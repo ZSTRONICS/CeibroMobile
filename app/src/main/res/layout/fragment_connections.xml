@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.connections.ConnectionsState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.connections.ConnectionsVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/connectionHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:padding="3dp"
+                android:layout_marginStart="15dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_round_close"
+                app:tint="@color/appYellow" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/inviteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="18dp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_semibold"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:text="@string/invite_btn_text"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/connections_heading"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/inviteBtn"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/connectionHeader">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/newConnectionReqLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/acceptAllBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="16dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:fontFamily="@font/inter_semibold"
+                        android:padding="4dp"
+                        android:text="@string/accept_all_heading"
+                        android:textColor="@color/appYellow"
+                        android:textSize="14.5sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/declineAllBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:fontFamily="@font/inter_semibold"
+                        android:padding="4dp"
+                        android:text="@string/decline_all_heading"
+                        android:textColor="@color/appRed"
+                        android:textSize="14.5sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/acceptAllBtn"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/acceptAllBtn" />
+
+                    <View
+                        android:id="@+id/view8"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/appLightGrey"
+                        android:clickable="false"
+                        app:layout_constraintEnd_toEndOf="@+id/declineAllBtn"
+                        app:layout_constraintStart_toStartOf="@+id/acceptAllBtn"
+                        app:layout_constraintTop_toBottomOf="@+id/acceptAllBtn" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/view8">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/newConnectImgCard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="13dp"
+                            android:elevation="0dp"
+                            android:outlineSpotShadowColor="@color/white"
+                            app:cardCornerRadius="4dp"
+                            app:cardBackgroundColor="@color/appLightGrey"
+                            app:layout_constraintBottom_toBottomOf="@+id/newConnectPersonCompany"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/newConnectPersonName">
+
+                            <TextView
+                                android:id="@+id/newConnectImgText"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:fontFamily="@font/inter_semibold"
+                                android:gravity="center"
+                                android:maxLength="3"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:text="KD"
+                                android:textColor="@color/black"
+                                android:textSize="16sp" />
+                        </androidx.cardview.widget.CardView>
+
+
+                        <TextView
+                            android:id="@+id/newConnectPersonName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="11dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="15dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_semibold"
+                            android:gravity="start"
+                            android:maxLines="1"
+                            android:text="Kristo Vunukainen"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintEnd_toStartOf="@+id/acceptBtn"
+                            app:layout_constraintStart_toEndOf="@+id/newConnectImgCard"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/newConnectPersonCompany"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="16dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start"
+                            android:maxLines="1"
+                            android:text="@string/company_heading"
+                            android:textColor="@color/appTextGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/newConnectPersonName"
+                            app:layout_constraintStart_toStartOf="@+id/newConnectPersonName"
+                            app:layout_constraintTop_toBottomOf="@+id/newConnectPersonName"
+                            app:layout_constraintVertical_bias="0.0" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:background="@color/appLightGrey"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/cancelBtn"
+                            app:layout_constraintStart_toStartOf="@+id/newConnectImgCard" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/acceptBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="31dp"
+                            android:layout_marginEnd="11dp"
+                            android:background="@drawable/signin_button_back"
+                            android:fontFamily="@font/inter_semibold"
+                            android:paddingStart="15dp"
+                            android:paddingEnd="15dp"
+                            android:text="@string/accept_btn_text"
+                            android:textAllCaps="false"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cancelBtn"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="TouchTargetSizeCheck" />
+
+                        <ImageView
+                            android:id="@+id/cancelBtn"
+                            android:layout_width="31dp"
+                            android:layout_height="31dp"
+                            android:layout_marginEnd="13dp"
+                            android:padding="1dp"
+                            android:src="@drawable/icon_close_round"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="TouchTargetSizeCheck" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/connectionsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newConnectionReqLayout">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/connectionRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/layout_connection_box" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

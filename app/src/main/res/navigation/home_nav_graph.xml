@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.zstronics.ceibro.ui.dashboard.DashboardFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_connectionsFragment"
+            app:destination="@id/connectionsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_homeFragment2"
+            app:destination="@id/homeFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.zstronics.ceibro.ui.profile.ProfileFragment"
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_connectionsFragment"
+            app:destination="@id/connectionsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.zstronics.ceibro.ui.profile.editprofile.EditProfileFragment"
+        android:label="EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/connectionsFragment"
+        android:name="com.zstronics.ceibro.ui.connections.ConnectionsFragment"
+        android:label="ConnectionsFragment"
+        tools:layout="@layout/fragment_connections" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.zstronics.ceibro.ui.chat.ChatFragment"
+        android:label="ChatFragment"
+        tools:layout="@layout/fragment_chat">
+        <action
+            android:id="@+id/action_chatFragment_to_newChatFragment"
+            app:destination="@id/newChatFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_msgViewFragment"
+            app:destination="@id/msgViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newChatFragment"
+        android:name="com.zstronics.ceibro.ui.chat.newchat.NewChatFragment"
+        android:label="NewChatFragment"
+        tools:layout="@layout/fragment_new_chat" />
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.zstronics.ceibro.ui.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/msgViewFragment"
+        android:name="com.zstronics.ceibro.ui.chat.chatmsgview.MsgViewFragment"
+        android:label="MsgViewFragment"
+        tools:layout="@layout/fragment_msg_view">
+        <action
+            android:id="@+id/action_msgViewFragment_to_chatMembersFragment"
+            app:destination="@id/chatMembersFragment" />
+        <action
+            android:id="@+id/action_msgViewFragment_to_groupInfoFragment"
+            app:destination="@id/groupInfoFragment" />
+        <action
+            android:id="@+id/action_msgViewFragment_to_messageInfoFragment"
+            app:destination="@id/messageInfoFragment" />
+        <action
+            android:id="@+id/action_msgViewFragment_to_questionarie_nav_graph"
+            app:destination="@id/questionarie_nav_graph" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatMembersFragment"
+        android:name="com.zstronics.ceibro.ui.chat.chat_members.ChatMembersFragment"
+        android:label="ChatMembersFragment"
+        tools:layout="@layout/fragment_chat_members" />
+    <fragment
+        android:id="@+id/groupInfoFragment"
+        android:name="com.zstronics.ceibro.ui.chat.groupinfo.GroupInfoFragment"
+        android:label="GroupInfoFragment"
+        tools:layout="@layout/fragment_group_info">
+        <action
+            android:id="@+id/action_groupInfoFragment_to_chatMembersFragment"
+            app:destination="@id/chatMembersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messageInfoFragment"
+        android:name="com.zstronics.ceibro.ui.chat.messageinfo.MessageInfoFragment"
+        android:label="MessageInfoFragment"
+        tools:layout="@layout/fragment_message_info" />
+    <include app:graph="@navigation/questionarie_nav_graph" />
+</navigation>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="chatRoom"
+            type="com.zstronics.ceibro.data.repos.chat.room.ChatRoom" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chatProfileImgCard"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="13dp"
+                android:elevation="0dp"
+                android:outlineSpotShadowColor="@color/white"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/chatText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/chatPersonName">
+
+                <TextView
+                    android:id="@+id/chatProfileIconText"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/input_field_rectangle"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:letterSpacing="0.1"
+                    android:maxLength="3"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="KD"
+                    android:textColor="@color/black"
+                    android:textSize="17sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/chatTypeIcon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:elevation="2dp"
+                android:paddingStart="0dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="2dp"
+                android:visibility="@{chatRoom.groupChat?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toTopOf="@+id/chatProfileImgCard"
+                app:layout_constraintEnd_toEndOf="@+id/chatProfileImgCard"
+                app:layout_constraintStart_toEndOf="@+id/chatProfileImgCard"
+                app:layout_constraintTop_toTopOf="@+id/chatProfileImgCard"
+                app:srcCompat="@drawable/icon_group_chat" />
+
+            <TextView
+                android:id="@+id/chatPersonName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Kristo Dunkin Kristo Dunkin"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/chatFavIcon"
+                app:layout_constraintStart_toEndOf="@+id/chatProfileImgCard"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/chatText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="17dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Cursus Condimentum tempusCursus Condimentum tempus"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/chatPersonName"
+                app:layout_constraintStart_toStartOf="@+id/chatPersonName"
+                app:layout_constraintTop_toBottomOf="@+id/chatPersonName"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+            <LinearLayout
+                android:id="@+id/chatTimeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="13dp"
+                android:gravity="end"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/unreadMsgCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/badge_back"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:text="@{String.valueOf(chatRoom.unreadCount)}"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="@{chatRoom.unreadCount>0?View.VISIBLE:View.GONE}" />
+
+                <TextView
+                    android:id="@+id/msgTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:text="10:25"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/chatProjectTextLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="15dp"
+                android:orientation="horizontal"
+                android:visibility="@{chatRoom.groupChat?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/chatText"
+                app:layout_constraintTop_toBottomOf="@+id/chatText">
+
+                <TextView
+                    android:id="@+id/chatProjectHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/project_text"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/chatProjectName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:padding="2dp"
+                    android:textColor="@color/appYellow"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/chatFavIcon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="13dp"
+                android:padding="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/chatTimeLayout"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_star_outline" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

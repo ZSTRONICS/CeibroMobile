@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="readBy"
+            type="com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse.ChatMessage.ReadBy" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/connectionImgCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:elevation="0dp"
+            android:outlineSpotShadowColor="@color/white"
+            app:cardBackgroundColor="@color/appLightGrey"
+            app:cardCornerRadius="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/userCompany"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/userName">
+
+            <TextView
+                android:id="@+id/connectionImgText"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="center"
+                android:letterSpacing="0.1"
+                android:maxLength="3"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:firstName="@{readBy.firstName}"
+                app:surName="@{readBy.surName}"
+                tools:text="KD" />
+        </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="@{readBy.firstName + ` `+ readBy.surName}"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toStartOf="@+id/messagedInfoDate"
+            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Kristo Vunukainen" />
+
+        <TextView
+            android:id="@+id/userCompany"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="Company · Electrician"
+            android:textColor="@color/appTextGrey"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/userName"
+            app:layout_constraintStart_toStartOf="@+id/userName"
+            app:layout_constraintTop_toBottomOf="@id/userName" />
+
+        <TextView
+            android:id="@+id/messagedInfoDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="9dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="22/08/2020"
+            android:textColor="@color/appTextGrey"
+            android:textSize="12.5sp"
+            app:layout_constraintBottom_toBottomOf="@+id/userName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/userName"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/messagedInfoTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="12:05 AM"
+            android:textColor="@color/appTextGrey"
+            android:textSize="11.5sp"
+            app:layout_constraintBottom_toBottomOf="@+id/userCompany"
+            app:layout_constraintEnd_toEndOf="@+id/messagedInfoDate"
+            app:layout_constraintTop_toTopOf="@+id/userCompany"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <View
+            android:id="@+id/view19"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:background="@color/appLightGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toBottomOf="@+id/userCompany"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

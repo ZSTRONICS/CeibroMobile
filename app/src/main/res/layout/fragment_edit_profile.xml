@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.profile.editprofile.EditProfileState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.profile.editprofile.EditProfileVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:theme="@style/Theme.Ceibro">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/editProfileHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:padding="3dp"
+                android:layout_marginStart="16dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appYellow" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/edit_profile_heading"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/editProfileScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="15dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@+id/updateBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editProfileHeader">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/editProfileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/personalDetailCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:layout_marginTop="9dp"
+                    android:layout_marginEnd="11dp"
+                    android:shape="rectangle"
+                    app:cardBackgroundColor="@color/appEditProfileCard"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="3dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/edProfHeading"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="13dp"
+                            android:fontFamily="@font/inter_bold"
+                            android:text="@string/personal_details_heading"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/editProfileImgCard"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="30dp"
+                            android:shape="rectangle"
+                            app:cardBackgroundColor="@color/black"
+                            app:cardCornerRadius="5dp"
+                            app:cardElevation="4dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/edProfHeading">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/userEditProfileImg"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:padding="0dp"
+                                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/profile_img"
+                                app:loadImageFromUrl="@{viewState.userProfilePic}" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/nameHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/name_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/etUserName"
+                            app:layout_constraintTop_toBottomOf="@+id/edProfHeading" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUserName"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/name_heading"
+                            android:text="@={viewState.userFirstName}"
+                            android:inputType="textPersonName"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/editProfileImgCard"
+                            app:layout_constraintTop_toBottomOf="@+id/nameHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateMinLength="@{3}"
+                            errorEnabledMinLength="@{true}"/>
+
+
+                        <TextView
+                            android:id="@+id/surNameHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/sur_name_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/nameHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etUserName" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUserSurName"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/sur_name_heading"
+                            android:text="@={viewState.userSurname}"
+                            android:inputType="textPersonName"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/etUserName"
+                            app:layout_constraintStart_toStartOf="@+id/etUserName"
+                            app:layout_constraintTop_toBottomOf="@+id/surNameHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateMinLength="@{3}"
+                            errorEnabledMinLength="@{true}" />
+
+                        <TextView
+                            android:id="@+id/emailHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/email_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/etUserEmail"
+                            app:layout_constraintTop_toBottomOf="@+id/etUserSurName" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUserEmail"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/email_heading"
+                            android:text="@={viewState.userEmail}"
+                            android:inputType="textEmailAddress"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            android:enabled="false"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/emailHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateType="@{`email`}"
+                            errorEnabledType="@{true}" />
+
+                        <TextView
+                            android:id="@+id/contactNoHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/contact_number_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/emailHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etUserEmail" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUserContactNo"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/contact_number_heading"
+                            android:text="@={viewState.userContactNumber}"
+                            android:inputType="number|phone"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/etUserEmail"
+                            app:layout_constraintStart_toStartOf="@+id/etUserEmail"
+                            app:layout_constraintTop_toBottomOf="@+id/contactNoHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateType="@{`phone`}"
+                            errorEnabledType="@{true}"  />
+
+                        <TextView
+                            android:id="@+id/passwordHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/password_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/contactNoHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etUserContactNo" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUserPassword"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/password_heading"
+                            android:text="@={viewState.userPassword}"
+                            android:inputType="textPassword"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/etUserContactNo"
+                            app:layout_constraintStart_toStartOf="@+id/etUserContactNo"
+                            app:layout_constraintTop_toBottomOf="@+id/passwordHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateMaxLength="@{30}"
+                            errorEnabledMaxLength="@{true}"
+                            app:validatePassword="@{etUserConfirmPassword}"
+                            errorEnabledPassword="@{true}"
+                            app:validatePasswordRegex="@{`^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$`}"
+                            errorEnabledPassRegex="@{true}"/>
+
+                        <ImageView
+                            android:id="@+id/profPasswordEye1"
+                            android:layout_width="32dp"
+                            android:layout_height="35dp"
+                            android:layout_marginEnd="3dp"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:padding="6dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/etUserPassword"
+                            app:layout_constraintEnd_toEndOf="@+id/etUserPassword"
+                            app:layout_constraintTop_toTopOf="@+id/etUserPassword"
+                            app:srcCompat="@drawable/visibility_off"
+                            app:tint="@color/appTextGrey" />
+
+                        <TextView
+                            android:id="@+id/confirmPasswordHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/confirm_password_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/passwordHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etUserPassword" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etUserConfirmPassword"
+                            errorEnabledEmpty="@{true}"
+                            errorEnabledMaxLength="@{true}"
+                            errorEnabledPassword="@{true}"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_marginBottom="22dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/confirm_password_heading"
+                            android:inputType="textPassword"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:text="@={viewState.userConfirmPassword}"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/etUserPassword"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@+id/etUserPassword"
+                            app:layout_constraintTop_toBottomOf="@+id/confirmPasswordHeading"
+                            app:layout_constraintVertical_bias="0.0"
+                            app:validateEmpty="@{true}"
+                            app:validateMaxLength="@{30}"
+                            app:validatePassword="@{etUserPassword}"
+                            app:validatePasswordRegex="@{`^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$`}"
+                            errorEnabledPassRegex="@{true}"
+                            tools:ignore="TouchTargetSizeCheck" />
+
+                        <ImageView
+                            android:id="@+id/profPasswordEye2"
+                            android:layout_width="32dp"
+                            android:layout_height="35dp"
+                            android:layout_marginEnd="3dp"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:padding="6dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/etUserConfirmPassword"
+                            app:layout_constraintEnd_toEndOf="@+id/etUserConfirmPassword"
+                            app:layout_constraintTop_toTopOf="@+id/etUserConfirmPassword"
+                            app:srcCompat="@drawable/visibility_off"
+                            app:tint="@color/appTextGrey" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/companyDetailCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="11dp"
+                    android:layout_marginBottom="12dp"
+                    android:shape="rectangle"
+                    app:cardBackgroundColor="@color/appEditProfileCard"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/personalDetailCard">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/edProfHeading2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="13dp"
+                            android:fontFamily="@font/inter_bold"
+                            android:text="@string/company_details_heading"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/companyHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="20dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/company_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/etCompanyName"
+                            app:layout_constraintTop_toBottomOf="@+id/edProfHeading2" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCompanyName"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/company_heading"
+                            android:text="@={viewState.userCompanyName}"
+                            android:inputType="textPersonName"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/companyHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateMinLength="@{3}"
+                            errorEnabledMinLength="@{true}" />
+
+
+                        <TextView
+                            android:id="@+id/vatHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/vat_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/companyHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etCompanyName" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCompanyVat"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/vat_heading"
+                            android:text="@={viewState.userCompanyVAT}"
+                            android:inputType="textPersonName"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/etCompanyName"
+                            app:layout_constraintStart_toStartOf="@+id/etCompanyName"
+                            app:layout_constraintTop_toBottomOf="@+id/vatHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateMinLength="@{3}"
+                            errorEnabledMinLength="@{true}" />
+
+                        <TextView
+                            android:id="@+id/locationHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/location_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/vatHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etCompanyVat" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCompanyLocation"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/location_heading"
+                            android:text="@={viewState.userCompanyLocation}"
+                            android:inputType="text"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/etCompanyVat"
+                            app:layout_constraintStart_toStartOf="@+id/etCompanyVat"
+                            app:layout_constraintTop_toBottomOf="@+id/locationHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateMinLength="@{3}"
+                            errorEnabledMinLength="@{true}" />
+
+                        <TextView
+                            android:id="@+id/contactNoHeading1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/contact_number_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/locationHeading"
+                            app:layout_constraintTop_toBottomOf="@+id/etCompanyLocation" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCompanyContactNo"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/contact_number_heading"
+                            android:text="@={viewState.userCompanyContactNo}"
+                            android:inputType="number|phone"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/etCompanyLocation"
+                            app:layout_constraintStart_toStartOf="@+id/etCompanyLocation"
+                            app:layout_constraintTop_toBottomOf="@+id/contactNoHeading1"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateType="@{`phone`}"
+                            errorEnabledType="@{true}" />
+
+                        <TextView
+                            android:id="@+id/workEmailHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start|center"
+                            android:text="@string/work_email_heading"
+                            android:textColor="@color/iconGrey"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@+id/contactNoHeading1"
+                            app:layout_constraintTop_toBottomOf="@+id/etCompanyContactNo" />
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCompanyWorkEmail"
+                            android:layout_width="0dp"
+                            android:layout_height="38dp"
+                            android:layout_marginBottom="22dp"
+                            android:background="@drawable/input_field_rectangle"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/work_email_heading"
+                            android:text="@={viewState.userCompanyWorkEmail}"
+                            android:inputType="textEmailAddress"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="14.5sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/etCompanyContactNo"
+                            app:layout_constraintStart_toStartOf="@+id/etCompanyContactNo"
+                            app:layout_constraintTop_toBottomOf="@+id/workEmailHeading"
+                            tools:ignore="TouchTargetSizeCheck"
+                            app:validateEmpty="@{true}"
+                            errorEnabledEmpty="@{true}"
+                            app:validateType="@{`email`}"
+                            errorEnabledType="@{true}" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/updateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="23dp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/update_btn_text"
+            android:enabled="@{viewModel.validator.isValidate , default = false}"
+            android:textAllCaps="false"
+            android:onClick="@{() -> viewModel.onUpdate()}"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/signin_button_back"
+            android:backgroundTint="@color/appLightGrey"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/cancel_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            app:layout_constraintBottom_toBottomOf="@+id/updateBtn"
+            app:layout_constraintEnd_toStartOf="@+id/updateBtn"
+            app:layout_constraintTop_toTopOf="@+id/updateBtn"
+            tools:ignore="TouchTargetSizeCheck" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/downBtn"
+            android:layout_width="39dp"
+            android:layout_height="39dp"
+            android:background="@drawable/badge_back"
+            android:backgroundTint="@color/appYellow"
+            android:padding="2dp"
+            android:text="⇅"
+            android:fontFamily="@font/inter_bold"
+            android:gravity="top|center_horizontal"
+            android:textSize="21dp"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:layout_marginBottom="25dp"
+            app:layout_constraintBottom_toTopOf="@+id/updateBtn"
+            app:layout_constraintEnd_toEndOf="@+id/updateBtn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/badge_back.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/bottom_nav_color.xml" value="0.2645" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/button_back_red.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/draft_status_filled.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/draft_status_outline.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/email_icon_solid.xml" value="0.2355" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/ic_backward.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/ic_icon_info.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/ic_path.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_add.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_at_the_rate.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_back.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_backward.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_call.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_chat.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_company.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_contacts.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_delivered.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_edit.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_forward.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_friends.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_home.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_invitations.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_lock.xml" value="0.2355" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_logout.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_media.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_member.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_members.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_more.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_navigate_down.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_navigate_next.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_notification.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_password.xml" value="0.2355" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_pin.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_projects.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_question.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_questionaire.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_reports.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_round_close.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_settings.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_star.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_task.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_tasks.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/icon_works.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/input_field.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/input_field_error.xml" value="0.2355" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/input_field_rectangle.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/input_field_rectangle_transparent.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/logout_icon.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/name_icon.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/question_icon.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/rounded_black_bg.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/settings_icon.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/signin_button_back.xml" value="0.2675" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_approve_filled.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_approve_outline.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_done_outline.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_draft_filled.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_draft_outline.xml" value="0.2995" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_ongoing_filled.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_ongoing_outline.xml" value="0.304" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_outline.xml" value="0.2645" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_publish_filled.xml" value="0.2995" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/status_publish_outline.xml" value="0.2995" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/username_icon.xml" value="0.3255" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/activity_navhost_presenter.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/activity_splash.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_chat.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_chat_members.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_connections.xml" value="0.36102564102564105" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_dashboard.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_edit_profile.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_group_info.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_login.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_media.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_message_action_sheet.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_message_info.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_msg_view.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_new_chat.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_profile.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_projects.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_sign_up.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/fragment_works.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_chat_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_chat_main_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_chat_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_chat_message_menu.xml" value="0.5" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_chat_receiving.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_chat_sending.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_common_toolbar.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_connection_box.xml" value="0.365625" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_item_chat_members.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_item_message_info_members.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_item_message_receive.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_item_message_sender.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_media_image.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_new_connection_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_profile_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/layout/layout_project_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/menu/profile_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/menu/search_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projects/Ceibro/app/src/main/res/xml/network_security_config.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/bottom_nav_color.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/home_icon.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/ic_backward.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/ic_nav_home.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/ic_nav_projects.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/ic_nav_works.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/ic_path.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/icon_tasks.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/input_field.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/lock_icon.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/login_button_back.xml" value="0.196" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/password_icon.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/rounded_black_bg.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/drawable/signin_button_back.xml" value="0.3255" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/layout/activity_splash.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/layout/fragment_dashboard.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/layout/fragment_login.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/layout/fragment_sign_up.xml" value="0.365625" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/layout/fragment_works.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Android/Downloads/Ceibro/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.36666666666666664" />
+        <entry key="app/src/main/res/drawable/back_icon.xml" value="0.153" />
+        <entry key="app/src/main/res/drawable/ic_nav_chat.xml" value="0.153" />
+        <entry key="app/src/main/res/drawable/ic_path.xml" value="0.153" />
+        <entry key="app/src/main/res/drawable/rounded_pink.xml" value="0.153" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.24259259259259258" />
+        <entry key="app/src/main/res/layout/activity_navhost_presenter.xml" value="0.13333333333333333" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/fragment_projects.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/fragment_tasks.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/fragment_works.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/layout_common_toolbar.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/layout/progress_dialogue_fragment.xml" value="0.2833333333333333" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.2833333333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.362962962962963" />
+      </ProjectState>
+    </option>
+  </component>
+</project>

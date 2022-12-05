@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="toolbarTitle"
+            type="String" />
+
+        <variable
+            name="toolsBarVisibility"
+            type="Boolean" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Ceibro.App.Widget.ToolBar"
+        android:visibility="@{toolsBarVisibility? View.VISIBLE : View.GONE }">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title"
+            style="@style/Ceibro.App.Widget.TextView.ToolBar"
+            android:text="@{toolbarTitle}" />
+    </androidx.appcompat.widget.Toolbar>
+</layout>

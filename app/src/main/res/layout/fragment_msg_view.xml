@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.chat.chatmsgview.MsgViewState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.chat.chatmsgview.MsgViewVM" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/msgViewHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="34dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_round_close"
+                app:tint="@color/appYellow" />
+
+            <ImageView
+                android:id="@+id/msgViewMenuBtn"
+                android:layout_width="36dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="@+id/msgViewGroupOrUserNameLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/msgViewGroupOrUserNameLayout"
+                app:srcCompat="@drawable/icon_more" />
+
+            <LinearLayout
+                android:id="@+id/msgViewGroupOrUserNameLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="65dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="start"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:orientation="vertical"
+                android:paddingEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/msgViewMenuBtn"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/msgViewGroupOrUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="@{viewState.chatTitle}"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:id="@+id/msgViewProjectNameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-1dp"
+                    android:orientation="horizontal"
+                    android:visibility="@{viewState.isGroupChat ? View.VISIBLE:View.GONE }">
+
+                    <TextView
+                        android:id="@+id/msgViewProjectHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/project_text"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/msgViewProjectName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:fontFamily="@font/inter_semibold"
+                        android:padding="2dp"
+                        android:text="@{viewState.project.title}"
+                        android:textColor="@color/appYellow"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <SearchView
+                android:id="@+id/msgViewSearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="15dp"
+                android:closeIcon="@drawable/icon_round_close"
+                android:elevation="1dp"
+                android:gravity="center"
+                android:layoutDirection="rtl"
+                android:queryBackground="@drawable/input_field_rectangle"
+                android:queryHint="Search"
+                android:searchIcon="@drawable/icon_search"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/closeBtn"
+                app:layout_constraintEnd_toStartOf="@+id/msgViewMenuBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/closeBtn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/messagesRV"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/messageFooterView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/msgViewHeader"
+            tools:itemCount="2"
+            tools:listitem="@layout/layout_item_message_receive">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/messageFooterView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <View
+                android:id="@+id/view18"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toTopOf="@+id/etMsgTypingField"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/quotedMessageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_field_rectangle"
+                android:orientation="vertical"
+                android:padding="@dimen/_5sdp"
+                android:visibility="@{viewState.isQuotedMessage?View.VISIBLE:View.GONE,default = gone}"
+                app:layout_constraintBottom_toTopOf="@+id/view18">
+
+                <TextView
+                    android:id="@+id/quotedUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@{viewState.quotedMessage.sender.firstName + ` ` + viewState.quotedMessage.sender.surName}"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Kristo Vunukainen" />
+
+                <TextView
+                    android:id="@+id/quotedMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="start"
+                    android:text="@{viewState.quotedMessage.message}"
+                    android:textColor="@color/black"
+                    android:textSize="13.6sp"
+                    app:layout_constraintEnd_toStartOf="@+id/cancelQuoted"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/quotedUser"
+                    tools:text="Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius blandit sit amet non magna." />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/cancelQuoted"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:src="@drawable/ic_msg_cancel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etMsgTypingField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:ems="5"
+                android:fontFamily="@font/inter_regular"
+                android:hint="@string/type_a_message_heading"
+                android:inputType="textCapSentences|textMultiLine"
+                android:isScrollContainer="true"
+                android:letterSpacing="0.01"
+                android:lineSpacingExtra="3dp"
+                android:maxLines="4"
+                android:minHeight="45dp"
+                android:paddingStart="13dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp"
+                android:text="@={viewState.messageBoxBody}"
+                android:textColor="@color/black"
+                android:textColorHint="@color/appGrey"
+                android:textSize="15.5sp"
+                app:layout_constraintBottom_toTopOf="@+id/view17"
+                app:layout_constraintEnd_toStartOf="@+id/recordAudioBtn"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/recordAudioBtn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="9dp"
+                android:padding="7dp"
+                android:visibility="@{viewState.messageBoxBody.isEmpty()? View.VISIBLE :View.INVISIBLE,default = visible}"
+                app:layout_constraintBottom_toBottomOf="@+id/etMsgTypingField"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/etMsgTypingField"
+                app:srcCompat="@drawable/icon_mic" />
+
+            <ImageView
+                android:id="@+id/sendMessageButton"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="9dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="7dp"
+                android:visibility="@{viewState.messageBoxBody.isEmpty()? View.INVISIBLE :View.VISIBLE,default = invisible}"
+                app:layout_constraintBottom_toBottomOf="@+id/etMsgTypingField"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/etMsgTypingField"
+                app:srcCompat="@drawable/ic_send" />
+
+
+            <View
+                android:id="@+id/view17"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toTopOf="@+id/attachmentsLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/attachmentsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:baselineAligned="false"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp"
+                android:weightSum="8"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/emojiLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:src="@drawable/icon_emoji" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btPickFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:src="@drawable/icon_attachment" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:src="@drawable/icon_camera" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.85">
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/appLightGrey" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:src="@drawable/icon_bell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/questionLL"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.9"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}">
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/appLightGrey" />
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:src="@drawable/icon_page" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.1">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.1">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.05">
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

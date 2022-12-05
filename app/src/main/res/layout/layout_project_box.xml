@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="allProjects"
+            type="com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse.Result.Projects" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="9dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/projectCardLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/status_draft_outline">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="18dp"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/projectImg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        app:srcCompat="@drawable/splash_background" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:id="@+id/projectStatusName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/status_draft_filled"
+                            android:elevation="1dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:paddingStart="7dp"
+                            android:paddingTop="2.5dp"
+                            android:paddingEnd="7dp"
+                            android:paddingBottom="2.5dp"
+                            android:text="@string/draft_heading"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/projectCDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="-10dp"
+                            android:background="@drawable/status_draft_filled"
+                            android:backgroundTint="@color/white"
+                            android:elevation="0dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:paddingStart="18dp"
+                            android:paddingTop="2.5dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="2.5dp"
+                            android:text="22.05.2021"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:id="@+id/dueDateLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toStartOf="@+id/projectDocumentLayout"
+                    app:layout_constraintStart_toStartOf="@+id/cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/cardView">
+
+                    <TextView
+                        android:id="@+id/dueDateHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:text="@string/due_date_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/projectDueDateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:text="26.05.2021"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ownerLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="@+id/cardView"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/dueDateLayout"
+                    app:layout_constraintTop_toTopOf="@+id/dueDateLayout">
+
+                    <TextView
+                        android:id="@+id/ownerHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:text="@string/owner_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/projectOwnerNameText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:text="Ilja Nikolajev"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/projectName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="@{allProjects.title}"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="@+id/cardView"
+                    app:layout_constraintStart_toStartOf="@+id/cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/dueDateLayout" />
+
+                <TextView
+                    android:id="@+id/projectViewMapBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/view_map_heading"
+                    android:textColor="@color/appYellow"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@+id/cardView"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/projectName" />
+
+                <View
+                    android:id="@+id/view15"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintEnd_toEndOf="@+id/cardView"
+                    app:layout_constraintStart_toStartOf="@+id/cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/projectViewMapBtn" />
+
+                <LinearLayout
+                    android:id="@+id/projectTaskLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="15dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/view15"
+                    app:layout_constraintTop_toBottomOf="@+id/view15"
+                    app:layout_constraintVertical_bias="0.0">
+
+                    <ImageView
+                        android:id="@+id/projTaskImg"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:src="@drawable/icon_task"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:tint="@color/appYellow" />
+
+                    <TextView
+                        android:id="@+id/projTaskCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:padding="1dp"
+                        android:text="@{String.valueOf(allProjects.tasksCount) + ` task(s)`}"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/projectMemberLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="1dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="@+id/view15"
+                    app:layout_constraintTop_toTopOf="@+id/projectTaskLayout">
+
+                    <ImageView
+                        android:id="@+id/projMemberImg"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:src="@drawable/icon_member"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:tint="@color/appYellow" />
+
+                    <TextView
+                        android:id="@+id/projMemberCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:padding="1dp"
+                        android:text="@{String.valueOf(allProjects.usersCount) + ``}"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/projectDocumentLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toStartOf="@+id/projectMemberLayout"
+                    app:layout_constraintStart_toEndOf="@+id/projectTaskLayout"
+                    app:layout_constraintTop_toTopOf="@+id/projectTaskLayout">
+
+                    <ImageView
+                        android:id="@+id/projDocumentImg"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:src="@drawable/icon_folder"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:tint="@color/appYellow" />
+
+                    <TextView
+                        android:id="@+id/projDocumentCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:padding="1dp"
+                        android:text="@{String.valueOf(allProjects.docsCount) + ` doc(s)`}"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

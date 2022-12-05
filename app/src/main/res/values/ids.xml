@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="view_holder_array_adapter_holder" type="id"/>
+    <item name="view_holder_array_adapter_position" type="id"/>
+    <item type="id" name="nav_host_fragment"/>
+    <item type="id" name="validator_rule" />
+    <item type="id" name="text_watcher_clear_error" />
+    <item name="more_notification" type="id"/>
+    <item name="more_atm_cdm" type="id"/>
+    <item name="more_help_support" type="id"/>
+    <item name="more_terms_condition" type="id"/>
+</resources>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:orientation="vertical"
+        android:padding="@dimen/_5sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/choiceIdTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:text="1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/choiceET"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/input_field_rectangle_transparent"
+            android:ems="10"
+            android:fontFamily="@font/inter_regular"
+            android:hint="@string/screen_create_question_enter_choice_label"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/appGrey"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toStartOf="@id/deleteIV"
+            app:layout_constraintStart_toEndOf="@id/choiceIdTV"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <requestFocus />
+        </com.google.android.material.textfield.TextInputEditText>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/deleteIV"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/icon_delete"
+            app:layout_constraintBottom_toBottomOf="@+id/choiceET"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/choiceET" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

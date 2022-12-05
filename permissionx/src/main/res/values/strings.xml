@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permissionx_access_background_location">Background location</string>
+    <string name="permissionx_system_alert_window">Display over other apps</string>
+    <string name="permissionx_write_settings">Modify system settings</string>
+    <string name="permissionx_manage_external_storage">All files access</string>
+    <string name="permissionx_request_install_packages">Install unknown apps</string>
+</resources>
