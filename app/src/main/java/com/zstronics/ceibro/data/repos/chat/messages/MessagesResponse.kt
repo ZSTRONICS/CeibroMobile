@@ -24,7 +24,12 @@ data class MessagesResponse(
         var companyName: String,
         @SerializedName("createdAt")
         val createdAt: String? = null,
-
+        @SerializedName("questions")
+        val questions: List<String>? = null,
+        @SerializedName("access")
+        val access: List<String>? = null,
+        @SerializedName("files")
+        val files: List<String>? = null,
         @SerializedName("_id")
         var id: String = "",
         @SerializedName("message")

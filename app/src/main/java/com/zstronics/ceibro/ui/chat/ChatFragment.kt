@@ -72,10 +72,10 @@ class ChatFragment :
                 viewModel.addChatToFav(data.id)
         }
 
-        SocketHandler.getSocket().on(SocketHandler.RECEIVE_MESSAGE) { args ->
+        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
 //            val gson = Gson()
-//            val messageTYpe = object : TypeToken<NewSocketReceiveMessageResponse>() {}.type
-//            val message: NewSocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageTYpe)
+//            val messageTYpe = object : TypeToken<SocketReceiveMessageResponse>() {}.type
+//            val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageTYpe)
             viewModel.loadChat("all",false)
         }
     }

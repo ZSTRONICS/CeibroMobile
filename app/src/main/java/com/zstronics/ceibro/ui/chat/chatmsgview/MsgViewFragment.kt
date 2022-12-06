@@ -21,13 +21,14 @@ import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
-import com.zstronics.ceibro.data.repos.chat.messages.NewSocketReceiveMessageResponse
+import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
 import com.zstronics.ceibro.databinding.FragmentMsgViewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
 import com.zstronics.ceibro.ui.chat.adapter.swipe.MessageSwipeController
 import com.zstronics.ceibro.ui.chat.adapter.swipe.SwipeControllerActions
 import com.zstronics.ceibro.ui.chat.bottomsheet.FragmentMessageActionSheet
+import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.enums.MessageActions.*
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.FileUtils
@@ -158,19 +159,23 @@ class MsgViewFragment :
             val itemTouchHelper = ItemTouchHelper(messageSwipeController)
             itemTouchHelper.attachToRecyclerView(mViewDataBinding.messagesRV)
 
-            SocketHandler.getSocket().on(SocketHandler.RECEIVE_MESSAGE) { args ->
+            SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
                 try {
                     val gson = Gson()
-                    val messageTYpe = object : TypeToken<NewSocketReceiveMessageResponse>() {}.type
-                    val message: NewSocketReceiveMessageResponse =
-                        gson.fromJson(args[0].toString(), messageTYpe)
-                    if (message.data.chat == viewModel.chatRoom?.id && message.data.from != viewModel.userId)
-                        viewModel.launch(Dispatcher.Main) {
-                            adapter.appendMessage(message.data.message) { lastPosition ->
-                                scrollToPosition(lastPosition)
+                    val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
+                    val response: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
+
+                    if (response.eventType == EventType.RECEIVE_MESSAGE.name) {
+                        if (response.data.messageData.chat == viewModel.chatRoom?.id && response.data.messageData.from != viewModel.userId) {
+                            viewModel.launch(Dispatcher.Main) {
+                                adapter.appendMessage(response.data.messageData.message) { lastPosition ->
+                                    scrollToPosition(lastPosition)
+                                }
                             }
                         }
-                } catch (e: Exception) {
+                    }
+                }
+                catch (e: Exception) {
                 }
             }
 

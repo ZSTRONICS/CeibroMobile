@@ -10,10 +10,12 @@ import com.zstronics.ceibro.data.repos.chat.IChatRepository
 import com.zstronics.ceibro.data.repos.chat.messages.MediaMessage
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.repos.chat.messages.NewMessageRequest
+import com.zstronics.ceibro.data.repos.chat.messages.SocketMessageRequest
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
 import com.zstronics.ceibro.ui.chat.extensions.getChatTitle
+import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.enums.MessageType
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -95,13 +97,17 @@ class MsgViewVM @Inject constructor(
     fun sendMessage(
         message: String? = null,
         chatId: String?,
+        eventType: EventType = EventType.SEND_MESSAGE,
         messageType: MessageType = MessageType.MESSAGE,
         file: File? = null
     ) {
 
-//        val from = sessionManager.getUser().value?.id
+        val from = sessionManager.getUser().value?.id
+
         val files = arrayListOf<MediaMessage?>()
-        files.add(MediaMessage(file?.extension, file?.name, file?.absolutePath.toString()))
+        if (file != null) {
+            files.add(MediaMessage(file.extension, file.name, file.absolutePath.toString()))
+        }
 
         val newMessage = NewMessageRequest(
             message = message,
@@ -116,9 +122,16 @@ class MsgViewVM @Inject constructor(
             newMessage.messageId = viewState.quotedMessage.value?.id
         }
         val gson = Gson()
-        val json = gson.toJson(newMessage)
+        val jsonData = gson.toJson(newMessage)
 
-        SocketHandler.sendMessage(json)
+
+        val messageRequest = SocketMessageRequest(
+            userId = userId,
+            eventType = eventType.name,
+            data = jsonData)
+        val json = gson.toJson(messageRequest)
+
+        SocketHandler.sendRequest(json)
 //        replyOrSendMessage(newMessage)
     }
 
@@ -144,7 +157,6 @@ class MsgViewVM @Inject constructor(
         }
 
         hideQuoted()
-
         viewState.messageBoxBody.value = ""
     }
 
