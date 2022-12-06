@@ -13,6 +13,8 @@ object SocketHandler {
     const val SEND_MESSAGE = "SEND_MESSAGE"
     const val TYPING_START = "TYPING_START"
     const val RECEIVE_MESSAGE = "RECEIVE_MESSAGE"
+    const val CHAT_EVENT_REP_OVER_SOCKET = "CHAT_EVENT_REP_OVER_SOCKET"
+    const val CHAT_EVENT_REQ_OVER_SOCKET = "CHAT_EVENT_REQ_OVER_SOCKET"
 
     @Synchronized
     fun setSocket() {
@@ -30,11 +32,11 @@ object SocketHandler {
 //                args
 //            }
 
-            mSocket.io().on(SEND_MESSAGE) { args ->
-                args
-            }
+//            mSocket.io().on(SEND_MESSAGE) { args ->
+//                args
+//            }
 
-            mSocket.io().on(TYPING_START) { args ->
+            mSocket.io().on(CHAT_EVENT_REQ_OVER_SOCKET) { args ->
                 args
             }
 
@@ -61,13 +63,13 @@ object SocketHandler {
 
     @Synchronized
     fun offAllEventOObservers() {
-        mSocket.io().off(TYPING_START)
-        mSocket.io().off(RECEIVE_MESSAGE)
-        mSocket.io().off(SEND_MESSAGE)
+        mSocket.io().off(CHAT_EVENT_REP_OVER_SOCKET)
+//        mSocket.io().off(RECEIVE_MESSAGE)
+        mSocket.io().off(CHAT_EVENT_REQ_OVER_SOCKET)
     }
 
     @Synchronized
-    fun sendMessage(message: String){
-        mSocket.emit(SEND_MESSAGE, message)
+    fun sendRequest(body: String){
+        mSocket.emit(CHAT_EVENT_REQ_OVER_SOCKET, body)
     }
 }
