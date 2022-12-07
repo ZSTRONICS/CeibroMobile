@@ -24,6 +24,8 @@ class SingleNewChatFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
+            R.id.startChatBtn -> viewModel.createIndividualChat()
+            200 -> navigateBack()
         }
     }
 

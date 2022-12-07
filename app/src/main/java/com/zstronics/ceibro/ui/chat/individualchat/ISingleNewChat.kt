@@ -8,5 +8,6 @@ interface ISingleNewChat {
 
     interface ViewModel : IBase.ViewModel<State> {
         fun loadConnections()
+        fun createIndividualChat()
     }
 }
