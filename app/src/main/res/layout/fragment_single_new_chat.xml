@@ -68,6 +68,7 @@
                 android:layout_height="@dimen/_27sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@drawable/square_rounded_yellow_filled"
+                android:enabled="false"
                 android:fontFamily="@font/inter_medium"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_10ssp"

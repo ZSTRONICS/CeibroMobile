@@ -19,6 +19,9 @@ class SingleNewChatVM @Inject constructor(
     private val _allConnections: MutableLiveData<MutableList<MyConnection>> = MutableLiveData()
     val allConnections: LiveData<MutableList<MyConnection>> = _allConnections
 
+    private val _selectedMember: MutableLiveData<String> = MutableLiveData()
+    val selectedMember: LiveData<String> = _selectedMember
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         loadConnections()
@@ -35,9 +38,17 @@ class SingleNewChatVM @Inject constructor(
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false, response.error.message)
+                    loading(false)
                 }
             }
         }
+    }
+
+    fun onMemberSelection(connection: MyConnection) {
+        val id = if (connection.sentByMe)
+            connection.to?.id
+        else
+            connection.from?.id
+        _selectedMember.value = id
     }
 }

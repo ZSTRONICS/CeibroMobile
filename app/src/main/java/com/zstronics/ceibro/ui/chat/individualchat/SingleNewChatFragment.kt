@@ -32,14 +32,53 @@ class SingleNewChatFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        adapter.showRadioButton = true
         initRecyclerView(adapter)
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
-        adapter.itemClickListener = { _: View, position: Int, data: MyConnection ->
+
+        viewModel.selectedMember.observe(viewLifecycleOwner) {
+
+            mViewDataBinding.startChatBtn.isEnabled = it?.isNotEmpty() == true
         }
+        adapter.itemClickListener = { _: View, position: Int, data: MyConnection ->
+            viewModel.onMemberSelection(data)
+        }
+
+        /*adapter.setList(
+            listOf(
+                MyConnection(
+                    from = null,
+                    id = "123",
+                    sentByMe = true,
+                    status = "Accepted",
+                    to = null
+                ),
+                MyConnection(
+                    from = null,
+                    id = "1234",
+                    sentByMe = true,
+                    status = "Accepted",
+                    to = null
+                ),
+                MyConnection(
+                    from = null,
+                    id = "1245",
+                    sentByMe = true,
+                    status = "Accepted",
+                    to = null
+                ),
+                MyConnection(
+                    from = null,
+                    id = "1123456723",
+                    sentByMe = true,
+                    status = "Accepted",
+                    to = null
+                ),
+            )
+        )*/
     }
 
     private fun initRecyclerView(adapter: AllConnectionsAdapter) {
