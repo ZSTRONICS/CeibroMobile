@@ -33,7 +33,8 @@ class ChatFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.newChatBtn -> navigateToNewChat()
+            R.id.individual -> navigateToNewChat()
+            R.id.group -> navigateToNewChat()
             R.id.viewAllBtn -> viewModel.loadChat("all",false)
             R.id.unreadBtn -> viewModel.loadChat("unread",false)
             R.id.favBtnText -> viewModel.loadChat("favorites",true)
