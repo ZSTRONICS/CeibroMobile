@@ -48,7 +48,7 @@ class ChatFragment :
         navigate(R.id.newChatFragment)
     }
     private fun navigateToSingleNewChat() {
-        navigate(R.id.action_chatFragment_to_singleNewChatFragment)
+        navigate(R.id.singleNewChatFragment)
     }
 
     private fun navigateToMsgView(chat: ChatRoom) {
