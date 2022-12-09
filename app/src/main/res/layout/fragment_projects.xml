@@ -161,7 +161,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
-                        android:backgroundTint="@color/appGreen"
+                        android:backgroundTint="@color/appBlue"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:paddingStart="5dp"
@@ -200,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
-                        android:backgroundTint="@color/appBlue"
+                        android:backgroundTint="@color/appDoneGrey"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:paddingStart="5dp"
@@ -216,12 +216,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
-                    android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
                     app:layout_constraintBottom_toBottomOf="@+id/doneProjectFilter"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/doneProjectFilter"
                     app:layout_constraintTop_toTopOf="@+id/doneProjectFilter">
 
@@ -252,46 +250,46 @@
 
                 </LinearLayout>
 
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/unknownProjectFilter"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="18dp"-->
-<!--                    android:layout_marginEnd="17dp"-->
-<!--                    android:gravity="center"-->
-<!--                    android:orientation="horizontal"-->
-<!--                    android:padding="7dp"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@+id/draftProjectFilter"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toEndOf="@+id/draftProjectFilter"-->
-<!--                    app:layout_constraintTop_toTopOf="@+id/draftProjectFilter">-->
+                <LinearLayout
+                    android:id="@+id/submitProjectFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="7dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/draftProjectFilter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/draftProjectFilter"
+                    app:layout_constraintTop_toTopOf="@+id/draftProjectFilter">
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/unknownProjectText"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:fontFamily="@font/inter_medium"-->
-<!--                        android:padding="1dp"-->
-<!--                        android:text="Unknown"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:textSize="15sp" />-->
+                    <TextView
+                        android:id="@+id/submitProjectText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/submitted_heading"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/unknownProjectCount"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginStart="6dp"-->
-<!--                        android:background="@drawable/badge_back"-->
-<!--                        android:backgroundTint="@color/grey"-->
-<!--                        android:fontFamily="@font/inter_regular"-->
-<!--                        android:gravity="center"-->
-<!--                        android:paddingStart="5dp"-->
-<!--                        android:paddingEnd="5dp"-->
-<!--                        android:text="4"-->
-<!--                        android:textColor="@color/white"-->
-<!--                        android:textSize="12sp" />-->
+                    <TextView
+                        android:id="@+id/submitProjectCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/badge_back"
+                        android:backgroundTint="@color/appGreen"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="4"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
 
-<!--                </LinearLayout>-->
+                </LinearLayout>
 
                 <View
                     android:id="@+id/view16"

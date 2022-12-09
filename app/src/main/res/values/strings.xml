@@ -184,5 +184,6 @@
     <string name="screen_create_question_add_choice_label">Add choice variant</string>
     <string name="screen_create_question_enter_choice_label">Enter choice</string>
     <string name="participants_list">Participants list</string>
+    <string name="submitted_heading">Submitted</string>
 
 </resources>

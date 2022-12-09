@@ -88,13 +88,17 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
                 binding.projectCardLayout.setBackgroundResource(R.drawable.status_approve_outline)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_approve_filled)
             }
-            else if (item.publishStatus.toLowerCase() == "done") {
+            else if (item.publishStatus.toLowerCase() == "done" || item.publishStatus.toLowerCase() == "complete" || item.publishStatus.toLowerCase() == "completed") {
                 binding.projectCardLayout.setBackgroundResource(R.drawable.status_done_outline)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_done_filled)
             }
             else if (item.publishStatus.toLowerCase() == "published" || item.publishStatus.toLowerCase() == "publish") {
                 binding.projectCardLayout.setBackgroundResource(R.drawable.status_publish_outline)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_publish_filled)
+            }
+            else if (item.publishStatus.toLowerCase() == "submit" || item.publishStatus.toLowerCase() == "submitted") {
+                binding.projectCardLayout.setBackgroundResource(R.drawable.status_submit_outline)
+                binding.projectStatusName.background = context.getDrawable(R.drawable.status_submit_filled)
             }
 
 
