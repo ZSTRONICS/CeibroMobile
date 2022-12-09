@@ -35,7 +35,7 @@ data class MessagesResponse(
         @SerializedName("message")
         var message: String = "",
         @SerializedName("myMessage")
-        var myMessage: Boolean = false,
+        var myMessage: String?,
         @SerializedName("pinnedBy")
         val pinnedBy: List<String>? = null,
         @SerializedName("readBy")

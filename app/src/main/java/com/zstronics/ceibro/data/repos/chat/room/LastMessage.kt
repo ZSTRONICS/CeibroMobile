@@ -14,4 +14,4 @@ data class LastMessage(
     val id: String,
     @SerializedName("message")
     val message: String
-): BaseResponse(), Parcelable
+) : BaseResponse(), Parcelable

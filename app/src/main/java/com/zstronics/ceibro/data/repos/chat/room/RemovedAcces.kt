@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class Member(
+data class RemovedAcces(
     @SerializedName("companyName")
     val companyName: String,
     @SerializedName("firstName")
@@ -19,6 +19,5 @@ data class Member(
     @SerializedName("profilePic")
     val profilePic: String,
     @SerializedName("surName")
-    val surName: String,
-    var isChecked: Boolean = false
+    val surName: String
 ) : BaseResponse(), Parcelable

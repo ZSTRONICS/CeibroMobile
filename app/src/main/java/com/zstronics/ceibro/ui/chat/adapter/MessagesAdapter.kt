@@ -50,10 +50,18 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
 
     override fun getItemViewType(position: Int): Int {
         val message = list[position]
-        return when (message.myMessage) {
-            true -> MY_MESSAGE
-            false -> OTHER_MESSAGE
+        val user = sessionManager.getUser().value
+        val userId = user?.id
+        if (message.myMessage == userId) {
+            return MY_MESSAGE
         }
+        else {
+            return OTHER_MESSAGE
+        }
+//        return when (message.myMessage) {             // this is for boolean type
+//            true -> MY_MESSAGE
+//            false -> OTHER_MESSAGE
+//        }
     }
 
     override fun getItemCount(): Int {
