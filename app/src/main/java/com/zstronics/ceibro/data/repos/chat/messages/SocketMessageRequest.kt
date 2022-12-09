@@ -6,7 +6,6 @@ import com.zstronics.ceibro.ui.enums.MessageType
 import org.json.JSONObject
 
 data class SocketMessageRequest(
-    @SerializedName("userId") var userId: String?,
     @SerializedName("eventType") var eventType: String?,
     @SerializedName("data") var data: String?
 )

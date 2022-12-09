@@ -6,51 +6,48 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import kotlinx.parcelize.Parcelize
-import java.util.*
-import kotlin.collections.ArrayList
 
 @Keep
 @Parcelize
 data class ChatRoom(
+    @SerializedName("admins")
+    val admins: List<String>,
     @SerializedName("createdAt")
     val createdAt: String,
+    @SerializedName("groups")
+    val groups: List<String>,
     @SerializedName("_id")
     val id: String,
     @SerializedName("initiator")
-    val initiator: String,
-
-    @SerializedName("name")
-    val name: String,
-
+    val initiator: Initiator,
     @SerializedName("isGroupChat")
     val isGroupChat: Boolean,
+    @SerializedName("isProjectAttached")
+    val isProjectAttached: Boolean,
     @SerializedName("lastMessage")
-    val lastMessage: LastMessage?,
+    val lastMessage: LastMessage,
+    @SerializedName("lastMessageTime")
+    val lastMessageTime: String,
     @SerializedName("members")
     val members: ArrayList<Member>,
     @SerializedName("mutedBy")
     val mutedBy: List<Member>,
+    @SerializedName("name")
+    val name: String,
     @SerializedName("pinTitle")
     val pinTitle: String,
     @SerializedName("pinnedBy")
     val pinnedBy: ArrayList<String>,
+    @SerializedName("project")
+    val project: Project,
+    @SerializedName("removedAccess")
+    val removedAccess: ArrayList<RemovedAcces>,
     @SerializedName("removedMembers")
-    val removedMembers: List<Member>,
+    val removedMembers: ArrayList<Member>,
+    @SerializedName("unreadCount")
+    val unreadCount: Int,
     @SerializedName("updatedAt")
     val updatedAt: String,
     @SerializedName("__v")
-    val v: Int,
-    @SerializedName("project")
-    val project: Project?,
-    @SerializedName("unreadCount")
-    val unreadCount: Int,
-) : BaseResponse(), Parcelable
-
-@Keep
-@Parcelize
-data class Project(
-    @SerializedName("title")
-    val title: String,
-    @SerializedName("id")
-    val id: String,
+    val v: Int
 ) : BaseResponse(), Parcelable

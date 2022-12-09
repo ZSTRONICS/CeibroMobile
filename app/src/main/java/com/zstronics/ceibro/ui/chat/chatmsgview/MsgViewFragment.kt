@@ -171,8 +171,15 @@ class MsgViewFragment :
                                 adapter.appendMessage(response.data.messageData.message) { lastPosition ->
                                     scrollToPosition(lastPosition)
                                 }
+                                viewModel.sendMessageStatus(
+                                    messageId = response.data.messageData.message.id,
+                                    roomId = response.data.messageData.message.chat
+                                )
                             }
                         }
+                    }
+                    else if (response.eventType == EventType.MESSAGE_SEEN.name) {
+
                     }
                 }
                 catch (e: Exception) {
@@ -181,6 +188,11 @@ class MsgViewFragment :
 
             setupMessageInput()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.chatRoom = null
     }
 
     private fun setupMessageInput() {

@@ -30,7 +30,7 @@ class ChatVM @Inject constructor(
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    _chatRooms.postValue(data.chatRooms)
+                    _chatRooms.postValue(data.chatRooms as MutableList<ChatRoom>?)
                 }
 
                 is ApiResponse.Error -> {

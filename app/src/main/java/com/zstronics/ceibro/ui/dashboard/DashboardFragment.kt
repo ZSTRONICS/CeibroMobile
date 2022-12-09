@@ -16,6 +16,7 @@ import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.chat.ChatFragment
 import com.zstronics.ceibro.ui.home.HomeFragment
 import com.zstronics.ceibro.ui.projects.ProjectsFragment
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.TasksFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +40,8 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        /*Set socket and establish connection*/
+        SocketHandler.setSocket()
 
 //        setBadgeOnChat(R.id.nav_chat, 4)
 

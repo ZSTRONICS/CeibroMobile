@@ -7,10 +7,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.IChatRepository
-import com.zstronics.ceibro.data.repos.chat.messages.MediaMessage
-import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
-import com.zstronics.ceibro.data.repos.chat.messages.NewMessageRequest
-import com.zstronics.ceibro.data.repos.chat.messages.SocketMessageRequest
+import com.zstronics.ceibro.data.repos.chat.messages.*
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
@@ -109,6 +106,15 @@ class MsgViewVM @Inject constructor(
             files.add(MediaMessage(file.extension, file.name, file.absolutePath.toString()))
         }
 
+        //  Creating following json to send message
+//        {
+//            eventType: SEND_MESSAGE,
+//            data: {
+//              userId: user.id,
+//              message: JSON.stringify(payload),
+//            }
+//        }
+
         val newMessage = NewMessageRequest(
             message = message,
             chat = chatId,
@@ -117,22 +123,49 @@ class MsgViewVM @Inject constructor(
             files = files,
             myId = System.currentTimeMillis().toString()
         )
-
         if (viewState.isQuotedMessage.value == true) {
             newMessage.messageId = viewState.quotedMessage.value?.id
         }
         val gson = Gson()
-        val jsonData = gson.toJson(newMessage)
+        val newMessageJson = gson.toJson(newMessage)
+
+
+        val messageData = MessageDataRequest(
+            userId = userId,
+            message = newMessageJson)
+        val messageDataJson = gson.toJson(messageData)
 
 
         val messageRequest = SocketMessageRequest(
+            eventType = eventType.name,
+            data = messageDataJson)
+        val json = gson.toJson(messageRequest)
+
+        SocketHandler.sendRequest(json)
+//        replyOrSendMessage(newMessage)
+    }
+
+    fun sendMessageStatus(
+        messageId: String?,
+        roomId: String?,
+        eventType: EventType = EventType.MESSAGE_READ
+    ) {
+
+        val messageStatusData = MessageStatusRequest(
             userId = userId,
+            roomId = roomId,
+            messageId = messageId
+        )
+        val gson = Gson()
+        val jsonData = gson.toJson(messageStatusData)
+
+
+        val messageRequest = SocketMessageRequest(
             eventType = eventType.name,
             data = jsonData)
         val json = gson.toJson(messageRequest)
 
         SocketHandler.sendRequest(json)
-//        replyOrSendMessage(newMessage)
     }
 
     override fun composeMessageToSend(
@@ -178,7 +211,7 @@ class MsgViewVM @Inject constructor(
             sender = sender,
             time = "Now",
             type = messageType.name.lowercase(),
-            myMessage = true,
+            myMessage = userId,
             message = message ?: "",
             chat = chatRoom?.id
         )
