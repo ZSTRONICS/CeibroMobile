@@ -184,6 +184,9 @@
     <string name="screen_create_question_add_choice_label">Add choice variant</string>
     <string name="screen_create_question_enter_choice_label">Enter choice</string>
     <string name="participants_list">Participants list</string>
+    <string name="individual_chat">Individual Chat</string>
+    <string name="start_chat_button_text">Start Chat</string>
+    <string name="frequently_contacted">Frequently Contacted</string>
     <string name="submitted_heading">Submitted</string>
 
 </resources>

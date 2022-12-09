@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.chat.messages.*
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoomsResponse
+import com.zstronics.ceibro.data.repos.chat.room.new_chat.IndividualChatResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -48,8 +49,20 @@ class ChatRepository @Inject constructor(
         executeSafely(
             call =
             {
-                val body: RequestBody = RequestBody.create("application/json".toMediaTypeOrNull(), questionRequest.toString())
+                val body: RequestBody = RequestBody.create(
+                    "application/json".toMediaTypeOrNull(),
+                    questionRequest.toString()
+                )
                 service.postQuestion(body)
+            }
+        )
+
+    override suspend fun createIndividualChat(userId: String): ApiResponse<IndividualChatResponse> =
+        executeSafely(
+            call =
+            {
+
+                service.createIndividualChat(userId)
             }
         )
 }

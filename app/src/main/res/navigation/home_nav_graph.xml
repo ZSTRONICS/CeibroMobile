@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_chatFragment_to_msgViewFragment"
             app:destination="@id/msgViewFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_singleNewChatFragment"
+            app:destination="@id/singleNewChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/newChatFragment"
@@ -105,4 +108,9 @@
         android:label="MessageInfoFragment"
         tools:layout="@layout/fragment_message_info" />
     <include app:graph="@navigation/questionarie_nav_graph" />
+    <fragment
+        android:id="@+id/singleNewChatFragment"
+        android:name="com.zstronics.ceibro.ui.chat.individualchat.SingleNewChatFragment"
+        android:label="SingleNewChatFragment"
+        tools:layout="@layout/fragment_single_new_chat" />
 </navigation>

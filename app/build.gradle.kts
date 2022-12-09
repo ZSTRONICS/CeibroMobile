@@ -67,4 +67,5 @@ dependencies {
     implementation("io.socket:socket.io-client:2.0.0"){
         exclude("org.json","json")
     }
+    implementation("com.github.clans:fab:1.6.4")
 }
