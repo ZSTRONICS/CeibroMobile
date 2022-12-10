@@ -63,7 +63,6 @@ class SingleNewChatVM @Inject constructor(
                 chatRepository.createIndividualChat(selectedMember.value.toString())) {
                 is ApiResponse.Success -> {
                     loading(false)
-                    val data = response.data
                     handlePressOnView(200)
                 }
 
