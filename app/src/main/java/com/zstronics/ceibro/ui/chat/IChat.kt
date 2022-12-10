@@ -9,5 +9,6 @@ interface IChat {
     interface ViewModel : IBase.ViewModel<State> {
         fun loadChat(type: String, favorite: Boolean)
         fun addChatToFav(roomId: String)
+        fun deleteConversation(roomId: String,position:Int)
     }
 }

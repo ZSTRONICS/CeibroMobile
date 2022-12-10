@@ -12,4 +12,5 @@ interface IChatRepository {
     suspend fun addChatRoomToFav(roomId: String): ApiResponse<ChatRoomAddToFavResponse>
     suspend fun postQuestion(questionRequest: QuestionRequest): ApiResponse<NewMessageResponse>
     suspend fun createIndividualChat(userId: String): ApiResponse<IndividualChatResponse>
+    suspend fun deleteConversation(roomId: String): ApiResponse<ChatRoomAddToFavResponse>
 }

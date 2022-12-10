@@ -1,18 +1,13 @@
 package com.zstronics.ceibro.ui.chat
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.databinding.FragmentChatBinding
 import com.zstronics.ceibro.ui.chat.adapter.ChatRoomAdapter
@@ -21,6 +16,7 @@ import com.zstronics.ceibro.ui.enums.ChatActions.*
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ChatFragment :
@@ -35,9 +31,9 @@ class ChatFragment :
         when (id) {
             R.id.individual -> navigateToSingleNewChat()
             R.id.group -> navigateToNewChat()
-            R.id.viewAllBtn -> viewModel.loadChat("all",false)
-            R.id.unreadBtn -> viewModel.loadChat("unread",false)
-            R.id.favBtnText -> viewModel.loadChat("favorites",true)
+            R.id.viewAllBtn -> viewModel.loadChat("all", false)
+            R.id.unreadBtn -> viewModel.loadChat("unread", false)
+            R.id.favBtnText -> viewModel.loadChat("favorites", true)
         }
     }
 
@@ -47,6 +43,7 @@ class ChatFragment :
     private fun navigateToNewChat() {
         navigate(R.id.newChatFragment)
     }
+
     private fun navigateToSingleNewChat() {
         navigate(R.id.singleNewChatFragment)
     }
@@ -80,7 +77,7 @@ class ChatFragment :
 //            val gson = Gson()
 //            val messageTYpe = object : TypeToken<SocketReceiveMessageResponse>() {}.type
 //            val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageTYpe)
-            viewModel.loadChat("all",false)
+            viewModel.loadChat("all", false)
         }
     }
 
@@ -88,19 +85,33 @@ class ChatFragment :
         mViewDataBinding.chatRV.adapter = adapter
 
         adapter.itemLongClickListener =
-            { _: View, _: Int, data: ChatRoom ->
-                showChatActionSheet(data)
+            { _: View, position: Int, data: ChatRoom ->
+                showChatActionSheet(data,position)
             }
     }
 
-    private fun showChatActionSheet(chatRoom: ChatRoom) {
+    private fun showChatActionSheet(chatRoom: ChatRoom, position: Int) {
         val sheet = FragmentChatRoomActionSheet()
         sheet.actionClick = { view, data ->
             when (data) {
                 MARK_AS_UNREAD -> {}
                 MUTE_CHAT -> {}
                 ADD_TO_FAV -> viewModel.addChatToFav(chatRoom.id)
-                DELETE_CHAT -> {}
+                DELETE_CHAT -> {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setMessage("Are you sure you want delete the conversation?")
+                        .setCancelable(false)
+                        .setPositiveButton(
+                            "Yes"
+                        ) { dialog, id ->
+                            viewModel.deleteConversation(chatRoom.id, position)
+                        }
+                        .setNegativeButton(
+                            "No"
+                        ) { dialog, id -> dialog.cancel() }
+                    val alert: AlertDialog = builder.create()
+                    alert.show()
+                }
                 NO_ACTION -> {}
             }
         }

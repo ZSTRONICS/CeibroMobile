@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.repos.chat.room.new_chat.IndividualChatResponse
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -39,4 +40,8 @@ interface ChatRepositoryService {
     @POST("chat/room/single/{userId}")
     suspend fun createIndividualChat(@Path("userId") userId: String): Response<IndividualChatResponse>
 
+    @DELETE("chat/room/{roomId}")
+    suspend fun deleteConversation(
+        @Path("roomId") roomId: String,
+    ): Response<ChatRoomAddToFavResponse>
 }

@@ -56,4 +56,22 @@ class ChatVM @Inject constructor(
             }
         }
     }
+
+    override fun deleteConversation(roomId: String, position: Int) {
+        loading(true)
+        launch {
+            when (val response = chatRepository.deleteConversation(roomId)) {
+                is ApiResponse.Success -> {
+                    loading(false, response.data.message)
+                    val chatRoomTemp = _chatRooms.value
+                    chatRoomTemp?.removeAt(position)
+                    _chatRooms.value = chatRoomTemp
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false)
+                }
+            }
+        }
+    }
 }

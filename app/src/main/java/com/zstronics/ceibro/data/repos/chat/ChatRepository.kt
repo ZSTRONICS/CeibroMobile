@@ -65,4 +65,12 @@ class ChatRepository @Inject constructor(
                 service.createIndividualChat(userId)
             }
         )
+    override suspend fun deleteConversation(roomId: String): ApiResponse<ChatRoomAddToFavResponse> =
+        executeSafely(
+            call =
+            {
+
+                service.deleteConversation(roomId)
+            }
+        )
 }
