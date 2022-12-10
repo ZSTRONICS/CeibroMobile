@@ -8,10 +8,18 @@ import javax.inject.Inject
 class ProjectRepository @Inject constructor(
     private val service: ProjectRepositoryService
 ) : IProjectRepository, BaseNetworkRepository() {
-    override suspend fun getProjects(publishStatus: String): ApiResponse<AllProjectsResponse> = executeSafely(
+    override suspend fun getProjects(publishStatus: String): ApiResponse<AllProjectsResponse> =
+        executeSafely(
+            call =
+            {
+                service.getProjects(publishStatus)
+            }
+        )
+
+    override suspend fun getProjectsWithMembers(): ApiResponse<AllProjectsResponse> = executeSafely(
         call =
         {
-            service.getProjects(publishStatus)
+            service.getProjectsWithMembers()
         }
     )
 

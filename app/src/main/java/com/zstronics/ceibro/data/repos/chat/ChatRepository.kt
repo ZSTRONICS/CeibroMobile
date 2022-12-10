@@ -65,6 +65,7 @@ class ChatRepository @Inject constructor(
                 service.createIndividualChat(userId)
             }
         )
+
     override suspend fun deleteConversation(roomId: String): ApiResponse<ChatRoomAddToFavResponse> =
         executeSafely(
             call =
@@ -73,4 +74,13 @@ class ChatRepository @Inject constructor(
                 service.deleteConversation(roomId)
             }
         )
+
+    override suspend fun createGroupChat(request: NewGroupChatRequest): ApiResponse<IndividualChatResponse> =
+        executeSafely(
+            call =
+            {
+                service.createGroupChat(request)
+            }
+        )
+
 }

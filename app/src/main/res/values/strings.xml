@@ -119,7 +119,7 @@
     <string name="message_camera_permission_denied">Camera and  Storage permissions are needed to capture image. Turning off any permission won\'t allow application run smoothly. Please turn on all requested permissions from Settings > Permissions.</string>
     <string name="common_text_permissions_denied">This app may not work correctly without the requested permissions.</string>
     <string name="screen_edit_profile_text_choose_file">Update Profile Photo</string>
-    <string name="chat_heading">Chat</string>
+    <string name="chat_heading">Group Chat</string>
     <string name="title_heading">Title</string>
     <string name="enter_chat_title_description">Enter chat title</string>
     <string name="chat_with_heading">Chat with</string>
@@ -188,5 +188,6 @@
     <string name="start_chat_button_text">Start Chat</string>
     <string name="frequently_contacted">Frequently Contacted</string>
     <string name="submitted_heading">Submitted</string>
+    <string name="suggested_users_groups_companies">Suggested users/groups/companies</string>
 
 </resources>

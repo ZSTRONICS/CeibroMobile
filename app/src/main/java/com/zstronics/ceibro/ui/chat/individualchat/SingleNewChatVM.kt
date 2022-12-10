@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.chat.individualchat
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.IChatRepository
@@ -65,7 +64,7 @@ class SingleNewChatVM @Inject constructor(
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    handleOnClick(200)
+                    handlePressOnView(200)
                 }
 
                 is ApiResponse.Error -> {

@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.chat.chatmsgview
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.IChatRepository
@@ -220,6 +219,8 @@ class MsgViewVM @Inject constructor(
                 val replyOf: MessagesResponse.ReplyOf =
                     MessagesResponse.ReplyOf(
                         message = replyTo.message,
+                        firstName = replyTo.sender.firstName,
+                        surName = replyTo.sender.surName,
                         id = replyTo.id,
                         sender = userId ?: "",
                         type = messageType.name.lowercase(),

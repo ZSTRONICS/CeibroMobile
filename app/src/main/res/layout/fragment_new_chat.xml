@@ -33,10 +33,10 @@
                 android:id="@+id/closeBtn"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:padding="3dp"
                 android:layout_marginStart="15dp"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
@@ -61,6 +61,25 @@
                 app:layout_constraintStart_toEndOf="@+id/closeBtn"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/startChatBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_27sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/square_rounded_yellow_filled"
+                android:enabled="false"
+                android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_10ssp"
+                android:paddingEnd="@dimen/_10ssp"
+                android:text="@string/start_chat_button_text"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -76,14 +95,14 @@
                 android:id="@+id/titleHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:fontFamily="@font/inter_regular"
                 android:text="@string/title_heading"
                 android:textColor="@color/appTextGrey"
                 android:textSize="14sp"
-                android:layout_marginStart="15dp"
                 app:layout_constraintBottom_toBottomOf="@+id/etChatTitle"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/etChatTitle"/>
+                app:layout_constraintTop_toTopOf="@+id/etChatTitle" />
 
             <View
                 android:id="@+id/view9"
@@ -103,6 +122,7 @@
                 android:layout_marginStart="7dp"
                 android:layout_marginTop="6dp"
                 android:layout_marginEnd="10dp"
+                android:autofillHints=""
                 android:background="@color/transparent"
                 android:ems="10"
                 android:fontFamily="@font/inter_regular"
@@ -110,13 +130,12 @@
                 android:inputType="textPersonName"
                 android:paddingStart="7dp"
                 android:paddingEnd="10dp"
-                android:textColorHint="@color/appGrey"
                 android:textColor="@color/black"
+                android:textColorHint="@color/appGrey"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view9"
-                app:layout_constraintTop_toTopOf="parent"
-                android:autofillHints="" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:id="@+id/view10"
@@ -137,9 +156,9 @@
                 android:text="@string/project_heading"
                 android:textColor="@color/appTextGrey"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/etProjectSelect"
+                app:layout_constraintBottom_toBottomOf="@+id/spProjectSelect"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/etProjectSelect" />
+                app:layout_constraintTop_toTopOf="@+id/spProjectSelect" />
 
             <View
                 android:id="@+id/view11"
@@ -148,32 +167,27 @@
                 android:layout_marginTop="11dp"
                 android:layout_marginBottom="11dp"
                 android:background="@color/appLightGrey"
-                app:layout_constraintBottom_toBottomOf="@+id/etProjectSelect"
+                app:layout_constraintBottom_toBottomOf="@+id/spProjectSelect"
                 app:layout_constraintStart_toStartOf="@+id/view13"
-                app:layout_constraintTop_toTopOf="@+id/etProjectSelect" />
+                app:layout_constraintTop_toTopOf="@+id/spProjectSelect" />
 
-            <EditText
-                android:id="@+id/etProjectSelect"
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spProjectSelect"
                 android:layout_width="0dp"
                 android:layout_height="46dp"
                 android:layout_marginStart="7dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="6dp"
-                android:layout_marginTop="6dp"
                 android:background="@color/transparent"
-                android:ems="10"
                 android:fontFamily="@font/inter_regular"
-                android:hint="@string/please_select_a_project_description"
-                android:inputType="textPersonName"
-                android:paddingStart="7dp"
-                android:paddingEnd="10dp"
-                android:textColorHint="@color/appGrey"
-                android:textColor="@color/black"
-                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:textSize="@dimen/_12sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view11"
-                app:layout_constraintTop_toBottomOf="@+id/view10"
-                android:autofillHints="" />
+                app:layout_constraintTop_toBottomOf="@+id/view10" />
 
             <View
                 android:id="@+id/view12"
@@ -183,7 +197,7 @@
                 android:background="@color/appLightGrey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etProjectSelect" />
+                app:layout_constraintTop_toBottomOf="@+id/spProjectSelect" />
 
             <TextView
                 android:id="@+id/chatWithHeading"
@@ -202,9 +216,9 @@
                 android:id="@+id/view13"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
+                android:layout_marginStart="13dp"
                 android:layout_marginTop="11dp"
                 android:layout_marginBottom="11dp"
-                android:layout_marginStart="13dp"
                 android:background="@color/appLightGrey"
                 app:layout_constraintBottom_toBottomOf="@+id/etChatPersons"
                 app:layout_constraintStart_toEndOf="@+id/chatWithHeading"
@@ -215,9 +229,10 @@
                 android:layout_width="0dp"
                 android:layout_height="46dp"
                 android:layout_marginStart="7dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="6dp"
+                android:autofillHints=""
                 android:background="@color/transparent"
                 android:ems="10"
                 android:fontFamily="@font/inter_regular"
@@ -230,8 +245,7 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view13"
-                app:layout_constraintTop_toBottomOf="@+id/view12"
-                android:autofillHints="" />
+                app:layout_constraintTop_toBottomOf="@+id/view12" />
 
             <View
                 android:id="@+id/view14"
@@ -247,42 +261,30 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/contactList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:fontFamily="@font/inter_regular"
+            android:text="@string/suggested_users_groups_companies"
+            android:textColor="@color/appTextGrey"
+            android:textSize="@dimen/_11sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fieldsLayout" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:contentDescription="@string/appbar_scrolling_view_behavior"
-            android:fillViewport="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fieldsLayout">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/startChatBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="46dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="35dp"
-            android:layout_marginEnd="35dp"
-            android:background="@drawable/signin_button_back"
-            android:fontFamily="@font/inter_medium"
-            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:text="@string/start_conversation_text"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="17sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/contactList"
+            tools:itemCount="10"
+            tools:listitem="@layout/layout_item_question_participants" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

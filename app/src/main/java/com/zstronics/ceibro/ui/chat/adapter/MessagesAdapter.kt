@@ -88,9 +88,8 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
                 View.GONE
 
             if (item.replyOf != null) {
-
                 binding.quotedMessageLayout.visibility = View.VISIBLE
-                binding.quotedUser.text = "Username"
+                binding.quotedUser.text = "${item.replyOf?.firstName} ${item.replyOf?.surName}"
                 binding.quotedMessage.text = item.replyOf?.message
             } else {
                 binding.quotedMessageLayout.visibility = View.GONE
@@ -135,7 +134,7 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
 
             if (item.replyOf != null) {
                 binding.quotedMessageLayout.visibility = View.VISIBLE
-                binding.quotedUser.text = "Username"
+                binding.quotedUser.text = "${item.replyOf?.firstName} ${item.replyOf?.surName}"
                 binding.quotedMessage.text = item.replyOf?.message
             } else {
                 binding.quotedMessageLayout.visibility = View.GONE

@@ -105,6 +105,10 @@ data class MessagesResponse(
         @SerializedName("type")
         val type: String,
         @SerializedName("voiceUrl")
-        val voiceUrl: String = ""
+        val voiceUrl: String = "",
+        @SerializedName("firstName")
+        val firstName: String = "",
+        @SerializedName("surName")
+        val surName: String = ""
     ) : BaseResponse(), Parcelable
 }

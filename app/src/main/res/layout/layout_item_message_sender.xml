@@ -61,7 +61,7 @@
                     android:maxLines="1"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintStart_toEndOf="@+id/sideView"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Kristo Vunukainen" />

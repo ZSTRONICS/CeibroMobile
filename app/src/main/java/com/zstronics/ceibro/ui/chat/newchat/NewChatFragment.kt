@@ -1,12 +1,16 @@
 package com.zstronics.ceibro.ui.chat.newchat
 
+import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.databinding.FragmentChatBinding
+import com.zstronics.ceibro.data.repos.chat.messages.NewGroupChatRequest
 import com.zstronics.ceibro.databinding.FragmentNewChatBinding
+import com.zstronics.ceibro.ui.questioner.createquestion.members.ParticipantsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +25,58 @@ class NewChatFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
+            R.id.startChatBtn -> {
+                val selectedMembers = adapter.dataList.filter { it.isChecked }
+                val members = selectedMembers.map { it.id }
+                val request = NewGroupChatRequest(
+                    members = members,
+                    name = viewState.name.value,
+                    projectId = viewModel.projectId
+                )
+                viewModel.createGroupChat(request)
+            }
         }
+    }
+
+    lateinit var adapter: ParticipantsAdapter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.projectNames.observe(viewLifecycleOwner) {
+            val adapter =
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    it
+                )
+
+            adapter.setDropDownViewResource(
+                android.R.layout
+                    .simple_spinner_dropdown_item
+            )
+            mViewDataBinding.spProjectSelect.adapter = adapter
+
+        }
+
+        mViewDataBinding.spProjectSelect.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>?,
+                    p1: View?,
+                    position: Int,
+                    p3: Long
+                ) {
+                    viewModel.onProjectSelect(position)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                }
+            }
+
+        viewModel.projectMembers.observe(viewLifecycleOwner) {
+            adapter.setList(it)
+        }
+        adapter = ParticipantsAdapter()
+        mViewDataBinding.recyclerView.adapter = adapter
     }
 }

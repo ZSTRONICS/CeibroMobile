@@ -98,7 +98,7 @@ class CreateQuestionVM @Inject constructor(
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    handleOnClick(111)
+                    handlePressOnView(111)
                 }
 
                 is ApiResponse.Error -> {
