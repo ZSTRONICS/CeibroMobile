@@ -92,7 +92,7 @@
                 android:layout_marginStart="13dp"
                 android:elevation="0dp"
                 app:cardCornerRadius="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/senderUserCompany"
+                app:layout_constraintBottom_toBottomOf="@+id/receiverUserCompany"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/linearLayoutName">
 
@@ -139,10 +139,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/quotedMessageLayout">
 
                 <TextView
-                    android:id="@+id/senderUserName"
+                    android:id="@+id/receiverUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_semibold"
                     android:gravity="start"
@@ -153,23 +153,23 @@
                     tools:text="Kristo Vunukainen" />
 
                 <TextView
-                    android:id="@+id/senderMsgTime"
+                    android:id="@+id/receiverMsgTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="1dp"
-                    android:layout_weight="0"
+                    android:layout_weight="1"
                     android:ellipsize="none"
                     android:fontFamily="@font/inter_regular"
-                    android:gravity="start"
+                    android:gravity="end"
                     android:maxLines="1"
-                    android:text="@{message.time}"
+                    android:text=""
                     android:textColor="@color/appTextGrey"
                     android:textSize="12sp" />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/senderUserCompany"
+                android:id="@+id/receiverUserCompany"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
@@ -200,7 +200,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/linearLayoutName"
-                app:layout_constraintTop_toBottomOf="@+id/senderUserCompany"
+                app:layout_constraintTop_toBottomOf="@+id/receiverUserCompany"
                 app:layout_constraintVertical_bias="0.0"
                 tools:text="Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius blandit sit amet non magna." />
 
@@ -215,7 +215,7 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/linearLayoutName"
-                app:layout_constraintTop_toBottomOf="@+id/senderUserCompany"
+                app:layout_constraintTop_toBottomOf="@+id/receiverUserCompany"
                 app:layout_constraintVertical_bias="0.0">
 
                 <TextView
@@ -435,6 +435,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_5sdp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/mainLayout"
             app:layout_constraintTop_toBottomOf="@id/mainLayout">
 

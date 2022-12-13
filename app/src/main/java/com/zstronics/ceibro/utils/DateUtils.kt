@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.utils
 
+import android.text.format.DateUtils
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -178,6 +179,40 @@ object DateUtils {
             d = null
         }
         return d
+    }
+
+    fun stringDateToMillis(dateStr: String, format: String): Long? {
+        var d: Date? = null
+        var timeInMilliseconds: Long? = null
+        val formatter = SimpleDateFormat(format, Locale.getDefault())
+        formatter.timeZone = UTC
+        try {
+            formatter.isLenient = false
+            d = formatter.parse(dateStr)
+            timeInMilliseconds = d.getTime()
+
+        } catch (e: Exception) {
+            timeInMilliseconds = null
+        }
+        return timeInMilliseconds
+    }
+
+    fun getCurrentTimeStamp(): String {
+        val sdf = SimpleDateFormat(SERVER_DATE_FULL_FORMAT, Locale.getDefault())
+        sdf.timeZone = UTC
+        return sdf.format(Date())
+    }
+    private fun getCurrentTimeInMillis(): Long {
+        return System.currentTimeMillis()
+    }
+
+    fun getStringTimeSpan(oldDateString: String, format: String): CharSequence? {
+        val msgTimeInMillis = stringDateToMillis(oldDateString, format)
+        val currentTime = getCurrentTimeInMillis()
+        val time =
+            msgTimeInMillis?.let { DateUtils.getRelativeTimeSpanString(it, currentTime, android.text.format.DateUtils.MINUTE_IN_MILLIS) }
+
+        return time
     }
 
     fun stringToDate(dateStr: String, format: String?, timeZone: TimeZone = GMT): Date? {

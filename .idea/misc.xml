@@ -13,8 +13,10 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/status_publish_outline.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/status_submit_filled.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/status_submit_outline.xml" value="0.2995" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_message_info.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_new_chat.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_projects.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_receive.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_sender.xml" value="0.36666666666666664" />
         <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/badge_back.xml" value="0.2675" />
         <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/bottom_nav_color.xml" value="0.2645" />

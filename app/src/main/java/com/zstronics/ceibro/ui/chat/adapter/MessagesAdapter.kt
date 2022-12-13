@@ -9,6 +9,10 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutItemMessageReceiveBinding
 import com.zstronics.ceibro.databinding.LayoutItemMessageSenderBinding
 import com.zstronics.ceibro.ui.enums.MessageType
+import com.zstronics.ceibro.utils.DateUtils
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
@@ -49,7 +53,7 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
     private val OTHER_MESSAGE = 2
 
     override fun getItemViewType(position: Int): Int {
-        return if (list[position].myMessage == sessionManager.getUser().value?.id) {
+        return if (list[position].sender.id == sessionManager.getUser().value?.id) {
             MY_MESSAGE
         } else {
             OTHER_MESSAGE
@@ -87,9 +91,23 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
             } else
                 View.GONE
 
+            val timeString = item.createdAt?.let { DateUtils.getStringTimeSpan(it, DateUtils.SERVER_DATE_FULL_FORMAT) }
+//            println("Date in String time :: $timeString")
+            if (timeString != null) {
+                if (timeString == "0 minutes ago") {
+                    binding.senderMsgTime.text = "few seconds ago"
+                }
+                else {
+                    binding.senderMsgTime.text = timeString
+                }
+            }
+            else {
+                binding.senderMsgTime.text = "Unknown time"
+            }
+
             if (item.replyOf != null) {
                 binding.quotedMessageLayout.visibility = View.VISIBLE
-                binding.quotedUser.text = "${item.replyOf?.firstName} ${item.replyOf?.surName}"
+                binding.quotedUser.text = "${item.replyOf?.replySender?.firstName} ${item.replyOf?.replySender?.surName}"
                 binding.quotedMessage.text = item.replyOf?.message
             } else {
                 binding.quotedMessageLayout.visibility = View.GONE
@@ -126,15 +144,29 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
         fun bind(item: MessagesResponse.ChatMessage) {
             binding.message = item
 
-            binding.seenCount.visibility = if (item.readBy !== null) {
-                binding.seenCount.text = item.readBy.size.toString()
-                View.VISIBLE
-            } else
-                View.GONE
+//            binding.seenCount.visibility = if (item.readBy !== null) {
+//                binding.seenCount.text = item.readBy.size.toString()
+//                View.VISIBLE
+//            } else
+//                View.GONE
+
+            val timeString = item.createdAt?.let { DateUtils.getStringTimeSpan(it, DateUtils.SERVER_DATE_FULL_FORMAT) }
+//            println("Date in String time :: $timeString")
+            if (timeString != null) {
+                if (timeString == "0 minutes ago") {
+                    binding.receiverMsgTime.text = "few seconds ago"
+                }
+                else {
+                    binding.receiverMsgTime.text = timeString
+                }
+            }
+            else {
+                binding.receiverMsgTime.text = "Unknown time"
+            }
 
             if (item.replyOf != null) {
                 binding.quotedMessageLayout.visibility = View.VISIBLE
-                binding.quotedUser.text = "${item.replyOf?.firstName} ${item.replyOf?.surName}"
+                binding.quotedUser.text = "${item.replyOf?.replySender?.firstName} ${item.replyOf?.replySender?.surName}"
                 binding.quotedMessage.text = item.replyOf?.message
             } else {
                 binding.quotedMessageLayout.visibility = View.GONE

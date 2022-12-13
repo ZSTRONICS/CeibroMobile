@@ -14,6 +14,7 @@ import com.zstronics.ceibro.ui.chat.extensions.getChatTitle
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.enums.MessageType
 import com.zstronics.ceibro.ui.socket.SocketHandler
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
 import javax.inject.Inject
@@ -188,8 +189,14 @@ class MsgViewVM @Inject constructor(
             scrollToPosition?.invoke(lastPosition)
         }
 
+        addMessageToMutableMessageList(messageRes)
+
         hideQuoted()
         viewState.messageBoxBody.value = ""
+    }
+
+    fun addMessageToMutableMessageList(messageRec: MessagesResponse.ChatMessage) {
+        _chatMessages.value?.add(messageRec)
     }
 
     fun hideQuoted() {
@@ -208,9 +215,8 @@ class MsgViewVM @Inject constructor(
         val localMessage: MessagesResponse.ChatMessage = MessagesResponse.ChatMessage(
             companyName = user?.companyName ?: "",
             sender = sender,
-            time = "Now",
+            createdAt = DateUtils.getCurrentTimeStamp(),
             type = messageType.name.lowercase(),
-            myMessage = userId,
             message = message ?: "",
             chat = chatRoom?.id
         )
@@ -219,12 +225,13 @@ class MsgViewVM @Inject constructor(
                 val replyOf: MessagesResponse.ReplyOf =
                     MessagesResponse.ReplyOf(
                         message = replyTo.message,
-                        firstName = replyTo.sender.firstName,
-                        surName = replyTo.sender.surName,
+                        replySender = MessagesResponse.ReplyOf.ReplySender(
+                            firstName = replyTo.sender.firstName,
+                            surName = replyTo.sender.surName,
+                            id = replyTo.sender.id,
+                        ),
                         id = replyTo.id,
-                        sender = userId ?: "",
                         type = messageType.name.lowercase(),
-                        chat = chatRoom?.id
                     )
                 this.replyOf = replyOf
             }

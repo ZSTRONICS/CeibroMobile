@@ -152,6 +152,7 @@ class MsgViewFragment :
                 SwipeControllerActions {
                 override fun showReplyUI(position: Int) {
                     viewModel.chatMessages.value?.let {
+                        println("Position for array $position")
                         showQuotedMessage(it[position])
                     }
                 }
@@ -171,6 +172,7 @@ class MsgViewFragment :
                                 adapter.appendMessage(response.data.messageData.message) { lastPosition ->
                                     scrollToPosition(lastPosition)
                                 }
+                                viewModel.addMessageToMutableMessageList(response.data.messageData.message)
                                 viewModel.sendMessageStatus(
                                     messageId = response.data.messageData.message.id,
                                     roomId = response.data.messageData.message.chat
