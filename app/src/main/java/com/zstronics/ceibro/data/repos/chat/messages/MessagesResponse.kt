@@ -57,7 +57,7 @@ data class MessagesResponse(
         data class ReadBy(
             @SerializedName("firstName")
             val firstName: String,
-            @SerializedName("_id")
+            @SerializedName("id")
             val id: String,
             @SerializedName("surName")
             val surName: String
@@ -68,7 +68,7 @@ data class MessagesResponse(
         data class Sender(
             @SerializedName("firstName")
             val firstName: String,
-            @SerializedName("_id")
+            @SerializedName("id")
             val id: String,
             @SerializedName("surName")
             val surName: String
@@ -91,7 +91,7 @@ data class MessagesResponse(
         data class ReplySender(
             @SerializedName("firstName")
             val firstName: String,
-            @SerializedName("_id")
+            @SerializedName("id")
             val id: String,
             @SerializedName("surName")
             val surName: String
