@@ -60,7 +60,9 @@ data class MessagesResponse(
             @SerializedName("id")
             val id: String,
             @SerializedName("surName")
-            val surName: String
+            val surName: String,
+            @SerializedName("profilePic")
+            val profilePic: String,
         ) : BaseResponse(), Parcelable
 
         @Keep
@@ -71,7 +73,9 @@ data class MessagesResponse(
             @SerializedName("id")
             val id: String,
             @SerializedName("surName")
-            val surName: String
+            val surName: String,
+            @SerializedName("profilePic")
+            val profilePic: String
         ) : BaseResponse(), Parcelable
     }
 
@@ -94,7 +98,9 @@ data class MessagesResponse(
             @SerializedName("id")
             val id: String,
             @SerializedName("surName")
-            val surName: String
+            val surName: String,
+            @SerializedName("profilePic")
+            val profilePic: String,
         ) : BaseResponse(), Parcelable
     }
 }

@@ -32,7 +32,8 @@ class MsgViewVM @Inject constructor(
         get() = MessagesResponse.ChatMessage.Sender(
             firstName = user?.firstName ?: "",
             surName = user?.surName ?: "",
-            id = userId ?: ""
+            id = userId ?: "",
+            profilePic = user?.profilePic ?: ""
         )
     private val _chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> =
         MutableLiveData()
@@ -229,6 +230,7 @@ class MsgViewVM @Inject constructor(
                             firstName = replyTo.sender.firstName,
                             surName = replyTo.sender.surName,
                             id = replyTo.sender.id,
+                            profilePic = replyTo.sender.profilePic
                         ),
                         id = replyTo.id,
                         type = messageType.name.lowercase(),
