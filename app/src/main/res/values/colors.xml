@@ -14,12 +14,14 @@
 
 
     <color name="appYellow">#F1B740</color>
-    <color name="appDimYellow">#0DF1B740</color>
+    <color name="appDimYellow">#0AF1B740</color>
     <color name="appRed">#FA0808</color>
     <color name="appDisableButton">#BFBFBF</color>
     <color name="appGreen">#55BCB3</color>
     <color name="appPurple">#B555BC</color>
     <color name="appBlue">#0076C8</color>
+    <color name="appShadedBlue">#800076C8</color>
+    <color name="appDimBlue">#0A0076C8</color>
     <color name="appGrey">#C0C0C0</color>
     <color name="appTextGrey">#605C5C</color>
     <color name="appDoneGrey">#BDC3C7</color>
