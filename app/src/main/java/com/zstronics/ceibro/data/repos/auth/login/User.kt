@@ -28,13 +28,13 @@ data class User(
     @SerializedName("lockedUntil")
     val lockedUntil: String,
     @SerializedName("mutedChat")
-    val mutedChat: List<Any>,
+    val mutedChat: List<String>,
     @SerializedName("phone")
     val phone: String,
     @SerializedName("pinnedChat")
     val pinnedChat: List<Any>,
     @SerializedName("pinnedMessages")
-    val pinnedMessages: List<Any>,
+    val pinnedMessages: List<String>,
     @SerializedName("profilePic")
     var profilePic: String,
     @SerializedName("role")
@@ -47,4 +47,4 @@ data class User(
     val username: String,
     @SerializedName("workEmail")
     val workEmail: String
-):BaseResponse()
+) : BaseResponse()
