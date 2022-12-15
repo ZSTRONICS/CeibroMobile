@@ -28,9 +28,6 @@ class SingleNewChatVM @Inject constructor(
         super.onFirsTimeUiCreate(bundle)
         loadConnections()
     }
-    override fun handleOnClick(id: Int) {
-        super.handleOnClick(id)
-    }
     override fun loadConnections() {
         launch {
             loading(true)

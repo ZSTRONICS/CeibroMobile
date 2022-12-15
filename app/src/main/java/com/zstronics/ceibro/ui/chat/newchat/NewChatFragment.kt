@@ -25,17 +25,7 @@ class NewChatFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> navigateBack()
-            R.id.startGroupChat -> {
-                val selectedMembers = adapter.dataList.filter { it.isChecked }
-                val members = selectedMembers.map { it.id }
-                val request = NewGroupChatRequest(
-                    members = members,
-                    name = viewState.name.value,
-                    projectId = viewModel.projectId
-                )
-                viewModel.createGroupChat(request)
-            }
+            111, R.id.closeBtn -> navigateBack()
         }
     }
 
@@ -47,19 +37,28 @@ class NewChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.projectNames.observe(viewLifecycleOwner) {
-            val adapter =
+            val arrayAdapter =
                 ArrayAdapter(
                     requireContext(),
                     android.R.layout.simple_spinner_item,
                     it
                 )
 
-            adapter.setDropDownViewResource(
+            arrayAdapter.setDropDownViewResource(
                 android.R.layout
                     .simple_spinner_dropdown_item
             )
-            mViewDataBinding.spProjectSelect.adapter = adapter
-
+            mViewDataBinding.spProjectSelect.adapter = arrayAdapter
+            mViewDataBinding.startGroupChat.setOnClickListener { view ->
+                val selectedMembers = adapter.dataList.filter { data -> data.isChecked }
+                val members = selectedMembers.map { member -> member.id }
+                val request = NewGroupChatRequest(
+                    members = members,
+                    name = viewState.name.value,
+                    projectId = viewModel.projectId
+                )
+                viewModel.createGroupChat(request)
+            }
         }
 
         mViewDataBinding.spProjectSelect.onItemSelectedListener =

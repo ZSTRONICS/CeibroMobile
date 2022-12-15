@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.chat.messages.*
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoomsResponse
+import com.zstronics.ceibro.data.repos.chat.room.new_chat.GroupChatResponse
 import com.zstronics.ceibro.data.repos.chat.room.new_chat.IndividualChatResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
@@ -75,10 +76,14 @@ class ChatRepository @Inject constructor(
             }
         )
 
-    override suspend fun createGroupChat(request: NewGroupChatRequest): ApiResponse<IndividualChatResponse> =
+    override suspend fun createGroupChat(request: NewGroupChatRequest): ApiResponse<GroupChatResponse> =
         executeSafely(
             call =
             {
+                val body: RequestBody = RequestBody.create(
+                    "application/json".toMediaTypeOrNull(),
+                    request.toString()
+                )
                 service.createGroupChat(request)
             }
         )

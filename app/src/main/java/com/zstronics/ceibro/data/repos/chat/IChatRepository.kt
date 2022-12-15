@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.chat
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.messages.*
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoomsResponse
+import com.zstronics.ceibro.data.repos.chat.room.new_chat.GroupChatResponse
 import com.zstronics.ceibro.data.repos.chat.room.new_chat.IndividualChatResponse
 
 interface IChatRepository {
@@ -13,5 +14,5 @@ interface IChatRepository {
     suspend fun postQuestion(questionRequest: QuestionRequest): ApiResponse<NewMessageResponse>
     suspend fun createIndividualChat(userId: String): ApiResponse<IndividualChatResponse>
     suspend fun deleteConversation(roomId: String): ApiResponse<ChatRoomAddToFavResponse>
-    suspend fun createGroupChat(request: NewGroupChatRequest): ApiResponse<IndividualChatResponse>
+    suspend fun createGroupChat(request: NewGroupChatRequest): ApiResponse<GroupChatResponse>
 }

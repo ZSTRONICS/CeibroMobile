@@ -2,8 +2,10 @@ package com.zstronics.ceibro.data.repos.chat
 
 import com.zstronics.ceibro.data.repos.chat.messages.*
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoomsResponse
+import com.zstronics.ceibro.data.repos.chat.room.new_chat.GroupChatResponse
 import com.zstronics.ceibro.data.repos.chat.room.new_chat.IndividualChatResponse
 import okhttp3.RequestBody
+import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -41,5 +43,5 @@ interface ChatRepositoryService {
     ): Response<ChatRoomAddToFavResponse>
 
     @POST("chat/rooms")
-    suspend fun createGroupChat(request: NewGroupChatRequest): Response<IndividualChatResponse>
+    suspend fun createGroupChat(@Body request: NewGroupChatRequest): Response<GroupChatResponse>
 }
