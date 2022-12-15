@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -12,14 +16,17 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.chat.ChatFragment
+import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.home.HomeFragment
 import com.zstronics.ceibro.ui.projects.ProjectsFragment
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.TasksFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class DashboardFragment :
@@ -42,6 +49,7 @@ class DashboardFragment :
         super.onViewCreated(view, savedInstanceState)
         /*Set socket and establish connection*/
         SocketHandler.setSocket()
+        SocketHandler.establishConnection()
 
 //        setBadgeOnChat(R.id.nav_chat, 4)
 
@@ -52,6 +60,25 @@ class DashboardFragment :
 
         viewState.selectedItem.observe(viewLifecycleOwner) {
             mViewDataBinding.bottomNavigation.selectedItemId = selectedItem
+        }
+
+
+        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+            val navHostFragment = activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
+            val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+            if (args[0].toString().contains(EventType.RECEIVE_MESSAGE.name)) {
+                println("RECEIVE_MESSAGE")
+            }
+            else if (args[0].toString().contains(EventType.MESSAGE_SEEN.name)) {
+                println("MESSAGE_SEEN")
+            }
+
+            if (fragment is DashboardFragment) {
+//                val gson = Gson()
+//                val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
+//                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
+            }
         }
     }
 

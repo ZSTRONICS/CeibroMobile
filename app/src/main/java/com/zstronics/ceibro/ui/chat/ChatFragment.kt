@@ -56,9 +56,6 @@ class ChatFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        /*Set socket and establish connection*/
-        SocketHandler.setSocket()
-        SocketHandler.establishConnection()
 
         initRecyclerView(adapter)
 
@@ -73,12 +70,13 @@ class ChatFragment :
                 viewModel.addChatToFav(data.id)
         }
 
-        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
-//            val gson = Gson()
-//            val messageTYpe = object : TypeToken<SocketReceiveMessageResponse>() {}.type
-//            val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageTYpe)
-            viewModel.loadChat("all", false)
-        }
+//        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+////            val gson = Gson()
+////            val messageTYpe = object : TypeToken<SocketReceiveMessageResponse>() {}.type
+////            val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageTYpe)
+//            viewModel.loadChat("all", false)
+//
+//        }
     }
 
     private fun initRecyclerView(adapter: ChatRoomAdapter) {
