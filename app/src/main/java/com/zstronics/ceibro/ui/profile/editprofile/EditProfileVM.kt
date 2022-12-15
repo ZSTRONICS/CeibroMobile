@@ -91,7 +91,7 @@ class EditProfileVM @Inject constructor(
             when (val response = repository.updateProfileCall(request)) {
 
                 is ApiResponse.Success -> {
-                    sessionManager.updateUser(response.data)
+                    sessionManager.updateUser(response.data.userObj)
                     loading(false, "Profile Updated successfully")
                     clickEvent?.postValue(111)
                 }

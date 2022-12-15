@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpResponse
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
+import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -27,7 +28,7 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun updateProfileCall(editProfileRequest: EditProfileRequest): ApiResponse<User> {
+    override suspend fun updateProfileCall(editProfileRequest: EditProfileRequest): ApiResponse<EditProfileResponse> {
         return executeSafely(
             call =
             {
