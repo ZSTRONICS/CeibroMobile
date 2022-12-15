@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_homeFragment2"
             app:destination="@id/homeFragment2" />
+        <action
+            android:id="@+id/action_homeFragment_to_projectsFragment"
+            app:destination="@id/projectsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -113,4 +116,9 @@
         android:name="com.zstronics.ceibro.ui.chat.individualchat.SingleNewChatFragment"
         android:label="SingleNewChatFragment"
         tools:layout="@layout/fragment_single_new_chat" />
+    <fragment
+        android:id="@+id/projectsFragment"
+        android:name="com.zstronics.ceibro.ui.projects.ProjectsFragment"
+        android:label="ProjectsFragment"
+        tools:layout="@layout/fragment_projects"  />
 </navigation>
