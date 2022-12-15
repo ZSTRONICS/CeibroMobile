@@ -69,36 +69,9 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
                 }
             }
 
+
             if (item.sentByMe) {                //It means if it's true, then i've invited the user and i'll get other user's data from "To" parameter
                 val userToObj = item.to             //Getting data from "To" class. because in "From" that's our user object, as we sent the request
-
-                binding.connectionImgText.text = ""
-                if (userToObj.profilePic == "" || userToObj.profilePic.isNullOrEmpty()){
-                    binding.connectionImgText.text = "${userToObj.firstName.get(0)?.uppercaseChar()}${userToObj.surName.get(0)?.uppercaseChar()}"
-                    binding.connectionImgText.visibility = View.VISIBLE
-                    binding.connectionImg.visibility = View.GONE
-                }
-                else{
-                    Glide.with(binding.connectionImg.context)
-                        .load(userToObj.profilePic)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .placeholder(R.drawable.profile_img)
-                        .into(binding.connectionImg)
-                    binding.connectionImg.visibility = View.VISIBLE
-                    binding.connectionImgText.visibility = View.GONE
-                }
-
-                binding.connectionUserName.text = "${userToObj.firstName} ${userToObj.surName}"
-                binding.connectionUserCompany.text = "${userToObj.companyName}"
-
-                if (userToObj.companyName == "" || userToObj.companyName.isNullOrEmpty()){
-                    binding.connectionUserCompany.text = "No company added"
-                }
-            }
-
-            if (item.sentByMe) {                //It means if it's true, then i've invited the user and i'll get other user's data from "To" parameter
-                val userToObj =
-                    item.to             //Getting data from "To" class. because in "From" that's our user object, as we sent the request
 
                 binding.connectionImgText.text = ""
                 if (userToObj.profilePic == "" || userToObj.profilePic.isNullOrEmpty()) {
@@ -126,8 +99,7 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
                 }
 
             } else {
-                val userFromObj =
-                    item.from             //Getting data from "From" class. because in "To" that's our user object, as we received the request
+                val userFromObj = item.from             //Getting data from "From" class. because in "To" that's our user object, as we received the request
 
                 binding.connectionImgText.text = ""
                 if (userFromObj.profilePic == "" || userFromObj.profilePic.isNullOrEmpty()) {

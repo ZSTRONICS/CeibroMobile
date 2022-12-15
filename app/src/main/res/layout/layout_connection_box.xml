@@ -36,8 +36,8 @@
 
             <ImageView
                 android:id="@+id/connectionImg"
-                android:layout_width="47dp"
-                android:layout_height="47dp"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_img"
                 android:visibility="invisible" />
