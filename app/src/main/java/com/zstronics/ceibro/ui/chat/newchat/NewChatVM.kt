@@ -8,7 +8,7 @@ import com.zstronics.ceibro.data.repos.chat.IChatRepository
 import com.zstronics.ceibro.data.repos.chat.messages.NewGroupChatRequest
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -19,11 +19,16 @@ class NewChatVM @Inject constructor(
     private val chatRepository: IChatRepository
 ) : HiltBaseViewModel<INewChat.State>(), INewChat.ViewModel {
 
-    private var _allProjects: List<AllProjectsResponse.Result.Projects> = listOf()
+    private var _allProjects: List<ProjectsWithMembersResponse.ProjectDetail> = listOf()
     private val _projectNames: MutableLiveData<List<String>> = MutableLiveData(arrayListOf())
 
     private val _projectMembers: MutableLiveData<List<Member>> = MutableLiveData(arrayListOf())
     val projectMembers: LiveData<List<Member>> = _projectMembers
+
+    private val _projectGroups: MutableLiveData<List<ProjectsWithMembersResponse.ProjectDetail.Group>> =
+        MutableLiveData(arrayListOf())
+    val projectGroups: LiveData<List<ProjectsWithMembersResponse.ProjectDetail.Group>> =
+        _projectGroups
 
     val projectNames: LiveData<List<String>> = _projectNames
 
@@ -56,9 +61,14 @@ class NewChatVM @Inject constructor(
             when (val response = projectRepository.getProjectsWithMembers()) {
 
                 is ApiResponse.Success -> {
-                    response.data.result.projects.let {
-                        _allProjects = it
-                        _projectNames.postValue(it.map { it.title })
+                    response.data.projectDetails.let { projects ->
+                        if (projects.isNotEmpty()) {
+                            _allProjects = projects
+                            _projectNames.postValue(projects.map { it.title })
+                            val firstProject = projects.first()
+                            _projectMembers.postValue(firstProject.projectMembers)
+                            _projectGroups.postValue(firstProject.groups)
+                        }
                     }
 
                     loading(false)
@@ -74,6 +84,7 @@ class NewChatVM @Inject constructor(
     fun onProjectSelect(position: Int) {
         val selectedProject = _allProjects[position]
         projectId = selectedProject.id
-//        _projectMembers.value =
+        _projectMembers.value = selectedProject.projectMembers
+        _projectGroups.value = selectedProject.groups
     }
 }

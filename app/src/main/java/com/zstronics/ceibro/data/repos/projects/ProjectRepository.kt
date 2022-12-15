@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.projects
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import javax.inject.Inject
 
 class ProjectRepository @Inject constructor(
@@ -16,7 +17,7 @@ class ProjectRepository @Inject constructor(
             }
         )
 
-    override suspend fun getProjectsWithMembers(): ApiResponse<AllProjectsResponse> = executeSafely(
+    override suspend fun getProjectsWithMembers(): ApiResponse<ProjectsWithMembersResponse> = executeSafely(
         call =
         {
             service.getProjectsWithMembers()

@@ -189,5 +189,6 @@
     <string name="frequently_contacted">Frequently Contacted</string>
     <string name="submitted_heading">Submitted</string>
     <string name="suggested_users_groups_companies">Suggested users/groups/companies</string>
+    <string name="groups">Groups</string>
 
 </resources>

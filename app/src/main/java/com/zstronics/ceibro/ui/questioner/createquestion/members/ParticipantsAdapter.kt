@@ -39,13 +39,11 @@ class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.ChaMembersV
         fun bind(item: Member) {
             binding.member = item
             binding.appCompatCheckBox.isChecked = item.isChecked
-
-            binding.appCompatCheckBox.setOnCheckedChangeListener { p0, p1 ->
-                item.isChecked = p1
-                dataList[absoluteAdapterPosition].isChecked = p1
+            binding.root.setOnClickListener {
+                item.isChecked = !item.isChecked
+                dataList[absoluteAdapterPosition].isChecked = item.isChecked
                 notifyItemChanged(absoluteAdapterPosition)
             }
-
         }
     }
 }

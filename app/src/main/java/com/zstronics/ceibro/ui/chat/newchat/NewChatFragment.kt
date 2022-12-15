@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.chat.messages.NewGroupChatRequest
 import com.zstronics.ceibro.databinding.FragmentNewChatBinding
 import com.zstronics.ceibro.ui.questioner.createquestion.members.ParticipantsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NewChatFragment :
@@ -25,7 +26,7 @@ class NewChatFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
-            R.id.startChatBtn -> {
+            R.id.startGroupChat -> {
                 val selectedMembers = adapter.dataList.filter { it.isChecked }
                 val members = selectedMembers.map { it.id }
                 val request = NewGroupChatRequest(
@@ -39,6 +40,9 @@ class NewChatFragment :
     }
 
     lateinit var adapter: ParticipantsAdapter
+
+    @Inject
+    lateinit var groupsAdapter: GroupsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,7 +80,11 @@ class NewChatFragment :
         viewModel.projectMembers.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
+        viewModel.projectGroups.observe(viewLifecycleOwner) {
+            groupsAdapter.setList(it)
+        }
         adapter = ParticipantsAdapter()
         mViewDataBinding.recyclerView.adapter = adapter
+        mViewDataBinding.groupsRecyclerView.adapter = groupsAdapter
     }
 }

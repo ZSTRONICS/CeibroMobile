@@ -51,4 +51,16 @@ object ImageBinding {
     ) {
         textView.text = "${firstName?.get(0)?.uppercaseChar()}${surName?.get(0)?.uppercaseChar()}"
     }
+
+    @JvmStatic
+    @BindingAdapter(
+        value = ["app:groupTitle"],
+        requireAll = false
+    )
+    fun groupInitials(
+        textView: TextView,
+        groupTitle: String?
+    ) {
+        textView.text = "${groupTitle?.get(0)?.uppercaseChar()}"
+    }
 }
