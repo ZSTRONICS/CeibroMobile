@@ -4,6 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutItemMessageReceiveBinding
@@ -91,8 +94,25 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
             } else
                 View.GONE
 
+            if (item.sender.profilePic == "" || item.sender.profilePic.isNullOrEmpty()) {
+                binding.senderImgText.text =
+                    "${item.sender.firstName.get(0)?.uppercaseChar()}${
+                        item.sender.surName.get(0)?.uppercaseChar()
+                    }"
+                binding.senderImgText.visibility = View.VISIBLE
+                binding.senderImg.visibility = View.GONE
+            } else {
+                Glide.with(binding.senderImg.context)
+                    .load(item.sender.profilePic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.profile_img)
+                    .into(binding.senderImg)
+                binding.senderImg.visibility = View.VISIBLE
+                binding.senderImgText.visibility = View.GONE
+            }
+
+
             val timeString = item.createdAt?.let { DateUtils.getStringTimeSpan(it, DateUtils.SERVER_DATE_FULL_FORMAT) }
-//            println("Date in String time :: $timeString")
             if (timeString != null) {
                 if (timeString == "0 minutes ago") {
                     binding.senderMsgTime.text = "few seconds ago"
@@ -104,6 +124,7 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
             else {
                 binding.senderMsgTime.text = "Unknown time"
             }
+
 
             if (item.replyOf != null) {
                 binding.quotedMessageLayout.visibility = View.VISIBLE
@@ -150,8 +171,25 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
 //            } else
 //                View.GONE
 
+            if (item.sender.profilePic == "" || item.sender.profilePic.isNullOrEmpty()) {
+                binding.receiverImgText.text =
+                    "${item.sender.firstName.get(0)?.uppercaseChar()}${
+                        item.sender.surName.get(0)?.uppercaseChar()
+                    }"
+                binding.receiverImgText.visibility = View.VISIBLE
+                binding.receiverImg.visibility = View.GONE
+            } else {
+                Glide.with(binding.receiverImg.context)
+                    .load(item.sender.profilePic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.profile_img)
+                    .into(binding.receiverImg)
+                binding.receiverImg.visibility = View.VISIBLE
+                binding.receiverImgText.visibility = View.GONE
+            }
+
+
             val timeString = item.createdAt?.let { DateUtils.getStringTimeSpan(it, DateUtils.SERVER_DATE_FULL_FORMAT) }
-//            println("Date in String time :: $timeString")
             if (timeString != null) {
                 if (timeString == "0 minutes ago") {
                     binding.receiverMsgTime.text = "few seconds ago"
@@ -159,10 +197,10 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
                 else {
                     binding.receiverMsgTime.text = timeString
                 }
-            }
-            else {
+            } else {
                 binding.receiverMsgTime.text = "Unknown time"
             }
+
 
             if (item.replyOf != null) {
                 binding.quotedMessageLayout.visibility = View.VISIBLE

@@ -33,7 +33,8 @@ class MsgViewVM @Inject constructor(
             firstName = user?.firstName ?: "",
             surName = user?.surName ?: "",
             id = userId ?: "",
-            profilePic = user?.profilePic ?: ""
+            profilePic = user?.profilePic ?: "",
+            companyName = user?.companyName ?: ""
         )
     private val _chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> =
         MutableLiveData()
@@ -214,7 +215,6 @@ class MsgViewVM @Inject constructor(
         messageType: MessageType = MessageType.MESSAGE,
     ): MessagesResponse.ChatMessage {
         val localMessage: MessagesResponse.ChatMessage = MessagesResponse.ChatMessage(
-            companyName = user?.companyName ?: "",
             sender = sender,
             createdAt = DateUtils.getCurrentTimeStamp(),
             type = messageType.name.lowercase(),
@@ -230,7 +230,8 @@ class MsgViewVM @Inject constructor(
                             firstName = replyTo.sender.firstName,
                             surName = replyTo.sender.surName,
                             id = replyTo.sender.id,
-                            profilePic = replyTo.sender.profilePic
+                            profilePic = replyTo.sender.profilePic,
+                            companyName = replyTo.sender.companyName
                         ),
                         id = replyTo.id,
                         type = messageType.name.lowercase(),
