@@ -19,8 +19,6 @@ data class MessagesResponse(
         val answeredBy: List<String>? = null,
         @SerializedName("chat")
         val chat: String? = null,
-        @SerializedName("companyName")
-        var companyName: String,
         @SerializedName("createdAt")
         var createdAt: String? = null,
         @SerializedName("questions")
@@ -62,7 +60,9 @@ data class MessagesResponse(
             @SerializedName("surName")
             val surName: String,
             @SerializedName("profilePic")
-            val profilePic: String,
+            val profilePic: String?,
+            @SerializedName("companyName")
+            val companyName: String?
         ) : BaseResponse(), Parcelable
 
         @Keep
@@ -75,7 +75,9 @@ data class MessagesResponse(
             @SerializedName("surName")
             val surName: String,
             @SerializedName("profilePic")
-            val profilePic: String
+            val profilePic: String?,
+            @SerializedName("companyName")
+            val companyName: String?
         ) : BaseResponse(), Parcelable
     }
 
@@ -100,7 +102,9 @@ data class MessagesResponse(
             @SerializedName("surName")
             val surName: String,
             @SerializedName("profilePic")
-            val profilePic: String,
+            val profilePic: String?,
+            @SerializedName("companyName")
+            val companyName: String?
         ) : BaseResponse(), Parcelable
     }
 }
