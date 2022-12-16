@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_profileFragment_to_connectionsFragment"
             app:destination="@id/connectionsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_invitationsFragment"
+            app:destination="@id/invitationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -47,7 +50,11 @@
         android:id="@+id/connectionsFragment"
         android:name="com.zstronics.ceibro.ui.connections.ConnectionsFragment"
         android:label="ConnectionsFragment"
-        tools:layout="@layout/fragment_connections" />
+        tools:layout="@layout/fragment_connections" >
+        <action
+            android:id="@+id/action_connectionsFragment_to_invitationsFragment"
+            app:destination="@id/invitationsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.zstronics.ceibro.ui.chat.ChatFragment"
@@ -121,4 +128,8 @@
         android:name="com.zstronics.ceibro.ui.projects.ProjectsFragment"
         android:label="ProjectsFragment"
         tools:layout="@layout/fragment_projects"  />
+    <fragment
+        android:id="@+id/invitationsFragment"
+        android:name="com.zstronics.ceibro.ui.invitations.InvitationsFragment"
+        android:label="InvitationsFragment" />
 </navigation>

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/newConnectImgCard"
+            android:id="@+id/newInviteImgCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp"
@@ -22,14 +22,22 @@
             android:outlineSpotShadowColor="@color/white"
             app:cardCornerRadius="4dp"
             app:cardBackgroundColor="@color/appLightGrey"
-            app:layout_constraintBottom_toBottomOf="@+id/newConnectPersonCompany"
+            app:layout_constraintBottom_toBottomOf="@+id/newInvitePersonCompany"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/newConnectPersonName">
+            app:layout_constraintTop_toTopOf="@+id/newInvitePersonName">
+
+            <ImageView
+                android:id="@+id/newInviteImg"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_img"
+                android:visibility="invisible" />
 
             <TextView
-                android:id="@+id/newConnectImgText"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
+                android:id="@+id/newInviteImgText"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:fontFamily="@font/inter_semibold"
                 android:gravity="center"
                 android:maxLength="3"
@@ -37,33 +45,33 @@
                 android:paddingBottom="8dp"
                 android:text="KD"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="15.5sp" />
         </androidx.cardview.widget.CardView>
 
 
         <TextView
-            android:id="@+id/newConnectPersonName"
+            android:id="@+id/newInvitePersonName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="11dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginEnd="14dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
             android:gravity="start"
             android:maxLines="1"
             android:text="Kristo Vunukainen"
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="14.5sp"
             app:layout_constraintEnd_toStartOf="@+id/acceptBtn"
-            app:layout_constraintStart_toEndOf="@+id/newConnectImgCard"
+            app:layout_constraintStart_toEndOf="@+id/newInviteImgCard"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/newConnectPersonCompany"
+            android:id="@+id/newInvitePersonCompany"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:layout_marginBottom="16dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
@@ -73,9 +81,9 @@
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/newConnectPersonName"
-            app:layout_constraintStart_toStartOf="@+id/newConnectPersonName"
-            app:layout_constraintTop_toBottomOf="@+id/newConnectPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/newInvitePersonName"
+            app:layout_constraintStart_toStartOf="@+id/newInvitePersonName"
+            app:layout_constraintTop_toBottomOf="@+id/newInvitePersonName"
             app:layout_constraintVertical_bias="0.0" />
 
         <View
@@ -84,7 +92,7 @@
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/cancelBtn"
-            app:layout_constraintStart_toStartOf="@+id/newConnectImgCard" />
+            app:layout_constraintStart_toStartOf="@+id/newInviteImgCard" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/acceptBtn"
@@ -108,7 +116,7 @@
             android:id="@+id/cancelBtn"
             android:layout_width="31dp"
             android:layout_height="31dp"
-            android:layout_marginEnd="13dp"
+            android:layout_marginEnd="12dp"
             android:padding="1dp"
             android:src="@drawable/icon_close_round"
             android:background="?attr/selectableItemBackgroundBorderless"

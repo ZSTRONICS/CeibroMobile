@@ -190,5 +190,6 @@
     <string name="submitted_heading">Submitted</string>
     <string name="suggested_users_groups_companies">Suggested users/groups/companies</string>
     <string name="groups">Groups</string>
+    <string name="invitations_heading">Invitations</string>
 
 </resources>
