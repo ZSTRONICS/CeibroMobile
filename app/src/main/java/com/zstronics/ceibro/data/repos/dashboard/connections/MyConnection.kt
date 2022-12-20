@@ -11,6 +11,10 @@ data class MyConnection(
     val id: String,
     @SerializedName("sentByMe")
     val sentByMe: Boolean,
+    @SerializedName("isEmailInvite")
+    val isEmailInvite: Boolean,
+    @SerializedName("email")
+    val email: String,
     @SerializedName("status")
     val status: String,
     @SerializedName("to")

@@ -69,10 +69,22 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
                 }
             }
 
+            if (item.isEmailInvite) {                //If email invite is true then it means user is not registered in ceibro and only email will be displayed
 
-            if (item.sentByMe) {                //It means if it's true, then i've invited the user and i'll get other user's data from "To" parameter
+                binding.connectionPendingStatus.visibility = View.VISIBLE
+
+                binding.connectionImgText.text = "${item.email.get(0)?.uppercaseChar()}"
+
+                binding.connectionUserName.text = "${item.email}"
+                binding.connectionUserCompany.text = "No company added"
+
+            }
+            else if (item.sentByMe) {                //It means if it's true, then i've invited the user and i'll get other user's data from "To" parameter
                 val userToObj = item.to             //Getting data from "To" class. because in "From" that's our user object, as we sent the request
 
+                if (item.status == "pending") {
+                    binding.connectionPendingStatus.visibility = View.VISIBLE
+                }
                 binding.connectionImgText.text = ""
                 if (userToObj.profilePic == "" || userToObj.profilePic.isNullOrEmpty()) {
                     binding.connectionImgText.text =
@@ -101,6 +113,9 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
             } else {
                 val userFromObj = item.from             //Getting data from "From" class. because in "To" that's our user object, as we received the request
 
+                if (item.status == "pending") {
+                    binding.connectionPendingStatus.visibility = View.VISIBLE
+                }
                 binding.connectionImgText.text = ""
                 if (userFromObj.profilePic == "" || userFromObj.profilePic.isNullOrEmpty()) {
                     binding.connectionImgText.text = "${

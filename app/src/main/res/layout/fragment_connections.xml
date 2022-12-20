@@ -44,7 +44,7 @@
                 app:tint="@color/appYellow" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/inviteBtn"
+                android:id="@+id/inviteMainBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginEnd="18dp"
@@ -56,6 +56,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="14sp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
@@ -73,7 +74,7 @@
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/inviteBtn"
+                app:layout_constraintEnd_toStartOf="@+id/inviteMainBtn"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/closeBtn"
                 app:layout_constraintTop_toTopOf="parent" />

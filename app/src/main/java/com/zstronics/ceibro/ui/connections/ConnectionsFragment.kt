@@ -33,10 +33,13 @@ class ConnectionsFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> finish()
+            R.id.inviteMainBtn -> navigateToInvitations()
         }
     }
 
-
+    private fun navigateToInvitations() {
+        navigate(R.id.invitationsFragment)
+    }
 
     @Inject
     lateinit var adapter: AllConnectionsAdapter
