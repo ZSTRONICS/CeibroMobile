@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.dashboard
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
+import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import javax.inject.Inject
 
 class DashboardRepository @Inject constructor(
@@ -12,6 +13,12 @@ class DashboardRepository @Inject constructor(
         call =
         {
             service.getAllConnections()
+        }
+    )
+        override suspend fun getAllInvites(): ApiResponse<MyInvitations> = executeSafely(
+        call =
+        {
+            service.getAllInvites()
         }
     )
 

@@ -62,13 +62,105 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/invitationsReqLayout"
+            android:id="@+id/invitationsRequestLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/invitationHeader">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/invite_search_area"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="19dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/input_field_rectangle"
+                android:elevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/inviteBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="11dp"
+                    android:padding="1dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/inviteSearchField"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/inviteSearchField"
+                    app:srcCompat="@drawable/icon_search" />
+
+                <View
+                    android:id="@+id/view9"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                    app:layout_constraintStart_toEndOf="@+id/imageView6"
+                    app:layout_constraintTop_toTopOf="@+id/imageView6"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <EditText
+                    android:id="@+id/inviteSearchField"
+                    android:layout_width="0dp"
+                    android:layout_height="39dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/transparent"
+                    android:ems="10"
+                    android:fontFamily="@font/inter_regular"
+                    android:hint="@string/search_heading"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:textColorHint="@color/appGrey"
+                    android:textSize="15.5sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/view9"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/inviteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="19dp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_semibold"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/invite_btn_text"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                app:layout_constraintBottom_toBottomOf="@+id/invite_search_area"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/invite_search_area"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/invitationsAcceptLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/invitationHeader">
+            app:layout_constraintTop_toBottomOf="@+id/invitationsRequestLayout">
 
             <TextView
                 android:id="@+id/acceptAllBtn"
@@ -77,6 +169,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/inter_semibold"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:padding="4dp"
                 android:text="@string/accept_all_heading"
@@ -91,6 +184,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
                 android:fontFamily="@font/inter_semibold"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:padding="4dp"
                 android:text="@string/decline_all_heading"
@@ -104,9 +198,11 @@
                 android:id="@+id/view8"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="4dp"
                 android:background="@color/appLightGrey"
                 android:clickable="false"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/declineAllBtn"
                 app:layout_constraintStart_toStartOf="@+id/acceptAllBtn"
                 app:layout_constraintTop_toBottomOf="@+id/acceptAllBtn" />
@@ -121,7 +217,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/invitationsReqLayout">
+            app:layout_constraintTop_toBottomOf="@+id/invitationsAcceptLayout">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

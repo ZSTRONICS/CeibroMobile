@@ -1,131 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="allInvitations"
+            type="com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitationsItem" />
+
+        <import type="android.view.View" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/newInviteImgCard"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="13dp"
-            android:elevation="0dp"
-            android:outlineSpotShadowColor="@color/white"
-            app:cardCornerRadius="4dp"
-            app:cardBackgroundColor="@color/appLightGrey"
-            app:layout_constraintBottom_toBottomOf="@+id/newInvitePersonCompany"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/newInvitePersonName">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/newInviteImg"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_img"
-                android:visibility="invisible" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/newInviteImgCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:elevation="0dp"
+                android:outlineSpotShadowColor="@color/white"
+                app:cardCornerRadius="4dp"
+                app:cardBackgroundColor="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="@+id/newInvitePersonCompany"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/newInvitePersonName">
+
+                <ImageView
+                    android:id="@+id/newInviteImg"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_img"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/newInviteImgText"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:maxLength="3"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="KD"
+                    android:textColor="@color/black"
+                    android:textSize="15.5sp" />
+            </androidx.cardview.widget.CardView>
+
 
             <TextView
-                android:id="@+id/newInviteImgText"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:id="@+id/newInvitePersonName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="14dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/inter_semibold"
-                android:gravity="center"
-                android:maxLength="3"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="KD"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Kristo Vunukainen"
                 android:textColor="@color/black"
-                android:textSize="15.5sp" />
-        </androidx.cardview.widget.CardView>
+                android:textSize="14.5sp"
+                app:layout_constraintEnd_toStartOf="@+id/acceptBtn"
+                app:layout_constraintStart_toEndOf="@+id/newInviteImgCard"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/newInvitePersonCompany"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="16dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="@string/company_heading"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/newInvitePersonName"
+                app:layout_constraintStart_toStartOf="@+id/newInvitePersonName"
+                app:layout_constraintTop_toBottomOf="@+id/newInvitePersonName"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/cancelBtn"
+                app:layout_constraintStart_toStartOf="@+id/newInviteImgCard" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/acceptBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:layout_marginEnd="11dp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_semibold"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/accept_btn_text"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/cancelBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <ImageView
+                android:id="@+id/cancelBtn"
+                android:layout_width="31dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="12dp"
+                android:padding="1dp"
+                android:src="@drawable/icon_close_round"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
 
 
-        <TextView
-            android:id="@+id/newInvitePersonName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="11dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="14dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_semibold"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="Kristo Vunukainen"
-            android:textColor="@color/black"
-            android:textSize="14.5sp"
-            app:layout_constraintEnd_toStartOf="@+id/acceptBtn"
-            app:layout_constraintStart_toEndOf="@+id/newInviteImgCard"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/newInvitePersonCompany"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="16dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/company_heading"
-            android:textColor="@color/appTextGrey"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/newInvitePersonName"
-            app:layout_constraintStart_toStartOf="@+id/newInvitePersonName"
-            app:layout_constraintTop_toBottomOf="@+id/newInvitePersonName"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/appLightGrey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/cancelBtn"
-            app:layout_constraintStart_toStartOf="@+id/newInviteImgCard" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/acceptBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="31dp"
-            android:layout_marginEnd="11dp"
-            android:background="@drawable/signin_button_back"
-            android:fontFamily="@font/inter_semibold"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:text="@string/accept_btn_text"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/cancelBtn"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <ImageView
-            android:id="@+id/cancelBtn"
-            android:layout_width="31dp"
-            android:layout_height="31dp"
-            android:layout_marginEnd="12dp"
-            android:padding="1dp"
-            android:src="@drawable/icon_close_round"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TouchTargetSizeCheck" />
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

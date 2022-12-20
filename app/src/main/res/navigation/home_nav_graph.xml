@@ -131,5 +131,6 @@
     <fragment
         android:id="@+id/invitationsFragment"
         android:name="com.zstronics.ceibro.ui.invitations.InvitationsFragment"
-        android:label="InvitationsFragment" />
+        android:label="InvitationsFragment"
+        tools:layout="@layout/fragment_invitations" />
 </navigation>

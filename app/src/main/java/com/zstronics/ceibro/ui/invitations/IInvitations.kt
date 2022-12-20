@@ -7,5 +7,6 @@ interface IInvitations {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
+        fun loadInvitations()
     }
 }

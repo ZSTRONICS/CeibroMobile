@@ -1,12 +1,20 @@
 package com.zstronics.ceibro.ui.invitations
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
+import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitationsItem
 import com.zstronics.ceibro.databinding.FragmentInvitationsBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.chat.adapter.ChatRoomAdapter
+import com.zstronics.ceibro.ui.invitations.adapter.AllInvitationsAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class InvitationsFragment :
@@ -18,5 +26,39 @@ class InvitationsFragment :
     override val layoutResId: Int = R.layout.fragment_invitations
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
+        when (id) {
+            R.id.closeBtn -> navigateBack()
+        }
     }
+
+    @Inject
+    lateinit var adapter: AllInvitationsAdapter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initRecyclerView(adapter)
+
+        viewModel.allInvites.observe(viewLifecycleOwner) {
+            adapter.setList(it)
+        }
+        adapter.itemClickListener = { _: View, position: Int, data: MyInvitationsItem ->
+//            navigateToMsgView(data)
+        }
+        adapter.childItemClickListener = { view: View, position: Int, data: MyInvitationsItem ->
+//            if (view.id == R.id.chatFavIcon)
+//                viewModel.addChatToFav(data.id)
+        }
+
+    }
+
+    private fun initRecyclerView(adapter: AllInvitationsAdapter) {
+        mViewDataBinding.invitationsRV.adapter = adapter
+
+        adapter.itemLongClickListener =
+            { _: View, position: Int, data: MyInvitationsItem ->
+//                showChatActionSheet(data,position)
+            }
+    }
+
 }
