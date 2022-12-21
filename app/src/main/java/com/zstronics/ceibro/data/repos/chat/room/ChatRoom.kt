@@ -31,7 +31,7 @@ data class ChatRoom(
     @SerializedName("members")
     val members: ArrayList<Member>,
     @SerializedName("mutedBy")
-    val mutedBy: List<Member>,
+    val mutedBy: List<String>,
     @SerializedName("name")
     val name: String,
     @SerializedName("pinTitle")

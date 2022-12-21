@@ -150,7 +150,7 @@ class MsgViewVM @Inject constructor(
     fun sendMessageStatus(
         messageId: String?,
         roomId: String?,
-        eventType: EventType = EventType.MESSAGE_READ
+        eventType: EventType
     ) {
 
         val messageStatusData = MessageStatusRequest(
@@ -170,29 +170,18 @@ class MsgViewVM @Inject constructor(
         SocketHandler.sendRequest(json)
     }
 
-    override fun composeMessageToSend(
+    override fun composeAndSendMessage(
         message: String?,
         scrollToPosition: ((lastPosition: Int) -> Unit?)?
     ) {
-        val chatId: String? = chatRoom?.id
+        sendMessage(message, chatRoom?.id)
 
-        sendMessage(message, chatId)
-
-        /* Dump new message locally*/
-
-        val replyTo = if (viewState.isQuotedMessage.value == true) {
-            viewState.quotedMessage.value
-        } else null
-
-        val messageRes: MessagesResponse.ChatMessage =
-            composeLocalMessage(replyTo = replyTo, message = message)
-
+        val replyTo = viewState.quotedMessage.value?.takeIf { viewState.isQuotedMessage.value == true }
+        val messageRes = composeLocalMessage(replyTo, message)
         adapter.appendMessage(messageRes) { lastPosition ->
             scrollToPosition?.invoke(lastPosition)
         }
-
         addMessageToMutableMessageList(messageRes)
-
         hideQuoted()
         viewState.messageBoxBody.value = ""
     }

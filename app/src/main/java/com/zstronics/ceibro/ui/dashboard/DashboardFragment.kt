@@ -17,6 +17,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
+import com.zstronics.ceibro.data.repos.chat.messages.socket.AllMessageSeenSocketResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.chat.ChatFragment
 import com.zstronics.ceibro.ui.enums.EventType
@@ -64,14 +65,23 @@ class DashboardFragment :
 
 
         SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
-            val navHostFragment = activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
+            val navHostFragment =
+                activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
             val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+            when {
+                args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
+                    println("RECEIVE_MESSAGE")
+                }
+                args[0].toString().contains(EventType.MESSAGE_SEEN.name) -> {
+                    println("MESSAGE_SEEN")
+                }
+                args[0].toString().contains(EventType.ALL_MESSAGE_SEEN.name) -> {
+                    val gson = Gson()
+                    val messageType = object : TypeToken<AllMessageSeenSocketResponse>() {}.type
+                    val message: SocketReceiveMessageResponse =
+                        gson.fromJson(args[0].toString(), messageType)
 
-            if (args[0].toString().contains(EventType.RECEIVE_MESSAGE.name)) {
-                println("RECEIVE_MESSAGE")
-            }
-            else if (args[0].toString().contains(EventType.MESSAGE_SEEN.name)) {
-                println("MESSAGE_SEEN")
+                }
             }
 
             if (fragment is DashboardFragment) {

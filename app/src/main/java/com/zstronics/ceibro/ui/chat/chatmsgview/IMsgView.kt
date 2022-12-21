@@ -22,7 +22,7 @@ interface IMsgView {
         fun replyOrSendMessage(
             message: NewMessageRequest
         )
-        fun composeMessageToSend(
+        fun composeAndSendMessage(
             message: String?,
             scrollToPosition: ((lastPosition: Int) -> Unit?)? = null
         )

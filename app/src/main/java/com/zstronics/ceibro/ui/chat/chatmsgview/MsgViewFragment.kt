@@ -51,7 +51,7 @@ class MsgViewFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.sendMessageButton -> {
-                viewModel.composeMessageToSend(viewState.messageBoxBody.value) {
+                viewModel.composeAndSendMessage(viewState.messageBoxBody.value) {
                     scrollToPosition(it)
                 }
             }
@@ -184,7 +184,8 @@ class MsgViewFragment :
                                 viewModel.addMessageToMutableMessageList(response.data.messageData.message)
                                 viewModel.sendMessageStatus(
                                     messageId = response.data.messageData.message.id,
-                                    roomId = response.data.messageData.message.chat
+                                    roomId = response.data.messageData.message.chat,
+                                    eventType = EventType.MESSAGE_SEEN
                                 )
                             }
                         }
@@ -215,7 +216,7 @@ class MsgViewFragment :
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     val message: String = text.toString()
                     if (!TextUtils.isEmpty(message))
-                        viewModel.composeMessageToSend(message) {
+                        viewModel.composeAndSendMessage(message) {
                             scrollToPosition(it)
                         }
                     return@OnEditorActionListener true
