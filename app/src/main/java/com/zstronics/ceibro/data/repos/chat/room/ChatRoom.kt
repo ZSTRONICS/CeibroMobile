@@ -25,7 +25,7 @@ data class ChatRoom(
     @SerializedName("isProjectAttached")
     val isProjectAttached: Boolean,
     @SerializedName("lastMessage")
-    val lastMessage: LastMessage,
+    var lastMessage: LastMessage,
     @SerializedName("lastMessageTime")
     val lastMessageTime: String,
     @SerializedName("members")

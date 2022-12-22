@@ -5,14 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.IChatRepository
+import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
+import com.zstronics.ceibro.data.repos.chat.room.LastMessage
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatVM @Inject constructor(
-    override val viewState: ChatState, private val chatRepository: IChatRepository
+    override val viewState: ChatState,
+    private val chatRepository: IChatRepository,
+    val sessionManager: SessionManager,
 ) : HiltBaseViewModel<IChat.State>(), IChat.ViewModel {
+
+    val user = sessionManager.getUser().value
+    val userId = user?.id
 
     private val _chatRooms: MutableLiveData<MutableList<ChatRoom>> = MutableLiveData()
     val chatRooms: LiveData<MutableList<ChatRoom>> = _chatRooms
@@ -30,7 +38,9 @@ class ChatVM @Inject constructor(
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    _chatRooms.postValue(data.chatRooms as MutableList<ChatRoom>?)
+                    val chatRooms = data.chatRooms as MutableList<ChatRoom>?
+                    chatRooms?.sortByDescending { it.unreadCount }
+                    _chatRooms.postValue(chatRooms)
                 }
 
                 is ApiResponse.Error -> {
@@ -74,4 +84,34 @@ class ChatVM @Inject constructor(
             }
         }
     }
+
+    fun updateChatListOnNewMessageReceived(newMessage: SocketReceiveMessageResponse) {
+        when {
+            isMessageExist(newMessage) -> {
+                val chatRooms = _chatRooms.value
+                val newMessageChat = chatRooms?.find { it.id == newMessage.data.messageData.chat }
+                val newMessageChatIndex = chatRooms?.indexOf(newMessageChat) ?: -1
+                newMessageChat?.apply {
+                    this.unreadCount += 1
+                    this.lastMessage = LastMessage(
+                        newMessage.data.messageData.message.id,
+                        newMessage.data.messageData.message.message
+                    )
+                }
+
+                newMessageChat?.let { chatRooms.set(newMessageChatIndex, it) }
+                chatRooms?.sortByDescending { it.unreadCount }
+                _chatRooms.postValue(chatRooms)
+            }
+            else -> {
+                /// TODO("Add new message to list but the data is being received in the socket is different than the data is already populated in the list.")
+                loadChat("all", false)
+            }
+        }
+    }
+
+    private fun isMessageExist(newMessage: SocketReceiveMessageResponse): Boolean {
+        return chatRooms.value?.find { it.id == newMessage.data.messageData.chat } != null
+    }
+
 }
