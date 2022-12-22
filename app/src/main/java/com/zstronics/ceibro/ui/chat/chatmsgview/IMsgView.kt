@@ -5,6 +5,7 @@ import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.repos.chat.messages.NewMessageRequest
 import com.zstronics.ceibro.data.repos.chat.room.Project
+import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
 
 interface IMsgView {
     interface State : IBase.State {
@@ -24,6 +25,7 @@ interface IMsgView {
         )
         fun composeAndSendMessage(
             message: String?,
+            adapter: MessagesAdapter,
             scrollToPosition: ((lastPosition: Int) -> Unit?)? = null
         )
     }

@@ -72,16 +72,6 @@ class DashboardFragment :
                 args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
                     println("RECEIVE_MESSAGE")
                 }
-                args[0].toString().contains(EventType.MESSAGE_SEEN.name) -> {
-                    println("MESSAGE_SEEN")
-                }
-                args[0].toString().contains(EventType.ALL_MESSAGE_SEEN.name) -> {
-                    val gson = Gson()
-                    val messageType = object : TypeToken<AllMessageSeenSocketResponse>() {}.type
-                    val message: SocketReceiveMessageResponse =
-                        gson.fromJson(args[0].toString(), messageType)
-
-                }
             }
 
             if (fragment is DashboardFragment) {

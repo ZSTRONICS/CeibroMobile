@@ -45,7 +45,7 @@ data class ChatRoom(
     @SerializedName("removedMembers")
     val removedMembers: ArrayList<Member>,
     @SerializedName("unreadCount")
-    val unreadCount: Int,
+    var unreadCount: Int,
     @SerializedName("updatedAt")
     val updatedAt: String,
     @SerializedName("__v")

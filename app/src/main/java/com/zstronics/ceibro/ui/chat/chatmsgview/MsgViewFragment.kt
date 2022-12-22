@@ -25,6 +25,8 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
+import com.zstronics.ceibro.data.repos.chat.messages.socket.AllMessageSeenSocketResponse
+import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse
 import com.zstronics.ceibro.databinding.FragmentMsgViewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
@@ -36,22 +38,29 @@ import com.zstronics.ceibro.ui.enums.MessageActions.*
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
+import io.socket.emitter.Emitter
 import okhttp3.internal.immutableListOf
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MsgViewFragment :
-    BaseNavViewModelFragment<FragmentMsgViewBinding, IMsgView.State, MsgViewVM>() {
+    BaseNavViewModelFragment<FragmentMsgViewBinding, IMsgView.State, MsgViewVM>(),
+    Emitter.Listener {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: MsgViewVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_msg_view
     override fun toolBarVisibility(): Boolean = false
+
+    @Inject
+    lateinit var adapter: MessagesAdapter
+
     override fun onClick(id: Int) {
         when (id) {
             R.id.sendMessageButton -> {
-                viewModel.composeAndSendMessage(viewState.messageBoxBody.value) {
+                viewModel.composeAndSendMessage(viewState.messageBoxBody.value, adapter) {
                     scrollToPosition(it)
                 }
             }
@@ -134,9 +143,13 @@ class MsgViewFragment :
                         val index = chatMessages.indexOf(quotedMessage)
                         fastScrollToPosition(index)
                         mViewDataBinding.messagesRV.postDelayed(Runnable {
-                            val viewHolder = mViewDataBinding.messagesRV.findViewHolderForLayoutPosition(index)
+                            val viewHolder =
+                                mViewDataBinding.messagesRV.findViewHolderForLayoutPosition(index)
                             val view = viewHolder?.itemView
-                            val expandIn: Animation = AnimationUtils.loadAnimation(mViewDataBinding.messagesRV.context, R.anim.modal_in)
+                            val expandIn: Animation = AnimationUtils.loadAnimation(
+                                mViewDataBinding.messagesRV.context,
+                                R.anim.modal_in
+                            )
                             view?.startAnimation(expandIn)
                         }, 200)
                     }
@@ -155,6 +168,7 @@ class MsgViewFragment :
                     }
 
                     viewModel.hideQuoted()
+                    viewModel.appendMessageInMessagesList(messageRes)
                 }
 
             val messageSwipeController = MessageSwipeController(requireContext(), object :
@@ -168,35 +182,8 @@ class MsgViewFragment :
             })
             val itemTouchHelper = ItemTouchHelper(messageSwipeController)
             itemTouchHelper.attachToRecyclerView(mViewDataBinding.messagesRV)
-
-            SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
-                try {
-                    val gson = Gson()
-                    val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
-                    val response: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
-
-                    if (response.eventType == EventType.RECEIVE_MESSAGE.name) {
-                        if (response.data.messageData.chat == viewModel.chatRoom?.id && response.data.messageData.from != viewModel.userId) {
-                            viewModel.launch(Dispatcher.Main) {
-                                adapter.appendMessage(response.data.messageData.message) { lastPosition ->
-                                    scrollToPosition(lastPosition)
-                                }
-                                viewModel.addMessageToMutableMessageList(response.data.messageData.message)
-                                viewModel.sendMessageStatus(
-                                    messageId = response.data.messageData.message.id,
-                                    roomId = response.data.messageData.message.chat,
-                                    eventType = EventType.MESSAGE_SEEN
-                                )
-                            }
-                        }
-                    }
-                    else if (response.eventType == EventType.MESSAGE_SEEN.name) {
-
-                    }
-                }
-                catch (e: Exception) {
-                }
-            }
+            SocketHandler.getSocket()
+                .on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
 
             setupMessageInput()
         }
@@ -205,6 +192,8 @@ class MsgViewFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.chatRoom = null
+        SocketHandler.getSocket()
+            .off(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
     }
 
     private fun setupMessageInput() {
@@ -216,7 +205,7 @@ class MsgViewFragment :
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     val message: String = text.toString()
                     if (!TextUtils.isEmpty(message))
-                        viewModel.composeAndSendMessage(message) {
+                        viewModel.composeAndSendMessage(message, adapter) {
                             scrollToPosition(it)
                         }
                     return@OnEditorActionListener true
@@ -244,6 +233,7 @@ class MsgViewFragment :
         if (position > 0)
             mViewDataBinding.messagesRV.smoothScrollToPosition(position)
     }
+
     private fun fastScrollToPosition(position: Int) {
         if (position > 0)
             mViewDataBinding.messagesRV.scrollToPosition(position)
@@ -284,12 +274,12 @@ class MsgViewFragment :
                     sheet.binding.chatMsgMessageInfo.visibility = View.GONE
                 }
             }
-        },90)
+        }, 90)
     }
 
     private fun navToMessageInfo(message: MessagesResponse.ChatMessage, position: Int) {
         arguments?.putParcelable("message", message)
-        navigate(R.id.action_msgViewFragment_to_messageInfoFragment,arguments)
+        navigate(R.id.action_msgViewFragment_to_messageInfoFragment, arguments)
     }
 
     private fun navToChatMembers(message: MessagesResponse.ChatMessage) {
@@ -313,5 +303,48 @@ class MsgViewFragment :
     private var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
         val file = FileUtils.getFile(requireContext(), intent?.data)
         viewModel.composeFileMessageToSend(file)
+    }
+
+    override fun call(vararg args: Any?) {
+        when {
+            args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
+                println("RECEIVE_MESSAGE")
+                val newMessage: SocketReceiveMessageResponse =
+                    Gson().fromJson(
+                        args[0].toString(),
+                        object : TypeToken<SocketReceiveMessageResponse>() {}.type
+                    )
+
+                if (newMessage.data.messageData.chat == viewModel.chatRoom?.id && newMessage.data.messageData.from != viewModel.userId) {
+                    viewModel.launch(Dispatcher.Main) {
+                        adapter.appendMessage(newMessage.data.messageData.message) { lastPosition ->
+                            scrollToPosition(lastPosition)
+                        }
+                        viewModel.addMessageToMutableMessageList(newMessage.data.messageData.message)
+
+                        viewModel.readMessage(
+                            messageId = newMessage.data.messageData.message.id,
+                            roomId = newMessage.data.messageData.message.chat,
+                            eventType = EventType.MESSAGE_SEEN
+                        )
+                    }
+                }
+            }
+            args[0].toString().contains(EventType.MESSAGE_SEEN.name) -> {
+                println("MESSAGE_SEEN")
+                val messageSeen: MessageSeenSocketResponse =
+                    Gson().fromJson(
+                        args[0].toString(),
+                        object : TypeToken<MessageSeenSocketResponse>() {}.type
+                    )
+                viewModel.updateOtherLastMessageSeen(messageSeen)
+            }
+            args[0].toString().contains(EventType.ALL_MESSAGE_SEEN.name) -> {
+//                val gson = Gson()
+//                val messageType = object : TypeToken<AllMessageSeenSocketResponse>() {}.type
+//                val message: AllMessageSeenSocketResponse =
+//                    gson.fromJson(args[0].toString(), messageType)
+            }
+        }
     }
 }

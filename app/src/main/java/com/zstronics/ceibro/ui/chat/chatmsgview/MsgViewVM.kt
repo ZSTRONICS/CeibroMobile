@@ -7,6 +7,8 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.IChatRepository
 import com.zstronics.ceibro.data.repos.chat.messages.*
+import com.zstronics.ceibro.data.repos.chat.messages.socket.AllMessageSeenSocketResponse
+import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
@@ -41,9 +43,6 @@ class MsgViewVM @Inject constructor(
     val chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> = _chatMessages
     var chatRoom: ChatRoom? = null
 
-    @Inject
-    lateinit var adapter: MessagesAdapter
-
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         val user = sessionManager.getUser().value
@@ -59,6 +58,8 @@ class MsgViewVM @Inject constructor(
     }
 
     override fun loadMessages(roomId: String) {
+        val readAllMessagesJson = readAllMessagesJson(roomId)
+        sendMessageStatus(readAllMessagesJson)
         launch {
             loading(true)
             when (val response = chatRepository.messages(roomId)) {
@@ -74,6 +75,15 @@ class MsgViewVM @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun readAllMessagesJson(roomId: String): String {
+        return Gson().toJson(
+            AllMessageSeenSocketResponse(
+                data = AllMessageSeenSocketResponse.Data(roomId, userId ?: ""),
+                eventType = EventType.ALL_MESSAGE_SEEN.name
+            )
+        )
     }
 
     override fun replyOrSendMessage(
@@ -134,49 +144,36 @@ class MsgViewVM @Inject constructor(
 
         val messageData = MessageDataRequest(
             userId = userId,
-            message = newMessageJson)
+            message = newMessageJson
+        )
         val messageDataJson = gson.toJson(messageData)
 
 
         val messageRequest = SocketMessageRequest(
             eventType = eventType.name,
-            data = messageDataJson)
+            data = messageDataJson
+        )
         val json = gson.toJson(messageRequest)
 
         SocketHandler.sendRequest(json)
 //        replyOrSendMessage(newMessage)
     }
 
-    fun sendMessageStatus(
-        messageId: String?,
-        roomId: String?,
-        eventType: EventType
+    private fun sendMessageStatus(
+        json: String
     ) {
-
-        val messageStatusData = MessageStatusRequest(
-            userId = userId,
-            roomId = roomId,
-            messageId = messageId
-        )
-        val gson = Gson()
-        val jsonData = gson.toJson(messageStatusData)
-
-
-        val messageRequest = SocketMessageRequest(
-            eventType = eventType.name,
-            data = jsonData)
-        val json = gson.toJson(messageRequest)
-
         SocketHandler.sendRequest(json)
     }
 
     override fun composeAndSendMessage(
         message: String?,
+        adapter: MessagesAdapter,
         scrollToPosition: ((lastPosition: Int) -> Unit?)?
     ) {
         sendMessage(message, chatRoom?.id)
 
-        val replyTo = viewState.quotedMessage.value?.takeIf { viewState.isQuotedMessage.value == true }
+        val replyTo =
+            viewState.quotedMessage.value?.takeIf { viewState.isQuotedMessage.value == true }
         val messageRes = composeLocalMessage(replyTo, message)
         adapter.appendMessage(messageRes) { lastPosition ->
             scrollToPosition?.invoke(lastPosition)
@@ -184,6 +181,13 @@ class MsgViewVM @Inject constructor(
         addMessageToMutableMessageList(messageRes)
         hideQuoted()
         viewState.messageBoxBody.value = ""
+        appendMessageInMessagesList(messageRes)
+    }
+
+    fun appendMessageInMessagesList(messageRes: MessagesResponse.ChatMessage) {
+        val chatMessages = _chatMessages.value
+        chatMessages?.add(messageRes)
+        _chatMessages.value = chatMessages
     }
 
     fun addMessageToMutableMessageList(messageRec: MessagesResponse.ChatMessage) {
@@ -256,5 +260,32 @@ class MsgViewVM @Inject constructor(
 //        hideQuoted()
 //
 //        viewState.messageBoxBody.value = ""
+    }
+
+    fun readMessage(messageId: String, roomId: String?, eventType: EventType) {
+        val data = MessageStatusRequest(
+            userId = userId,
+            roomId = roomId,
+            messageId = messageId
+        )
+        val messageRequest = SocketMessageRequest(
+            eventType = eventType.name,
+            data = Gson().toJson(data)
+        )
+        sendMessageStatus(Gson().toJson(messageRequest))
+    }
+
+    fun updateOtherLastMessageSeen(messageSeen: MessageSeenSocketResponse) {
+
+        if (messageSeen.data.roomId == chatRoom?.id &&
+            (messageSeen.data.userId == userId).not()
+        ) {
+            // update last message
+
+            val chatMessages = _chatMessages.value
+            chatMessages?.findLast { it.sender.id == userId }?.readBy =
+                messageSeen.data.updatedMessage[0].readBy
+            _chatMessages.postValue(chatMessages)
+        }
     }
 }

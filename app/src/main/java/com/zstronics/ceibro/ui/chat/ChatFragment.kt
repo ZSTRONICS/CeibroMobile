@@ -5,14 +5,20 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
+import com.zstronics.ceibro.data.repos.chat.messages.socket.AllMessageSeenSocketResponse
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.databinding.FragmentChatBinding
 import com.zstronics.ceibro.ui.chat.adapter.ChatRoomAdapter
 import com.zstronics.ceibro.ui.chat.bottomsheet.FragmentChatRoomActionSheet
+import com.zstronics.ceibro.ui.dashboard.DashboardFragment
 import com.zstronics.ceibro.ui.enums.ChatActions.*
+import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -69,14 +75,16 @@ class ChatFragment :
             if (view.id == R.id.chatFavIcon)
                 viewModel.addChatToFav(data.id)
         }
-
-//        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
-////            val gson = Gson()
-////            val messageTYpe = object : TypeToken<SocketReceiveMessageResponse>() {}.type
-////            val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageTYpe)
-//            viewModel.loadChat("all", false)
-//
-//        }
+        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+            when {
+                args[0].toString().contains(EventType.ALL_MESSAGE_SEEN.name) -> {
+                    val gson = Gson()
+                    val messageType = object : TypeToken<AllMessageSeenSocketResponse>() {}.type
+                    val message: AllMessageSeenSocketResponse =
+                        gson.fromJson(args[0].toString(), messageType)
+                }
+            }
+        }
     }
 
     private fun initRecyclerView(adapter: ChatRoomAdapter) {
@@ -84,7 +92,7 @@ class ChatFragment :
 
         adapter.itemLongClickListener =
             { _: View, position: Int, data: ChatRoom ->
-                showChatActionSheet(data,position)
+                showChatActionSheet(data, position)
             }
     }
 
