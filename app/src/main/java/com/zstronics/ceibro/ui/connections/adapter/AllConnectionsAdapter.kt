@@ -85,6 +85,9 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
                 if (item.status == "pending") {
                     binding.connectionPendingStatus.visibility = View.VISIBLE
                 }
+                else if (item.status == "accepted") {
+                    binding.connectionPendingStatus.visibility = View.GONE
+                }
                 binding.connectionImgText.text = ""
                 if (userToObj.profilePic == "" || userToObj.profilePic.isNullOrEmpty()) {
                     binding.connectionImgText.text =
@@ -115,6 +118,9 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
 
                 if (item.status == "pending") {
                     binding.connectionPendingStatus.visibility = View.VISIBLE
+                }
+                else if (item.status == "accepted") {
+                    binding.connectionPendingStatus.visibility = View.GONE
                 }
                 binding.connectionImgText.text = ""
                 if (userFromObj.profilePic == "" || userFromObj.profilePic.isNullOrEmpty()) {

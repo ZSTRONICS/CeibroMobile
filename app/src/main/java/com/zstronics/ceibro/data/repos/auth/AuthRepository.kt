@@ -6,7 +6,7 @@ import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpResponse
+import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -46,7 +46,7 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<SignUpResponse> {
+    override suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {

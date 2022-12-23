@@ -5,16 +5,15 @@ import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpResponse
+import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
-import retrofit2.http.Body
 
 interface IAuthRepository {
     suspend fun login(loginRequest: LoginRequest): ApiResponse<LoginResponse>
     suspend fun updateProfileCall(editProfileRequest: EditProfileRequest): ApiResponse<EditProfileResponse>
     suspend fun getUserProfile(): ApiResponse<LoginResponse>
-    suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<SignUpResponse>
+    suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse>
     suspend fun uploadProfilePicture(fileUri: String): ApiResponse<User>
 
 }

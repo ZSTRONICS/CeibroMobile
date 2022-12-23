@@ -1,11 +1,10 @@
 package com.zstronics.ceibro.data.repos.auth
 
-import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpResponse
+import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import okhttp3.MultipartBody
@@ -23,7 +22,7 @@ interface AuthRepositoryService {
     suspend fun getUserProfile(): Response<LoginResponse>
 
     @POST("auth/register")
-    suspend fun signup(@Body signUpRequest: SignUpRequest): Response<SignUpResponse>
+    suspend fun signup(@Body signUpRequest: SignUpRequest): Response<GenericResponse>
 
     @Multipart
     @PATCH("users/profile/pic")
