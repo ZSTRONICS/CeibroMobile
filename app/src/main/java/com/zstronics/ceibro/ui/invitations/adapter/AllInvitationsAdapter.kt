@@ -56,7 +56,45 @@ class AllInvitationsAdapter @Inject constructor(val sessionManager: SessionManag
             val context = binding.root.context
             binding.allInvitations = item
 
+            if (item.from.profilePic == "" || item.from.profilePic.isNullOrEmpty()) {
+                binding.newInviteImgText.text =
+                    "${item.from.firstName.get(0)?.uppercaseChar()}${
+                        item.from.surName.get(0)?.uppercaseChar()
+                    }"
+                binding.newInviteImgText.visibility = View.VISIBLE
+                binding.newInviteImg.visibility = View.GONE
+            } else {
+                Glide.with(binding.newInviteImg.context)
+                    .load(item.from.profilePic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.profile_img)
+                    .into(binding.newInviteImg)
+                binding.newInviteImg.visibility = View.VISIBLE
+                binding.newInviteImgText.visibility = View.GONE
+            }
+
             binding.newInvitePersonName.text = "${item.from.firstName} ${item.from.surName}"
+
+            if (item.from.companyName == "" || item.from.companyName.isNullOrEmpty()) {
+                binding.newInvitePersonCompany.text = "No company added"
+            }
+            else {
+                binding.newInvitePersonCompany.text = "${item.from.companyName}"
+            }
+
+
+            binding.acceptInviteBtn.setOnClickListener {
+//                val userId: String? = item.pinnedBy.find { userId -> userId == user?.id }
+//                if (userId != null) item.pinnedBy.remove(userId) else item.pinnedBy.add(user?.id.toString())
+//                notifyItemChanged(list.indexOf(item))
+                childItemClickListener?.invoke(it, adapterPosition, item)
+            }
+            binding.rejectInviteBtn.setOnClickListener {
+//                val userId: String? = item.pinnedBy.find { userId -> userId == user?.id }
+//                if (userId != null) item.pinnedBy.remove(userId) else item.pinnedBy.add(user?.id.toString())
+//                notifyItemChanged(list.indexOf(item))
+                childItemClickListener?.invoke(it, adapterPosition, item)
+            }
 
         }
     }

@@ -1,11 +1,13 @@
 package com.zstronics.ceibro.ui.invitations
 
 import android.os.Bundle
+import android.util.Patterns
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitationsItem
@@ -28,6 +30,14 @@ class InvitationsFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
+            R.id.inviteBtn -> {
+                val emailPattern = Patterns.EMAIL_ADDRESS
+                if (emailPattern.matcher(viewState.inviteEmail.value.toString()).matches()) {
+                    viewModel.onInvite()
+                } else {
+                    shortToastNow("Invalid Email Address")
+                }
+            }
         }
     }
 
@@ -41,14 +51,39 @@ class InvitationsFragment :
 
         viewModel.allInvites.observe(viewLifecycleOwner) {
             adapter.setList(it)
+
+            if (viewModel.allInvites.value?.size == 0){
+                mViewDataBinding.acceptAllBtn.isEnabled = false
+                mViewDataBinding.acceptAllBtn.setTextColor(R.color.appTextGrey)
+                mViewDataBinding.declineAllBtn.isEnabled = false
+                mViewDataBinding.declineAllBtn.setTextColor(R.color.appTextGrey)
+            }
         }
+
         adapter.itemClickListener = { _: View, position: Int, data: MyInvitationsItem ->
 //            navigateToMsgView(data)
         }
         adapter.childItemClickListener = { view: View, position: Int, data: MyInvitationsItem ->
-//            if (view.id == R.id.chatFavIcon)
-//                viewModel.addChatToFav(data.id)
+            if (view.id == R.id.acceptInviteBtn) {
+//                shortToastNow("acceptInviteBtn")
+                viewModel.acceptOrRejectInvitation(
+                    accepted = true,
+                    inviteId = data.id,
+                    position = position
+                )
+            }
+            else if (view.id == R.id.rejectInviteBtn) {
+//                shortToastNow("rejectInviteBtn")
+                viewModel.acceptOrRejectInvitation(
+                    accepted = false,
+                    inviteId = data.id,
+                    position = position
+                )
+            }
         }
+
+
+
 
     }
 

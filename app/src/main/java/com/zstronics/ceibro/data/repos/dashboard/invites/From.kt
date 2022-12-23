@@ -23,12 +23,16 @@ data class From(
     val pinnedMessages: List<String>,
     @SerializedName("role")
     val role: String,
-    @SerializedName("socketId")
-    val socketId: String,
     @SerializedName("surName")
     val surName: String,
     @SerializedName("companyName")
     val companyName: String,
+    @SerializedName("companyLocation")
+    val companyLocation: String,
+    @SerializedName("companyPhone")
+    val companyPhone: String,
+    @SerializedName("workEmail")
+    val workEmail: String,
     @SerializedName("profilePic")
     var profilePic: String,
 ) : BaseResponse()

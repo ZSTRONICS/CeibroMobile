@@ -191,5 +191,6 @@
     <string name="suggested_users_groups_companies">Suggested users/groups/companies</string>
     <string name="groups">Groups</string>
     <string name="invitations_heading">Invitations</string>
+    <string name="email_invite_heading">Email invite</string>
 
 </resources>

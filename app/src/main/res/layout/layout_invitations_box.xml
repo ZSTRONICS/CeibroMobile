@@ -74,7 +74,7 @@
                 android:text="Kristo Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="14.5sp"
-                app:layout_constraintEnd_toStartOf="@+id/acceptBtn"
+                app:layout_constraintEnd_toStartOf="@+id/acceptInviteBtn"
                 app:layout_constraintStart_toEndOf="@+id/newInviteImgCard"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -102,11 +102,11 @@
                 android:layout_height="1dp"
                 android:background="@color/appLightGrey"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/cancelBtn"
+                app:layout_constraintEnd_toEndOf="@+id/rejectInviteBtn"
                 app:layout_constraintStart_toStartOf="@+id/newInviteImgCard" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/acceptBtn"
+                android:id="@+id/acceptInviteBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="31dp"
                 android:layout_marginEnd="11dp"
@@ -119,12 +119,12 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cancelBtn"
+                app:layout_constraintEnd_toStartOf="@+id/rejectInviteBtn"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <ImageView
-                android:id="@+id/cancelBtn"
+                android:id="@+id/rejectInviteBtn"
                 android:layout_width="31dp"
                 android:layout_height="31dp"
                 android:layout_marginEnd="12dp"
