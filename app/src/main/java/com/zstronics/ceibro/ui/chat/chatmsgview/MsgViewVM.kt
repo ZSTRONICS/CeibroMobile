@@ -178,7 +178,6 @@ class MsgViewVM @Inject constructor(
         adapter.appendMessage(messageRes) { lastPosition ->
             scrollToPosition?.invoke(lastPosition)
         }
-        addMessageToMutableMessageList(messageRes)
         hideQuoted()
         viewState.messageBoxBody.value = ""
         appendMessageInMessagesList(messageRes)
@@ -188,10 +187,6 @@ class MsgViewVM @Inject constructor(
         val chatMessages = _chatMessages.value
         chatMessages?.add(messageRes)
         _chatMessages.value = chatMessages
-    }
-
-    fun addMessageToMutableMessageList(messageRec: MessagesResponse.ChatMessage) {
-        _chatMessages.value?.add(messageRec)
     }
 
     fun hideQuoted() {

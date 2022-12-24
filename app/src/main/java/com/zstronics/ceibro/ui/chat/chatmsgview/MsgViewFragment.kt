@@ -320,8 +320,7 @@ class MsgViewFragment :
                         adapter.appendMessage(newMessage.data.messageData.message) { lastPosition ->
                             scrollToPosition(lastPosition)
                         }
-                        viewModel.addMessageToMutableMessageList(newMessage.data.messageData.message)
-
+                        viewModel.appendMessageInMessagesList(newMessage.data.messageData.message)
                         viewModel.readMessage(
                             messageId = newMessage.data.messageData.message.id,
                             roomId = newMessage.data.messageData.message.chat,
