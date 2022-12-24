@@ -25,8 +25,8 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
-import com.zstronics.ceibro.data.repos.chat.messages.socket.AllMessageSeenSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse
+import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.databinding.FragmentMsgViewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
@@ -306,30 +306,31 @@ class MsgViewFragment :
     }
 
     override fun call(vararg args: Any?) {
-        when {
-            args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
-                println("RECEIVE_MESSAGE")
-                val newMessage: SocketReceiveMessageResponse =
-                    Gson().fromJson(
-                        args[0].toString(),
-                        object : TypeToken<SocketReceiveMessageResponse>() {}.type
-                    )
-
-                if (newMessage.data.messageData.chat == viewModel.chatRoom?.id && newMessage.data.messageData.from != viewModel.userId) {
+        val socketEventTypeResponse: SocketEventTypeResponse = Gson().fromJson(
+            args[0].toString(),
+            object : TypeToken<SocketEventTypeResponse>() {}.type
+        )
+        when (socketEventTypeResponse.eventType) {
+            EventType.RECEIVE_MESSAGE.name -> {
+                val messageData = Gson().fromJson<SocketReceiveMessageResponse>(
+                    args[0].toString(),
+                    object : TypeToken<SocketReceiveMessageResponse>() {}.type
+                ).data.messageData
+                if (messageData.chat == viewModel.chatRoom?.id && messageData.from != viewModel.userId) {
                     viewModel.launch(Dispatcher.Main) {
-                        adapter.appendMessage(newMessage.data.messageData.message) { lastPosition ->
+                        adapter.appendMessage(messageData.message) { lastPosition ->
                             scrollToPosition(lastPosition)
                         }
-                        viewModel.appendMessageInMessagesList(newMessage.data.messageData.message)
+                        viewModel.appendMessageInMessagesList(messageData.message)
                         viewModel.readMessage(
-                            messageId = newMessage.data.messageData.message.id,
-                            roomId = newMessage.data.messageData.message.chat,
+                            messageId = messageData.message.id,
+                            roomId = messageData.message.chat,
                             eventType = EventType.MESSAGE_SEEN
                         )
                     }
                 }
             }
-            args[0].toString().contains(EventType.MESSAGE_SEEN.name) -> {
+            EventType.MESSAGE_SEEN.name -> {
                 println("MESSAGE_SEEN")
                 val messageSeen: MessageSeenSocketResponse =
                     Gson().fromJson(
@@ -338,7 +339,7 @@ class MsgViewFragment :
                     )
                 viewModel.updateOtherLastMessageSeen(messageSeen)
             }
-            args[0].toString().contains(EventType.ALL_MESSAGE_SEEN.name) -> {
+            EventType.ALL_MESSAGE_SEEN.name -> {
 //                val gson = Gson()
 //                val messageType = object : TypeToken<AllMessageSeenSocketResponse>() {}.type
 //                val message: AllMessageSeenSocketResponse =
