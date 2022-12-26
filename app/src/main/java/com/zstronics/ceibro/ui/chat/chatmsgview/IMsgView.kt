@@ -19,10 +19,11 @@ interface IMsgView {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun loadMessages(roomId: String)
+        fun loadMessages(fetchMoreMessages: Boolean)
         fun replyOrSendMessage(
             message: NewMessageRequest
         )
+
         fun composeAndSendMessage(
             message: String?,
             adapter: MessagesAdapter,

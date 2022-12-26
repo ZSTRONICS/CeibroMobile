@@ -39,7 +39,7 @@ class MsgViewVM @Inject constructor(
             companyName = user?.companyName ?: ""
         )
     private val _chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> =
-        MutableLiveData()
+        MutableLiveData(arrayListOf())
     val chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> = _chatMessages
     var chatRoom: ChatRoom? = null
 
@@ -53,21 +53,27 @@ class MsgViewVM @Inject constructor(
             if (chatRoom?.isGroupChat == true) {
                 project.value = chatRoom?.project
             }
-            chatRoom?.id?.let { loadMessages(it) }
+            loadMessages(false)
+            // Send ACK ALL_MESSAGE_READ
+            val roomId = chatRoom?.id ?: "0"
+            val readAllMessagesJson = readAllMessagesJson(roomId)
+            sendMessageStatus(readAllMessagesJson)
         }
     }
 
-    override fun loadMessages(roomId: String) {
-        val readAllMessagesJson = readAllMessagesJson(roomId)
-        sendMessageStatus(readAllMessagesJson)
+    override fun loadMessages(fetchMoreMessages: Boolean) {
+        val loadedMessagesCount: Int = if (fetchMoreMessages) chatMessages.value?.size ?: 0 else 0
+        val roomId = chatRoom?.id ?: "0"
         launch {
             loading(true)
-            when (val response = chatRepository.messages(roomId)) {
+            when (val response = chatRepository.messages(roomId, loadedMessagesCount)) {
 
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    _chatMessages.postValue(data.messages.toMutableList())
+                    val chatMessages = _chatMessages.value
+                    chatMessages?.addAll(data.messages.toMutableList())
+                    _chatMessages.postValue(chatMessages)
                 }
 
                 is ApiResponse.Error -> {

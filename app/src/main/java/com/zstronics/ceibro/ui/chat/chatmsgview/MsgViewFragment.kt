@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.yap.permissionx.PermissionX
@@ -121,7 +122,7 @@ class MsgViewFragment :
 
             viewModel.chatMessages.observe(viewLifecycleOwner) {
                 adapter.setList(it)
-                fastScrollToPosition(it.size - 1)
+                scrollToPosition(it.size - 1, true)
             }
             adapter.itemClickListener =
                 { _: View, position: Int, data: MessagesResponse.ChatMessage ->
@@ -141,7 +142,7 @@ class MsgViewFragment :
                     val quotedMessage = chatMessages?.find { it.id == data?.id }
                     if (quotedMessage != null) {
                         val index = chatMessages.indexOf(quotedMessage)
-                        fastScrollToPosition(index)
+                        scrollToPosition(index, true)
                         mViewDataBinding.messagesRV.postDelayed(Runnable {
                             val viewHolder =
                                 mViewDataBinding.messagesRV.findViewHolderForLayoutPosition(index)
@@ -182,10 +183,9 @@ class MsgViewFragment :
             })
             val itemTouchHelper = ItemTouchHelper(messageSwipeController)
             itemTouchHelper.attachToRecyclerView(mViewDataBinding.messagesRV)
+            setupMessageInput()
             SocketHandler.getSocket()
                 .on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
-
-            setupMessageInput()
         }
     }
 
@@ -226,17 +226,25 @@ class MsgViewFragment :
                     }, 100)
                 }
             }
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    when {
+                        !recyclerView.canScrollVertically(-1) && dy < 0 -> {
+                            //scrolled to TOP
+                            viewModel.loadMessages(true)
+                        }
+                    }
+                }
+            })
         }
     }
 
-    private fun scrollToPosition(position: Int) {
+    private fun scrollToPosition(position: Int, isFastScroll: Boolean = false) {
         if (position > 0)
-            mViewDataBinding.messagesRV.smoothScrollToPosition(position)
-    }
-
-    private fun fastScrollToPosition(position: Int) {
-        if (position > 0)
-            mViewDataBinding.messagesRV.scrollToPosition(position)
+            if (isFastScroll)
+                mViewDataBinding.messagesRV.scrollToPosition(position)
+            else
+                mViewDataBinding.messagesRV.smoothScrollToPosition(position)
     }
 
     private fun showQuotedMessage(message: MessagesResponse.ChatMessage) {
