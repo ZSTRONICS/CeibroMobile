@@ -22,6 +22,13 @@ interface ChatRepositoryService {
         @Query("limit") limit: Int
     ): Response<MessagesResponse>
 
+    @POST("chat/room/messages/{roomId}")
+    suspend fun messages(
+        @Path("roomId") roomId: String,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int
+    ): Response<MessagesResponse>
+
     @POST("chat/message/reply")
     suspend fun replyOrSendMessage(@Body message: NewMessageRequest): Response<NewMessageResponse>
 

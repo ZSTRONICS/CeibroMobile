@@ -14,4 +14,5 @@ class MsgViewState @Inject constructor() : BaseState(), IMsgView.State {
     override val messageBoxBody: MutableLiveData<String> = MutableLiveData("")
     override var quotedMessage: MutableLiveData<MessagesResponse.ChatMessage> = MutableLiveData()
     override val isQuotedMessage: MutableLiveData<Boolean> = MutableLiveData(false)
+    override val isLoadingMore: MutableLiveData<Boolean> = MutableLiveData(false)
 }

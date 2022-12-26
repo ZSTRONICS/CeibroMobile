@@ -30,6 +30,18 @@ class ChatRepository @Inject constructor(
             }
         )
 
+    override suspend fun fetchMoreMessages(
+        roomId: String,
+        limit: Int,
+        skip: Int
+    ): ApiResponse<MessagesResponse> =
+        executeSafely(
+            call =
+            {
+                service.messages(roomId, limit, skip)
+            }
+        )
+
     override suspend fun replyOrSendMessage(message: NewMessageRequest): ApiResponse<NewMessageResponse> =
         executeSafely(
             call =

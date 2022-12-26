@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.chat.chatmsgview
 
 import android.os.Bundle
+import androidx.appcompat.view.menu.ListMenuItemView
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -29,7 +30,9 @@ class MsgViewVM @Inject constructor(
 ) : HiltBaseViewModel<IMsgView.State>(), IMsgView.ViewModel {
     val user = sessionManager.getUser().value
     val userId = user?.id
-
+    var currentPositionWhenLoadingMore = -1
+    val MESSAGES_LIMIT = 10
+    var haveMoreMessages = true
     val sender: MessagesResponse.ChatMessage.Sender
         get() = MessagesResponse.ChatMessage.Sender(
             firstName = user?.firstName ?: "",
@@ -53,7 +56,7 @@ class MsgViewVM @Inject constructor(
             if (chatRoom?.isGroupChat == true) {
                 project.value = chatRoom?.project
             }
-            loadMessages(false)
+            loadMessages()
             // Send ACK ALL_MESSAGE_READ
             val roomId = chatRoom?.id ?: "0"
             val readAllMessagesJson = readAllMessagesJson(roomId)
@@ -61,19 +64,15 @@ class MsgViewVM @Inject constructor(
         }
     }
 
-    override fun loadMessages(fetchMoreMessages: Boolean) {
-        val loadedMessagesCount: Int = if (fetchMoreMessages) chatMessages.value?.size ?: 0 else 0
+    override fun loadMessages() {
         val roomId = chatRoom?.id ?: "0"
         launch {
             loading(true)
-            when (val response = chatRepository.messages(roomId, loadedMessagesCount)) {
-
+            when (val response = chatRepository.messages(roomId)) {
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    val chatMessages = _chatMessages.value
-                    chatMessages?.addAll(data.messages.toMutableList())
-                    _chatMessages.postValue(chatMessages)
+                    _chatMessages.postValue(data.messages.toMutableList())
                 }
 
                 is ApiResponse.Error -> {
@@ -82,6 +81,38 @@ class MsgViewVM @Inject constructor(
             }
         }
     }
+
+    override fun fetchMoreMessages() {
+        miniLoading(true)
+        val loadedMessagesCount: Int = chatMessages.value?.size ?: 0
+        currentPositionWhenLoadingMore = loadedMessagesCount
+        val roomId = chatRoom?.id ?: "0"
+        launch {
+            when (val response =
+                chatRepository.fetchMoreMessages(
+                    roomId = roomId,
+                    skip = loadedMessagesCount,
+                    limit = MESSAGES_LIMIT
+                )) {
+                is ApiResponse.Success -> {
+                    miniLoading(false)
+                    haveMoreMessages = response.data.messages.isNotEmpty()
+                    if (!haveMoreMessages)
+                        alert("No more messages")
+                    val chatMessages = _chatMessages.value
+                    chatMessages?.addAll(response.data.messages.toMutableList())
+                    _chatMessages.postValue(chatMessages?.sortedBy { it.createdAt }
+                        ?.toMutableList())
+                }
+
+                is ApiResponse.Error -> {
+                    miniLoading(false)
+                }
+            }
+        }
+    }
+
+    private fun miniLoading(loading: Boolean) = viewState.isLoadingMore.postValue(loading)
 
     private fun readAllMessagesJson(roomId: String): String {
         return Gson().toJson(
@@ -277,16 +308,18 @@ class MsgViewVM @Inject constructor(
     }
 
     fun updateOtherLastMessageSeen(messageSeen: MessageSeenSocketResponse) {
-
         if (messageSeen.data.roomId == chatRoom?.id &&
             (messageSeen.data.userId == userId).not()
         ) {
             // update last message
-
-            val chatMessages = _chatMessages.value
-            chatMessages?.findLast { it.sender.id == userId }?.readBy =
-                messageSeen.data.updatedMessage[0].readBy
-            _chatMessages.postValue(chatMessages)
+            val updatedMessage = messageSeen.data.updatedMessage
+            if (updatedMessage.isNotEmpty()) {
+                val firstMessage = updatedMessage[0]
+                val chatMessages = _chatMessages.value
+                chatMessages?.findLast { it.sender.id == userId }?.readBy =
+                    firstMessage.readBy
+                _chatMessages.postValue(chatMessages)
+            }
         }
     }
 }

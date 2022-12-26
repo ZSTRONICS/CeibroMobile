@@ -16,10 +16,12 @@ interface IMsgView {
         val messageBoxBody: MutableLiveData<String>
         var quotedMessage: MutableLiveData<MessagesResponse.ChatMessage>
         val isQuotedMessage: MutableLiveData<Boolean>
+        val isLoadingMore: MutableLiveData<Boolean>
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun loadMessages(fetchMoreMessages: Boolean)
+        fun loadMessages()
+        fun fetchMoreMessages()
         fun replyOrSendMessage(
             message: NewMessageRequest
         )
