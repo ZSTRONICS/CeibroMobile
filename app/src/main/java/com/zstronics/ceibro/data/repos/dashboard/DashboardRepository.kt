@@ -36,6 +36,13 @@ class DashboardRepository @Inject constructor(
                     service.acceptOrRejectInvitation(accepted, inviteId)
                 }
             )
+        override suspend fun acceptOrRejectAllInvitations(accepted: Boolean): ApiResponse<GenericResponse> =
+            executeSafely(
+                call =
+                {
+                    service.acceptOrRejectAllInvitations(accepted)
+                }
+            )
 
 
 }

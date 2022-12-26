@@ -20,4 +20,8 @@ interface DashboardRepositoryService {
         @Path("accepted") accepted: Boolean,
         @Path("inviteId") inviteId: String
     ): Response<GenericResponse>
+    @POST("users/invite/accept-all/{accepted}")
+    suspend fun acceptOrRejectAllInvitations(
+        @Path("accepted") accepted: Boolean
+    ): Response<GenericResponse>
 }

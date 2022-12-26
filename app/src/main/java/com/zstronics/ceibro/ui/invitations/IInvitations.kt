@@ -13,5 +13,6 @@ interface IInvitations {
         fun onInvite()
         fun sendInvite(email: String)
         fun acceptOrRejectInvitation(accepted: Boolean, inviteId: String, position: Int)
+        fun acceptOrRejectAllInvitations(accepted: Boolean)
     }
 }

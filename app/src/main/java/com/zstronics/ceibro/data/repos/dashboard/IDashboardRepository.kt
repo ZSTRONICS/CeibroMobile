@@ -14,4 +14,5 @@ interface IDashboardRepository {
     suspend fun getAllInvites(): ApiResponse<MyInvitations>
     suspend fun sendInvite(sendInviteRequest: SendInviteRequest): ApiResponse<GenericResponse>
     suspend fun acceptOrRejectInvitation(accepted: Boolean, inviteId: String): ApiResponse<GenericResponse>
+    suspend fun acceptOrRejectAllInvitations(accepted: Boolean): ApiResponse<GenericResponse>
 }

@@ -84,15 +84,9 @@ class AllInvitationsAdapter @Inject constructor(val sessionManager: SessionManag
 
 
             binding.acceptInviteBtn.setOnClickListener {
-//                val userId: String? = item.pinnedBy.find { userId -> userId == user?.id }
-//                if (userId != null) item.pinnedBy.remove(userId) else item.pinnedBy.add(user?.id.toString())
-//                notifyItemChanged(list.indexOf(item))
                 childItemClickListener?.invoke(it, adapterPosition, item)
             }
             binding.rejectInviteBtn.setOnClickListener {
-//                val userId: String? = item.pinnedBy.find { userId -> userId == user?.id }
-//                if (userId != null) item.pinnedBy.remove(userId) else item.pinnedBy.add(user?.id.toString())
-//                notifyItemChanged(list.indexOf(item))
                 childItemClickListener?.invoke(it, adapterPosition, item)
             }
 

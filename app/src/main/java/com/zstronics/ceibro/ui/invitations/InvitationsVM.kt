@@ -92,4 +92,22 @@ class InvitationsVM @Inject constructor(
         }
     }
 
+    override fun acceptOrRejectAllInvitations(accepted: Boolean) {
+        loading(true)
+        launch {
+            when (val response = dashboardRepository.acceptOrRejectAllInvitations(accepted)) {
+                is ApiResponse.Success -> {
+                    loading(false, response.data.message)
+                    val allInvitesTemp = _allInvites.value
+                    allInvitesTemp?.clear()
+                    _allInvites.value = allInvitesTemp
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
 }

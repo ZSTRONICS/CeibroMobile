@@ -38,6 +38,16 @@ class InvitationsFragment :
                     shortToastNow("Invalid Email Address")
                 }
             }
+            R.id.acceptAllBtn -> {
+                viewModel.acceptOrRejectAllInvitations(
+                    accepted = true
+                )
+            }
+            R.id.declineAllBtn -> {
+                viewModel.acceptOrRejectAllInvitations(
+                    accepted = false
+                )
+            }
         }
     }
 
@@ -65,7 +75,6 @@ class InvitationsFragment :
         }
         adapter.childItemClickListener = { view: View, position: Int, data: MyInvitationsItem ->
             if (view.id == R.id.acceptInviteBtn) {
-//                shortToastNow("acceptInviteBtn")
                 viewModel.acceptOrRejectInvitation(
                     accepted = true,
                     inviteId = data.id,
@@ -73,7 +82,6 @@ class InvitationsFragment :
                 )
             }
             else if (view.id == R.id.rejectInviteBtn) {
-//                shortToastNow("rejectInviteBtn")
                 viewModel.acceptOrRejectInvitation(
                     accepted = false,
                     inviteId = data.id,
