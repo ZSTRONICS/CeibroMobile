@@ -359,10 +359,12 @@ class MsgViewFragment :
                 viewModel.updateOtherLastMessageSeen(messageSeen)
             }
             EventType.ALL_MESSAGE_SEEN.name -> {
-//                val gson = Gson()
-//                val messageType = object : TypeToken<AllMessageSeenSocketResponse>() {}.type
-//                val message: AllMessageSeenSocketResponse =
-//                    gson.fromJson(args[0].toString(), messageType)
+                val messageSeen: MessageSeenSocketResponse =
+                    Gson().fromJson(
+                        args[0].toString(),
+                        object : TypeToken<MessageSeenSocketResponse>() {}.type
+                    )
+                viewModel.updateOtherLastMessageSeen(messageSeen)
             }
         }
     }

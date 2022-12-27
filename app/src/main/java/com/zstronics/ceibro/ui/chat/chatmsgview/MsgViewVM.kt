@@ -314,11 +314,11 @@ class MsgViewVM @Inject constructor(
             // update last message
             val updatedMessage = messageSeen.data.updatedMessage
             if (updatedMessage.isNotEmpty()) {
-                val firstMessage = updatedMessage[0]
-                val chatMessages = _chatMessages.value
-                chatMessages?.findLast { it.sender.id == userId }?.readBy =
-                    firstMessage.readBy
-                _chatMessages.postValue(chatMessages)
+                for (item in updatedMessage) {
+                    val chatMessages = _chatMessages.value
+                    chatMessages?.findLast { it.id == item.id }?.readBy = item.readBy        //searching message id and then putting readBy to that message readBy
+                    _chatMessages.postValue(chatMessages)
+                }
             }
         }
     }
