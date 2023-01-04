@@ -2,7 +2,7 @@ package com.zstronics.ceibro.ui.tasks
 
 import com.zstronics.ceibro.base.interfaces.IBase
 
-interface ITasks {
+interface IMainTasks {
     interface State : IBase.State {
     }
 

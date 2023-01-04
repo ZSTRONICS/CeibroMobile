@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -16,15 +12,13 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
-import com.zstronics.ceibro.data.repos.chat.messages.socket.AllMessageSeenSocketResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.chat.ChatFragment
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.home.HomeFragment
 import com.zstronics.ceibro.ui.projects.ProjectsFragment
 import com.zstronics.ceibro.ui.socket.SocketHandler
-import com.zstronics.ceibro.ui.tasks.TasksFragment
+import com.zstronics.ceibro.ui.tasks.MainTasksFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -87,7 +81,7 @@ class DashboardFragment :
         val selectedFragment: Fragment = when (item.itemId) {
             R.id.nav_home -> HomeFragment()
             R.id.nav_chat -> ChatFragment()
-            R.id.nav_tasks -> TasksFragment()
+            R.id.nav_tasks -> MainTasksFragment()
             R.id.nav_projects -> ProjectsFragment()
             else -> WorksFragment()
         }

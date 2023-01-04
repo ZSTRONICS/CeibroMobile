@@ -192,5 +192,11 @@
     <string name="groups">Groups</string>
     <string name="invitations_heading">Invitations</string>
     <string name="email_invite_heading">Email invite</string>
+    <string name="tasks_heading">Tasks</string>
+    <string name="subtask_heading">Subtask</string>
+    <string name="all_heading">All</string>
+    <string name="active_heading">Active</string>
+    <string name="assigned_to_heading">Assigned to</string>
+    <string name="task_due_date_heading">Task due date</string>
 
 </resources>

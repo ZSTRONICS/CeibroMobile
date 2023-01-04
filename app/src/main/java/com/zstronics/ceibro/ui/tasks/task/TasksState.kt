@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks
+package com.zstronics.ceibro.ui.tasks.task
 
 import com.zstronics.ceibro.base.state.BaseState
 import javax.inject.Inject
