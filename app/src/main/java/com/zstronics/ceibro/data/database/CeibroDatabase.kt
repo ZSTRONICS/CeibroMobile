@@ -11,7 +11,7 @@ import com.zstronics.ceibro.data.database.models.tasks.ProjectTask
 
 @Database(
     entities = [ProjectTask::class, AdvanceOptions::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(ListConverters::class, AdvanceOptionsTypeConverter::class)

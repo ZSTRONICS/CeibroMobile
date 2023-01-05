@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zstronics.ceibro.data.base.RetroNetwork
 import com.zstronics.ceibro.data.database.CeibroDatabase
+import com.zstronics.ceibro.data.remote.TaskRetroService
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.data.repos.auth.AuthRepositoryService
@@ -52,6 +53,10 @@ class NetworkModule {
 
     @Provides
     fun provideProjectTaskDao(database: CeibroDatabase) = database.getTasksDao()
+
+    @Provides
+    fun providesTaskRepoService(): TaskRetroService =
+        RetroNetwork().createService(TaskRetroService::class.java)
 
     @Provides
     @Singleton

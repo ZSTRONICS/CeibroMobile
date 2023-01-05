@@ -2,20 +2,22 @@ package com.zstronics.ceibro.data.database.models.tasks
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.database.TableNames
+import com.zstronics.ceibro.data.repos.task.models.TasksResponse
 
 @Entity(tableName = TableNames.AdvanceOptions)
 data class AdvanceOptions(
     @PrimaryKey
     val id: Int,
-    val confirmNeeded: List<String>,
-    val viewer: List<String>,
-    val categories: List<String>,
-    val manPower: Int,
-    val location: String,
-    val priority: String,
-    val timeLog: Boolean,
-    val checkList: List<String>,
-    val isAdditionalWork: Boolean,
-    val startDate: String
+    @SerializedName("categories") val categories: List<String>,
+    @SerializedName("checkList") val checkList: List<String>,
+    @SerializedName("confirmNeeded") val confirmNeeded: List<String>,
+    @SerializedName("isAdditionalWork") val isAdditionalWork: Boolean,
+    @SerializedName("location") val location: String,
+    @SerializedName("manPower") val manPower: Int,
+    @SerializedName("priority") val priority: String,
+    @SerializedName("startDate") val startDate: String,
+    @SerializedName("timeLog") val timeLog: Boolean,
+    @SerializedName("viewer") val viewer: List<String>
 )

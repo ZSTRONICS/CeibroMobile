@@ -13,6 +13,8 @@ import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.ProjectRepository
+import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -39,4 +41,7 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun provideDashboardRepository(dashboardRepository: DashboardRepository): IDashboardRepository
+    @Binds
+    @Singleton
+    abstract fun provideTaskRepository(taskRepository: TaskRepository): ITaskRepository
 }

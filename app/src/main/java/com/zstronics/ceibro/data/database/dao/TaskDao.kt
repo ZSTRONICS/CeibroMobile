@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.data.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -13,4 +12,7 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks")
     suspend fun getTasks(): List<ProjectTask>
+
+    @Insert
+    suspend fun insertAllTasks(list: List<ProjectTask>)
 }
