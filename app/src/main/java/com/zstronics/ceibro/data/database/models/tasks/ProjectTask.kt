@@ -21,9 +21,18 @@ data class ProjectTask(
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
     @SerializedName("project") val project: String,
     @SerializedName("state") val state: String,
-    @SerializedName("subTaskStatusCount") val subTaskStatusCount: List<String>,
+    @SerializedName("subTaskStatusCount") val subTaskStatusCount: List<ProjectSubTask>,
     @SerializedName("title") val title: String,
     @SerializedName("unSeenSubTaskCommentCount") val unSeenSubTaskCommentCount: Int,
     @SerializedName("updatedAt") val updatedAt: String,
     @SerializedName("__v") val v: Int
+)
+
+@Entity(tableName = TableNames.SubTasks)
+data class ProjectSubTask(
+    @PrimaryKey
+    val id: Int,
+    @SerializedName("state") val state: String,
+    @SerializedName("count") val count: String,
+    @SerializedName("subTasks") val subTasks: List<String>,
 )
