@@ -3,21 +3,25 @@ package com.zstronics.ceibro.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.zstronics.ceibro.data.database.converters.AdvanceOptionsTypeConverter
-import com.zstronics.ceibro.data.database.converters.ListConverters
-import com.zstronics.ceibro.data.database.converters.ProjectSubTaskListTypeConverter
+import com.zstronics.ceibro.data.database.converters.*
 import com.zstronics.ceibro.data.database.dao.TaskDao
 import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
-import com.zstronics.ceibro.data.database.models.tasks.ProjectTask
+import com.zstronics.ceibro.data.database.models.tasks.ProjectSubTaskStatus
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 
 @Database(
-    entities = [ProjectTask::class, AdvanceOptions::class],
-    version = 2,
+    entities = [CeibroTask::class, AdvanceOptions::class, ProjectSubTaskStatus::class, TaskMember::class],
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(
-    ListConverters::class, AdvanceOptionsTypeConverter::class,
-    ProjectSubTaskListTypeConverter::class
+    AdvanceOptionsTypeConverter::class,
+    ListConverters::class,
+    ProjectSubTaskListTypeConverter::class,
+    TaskMemberListTypeConverter::class,
+    TaskMemberTypeConverter::class,
+    TaskProjectTypeConverter::class
 )
 abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getTasksDao(): TaskDao

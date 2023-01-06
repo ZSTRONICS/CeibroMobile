@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,14 +21,15 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileVM @Inject constructor(
     override val viewState: ProfileState,
-    val sessionManager: SessionManager
+    val sessionManager: SessionManager,
+    private val taskRepository: TaskRepository
 ) : HiltBaseViewModel<IProfile.State>(), IProfile.ViewModel {
 
     init {
         sessionManager.setUser()
     }
 
-    override fun showMenuPopup(v : View){
+    override fun showMenuPopup(v: View) {
         val popUpWindowObj = popUpMenu(v)
         popUpWindowObj.showAsDropDown(v.findViewById(R.id.profileMenuBtn), 0, 35)
     }
@@ -71,6 +73,9 @@ class ProfileVM @Inject constructor(
 
 
     override fun endUserSession() {
+        launch {
+            taskRepository.eraseTaskTable()
+        }
         sessionManager.endUserSession()
     }
 }

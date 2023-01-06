@@ -1,12 +1,14 @@
 package com.zstronics.ceibro.ui.tasks.task
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentTasksBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TasksFragment :
@@ -25,5 +27,16 @@ class TasksFragment :
 
     private fun navigateToNewTaskCreation() {
         navigate(R.id.newTaskFragment)
+    }
+
+    @Inject
+    lateinit var adapter: TaskAdapter
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.tasks.observe(viewLifecycleOwner) {
+            adapter.setList(it)
+        }
+        mViewDataBinding.taskRV.adapter = adapter
     }
 }

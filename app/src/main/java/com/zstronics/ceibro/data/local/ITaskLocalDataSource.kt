@@ -1,8 +1,9 @@
 package com.zstronics.ceibro.data.local
 
-import com.zstronics.ceibro.data.database.models.tasks.ProjectTask
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
 interface ITaskLocalDataSource {
-    suspend fun tasks(): List<ProjectTask>
-    suspend fun insertAllTasks(list: List<ProjectTask>)
+    suspend fun tasks(): List<CeibroTask>
+    suspend fun insertAllTasks(list: List<CeibroTask>)
+    suspend fun eraseTaskTable()
 }
