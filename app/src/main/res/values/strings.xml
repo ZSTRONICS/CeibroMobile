@@ -198,5 +198,18 @@
     <string name="active_heading">Active</string>
     <string name="assigned_to_heading">Assigned to</string>
     <string name="task_due_date_heading">Task due date</string>
+    <string name="new_task_heading">New Task</string>
+    <string name="multi_task_switchtext">Multi-task</string>
+    <string name="task_title_heading">Task title</string>
+    <string name="assign_to_heading">Assign to</string>
+    <string name="confirm_needed_heading">Confirm needed</string>
+    <string name="viewer_heading">Viewer</string>
+    <string name="start_date_heading">Start date</string>
+    <string name="man_power_heading">Man Power</string>
+    <string name="category_heading">Category</string>
+    <string name="priority_heading">Priority</string>
+    <string name="additional_work_heading">Additional work</string>
+    <string name="time_logging_heading">Time logging</string>
+    <string name="advanced_options_heading">Advanced options</string>
 
 </resources>

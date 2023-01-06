@@ -18,5 +18,12 @@ class TasksFragment :
     override val layoutResId: Int = R.layout.fragment_tasks
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
+        when (id) {
+            R.id.createTaskBtn -> navigateToNewTaskCreation()
+        }
+    }
+
+    private fun navigateToNewTaskCreation() {
+        navigate(R.id.newTaskFragment)
     }
 }

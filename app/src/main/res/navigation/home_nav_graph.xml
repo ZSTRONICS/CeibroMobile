@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_homeFragment_to_projectsFragment"
             app:destination="@id/projectsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_mainTasksFragment"
+            app:destination="@id/mainTasksFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -133,4 +136,35 @@
         android:name="com.zstronics.ceibro.ui.invitations.InvitationsFragment"
         android:label="InvitationsFragment"
         tools:layout="@layout/fragment_invitations" />
+    <fragment
+        android:id="@+id/mainTasksFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.MainTasksFragment"
+        android:label="MainTasksFragment"
+        tools:layout="@layout/fragment_main_tasks" >
+        <action
+            android:id="@+id/action_mainTasksFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment" />
+        <action
+            android:id="@+id/action_mainTasksFragment_to_subTaskFragment"
+            app:destination="@id/subTaskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.task.TasksFragment"
+        android:label="TasksFragment"
+        tools:layout="@layout/fragment_tasks" >
+        <action
+            android:id="@+id/action_tasksFragment_to_newTaskFragment"
+            app:destination="@id/newTaskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/subTaskFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment"
+        android:label="SubTaskFragment"
+        tools:layout="@layout/fragment_sub_task" />
+    <fragment
+        android:id="@+id/newTaskFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.newtask.NewTaskFragment"
+        android:label="NewTaskFragment"
+        tools:layout="@layout/fragment_new_task" />
 </navigation>

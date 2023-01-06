@@ -1,0 +1,83 @@
+package com.zstronics.ceibro.ui.tasks.newtask
+
+import android.app.DatePickerDialog
+import android.os.Bundle
+import android.text.InputType
+import android.view.View
+import androidx.fragment.app.viewModels
+import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
+import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.*
+
+@AndroidEntryPoint
+class NewTaskFragment :
+    BaseNavViewModelFragment<FragmentNewTaskBinding, INewTask.State, NewTaskVM>() {
+
+    override val bindingVariableId = BR.viewModel
+    override val bindingViewStateVariableId = BR.viewState
+    override val viewModel: NewTaskVM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_new_task
+    override fun toolBarVisibility(): Boolean = false
+    override fun onClick(id: Int) {
+        when (id) {
+            R.id.closeBtn -> navigateBack()
+            R.id.newTaskDueDateText -> {
+                val datePicker =
+                    DatePickerDialog(
+                        requireContext(),
+                        dateSetListener,
+                        // set DatePickerDialog to point to today's date when it loads up
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    )
+                datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
+                datePicker.show()
+            }
+            R.id.newTaskAdvanceOptionBtn -> {
+                if (mViewDataBinding.newTaskAdvanceOptionLayout.visibility == View.GONE) {
+                    mViewDataBinding.newTaskAdvanceOptionLayout.visibility = View.VISIBLE
+                    mViewDataBinding.newTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_down)
+                }
+                else {
+                    mViewDataBinding.newTaskAdvanceOptionLayout.visibility = View.GONE
+                    mViewDataBinding.newTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_next)
+                }
+
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mViewDataBinding.newTaskDueDateText.inputType = InputType.TYPE_NULL
+        mViewDataBinding.newTaskDueDateText.keyListener = null
+    }
+
+    var cal: Calendar = Calendar.getInstance()
+
+    private val dateSetListener =
+        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, monthOfYear)
+            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            updateDateInView()
+        }
+
+    private fun updateDateInView() {
+        val myFormat = "MM/dd/yyyy"
+        val sdf = SimpleDateFormat(myFormat, Locale.US)
+
+        val formatToSend = "yyyy-MM-dd"
+        val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
+
+        viewState.dueDate = sdf1.format(cal.time)
+
+        mViewDataBinding.newTaskDueDateText.setText(sdf.format(cal.time))
+    }
+}
