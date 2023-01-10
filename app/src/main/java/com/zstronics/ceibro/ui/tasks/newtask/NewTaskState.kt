@@ -5,4 +5,5 @@ import javax.inject.Inject
 
 class NewTaskState @Inject constructor() : BaseState(), INewTask.State {
     override var dueDate: String = ""
+    override var startDate: String = ""
 }

@@ -30,7 +30,20 @@ class NewTaskFragment :
                 val datePicker =
                     DatePickerDialog(
                         requireContext(),
-                        dateSetListener,
+                        dueDateSetListener,
+                        // set DatePickerDialog to point to today's date when it loads up
+                        cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH),
+                        cal.get(Calendar.DAY_OF_MONTH)
+                    )
+                datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
+                datePicker.show()
+            }
+            R.id.newTaskStartDateText -> {
+                val datePicker =
+                    DatePickerDialog(
+                        requireContext(),
+                        startDateSetListener,
                         // set DatePickerDialog to point to today's date when it loads up
                         cal.get(Calendar.YEAR),
                         cal.get(Calendar.MONTH),
@@ -55,21 +68,28 @@ class NewTaskFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewDataBinding.newTaskDueDateText.inputType = InputType.TYPE_NULL
-        mViewDataBinding.newTaskDueDateText.keyListener = null
+//        mViewDataBinding.newTaskDueDateText.inputType = InputType.TYPE_NULL
+//        mViewDataBinding.newTaskDueDateText.keyListener = null
     }
 
     var cal: Calendar = Calendar.getInstance()
 
-    private val dateSetListener =
+    private val dueDateSetListener =
         DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            updateDateInView()
+            updateDueDateInView()
+        }
+    private val startDateSetListener =
+        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, monthOfYear)
+            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            updateStartDateInView()
         }
 
-    private fun updateDateInView() {
+    private fun updateDueDateInView() {
         val myFormat = "MM/dd/yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
 
@@ -79,5 +99,16 @@ class NewTaskFragment :
         viewState.dueDate = sdf1.format(cal.time)
 
         mViewDataBinding.newTaskDueDateText.setText(sdf.format(cal.time))
+    }
+    private fun updateStartDateInView() {
+        val myFormat = "MM/dd/yyyy"
+        val sdf = SimpleDateFormat(myFormat, Locale.US)
+
+        val formatToSend = "yyyy-MM-dd"
+        val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
+
+        viewState.startDate = sdf1.format(cal.time)
+
+        mViewDataBinding.newTaskStartDateText.setText(sdf.format(cal.time))
     }
 }
