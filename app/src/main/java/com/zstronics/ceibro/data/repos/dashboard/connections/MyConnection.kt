@@ -7,7 +7,7 @@ import com.zstronics.ceibro.data.base.BaseResponse
 data class MyConnection(
     @SerializedName("from")
     val from: From,
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String,
     @SerializedName("sentByMe")
     val sentByMe: Boolean,

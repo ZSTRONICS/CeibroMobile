@@ -37,7 +37,7 @@ data class AllProjectsResponse(
             val dueDate: String,
             @SerializedName("extraStatus")
             val extraStatus: List<String>,
-            @SerializedName("id")
+            @SerializedName("_id")
             val id: String,
             @SerializedName("isDefault")
             val isDefault: Boolean,
@@ -71,7 +71,7 @@ data class AllProjectsResponse(
                 val email: String,
                 @SerializedName("firstName")
                 val firstName: String,
-                @SerializedName("id")
+                @SerializedName("_id")
                 val id: String,
                 @SerializedName("isEmailVerified")
                 val isEmailVerified: Boolean,

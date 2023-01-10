@@ -3,7 +3,7 @@ package com.zstronics.ceibro.data.repos.chat.questionarie
 import com.google.gson.annotations.SerializedName
 
 data class Question(
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: Int? = 0,
     @SerializedName("type")
     var questionType: String = "multiple",

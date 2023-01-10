@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class Project(
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String,
     @SerializedName("title")
     val title: String

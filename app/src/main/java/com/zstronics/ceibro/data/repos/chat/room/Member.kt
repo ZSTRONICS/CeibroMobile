@@ -14,7 +14,7 @@ data class Member(
     val companyName: String,
     @SerializedName("firstName")
     val firstName: String,
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String,
     @SerializedName("profilePic")
     val profilePic: String,

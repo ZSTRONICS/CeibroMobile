@@ -44,7 +44,7 @@ data class TaskMember(
     val TaskMemberId: Int,
     @SerializedName("firstName") val firstName: String,
     @SerializedName("surName") val surName: String,
-    @SerializedName("id") val id: String,
+    @SerializedName("_id") val id: String,
 )
 
 @Entity(tableName = TableNames.TaskMember)
@@ -52,5 +52,5 @@ data class TaskProject(
     @PrimaryKey(autoGenerate = true)
     val TaskProjectId: Int,
     @SerializedName("title") val title: String,
-    @SerializedName("id") val id: String,
+    @SerializedName("_id") val id: String,
 )

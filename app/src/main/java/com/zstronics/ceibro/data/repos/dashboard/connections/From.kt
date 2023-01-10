@@ -19,7 +19,7 @@ data class From(
     val email: String,
     @SerializedName("firstName")
     val firstName: String,
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String,
     @SerializedName("isEmailVerified")
     val isEmailVerified: Boolean,

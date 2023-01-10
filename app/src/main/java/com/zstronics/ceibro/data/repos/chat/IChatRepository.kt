@@ -8,7 +8,7 @@ import com.zstronics.ceibro.data.repos.chat.room.new_chat.IndividualChatResponse
 
 interface IChatRepository {
     suspend fun chat(type: String, favorite: Boolean): ApiResponse<ChatRoomsResponse>
-    suspend fun messages(roomId: String, limit: Int = 21): ApiResponse<MessagesResponse>
+    suspend fun messages(roomId: String, limit: Int = 20): ApiResponse<MessagesResponse>
     suspend fun replyOrSendMessage(message: NewMessageRequest): ApiResponse<NewMessageResponse>
     suspend fun addChatRoomToFav(roomId: String): ApiResponse<ChatRoomAddToFavResponse>
     suspend fun postQuestion(questionRequest: QuestionRequest): ApiResponse<NewMessageResponse>
@@ -18,6 +18,6 @@ interface IChatRepository {
     suspend fun fetchMoreMessages(
         roomId: String,
         skip: Int,
-        limit: Int = 20
+        limit: Int
     ): ApiResponse<MessagesResponse>
 }

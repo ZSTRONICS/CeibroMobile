@@ -38,7 +38,7 @@ class ChatRepository @Inject constructor(
         executeSafely(
             call =
             {
-                service.messages(roomId, limit, skip)
+                service.messages(roomId, skip, limit )
             }
         )
 

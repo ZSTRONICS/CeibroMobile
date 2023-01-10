@@ -5,34 +5,42 @@ import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 
 data class From(
+    @SerializedName("companyLocation")
+    val companyLocation: String,
+    @SerializedName("companyName")
+    val companyName: String,
+    @SerializedName("companyPhone")
+    val companyPhone: String,
+    @SerializedName("companyVat")
+    val companyVat: String,
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("currentlyRepresenting")
+    val currentlyRepresenting: Boolean,
     @SerializedName("email")
     val email: String,
     @SerializedName("firstName")
     val firstName: String,
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String,
-    @SerializedName("isEmailVerified")
-    val isEmailVerified: Boolean,
     @SerializedName("isOnline")
     val isOnline: Boolean,
     @SerializedName("mutedChat")
-    val mutedChat: List<String>,
+    val mutedChat: List<Any>,
+    @SerializedName("phone")
+    val phone: String,
     @SerializedName("pinnedChat")
-    val pinnedChat: List<String>,
+    val pinnedChat: List<Any>,
     @SerializedName("pinnedMessages")
-    val pinnedMessages: List<String>,
+    val pinnedMessages: List<Any>,
+    @SerializedName("profilePic")
+    val profilePic: String,
     @SerializedName("role")
     val role: String,
     @SerializedName("surName")
     val surName: String,
-    @SerializedName("companyName")
-    val companyName: String,
-    @SerializedName("companyLocation")
-    val companyLocation: String,
-    @SerializedName("companyPhone")
-    val companyPhone: String,
+    @SerializedName("updatedAt")
+    val updatedAt: String,
     @SerializedName("workEmail")
-    val workEmail: String,
-    @SerializedName("profilePic")
-    var profilePic: String,
+    val workEmail: String
 ) : BaseResponse()

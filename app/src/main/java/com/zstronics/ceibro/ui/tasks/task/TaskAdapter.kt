@@ -79,11 +79,15 @@ class TaskAdapter @Inject constructor() :
                     DateUtils.SERVER_DATE_FULL_FORMAT,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
+
                 if (item.assignedTo.isNotEmpty()) {
                     taskAssignToName.text = if (item.assignedTo.size > 1)
                         "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName} + ${item.assignedTo.size - 1}"
                     else
                         "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName}"
+                }
+                else {
+                    taskAssignToName.text = "No user assigned"
                 }
 
                 taskDueDateText.text = DateUtils.reformatStringDate(
@@ -96,7 +100,7 @@ class TaskAdapter @Inject constructor() :
                 taskCommentCountText.text = item.unSeenSubTaskCommentCount.toString()
 
                 taskProjectName.text = item.project.title
-                taskSubTaskTotalCountLayout.visibility =
+                taskSubTasksRV.visibility =
                     if (item.totalSubTaskCount > 0)
                         View.VISIBLE
                     else

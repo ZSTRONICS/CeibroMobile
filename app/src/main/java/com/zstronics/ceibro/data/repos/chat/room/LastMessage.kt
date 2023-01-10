@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class LastMessage(
-    @SerializedName("id")
+    @SerializedName("_id")
     val id: String,
     @SerializedName("message")
     val message: String

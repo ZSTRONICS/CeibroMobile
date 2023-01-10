@@ -6,5 +6,5 @@ import com.zstronics.ceibro.data.base.BaseResponse
 
 data class MyInvitations(
     @SerializedName("invites")
-    var invites: ArrayList<MyInvitationsItem>
+    val invites: List<MyInvitationsItem>
 ) : BaseResponse()
