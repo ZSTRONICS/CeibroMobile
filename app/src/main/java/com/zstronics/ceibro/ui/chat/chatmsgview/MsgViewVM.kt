@@ -83,6 +83,7 @@ class MsgViewVM @Inject constructor(
     }
 
     override fun fetchMoreMessages() {
+        //bot message handling here
         miniLoading(true)
         val loadedMessagesCount: Int = chatMessages.value?.size ?: 0
         currentPositionWhenLoadingMore = loadedMessagesCount
@@ -99,10 +100,11 @@ class MsgViewVM @Inject constructor(
                     haveMoreMessages = response.data.messages.isNotEmpty()
                     if (!haveMoreMessages)
                         alert("No more messages")
-                    val chatMessages = _chatMessages.value
-                    chatMessages?.addAll(response.data.messages.toMutableList())
-                    _chatMessages.postValue(chatMessages?.sortedBy { it.createdAt }
-                        ?.toMutableList())
+
+                    val chatMessages = response.data.messages.toMutableList()
+                    currentPositionWhenLoadingMore = chatMessages.size
+                    _chatMessages.value?.let { chatMessages.addAll(it) }
+                    _chatMessages.postValue(chatMessages)
                 }
 
                 is ApiResponse.Error -> {

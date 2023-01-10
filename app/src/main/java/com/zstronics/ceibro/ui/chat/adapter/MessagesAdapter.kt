@@ -9,6 +9,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.databinding.LayoutItemMessageBotBinding
 import com.zstronics.ceibro.databinding.LayoutItemMessageReceiveBinding
 import com.zstronics.ceibro.databinding.LayoutItemMessageSenderBinding
 import com.zstronics.ceibro.ui.enums.MessageType
@@ -38,9 +39,15 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
                 )
             )
 
-        } else {
+        } else if (viewType == OTHER_MESSAGE) {
             OtherMessagesViewHolder(
                 LayoutItemMessageReceiveBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
+            )
+        } else {
+            BotMessagesViewHolder(
+                LayoutItemMessageBotBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
@@ -50,17 +57,25 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MyMessagesViewHolder) holder.bind(list[position])
         else if (holder is OtherMessagesViewHolder) holder.bind(list[position])
+        else if (holder is BotMessagesViewHolder) holder.bind(list[position])
     }
 
     private val MY_MESSAGE = 1
     private val OTHER_MESSAGE = 2
+    private val BOT_MESSAGE = 3
 
     override fun getItemViewType(position: Int): Int {
-        return if (list[position].sender.id == sessionManager.getUser().value?.id) {
-            MY_MESSAGE
-        } else {
-            OTHER_MESSAGE
+        return if (list[position].type == "start-bot") {
+            BOT_MESSAGE
         }
+        else {
+            if (list[position].sender.id == sessionManager.getUser().value?.id) {
+                MY_MESSAGE
+            } else {
+                OTHER_MESSAGE
+            }
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -257,6 +272,33 @@ class MessagesAdapter @Inject constructor(val sessionManager: SessionManager) :
             }
         }
     }
+
+
+    inner class BotMessagesViewHolder(private val binding: LayoutItemMessageBotBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: MessagesResponse.ChatMessage) {
+            binding.message = item
+
+            val timeString = item.createdAt?.let {
+                DateUtils.getStringTimeSpan(
+                    it,
+                    DateUtils.SERVER_DATE_FULL_FORMAT
+                )
+            }
+            if (timeString != null) {
+                if (timeString == "0 minutes ago") {
+                    binding.botText.text = "few seconds ago"
+                } else {
+                    binding.botText.text = timeString
+                }
+            } else {
+                binding.botText.text = "Unknown time"
+            }
+        }
+    }
+
+
 }
 //              binding.senderMsgTime.text = DateUtils.reformatStringDate(
 //                item.createdAt, DateUtils.SERVER_DATE_FULL_FORMAT, DateUtils.FORMAT_TIME_12H

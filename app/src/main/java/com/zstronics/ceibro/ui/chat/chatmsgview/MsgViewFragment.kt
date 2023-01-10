@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken
 import com.yap.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
@@ -70,21 +71,21 @@ class MsgViewFragment :
             R.id.cancelQuoted -> {
                 viewModel.hideQuoted()
             }
-            R.id.btPickFile -> checkPermission(
-                immutableListOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                )
-            ) {
-                chooseFile(
-                    arrayOf(
-                        "image/png",
-                        "image/jpg",
-                        "image/jpeg",
-                        "image/*"
-                    )
-                )
-            }
-            R.id.questionLL -> navigateToQuestionarieNavGraph()
+//            R.id.btPickFile -> checkPermission(
+//                immutableListOf(
+//                    Manifest.permission.READ_EXTERNAL_STORAGE,
+//                )
+//            ) {
+//                chooseFile(
+//                    arrayOf(
+//                        "image/png",
+//                        "image/jpg",
+//                        "image/jpeg",
+//                        "image/*"
+//                    )
+//                )
+//            }
+//            R.id.questionLL -> navigateToQuestionarieNavGraph()
         }
     }
 
@@ -130,7 +131,7 @@ class MsgViewFragment :
                     3 is the number of messages to scroll down till.
                  */
                 val position =
-                    if (currentPositionWhenLoadingMore > 0) viewModel.MESSAGES_LIMIT + 3 else it.size - 1
+                    if (currentPositionWhenLoadingMore >= 0) currentPositionWhenLoadingMore + 2 else it.size - 1
                 if (position < it.size)
                     scrollToPosition(position, true)
             }
@@ -241,8 +242,9 @@ class MsgViewFragment :
                     when {
                         !recyclerView.canScrollVertically(-1) && dy < 0 -> {
                             //scrolled to TOP
-                            if (viewModel.haveMoreMessages)
+                            if ((viewModel.chatMessages.value?.get(0)?.type ?: "") != "start-bot") {
                                 viewModel.fetchMoreMessages()
+                            }
                         }
                     }
                 }
