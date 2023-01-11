@@ -211,5 +211,14 @@
     <string name="additional_work_heading">Additional work</string>
     <string name="time_logging_heading">Time logging</string>
     <string name="advanced_options_heading">Advanced options</string>
+    <string name="subtask_title_heading">Subtask title</string>
+    <string name="work_profile_heading">Work profile</string>
+    <string name="description_heading">Description</string>
+    <string name="assign_btn_text">Assign</string>
+    <string name="new_subtask_heading">New Subtask</string>
+    <string name="normal_heading">Normal</string>
+    <string name="fast_heading">Fast</string>
+    <string name="image_heading">Image</string>
+    <string name="comment_heading">Comment</string>
 
 </resources>

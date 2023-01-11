@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.newtask.NewTaskState" />
+            type="com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskState" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.newtask.NewTaskVM" />
+            type="com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +19,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/newTaskHeader"
+            android:id="@+id/newSubTaskHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -48,22 +48,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginEnd="20dp"
                 android:layout_marginBottom="15dp"
+                android:layout_marginEnd="20dp"
                 android:fontFamily="@font/inter_bold"
-                android:text="@string/new_task_heading"
+                android:text="@string/new_subtask_heading"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/newTaskSaveAsDraftBtn"
+                app:layout_constraintEnd_toStartOf="@+id/newSubTaskSaveAsDraftBtn"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/closeBtn"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/newTaskSaveAsDraftBtn"
+                android:id="@+id/newSubTaskSaveAsDraftBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginEnd="15dp"
@@ -92,7 +92,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/newTaskHeader">
+            app:layout_constraintTop_toBottomOf="@+id/newSubTaskHeader">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -100,7 +100,7 @@
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/newTaskMainLayout"
+                    android:id="@+id/newSubTaskMainLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="2dp"
@@ -109,41 +109,100 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/newTaskMultiTaskSwitch"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/newSubTaskTitleField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:padding="1dp"
-                        android:checked="false"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="center"
-                        android:text="@string/multi_task_switchtext"
-                        android:textSize="14.5sp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/subtask_title_heading"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:switchPadding="12dp"
-                        app:thumbTint="@color/appYellow" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/newSubTaskTitleText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:textSize="15sp"
+                            android:maxLines="1"
+                            android:inputType="text"
+                            android:scrollHorizontally="true"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskDueDateField"
+                        android:id="@+id/newSubTaskAssignToField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        app:endIconMode="dropdown_menu"
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskTitleField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskTitleField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskTitleField">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/newSubTaskAssignToSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:hint="@string/assign_to_heading"
+                            android:inputType="text"
+                            android:maxLines="2"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/newSubTaskViewerField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        app:endIconMode="dropdown_menu"
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskAssignToField">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/newSubTaskViewerSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:hint="@string/viewer_heading"
+                            android:inputType="text"
+                            android:maxLines="2"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/newSubTaskDueDateField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="16dp"
                         android:hint="@string/due_date_heading"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
                         app:endIconMode="custom"
                         app:endIconDrawable="@drawable/ic_calendar"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskMultiTaskSwitch"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskMultiTaskSwitch">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskViewerField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskViewerField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskViewerField">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/newTaskDueDateText"
+                            android:id="@+id/newSubTaskDueDateText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -159,32 +218,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskTitleField"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:hint="@string/task_title_heading"
-                        app:boxStrokeColor="@color/colorGrey"
-                        app:boxStrokeWidth="1dp"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskDueDateField">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/newTaskTitleText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_regular"
-                            android:textSize="15sp"
-                            android:maxLines="1"
-                            android:inputType="text"
-                            android:scrollHorizontally="true"/>
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskProjectField"
+                        android:id="@+id/newSubTaskProjectField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -192,12 +226,13 @@
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
                         app:endIconMode="dropdown_menu"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskTitleField">
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskDueDateField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskDueDateField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskDueDateField">
 
                         <AutoCompleteTextView
-                            android:id="@+id/newTaskProjectSpinner"
+                            android:id="@+id/newSubTaskProjectSpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
@@ -209,57 +244,77 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskAdminsField"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:id="@+id/newSubTaskDescriptionField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:hint="@string/description_heading"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        app:endIconMode="dropdown_menu"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskProjectField">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskDueDateField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskDueDateField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskProjectField">
 
-                        <AutoCompleteTextView
-                            android:id="@+id/newTaskAdminsSpinner"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/newSubTaskDescriptionText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:hint="@string/admins_heading"
-                            android:inputType="text"
-                            android:maxLines="2"
+                            android:fontFamily="@font/inter_regular"
+                            android:inputType="none"
+                            android:maxLines="4"
                             android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskAssignToField"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="0dp"
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/newSubTaskImageSwitch"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:boxStrokeColor="@color/colorGrey"
-                        app:boxStrokeWidth="1dp"
-                        app:endIconMode="dropdown_menu"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskAdminsField">
+                        android:layout_marginTop="13dp"
+                        android:checked="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:padding="1dp"
+                        android:text="@string/image_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="14.5sp"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskDescriptionField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskDescriptionField"
+                        app:switchPadding="9dp"
+                        app:thumbTint="@color/appYellow" />
 
-                        <AutoCompleteTextView
-                            android:id="@+id/newTaskAssignToSpinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:hint="@string/assign_to_heading"
-                            android:inputType="text"
-                            android:maxLines="2"
-                            android:textSize="15sp" />
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/newSubTaskCommentSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:checked="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:padding="1dp"
+                        android:text="@string/comment_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="14.5sp"
+                        app:layout_constraintEnd_toStartOf="@+id/newSubTaskAttachmentBtn"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/newSubTaskImageSwitch"
+                        app:layout_constraintTop_toTopOf="@+id/newSubTaskImageSwitch"
+                        app:switchPadding="9dp"
+                        app:thumbTint="@color/appYellow" />
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/newSubTaskAttachmentBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="5dp"
+                        android:src="@drawable/icon_attachment"
+                        app:layout_constraintBottom_toBottomOf="@+id/newSubTaskCommentSwitch"
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskDescriptionField"
+                        app:layout_constraintTop_toTopOf="@+id/newSubTaskCommentSwitch"
+                        app:tint="@color/appYellow" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
 
                 <View
                     android:id="@+id/view20"
@@ -269,11 +324,11 @@
                     android:background="@color/colorGrey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskMainLayout" />
+                    app:layout_constraintTop_toBottomOf="@+id/newSubTaskMainLayout" />
 
 
                 <LinearLayout
-                    android:id="@+id/newTaskAdvanceOptionBtn"
+                    android:id="@+id/newSubTaskAdvanceOptionBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -284,13 +339,14 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="5dp"
                     android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
                     android:tooltipText="@string/advanced_options_heading"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view20"
                     app:drawableStartCompat="@drawable/icon_navigate_next" >
 
                     <ImageView
-                        android:id="@+id/newTaskAdvanceOptionBtnImg"
+                        android:id="@+id/newSubTaskAdvanceOptionBtnImg"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:fontFamily="@font/inter_regular"
@@ -300,7 +356,7 @@
                         app:tint="@color/black" />
 
                     <TextView
-                        android:id="@+id/newTaskAdvanceOptionText"
+                        android:id="@+id/newSubTaskAdvanceOptionText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_semibold"
@@ -314,7 +370,7 @@
                 </LinearLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/newTaskAdvanceOptionLayout"
+                    android:id="@+id/newSubTaskAdvanceOptionLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
@@ -322,10 +378,10 @@
                     android:paddingBottom="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskAdvanceOptionBtn">
+                    app:layout_constraintTop_toBottomOf="@+id/newSubTaskAdvanceOptionBtn">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskStartDateField"
+                        android:id="@+id/newSubTaskStartDateField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -342,7 +398,7 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/newTaskStartDateText"
+                            android:id="@+id/newSubTaskStartDateText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -358,7 +414,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskConfirmNeededField"
+                        android:id="@+id/newSubTaskConfirmNeededField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -366,12 +422,12 @@
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
                         app:endIconMode="dropdown_menu"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskStartDateField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskStartDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskStartDateField">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskStartDateField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskStartDateField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskStartDateField">
 
                         <AutoCompleteTextView
-                            android:id="@+id/newTaskConfirmNeededSpinner"
+                            android:id="@+id/newSubTaskConfirmNeededSpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -383,32 +439,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskViewerField"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:boxStrokeColor="@color/colorGrey"
-                        app:boxStrokeWidth="1dp"
-                        app:endIconMode="dropdown_menu"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskConfirmNeededField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskConfirmNeededField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskConfirmNeededField">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/newTaskViewerSpinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:hint="@string/viewer_heading"
-                            android:inputType="text"
-                            android:maxLines="2"
-                            android:textSize="15sp" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskLocationField"
+                        android:id="@+id/newSubTaskLocationField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -418,12 +449,12 @@
                         app:boxStrokeWidth="1dp"
                         app:endIconDrawable="@drawable/ic_location"
                         app:endIconMode="custom"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskViewerField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskViewerField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskViewerField">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskConfirmNeededField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskConfirmNeededField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskConfirmNeededField">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/newTaskLocationText"
+                            android:id="@+id/newSubTaskLocationText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clickable="true"
@@ -439,7 +470,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskManPowerField"
+                        android:id="@+id/newSubTaskManPowerField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -447,12 +478,12 @@
                         android:hint="@string/man_power_heading"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskLocationField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskLocationField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskLocationField">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskLocationField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskLocationField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskLocationField">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/newTaskManPowerText"
+                            android:id="@+id/newSubTaskManPowerText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_regular"
@@ -464,7 +495,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newTaskCategoryField"
+                        android:id="@+id/newSubTaskCategoryField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -472,12 +503,12 @@
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
                         app:endIconMode="dropdown_menu"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskManPowerField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskManPowerField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskManPowerField">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskManPowerField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskManPowerField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskManPowerField">
 
                         <AutoCompleteTextView
-                            android:id="@+id/newTaskCategorySpinner"
+                            android:id="@+id/newSubTaskCategorySpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -489,14 +520,14 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <RadioGroup
-                        android:id="@+id/newTaskPriorityRadioGroup"
+                        android:id="@+id/newSubTaskPriorityRadioGroup"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskCategoryField"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskCategoryField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskAdditionalWorkSwitch">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskCategoryField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskCategoryField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskAdditionalWorkSwitch">
 
                         <TextView
                             android:id="@+id/title"
@@ -512,14 +543,14 @@
                             android:textSize="14.5sp" />
 
                         <RadioButton
-                            android:id="@+id/newTaskStatusRadioNormal"
+                            android:id="@+id/newSubTaskPriorityNormal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:text="@string/normal_heading" />
 
                         <RadioButton
-                            android:id="@+id/newTaskStatusRadioFast"
+                            android:id="@+id/newSubTaskPriorityFast"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
@@ -528,7 +559,7 @@
                     </RadioGroup>
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/newTaskAdditionalWorkSwitch"
+                        android:id="@+id/newSubTaskAdditionalWorkSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -539,8 +570,8 @@
                         android:text="@string/additional_work_heading"
                         android:textColor="@color/appTextGrey"
                         android:textSize="14.5sp"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskCategoryField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskCategoryField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskCategoryField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskCategoryField"
                         app:switchPadding="9dp"
                         app:thumbTint="@color/appYellow" />
 
@@ -556,17 +587,17 @@
                         android:text="@string/time_logging_heading"
                         android:textColor="@color/appTextGrey"
                         android:textSize="14.5sp"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskCategoryField"
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskCategoryField"
                         app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toEndOf="@+id/newTaskAdditionalWorkSwitch"
-                        app:layout_constraintTop_toTopOf="@+id/newTaskAdditionalWorkSwitch"
+                        app:layout_constraintStart_toEndOf="@+id/newSubTaskAdditionalWorkSwitch"
+                        app:layout_constraintTop_toTopOf="@+id/newSubTaskAdditionalWorkSwitch"
                         app:switchPadding="9dp"
                         app:thumbTint="@color/appYellow" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/newTaskCancelBtn"
+                    android:id="@+id/newSubTaskCancelBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_marginTop="30dp"
@@ -584,12 +615,12 @@
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskAdvanceOptionLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/newSubTaskAdvanceOptionLayout"
                     app:layout_constraintVertical_bias="0.0"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/newTaskSaveAndAssignBtn"
+                    android:id="@+id/newSubTaskSaveAndAssignBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:background="@drawable/signin_button_back"
@@ -602,9 +633,9 @@
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/newTaskCancelBtn"
-                    app:layout_constraintEnd_toStartOf="@+id/newTaskCancelBtn"
-                    app:layout_constraintTop_toTopOf="@+id/newTaskCancelBtn"
+                    app:layout_constraintBottom_toBottomOf="@+id/newSubTaskCancelBtn"
+                    app:layout_constraintEnd_toStartOf="@+id/newSubTaskCancelBtn"
+                    app:layout_constraintTop_toTopOf="@+id/newSubTaskCancelBtn"
                     tools:ignore="TouchTargetSizeCheck" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
