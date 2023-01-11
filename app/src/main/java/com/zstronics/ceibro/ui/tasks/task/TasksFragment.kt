@@ -26,7 +26,7 @@ class TasksFragment :
     }
 
     private fun navigateToNewTaskCreation() {
-        navigate(R.id.taskDetailFragment)
+        navigate(R.id.newTaskFragment)
     }
 
     @Inject
