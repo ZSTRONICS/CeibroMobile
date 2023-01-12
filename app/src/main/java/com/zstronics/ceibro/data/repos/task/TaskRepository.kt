@@ -39,7 +39,6 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 local.insertTask(response.data.newTask)
                 callBack(true, "")
-                /// TODO add into local db the response.
             }
             is ApiResponse.Error -> {
                 callBack(true, response.error.message)
@@ -55,7 +54,6 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 local.insertTask(response.data.newTask)
                 callBack(true, "")
-                /// TODO add into local db the response.
             }
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
