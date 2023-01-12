@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.tasks.task.TaskState
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,7 +32,10 @@ class NewTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
+            1 -> navigateBack()
             R.id.closeBtn -> navigateBack()
+            R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskState.DRAFT.name)
+            R.id.newTaskSaveAndAssignBtn -> viewModel.createNewTask(TaskState.ACTIVE.name)
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(

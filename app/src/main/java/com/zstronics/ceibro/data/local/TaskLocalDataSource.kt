@@ -14,4 +14,8 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
     override suspend fun eraseTaskTable() {
         taskDao.deleteAllTasks()
     }
+
+    override suspend fun insertTask(task: CeibroTask) {
+        taskDao.insertTask(task)
+    }
 }
