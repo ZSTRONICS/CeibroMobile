@@ -49,16 +49,17 @@ class NewChatFragment :
                     .simple_spinner_dropdown_item
             )
             mViewDataBinding.spProjectSelect.adapter = arrayAdapter
-            mViewDataBinding.startGroupChat.setOnClickListener { view ->
-                val selectedMembers = adapter.dataList.filter { data -> data.isChecked }
-                val members = selectedMembers.map { member -> member.id }
-                val request = NewGroupChatRequest(
-                    members = members,
-                    name = viewState.name.value,
-                    projectId = viewModel.projectId
-                )
-                viewModel.createGroupChat(request)
-            }
+        }
+
+        mViewDataBinding.startGroupChat.setOnClickListener { view ->
+            val selectedMembers = adapter.dataList.filter { data -> data.isChecked }
+            val members = selectedMembers.map { member -> member.id }
+            val request = NewGroupChatRequest(
+                members = members,
+                name = viewState.name.value,
+                projectId = viewModel.projectId
+            )
+            viewModel.createGroupChat(request)
         }
 
         mViewDataBinding.spProjectSelect.onItemSelectedListener =

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout  xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -50,10 +50,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="15dp"
-                android:fontFamily="@font/inter_bold"
-                android:text="@string/new_task_heading"
-                android:maxLines="1"
                 android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="1"
+                android:text="@string/new_task_heading"
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -115,10 +115,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:padding="1dp"
-                        android:checked="false"
+                        android:checked="@={viewState.isMultiTask}"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
+                        android:padding="1dp"
                         android:text="@string/multi_task_switchtext"
                         android:textSize="14.5sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -136,8 +136,8 @@
                         android:hint="@string/due_date_heading"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        app:endIconMode="custom"
                         app:endIconDrawable="@drawable/ic_calendar"
+                        app:endIconMode="custom"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/newTaskMultiTaskSwitch"
                         app:layout_constraintTop_toBottomOf="@+id/newTaskMultiTaskSwitch">
@@ -146,15 +146,15 @@
                             android:id="@+id/newTaskDueDateText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:clickable="true"
+                            android:focusable="false"
                             android:fontFamily="@font/inter_regular"
-                            android:textSize="15sp"
+                            android:inputType="none"
                             android:maxLines="1"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:paddingStart="18dp"
                             android:paddingEnd="28dp"
-                            android:inputType="none"
-                            android:focusable="false"
-                            android:clickable="true"/>
+                            android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,10 +176,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_regular"
-                            android:textSize="15sp"
-                            android:maxLines="1"
                             android:inputType="text"
-                            android:scrollHorizontally="true"/>
+                            android:maxLines="1"
+                            android:scrollHorizontally="true"
+                            android:text="@={viewState.taskTitle}"
+                            android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -200,11 +201,11 @@
                             android:id="@+id/newTaskProjectSpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:hint="@string/project_heading"
                             android:inputType="text"
                             android:maxLines="2"
-                            android:hint="@string/project_heading"
-                            android:ellipsize="end"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -233,6 +234,19 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/newTaskAdminsChipsRV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toBottomOf="@+id/newTaskAdminsField"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/layout_item_chip" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/newTaskAssignToField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -244,7 +258,7 @@
                         app:endIconMode="dropdown_menu"
                         app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
                         app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newTaskAdminsField">
+                        app:layout_constraintTop_toBottomOf="@+id/newTaskAdminsChipsRV">
 
                         <AutoCompleteTextView
                             android:id="@+id/newTaskAssignToSpinner"
@@ -257,6 +271,19 @@
                             android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/newTaskAssigneeChipsRV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toBottomOf="@+id/newTaskAssignToField"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/layout_item_chip" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -276,18 +303,18 @@
                     android:id="@+id/newTaskAdvanceOptionBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:background="?attr/selectableItemBackground"
+                    android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:orientation="horizontal"
                     android:padding="5dp"
                     android:paddingStart="0dp"
                     android:tooltipText="@string/advanced_options_heading"
+                    app:drawableStartCompat="@drawable/icon_navigate_next"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view20"
-                    app:drawableStartCompat="@drawable/icon_navigate_next" >
+                    app:layout_constraintTop_toBottomOf="@+id/view20">
 
                     <ImageView
                         android:id="@+id/newTaskAdvanceOptionBtnImg"
@@ -303,12 +330,12 @@
                         android:id="@+id/newTaskAdvanceOptionText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:fontFamily="@font/inter_semibold"
+                        android:gravity="center"
                         android:text="@string/advanced_options_heading"
                         android:textColor="@color/black"
                         android:textSize="15sp"
-                        android:gravity="center"
-                        android:layout_marginStart="8dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/view20" />
                 </LinearLayout>
@@ -318,8 +345,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:visibility="gone"
                     android:paddingBottom="10dp"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/newTaskAdvanceOptionBtn">
@@ -335,8 +362,8 @@
                         android:hint="@string/start_date_heading"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        app:endIconMode="custom"
                         app:endIconDrawable="@drawable/ic_calendar"
+                        app:endIconMode="custom"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -345,15 +372,15 @@
                             android:id="@+id/newTaskStartDateText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:clickable="true"
+                            android:focusable="false"
                             android:fontFamily="@font/inter_regular"
-                            android:textSize="15sp"
+                            android:inputType="none"
                             android:maxLines="1"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:paddingStart="18dp"
                             android:paddingEnd="28dp"
-                            android:inputType="none"
-                            android:focusable="false"
-                            android:clickable="true"/>
+                            android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -592,12 +619,12 @@
                     android:id="@+id/newTaskSaveAndAssignBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
+                    android:layout_marginEnd="12dp"
                     android:background="@drawable/signin_button_back"
                     android:fontFamily="@font/inter_semibold"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:layout_marginEnd="12dp"
                     android:text="@string/assign_btn_text"
                     android:textAllCaps="false"
                     android:textColor="@color/white"

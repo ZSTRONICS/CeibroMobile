@@ -7,11 +7,12 @@ import javax.inject.Inject
 
 class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroService) :
     ITaskRemoteDataSource, BaseNetworkRepository() {
-    override suspend fun tasks(state: String): ApiResponse<TasksResponse> = executeSafely(
-        call =
-        {
-            service.tasks(state)
-        }
-    )
+    override suspend fun tasks(state: String, noPaginate: Boolean): ApiResponse<TasksResponse> =
+        executeSafely(
+            call =
+            {
+                service.tasks(state, noPaginate)
+            }
+        )
 
 }

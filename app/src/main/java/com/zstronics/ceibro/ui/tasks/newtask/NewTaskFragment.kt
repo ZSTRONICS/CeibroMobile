@@ -4,15 +4,21 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import com.google.android.material.chip.Chip
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NewTaskFragment :
@@ -56,8 +62,7 @@ class NewTaskFragment :
                 if (mViewDataBinding.newTaskAdvanceOptionLayout.visibility == View.GONE) {
                     mViewDataBinding.newTaskAdvanceOptionLayout.visibility = View.VISIBLE
                     mViewDataBinding.newTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_down)
-                }
-                else {
+                } else {
                     mViewDataBinding.newTaskAdvanceOptionLayout.visibility = View.GONE
                     mViewDataBinding.newTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_next)
                 }
@@ -66,10 +71,81 @@ class NewTaskFragment :
         }
     }
 
+    @Inject
+    lateinit var adminsChipsAdapter: MemberChipAdapter
+
+    @Inject
+    lateinit var assigneeChipsAdapter: MemberChipAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        mViewDataBinding.newTaskDueDateText.inputType = InputType.TYPE_NULL
-//        mViewDataBinding.newTaskDueDateText.keyListener = null
+        viewModel.projectNames.observe(viewLifecycleOwner) {
+            val arrayAdapter =
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    it
+                )
+
+            arrayAdapter.setDropDownViewResource(
+                android.R.layout
+                    .simple_spinner_dropdown_item
+            )
+
+            mViewDataBinding.newTaskProjectSpinner.setAdapter(arrayAdapter)
+        }
+
+        viewModel.projectMemberNames.observe(viewLifecycleOwner) {
+            val arrayAdapter =
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    it
+                )
+
+            arrayAdapter.setDropDownViewResource(
+                android.R.layout
+                    .simple_spinner_dropdown_item
+            )
+
+            mViewDataBinding.newTaskAdminsSpinner.setAdapter(arrayAdapter)
+            mViewDataBinding.newTaskAssignToSpinner.setAdapter(arrayAdapter)
+        }
+
+        mViewDataBinding.newTaskProjectSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onProjectSelect(position)
+            }
+
+        mViewDataBinding.newTaskAdminsSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onAdminSelect(position)
+            }
+
+        mViewDataBinding.newTaskAssignToSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onAssigneeSelect(position)
+            }
+
+        viewModel.taskAdmins.observe(viewLifecycleOwner) {
+            adminsChipsAdapter.setList(it)
+        }
+
+        viewModel.taskAssignee.observe(viewLifecycleOwner) {
+            assigneeChipsAdapter.setList(it)
+        }
+
+        mViewDataBinding.newTaskAdminsChipsRV.adapter = adminsChipsAdapter
+
+        mViewDataBinding.newTaskAssigneeChipsRV.adapter = assigneeChipsAdapter
+
+        adminsChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
+            viewModel.removeAdmin(data)
+        }
+
+        assigneeChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
+            viewModel.removeAssignee(data)
+        }
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -100,6 +176,7 @@ class NewTaskFragment :
 
         mViewDataBinding.newTaskDueDateText.setText(sdf.format(cal.time))
     }
+
     private fun updateStartDateInView() {
         val myFormat = "MM/dd/yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)

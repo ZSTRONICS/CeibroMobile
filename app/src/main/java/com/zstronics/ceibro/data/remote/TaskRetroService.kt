@@ -7,5 +7,5 @@ import retrofit2.http.Query
 
 interface TaskRetroService {
     @GET("task")
-    suspend fun tasks(@Query("state") state: String): Response<TasksResponse>
+    suspend fun tasks(@Query("state") state: String, @Query("noPaginate") noPaginate: Boolean): Response<TasksResponse>
 }
