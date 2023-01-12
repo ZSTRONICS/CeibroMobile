@@ -8,5 +8,5 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
 @Keep
 data class TasksResponse(
-    @SerializedName("allTasks") val allTasks: List<CeibroTask>
+    @SerializedName("results") val allTasks: List<CeibroTask>
 ) : BaseResponse()
