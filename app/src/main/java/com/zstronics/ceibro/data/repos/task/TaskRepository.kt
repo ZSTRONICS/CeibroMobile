@@ -4,6 +4,8 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -29,4 +31,35 @@ class TaskRepository @Inject constructor(
 
     override suspend fun eraseTaskTable() = local.eraseTaskTable()
 
+    override suspend fun newTask(
+        newTask: NewTaskRequest,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remote.newTask(newTask)) {
+            is ApiResponse.Success -> {
+                local.insertTask(response.data.newTask)
+                callBack(true, "")
+                /// TODO add into local db the response.
+            }
+            is ApiResponse.Error -> {
+                callBack(true, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun newTask(
+        newTask: NewTaskRequestNoAdvanceOptions,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remote.newTask(newTask)) {
+            is ApiResponse.Success -> {
+                local.insertTask(response.data.newTask)
+                callBack(true, "")
+                /// TODO add into local db the response.
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
 }

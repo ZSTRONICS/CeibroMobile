@@ -7,6 +7,10 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,6 +18,8 @@ import javax.inject.Inject
 class NewTaskVM @Inject constructor(
     override val viewState: NewTaskState,
     private val projectRepository: IProjectRepository,
+    private val taskRepository: ITaskRepository,
+    private val sessionManager: SessionManager
 ) : HiltBaseViewModel<INewTask.State>(), INewTask.ViewModel {
 
     private var _allProjects: List<ProjectsWithMembersResponse.ProjectDetail> = listOf()
@@ -132,5 +138,29 @@ class NewTaskVM @Inject constructor(
         val admins = _taskAssignee.value
         admins?.remove(data)
         _taskAssignee.value = admins
+    }
+
+    fun createNewTask(state: String) {
+        val admins = taskAdmins.value?.map { it.id } ?: listOf()
+        val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
+        val newTaskRequest = NewTaskRequestNoAdvanceOptions(
+            admins = admins,
+            assignedTo = assignedTo,
+            creator = sessionManager.getUser().value?.id ?: "",
+            dueDate = viewState.dueDate,
+            isMultiTask = viewState.isMultiTask.value ?: false,
+            project = projectId,
+            state = state,
+            title = viewState.taskTitle.value ?: ""
+        )
+
+        launch {
+            loading(true)
+            taskRepository.newTask(newTaskRequest) { isSuccess, error ->
+                loading(false, error)
+                if (isSuccess)
+                    handlePressOnView(1)
+            }
+        }
     }
 }
