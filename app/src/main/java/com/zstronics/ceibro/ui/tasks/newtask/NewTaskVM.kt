@@ -72,34 +72,33 @@ class NewTaskVM @Inject constructor(
         _projectMembers.value = selectedProject.projectMembers
         _projectMemberNames.value =
             selectedProject.projectMembers.map { it.firstName + " " + it.surName }
-        if (selectedProject.projectMembers.isEmpty()) {
-            /// TODO Need to remove this test code
-            val members = listOf(
-                Member(
-                    companyName = "A Company",
-                    firstName = "Tehrim",
-                    surName = "Abbas",
-                    id = "15636357",
-                    profilePic = ""
-                ),
-                Member(
-                    companyName = "B Company",
-                    firstName = "Abdul",
-                    surName = "Majeed",
-                    id = "15636358",
-                    profilePic = ""
-                ),
-                Member(
-                    companyName = "C Company",
-                    firstName = "Ibrahim",
-                    surName = "Jutt",
-                    id = "15636359",
-                    profilePic = ""
-                ),
-            )
-            _projectMembers.value = members
-            _projectMemberNames.value = members.map { it.firstName + " " + it.surName }
-        }
+//        if (selectedProject.projectMembers.isEmpty()) {
+//            val members = listOf(
+//                Member(
+//                    companyName = "A Company",
+//                    firstName = "Tehrim",
+//                    surName = "Abbas",
+//                    id = "15636357",
+//                    profilePic = ""
+//                ),
+//                Member(
+//                    companyName = "B Company",
+//                    firstName = "Abdul",
+//                    surName = "Majeed",
+//                    id = "15636358",
+//                    profilePic = ""
+//                ),
+//                Member(
+//                    companyName = "C Company",
+//                    firstName = "Ibrahim",
+//                    surName = "Jutt",
+//                    id = "15636359",
+//                    profilePic = ""
+//                ),
+//            )
+//            _projectMembers.value = members
+//            _projectMemberNames.value = members.map { it.firstName + " " + it.surName }
+//        }
     }
 
     fun onAdminSelect(position: Int) {
