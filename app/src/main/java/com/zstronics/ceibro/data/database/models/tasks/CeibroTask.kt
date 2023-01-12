@@ -16,7 +16,7 @@ data class CeibroTask(
     @SerializedName("advanceOptionsEnabled") val advanceOptionsEnabled: Boolean,
     @SerializedName("assignedTo") val assignedTo: List<TaskMember>,
     @SerializedName("createdAt") val createdAt: String,
-    @SerializedName("creator") val creator: TaskMember,
+    @SerializedName("creator") val creator: TaskMember?,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
     @SerializedName("project") val project: TaskProject,
