@@ -6,8 +6,6 @@ import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.NewTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.TasksResponse
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
 import javax.inject.Inject
 
 class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroService) :
@@ -24,11 +22,7 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
         executeSafely(
             call =
             {
-                val body: RequestBody = RequestBody.create(
-                    "application/json".toMediaTypeOrNull(),
-                    newTask.toString()
-                )
-                service.newTask(body)
+                service.newTask(newTask)
             }
         )
 
@@ -36,11 +30,7 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
         executeSafely(
             call =
             {
-                val body: RequestBody = RequestBody.create(
-                    "application/json".toMediaTypeOrNull(),
-                    newTask.toString()
-                )
-                service.newTask(body)
+                service.newTask(newTask)
             }
         )
 }

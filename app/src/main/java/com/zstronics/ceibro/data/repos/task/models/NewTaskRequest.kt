@@ -1,8 +1,8 @@
 package com.zstronics.ceibro.data.repos.task.models
 
 
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 
 @Keep
 data class NewTaskRequest(
@@ -19,7 +19,6 @@ data class NewTaskRequest(
     @Keep
     data class AdvanceOptions(
         @SerializedName("categories") val categories: List<String>,
-        @SerializedName("checkList") val checkList: List<Any>,
         @SerializedName("confirmNeeded") val confirmNeeded: List<String>,
         @SerializedName("isAdditionalWork") val isAdditionalWork: Boolean,
         @SerializedName("location") val location: String,
