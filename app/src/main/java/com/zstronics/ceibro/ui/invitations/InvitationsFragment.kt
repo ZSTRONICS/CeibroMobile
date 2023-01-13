@@ -6,14 +6,10 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitationsItem
 import com.zstronics.ceibro.databinding.FragmentInvitationsBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
-import com.zstronics.ceibro.ui.chat.adapter.ChatRoomAdapter
 import com.zstronics.ceibro.ui.invitations.adapter.AllInvitationsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

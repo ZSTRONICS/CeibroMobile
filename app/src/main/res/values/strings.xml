@@ -220,5 +220,6 @@
     <string name="fast_heading">Fast</string>
     <string name="image_heading">Image</string>
     <string name="comment_heading">Comment</string>
+    <string name="create_heading">Create</string>
 
 </resources>

@@ -2,19 +2,16 @@ package com.zstronics.ceibro.ui.tasks.newtask
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
-import com.google.android.material.chip.Chip
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskState
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -33,9 +30,9 @@ class NewTaskFragment :
     override fun onClick(id: Int) {
         when (id) {
             1 -> navigateBack()
-            R.id.closeBtn -> navigateBack()
+            R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
             R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskState.DRAFT.name.lowercase())
-            R.id.newTaskSaveAndAssignBtn -> viewModel.createNewTask(TaskState.ACTIVE.name.lowercase())
+            R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskState.newTask.name)
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -87,7 +84,7 @@ class NewTaskFragment :
             val arrayAdapter =
                 ArrayAdapter(
                     requireContext(),
-                    android.R.layout.simple_spinner_item,
+                    android.R.layout.simple_spinner_dropdown_item,
                     it
                 )
 
@@ -103,7 +100,7 @@ class NewTaskFragment :
             val arrayAdapter =
                 ArrayAdapter(
                     requireContext(),
-                    android.R.layout.simple_spinner_item,
+                    android.R.layout.simple_spinner_dropdown_item,
                     it
                 )
 

@@ -1,12 +1,15 @@
 package com.zstronics.ceibro.data.database.models.tasks
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.database.TableNames
 import com.zstronics.ceibro.data.repos.task.models.TasksResponse
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TableNames.AdvanceOptions)
+@Parcelize
 data class AdvanceOptions(
     @PrimaryKey
     val id: Int,
@@ -20,4 +23,4 @@ data class AdvanceOptions(
     @SerializedName("startDate") val startDate: String,
     @SerializedName("timeLog") val timeLog: Boolean,
     @SerializedName("viewer") val viewer: List<TaskMember>
-)
+) : Parcelable

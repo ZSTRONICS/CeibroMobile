@@ -6,6 +6,8 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.databinding.FragmentTasksBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,5 +40,16 @@ class TasksFragment :
             adapter.setList(it)
         }
         mViewDataBinding.taskRV.adapter = adapter
+
+        adapter.itemClickListener = { _: View, position: Int, data: CeibroTask ->
+            navigateToTaskDetail(data)
+        }
+
+    }
+
+    private fun navigateToTaskDetail(data: CeibroTask) {
+        val bundle = Bundle()
+//            bundle.putParcelable("chatRoom", chat)
+        navigate(R.id.taskDetailFragment)
     }
 }

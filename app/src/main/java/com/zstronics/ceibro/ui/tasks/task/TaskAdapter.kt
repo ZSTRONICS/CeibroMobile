@@ -16,7 +16,7 @@ class TaskAdapter @Inject constructor() :
     var itemClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? = null
     var itemLongClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? =
         null
-    var childItemClickListener: ((view: View, position: Int, data: ChatRoom) -> Unit)? = null
+    var childItemClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? = null
 
     private var list: MutableList<CeibroTask> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -60,7 +60,7 @@ class TaskAdapter @Inject constructor() :
                         R.string.active_heading
                     )
                     TaskState.DONE.name -> Pair(
-                        R.drawable.status_ongoing_outline,
+                        R.drawable.status_done_outline,
                         R.string.done_heading
                     )
                     else -> Pair(
@@ -92,7 +92,7 @@ class TaskAdapter @Inject constructor() :
 
                 taskDueDateText.text = DateUtils.reformatStringDate(
                     date = item.dueDate,
-                    DateUtils.SERVER_DATE_FULL_FORMAT,
+                    DateUtils.FORMAT_YEAR_MON_DATE,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
 
@@ -106,6 +106,12 @@ class TaskAdapter @Inject constructor() :
                     else
                         View.INVISIBLE
                 taskSubTaskTotalCountText.text = "${item.totalSubTaskCount} subtask(s)"
+                taskSubTaskCount.text = "${item.totalSubTaskCount}/${item.totalSubTaskCount}"
+
+                itemView.setOnClickListener {
+                    itemClickListener?.invoke(it, adapterPosition, item)
+                }
+
             }
         }
     }

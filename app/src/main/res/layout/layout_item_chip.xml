@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp"
+        android:layout_margin="6dp"
         android:background="@drawable/background_chip"
         android:padding="@dimen/_5sdp">
 
@@ -19,14 +19,20 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:text="Chip 1"
+            android:textSize="13.5sp"
+            android:layout_marginStart="1dp"
             android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/crossView"
-            android:layout_width="@dimen/_12sdp"
-            android:layout_height="@dimen/_12sdp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:padding="3.5dp"
+            android:background="@drawable/rounded_black_bg"
+            android:backgroundTint="@color/white"
             android:layout_marginStart="@dimen/_10sdp"
             android:src="@drawable/icon_round_close"
             android:tint="@color/black"

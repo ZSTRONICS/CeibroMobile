@@ -53,7 +53,7 @@ class NewSubTaskFragment :
                 datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
                 datePicker.show()
             }
-            R.id.newTaskAdvanceOptionBtn -> {
+            R.id.newSubTaskAdvanceOptionBtn -> {
                 if (mViewDataBinding.newSubTaskAdvanceOptionLayout.visibility == View.GONE) {
                     mViewDataBinding.newSubTaskAdvanceOptionLayout.visibility = View.VISIBLE
                     mViewDataBinding.newSubTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_down)

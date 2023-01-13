@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.profile
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -15,7 +14,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.sessions.SessionManager.Companion.user
 import com.zstronics.ceibro.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 
