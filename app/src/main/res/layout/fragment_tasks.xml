@@ -75,7 +75,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/activeTaskFilter"
+                    android:id="@+id/newTaskFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
@@ -85,6 +85,57 @@
                     app:layout_constraintBottom_toBottomOf="@+id/allTaskFilter"
                     app:layout_constraintStart_toEndOf="@+id/allTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/allTaskFilter">
+
+                    <TextView
+                        android:id="@+id/newTaskText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/new_heading"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/newTaskCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/badge_back"
+                        android:backgroundTint="@color/appGreen"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="4"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/centerVLine"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:background="@color/appLightGrey"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="3dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/newTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskFilter"/>
+
+                <LinearLayout
+                    android:id="@+id/activeTaskFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="7dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/centerVLine"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskFilter">
 
                     <TextView
                         android:id="@+id/activeTaskText"
@@ -157,10 +208,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
+                    android:layout_marginEnd="18dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
                     app:layout_constraintBottom_toBottomOf="@+id/doneTaskFilter"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/doneTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/doneTaskFilter">
 

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/topBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/subTaskAttachmentLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/subTaskStatusName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/status_ongoing_filled"
+                android:elevation="1dp"
+                android:fontFamily="@font/inter_regular"
+                android:paddingStart="7dp"
+                android:paddingTop="2.5dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2.5dp"
+                android:text="@string/ongoing_heading"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/taskCDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:background="@drawable/status_draft_filled"
+                android:backgroundTint="@color/white"
+                android:elevation="0dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:fontFamily="@font/inter_regular"
+                android:paddingStart="12dp"
+                android:paddingTop="2.5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="2.5dp"
+                android:text="22.05.2021"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/appCompatImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_menu_dots"
+            app:layout_constraintBottom_toBottomOf="@+id/topBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBar" />
+
+        <LinearLayout
+            android:id="@+id/subTaskCommentLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+            app:layout_constraintEnd_toStartOf="@+id/appCompatImageView"
+            app:layout_constraintTop_toTopOf="@+id/appCompatImageView">
+
+            <ImageView
+                android:id="@+id/subTaskCommentImg"
+                android:layout_width="17dp"
+                android:layout_height="14dp"
+                android:fontFamily="@font/inter_regular"
+                android:src="@drawable/icon_chat"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:tint="@color/appTextGrey" />
+
+            <TextView
+                android:id="@+id/subTaskCommentCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/inter_regular"
+                android:padding="1dp"
+                android:text="0"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subTaskAttachmentLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+            app:layout_constraintEnd_toStartOf="@+id/subTaskCommentLayout"
+            app:layout_constraintTop_toTopOf="@+id/appCompatImageView">
+
+            <ImageView
+                android:id="@+id/subTaskAttachmentImg"
+                android:layout_width="17dp"
+                android:layout_height="15dp"
+                android:fontFamily="@font/inter_regular"
+                android:src="@drawable/icon_attachment"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:tint="@color/appTextGrey" />
+
+            <TextView
+                android:id="@+id/subTaskAttachmentCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/inter_regular"
+                android:padding="1dp"
+                android:text="0"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/subTaskAssignToLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="start"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatImageView"
+            app:layout_constraintStart_toStartOf="@+id/topBar"
+            app:layout_constraintTop_toBottomOf="@+id/topBar">
+
+            <TextView
+                android:id="@+id/subTaskAssignToHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/assigned_to_heading"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/subTaskAssignToName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Kristo Vunukainen"
+                android:textColor="@color/black"
+                android:textSize="13.5sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/subTaskTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:maxLines="2"
+            android:layout_marginTop="13dp"
+            android:text="Magnis dis parturient montes, nascetur ridiculus dis mus."
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@+id/subTaskAssignToLayout"
+            app:layout_constraintStart_toStartOf="@+id/subTaskAssignToLayout"
+            app:layout_constraintTop_toBottomOf="@+id/subTaskAssignToLayout" />
+
+        <TextView
+            android:id="@+id/subTaskDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:maxLines="2"
+            android:layout_marginTop="6dp"
+            android:text="Aenean eu leo quam. Pellentesque ornare Aenean eu leo quam. Pellentesque ornare Aenean eu leo quam. Pellentesque ornare"
+            android:textColor="@color/appTextGrey"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/subTaskTitle"
+            app:layout_constraintStart_toStartOf="@+id/subTaskTitle"
+            app:layout_constraintTop_toBottomOf="@+id/subTaskTitle" />
+
+        <HorizontalScrollView
+            android:id="@+id/btnScrollLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:layout_marginTop="12dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:scrollbars="none"
+            android:layoutDirection="rtl"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@+id/subTaskDesc"
+            app:layout_constraintStart_toStartOf="@+id/subTaskDesc"
+            app:layout_constraintTop_toBottomOf="@+id/subTaskDesc">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/assignedStateBtnLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/assignedStateRejectBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:background="@drawable/status_reject_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/reject_btn_text"
+                        android:textColor="@color/appRed"
+                        android:textSize="13.5sp" />
+
+                    <TextView
+                        android:id="@+id/assignedStateAcceptBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@drawable/status_submit_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/accept_btn_text"
+                        android:textColor="@color/appGreen"
+                        android:textSize="13.5sp" />
+
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </HorizontalScrollView>
+
+        <View
+            android:id="@+id/view17"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/appLightGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnScrollLayout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

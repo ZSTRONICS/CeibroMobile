@@ -44,7 +44,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/status_ongoing_outline"
-                        android:elevation="1dp"
+                        android:elevation="0.5dp"
                         android:fontFamily="@font/inter_regular"
                         android:paddingStart="7dp"
                         android:paddingTop="2.5dp"
