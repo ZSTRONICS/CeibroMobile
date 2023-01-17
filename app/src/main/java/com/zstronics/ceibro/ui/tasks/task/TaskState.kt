@@ -1,7 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.task
 
 enum class TaskState {
-        newTask,
+        NEW,
         DRAFT,
         ACTIVE,
         DONE

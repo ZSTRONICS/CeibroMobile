@@ -32,7 +32,7 @@ class NewTaskFragment :
             1 -> navigateBack()
             R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
             R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskState.DRAFT.name.lowercase())
-            R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskState.newTask.name)
+            R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskState.NEW.name.lowercase())
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
