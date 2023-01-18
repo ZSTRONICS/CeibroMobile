@@ -38,7 +38,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/taskCDate"
+                android:id="@+id/subTaskCDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -86,7 +86,7 @@
                 android:src="@drawable/icon_chat"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:tint="@color/appTextGrey" />
+                app:tint="@color/appRed" />
 
             <TextView
                 android:id="@+id/subTaskCommentCountText"
@@ -119,7 +119,7 @@
                 android:src="@drawable/icon_attachment"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:tint="@color/appTextGrey" />
+                app:tint="@color/appBlue" />
 
             <TextView
                 android:id="@+id/subTaskAttachmentCountText"
@@ -252,7 +252,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="2dp"
-                        android:background="@drawable/status_submit_outline"
+                        android:background="@drawable/status_done_outline"
                         android:elevation="2dp"
                         android:fontFamily="@font/inter_medium"
                         android:paddingStart="11dp"

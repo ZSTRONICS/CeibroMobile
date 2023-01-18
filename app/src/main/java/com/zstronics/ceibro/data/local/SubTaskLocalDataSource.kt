@@ -1,0 +1,23 @@
+package com.zstronics.ceibro.data.local
+
+import com.zstronics.ceibro.data.database.dao.SubTaskDao
+import com.zstronics.ceibro.data.database.dao.TaskDao
+import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import javax.inject.Inject
+
+class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTaskDao) : ISubTaskLocalDataSource {
+    override suspend fun getSubTasks(): List<AllSubtask> = subTaskDao.getAllSubTasks()
+
+    override suspend fun insertAllSubTasks(list: List<AllSubtask>) {
+        subTaskDao.insertAllSubTasks(list)
+    }
+
+    override suspend fun eraseSubTaskTable() {
+        subTaskDao.deleteAllSubTasks()
+    }
+
+    override suspend fun insertSubTask(subTask: AllSubtask) {
+        subTaskDao.insertSubTask(subTask)
+    }
+}

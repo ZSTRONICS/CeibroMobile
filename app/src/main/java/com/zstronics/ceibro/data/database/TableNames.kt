@@ -2,7 +2,11 @@ package com.zstronics.ceibro.data.database
 
 object TableNames {
     const val Tasks = "tasks"
+    const val SubTasks = "sub_tasks"
     const val AdvanceOptions = "advance_options"
-    const val SubTasks = "sub_tasks_status"
+    const val SubTaskAdvanceOptions = "sub_task_advance_options"
+    const val SubTasksStatus = "sub_tasks_status"
     const val TaskMember = "task_member"
+    const val AssignedTo = "assigned_to"
+    const val Viewer = "viewer"
 }

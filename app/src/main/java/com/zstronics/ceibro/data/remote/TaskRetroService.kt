@@ -1,9 +1,6 @@
 package com.zstronics.ceibro.data.remote
 
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.NewTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.TasksResponse
+import com.zstronics.ceibro.data.repos.task.models.*
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -19,8 +16,15 @@ interface TaskRetroService {
     ): Response<TasksResponse>
 
     @POST("task")
-    suspend fun newTask(@Body requestBody: NewTaskRequestNoAdvanceOptions): Response<NewTaskResponse>
+    suspend fun newTaskNoAdvanceOptions(@Body requestBody: NewTaskRequestNoAdvanceOptions): Response<NewTaskResponse>
 
     @POST("task")
     suspend fun newTask(@Body requestBody: NewTaskRequest): Response<NewTaskResponse>
+
+
+
+    @GET("task/subtask")
+    suspend fun getAllSubTasksForUser(
+        @Query("state") state: String
+    ): Response<AllSubtasksResponse>
 }

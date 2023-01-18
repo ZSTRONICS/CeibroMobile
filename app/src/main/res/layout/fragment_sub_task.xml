@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/allTaskFilter"
+                    android:id="@+id/allSubTaskFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
@@ -47,7 +47,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/allTaskText"
+                        android:id="@+id/allSubTaskText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
@@ -57,12 +57,12 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/allTaskCount"
+                        android:id="@+id/allSubTaskCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
-                        android:backgroundTint="@color/appYellow"
+                        android:backgroundTint="@color/appAllGrey"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:paddingStart="5dp"
@@ -74,19 +74,19 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ongoingProjectFilter"
+                    android:id="@+id/ongoingSubTaskFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/allTaskFilter"
-                    app:layout_constraintStart_toEndOf="@+id/allTaskFilter"
-                    app:layout_constraintTop_toTopOf="@+id/allTaskFilter">
+                    app:layout_constraintBottom_toBottomOf="@+id/allSubTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/allSubTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/allSubTaskFilter">
 
                     <TextView
-                        android:id="@+id/ongoingProjectText"
+                        android:id="@+id/ongoingSubTaskText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
@@ -96,7 +96,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/ongoingProjectCount"
+                        android:id="@+id/ongoingSubTaskCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -113,29 +113,29 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/approveProjectFilter"
+                    android:id="@+id/assignedSubTaskFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/ongoingProjectFilter"
-                    app:layout_constraintStart_toEndOf="@+id/ongoingProjectFilter"
-                    app:layout_constraintTop_toTopOf="@+id/ongoingProjectFilter">
+                    app:layout_constraintBottom_toBottomOf="@+id/ongoingSubTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/ongoingSubTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/ongoingSubTaskFilter">
 
                     <TextView
-                        android:id="@+id/approveProjectText"
+                        android:id="@+id/assignedSubTaskText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
                         android:padding="1dp"
-                        android:text="@string/approve_heading"
+                        android:text="@string/assigned_heading"
                         android:textColor="@color/black"
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/approveProjectCount"
+                        android:id="@+id/assignedSubTaskCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -152,19 +152,97 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/doneProjectFilter"
+                    android:id="@+id/acceptedSubTaskFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/approveProjectFilter"
-                    app:layout_constraintStart_toEndOf="@+id/approveProjectFilter"
-                    app:layout_constraintTop_toTopOf="@+id/approveProjectFilter">
+                    app:layout_constraintBottom_toBottomOf="@+id/assignedSubTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/assignedSubTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/assignedSubTaskFilter">
 
                     <TextView
-                        android:id="@+id/doneProjectText"
+                        android:id="@+id/acceptedSubTaskText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/accepted_heading"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/acceptedSubTaskCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/badge_back"
+                        android:backgroundTint="@color/appAcceptBlue"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="4"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rejectedSubTaskFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="7dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/acceptedSubTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/acceptedSubTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/acceptedSubTaskFilter">
+
+                    <TextView
+                        android:id="@+id/rejectedSubTaskText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/rejected_heading"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/rejectedSubTaskCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/badge_back"
+                        android:backgroundTint="@color/appRed"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="4"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/doneSubTaskFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="7dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/rejectedSubTaskFilter"
+                    app:layout_constraintStart_toEndOf="@+id/rejectedSubTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/rejectedSubTaskFilter">
+
+                    <TextView
+                        android:id="@+id/doneSubTaskText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
@@ -174,12 +252,12 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/doneProjectCount"
+                        android:id="@+id/doneSubTaskCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
-                        android:backgroundTint="@color/appDoneGrey"
+                        android:backgroundTint="@color/appGreen"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:paddingStart="5dp"
@@ -191,19 +269,21 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/draftProjectFilter"
+                    android:id="@+id/draftSubTaskFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="18dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/doneProjectFilter"
-                    app:layout_constraintStart_toEndOf="@+id/doneProjectFilter"
-                    app:layout_constraintTop_toTopOf="@+id/doneProjectFilter">
+                    app:layout_constraintBottom_toBottomOf="@+id/doneSubTaskFilter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/doneSubTaskFilter"
+                    app:layout_constraintTop_toTopOf="@+id/doneSubTaskFilter">
 
                     <TextView
-                        android:id="@+id/draftProjectText"
+                        android:id="@+id/draftSubTaskText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_medium"
@@ -213,53 +293,12 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/draftProjectCount"
+                        android:id="@+id/draftSubTaskCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
-                        android:backgroundTint="@color/grey"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:text="4"
-                        android:textColor="@color/white"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/submitProjectFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="7dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/draftProjectFilter"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/draftProjectFilter"
-                    app:layout_constraintTop_toTopOf="@+id/draftProjectFilter">
-
-                    <TextView
-                        android:id="@+id/submitProjectText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_medium"
-                        android:padding="1dp"
-                        android:text="@string/submitted_heading"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/submitProjectCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:background="@drawable/badge_back"
-                        android:backgroundTint="@color/appGreen"
+                        android:backgroundTint="@color/appDraftGrey"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:paddingStart="5dp"
@@ -278,7 +317,7 @@
                     android:background="@color/appLightGrey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ongoingProjectFilter" />
+                    app:layout_constraintTop_toBottomOf="@+id/draftSubTaskFilter" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </HorizontalScrollView>
@@ -296,9 +335,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="1dp"
-                android:paddingEnd="1dp">
+                android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/subTaskRV"
@@ -306,8 +343,6 @@
                     tools:listitem="@layout/layout_subtask_box"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:paddingStart="1dp"
-                    android:paddingEnd="1dp"
                     android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"

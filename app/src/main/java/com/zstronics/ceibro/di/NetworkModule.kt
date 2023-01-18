@@ -52,7 +52,10 @@ class NetworkModule {
         SharedPreferenceManager(context)
 
     @Provides
-    fun provideProjectTaskDao(database: CeibroDatabase) = database.getTasksDao()
+    fun provideTaskDao(database: CeibroDatabase) = database.getTasksDao()
+
+    @Provides
+    fun provideSubTaskDao(database: CeibroDatabase) = database.getSubTaskDao()
 
     @Provides
     fun providesTaskRepoService(): TaskRetroService =

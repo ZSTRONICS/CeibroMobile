@@ -1,25 +1,33 @@
 package com.zstronics.ceibro.data.repos.task
 
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
+import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
-    private val local: TaskLocalDataSource,
-    private val remote: TaskRemoteDataSource
+    private val localTask: TaskLocalDataSource,
+    private val remoteTask: TaskRemoteDataSource,
+    private val localSubTask: SubTaskLocalDataSource,
+    private val remoteSubTask: SubTaskRemoteDataSource
 ) : ITaskRepository {
+
+    /// Following calls are for TODO - Task
+
     override suspend fun tasks(): List<CeibroTask> {
-        val list = local.tasks()
+        val list = localTask.tasks()
         return if (list.isEmpty()) {
             /// Fetch from remote and save into local
-            when (val response = remote.tasks()) {
+            when (val response = remoteTask.tasks()) {
                 is ApiResponse.Success -> {
                     val tasks = response.data.allTasks
-                    local.insertAllTasks(tasks)
+                    localTask.insertAllTasks(tasks)
                     return tasks
                 }
                 else -> emptyList()
@@ -29,15 +37,15 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun eraseTaskTable() = local.eraseTaskTable()
+    override suspend fun eraseTaskTable() = localTask.eraseTaskTable()
 
     override suspend fun newTask(
         newTask: NewTaskRequest,
         callBack: (isSuccess: Boolean, message: String) -> Unit
     ) {
-        when (val response = remote.newTask(newTask)) {
+        when (val response = remoteTask.newTask(newTask)) {
             is ApiResponse.Success -> {
-                local.insertTask(response.data.newTask)
+                localTask.insertTask(response.data.newTask)
                 callBack(true, "")
             }
             is ApiResponse.Error -> {
@@ -46,13 +54,13 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun newTask(
+    override suspend fun newTaskNoAdvanceOptions(
         newTask: NewTaskRequestNoAdvanceOptions,
         callBack: (isSuccess: Boolean, message: String) -> Unit
     ) {
-        when (val response = remote.newTask(newTask)) {
+        when (val response = remoteTask.newTaskNoAdvanceOptions(newTask)) {
             is ApiResponse.Success -> {
-                local.insertTask(response.data.newTask)
+                localTask.insertTask(response.data.newTask)
                 callBack(true, "")
             }
             is ApiResponse.Error -> {
@@ -60,4 +68,30 @@ class TaskRepository @Inject constructor(
             }
         }
     }
+
+
+
+
+
+
+
+    /// Following calls are for TODO - Sub-Task
+
+    override suspend fun getAllSubtasks(): List<AllSubtask> {
+        val list = localSubTask.getSubTasks()
+        return if (list.isEmpty()) {
+            when (val response = remoteSubTask.getAllSubTasksForUser("all")) {
+                is ApiResponse.Success -> {
+                    val subTasks = response.data.allSubtasks
+                    localSubTask.insertAllSubTasks(subTasks)
+                    return subTasks
+                }
+                else -> emptyList()
+            }
+        } else {
+            list
+        }
+    }
+
+    override suspend fun eraseSubTaskTable() = localSubTask.eraseSubTaskTable()
 }
