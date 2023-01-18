@@ -6,11 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toCamelCase
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
-import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.databinding.LayoutChatBoxBinding
 import com.zstronics.ceibro.databinding.LayoutProjectBoxBinding
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
@@ -85,20 +82,16 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_ongoing_filled)
             }
             else if (item.publishStatus.toLowerCase() == "approved" || item.publishStatus.toLowerCase() == "approve") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_approve_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_approve_filled)
+                binding.projectCardLayout.setBackgroundResource(R.drawable.status_assigned_outline)
+                binding.projectStatusName.background = context.getDrawable(R.drawable.status_assigned_filled)
             }
             else if (item.publishStatus.toLowerCase() == "done" || item.publishStatus.toLowerCase() == "complete" || item.publishStatus.toLowerCase() == "completed") {
                 binding.projectCardLayout.setBackgroundResource(R.drawable.status_done_outline)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_done_filled)
             }
             else if (item.publishStatus.toLowerCase() == "published" || item.publishStatus.toLowerCase() == "publish") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_publish_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_publish_filled)
-            }
-            else if (item.publishStatus.toLowerCase() == "submit" || item.publishStatus.toLowerCase() == "submitted") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_submit_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_submit_filled)
+                binding.projectCardLayout.setBackgroundResource(R.drawable.status_accepted_outline)
+                binding.projectStatusName.background = context.getDrawable(R.drawable.status_accepted_filled)
             }
 
 

@@ -75,6 +75,7 @@ class ProfileVM @Inject constructor(
     override fun endUserSession() {
         launch {
             taskRepository.eraseTaskTable()
+            taskRepository.eraseSubTaskTable()
         }
         sessionManager.endUserSession()
     }

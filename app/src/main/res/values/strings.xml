@@ -223,5 +223,8 @@
     <string name="create_heading">Create</string>
     <string name="new_heading">New</string>
     <string name="reject_btn_text">Reject</string>
+    <string name="assigned_heading">Assigned</string>
+    <string name="accepted_heading">Accepted</string>
+    <string name="rejected_heading">Rejected</string>
 
 </resources>
