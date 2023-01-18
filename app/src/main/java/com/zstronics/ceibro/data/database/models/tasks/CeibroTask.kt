@@ -32,7 +32,7 @@ data class CeibroTask(
     @SerializedName("totalSubTaskCount") val totalSubTaskCount: Int
 ) : Parcelable
 
-@Entity(tableName = TableNames.SubTasks)
+@Entity(tableName = TableNames.SubTasksStatus)
 @Parcelize
 data class ProjectSubTaskStatus(
     @PrimaryKey(autoGenerate = true)
