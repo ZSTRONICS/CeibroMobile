@@ -171,7 +171,7 @@ class NewTaskVM @Inject constructor(
 
         launch {
             loading(true)
-            taskRepository.newTask(newTaskRequest) { isSuccess, error ->
+            taskRepository.newTaskNoAdvanceOptions(newTaskRequest) { isSuccess, error ->
                 loading(false, error)
                 if (isSuccess)
                     handlePressOnView(1)

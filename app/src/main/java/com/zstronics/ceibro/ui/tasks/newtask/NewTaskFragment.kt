@@ -8,11 +8,10 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
-import com.zstronics.ceibro.ui.tasks.task.TaskState
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,8 +30,8 @@ class NewTaskFragment :
         when (id) {
             1 -> navigateBack()
             R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
-            R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskState.DRAFT.name.lowercase())
-            R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskState.NEW.name.lowercase())
+            R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskStatus.DRAFT.name.lowercase())
+            R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskStatus.NEW.name.lowercase())
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(

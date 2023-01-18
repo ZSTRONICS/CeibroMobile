@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.databinding.LayoutTaskBoxBinding
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
@@ -51,15 +50,15 @@ class TaskAdapter @Inject constructor() :
             with(binding) {
                 /// Setting Status background and the status string.
                 val taskStatusNameBg: Pair<Int, Int> = when (item.state.uppercase()) {
-                    TaskState.DRAFT.name -> Pair(
+                    TaskStatus.DRAFT.name -> Pair(
                         R.drawable.status_draft_outline,
                         R.string.draft_heading
                     )
-                    TaskState.ACTIVE.name -> Pair(
+                    TaskStatus.ACTIVE.name -> Pair(
                         R.drawable.status_ongoing_outline,
                         R.string.active_heading
                     )
-                    TaskState.DONE.name -> Pair(
+                    TaskStatus.DONE.name -> Pair(
                         R.drawable.status_done_outline,
                         R.string.done_heading
                     )

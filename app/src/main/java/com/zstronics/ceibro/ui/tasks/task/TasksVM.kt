@@ -20,7 +20,7 @@ class TasksVM @Inject constructor(
         getTasks()
     }
 
-    private fun getTasks() {
+    override fun getTasks() {
         launch {
             _tasks.postValue(taskRepository.tasks())
         }

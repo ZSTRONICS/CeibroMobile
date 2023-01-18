@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.data.database.models.tasks.ProjectSubTaskStatus
 
-class ProjectSubTaskListTypeConverter {
+class ProjectSubTaskStatusListTypeConverter {
 
     @TypeConverter
     fun fromString(value: String): List<ProjectSubTaskStatus> {

@@ -7,5 +7,6 @@ interface ITasks {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
+        fun getTasks()
     }
 }
