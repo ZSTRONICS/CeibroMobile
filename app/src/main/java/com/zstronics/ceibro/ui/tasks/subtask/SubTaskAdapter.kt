@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.databinding.LayoutSubtaskBoxBinding
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
@@ -83,6 +84,36 @@ class SubTaskAdapter @Inject constructor() :
                 subTaskStatusName.setBackgroundResource(background)
                 subTaskStatusName.text = stringRes
 
+                if (item.subTaskState.uppercase() == SubTaskStatus.DRAFT.name) {
+                    draftStateBtnLayout.visibility = View.VISIBLE
+                    assignedStateBtnLayout.visibility = View.GONE
+                    acceptedStateBtnLayout.visibility = View.GONE
+                    ongoingStateBtnLayout.visibility = View.GONE
+                }
+                else if (item.subTaskState.uppercase() == SubTaskStatus.ASSIGNED.name) {
+                    draftStateBtnLayout.visibility = View.GONE
+                    assignedStateBtnLayout.visibility = View.VISIBLE
+                    acceptedStateBtnLayout.visibility = View.GONE
+                    ongoingStateBtnLayout.visibility = View.GONE
+                }
+                else if (item.subTaskState.uppercase() == SubTaskStatus.ACCEPTED.name) {
+                    draftStateBtnLayout.visibility = View.GONE
+                    assignedStateBtnLayout.visibility = View.GONE
+                    acceptedStateBtnLayout.visibility = View.VISIBLE
+                    ongoingStateBtnLayout.visibility = View.GONE
+                }
+                else if (item.subTaskState.uppercase() == SubTaskStatus.ONGOING.name) {
+                    draftStateBtnLayout.visibility = View.GONE
+                    assignedStateBtnLayout.visibility = View.GONE
+                    acceptedStateBtnLayout.visibility = View.GONE
+                    ongoingStateBtnLayout.visibility = View.VISIBLE
+                }
+                else if (item.subTaskState.uppercase() == SubTaskStatus.DONE.name) {
+                    draftStateBtnLayout.visibility = View.GONE
+                    assignedStateBtnLayout.visibility = View.GONE
+                    acceptedStateBtnLayout.visibility = View.GONE
+                    ongoingStateBtnLayout.visibility = View.GONE
+                }
 
                 subTaskCDate.text = DateUtils.reformatStringDate(
                     date = item.createdAt,
@@ -90,15 +121,21 @@ class SubTaskAdapter @Inject constructor() :
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
 
-//                if (item.assignedTo[0].members.isNotEmpty()) {
-//                    taskAssignToName.text = if (item.assignedTo.size > 1)
-//                        "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName} + ${item.assignedTo.size - 1}"
-//                    else
-//                        "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName}"
-//                }
-//                else {
-//                    taskAssignToName.text = "No user assigned"
-//                }
+                val members: ArrayList<TaskMember> = ArrayList()
+                for (assign in item.assignedTo) {
+                    for (member in assign.members) {
+                        members.add(member)
+                    }
+                }
+                if (members.isNotEmpty()) {
+                    subTaskAssignToName.text = if (members.size > 1)
+                        "${members[0].firstName} ${members[0].surName} + ${members.size - 1}"
+                    else
+                        "${members[0].firstName} ${members[0].surName}"
+                }
+                else {
+                    subTaskAssignToName.text = "No user assigned"
+                }
 
 
                 subTaskTitle.text = item.title

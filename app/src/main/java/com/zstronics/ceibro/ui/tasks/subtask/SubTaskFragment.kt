@@ -33,6 +33,7 @@ class SubTaskFragment :
         super.onViewCreated(view, savedInstanceState)
         viewModel.subTasks.observe(viewLifecycleOwner) {
             adapter.setList(it)
+            mViewDataBinding.allSubTaskCount.text = it.size.toString()
         }
         mViewDataBinding.subTaskRV.adapter = adapter
 

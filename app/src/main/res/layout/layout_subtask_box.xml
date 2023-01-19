@@ -209,6 +209,8 @@
             android:layout_marginTop="12dp"
             android:paddingTop="1dp"
             android:paddingBottom="1dp"
+            android:paddingEnd="2dp"
+            android:paddingStart="0dp"
             android:scrollbars="none"
             android:layoutDirection="rtl"
             android:visibility="visible"
@@ -221,13 +223,62 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/assignedStateBtnLayout"
+                    android:id="@+id/draftStateBtnLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/draftStateDeleteBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:background="@drawable/status_reject_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/delete_heading"
+                        android:textColor="@color/appRed"
+                        android:textSize="13.5sp" />
+
+                    <TextView
+                        android:id="@+id/draftStateAssignBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@drawable/status_assigned_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/assign_btn_text"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13.5sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/assignedStateBtnLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/draftStateBtnLayout"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
@@ -252,7 +303,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="2dp"
-                        android:background="@drawable/status_done_outline"
+                        android:background="@drawable/status_accepted_outline"
                         android:elevation="2dp"
                         android:fontFamily="@font/inter_medium"
                         android:paddingStart="11dp"
@@ -260,11 +311,88 @@
                         android:paddingEnd="11dp"
                         android:paddingBottom="4dp"
                         android:text="@string/accept_btn_text"
-                        android:textColor="@color/appGreen"
+                        android:textColor="@color/appAcceptBlue"
                         android:textSize="13.5sp" />
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/acceptedStateBtnLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/assignedStateBtnLayout"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/acceptedStateStartBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:background="@drawable/status_assigned_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/start_heading"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13.5sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ongoingStateBtnLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/acceptedStateBtnLayout"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/ongoingStateResumePauseBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:background="@drawable/status_assigned_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/pause_heading"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13.5sp" />
+
+                    <TextView
+                        android:id="@+id/ongoingStateDoneBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@drawable/status_done_outline"
+                        android:elevation="2dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingStart="11dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="11dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/done_heading"
+                        android:textColor="@color/appGreen"
+                        android:textSize="13.5sp" />
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

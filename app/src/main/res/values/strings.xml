@@ -226,5 +226,9 @@
     <string name="assigned_heading">Assigned</string>
     <string name="accepted_heading">Accepted</string>
     <string name="rejected_heading">Rejected</string>
+    <string name="resume_heading">Resume</string>
+    <string name="pause_heading">Pause</string>
+    <string name="delete_heading">Delete</string>
+    <string name="start_heading">Start</string>
 
 </resources>
