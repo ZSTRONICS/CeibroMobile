@@ -7,5 +7,6 @@ interface ITaskDetail {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
+        fun getSubTasks(taskId: String)
     }
 }

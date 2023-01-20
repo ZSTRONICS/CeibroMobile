@@ -2,10 +2,7 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.NewTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.TasksResponse
+import com.zstronics.ceibro.data.repos.task.models.*
 import javax.inject.Inject
 
 class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroService) :
@@ -31,6 +28,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             call =
             {
                 service.newTaskNoAdvanceOptions(newTask)
+            }
+        )
+
+    override suspend fun newSubTask(newTask: NewSubtaskRequest): ApiResponse<NewSubTaskResponse> =
+        executeSafely(
+            call =
+            {
+                service.newSubTask(newTask)
             }
         )
 }

@@ -17,7 +17,7 @@ data class Member(
     @SerializedName("_id")
     val id: String,
     @SerializedName("profilePic")
-    val profilePic: String,
+    val profilePic: String?,
     @SerializedName("surName")
     val surName: String,
     var isChecked: Boolean = false

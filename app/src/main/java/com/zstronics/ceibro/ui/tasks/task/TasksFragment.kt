@@ -49,7 +49,7 @@ class TasksFragment :
 
     private fun navigateToTaskDetail(data: CeibroTask) {
         val bundle = Bundle()
-//            bundle.putParcelable("chatRoom", chat)
-        navigate(R.id.taskDetailFragment)
+        bundle.putParcelable("task", data)
+        navigate(R.id.taskDetailFragment, bundle)
     }
 }

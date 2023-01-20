@@ -4,16 +4,22 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class NewSubTaskFragment :
@@ -26,7 +32,9 @@ class NewSubTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> navigateBack()
+            R.id.closeBtn, 1 -> navigateBack()
+            R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(TaskStatus.DRAFT.name.lowercase())
+            R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(TaskStatus.ASSIGNED.name.lowercase())
             R.id.newSubTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -57,8 +65,7 @@ class NewSubTaskFragment :
                 if (mViewDataBinding.newSubTaskAdvanceOptionLayout.visibility == View.GONE) {
                     mViewDataBinding.newSubTaskAdvanceOptionLayout.visibility = View.VISIBLE
                     mViewDataBinding.newSubTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_down)
-                }
-                else {
+                } else {
                     mViewDataBinding.newSubTaskAdvanceOptionLayout.visibility = View.GONE
                     mViewDataBinding.newSubTaskAdvanceOptionBtnImg.setImageResource(R.drawable.icon_navigate_next)
                 }
@@ -67,9 +74,62 @@ class NewSubTaskFragment :
         }
     }
 
+    @Inject
+    lateinit var assigneeChipsAdapter: MemberChipAdapter
+
+    @Inject
+    lateinit var viewersChipsAdapter: MemberChipAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.task.observe(viewLifecycleOwner) { item ->
+        }
 
+        viewModel.taskAssignee.observe(viewLifecycleOwner) {
+            assigneeChipsAdapter.setList(it)
+        }
+
+        viewModel.viewers.observe(viewLifecycleOwner) {
+            viewersChipsAdapter.setList(it)
+        }
+
+        viewModel.projectMemberNames.observe(viewLifecycleOwner) {
+            val arrayAdapter =
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    it
+                )
+
+            arrayAdapter.setDropDownViewResource(
+                android.R.layout
+                    .simple_spinner_dropdown_item
+            )
+
+            mViewDataBinding.newSubTaskAssignToSpinner.setAdapter(arrayAdapter)
+            mViewDataBinding.newSubTaskViewerSpinner.setAdapter(arrayAdapter)
+        }
+
+
+        mViewDataBinding.newSubTaskAssignToSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onAssigneeSelect(position)
+            }
+
+        mViewDataBinding.newSubTaskViewerSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.onViewerSelect(position)
+            }
+
+        mViewDataBinding.assigneeChipsRV.adapter = assigneeChipsAdapter
+        assigneeChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
+            viewModel.removeAssignee(data)
+        }
+
+        mViewDataBinding.viewersChipsRV.adapter = viewersChipsAdapter
+        viewersChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
+            viewModel.removeViewer(data)
+        }
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -100,6 +160,7 @@ class NewSubTaskFragment :
 
         mViewDataBinding.newSubTaskDueDateText.setText(sdf.format(cal.time))
     }
+
     private fun updateStartDateInView() {
         val myFormat = "MM/dd/yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)

@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
 import javax.inject.Inject
@@ -49,7 +50,7 @@ class TaskRepository @Inject constructor(
                 callBack(true, "")
             }
             is ApiResponse.Error -> {
-                callBack(true, response.error.message)
+                callBack(false, response.error.message)
             }
         }
     }
@@ -70,11 +71,6 @@ class TaskRepository @Inject constructor(
     }
 
 
-
-
-
-
-
     /// Following calls are for TODO - Sub-Task
 
     override suspend fun getAllSubtasks(): List<AllSubtask> {
@@ -90,6 +86,25 @@ class TaskRepository @Inject constructor(
             }
         } else {
             list
+        }
+    }
+
+    override suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask> {
+        return localSubTask.getSubTaskByTaskId(taskId)
+    }
+
+    override suspend fun newSubTask(
+        newTask: NewSubtaskRequest,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteTask.newSubTask(newTask)) {
+            is ApiResponse.Success -> {
+                localSubTask.insertSubTask(response.data.newTask)
+                callBack(true, "")
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TaskRetroService {
@@ -15,16 +16,23 @@ interface TaskRetroService {
         @Query("noPaginate") noPaginate: Boolean
     ): Response<TasksResponse>
 
+    @GET("task")
+    suspend fun subTaskById(
+        @Path("taskId") taskId: String
+    ): Response<TasksResponse>
+
     @POST("task")
     suspend fun newTaskNoAdvanceOptions(@Body requestBody: NewTaskRequestNoAdvanceOptions): Response<NewTaskResponse>
 
     @POST("task")
     suspend fun newTask(@Body requestBody: NewTaskRequest): Response<NewTaskResponse>
 
-
-
     @GET("task/subtask")
     suspend fun getAllSubTasksForUser(
         @Query("state") state: String
     ): Response<AllSubtasksResponse>
+
+    @POST("task/subtask")
+    suspend fun newSubTask(@Body requestBody: NewSubtaskRequest): Response<NewSubTaskResponse>
+
 }

@@ -23,6 +23,7 @@ data class AllSubtask(
     @SerializedName("creator") val creator: TaskMember,
     @SerializedName("description") val description: String,
     @SerializedName("doneCommentsRequired") val doneCommentsRequired: Boolean,
+    @SerializedName("advanceOptionsEnabled") val advanceOptionsEnabled: Boolean,
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("files") val files: List<String>,
