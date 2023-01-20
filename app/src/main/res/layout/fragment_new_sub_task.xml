@@ -39,7 +39,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
-                app:srcCompat="@drawable/icon_round_close"
+                app:srcCompat="@drawable/icon_back"
                 app:tint="@color/appYellow" />
 
             <TextView
@@ -289,7 +289,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_regular"
                             android:inputType="none"
-                            android:maxLines="4"
+                            android:maxLines="6"
                             android:text="@={viewState.description}"
                             android:textSize="15sp" />
 
@@ -366,8 +366,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="horizontal"
                     android:padding="5dp"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
+                    android:visibility="gone"
                     android:tooltipText="@string/advanced_options_heading"
                     app:drawableStartCompat="@drawable/icon_navigate_next"
                     app:layout_constraintStart_toStartOf="parent"

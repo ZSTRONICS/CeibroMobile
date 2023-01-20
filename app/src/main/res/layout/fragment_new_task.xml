@@ -39,7 +39,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
-                app:srcCompat="@drawable/icon_round_close"
+                app:srcCompat="@drawable/icon_back"
                 app:tint="@color/appYellow" />
 
             <TextView
@@ -121,6 +121,7 @@
                         android:padding="1dp"
                         android:text="@string/multi_task_switchtext"
                         android:textSize="14.5sp"
+                        android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:switchPadding="12dp"
@@ -132,6 +133,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:hint="@string/due_date_heading"
                         app:boxStrokeColor="@color/colorGrey"
@@ -139,7 +141,7 @@
                         app:endIconDrawable="@drawable/ic_calendar"
                         app:endIconMode="custom"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/newTaskMultiTaskSwitch"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/newTaskMultiTaskSwitch">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -310,7 +312,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="horizontal"
                     android:padding="5dp"
-                    android:paddingStart="0dp"
+                    android:visibility="gone"
                     android:tooltipText="@string/advanced_options_heading"
                     app:drawableStartCompat="@drawable/icon_navigate_next"
                     app:layout_constraintStart_toStartOf="parent"
@@ -625,7 +627,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:text="@string/create_heading"
+                    android:text="@string/create_task_heading"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"

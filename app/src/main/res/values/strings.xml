@@ -220,7 +220,7 @@
     <string name="fast_heading">Fast</string>
     <string name="image_heading">Image</string>
     <string name="comment_heading">Comment</string>
-    <string name="create_heading">Create</string>
+    <string name="create_task_heading">Create task</string>
     <string name="new_heading">New</string>
     <string name="reject_btn_text">Reject</string>
     <string name="assigned_heading">Assigned</string>

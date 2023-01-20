@@ -50,13 +50,17 @@ class TaskAdapter @Inject constructor() :
             with(binding) {
                 /// Setting Status background and the status string.
                 val taskStatusNameBg: Pair<Int, Int> = when (item.state.uppercase()) {
-                    TaskStatus.DRAFT.name -> Pair(
-                        R.drawable.status_draft_outline,
-                        R.string.draft_heading
+                    TaskStatus.NEW.name -> Pair(
+                        R.drawable.status_assigned_outline,
+                        R.string.new_heading
                     )
                     TaskStatus.ACTIVE.name -> Pair(
                         R.drawable.status_ongoing_outline,
                         R.string.active_heading
+                    )
+                    TaskStatus.DRAFT.name -> Pair(
+                        R.drawable.status_draft_outline,
+                        R.string.draft_heading
                     )
                     TaskStatus.DONE.name -> Pair(
                         R.drawable.status_done_outline,
@@ -68,6 +72,7 @@ class TaskAdapter @Inject constructor() :
                     )
                 }
                 val (background, stringRes) = taskStatusNameBg
+                taskCardLayout.setBackgroundResource(background)
                 taskStatusName.setBackgroundResource(background)
                 taskStatusName.text = context.getString(stringRes)
 
@@ -81,7 +86,7 @@ class TaskAdapter @Inject constructor() :
 
                 if (item.assignedTo.isNotEmpty()) {
                     taskAssignToName.text = if (item.assignedTo.size > 1)
-                        "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName} + ${item.assignedTo.size - 1}"
+                        "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName}  +${item.assignedTo.size - 1}"
                     else
                         "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName}"
                 }
@@ -94,6 +99,16 @@ class TaskAdapter @Inject constructor() :
                     DateUtils.FORMAT_YEAR_MON_DATE,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
+                if (taskDueDateText.text == "") {                              // Checking if date format was not yyyy-MM-dd then it will be empty
+                    taskDueDateText.text = DateUtils.reformatStringDate(
+                        date = item.dueDate,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                    )
+                    if (taskDueDateText.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
+                        taskDueDateText.text = "Invalid due date"
+                    }
+                }
 
                 taskName.text = item.title
                 taskCommentCountText.text = item.unSeenSubTaskCommentCount.toString()

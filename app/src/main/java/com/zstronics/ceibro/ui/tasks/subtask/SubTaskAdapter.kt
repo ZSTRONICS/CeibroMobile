@@ -129,7 +129,7 @@ class SubTaskAdapter @Inject constructor() :
                 }
                 if (members.isNotEmpty()) {
                     subTaskAssignToName.text = if (members.size > 1)
-                        "${members[0].firstName} ${members[0].surName} + ${members.size - 1}"
+                        "${members[0].firstName} ${members[0].surName}  +${members.size - 1}"
                     else
                         "${members[0].firstName} ${members[0].surName}"
                 }

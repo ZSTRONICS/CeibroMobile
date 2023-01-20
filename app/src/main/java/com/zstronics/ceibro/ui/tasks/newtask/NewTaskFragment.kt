@@ -166,10 +166,10 @@ class NewTaskFragment :
         }
 
     private fun updateDueDateInView() {
-        val myFormat = "MM/dd/yyyy"
+        val myFormat = "dd-MM-yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
 
-        val formatToSend = "yyyy-MM-dd"
+        val formatToSend = "dd-MM-yyyy"
         val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
 
         viewState.dueDate = sdf1.format(cal.time)
@@ -178,10 +178,10 @@ class NewTaskFragment :
     }
 
     private fun updateStartDateInView() {
-        val myFormat = "MM/dd/yyyy"
+        val myFormat = "dd-MM-yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
 
-        val formatToSend = "yyyy-MM-dd"
+        val formatToSend = "dd-MM-yyyy"
         val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
 
         viewState.startDate = sdf1.format(cal.time)
