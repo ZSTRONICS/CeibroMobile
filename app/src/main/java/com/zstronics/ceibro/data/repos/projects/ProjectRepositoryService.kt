@@ -12,5 +12,5 @@ interface ProjectRepositoryService {
     suspend fun getProjects(@Query("publishStatus") publishStatus: String = "all"): Response<AllProjectsResponse>
 
     @POST("project/getProjectsWithMembers")
-    suspend fun getProjectsWithMembers(): Response<ProjectsWithMembersResponse>
+    suspend fun getProjectsWithMembers(@Query("includeMe") includeMe: Boolean = false): Response<ProjectsWithMembersResponse>
 }

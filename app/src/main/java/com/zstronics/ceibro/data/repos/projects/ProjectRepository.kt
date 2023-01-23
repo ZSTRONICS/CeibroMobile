@@ -17,10 +17,10 @@ class ProjectRepository @Inject constructor(
             }
         )
 
-    override suspend fun getProjectsWithMembers(): ApiResponse<ProjectsWithMembersResponse> = executeSafely(
+    override suspend fun getProjectsWithMembers(includeMe: Boolean): ApiResponse<ProjectsWithMembersResponse> = executeSafely(
         call =
         {
-            service.getProjectsWithMembers()
+            service.getProjectsWithMembers(includeMe)
         }
     )
 

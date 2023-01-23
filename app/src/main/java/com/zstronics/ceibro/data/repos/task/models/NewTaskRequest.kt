@@ -14,6 +14,7 @@ data class NewTaskRequest(
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
     @SerializedName("project") val project: String,
     @SerializedName("state") val state: String,
+    @SerializedName("description") val description: String,
     @SerializedName("title") val title: String
 ) {
     @Keep
@@ -39,5 +40,6 @@ data class NewTaskRequestNoAdvanceOptions(
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
     @SerializedName("project") val project: String,
     @SerializedName("state") val state: String,
+    @SerializedName("description") val description: String,
     @SerializedName("title") val title: String
 )

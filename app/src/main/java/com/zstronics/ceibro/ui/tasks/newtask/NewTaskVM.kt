@@ -46,15 +46,15 @@ class NewTaskVM @Inject constructor(
     override fun loadProjects() {
         launch {
             loading(true)
-            when (val response = projectRepository.getProjectsWithMembers()) {
+            when (val response = projectRepository.getProjectsWithMembers(true)) {
 
                 is ApiResponse.Success -> {
                     response.data.projectDetails.let { projects ->
                         if (projects.isNotEmpty()) {
                             _allProjects = projects
                             _projectNames.postValue(projects.map { it.title })
-                            val firstProject = projects.first()
-                            _projectMembers.postValue(firstProject.projectMembers)
+//                            val firstProject = projects.first()
+//                            _projectMembers.postValue(firstProject.projectMembers)
                         }
                     }
 
@@ -143,38 +143,39 @@ class NewTaskVM @Inject constructor(
     }
 
     fun createNewTask(state: String) {
-//        val member: Member = Member(
-//            firstName = user?.firstName ?: "",
-//            surName = user?.surName ?: "",
-//            id = user?.id ?: "",
-//            profilePic = user?.profilePic ?: "",
-//            companyName = user?.companyName ?: ""
-//        )
-//        val admins1 = _taskAdmins.value
-//        admins1?.add(member)
-//        _taskAdmins.value = admins1
 
+        if (viewState.taskTitle.value.toString() == "") {
+            alert("Please enter task title")
+        }
+        else if (projectId == "") {
+            alert("Please select a project")
+        }
+        else if (viewState.dueDate == "") {
+            alert("Please select a due date")
+        }
+        else {
 
-        val admins = taskAdmins.value?.map { it.id } as MutableList
-        admins.add(user?.id ?: "")          //user who is creating the task, MUST be a part of admins also
-        val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
-        val newTaskRequest = NewTaskRequestNoAdvanceOptions(
-            admins = admins,
-            assignedTo = assignedTo,
-            creator = sessionManager.getUser().value?.id ?: "",
-            dueDate = viewState.dueDate,
-            isMultiTask = viewState.isMultiTask.value ?: false,
-            project = projectId,
-            state = state,
-            title = viewState.taskTitle.value ?: ""
-        )
+            val admins = taskAdmins.value?.map { it.id } as MutableList
+            val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
+            val newTaskRequest = NewTaskRequestNoAdvanceOptions(
+                admins = admins,
+                assignedTo = assignedTo,
+                creator = sessionManager.getUser().value?.id ?: "",
+                dueDate = viewState.dueDate,
+                isMultiTask = viewState.isMultiTask.value ?: false,
+                project = projectId,
+                state = state,
+                description = viewState.description.value.toString(),
+                title = viewState.taskTitle.value.toString() ?: ""
+            )
 
-        launch {
-            loading(true)
-            taskRepository.newTaskNoAdvanceOptions(newTaskRequest) { isSuccess, error ->
-                loading(false, error)
-                if (isSuccess)
-                    handlePressOnView(1)
+            launch {
+                loading(true)
+                taskRepository.newTaskNoAdvanceOptions(newTaskRequest) { isSuccess, error ->
+                    loading(false, error)
+                    if (isSuccess)
+                        handlePressOnView(1)
+                }
             }
         }
     }

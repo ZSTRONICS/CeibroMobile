@@ -58,7 +58,7 @@ class NewChatVM @Inject constructor(
     override fun loadProjects() {
         launch {
             loading(true)
-            when (val response = projectRepository.getProjectsWithMembers()) {
+            when (val response = projectRepository.getProjectsWithMembers(false)) {
 
                 is ApiResponse.Success -> {
                     response.data.projectDetails.let { projects ->

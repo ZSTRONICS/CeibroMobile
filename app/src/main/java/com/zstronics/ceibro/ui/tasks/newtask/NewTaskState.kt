@@ -8,5 +8,6 @@ class NewTaskState @Inject constructor() : BaseState(), INewTask.State {
     override var dueDate: String = ""
     override var startDate: String = ""
     override val taskTitle: MutableLiveData<String> = MutableLiveData("")
+    override val description: MutableLiveData<String> = MutableLiveData("")
     override val isMultiTask: MutableLiveData<Boolean> = MutableLiveData(false)
 }

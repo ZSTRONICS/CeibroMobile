@@ -6,5 +6,5 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 
 interface IProjectRepository {
     suspend fun getProjects(publishStatus:String): ApiResponse<AllProjectsResponse>
-    suspend fun getProjectsWithMembers(): ApiResponse<ProjectsWithMembersResponse>
+    suspend fun getProjectsWithMembers(includeMe: Boolean): ApiResponse<ProjectsWithMembersResponse>
 }

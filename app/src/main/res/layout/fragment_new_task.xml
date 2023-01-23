@@ -287,6 +287,31 @@
                         tools:itemCount="10"
                         tools:listitem="@layout/layout_item_chip" />
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/newTaskDescriptionField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="11dp"
+                        android:hint="@string/description_heading"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskAssignToField"
+                        app:layout_constraintStart_toStartOf="@+id/newTaskAssignToField"
+                        app:layout_constraintTop_toBottomOf="@+id/newTaskAssigneeChipsRV">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/newTaskDescriptionText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:inputType="none"
+                            android:maxLines="6"
+                            android:text="@={viewState.description}"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

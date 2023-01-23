@@ -61,7 +61,7 @@ class NewSubTaskVM @Inject constructor(
     private fun loadProjects(projectId: String) {
         launch {
             loading(true)
-            when (val response = projectRepository.getProjectsWithMembers()) {
+            when (val response = projectRepository.getProjectsWithMembers(false)) {
 
                 is ApiResponse.Success -> {
                     response.data.projectDetails.let { projects ->

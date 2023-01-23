@@ -8,6 +8,7 @@ interface INewTask {
         var dueDate: String
         var startDate: String
         val taskTitle: MutableLiveData<String>
+        val description: MutableLiveData<String>
         val isMultiTask: MutableLiveData<Boolean>
     }
 
