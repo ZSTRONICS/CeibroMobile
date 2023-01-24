@@ -90,16 +90,28 @@ class TaskRepository @Inject constructor(
     }
 
     override suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask> {
-        return localSubTask.getSubTaskByTaskId(taskId)
+        val list = localSubTask.getSubTaskByTaskId(taskId)
+        return if (list.isEmpty()) {
+            when (val response = remoteSubTask.getSubTaskByTaskId(taskId)) {
+                is ApiResponse.Success -> {
+                    val subTasks = response.data.results.subtasks
+                    localSubTask.insertAllSubTasks(subTasks)
+                    return subTasks
+                }
+                else -> emptyList()
+            }
+        } else {
+            list
+        }
     }
 
     override suspend fun newSubTask(
         newTask: NewSubtaskRequest,
         callBack: (isSuccess: Boolean, message: String) -> Unit
     ) {
-        when (val response = remoteTask.newSubTask(newTask)) {
+        when (val response = remoteSubTask.newSubTask(newTask)) {
             is ApiResponse.Success -> {
-                localSubTask.insertSubTask(response.data.newTask)
+                localSubTask.insertSubTask(response.data.newSubtask)
                 callBack(true, "")
             }
             is ApiResponse.Error -> {

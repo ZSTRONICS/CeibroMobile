@@ -35,4 +35,7 @@ interface TaskRetroService {
     @POST("task/subtask")
     suspend fun newSubTask(@Body requestBody: NewSubtaskRequest): Response<NewSubTaskResponse>
 
+    @GET("task/{taskId}")
+    suspend fun getSubTaskByTaskId(@Path("taskId") taskId: String): Response<SubTaskByTaskResponse>
+
 }

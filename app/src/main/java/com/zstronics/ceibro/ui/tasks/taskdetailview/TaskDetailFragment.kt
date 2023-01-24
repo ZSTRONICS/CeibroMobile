@@ -44,34 +44,48 @@ class TaskDetailFragment :
 
         viewModel.task.observe(viewLifecycleOwner) { item ->
             with(mViewDataBinding) {
-                val taskStatusNameBg: Pair<Int, Int> = when (item.state.uppercase()) {
+                val taskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
+                    TaskStatus.NEW.name -> Pair(
+                        R.drawable.status_assigned_outline,
+                        requireContext().getString(R.string.new_heading)
+                    )
+                    TaskStatus.ACTIVE.name -> Pair(
+                        R.drawable.status_ongoing_outline,
+                        requireContext().getString(R.string.active_heading)
+                    )
                     TaskStatus.DRAFT.name -> Pair(
                         R.drawable.status_draft_outline,
-                        R.string.draft_heading
-                    )
-                    TaskStatus.ACTIVE.name, TaskStatus.ASSIGNED.name -> Pair(
-                        R.drawable.status_ongoing_outline,
-                        R.string.active_heading
+                        requireContext().getString(R.string.draft_heading)
                     )
                     TaskStatus.DONE.name -> Pair(
                         R.drawable.status_done_outline,
-                        R.string.done_heading
+                        requireContext().getString(R.string.done_heading)
                     )
                     else -> Pair(
                         R.drawable.status_draft_outline,
-                        R.string.draft_heading
+                        item.state
                     )
                 }
 
                 val (background, stringRes) = taskStatusNameBg
                 taskDetailStatusName.setBackgroundResource(background)
-                taskDetailStatusName.text = requireContext().getString(stringRes)
+                taskDetailStatusName.text = stringRes
 
                 taskDetailDueDate.text = DateUtils.reformatStringDate(
-                    date = item.createdAt,
-                    DateUtils.SERVER_DATE_FULL_FORMAT,
+                    date = item.dueDate,
+                    DateUtils.FORMAT_YEAR_MON_DATE,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
+                if (taskDetailDueDate.text == "") {                              // Checking if date format was not yyyy-MM-dd then it will be empty
+                    taskDetailDueDate.text = DateUtils.reformatStringDate(
+                        date = item.dueDate,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                    )
+                    if (taskDetailDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
+                        taskDetailDueDate.text = "Invalid due date"
+                    }
+                }
 
                 taskTitle.text = item.title
 

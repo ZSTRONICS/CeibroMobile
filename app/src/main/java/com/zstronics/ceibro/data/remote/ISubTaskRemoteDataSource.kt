@@ -5,4 +5,6 @@ import com.zstronics.ceibro.data.repos.task.models.*
 
 interface ISubTaskRemoteDataSource {
     suspend fun getAllSubTasksForUser(state: String = "all"): ApiResponse<AllSubtasksResponse>
+    suspend fun newSubTask(newTask: NewSubtaskRequest): ApiResponse<NewSubTaskResponse>
+    suspend fun getSubTaskByTaskId(taskId: String): ApiResponse<SubTaskByTaskResponse>
 }

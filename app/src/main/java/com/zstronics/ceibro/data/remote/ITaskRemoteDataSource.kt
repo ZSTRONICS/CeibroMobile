@@ -7,5 +7,4 @@ interface ITaskRemoteDataSource {
     suspend fun tasks(state: String = "all", noPaginate: Boolean = true): ApiResponse<TasksResponse>
     suspend fun newTask(newTask: NewTaskRequest): ApiResponse<NewTaskResponse>
     suspend fun newTaskNoAdvanceOptions(newTask: NewTaskRequestNoAdvanceOptions): ApiResponse<NewTaskResponse>
-    suspend fun newSubTask(newTask: NewSubtaskRequest): ApiResponse<NewSubTaskResponse>
 }
