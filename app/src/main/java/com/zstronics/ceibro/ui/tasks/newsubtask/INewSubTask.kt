@@ -7,7 +7,7 @@ interface INewSubTask {
     interface State : IBase.State {
         var dueDate: String
         var startDate: String
-        val taskTitle: MutableLiveData<String>
+        val subtaskTitle: MutableLiveData<String>
         val description: MutableLiveData<String>
         val doneImageRequired: MutableLiveData<Boolean>
         val doneCommentsRequired: MutableLiveData<Boolean>

@@ -30,8 +30,8 @@ class NewSubTaskVM @Inject constructor(
     private val _taskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
     val taskAssignee: MutableLiveData<ArrayList<Member>> = _taskAssignee
 
-    private val _viewers: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
-    val viewers: MutableLiveData<ArrayList<Member>> = _viewers
+//    private val _viewers: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
+//    val viewers: MutableLiveData<ArrayList<Member>> = _viewers
 
     private val _projectMembers: MutableLiveData<List<Member>> = MutableLiveData(arrayListOf())
     val projectMembers: LiveData<List<Member>> = _projectMembers
@@ -102,18 +102,18 @@ class NewSubTaskVM @Inject constructor(
         _taskAssignee.value = assignees
     }
 
-    fun onViewerSelect(position: Int) {
-        val member: Member? = projectMembers.value?.get(position)
-        val viewers = _viewers.value
-        if (viewers?.contains(member) == true) {
-            viewers.remove(member)
-        } else {
-            if (member != null) {
-                viewers?.add(member)
-            }
-        }
-        _viewers.value = viewers
-    }
+//    fun onViewerSelect(position: Int) {
+//        val member: Member? = projectMembers.value?.get(position)
+//        val viewers = _viewers.value
+//        if (viewers?.contains(member) == true) {
+//            viewers.remove(member)
+//        } else {
+//            if (member != null) {
+//                viewers?.add(member)
+//            }
+//        }
+//        _viewers.value = viewers
+//    }
 
     fun removeAssignee(data: Member) {
         val assignee = _taskAssignee.value
@@ -121,11 +121,11 @@ class NewSubTaskVM @Inject constructor(
         _taskAssignee.value = assignee
     }
 
-    fun removeViewer(data: Member) {
-        val viewers = _viewers.value
-        viewers?.remove(data)
-        _viewers.value = viewers
-    }
+//    fun removeViewer(data: Member) {
+//        val viewers = _viewers.value
+//        viewers?.remove(data)
+//        _viewers.value = viewers
+//    }
 
     fun createNewSubTask(state: String) {
         val assigneeMembersId = taskAssignee.value?.map { it.id }
@@ -136,13 +136,13 @@ class NewSubTaskVM @Inject constructor(
             )
         )
 
-        val viewersMembersId = viewers.value?.map { it.id }
-        val viewers: List<NewSubtaskRequest.Viewer> = listOf(
-            NewSubtaskRequest.Viewer(
-                addedBy = user?.id,
-                members = viewersMembersId
-            )
-        )
+//        val viewersMembersId = viewers.value?.map { it.id }
+//        val viewers: List<NewSubtaskRequest.Viewer> = listOf(
+//            NewSubtaskRequest.Viewer(
+//                addedBy = user?.id,
+//                members = viewersMembersId
+//            )
+//        )
 
         val newTaskRequest = NewSubtaskRequest(
             assignedTo = assignedTo,
@@ -152,10 +152,9 @@ class NewSubTaskVM @Inject constructor(
             doneImageRequired = viewState.doneImageRequired.value ?: false,
             dueDate = viewState.dueDate,
             isMultiTaskSubTask = false,
-            subTaskState = state,
+            state = state,
             taskId = task.value?._id ?: "",
-            title = viewState.taskTitle.value.toString(),
-            viewer = viewers
+            title = viewState.subtaskTitle.value.toString()
         )
 
         launch {

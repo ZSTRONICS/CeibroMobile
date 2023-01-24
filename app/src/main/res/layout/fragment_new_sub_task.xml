@@ -132,7 +132,7 @@
                             android:inputType="text"
                             android:maxLines="1"
                             android:scrollHorizontally="true"
-                            android:text="@={viewState.taskTitle}"
+                            android:text="@={viewState.subtaskTitle}"
                             android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -183,6 +183,7 @@
                         android:layout_marginTop="10dp"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
+                        android:visibility="gone"
                         app:endIconMode="dropdown_menu"
                         app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
                         app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
@@ -206,6 +207,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal"
+                        android:visibility="gone"
                         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                         app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
                         app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
@@ -224,8 +226,8 @@
                         app:boxStrokeWidth="1dp"
                         app:endIconDrawable="@drawable/ic_calendar"
                         app:endIconMode="custom"
-                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskViewerField"
-                        app:layout_constraintStart_toStartOf="@+id/newSubTaskViewerField"
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
                         app:layout_constraintTop_toBottomOf="@+id/viewersChipsRV">
 
                         <com.google.android.material.textfield.TextInputEditText

@@ -49,32 +49,32 @@ class TaskAdapter @Inject constructor() :
             val context = binding.root.context
             with(binding) {
                 /// Setting Status background and the status string.
-                val taskStatusNameBg: Pair<Int, Int> = when (item.state.uppercase()) {
+                val taskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
                     TaskStatus.NEW.name -> Pair(
                         R.drawable.status_assigned_outline,
-                        R.string.new_heading
+                        context.getString(R.string.new_heading)
                     )
                     TaskStatus.ACTIVE.name -> Pair(
                         R.drawable.status_ongoing_outline,
-                        R.string.active_heading
+                        context.getString(R.string.active_heading)
                     )
                     TaskStatus.DRAFT.name -> Pair(
                         R.drawable.status_draft_outline,
-                        R.string.draft_heading
+                        context.getString(R.string.draft_heading)
                     )
                     TaskStatus.DONE.name -> Pair(
                         R.drawable.status_done_outline,
-                        R.string.done_heading
+                        context.getString(R.string.done_heading)
                     )
                     else -> Pair(
                         R.drawable.status_draft_outline,
-                        R.string.draft_heading
+                        item.state
                     )
                 }
                 val (background, stringRes) = taskStatusNameBg
                 taskCardLayout.setBackgroundResource(background)
                 taskStatusName.setBackgroundResource(background)
-                taskStatusName.text = context.getString(stringRes)
+                taskStatusName.text = stringRes
 
                 /// setting started date.
 

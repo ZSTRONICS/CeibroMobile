@@ -32,7 +32,7 @@ class NewSubTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn, 1 -> navigateBack()
+            R.id.closeBtn, 1, R.id.newSubTaskCancelBtn -> navigateBack()
             R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(TaskStatus.DRAFT.name.lowercase())
             R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(TaskStatus.ASSIGNED.name.lowercase())
             R.id.newSubTaskDueDateText -> {
@@ -89,9 +89,9 @@ class NewSubTaskFragment :
             assigneeChipsAdapter.setList(it)
         }
 
-        viewModel.viewers.observe(viewLifecycleOwner) {
-            viewersChipsAdapter.setList(it)
-        }
+//        viewModel.viewers.observe(viewLifecycleOwner) {
+//            viewersChipsAdapter.setList(it)
+//        }
 
         viewModel.projectMemberNames.observe(viewLifecycleOwner) {
             val arrayAdapter =
@@ -107,7 +107,7 @@ class NewSubTaskFragment :
             )
 
             mViewDataBinding.newSubTaskAssignToSpinner.setAdapter(arrayAdapter)
-            mViewDataBinding.newSubTaskViewerSpinner.setAdapter(arrayAdapter)
+//            mViewDataBinding.newSubTaskViewerSpinner.setAdapter(arrayAdapter)
         }
 
 
@@ -116,20 +116,20 @@ class NewSubTaskFragment :
                 viewModel.onAssigneeSelect(position)
             }
 
-        mViewDataBinding.newSubTaskViewerSpinner.onItemClickListener =
-            AdapterView.OnItemClickListener { _, _, position, _ ->
-                viewModel.onViewerSelect(position)
-            }
+//        mViewDataBinding.newSubTaskViewerSpinner.onItemClickListener =
+//            AdapterView.OnItemClickListener { _, _, position, _ ->
+//                viewModel.onViewerSelect(position)
+//            }
 
         mViewDataBinding.assigneeChipsRV.adapter = assigneeChipsAdapter
         assigneeChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
             viewModel.removeAssignee(data)
         }
 
-        mViewDataBinding.viewersChipsRV.adapter = viewersChipsAdapter
-        viewersChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
-            viewModel.removeViewer(data)
-        }
+//        mViewDataBinding.viewersChipsRV.adapter = viewersChipsAdapter
+//        viewersChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
+//            viewModel.removeViewer(data)
+//        }
     }
 
     var cal: Calendar = Calendar.getInstance()

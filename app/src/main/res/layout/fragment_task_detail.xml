@@ -148,14 +148,14 @@
                     android:id="@+id/taskDetailDueDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginStart="1dp"
                     android:background="@drawable/status_draft_filled"
                     android:backgroundTint="@color/white"
                     android:elevation="0dp"
                     android:fontFamily="@font/inter_regular"
-                    android:paddingStart="12dp"
+                    android:paddingStart="11dp"
                     android:paddingTop="2.5dp"
-                    android:paddingEnd="12dp"
+                    android:paddingEnd="11dp"
                     android:paddingBottom="2.5dp"
                     android:text="22.05.2021"
                     android:textColor="@color/black"
@@ -533,15 +533,15 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp">
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/taskDetailSubTasksRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:paddingStart="3dp"
-                    android:paddingEnd="3dp"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="1dp"
                     android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -549,7 +549,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:itemCount="10"
-                    tools:listitem="@layout/layout_task_box" />
+                    tools:listitem="@layout/layout_subtask_box" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

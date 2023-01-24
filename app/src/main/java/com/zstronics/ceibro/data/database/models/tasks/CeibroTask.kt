@@ -20,6 +20,7 @@ data class CeibroTask(
     @SerializedName("assignedTo") val assignedTo: List<TaskMember>,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("creator") val creator: TaskMember?,
+    @SerializedName("description") val description: String?,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
     @SerializedName("project") val project: TaskProject,
@@ -38,8 +39,7 @@ data class ProjectSubTaskStatus(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     @SerializedName("state") val state: String,
-    @SerializedName("count") val count: String,
-    @SerializedName("subTasks") val subTasks: List<String>,
+    @SerializedName("count") val count: String
 ) : Parcelable
 
 @Entity(tableName = TableNames.TaskMember)

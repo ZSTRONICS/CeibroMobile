@@ -50,7 +50,7 @@ class SubTaskAdapter @Inject constructor() :
             val context = binding.root.context
             with(binding) {
                 /// Setting Status background and the status string.
-                val subTaskStatusNameBg: Pair<Int, String> = when (item.subTaskState.uppercase()) {
+                val subTaskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
                     SubTaskStatus.ONGOING.name -> Pair(
                         R.drawable.status_ongoing_filled,
                         context.getString(R.string.ongoing_heading)
@@ -77,38 +77,38 @@ class SubTaskAdapter @Inject constructor() :
                     )
                     else -> Pair(
                         R.drawable.status_draft_filled,
-                        item.subTaskState
+                        item.state
                     )
                 }
                 val (background, stringRes) = subTaskStatusNameBg
                 subTaskStatusName.setBackgroundResource(background)
                 subTaskStatusName.text = stringRes
 
-                if (item.subTaskState.uppercase() == SubTaskStatus.DRAFT.name) {
+                if (item.state.uppercase() == SubTaskStatus.DRAFT.name) {
                     draftStateBtnLayout.visibility = View.VISIBLE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
                     ongoingStateBtnLayout.visibility = View.GONE
                 }
-                else if (item.subTaskState.uppercase() == SubTaskStatus.ASSIGNED.name) {
+                else if (item.state.uppercase() == SubTaskStatus.ASSIGNED.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.VISIBLE
                     acceptedStateBtnLayout.visibility = View.GONE
                     ongoingStateBtnLayout.visibility = View.GONE
                 }
-                else if (item.subTaskState.uppercase() == SubTaskStatus.ACCEPTED.name) {
+                else if (item.state.uppercase() == SubTaskStatus.ACCEPTED.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.VISIBLE
                     ongoingStateBtnLayout.visibility = View.GONE
                 }
-                else if (item.subTaskState.uppercase() == SubTaskStatus.ONGOING.name) {
+                else if (item.state.uppercase() == SubTaskStatus.ONGOING.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
                     ongoingStateBtnLayout.visibility = View.VISIBLE
                 }
-                else if (item.subTaskState.uppercase() == SubTaskStatus.DONE.name) {
+                else if (item.state.uppercase() == SubTaskStatus.DONE.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
