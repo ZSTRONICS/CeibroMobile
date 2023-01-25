@@ -15,6 +15,8 @@ object SocketHandler {
     const val RECEIVE_MESSAGE = "RECEIVE_MESSAGE"
     const val CHAT_EVENT_REP_OVER_SOCKET = "CHAT_EVENT_REP_OVER_SOCKET"
     const val CHAT_EVENT_REQ_OVER_SOCKET = "CHAT_EVENT_REQ_OVER_SOCKET"
+    const val CEIBRO_LIVE_EVENT_BY_USER = "CEIBRO_LIVE_EVENT_BY_USER"
+    const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
 
     @Synchronized
     fun setSocket() {
@@ -37,6 +39,9 @@ object SocketHandler {
 //            }
 
             mSocket.io().on(CHAT_EVENT_REQ_OVER_SOCKET) { args ->
+                args
+            }
+            mSocket.io().on(CEIBRO_LIVE_EVENT_BY_USER) { args ->
                 args
             }
 
@@ -64,12 +69,18 @@ object SocketHandler {
     @Synchronized
     fun offAllEventOObservers() {
         mSocket.io().off(CHAT_EVENT_REP_OVER_SOCKET)
-//        mSocket.io().off(RECEIVE_MESSAGE)
         mSocket.io().off(CHAT_EVENT_REQ_OVER_SOCKET)
+        mSocket.io().off(CEIBRO_LIVE_EVENT_BY_USER)
+        mSocket.io().off(CEIBRO_LIVE_EVENT_BY_SERVER)
     }
 
     @Synchronized
-    fun sendRequest(body: String){
+    fun sendChatRequest(body: String){
         mSocket.emit(CHAT_EVENT_REQ_OVER_SOCKET, body)
+    }
+
+    @Synchronized
+    fun sendLiveEventRequest(body: String){
+        mSocket.emit(CEIBRO_LIVE_EVENT_BY_USER, body)
     }
 }

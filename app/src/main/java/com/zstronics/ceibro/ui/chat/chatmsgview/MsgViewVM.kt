@@ -194,14 +194,14 @@ class MsgViewVM @Inject constructor(
         )
         val json = gson.toJson(messageRequest)
 
-        SocketHandler.sendRequest(json)
+        SocketHandler.sendChatRequest(json)
 //        replyOrSendMessage(newMessage)
     }
 
     private fun sendMessageStatus(
         json: String
     ) {
-        SocketHandler.sendRequest(json)
+        SocketHandler.sendChatRequest(json)
     }
 
     override fun composeAndSendMessage(
