@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -54,23 +55,17 @@ class NewSubTaskVM @Inject constructor(
             )
         }
         _taskAssignee.value = list as ArrayList<Member>?
-
-        taskParcel?._id?.let { loadProjects(it) }
+        taskParcel?.project?.id?.let { loadMemberByProjectId(it) }
     }
 
-    private fun loadProjects(projectId: String) {
+    private fun loadMemberByProjectId(projectId: String) {
         launch {
             loading(true)
-            when (val response = projectRepository.getProjectsWithMembers(false)) {
-
+            when (val response = projectRepository.getMemberByProjectId(projectId)) {
                 is ApiResponse.Success -> {
-                    response.data.projectDetails.let { projects ->
-                        if (projects.isNotEmpty()) {
-//                            val selectedProject = projects.find { it.id == projectId }
-                            val selectedProject = projects.first()
-                            if (selectedProject !== null)
-                                onProjectSelect(selectedProject)
-                        }
+                    response.data.members.let { members ->
+                        _projectMembers.postValue(members)
+                        _projectMemberNames.postValue(members.map { it.firstName + " " + it.surName })
                     }
                     loading(false)
                 }
@@ -82,18 +77,15 @@ class NewSubTaskVM @Inject constructor(
         }
     }
 
-    private fun onProjectSelect(selectedProject: ProjectsWithMembersResponse.ProjectDetail?) {
-        val projectMemb = selectedProject?.projectMembers as MutableList
-        _projectMembers.postValue(projectMemb)
-        _projectMemberNames.postValue(projectMemb.map { it.firstName + " " + it.surName })
-    }
-
 
     fun onAssigneeSelect(position: Int) {
         val member: Member? = projectMembers.value?.get(position)
         val assignees = _taskAssignee.value
-        if (assignees?.contains(member) == true) {
-            assignees.remove(member)
+
+        val selectedMember = assignees?.find { it.id == member?.id }
+
+        if (selectedMember != null) {
+            assignees.remove(selectedMember)
         } else {
             if (member != null) {
                 assignees?.add(member)

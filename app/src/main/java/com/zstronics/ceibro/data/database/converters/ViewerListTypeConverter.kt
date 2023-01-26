@@ -3,9 +3,7 @@ package com.zstronics.ceibro.data.database.converters
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.zstronics.ceibro.data.database.models.subtask.AssignedTo
 import com.zstronics.ceibro.data.database.models.subtask.Viewer
-import com.zstronics.ceibro.data.database.models.tasks.ProjectSubTaskStatus
 
 class ViewerListTypeConverter {
 

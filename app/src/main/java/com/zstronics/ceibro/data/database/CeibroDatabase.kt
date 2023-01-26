@@ -11,14 +11,14 @@ import com.zstronics.ceibro.data.database.models.subtask.AssignedTo
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskAdvanceOptions
 import com.zstronics.ceibro.data.database.models.subtask.Viewer
 import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
-import com.zstronics.ceibro.data.database.models.tasks.ProjectSubTaskStatus
+import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 
 @Database(
-    entities = [CeibroTask::class, AdvanceOptions::class, ProjectSubTaskStatus::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
+    entities = [CeibroTask::class, AdvanceOptions::class, SubTaskStatusCount::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
         Viewer::class, SubTaskAdvanceOptions::class],
-    version = 14,
+    version = 16,
     exportSchema = false
 )
 @TypeConverters(
@@ -27,10 +27,10 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
     ViewerListTypeConverter::class,
     AdvanceOptionsTypeConverter::class,
     ListConverters::class,
-    ProjectSubTaskStatusListTypeConverter::class,
     TaskMemberListTypeConverter::class,
     TaskMemberTypeConverter::class,
-    TaskProjectTypeConverter::class
+    TaskProjectTypeConverter::class,
+    SubTaskStatusCountTypeConverter::class
 )
 abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getTasksDao(): TaskDao

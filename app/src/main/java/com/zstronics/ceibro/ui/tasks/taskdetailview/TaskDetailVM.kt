@@ -36,4 +36,9 @@ class TaskDetailVM @Inject constructor(
             _subTasks.postValue(taskRepository.getSubTaskByTaskId(taskId))
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        task.value?._id?.let { getSubTasks(it) }
+    }
 }

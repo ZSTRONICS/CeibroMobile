@@ -25,7 +25,7 @@ data class CeibroTask(
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
     @SerializedName("project") val project: TaskProject,
     @SerializedName("state") val state: String,
-    @SerializedName("subTaskStatusCount") val subTaskStatusCount: List<ProjectSubTaskStatus>,
+    @SerializedName("subTaskStatusCount") val subTaskStatusCount: SubTaskStatusCount?,
     @SerializedName("title") val title: String,
     @SerializedName("unSeenSubTaskCommentCount") val unSeenSubTaskCommentCount: Int,
     @SerializedName("updatedAt") val updatedAt: String,
@@ -35,11 +35,17 @@ data class CeibroTask(
 
 @Entity(tableName = TableNames.SubTasksStatus)
 @Parcelize
-data class ProjectSubTaskStatus(
+data class SubTaskStatusCount(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    @SerializedName("state") val state: String,
-    @SerializedName("count") val count: String
+    @SerializedName("accepted") val accepted: Int,
+    @SerializedName("approved") val approved: Int,
+    @SerializedName("assigned") val assigned: Int,
+    @SerializedName("done") val done: Int,
+    @SerializedName("draft") val draft: Int,
+    @SerializedName("ongoing") val ongoing: Int,
+    @SerializedName("rejected") val rejected: Int,
+    @SerializedName("submitted") val submitted: Int
 ) : Parcelable
 
 @Entity(tableName = TableNames.TaskMember)
@@ -53,7 +59,7 @@ data class TaskMember(
     @SerializedName("_id") val id: String,
 ) : Parcelable
 
-@Entity(tableName = TableNames.TaskMember)
+@Entity(tableName = TableNames.TaskProject)
 @Parcelize
 data class TaskProject(
     @PrimaryKey(autoGenerate = true)
