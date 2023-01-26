@@ -42,10 +42,11 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         /*Set socket and establish connection*/
         SocketHandler.setSocket()
         SocketHandler.establishConnection()
-
+        viewModel.handleSocketEvents()
 //        setBadgeOnChat(R.id.nav_chat, 4)
 
         mViewDataBinding.bottomNavigation.setOnNavigationItemSelectedListener(navListener)

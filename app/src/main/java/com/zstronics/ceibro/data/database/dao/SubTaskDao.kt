@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 
 @Dao
@@ -21,4 +22,7 @@ interface SubTaskDao {
 
     @Query("SELECT * FROM sub_tasks where taskId = :taskId")
     suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask>
+
+    @Update
+    suspend fun updateSubTask(subTask: AllSubtask)
 }

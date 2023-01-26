@@ -18,6 +18,10 @@ object SocketHandler {
     const val CEIBRO_LIVE_EVENT_BY_USER = "CEIBRO_LIVE_EVENT_BY_USER"
     const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
 
+    enum class TaskEvent {
+        TASK_CREATED, TASK_UPDATE_PUBLIC, TASK_UPDATE_PRIVATE, SUB_TASK_CREATED, SUB_TASK_UPDATE_PUBLIC, SUB_TASK_UPDATE_PRIVATE
+    }
+
     @Synchronized
     fun setSocket() {
         try {
@@ -75,12 +79,12 @@ object SocketHandler {
     }
 
     @Synchronized
-    fun sendChatRequest(body: String){
+    fun sendChatRequest(body: String) {
         mSocket.emit(CHAT_EVENT_REQ_OVER_SOCKET, body)
     }
 
     @Synchronized
-    fun sendLiveEventRequest(body: String){
+    fun sendLiveEventRequest(body: String) {
         mSocket.emit(CEIBRO_LIVE_EVENT_BY_USER, body)
     }
 }

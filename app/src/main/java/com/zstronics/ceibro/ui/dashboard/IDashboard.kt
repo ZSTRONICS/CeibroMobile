@@ -9,5 +9,6 @@ interface IDashboard {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
+        fun handleSocketEvents()
     }
 }
