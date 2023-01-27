@@ -20,10 +20,14 @@ class DashboardVM @Inject constructor(
     override val viewState: DashboardState,
     val sessionManager: SessionManager,
     private val localTask: TaskLocalDataSource,
-    private val localSubTask: SubTaskLocalDataSource
+    private val localSubTask: SubTaskLocalDataSource,
+    private val repository: ITaskRepository
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     init {
         sessionManager.setUser()
+        launch {
+            repository.syncTasksAndSubTasks()
+        }
     }
 
     override fun handleSocketEvents() {

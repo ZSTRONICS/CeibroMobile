@@ -28,4 +28,6 @@ interface ITaskRepository {
     )
     
     suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask>
+
+    suspend fun syncTasksAndSubTasks()
 }

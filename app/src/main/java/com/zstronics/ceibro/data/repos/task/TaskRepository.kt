@@ -70,9 +70,7 @@ class TaskRepository @Inject constructor(
         }
     }
 
-
-    /// Following calls are for TODO - Sub-Task
-
+    /// Following calls are for Sub-Task
     override suspend fun getAllSubtasks(): List<AllSubtask> {
         val list = localSubTask.getSubTasks()
         return if (list.isEmpty()) {
@@ -121,4 +119,27 @@ class TaskRepository @Inject constructor(
     }
 
     override suspend fun eraseSubTaskTable() = localSubTask.eraseSubTaskTable()
+
+    private suspend fun syncSubTask() {
+        when (val response = remoteSubTask.getAllSubTasksForUser("all")) {
+            is ApiResponse.Success -> {
+                val subTasks = response.data.allSubtasks
+                localSubTask.insertAllSubTasks(subTasks)
+            }
+        }
+    }
+
+    private suspend fun syncTask() {
+        when (val response = remoteTask.tasks()) {
+            is ApiResponse.Success -> {
+                val tasks = response.data.allTasks
+                localTask.insertAllTasks(tasks)
+            }
+        }
+    }
+
+    override suspend fun syncTasksAndSubTasks() {
+        syncSubTask()
+        syncTask()
+    }
 }

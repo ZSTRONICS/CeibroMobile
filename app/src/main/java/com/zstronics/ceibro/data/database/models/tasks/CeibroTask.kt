@@ -10,8 +10,9 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = TableNames.Tasks)
 @Parcelize
 data class CeibroTask(
-    @PrimaryKey(autoGenerate = true)
-    val taskId: Int,
+//    @PrimaryKey(autoGenerate = true)
+//    val taskId: Int,
+    @PrimaryKey
     @SerializedName("_id") val _id: String,
     @SerializedName("access") val access: List<String>,
     @SerializedName("admins") val admins: List<TaskMember>,
