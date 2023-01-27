@@ -5,5 +5,6 @@ enum class TaskStatus {
     DRAFT,
     ACTIVE,
     DONE,
-    ASSIGNED
+    ASSIGNED,
+    ACCEPTED
 }

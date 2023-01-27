@@ -13,6 +13,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -135,6 +136,43 @@ class NewSubTaskVM @Inject constructor(
 //                members = viewersMembersId
 //            )
 //        )
+        val adminsId = task.value?.admins?.map { it.id }
+        var highestState = TaskStatus.ASSIGNED.name.lowercase()
+
+        val assigneeStates = if (state == TaskStatus.DRAFT.name.lowercase()) {
+            listOf(
+                NewSubtaskRequest.State(
+                    userId = user?.id,
+                    userState = state
+                )
+            )
+        } else {
+            assigneeMembersId?.map { id ->
+                NewSubtaskRequest.State(
+                    userId = id,
+                    userState = if (isAdmin(id)) {
+                        highestState = TaskStatus.ACCEPTED.name.lowercase()
+                        highestState
+                    } else state
+                )
+            }
+        }
+
+        var adminsStates = adminsId?.map { id ->
+            NewSubtaskRequest.State(
+                userId = id,
+                userState = highestState
+            )
+        }
+        val finalStates = arrayListOf<NewSubtaskRequest.State>()
+
+        if (assigneeStates != null) {
+            finalStates.addAll(assigneeStates)
+        }
+        if (adminsStates != null) {
+            finalStates.addAll(adminsStates)
+        }
+        val states = finalStates.distinctBy { it.userId }
 
         val newTaskRequest = NewSubtaskRequest(
             assignedTo = assignedTo,
@@ -144,7 +182,7 @@ class NewSubTaskVM @Inject constructor(
             doneImageRequired = viewState.doneImageRequired.value ?: false,
             dueDate = viewState.dueDate,
             isMultiTaskSubTask = false,
-            state = state,
+            state = states,
             taskId = task.value?._id ?: "",
             title = viewState.subtaskTitle.value.toString()
         )
@@ -159,4 +197,7 @@ class NewSubTaskVM @Inject constructor(
         }
     }
 
+    fun isAdmin(id: String): Boolean {
+        return id == user?.id
+    }
 }

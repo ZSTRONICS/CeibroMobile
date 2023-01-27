@@ -13,7 +13,7 @@ data class NewSubtaskRequest(
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
-    @SerializedName("state") val state: List<State>,
+    @SerializedName("state") val state: List<State>?,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("title") val title: String
 ) {

@@ -7,12 +7,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutSubtaskBoxBinding
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
-class SubTaskAdapter @Inject constructor() :
+class SubTaskAdapter @Inject constructor(
+    val sessionManager: SessionManager
+) :
     RecyclerView.Adapter<SubTaskAdapter.SubTaskViewHolder>() {
+    val user = sessionManager.getUser().value
     var itemClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? = null
     var itemLongClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? =
         null
@@ -50,7 +55,10 @@ class SubTaskAdapter @Inject constructor() :
             val context = binding.root.context
             with(binding) {
                 /// Setting Status background and the status string.
-                val subTaskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
+                val state = item.state.find { it.userId == user?.id }?.userState?.uppercase()
+                    ?: TaskStatus.DRAFT.name
+
+                val subTaskStatusNameBg: Pair<Int, String> = when (state) {
                     SubTaskStatus.ONGOING.name -> Pair(
                         R.drawable.status_ongoing_filled,
                         context.getString(R.string.ongoing_heading)
@@ -77,38 +85,34 @@ class SubTaskAdapter @Inject constructor() :
                     )
                     else -> Pair(
                         R.drawable.status_draft_filled,
-                        item.state
+                        state
                     )
                 }
                 val (background, stringRes) = subTaskStatusNameBg
                 subTaskStatusName.setBackgroundResource(background)
                 subTaskStatusName.text = stringRes
 
-                if (item.state.uppercase() == SubTaskStatus.DRAFT.name) {
+                if (state == SubTaskStatus.DRAFT.name) {
                     draftStateBtnLayout.visibility = View.VISIBLE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
                     ongoingStateBtnLayout.visibility = View.GONE
-                }
-                else if (item.state.uppercase() == SubTaskStatus.ASSIGNED.name) {
+                } else if (state == SubTaskStatus.ASSIGNED.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.VISIBLE
                     acceptedStateBtnLayout.visibility = View.GONE
                     ongoingStateBtnLayout.visibility = View.GONE
-                }
-                else if (item.state.uppercase() == SubTaskStatus.ACCEPTED.name) {
+                } else if (state == SubTaskStatus.ACCEPTED.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.VISIBLE
                     ongoingStateBtnLayout.visibility = View.GONE
-                }
-                else if (item.state.uppercase() == SubTaskStatus.ONGOING.name) {
+                } else if (state == SubTaskStatus.ONGOING.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
                     ongoingStateBtnLayout.visibility = View.VISIBLE
-                }
-                else if (item.state.uppercase() == SubTaskStatus.DONE.name) {
+                } else if (state == SubTaskStatus.DONE.name) {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
@@ -132,8 +136,7 @@ class SubTaskAdapter @Inject constructor() :
                         "${members[0].firstName} ${members[0].surName}  +${members.size - 1}"
                     else
                         "${members[0].firstName} ${members[0].surName}"
-                }
-                else {
+                } else {
                     subTaskAssignToName.text = "No user assigned"
                 }
 

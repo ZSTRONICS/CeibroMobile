@@ -9,6 +9,6 @@ class NewSubTaskState @Inject constructor() : BaseState(), INewSubTask.State {
     override var startDate: String = ""
     override val subtaskTitle: MutableLiveData<String> = MutableLiveData("")
     override val description: MutableLiveData<String> = MutableLiveData("")
-    override val doneImageRequired: MutableLiveData<Boolean> = MutableLiveData(true)
-    override val doneCommentsRequired: MutableLiveData<Boolean> = MutableLiveData(true)
+    override val doneImageRequired: MutableLiveData<Boolean> = MutableLiveData(false)
+    override val doneCommentsRequired: MutableLiveData<Boolean> = MutableLiveData(false)
 }

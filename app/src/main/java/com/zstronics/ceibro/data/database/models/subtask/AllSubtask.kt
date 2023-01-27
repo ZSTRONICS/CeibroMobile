@@ -12,8 +12,9 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = TableNames.SubTasks)
 @Parcelize
 data class AllSubtask(
-    @PrimaryKey(autoGenerate = true)
-    val subTaskId: Int,
+//    @PrimaryKey(autoGenerate = true)
+//    val subTaskId: Int,
+    @PrimaryKey
     @SerializedName("_id") val id: String,
     @SerializedName("access") val access: List<String>,
     @SerializedName("advanceOptions") val advanceOptions: SubTaskAdvanceOptions,

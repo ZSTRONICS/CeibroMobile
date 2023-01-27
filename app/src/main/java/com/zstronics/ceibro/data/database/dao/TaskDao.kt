@@ -1,21 +1,17 @@
 package com.zstronics.ceibro.data.database.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
 @Dao
 interface TaskDao {
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: CeibroTask)
 
     @Query("SELECT * FROM tasks")
     suspend fun getTasks(): List<CeibroTask>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllTasks(list: List<CeibroTask>)
 
     @Query("DELETE FROM tasks")
