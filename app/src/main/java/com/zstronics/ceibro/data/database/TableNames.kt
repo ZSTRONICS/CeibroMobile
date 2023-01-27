@@ -6,6 +6,7 @@ object TableNames {
     const val AdvanceOptions = "advance_options"
     const val SubTaskAdvanceOptions = "sub_task_advance_options"
     const val SubTasksStatus = "sub_tasks_status"
+    const val SubTasksState = "sub_tasks_state"
     const val TaskMember = "task_member"
     const val TaskProject = "task_project"
     const val AssignedTo = "assigned_to"

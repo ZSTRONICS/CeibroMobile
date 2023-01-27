@@ -28,7 +28,7 @@ data class AllSubtask(
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("files") val files: List<String>,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
-    @SerializedName("state") val state: String,
+    @SerializedName("state") val state: List<SubTaskStateItem>,
     @SerializedName("subTaskFixedForUser") val subTaskFixedForUser: List<String>,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("title") val title: String,
@@ -56,4 +56,14 @@ data class Viewer(
     @SerializedName("addedBy") val addedBy: TaskMember,
     @SerializedName("_id") val id: String,
     @SerializedName("members") val members: List<TaskMember>
+) : Parcelable
+
+
+@Entity(tableName = TableNames.SubTasksState)
+@Parcelize
+data class SubTaskStateItem(
+    @PrimaryKey(autoGenerate = true)
+    val subTaskStateId: Int,
+    @SerializedName("userId") val userId: String,
+    @SerializedName("userState") val userState: String
 ) : Parcelable

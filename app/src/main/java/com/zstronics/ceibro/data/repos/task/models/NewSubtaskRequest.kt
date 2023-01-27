@@ -13,7 +13,7 @@ data class NewSubtaskRequest(
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
-    @SerializedName("state") val state: String,
+    @SerializedName("state") val state: List<State>,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("title") val title: String
 ) {
@@ -27,5 +27,11 @@ data class NewSubtaskRequest(
     data class Viewer(
         @SerializedName("addedBy") val addedBy: String?,
         @SerializedName("members") val members: List<String>?
+    )
+
+    @Keep
+    data class State(
+        @SerializedName("userId") val userId: String?,
+        @SerializedName("userState") val userState: String?
     )
 }
