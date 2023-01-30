@@ -78,11 +78,13 @@ class TaskAdapter @Inject constructor() :
 
                 /// setting started date.
 
-                taskCDate.text = DateUtils.reformatStringDate(
+                taskCreationDateText.text = DateUtils.reformatStringDate(
                     date = item.createdAt,
                     DateUtils.SERVER_DATE_FULL_FORMAT,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
+
+                taskCreatorName.text = "${item.creator?.firstName} ${item.creator?.surName}"
 
                 if (item.assignedTo.isNotEmpty()) {
                     taskAssignToName.text = if (item.assignedTo.size > 1)
@@ -120,7 +122,7 @@ class TaskAdapter @Inject constructor() :
                     else
                         View.INVISIBLE
                 taskSubTaskTotalCountText.text = "${item.totalSubTaskCount} subtask(s)"
-                taskSubTaskCount.text = "${item.totalSubTaskCount}/${item.totalSubTaskCount}"
+                taskSubTaskCount.text = "${item.subTaskStatusCount?.done}/${item.totalSubTaskCount}"
 
                 itemView.setOnClickListener {
                     itemClickListener?.invoke(it, adapterPosition, item)
