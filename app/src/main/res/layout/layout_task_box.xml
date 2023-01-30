@@ -66,6 +66,7 @@
                         android:paddingStart="12dp"
                         android:paddingTop="2.5dp"
                         android:paddingEnd="12dp"
+                        android:visibility="gone"
                         android:paddingBottom="2.5dp"
                         android:text="22.05.2021"
                         android:textColor="@color/black"
@@ -94,7 +95,7 @@
 
 
                 <LinearLayout
-                    android:id="@+id/taskAssignToLayout"
+                    android:id="@+id/taskCreatorLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="9dp"
@@ -104,6 +105,82 @@
                     app:layout_constraintEnd_toStartOf="@+id/bottomCenterPoint"
                     app:layout_constraintStart_toStartOf="@+id/topBar"
                     app:layout_constraintTop_toBottomOf="@+id/topBar">
+
+                    <TextView
+                        android:id="@+id/taskCreatorHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/creator_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/taskCreatorName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:maxLines="1"
+                        android:text="Kristo Vunukainen 1"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/taskCreationDateLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="@+id/taskSubTaskCount"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/taskCreatorLayout"
+                    app:layout_constraintTop_toTopOf="@+id/taskCreatorLayout">
+
+                    <TextView
+                        android:id="@+id/taskCreationDateHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/created_on_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/taskCreationDateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:maxLines="1"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="0dp"
+                        android:text="15.05.2021"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/taskAssignToLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:layout_marginEnd="5dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toStartOf="@+id/bottomCenterPoint"
+                    app:layout_constraintStart_toStartOf="@+id/taskCreatorLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/taskCreatorLayout">
 
                     <TextView
                         android:id="@+id/taskAssignToHeading"
@@ -137,7 +214,7 @@
                     android:layout_marginStart="20dp"
                     android:gravity="start"
                     android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="@+id/taskSubTaskCount"
+                    app:layout_constraintEnd_toEndOf="@+id/taskCreationDateLayout"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@+id/taskAssignToLayout"
                     app:layout_constraintTop_toTopOf="@+id/taskAssignToLayout">

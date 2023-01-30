@@ -230,5 +230,7 @@
     <string name="pause_heading">Pause</string>
     <string name="delete_heading">Delete</string>
     <string name="start_heading">Start</string>
+    <string name="creator_heading">Creator</string>
+    <string name="created_on_heading">Created on</string>
 
 </resources>
