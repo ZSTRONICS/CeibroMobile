@@ -81,6 +81,7 @@ data class MessagesResponse(
         ) : BaseResponse(), Parcelable
     }
 
+    @Keep
     @Parcelize
     data class ReplyOf(
         @SerializedName("_id")

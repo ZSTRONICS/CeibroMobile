@@ -1,8 +1,10 @@
 package com.zstronics.ceibro.data.repos.chat.messages
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.ui.enums.MessageType
 
+@Keep
 data class NewMessageRequest(
     @SerializedName("message") var message: String?,
     @SerializedName("chat") var chat: String?,
@@ -14,6 +16,7 @@ data class NewMessageRequest(
     @SerializedName("files") var files: ArrayList<MediaMessage?>? = null
 )
 
+@Keep
 data class MediaMessage(
     @SerializedName("fileType") var fileType: String?,
     @SerializedName("fileName") var fileName: String?,

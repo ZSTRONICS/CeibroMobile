@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.database.models.tasks
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -9,6 +10,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TableNames.Tasks)
 @Parcelize
+@Keep
 data class CeibroTask(
 //    @PrimaryKey(autoGenerate = true)
 //    val taskId: Int,
@@ -36,6 +38,7 @@ data class CeibroTask(
 
 @Entity(tableName = TableNames.SubTasksStatus)
 @Parcelize
+@Keep
 data class SubTaskStatusCount(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
@@ -51,6 +54,7 @@ data class SubTaskStatusCount(
 
 @Entity(tableName = TableNames.TaskMember)
 @Parcelize
+@Keep
 data class TaskMember(
     @PrimaryKey(autoGenerate = true)
     val TaskMemberId: Int,
@@ -62,6 +66,7 @@ data class TaskMember(
 
 @Entity(tableName = TableNames.TaskProject)
 @Parcelize
+@Keep
 data class TaskProject(
     @PrimaryKey(autoGenerate = true)
     val TaskProjectId: Int,

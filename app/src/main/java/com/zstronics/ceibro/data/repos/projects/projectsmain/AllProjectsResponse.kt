@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import kotlinx.parcelize.Parcelize
 
+@Keep
 data class AllProjectsResponse(
     @SerializedName("result")
     val result: Result

@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.database.models.subtask
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -10,6 +11,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TableNames.SubTaskAdvanceOptions)
 @Parcelize
+@Keep
 data class SubTaskAdvanceOptions(
     @PrimaryKey
     val id: Int,

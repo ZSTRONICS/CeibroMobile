@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.database.models.subtask
 
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -11,6 +12,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TableNames.SubTasks)
 @Parcelize
+@Keep
 data class AllSubtask(
 //    @PrimaryKey(autoGenerate = true)
 //    val subTaskId: Int,
@@ -40,6 +42,7 @@ data class AllSubtask(
 
 @Entity(tableName = TableNames.AssignedTo)
 @Parcelize
+@Keep
 data class AssignedTo(
     @PrimaryKey(autoGenerate = true)
     val assignedToId: Int,
@@ -51,6 +54,7 @@ data class AssignedTo(
 
 @Entity(tableName = TableNames.Viewer)
 @Parcelize
+@Keep
 data class Viewer(
     @PrimaryKey(autoGenerate = true)
     val viewerId: Int,
@@ -62,6 +66,7 @@ data class Viewer(
 
 @Entity(tableName = TableNames.SubTasksState)
 @Parcelize
+@Keep
 data class SubTaskStateItem(
     @PrimaryKey(autoGenerate = true)
     val subTaskStateId: Int,
