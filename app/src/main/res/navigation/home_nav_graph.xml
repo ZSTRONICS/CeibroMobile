@@ -164,7 +164,11 @@
         android:id="@+id/subTaskFragment"
         android:name="com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment"
         android:label="SubTaskFragment"
-        tools:layout="@layout/fragment_sub_task" />
+        tools:layout="@layout/fragment_sub_task" >
+        <action
+            android:id="@+id/action_subTaskFragment_to_subTaskDetailFragment"
+            app:destination="@id/subTaskDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/newTaskFragment"
         android:name="com.zstronics.ceibro.ui.tasks.newtask.NewTaskFragment"
@@ -178,10 +182,18 @@
         <action
             android:id="@+id/action_taskDetailFragment_to_newSubTaskFragment"
             app:destination="@id/newSubTaskFragment" />
+        <action
+            android:id="@+id/action_taskDetailFragment_to_subTaskDetailFragment"
+            app:destination="@id/subTaskDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/newSubTaskFragment"
         android:name="com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskFragment"
         android:label="NewSubTaskFragment"
         tools:layout="@layout/fragment_new_sub_task" />
+    <fragment
+        android:id="@+id/subTaskDetailFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.subtaskdetailview.SubTaskDetailFragment"
+        android:label="SubTaskDetailFragment"
+        tools:layout="@layout/fragment_sub_task_detail" />
 </navigation>

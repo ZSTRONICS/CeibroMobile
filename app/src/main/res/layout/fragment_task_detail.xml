@@ -39,7 +39,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/taskTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/taskTitle"
-                app:srcCompat="@drawable/icon_round_close"
+                app:srcCompat="@drawable/icon_back"
                 app:tint="@color/appYellow" />
 
             <TextView
@@ -540,8 +540,6 @@
                     android:id="@+id/taskDetailSubTasksRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:paddingStart="1dp"
-                    android:paddingEnd="1dp"
                     android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"

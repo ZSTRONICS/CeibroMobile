@@ -122,7 +122,11 @@ class TaskAdapter @Inject constructor() :
                     else
                         View.INVISIBLE
                 taskSubTaskTotalCountText.text = "${item.totalSubTaskCount} subtask(s)"
-                taskSubTaskCount.text = "${item.subTaskStatusCount?.done}/${item.totalSubTaskCount}"
+                taskSubTaskCount.text = if (item.subTaskStatusCount?.done != null)
+                    "${item.subTaskStatusCount.done}/${item.totalSubTaskCount}"
+                else
+                    "0/${item.totalSubTaskCount}"
+
 
                 itemView.setOnClickListener {
                     itemClickListener?.invoke(it, adapterPosition, item)

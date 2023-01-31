@@ -232,5 +232,13 @@
     <string name="start_heading">Start</string>
     <string name="creator_heading">Creator</string>
     <string name="created_on_heading">Created on</string>
+    <string name="show_more_heading">Show More</string>
+    <string name="show_less_heading">Show Less</string>
+    <string name="attachments_heading">Attachments</string>
+    <string name="view_rejections_heading">View Rejections</string>
+    <string name="recent_comment_heading">Recent Comment</string>
+    <string name="all_comments_heading">All Comments</string>
+    <string name="send_heading">Send</string>
+    <string name="type_new_comment_heading">Type new comment</string>
 
 </resources>

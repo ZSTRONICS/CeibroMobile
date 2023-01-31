@@ -26,6 +26,7 @@
     <color name="appGrey">#C0C0C0</color>
     <color name="appTextGrey">#605C5C</color>
     <color name="appDraftGrey">#B6B7B8</color>
+    <color name="appHintGrey">#ADB5BD</color>
     <color name="appAcceptBlue">#5572BC</color>
     <color name="appLightGrey">#DBDBDB</color>
     <color name="appHomeBack">#F5F7F8</color>

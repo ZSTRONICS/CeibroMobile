@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.databinding.FragmentSubTaskBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
@@ -37,10 +38,17 @@ class SubTaskFragment :
         }
         mViewDataBinding.subTaskRV.adapter = adapter
 
-//        adapter.itemClickListener = { _: View, position: Int, data: CeibroTask ->
-//            navigateToTaskDetail(data)
-//        }
+        adapter.itemClickListener = { _: View, position: Int, data: AllSubtask ->
+            navigateToSubTaskDetail(data)
+        }
 
+    }
+
+
+    private fun navigateToSubTaskDetail(data: AllSubtask) {
+        val bundle = Bundle()
+        bundle.putParcelable("subtask", data)
+        navigate(R.id.subTaskDetailFragment, bundle)
     }
 
 }

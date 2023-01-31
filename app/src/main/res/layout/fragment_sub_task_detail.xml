@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.tasks.subtaskdetailview.SubTaskDetailState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.tasks.subtaskdetailview.SubTaskDetailVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/subTaskDetailHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appYellow" />
+
+            <TextView
+                android:id="@+id/taskTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="1"
+                android:text="@string/task_title_heading"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subTaskDetailHeader">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp">
+
+                <TextView
+                    android:id="@+id/subTaskStatusName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/status_ongoing_filled"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:paddingStart="7dp"
+                    android:paddingTop="2.5dp"
+                    android:paddingEnd="7dp"
+                    android:paddingBottom="2.5dp"
+                    android:text="@string/ongoing_heading"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginStart="15dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/dateBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskStatusName">
+
+                    <TextView
+                        android:id="@+id/subTaskCDateHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/status_draft_filled"
+                        android:backgroundTint="@color/white"
+                        android:elevation="0dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="1"
+                        android:paddingStart="1dp"
+                        android:paddingTop="2.5dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="2.5dp"
+                        android:text="@string/created_on_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskCreationDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="1dp"
+                        android:background="@drawable/status_draft_filled"
+                        android:backgroundTint="@color/white"
+                        android:elevation="0dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLength="11"
+                        android:maxLines="1"
+                        android:paddingStart="2dp"
+                        android:paddingTop="2.5dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="2.5dp"
+                        android:text="22.05.2021"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskDueDateHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="13dp"
+                        android:background="@drawable/status_draft_filled"
+                        android:backgroundTint="@color/white"
+                        android:elevation="0dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="1"
+                        android:paddingStart="3dp"
+                        android:paddingTop="2.5dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="2.5dp"
+                        android:text="@string/due_date_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskDueDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="1dp"
+                        android:background="@drawable/status_draft_filled"
+                        android:backgroundTint="@color/white"
+                        android:elevation="0dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLength="11"
+                        android:maxLines="1"
+                        android:paddingStart="2dp"
+                        android:paddingTop="2.5dp"
+                        android:paddingEnd="3dp"
+                        android:paddingBottom="2.5dp"
+                        android:text="28.05.2021"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <LinearLayout
+                    android:id="@+id/subTaskTitleLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="start"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dateBar">
+
+                    <TextView
+                        android:id="@+id/subTaskTitleHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/subtask_title_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskTitleName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:layout_marginTop="1dp"
+                        android:text="@string/subtask_title_heading"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="7dp"
+                        android:alpha="0.6"
+                        android:background="@color/appLightGrey"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subTaskProjectLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskTitleLayout">
+
+                    <TextView
+                        android:id="@+id/subTaskProjectHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/project_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskProjectName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:maxLines="2"
+                        android:text="Paevälja 112-6"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="7dp"
+                        android:alpha="0.6"
+                        android:background="@color/appLightGrey" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subTaskCreatorLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskProjectLayout">
+
+                    <TextView
+                        android:id="@+id/subTaskCreatorHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/creator_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskCreatorName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:maxLines="1"
+                        android:text="Kristo Vunukainen"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="7dp"
+                        android:alpha="0.6"
+                        android:background="@color/appLightGrey" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subTaskAssignToLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskCreatorLayout">
+
+                    <TextView
+                        android:id="@+id/subTaskAssignToHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/assigned_to_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskAssignToName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:text="Kristo Vunukainen, Kristo Vunukainen, Kristo Vunukainen, Kristo Vunukainen"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="7dp"
+                        android:alpha="0.6"
+                        android:background="@color/appLightGrey" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subTaskDescriptionLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskAssignToLayout">
+
+                    <TextView
+                        android:id="@+id/subTaskDescriptionHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/description_heading"
+                        android:textColor="@color/grey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskDescriptionText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:maxLines="4"
+                        android:text="Any description of this subtask can be displayed over here."
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/subTaskDescriptionShowMoreBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:text="@string/show_more_heading"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:visibility="gone"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="7dp"
+                        android:alpha="0.6"
+                        android:background="@color/appLightGrey" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/subTaskAttachmentsBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:layout_marginTop="11dp"
+                    android:orientation="horizontal"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:background="?attr/selectableItemBackground"
+                    app:layout_constraintEnd_toEndOf="@+id/subTaskDescriptionLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskDescriptionLayout" >
+
+                    <ImageView
+                        android:id="@+id/subTaskAttachmentsImg"
+                        android:layout_width="17dp"
+                        android:layout_height="15dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:src="@drawable/icon_attachment"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:tint="@color/appBlue" />
+
+                    <TextView
+                        android:id="@+id/subTaskAttachmentsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/attachments_heading"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/centerVLine"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:alpha="0.7"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintBottom_toBottomOf="@+id/subTaskAttachmentsBtn"
+                    app:layout_constraintEnd_toStartOf="@+id/subTaskAttachmentsBtn"
+                    app:layout_constraintTop_toTopOf="@+id/subTaskAttachmentsBtn" />
+
+                <LinearLayout
+                    android:id="@+id/subTaskRejectionsBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    app:layout_constraintEnd_toStartOf="@+id/centerVLine"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskDescriptionLayout">
+
+                    <ImageView
+                        android:id="@+id/subTaskRejectionsImg"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:src="@drawable/visibility_on"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:tint="@color/appBlue" />
+
+                    <TextView
+                        android:id="@+id/subTaskRejectionsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/view_rejections_heading"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/recentCommentLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="25dp"
+                    android:alpha="0.7"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintEnd_toEndOf="@+id/subTaskDescriptionLayout"
+                    app:layout_constraintStart_toStartOf="@+id/subTaskDescriptionLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskAttachmentsBtn" />
+
+                <TextView
+                    android:id="@+id/recentCommentText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="1dp"
+                    android:text="@string/recent_comment_heading"
+                    android:background="@color/white"
+                    android:textColor="@color/grey"
+                    android:textSize="12.5sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/recentCommentLine"
+                    app:layout_constraintEnd_toEndOf="@+id/recentCommentLine"
+                    app:layout_constraintStart_toStartOf="@+id/recentCommentLine"
+                    app:layout_constraintTop_toTopOf="@+id/recentCommentLine" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recentCommentText">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/subTaskCommentsRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/layout_comment_box" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/subTaskViewCommentsBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="5dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:orientation="horizontal"
+                    android:padding="2dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+
+                    <ImageView
+                        android:id="@+id/subTaskViewCommentsImg"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:src="@drawable/visibility_on"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:tint="@color/appBlue" />
+
+                    <TextView
+                        android:id="@+id/subTaskViewCommentsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:padding="1dp"
+                        android:text="@string/all_comments_heading"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subTaskCommentLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/input_field_rectangle"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subTaskViewCommentsBtn"
+                    app:layout_constraintVertical_bias="0.0">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/subTaskCommentField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_rectangle"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="top|start"
+                        android:hint="@string/type_new_comment_heading"
+                        android:inputType="textMultiLine"
+                        android:maxLines="5"
+                        android:minLines="4"
+                        android:overScrollMode="always"
+                        android:paddingStart="7dp"
+                        android:paddingTop="7dp"
+                        android:paddingEnd="7dp"
+                        android:paddingBottom="9dp"
+                        android:scrollbarStyle="insideInset"
+                        android:scrollbars="vertical"
+                        android:textColorHint="@color/appHintGrey"
+                        android:textSize="14.5sp" />
+
+                    <LinearLayout
+                        android:id="@+id/subTaskCommentSendLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="3dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/draftStateAssignBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="3dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="3dp"
+                            android:background="@drawable/signin_button_back"
+                            android:backgroundTint="@color/appBlue"
+                            android:elevation="1dp"
+                            android:fontFamily="@font/inter_medium"
+                            android:paddingStart="11dp"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="11dp"
+                            android:paddingBottom="4dp"
+                            android:text="@string/send_heading"
+                            android:textColor="@color/white"
+                            android:textSize="13.5sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -124,6 +124,7 @@ class SubTaskAdapter @Inject constructor(
                     DateUtils.SERVER_DATE_FULL_FORMAT,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
+                subTaskCreatorName.text = "${item.creator?.firstName} ${item.creator?.surName}"
 
                 val members: ArrayList<TaskMember> = ArrayList()
                 for (assign in item.assignedTo) {
@@ -145,9 +146,9 @@ class SubTaskAdapter @Inject constructor(
                 subTaskDesc.text = item.description
 
 
-//                itemView.setOnClickListener {
-//                    itemClickListener?.invoke(it, adapterPosition, item)
-//                }
+                itemView.setOnClickListener {
+                    itemClickListener?.invoke(it, adapterPosition, item)
+                }
 
             }
         }

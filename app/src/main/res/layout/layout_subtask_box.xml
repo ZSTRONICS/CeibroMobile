@@ -134,7 +134,7 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/subTaskAssignToLayout"
+            android:id="@+id/subTaskCreatorLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -143,6 +143,43 @@
             app:layout_constraintEnd_toEndOf="@+id/appCompatImageView"
             app:layout_constraintStart_toStartOf="@+id/topBar"
             app:layout_constraintTop_toBottomOf="@+id/topBar">
+
+            <TextView
+                android:id="@+id/subTaskCreatorHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/creator_heading"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/subTaskCreatorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Kristo Vunukainen"
+                android:textColor="@color/black"
+                android:textSize="13.5sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/subTaskAssignToLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="start"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
+            app:layout_constraintStart_toStartOf="@+id/subTaskCreatorLayout"
+            app:layout_constraintTop_toBottomOf="@+id/subTaskCreatorLayout">
 
             <TextView
                 android:id="@+id/subTaskAssignToHeading"
