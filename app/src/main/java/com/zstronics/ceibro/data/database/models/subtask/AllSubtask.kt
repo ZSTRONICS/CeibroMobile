@@ -19,6 +19,7 @@ data class AllSubtask(
     @PrimaryKey
     @SerializedName("_id") val id: String,
     @SerializedName("access") val access: List<String>,
+    @SerializedName("removedAccess") val removedAccess: List<String>,
     @SerializedName("advanceOptions") val advanceOptions: SubTaskAdvanceOptions,
     @SerializedName("assignedTo") val assignedTo: List<AssignedTo>,
     @SerializedName("comments") val comments: List<String>,
@@ -31,8 +32,9 @@ data class AllSubtask(
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("files") val files: List<String>,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
+    @SerializedName("recentComments") val recentComments: List<SubTaskComments>,
+    @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>,
     @SerializedName("state") val state: List<SubTaskStateItem>,
-    @SerializedName("subTaskFixedForUser") val subTaskFixedForUser: List<String>,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("title") val title: String,
     @SerializedName("updatedAt") val updatedAt: String,
@@ -72,4 +74,20 @@ data class SubTaskStateItem(
     val subTaskStateId: Int,
     @SerializedName("userId") val userId: String,
     @SerializedName("userState") val userState: String
+) : Parcelable
+
+@Entity(tableName = TableNames.SubTaskComments)
+@Parcelize
+@Keep
+data class SubTaskComments(
+    @PrimaryKey(autoGenerate = true)
+    val subTaskCommentId: Int,
+    @SerializedName("comment")
+    val comment: String,
+    @SerializedName("creator")
+    val creator: TaskMember,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("subtaskStateAtComment")
+    val subtaskStateAtComment: String
 ) : Parcelable
