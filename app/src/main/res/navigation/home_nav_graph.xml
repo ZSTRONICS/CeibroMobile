@@ -195,5 +195,14 @@
         android:id="@+id/subTaskDetailFragment"
         android:name="com.zstronics.ceibro.ui.tasks.subtaskdetailview.SubTaskDetailFragment"
         android:label="SubTaskDetailFragment"
-        tools:layout="@layout/fragment_sub_task_detail" />
+        tools:layout="@layout/fragment_sub_task_detail" >
+        <action
+            android:id="@+id/action_subTaskDetailFragment_to_subTaskCommentsFragment"
+            app:destination="@id/subTaskCommentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/subTaskCommentsFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.subtaskcomments.SubTaskCommentsFragment"
+        android:label="SubTaskCommentsFragment"
+        tools:layout="@layout/fragment_sub_task_comments" />
 </navigation>

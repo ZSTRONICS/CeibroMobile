@@ -23,6 +23,7 @@ class SubTaskDetailFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
+            R.id.subTaskViewCommentsBtn -> navigateToAllComments()
             R.id.subTaskDescriptionShowMoreBtn -> {
                 if (mViewDataBinding.subTaskDescriptionText.maxLines == 4) {
                     mViewDataBinding.subTaskDescriptionText.maxLines = Integer.MAX_VALUE
@@ -65,5 +66,9 @@ class SubTaskDetailFragment :
                 return@setOnTouchListener false
             }
         }
+    }
+
+    private fun navigateToAllComments() {
+        navigate(R.id.subTaskCommentsFragment)
     }
 }
