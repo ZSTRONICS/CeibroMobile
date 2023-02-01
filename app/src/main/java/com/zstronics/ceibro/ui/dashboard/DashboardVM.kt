@@ -5,14 +5,16 @@ import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
-import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
 import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.SubTaskByTaskResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +50,7 @@ class DashboardVM @Inject constructor(
                                 object : TypeToken<SocketTaskCreatedResponse>() {}.type
                             )
                             localTask.insertTask(taskCreatedData.data)
+                            EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                         }
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
                             val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
@@ -62,6 +65,8 @@ class DashboardVM @Inject constructor(
                                 object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
                             )
                             localSubTask.insertSubTask(subtask.data)
+                            EventBus.getDefault()
+                                .post(LocalEvents.SubTaskCreatedEvent(subtask.data.taskId))
                         }
 
                         SocketHandler.TaskEvent.SUB_TASK_UPDATE_PRIVATE.name -> {
@@ -77,6 +82,29 @@ class DashboardVM @Inject constructor(
                         }
                         SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
                             alert(socketData.eventType)
+                        }
+
+                        SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {
+                            val subTaskByTaskResponse = gson.fromJson<SubTaskByTaskResponse>(
+                                arguments,
+                                object : TypeToken<SubTaskByTaskResponse>() {}.type
+                            )
+                            val subtaskUpdatedData = subTaskByTaskResponse.results
+
+                            val subTasks = subtaskUpdatedData.subtasks
+                            val task = subtaskUpdatedData.task
+
+                            if (subTasks.isNotEmpty()) {
+                                val subTask = subTasks[0]
+                                localSubTask.updateSubTask(subTask)
+                                EventBus.getDefault()
+                                    .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
+                            }
+
+                            if (task != null) {
+                                localTask.updateTask(task)
+                                EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+                            }
                         }
                     }
                 }

@@ -10,10 +10,14 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.databinding.FragmentTaskDetailBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -110,5 +114,21 @@ class TaskDetailFragment :
         val bundle = Bundle()
         bundle.putParcelable("subtask", data)
         navigate(R.id.subTaskDetailFragment, bundle)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSubTaskCreatedEvent(event: LocalEvents.SubTaskCreatedEvent?) {
+        if (viewModel.isCurrentTaskId(event?.taskId))
+            event?.taskId?.let { viewModel.getSubTasks(it) }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 }

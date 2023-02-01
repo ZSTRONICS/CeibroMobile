@@ -22,7 +22,7 @@ data class AllSubtask(
     @SerializedName("removedAccess") val removedAccess: List<String>?,
     @SerializedName("advanceOptions") val advanceOptions: SubTaskAdvanceOptions,
     @SerializedName("assignedTo") val assignedTo: List<AssignedTo>,
-    @SerializedName("comments") val comments: List<String>,
+    @SerializedName("comments") val comments: List<String>?,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("creator") val creator: TaskMember,
     @SerializedName("description") val description: String,

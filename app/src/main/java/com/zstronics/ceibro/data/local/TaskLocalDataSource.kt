@@ -22,4 +22,8 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
     override suspend fun updateTask(task: CeibroTask) {
         taskDao.updateTask(task)
     }
+
+    override suspend fun deleteTaskById(taskId: String) {
+        taskDao.deleteTaskById(taskId)
+    }
 }

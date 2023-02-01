@@ -7,11 +7,12 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.databinding.FragmentSubTaskBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
-import com.zstronics.ceibro.ui.tasks.task.TaskAdapter
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -42,6 +43,9 @@ class SubTaskFragment :
             navigateToSubTaskDetail(data)
         }
 
+        adapter.childItemClickListener = { childView: View, position: Int, data: AllSubtask ->
+            viewModel.rejectSubTask(data)
+        }
     }
 
 
@@ -51,4 +55,18 @@ class SubTaskFragment :
         navigate(R.id.subTaskDetailFragment, bundle)
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onSubTaskCreatedEvent(event: LocalEvents.SubTaskCreatedEvent?) {
+        viewModel.getSubTasks()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }

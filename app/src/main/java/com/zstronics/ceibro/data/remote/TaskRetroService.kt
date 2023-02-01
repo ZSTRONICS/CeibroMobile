@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.task.models.*
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -37,5 +36,8 @@ interface TaskRetroService {
 
     @GET("task/{taskId}")
     suspend fun getSubTaskByTaskId(@Path("taskId") taskId: String): Response<SubTaskByTaskResponse>
+
+    @POST("task/st/statechange")
+    suspend fun rejectSubtask(@Body requestBody: UpdateSubTaskStatusRequest): Response<SubTaskByTaskResponse>
 
 }

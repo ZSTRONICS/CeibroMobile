@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutSubtaskBoxBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -150,6 +151,12 @@ class SubTaskAdapter @Inject constructor(
                     itemClickListener?.invoke(it, adapterPosition, item)
                 }
 
+                assignedStateRejectBtn.setOnClickListener {
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                }
+                acceptedStateRejectBtn.setOnClickListener {
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                }
             }
         }
     }

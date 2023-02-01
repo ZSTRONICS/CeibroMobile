@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -141,5 +142,36 @@ class TaskRepository @Inject constructor(
     override suspend fun syncTasksAndSubTasks() {
         syncSubTask()
         syncTask()
+    }
+
+    override suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean, Boolean, Boolean> {
+        when (val response = remoteSubTask.rejectSubtask(updateSubTaskStatusRequest)) {
+            is ApiResponse.Success -> {
+                val subTasks = response.data.results.subtasks
+                val task = response.data.results.task
+                var taskDeleted = false
+                var subTaskDeleted = false
+                if (subTasks.isEmpty()) {
+                    localSubTask.deleteSubtaskById(updateSubTaskStatusRequest.subTaskId)
+                    subTaskDeleted = true
+                } else {
+                    val subTask = subTasks.find { it.id == updateSubTaskStatusRequest.subTaskId }
+                    if (subTask != null) {
+                        localSubTask.updateSubTask(subTask)
+                        subTaskDeleted = false
+                    }
+                }
+
+                if (task == null) {
+                    taskDeleted = true
+                    localTask.deleteTaskById(updateSubTaskStatusRequest.taskId)
+                } else {
+                    taskDeleted = false
+                    localTask.updateTask(task)
+                }
+                return Triple(true, taskDeleted, subTaskDeleted)
+            }
+            else -> return Triple(false, false, false)
+        }
     }
 }

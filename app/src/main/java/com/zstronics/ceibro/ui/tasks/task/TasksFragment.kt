@@ -7,10 +7,14 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.databinding.FragmentTasksBinding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class TasksFragment :
@@ -51,5 +55,21 @@ class TasksFragment :
         val bundle = Bundle()
         bundle.putParcelable("task", data)
         navigate(R.id.taskDetailFragment, bundle)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
+        showToast("New Task Created")
+        viewModel.getTasks()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 }

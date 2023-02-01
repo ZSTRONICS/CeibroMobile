@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -26,4 +27,7 @@ interface SubTaskDao {
 
     @Update
     suspend fun updateSubTask(subTask: AllSubtask)
+
+    @Query("DELETE FROM sub_tasks WHERE id = :subTaskId")
+    suspend fun deleteSubtaskById(subTaskId: String)
 }

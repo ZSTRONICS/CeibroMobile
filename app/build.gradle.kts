@@ -68,4 +68,5 @@ dependencies {
         exclude("org.json","json")
     }
     implementation("com.github.clans:fab:1.6.4")
+    implementation("org.greenrobot:eventbus:3.3.1")
 }

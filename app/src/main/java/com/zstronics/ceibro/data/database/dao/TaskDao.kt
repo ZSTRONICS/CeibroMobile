@@ -19,4 +19,7 @@ interface TaskDao {
 
     @Update
     suspend fun updateTask(task: CeibroTask)
+
+    @Query("DELETE FROM tasks WHERE _id = :taskId")
+    suspend fun deleteTaskById(taskId: String)
 }

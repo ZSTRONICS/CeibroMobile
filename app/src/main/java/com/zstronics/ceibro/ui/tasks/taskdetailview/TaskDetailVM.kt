@@ -41,4 +41,8 @@ class TaskDetailVM @Inject constructor(
         super.onResume()
         task.value?._id?.let { getSubTasks(it) }
     }
+
+    fun isCurrentTaskId(taskId: String?): Boolean {
+        return taskId == task.value?._id
+    }
 }

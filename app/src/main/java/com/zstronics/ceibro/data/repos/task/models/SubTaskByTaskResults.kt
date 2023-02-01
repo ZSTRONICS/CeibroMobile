@@ -12,5 +12,5 @@ data class SubTaskByTaskResults(
     @SerializedName("subtasks")
     val subtasks: List<AllSubtask>,
     @SerializedName("task")
-    val task: CeibroTask
+    val task: CeibroTask?
 ) : BaseResponse()

@@ -8,4 +8,5 @@ interface ITaskLocalDataSource {
     suspend fun eraseTaskTable()
     suspend fun insertTask(task: CeibroTask)
     suspend fun updateTask(task: CeibroTask)
+    suspend fun deleteTaskById(taskId: String)
 }
