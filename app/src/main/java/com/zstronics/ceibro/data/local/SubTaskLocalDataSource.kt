@@ -25,6 +25,11 @@ class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTask
     override suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask> =
         subTaskDao.getSubTaskByTaskId(taskId)
 
+
+    override suspend fun getSingleSubTaskCount(subtaskId: String) : Int {
+        return subTaskDao.getSingleSubTask(subtaskId)
+    }
+
     override suspend fun updateSubTask(subTask: AllSubtask) {
         subTaskDao.updateSubTask(subTask)
     }

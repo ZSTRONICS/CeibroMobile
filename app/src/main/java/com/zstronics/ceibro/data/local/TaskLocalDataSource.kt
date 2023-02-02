@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.local
 
+import androidx.lifecycle.LiveData
 import com.zstronics.ceibro.data.database.dao.TaskDao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import javax.inject.Inject
@@ -17,6 +18,10 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
 
     override suspend fun insertTask(task: CeibroTask) {
         taskDao.insertTask(task)
+    }
+
+    override suspend fun getSingleTaskCount(taskId: String) : Int {
+        return taskDao.getSingleTask(taskId)
     }
 
     override suspend fun updateTask(task: CeibroTask) {

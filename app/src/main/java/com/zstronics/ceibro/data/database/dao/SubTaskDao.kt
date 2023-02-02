@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -24,6 +25,9 @@ interface SubTaskDao {
 
     @Query("SELECT * FROM sub_tasks WHERE taskId = :taskId")
     suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask>
+
+    @Query("SELECT COUNT(*) FROM sub_tasks WHERE id = :subTaskId")
+    suspend fun getSingleSubTask(subTaskId: String): Int
 
     @Update
     suspend fun updateSubTask(subTask: AllSubtask)

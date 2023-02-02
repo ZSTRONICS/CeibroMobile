@@ -57,7 +57,15 @@ class DashboardVM @Inject constructor(
                                 arguments,
                                 object : TypeToken<SocketTaskCreatedResponse>() {}.type
                             )
-                            localTask.updateTask(taskUpdatedData.data)
+                            // Need to check if task data object is null then don't do anything
+                            val taskCount = localTask.getSingleTaskCount(taskUpdatedData.data._id)
+                            if (taskCount < 1) {
+                                localTask.insertTask(taskUpdatedData.data)
+                            }
+                            else {
+                                localTask.updateTask(taskUpdatedData.data)
+                            }
+                            EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                         }
                         SocketHandler.TaskEvent.SUB_TASK_CREATED.name -> {
                             val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
@@ -74,7 +82,16 @@ class DashboardVM @Inject constructor(
                                 arguments,
                                 object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
                             )
-                            localSubTask.updateSubTask(subtask.data)
+                            // Need to check if subtask data object is null then don't do anything
+                            val subtaskCount = localSubTask.getSingleSubTaskCount(subtask.data.id)
+                            if (subtaskCount < 1) {
+                                localSubTask.insertSubTask(subtask.data)
+                            }
+                            else {
+                                localSubTask.updateSubTask(subtask.data)
+                            }
+                            EventBus.getDefault()
+                                .post(LocalEvents.SubTaskCreatedEvent(subtask.data.taskId))
                         }
 
                         SocketHandler.TaskEvent.TASK_UPDATE_PUBLIC.name -> {

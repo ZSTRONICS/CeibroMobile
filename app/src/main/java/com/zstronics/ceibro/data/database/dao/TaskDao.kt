@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
@@ -16,6 +17,9 @@ interface TaskDao {
 
     @Query("DELETE FROM tasks")
     suspend fun deleteAllTasks()
+
+    @Query("SELECT COUNT(*) FROM tasks WHERE _id = :taskId")
+    suspend fun getSingleTask(taskId: String): Int
 
     @Update
     suspend fun updateTask(task: CeibroTask)

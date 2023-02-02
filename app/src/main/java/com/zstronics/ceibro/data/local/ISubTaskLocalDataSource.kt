@@ -8,6 +8,7 @@ interface ISubTaskLocalDataSource {
     suspend fun eraseSubTaskTable()
     suspend fun insertSubTask(subTask: AllSubtask)
     suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask>
+    suspend fun getSingleSubTaskCount(subtaskId: String): Int
     suspend fun updateSubTask(subTask: AllSubtask)
     suspend fun deleteSubtaskById(subTaskId: String)
 }

@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.local
 
+import androidx.lifecycle.LiveData
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
 interface ITaskLocalDataSource {
@@ -8,5 +9,6 @@ interface ITaskLocalDataSource {
     suspend fun eraseTaskTable()
     suspend fun insertTask(task: CeibroTask)
     suspend fun updateTask(task: CeibroTask)
+    suspend fun getSingleTaskCount(taskId: String): Int
     suspend fun deleteTaskById(taskId: String)
 }

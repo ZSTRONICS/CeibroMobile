@@ -59,7 +59,7 @@ class TasksFragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
-        showToast("New Task Created")
+//        showToast("New Task Created")
         viewModel.getTasks()
     }
 
