@@ -56,7 +56,7 @@ class SubTaskAdapter @Inject constructor(
             val context = binding.root.context
             with(binding) {
                 /// Setting Status background and the status string.
-                val state = item.state.find { it.userId == user?.id }?.userState?.uppercase()
+                val state = item.state?.find { it.userId == user?.id }?.userState?.uppercase()
                     ?: TaskStatus.DRAFT.name
 
                 val subTaskStatusNameBg: Pair<Int, String> = when (state) {

@@ -24,6 +24,7 @@ class SubTaskDetailFragment :
         when (id) {
             R.id.backBtn -> navigateBack()
             R.id.subTaskViewCommentsBtn -> navigateToAllComments()
+            R.id.subTaskRejectionsBtn -> navigateToRejections()
             R.id.subTaskDescriptionShowMoreBtn -> {
                 if (mViewDataBinding.subTaskDescriptionText.maxLines == 4) {
                     mViewDataBinding.subTaskDescriptionText.maxLines = Integer.MAX_VALUE
@@ -70,5 +71,8 @@ class SubTaskDetailFragment :
 
     private fun navigateToAllComments() {
         navigate(R.id.subTaskCommentsFragment)
+    }
+    private fun navigateToRejections() {
+        navigate(R.id.subTaskRejectionFragment)
     }
 }

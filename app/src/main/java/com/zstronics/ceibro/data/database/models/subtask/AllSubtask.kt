@@ -25,7 +25,7 @@ data class AllSubtask(
     @SerializedName("comments") val comments: List<String>?,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("creator") val creator: TaskMember,
-    @SerializedName("description") val description: String,
+    @SerializedName("description") val description: String?,
     @SerializedName("doneCommentsRequired") val doneCommentsRequired: Boolean,
     @SerializedName("advanceOptionsEnabled") val advanceOptionsEnabled: Boolean,
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
@@ -34,7 +34,7 @@ data class AllSubtask(
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
     @SerializedName("recentComments") val recentComments: List<SubTaskComments>?,
     @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>?,
-    @SerializedName("state") val state: List<SubTaskStateItem>,
+    @SerializedName("state") val state: List<SubTaskStateItem>?,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("title") val title: String,
     @SerializedName("updatedAt") val updatedAt: String,
@@ -72,6 +72,7 @@ data class Viewer(
 data class SubTaskStateItem(
     @PrimaryKey(autoGenerate = true)
     val subTaskStateId: Int,
+    @SerializedName("_id") val id: String,
     @SerializedName("userId") val userId: String,
     @SerializedName("userState") val userState: String
 ) : Parcelable

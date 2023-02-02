@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/topBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="13dp"
+            app:layout_constraintEnd_toStartOf="@+id/rejectionDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/rejectionUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/status_draft_filled"
+                android:backgroundTint="@color/white"
+                android:elevation="0dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:maxLines="1"
+                android:paddingStart="1dp"
+                android:paddingTop="1dp"
+                android:paddingEnd="1dp"
+                android:paddingBottom="1dp"
+                android:text="Kristo Vunukainen"
+                android:textColor="@color/grey"
+                android:textSize="12.5sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/rejectionDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/status_draft_filled"
+            android:backgroundTint="@color/white"
+            android:elevation="0dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:maxLength="17"
+            android:maxLines="1"
+            android:paddingStart="2dp"
+            android:paddingTop="1dp"
+            android:paddingEnd="1dp"
+            android:paddingBottom="1dp"
+            android:text="22.05.2021"
+            android:textColor="@color/grey"
+            android:textSize="11.5sp"
+            app:layout_constraintBottom_toBottomOf="@+id/topBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBar" />
+
+        <TextView
+            android:id="@+id/rejectionCommentDetail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:text="Comment will be displayed here when a user rejected the subtask"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/rejectionDate"
+            app:layout_constraintStart_toStartOf="@+id/topBar"
+            app:layout_constraintTop_toBottomOf="@+id/topBar" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="7dp"
+            android:alpha="0.8"
+            android:background="@color/appLightGrey"
+            app:layout_constraintEnd_toEndOf="@+id/rejectionCommentDetail"
+            app:layout_constraintStart_toStartOf="@+id/rejectionCommentDetail"
+            app:layout_constraintTop_toBottomOf="@+id/rejectionCommentDetail" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

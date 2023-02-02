@@ -55,6 +55,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_comments.xml" value="0.365625" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_detail.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_rejection.xml" value="0.365625" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_task_detail.xml" value="0.365625" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_tasks.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_chat_box.xml" value="0.36666666666666664" />
@@ -68,6 +69,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_new_connection_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_profile_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_project_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_rejection_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_status_box.xml" value="0.23854166666666668" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_task_box.xml" value="0.36666666666666664" />

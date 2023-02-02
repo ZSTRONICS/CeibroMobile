@@ -22,7 +22,7 @@ interface SubTaskDao {
     @Query("DELETE FROM sub_tasks")
     suspend fun deleteAllSubTasks()
 
-    @Query("SELECT * FROM sub_tasks where taskId = :taskId")
+    @Query("SELECT * FROM sub_tasks WHERE taskId = :taskId")
     suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask>
 
     @Update

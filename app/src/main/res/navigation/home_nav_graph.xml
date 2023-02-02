@@ -199,10 +199,18 @@
         <action
             android:id="@+id/action_subTaskDetailFragment_to_subTaskCommentsFragment"
             app:destination="@id/subTaskCommentsFragment" />
+        <action
+            android:id="@+id/action_subTaskDetailFragment_to_subTaskRejectionFragment"
+            app:destination="@id/subTaskRejectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/subTaskCommentsFragment"
         android:name="com.zstronics.ceibro.ui.tasks.subtaskcomments.SubTaskCommentsFragment"
         android:label="SubTaskCommentsFragment"
         tools:layout="@layout/fragment_sub_task_comments" />
+    <fragment
+        android:id="@+id/subTaskRejectionFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.subtaskrejections.SubTaskRejectionFragment"
+        android:label="SubTaskRejectionFragment"
+        tools:layout="@layout/fragment_sub_task_rejection" />
 </navigation>
