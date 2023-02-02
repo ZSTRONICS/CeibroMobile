@@ -28,7 +28,10 @@ class SubTaskVM @Inject constructor(
         }
     }
 
-    fun rejectSubTask(data: AllSubtask) {
+    fun rejectSubTask(
+        data: AllSubtask,
+        callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit
+    ) {
         val request = UpdateSubTaskStatusRequest(
             comment = "Test comment",
             state = SubTaskStatus.REJECTED.name.lowercase(),
@@ -36,7 +39,8 @@ class SubTaskVM @Inject constructor(
             taskId = data.taskId
         )
         launch {
-            taskRepository.rejectSubtask(request)
+            val result = taskRepository.rejectSubtask(request)
+            callBack.invoke(result)
         }
     }
 }

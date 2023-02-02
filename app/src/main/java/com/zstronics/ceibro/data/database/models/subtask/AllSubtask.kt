@@ -34,7 +34,7 @@ data class AllSubtask(
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
     @SerializedName("recentComments") val recentComments: List<SubTaskComments>?,
     @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>?,
-    @SerializedName("state") val state: List<SubTaskStateItem>?,
+    @SerializedName("state") var state: List<SubTaskStateItem>?,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("title") val title: String,
     @SerializedName("updatedAt") val updatedAt: String,
@@ -74,7 +74,7 @@ data class SubTaskStateItem(
     val subTaskStateId: Int,
     @SerializedName("_id") val id: String,
     @SerializedName("userId") val userId: String,
-    @SerializedName("userState") val userState: String
+    @SerializedName("userState") var userState: String
 ) : Parcelable
 
 @Entity(tableName = TableNames.SubTaskComments)

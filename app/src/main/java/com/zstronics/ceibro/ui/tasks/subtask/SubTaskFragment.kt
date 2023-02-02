@@ -43,9 +43,10 @@ class SubTaskFragment :
             navigateToSubTaskDetail(data)
         }
 
-        adapter.childItemClickListener = { childView: View, position: Int, data: AllSubtask ->
-            viewModel.rejectSubTask(data)
-        }
+        adapter.childItemClickListener =
+            { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
+                viewModel.rejectSubTask(data,callBack)
+            }
     }
 
 

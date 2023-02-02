@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -22,7 +23,8 @@ class SubTaskAdapter @Inject constructor(
     var itemClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? = null
     var itemLongClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? =
         null
-    var childItemClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? = null
+    var childItemClickListener: ((view: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit) -> Unit)? =
+        null
 
     private var list: MutableList<AllSubtask> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubTaskViewHolder {
@@ -152,12 +154,45 @@ class SubTaskAdapter @Inject constructor(
                 }
 
                 assignedStateRejectBtn.setOnClickListener {
-                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
+                        onRejectResult(result, absoluteAdapterPosition)
+                    }
                 }
                 acceptedStateRejectBtn.setOnClickListener {
-                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
+                        onRejectResult(result, absoluteAdapterPosition)
+                    }
                 }
             }
         }
+    }
+
+    private fun onRejectResult(result: Triple<Boolean, Boolean, Boolean>, adapterPos: Int) {
+        val (apiCallSuccess, taskDeleted, subTaskDeleted) = result
+        if (apiCallSuccess) { // we will assume that API call successfully completed
+            if (subTaskDeleted) {
+                removeItem(adapterPos)
+            } else {
+                updateItemStatus(adapterPos, SubTaskStatus.REJECTED)
+            }
+        }
+    }
+
+    private fun updateItemStatus(adapterPos: Int, rejected: SubTaskStatus) {
+        val allStates: ArrayList<SubTaskStateItem> =
+            this.list[adapterPos].state as ArrayList<SubTaskStateItem>
+        val user = user ?: return
+        val userState = allStates.find { it.userId == user.id } ?: return
+        val positionOfState = allStates.indexOf(userState)
+        userState.userState = rejected.name.lowercase()
+        allStates.removeAt(positionOfState)
+        allStates.add(positionOfState, userState)
+        this.list[adapterPos].state = allStates
+        notifyItemChanged(adapterPos)
+    }
+
+    private fun removeItem(adapterPos: Int) {
+        this.list.removeAt(adapterPos)
+        notifyItemChanged(adapterPos)
     }
 }
