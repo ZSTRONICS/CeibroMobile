@@ -30,7 +30,7 @@ data class AllSubtask(
     @SerializedName("advanceOptionsEnabled") val advanceOptionsEnabled: Boolean,
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
     @SerializedName("dueDate") val dueDate: String,
-    @SerializedName("files") val files: List<String>,
+    @SerializedName("files") val files: List<String>?,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
     @SerializedName("recentComments") val recentComments: List<SubTaskComments>?,
     @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>?,
