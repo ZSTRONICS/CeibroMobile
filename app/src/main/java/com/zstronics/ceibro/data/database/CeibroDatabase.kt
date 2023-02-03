@@ -14,8 +14,8 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 
 @Database(
     entities = [CeibroTask::class, AdvanceOptions::class, SubTaskStatusCount::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
-        Viewer::class, SubTaskAdvanceOptions::class, SubTaskStateItem::class, SubTaskComments::class],
-    version = 27,
+        Viewer::class, SubTaskAdvanceOptions::class, SubTaskStateItem::class, SubTaskComments::class, TaskDataOfSubTask::class],
+    version = 33,
     exportSchema = false
 )
 @TypeConverters(
@@ -31,6 +31,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
     SubTaskStateListTypeConverter::class,
     SubTaskCommentsTypeConverter::class,
     SubTaskCommentsListTypeConverter::class,
+    TaskDataOfSubTaskTypeConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getTasksDao(): TaskDao

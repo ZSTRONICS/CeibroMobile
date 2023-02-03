@@ -8,13 +8,13 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 class TaskMemberListTypeConverter {
 
     @TypeConverter
-    fun fromString(value: String): List<TaskMember> {
+    fun fromString(value: String): List<TaskMember>? {
         val type = object : TypeToken<List<TaskMember>>() {}.type
         return Gson().fromJson(value, type)
     }
 
     @TypeConverter
-    fun fromList(list: List<TaskMember>): String {
+    fun fromList(list: List<TaskMember>?): String? {
         return Gson().toJson(list)
     }
 }

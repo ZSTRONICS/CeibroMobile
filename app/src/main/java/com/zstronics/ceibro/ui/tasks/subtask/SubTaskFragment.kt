@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.databinding.FragmentSubTaskBinding
@@ -45,7 +46,20 @@ class SubTaskFragment :
 
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
-                viewModel.rejectSubTask(data,callBack)
+                if (childView.id == R.id.assignedStateRejectBtn) {
+                    viewModel.rejectSubTask(data,callBack)
+                }
+                else if (childView.id == R.id.acceptedStateRejectBtn) {
+                    viewModel.rejectSubTask(data,callBack)
+                }
+                else if (childView.id == R.id.draftStateAssignBtn) {
+//                    viewModel.rejectSubTask(data,callBack)    TODO  -  Send "state" as ASSIGNED
+                    shortToastNow("draftStateAssignBtn")
+                }
+                else if (childView.id == R.id.assignedStateAcceptBtn) {
+//                    viewModel.rejectSubTask(data,callBack)    TODO  -  Send "state" as ACCEPTED
+                    shortToastNow("assignedStateAcceptBtn")
+                }
             }
     }
 

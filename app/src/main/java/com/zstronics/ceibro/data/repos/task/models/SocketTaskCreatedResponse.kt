@@ -13,5 +13,5 @@ data class SocketTaskCreatedResponse(
     @SerializedName("eventType")
     val eventType: String,
     @SerializedName("data")
-    val data: CeibroTask
+    val data: CeibroTask?
 ) : BaseResponse(), Parcelable

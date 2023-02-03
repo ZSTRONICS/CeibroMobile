@@ -6,9 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.AssignedTo
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
-import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutSubtaskBoxBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -16,7 +18,8 @@ import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
 class SubTaskAdapter @Inject constructor(
-    val sessionManager: SessionManager
+    val sessionManager: SessionManager,
+    private val localTask: TaskLocalDataSource
 ) :
     RecyclerView.Adapter<SubTaskAdapter.SubTaskViewHolder>() {
     val user = sessionManager.getUser().value
@@ -95,27 +98,110 @@ class SubTaskAdapter @Inject constructor(
                 subTaskStatusName.setBackgroundResource(background)
                 subTaskStatusName.text = stringRes
 
-                if (state == SubTaskStatus.DRAFT.name) {
-                    draftStateBtnLayout.visibility = View.VISIBLE
-                    assignedStateBtnLayout.visibility = View.GONE
-                    acceptedStateBtnLayout.visibility = View.GONE
-                    ongoingStateBtnLayout.visibility = View.GONE
-                } else if (state == SubTaskStatus.ASSIGNED.name) {
-                    draftStateBtnLayout.visibility = View.GONE
-                    assignedStateBtnLayout.visibility = View.VISIBLE
-                    acceptedStateBtnLayout.visibility = View.GONE
-                    ongoingStateBtnLayout.visibility = View.GONE
-                } else if (state == SubTaskStatus.ACCEPTED.name) {
-                    draftStateBtnLayout.visibility = View.GONE
-                    assignedStateBtnLayout.visibility = View.GONE
-                    acceptedStateBtnLayout.visibility = View.VISIBLE
-                    ongoingStateBtnLayout.visibility = View.GONE
-                } else if (state == SubTaskStatus.ONGOING.name) {
-                    draftStateBtnLayout.visibility = View.GONE
-                    assignedStateBtnLayout.visibility = View.GONE
-                    acceptedStateBtnLayout.visibility = View.GONE
-                    ongoingStateBtnLayout.visibility = View.VISIBLE
-                } else if (state == SubTaskStatus.DONE.name) {
+
+                val isAssignee = isAssignToMember(user?.id, item.assignedTo)
+                val isAdmin = isTaskAdmin(user?.id, item.taskData?.admins)
+
+                if (isAdmin && !isAssignee) {
+                    if (state == SubTaskStatus.DRAFT.name) {
+                        draftStateBtnLayout.visibility = View.VISIBLE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ASSIGNED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ACCEPTED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ONGOING.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.DONE.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.REJECTED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    }
+                }
+                else if (isAdmin && isAssignee) {
+                    if (state == SubTaskStatus.DRAFT.name) {
+                        draftStateBtnLayout.visibility = View.VISIBLE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ASSIGNED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.VISIBLE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ACCEPTED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.VISIBLE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ONGOING.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.VISIBLE
+                    } else if (state == SubTaskStatus.DONE.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.REJECTED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    }
+                }
+                else if (!isAdmin && isAssignee) {
+                    if (state == SubTaskStatus.DRAFT.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ASSIGNED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.VISIBLE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ACCEPTED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.VISIBLE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.ONGOING.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.VISIBLE
+                    } else if (state == SubTaskStatus.DONE.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    } else if (state == SubTaskStatus.REJECTED.name) {
+                        draftStateBtnLayout.visibility = View.GONE
+                        assignedStateBtnLayout.visibility = View.GONE
+                        acceptedStateBtnLayout.visibility = View.GONE
+                        ongoingStateBtnLayout.visibility = View.GONE
+                    }
+                }
+                else {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
@@ -163,6 +249,16 @@ class SubTaskAdapter @Inject constructor(
                         onRejectResult(result, absoluteAdapterPosition)
                     }
                 }
+                draftStateAssignBtn.setOnClickListener {
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
+                        //onRejectResult(result, absoluteAdapterPosition)
+                    }
+                }
+                assignedStateAcceptBtn.setOnClickListener {
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
+                        //onRejectResult(result, absoluteAdapterPosition)
+                    }
+                }
             }
         }
     }
@@ -194,5 +290,32 @@ class SubTaskAdapter @Inject constructor(
     private fun removeItem(adapterPos: Int) {
         this.list.removeAt(adapterPos)
         notifyItemChanged(adapterPos)
+    }
+
+    fun isAssignToMember(userId: String?, assignedTo: List<AssignedTo>): Boolean {
+        var isAssignee = false
+        val members: ArrayList<TaskMember> = ArrayList()
+        for (assign in assignedTo) {
+            for (member in assign.members) {
+                members.add(member)
+            }
+        }
+        val assignMember: TaskMember? = members.find { it.id == userId }
+
+        if (assignMember?.id.equals(userId)) {
+            isAssignee = true
+        }
+
+        return isAssignee
+    }
+    fun isTaskAdmin(userId: String?, admins: List<TaskMember>?): Boolean {
+        var isAdmin = false
+        val adminMember: TaskMember? = admins?.find { it.id == userId }
+
+        if (adminMember?.id.equals(userId)) {
+            isAdmin = true
+        }
+
+        return isAdmin
     }
 }

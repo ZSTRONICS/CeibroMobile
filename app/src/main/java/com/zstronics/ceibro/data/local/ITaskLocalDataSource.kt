@@ -10,5 +10,6 @@ interface ITaskLocalDataSource {
     suspend fun insertTask(task: CeibroTask)
     suspend fun updateTask(task: CeibroTask)
     suspend fun getSingleTaskCount(taskId: String): Int
+    suspend fun getTaskById(taskId: String): CeibroTask
     suspend fun deleteTaskById(taskId: String)
 }

@@ -14,5 +14,5 @@ data class SocketSubTaskCreatedResponse(
     @SerializedName("eventType")
     val eventType: String,
     @SerializedName("data")
-    val data: AllSubtask
+    val data: AllSubtask?
 ) : BaseResponse(), Parcelable

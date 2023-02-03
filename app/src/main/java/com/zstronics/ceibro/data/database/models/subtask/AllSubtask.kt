@@ -36,6 +36,7 @@ data class AllSubtask(
     @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>?,
     @SerializedName("state") var state: List<SubTaskStateItem>?,
     @SerializedName("taskId") val taskId: String,
+    @SerializedName("taskData") val taskData: TaskDataOfSubTask?,
     @SerializedName("title") val title: String,
     @SerializedName("updatedAt") val updatedAt: String,
     @SerializedName("viewer") val viewer: List<Viewer>
@@ -91,4 +92,15 @@ data class SubTaskComments(
     val id: String,
     @SerializedName("subtaskStateAtComment")
     val subtaskStateAtComment: String
+) : Parcelable
+
+@Entity(tableName = TableNames.TaskDataOfSubTask)
+@Parcelize
+@Keep
+data class TaskDataOfSubTask(
+    @PrimaryKey(autoGenerate = true)
+    val taskDataId: Int,
+    @SerializedName("_id") val id: String?,
+    @SerializedName("title") val title: String?,
+    @SerializedName("admins") val admins: List<TaskMember>?
 ) : Parcelable

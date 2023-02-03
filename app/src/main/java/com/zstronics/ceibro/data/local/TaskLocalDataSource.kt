@@ -24,6 +24,10 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
         return taskDao.getSingleTask(taskId)
     }
 
+    override suspend fun getTaskById(taskId: String) : CeibroTask {
+        return taskDao.getTaskById(taskId)
+    }
+
     override suspend fun updateTask(task: CeibroTask) {
         taskDao.updateTask(task)
     }
