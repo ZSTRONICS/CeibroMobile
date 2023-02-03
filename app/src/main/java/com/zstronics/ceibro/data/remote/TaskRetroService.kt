@@ -40,4 +40,7 @@ interface TaskRetroService {
     @POST("task/st/statechange")
     suspend fun rejectSubtask(@Body requestBody: UpdateSubTaskStatusRequest): Response<SubTaskByTaskResponse>
 
+    @POST("task/st/statechange")
+    suspend fun updateSubtaskStatus(@Body requestBody: UpdateSubTaskStatusWithoutCommentRequest): Response<SubTaskByTaskResponse>
+
 }

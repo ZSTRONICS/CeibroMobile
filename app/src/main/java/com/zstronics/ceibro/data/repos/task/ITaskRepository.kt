@@ -2,10 +2,7 @@ package com.zstronics.ceibro.data.repos.task
 
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
-import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
+import com.zstronics.ceibro.data.repos.task.models.*
 
 interface ITaskRepository {
     suspend fun tasks(): List<CeibroTask>
@@ -33,4 +30,5 @@ interface ITaskRepository {
     suspend fun syncTasksAndSubTasks()
 
     suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean,Boolean, Boolean>
+    suspend fun updateSubtaskStatus(updateSubTaskStatusRequest: UpdateSubTaskStatusWithoutCommentRequest): Triple<Boolean,Boolean, Boolean>
 }

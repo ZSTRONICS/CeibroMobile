@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -30,16 +31,33 @@ class SubTaskVM @Inject constructor(
 
     fun rejectSubTask(
         data: AllSubtask,
+        state: SubTaskStatus,
         callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit
     ) {
         val request = UpdateSubTaskStatusRequest(
             comment = "Test comment",
-            state = SubTaskStatus.REJECTED.name.lowercase(),
+            state = state.name.lowercase(),
             subTaskId = data.id,
             taskId = data.taskId
         )
         launch {
             val result = taskRepository.rejectSubtask(request)
+            callBack.invoke(result)
+        }
+    }
+
+    fun updateSubtaskStatus(
+        data: AllSubtask,
+        state: SubTaskStatus,
+        callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit
+    ) {
+        val request = UpdateSubTaskStatusWithoutCommentRequest(
+            state = state.name.lowercase(),
+            subTaskId = data.id,
+            taskId = data.taskId
+        )
+        launch {
+            val result = taskRepository.updateSubtaskStatus(request)
             callBack.invoke(result)
         }
     }

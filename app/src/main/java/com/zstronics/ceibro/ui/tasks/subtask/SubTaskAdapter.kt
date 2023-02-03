@@ -134,8 +134,7 @@ class SubTaskAdapter @Inject constructor(
                         acceptedStateBtnLayout.visibility = View.GONE
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
-                }
-                else if (isAdmin && isAssignee) {
+                } else if (isAdmin && isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.VISIBLE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -167,8 +166,7 @@ class SubTaskAdapter @Inject constructor(
                         acceptedStateBtnLayout.visibility = View.GONE
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
-                }
-                else if (!isAdmin && isAssignee) {
+                } else if (!isAdmin && isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.GONE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -200,8 +198,7 @@ class SubTaskAdapter @Inject constructor(
                         acceptedStateBtnLayout.visibility = View.GONE
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
-                }
-                else {
+                } else {
                     draftStateBtnLayout.visibility = View.GONE
                     assignedStateBtnLayout.visibility = View.GONE
                     acceptedStateBtnLayout.visibility = View.GONE
@@ -241,29 +238,29 @@ class SubTaskAdapter @Inject constructor(
 
                 assignedStateRejectBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        onRejectResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition)
                     }
                 }
                 acceptedStateRejectBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        onRejectResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition)
                     }
                 }
                 draftStateAssignBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        //onRejectResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition)
                     }
                 }
                 assignedStateAcceptBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        //onRejectResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition)
                     }
                 }
             }
         }
     }
 
-    private fun onRejectResult(result: Triple<Boolean, Boolean, Boolean>, adapterPos: Int) {
+    private fun onApiResult(result: Triple<Boolean, Boolean, Boolean>, adapterPos: Int) {
         val (apiCallSuccess, taskDeleted, subTaskDeleted) = result
         if (apiCallSuccess) { // we will assume that API call successfully completed
             if (subTaskDeleted) {
@@ -308,11 +305,11 @@ class SubTaskAdapter @Inject constructor(
 
         return isAssignee
     }
-    fun isTaskAdmin(userId: String?, admins: List<TaskMember>?): Boolean {
-        var isAdmin = false
-        val adminMember: TaskMember? = admins?.find { it.id == userId }
 
-        if (adminMember?.id.equals(userId)) {
+    fun isTaskAdmin(userId: String?, admins: List<String>?): Boolean {
+        var isAdmin = false
+        val id: String? = admins?.find { it == userId }
+        if (id.equals(userId)) {
             isAdmin = true
         }
 

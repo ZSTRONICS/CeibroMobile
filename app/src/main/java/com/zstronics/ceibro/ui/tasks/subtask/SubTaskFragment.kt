@@ -46,19 +46,27 @@ class SubTaskFragment :
 
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
-                if (childView.id == R.id.assignedStateRejectBtn) {
-                    viewModel.rejectSubTask(data,callBack)
-                }
-                else if (childView.id == R.id.acceptedStateRejectBtn) {
-                    viewModel.rejectSubTask(data,callBack)
-                }
-                else if (childView.id == R.id.draftStateAssignBtn) {
-//                    viewModel.rejectSubTask(data,callBack)    TODO  -  Send "state" as ASSIGNED
-                    shortToastNow("draftStateAssignBtn")
-                }
-                else if (childView.id == R.id.assignedStateAcceptBtn) {
-//                    viewModel.rejectSubTask(data,callBack)    TODO  -  Send "state" as ACCEPTED
-                    shortToastNow("assignedStateAcceptBtn")
+                when (childView.id) {
+                    R.id.assignedStateRejectBtn ->
+                        viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack)
+                    R.id.acceptedStateRejectBtn ->
+                        viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack)
+                    R.id.draftStateAssignBtn -> {
+                        if (data.assignedTo.isNotEmpty()) {
+                            viewModel.updateSubtaskStatus(
+                                data,
+                                SubTaskStatus.ASSIGNED,
+                                callBack
+                            )
+                        } else {
+                            shortToastNow("There are no assign to members in subtask")
+                        }
+                    }
+                    R.id.assignedStateAcceptBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.ACCEPTED,
+                        callBack
+                    )
                 }
             }
     }

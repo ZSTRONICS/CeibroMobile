@@ -7,10 +7,7 @@ import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
+import com.zstronics.ceibro.data.repos.task.models.*
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -145,17 +142,39 @@ class TaskRepository @Inject constructor(
     }
 
     override suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean, Boolean, Boolean> {
-        when (val response = remoteSubTask.rejectSubtask(updateSubTaskStatusRequest)) {
+        val response = remoteSubTask.rejectSubtask(updateSubTaskStatusRequest)
+        return processStatusResponse(
+            updateSubTaskStatusRequest.subTaskId,
+            updateSubTaskStatusRequest.taskId,
+            response
+        )
+    }
+
+    override suspend fun updateSubtaskStatus(updateSubTaskStatusRequest: UpdateSubTaskStatusWithoutCommentRequest): Triple<Boolean, Boolean, Boolean> {
+        val response = remoteSubTask.updateSubtaskStatus(updateSubTaskStatusRequest)
+        return processStatusResponse(
+            updateSubTaskStatusRequest.subTaskId,
+            updateSubTaskStatusRequest.taskId,
+            response
+        )
+    }
+
+    private suspend fun processStatusResponse(
+        subTaskId: String,
+        taskId: String,
+        response: ApiResponse<SubTaskByTaskResponse>
+    ): Triple<Boolean, Boolean, Boolean> {
+        when (response) {
             is ApiResponse.Success -> {
                 val subTasks = response.data.results.subtasks
                 val task = response.data.results.task
                 var taskDeleted = false
                 var subTaskDeleted = false
                 if (subTasks.isEmpty()) {
-                    localSubTask.deleteSubtaskById(updateSubTaskStatusRequest.subTaskId)
+                    localSubTask.deleteSubtaskById(subTaskId)
                     subTaskDeleted = true
                 } else {
-                    val subTask = subTasks.find { it.id == updateSubTaskStatusRequest.subTaskId }
+                    val subTask = subTasks.find { it.id == subTaskId }
                     if (subTask != null) {
                         localSubTask.updateSubTask(subTask)
                         subTaskDeleted = false
@@ -164,7 +183,7 @@ class TaskRepository @Inject constructor(
 
                 if (task == null) {
                     taskDeleted = true
-                    localTask.deleteTaskById(updateSubTaskStatusRequest.taskId)
+                    localTask.deleteTaskById(taskId)
                 } else {
                     taskDeleted = false
                     localTask.updateTask(task)
