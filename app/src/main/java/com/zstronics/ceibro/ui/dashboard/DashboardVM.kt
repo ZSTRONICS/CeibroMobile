@@ -112,20 +112,25 @@ class DashboardVM @Inject constructor(
                             )
                             val subtaskUpdatedData = subTaskByTaskResponse.results
 
-                            val subTasks = subtaskUpdatedData.subtasks
-                            val task = subtaskUpdatedData.task
+                            subtaskUpdatedData.subtasks.let {
+                                val subTasks = it
 
-                            if (subTasks.isNotEmpty()) {
-                                val subTask = subTasks[0]
-                                localSubTask.updateSubTask(subTask)
-                                EventBus.getDefault()
-                                    .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
+                                if (subTasks.isNotEmpty()) {
+                                    val subTask = subTasks[0]
+                                    localSubTask.updateSubTask(subTask)
+                                    EventBus.getDefault()
+                                        .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
+                                }
+                            }
+                            subtaskUpdatedData.task.let {
+                                val task = it
+
+                                if (task != null) {
+                                    localTask.updateTask(task)
+                                    EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+                                }
                             }
 
-                            if (task != null) {
-                                localTask.updateTask(task)
-                                EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
-                            }
                         }
                     }
                 }

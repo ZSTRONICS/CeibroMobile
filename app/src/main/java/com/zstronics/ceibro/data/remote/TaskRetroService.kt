@@ -28,14 +28,18 @@ interface TaskRetroService {
 
     @GET("task/subtask")
     suspend fun getAllSubTasksForUser(
-        @Query("state") state: String
+        @Query("state") state: String,
+        @Query("noPaginate") noPaginate: Boolean
     ): Response<AllSubtasksResponse>
 
     @POST("task/subtask")
     suspend fun newSubTask(@Body requestBody: NewSubtaskRequest): Response<NewSubTaskResponse>
 
     @GET("task/{taskId}")
-    suspend fun getSubTaskByTaskId(@Path("taskId") taskId: String): Response<SubTaskByTaskResponse>
+    suspend fun getSubTaskByTaskId(
+        @Path("taskId") taskId: String,
+        @Query("noPaginate") noPaginate: Boolean
+    ): Response<SubTaskByTaskResponse>
 
     @POST("task/st/statechange")
     suspend fun rejectSubtask(@Body requestBody: UpdateSubTaskStatusRequest): Response<SubTaskByTaskResponse>

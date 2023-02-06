@@ -7,11 +7,11 @@ import javax.inject.Inject
 
 class SubTaskRemoteDataSource @Inject constructor(private val service: TaskRetroService) :
     ISubTaskRemoteDataSource, BaseNetworkRepository() {
-    override suspend fun getAllSubTasksForUser(state: String): ApiResponse<AllSubtasksResponse> =
+    override suspend fun getAllSubTasksForUser(state: String, noPaginate: Boolean): ApiResponse<AllSubtasksResponse> =
         executeSafely(
             call =
             {
-                service.getAllSubTasksForUser(state)
+                service.getAllSubTasksForUser(state, noPaginate)
             }
         )
 
@@ -23,11 +23,11 @@ class SubTaskRemoteDataSource @Inject constructor(private val service: TaskRetro
             }
         )
 
-    override suspend fun getSubTaskByTaskId(taskId: String): ApiResponse<SubTaskByTaskResponse> =
+    override suspend fun getSubTaskByTaskId(taskId: String, noPaginate: Boolean): ApiResponse<SubTaskByTaskResponse> =
         executeSafely(
             call =
             {
-                service.getSubTaskByTaskId(taskId)
+                service.getSubTaskByTaskId(taskId, noPaginate)
             }
         )
 
