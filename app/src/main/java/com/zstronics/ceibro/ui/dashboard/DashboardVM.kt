@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeRespo
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
 import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
 import com.zstronics.ceibro.data.repos.task.models.SubTaskByTaskResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -106,31 +107,26 @@ class DashboardVM @Inject constructor(
                         }
 
                         SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {
-                            val subTaskByTaskResponse = gson.fromJson<SubTaskByTaskResponse>(
+                            val taskSubtaskUpdateResponse = gson.fromJson<SocketTaskSubtaskUpdateResponse>(
                                 arguments,
-                                object : TypeToken<SubTaskByTaskResponse>() {}.type
+                                object : TypeToken<SocketTaskSubtaskUpdateResponse>() {}.type
                             )
-                            val subtaskUpdatedData = subTaskByTaskResponse.results
+                            val taskSubtaskUpdatedData = taskSubtaskUpdateResponse.data.results
 
-                            subtaskUpdatedData.subtasks.let {
-                                val subTasks = it
+                            val subTasks = taskSubtaskUpdatedData.subtasks
+                            val task = taskSubtaskUpdatedData.task
 
-                                if (subTasks.isNotEmpty()) {
-                                    val subTask = subTasks[0]
-                                    localSubTask.updateSubTask(subTask)
-                                    EventBus.getDefault()
-                                        .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
-                                }
-                            }
-                            subtaskUpdatedData.task.let {
-                                val task = it
-
-                                if (task != null) {
-                                    localTask.updateTask(task)
-                                    EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
-                                }
+                            if (subTasks.isNotEmpty()) {
+                                val subTask = subTasks[0]
+                                localSubTask.updateSubTask(subTask)
+                                EventBus.getDefault()
+                                    .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
                             }
 
+                            if (task != null) {
+                                localTask.updateTask(task)
+                                EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+                            }
                         }
                     }
                 }
