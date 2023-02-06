@@ -36,54 +36,34 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="3dp"
-                app:layout_constraintBottom_toBottomOf="@+id/taskTitle"
+                app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/taskTitle"
+                app:layout_constraintTop_toTopOf="@+id/taskTitleLayout"
                 app:srcCompat="@drawable/icon_back"
                 app:tint="@color/appYellow" />
 
-            <TextView
-                android:id="@+id/taskTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/inter_bold"
-                android:maxLines="1"
-                android:text="@string/task_title_heading"
-                android:textColor="@color/black"
-                android:textSize="19sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/taskDetailFilterBtn"
-                app:layout_constraintStart_toEndOf="@+id/closeBtn"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/taskDetailFilterBtn"
                 android:layout_width="38dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="38dp"
                 android:layout_marginEnd="15dp"
-                android:layout_marginBottom="10dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="8dp"
                 android:tooltipText="Filters"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/taskTitleLayout"
                 app:srcCompat="@drawable/icon_filter"
-                app:tint="@color/black"/>
+                app:tint="@color/black" />
 
             <SearchView
                 android:id="@+id/taskDetailSearchBar"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="7dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="2dp"
                 android:closeIcon="@drawable/icon_round_close"
                 android:elevation="1dp"
                 android:gravity="center"
@@ -92,10 +72,50 @@
                 android:queryHint="Search"
                 android:searchIcon="@drawable/icon_search"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/taskDetailFilterBtn"
+                app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
                 app:layout_constraintEnd_toStartOf="@+id/closeBtn"
                 app:layout_constraintStart_toEndOf="@+id/taskDetailFilterBtn"
-                app:layout_constraintTop_toTopOf="@+id/taskDetailFilterBtn" />
+                app:layout_constraintTop_toTopOf="@+id/taskTitleLayout" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/taskTitleLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginTop="11dp"
+                android:layout_marginBottom="11dp"
+                android:gravity="start"
+                android:orientation="vertical"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/taskDetailSearchBar"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" >
+
+                <TextView
+                    android:id="@+id/taskTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="@string/task_title_heading"
+                    android:textColor="@color/black"
+                    android:textSize="18.5sp" />
+
+                <TextView
+                    android:id="@+id/taskViewDetailBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@string/view_details_heading"
+                    android:textColor="@color/appTextGrey"
+                    android:textSize="12.5sp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
                 android:id="@+id/view20"

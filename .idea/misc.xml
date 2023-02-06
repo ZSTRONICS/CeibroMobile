@@ -13,6 +13,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/icon_more.xml" value="0.3055" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/input_field_rectangle.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/receiver_message_box.xml" value="0.2995" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/rounded_bottom_dialog.xml" value="0.223" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/sender_message_box.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/signin_button_back.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/status_accepted_filled.xml" value="0.3055" />
@@ -43,20 +44,24 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_invitations.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_main_tasks.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_media.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_message_action_sheet.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_message_info.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_msg_view.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_new_chat.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_new_sub_task.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_new_task.xml" value="0.33" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_participants.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_profile.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_projects.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sign_up.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_comments.xml" value="0.365625" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_detail.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_edit_members.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_sub_task_rejection.xml" value="0.365625" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_task_detail.xml" value="0.365625" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_task_detail_sheet.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_tasks.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_chat_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_comment_box.xml" value="0.36666666666666664" />

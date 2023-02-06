@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.databinding.FragmentTaskDetailBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.questioner.createquestion.members.FragmentQuestionParticipantsSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -33,6 +34,7 @@ class TaskDetailFragment :
         when (id) {
             R.id.closeBtn -> navigateBack()
             R.id.createSubTaskBtn -> navigateToNewSubTaskCreation()
+            R.id.taskTitleLayout -> showTaskDetailSheet()
         }
     }
 
@@ -108,6 +110,11 @@ class TaskDetailFragment :
 
     private fun navigateToNewSubTaskCreation() {
         navigate(R.id.newSubTaskFragment, arguments)
+    }
+
+    private fun showTaskDetailSheet() {
+        val fragment = viewModel.task.value?.description?.let { FragmentTaskDetailSheet(it) }
+        fragment?.show(childFragmentManager, "FragmentTaskDetailSheet")
     }
 
     private fun navigateToSubTaskDetail(data: AllSubtask) {

@@ -241,5 +241,8 @@
     <string name="send_heading">Send</string>
     <string name="type_new_comment_heading">Type new comment</string>
     <string name="subtask_rejection_heading">SubTask Rejection</string>
+    <string name="edit_members_heading">Edit Members</string>
+    <string name="view_details_heading">View details</string>
+    <string name="task_details_heading">Task Details</string>
 
 </resources>
