@@ -102,5 +102,17 @@ data class TaskDataOfSubTask(
     val taskDataId: Int,
     @SerializedName("_id") val id: String?,
     @SerializedName("title") val title: String?,
-    @SerializedName("admins") val admins: List<String>?
+    @SerializedName("admins") val admins: List<String>?,
+    @SerializedName("project") val project: SubTaskProject?
+) : Parcelable
+
+
+@Entity(tableName = TableNames.SubTaskProject)
+@Parcelize
+@Keep
+data class SubTaskProject(
+    @PrimaryKey(autoGenerate = true)
+    val SubTaskProjectId: Int,
+    @SerializedName("title") val title: String,
+    @SerializedName("_id") val id: String,
 ) : Parcelable

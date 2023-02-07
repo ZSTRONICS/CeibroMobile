@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.repos.task.models.*
 
 interface ITaskRepository {
     suspend fun tasks(): List<CeibroTask>
+    suspend fun getTaskById(taskId: String): CeibroTask
     suspend fun eraseTaskTable()
     suspend fun newTask(
         newTask: NewTaskRequest,

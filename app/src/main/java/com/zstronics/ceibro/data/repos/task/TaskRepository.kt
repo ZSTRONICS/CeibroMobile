@@ -36,6 +36,10 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun getTaskById(taskId: String): CeibroTask {
+        return localTask.getTaskById(taskId)
+    }
+
     override suspend fun eraseTaskTable() = localTask.eraseTaskTable()
 
     override suspend fun newTask(
