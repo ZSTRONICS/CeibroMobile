@@ -231,9 +231,9 @@ class SubTaskAdapter @Inject constructor(
                 subTaskTitle.text = item.title
                 if (item.description?.isNotEmpty() == true) {
                     subTaskDesc.text = item.description
-                }
-                else {
-                    subTaskDesc.text = context.getString(R.string.no_description_added_by_creator_text)
+                } else {
+                    subTaskDesc.text =
+                        context.getString(R.string.no_description_added_by_creator_text)
                 }
                 subTaskDesc.text = item.description
 
@@ -244,46 +244,50 @@ class SubTaskAdapter @Inject constructor(
 
                 assignedStateRejectBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        onApiResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition, SubTaskStatus.REJECTED)
                     }
                 }
                 acceptedStateRejectBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        onApiResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition, SubTaskStatus.REJECTED)
                     }
                 }
                 draftStateAssignBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        onApiResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition, SubTaskStatus.ASSIGNED)
                     }
                 }
                 assignedStateAcceptBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
-                        onApiResult(result, absoluteAdapterPosition)
+                        onApiResult(result, absoluteAdapterPosition, SubTaskStatus.ACCEPTED)
                     }
                 }
             }
         }
     }
 
-    private fun onApiResult(result: Triple<Boolean, Boolean, Boolean>, adapterPos: Int) {
+    private fun onApiResult(
+        result: Triple<Boolean, Boolean, Boolean>,
+        adapterPos: Int,
+        subtaskStatus: SubTaskStatus
+    ) {
         val (apiCallSuccess, taskDeleted, subTaskDeleted) = result
         if (apiCallSuccess) { // we will assume that API call successfully completed
             if (subTaskDeleted) {
                 removeItem(adapterPos)
             } else {
-                updateItemStatus(adapterPos, SubTaskStatus.REJECTED)
+                updateItemStatus(adapterPos, subtaskStatus)
             }
         }
     }
 
-    private fun updateItemStatus(adapterPos: Int, rejected: SubTaskStatus) {
+    private fun updateItemStatus(adapterPos: Int, subtaskStatus: SubTaskStatus) {
         val allStates: ArrayList<SubTaskStateItem> =
             this.list[adapterPos].state as ArrayList<SubTaskStateItem>
         val user = user ?: return
         val userState = allStates.find { it.userId == user.id } ?: return
         val positionOfState = allStates.indexOf(userState)
-        userState.userState = rejected.name.lowercase()
+        userState.userState = subtaskStatus.name.lowercase()
         allStates.removeAt(positionOfState)
         allStates.add(positionOfState, userState)
         this.list[adapterPos].state = allStates
