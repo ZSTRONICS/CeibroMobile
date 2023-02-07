@@ -95,7 +95,7 @@ class TaskDetailFragment :
                         DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                     )
                     if (taskDetailDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
-                        taskDetailDueDate.text = "Invalid due date"
+                        taskDetailDueDate.text = requireContext().getString(R.string.invalid_due_date_text)
                     }
                 }
 

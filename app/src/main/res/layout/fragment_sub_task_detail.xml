@@ -360,6 +360,7 @@
                         android:layout_marginTop="1dp"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="start"
+                        android:lineSpacingExtra="5dp"
                         android:text="Kristo Vunukainen, Kristo Vunukainen, Kristo Vunukainen, Kristo Vunukainen"
                         android:textColor="@color/black"
                         android:textSize="14sp" />

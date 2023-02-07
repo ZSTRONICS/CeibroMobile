@@ -244,5 +244,8 @@
     <string name="edit_members_heading">Edit Members</string>
     <string name="view_details_heading">View details</string>
     <string name="task_details_heading">Task Details</string>
+    <string name="no_user_assigned_text">No user assigned</string>
+    <string name="no_description_added_by_creator_text">No description added by creator</string>
+    <string name="invalid_due_date_text">Invalid due date</string>
 
 </resources>

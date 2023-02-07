@@ -93,7 +93,7 @@ class TaskAdapter @Inject constructor() :
                         "${item.assignedTo[0].firstName} ${item.assignedTo[0].surName}"
                 }
                 else {
-                    taskAssignToName.text = "No user assigned"
+                    taskAssignToName.text = context.getString(R.string.no_user_assigned_text)
                 }
 
                 taskDueDateText.text = DateUtils.reformatStringDate(
@@ -108,7 +108,7 @@ class TaskAdapter @Inject constructor() :
                         DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                     )
                     if (taskDueDateText.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
-                        taskDueDateText.text = "Invalid due date"
+                        taskDueDateText.text = context.getString(R.string.invalid_due_date_text)
                     }
                 }
 
@@ -116,11 +116,8 @@ class TaskAdapter @Inject constructor() :
                 taskCommentCountText.text = item.unSeenSubTaskCommentCount.toString()
 
                 taskProjectName.text = item.project.title
-                taskSubTasksRV.visibility =
-                    if (item.totalSubTaskCount > 0)
-                        View.VISIBLE
-                    else
-                        View.INVISIBLE
+                taskSubTasksRV.visibility = View.INVISIBLE
+
                 taskSubTaskTotalCountText.text = "${item.totalSubTaskCount} subtask(s)"
                 taskSubTaskCount.text = if (item.subTaskStatusCount?.done != null)
                     "${item.subTaskStatusCount.done}/${item.totalSubTaskCount}"

@@ -224,11 +224,17 @@ class SubTaskAdapter @Inject constructor(
                     else
                         "${members[0].firstName} ${members[0].surName}"
                 } else {
-                    subTaskAssignToName.text = "No user assigned"
+                    subTaskAssignToName.text = context.getString(R.string.no_user_assigned_text)
                 }
 
 
                 subTaskTitle.text = item.title
+                if (item.description?.isNotEmpty() == true) {
+                    subTaskDesc.text = item.description
+                }
+                else {
+                    subTaskDesc.text = context.getString(R.string.no_description_added_by_creator_text)
+                }
                 subTaskDesc.text = item.description
 
 
