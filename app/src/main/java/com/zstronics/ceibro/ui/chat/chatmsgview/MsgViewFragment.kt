@@ -30,6 +30,7 @@ import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageRespons
 import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.databinding.FragmentMsgViewBinding
+import com.zstronics.ceibro.extensions.openCamera
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
 import com.zstronics.ceibro.ui.chat.adapter.swipe.MessageSwipeController
@@ -70,6 +71,18 @@ class MsgViewFragment :
             R.id.closeBtn -> navigateBack()
             R.id.cancelQuoted -> {
                 viewModel.hideQuoted()
+            }
+            R.id.captureImage -> {
+                checkPermission(
+                    immutableListOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                    )
+                ) {
+                    requireActivity().openCamera { resultCode, intent ->
+                        val file = FileUtils.getFile(requireContext(), intent?.data)
+                    }
+                }
             }
 //            R.id.btPickFile -> checkPermission(
 //                immutableListOf(
