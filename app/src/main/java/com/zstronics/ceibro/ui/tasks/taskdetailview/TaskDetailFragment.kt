@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
@@ -13,6 +14,7 @@ import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.questioner.createquestion.members.FragmentQuestionParticipantsSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskAdapter
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +55,35 @@ class TaskDetailFragment :
         adapter.itemClickListener = { _: View, position: Int, data: AllSubtask ->
             navigateToSubTaskDetail(data)
         }
+        adapter.childItemClickListener =
+            { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
+                when (childView.id) {
+                    R.id.assignedStateRejectBtn, R.id.acceptedStateRejectBtn ->
+                        viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack) {
+                            navigateBack()
+                        }
+                    R.id.draftStateAssignBtn -> {
+                        if (data.assignedTo.isNotEmpty()) {
+                            viewModel.updateSubtaskStatus(
+                                data,
+                                SubTaskStatus.ASSIGNED,
+                                callBack
+                            ) {
+                                navigateBack()
+                            }
+                        } else {
+                            shortToastNow("There are no assign to members in subtask")
+                        }
+                    }
+                    R.id.assignedStateAcceptBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.ACCEPTED,
+                        callBack
+                    ) {
+                        navigateBack()
+                    }
+                }
+            }
 
         viewModel.task.observe(viewLifecycleOwner) { item ->
             with(mViewDataBinding) {
