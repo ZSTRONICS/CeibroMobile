@@ -40,9 +40,11 @@ class SubTaskVM @Inject constructor(
             subTaskId = data.id,
             taskId = data.taskId
         )
+        loading(true)
         launch {
             val result = taskRepository.rejectSubtask(request)
             callBack.invoke(result)
+            loading(false)
         }
     }
 
@@ -56,9 +58,11 @@ class SubTaskVM @Inject constructor(
             subTaskId = data.id,
             taskId = data.taskId
         )
+        loading(true)
         launch {
             val result = taskRepository.updateSubtaskStatus(request)
             callBack.invoke(result)
+            loading(false)
         }
     }
 }
