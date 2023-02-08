@@ -185,7 +185,7 @@ class TaskRepository @Inject constructor(
                     }
                 }
 
-                if (task == null) {
+                if (task?._id == null) {
                     taskDeleted = true
                     localTask.deleteTaskById(taskId)
                 } else {

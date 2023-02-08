@@ -64,10 +64,13 @@ class TaskDetailVM @Inject constructor(
         launch {
             val result = taskRepository.rejectSubtask(request)
             val (apiCallSuccess, taskDeleted, subTaskDeleted) = result
-            if (taskDeleted)
+            if (taskDeleted) {
                 callBack.invoke(result)
-            else
                 onTaskDeleted()
+            }
+            else {
+                callBack.invoke(result)
+            }
         }
     }
 
@@ -85,10 +88,13 @@ class TaskDetailVM @Inject constructor(
         launch {
             val result = taskRepository.updateSubtaskStatus(request)
             val (apiCallSuccess, taskDeleted, subTaskDeleted) = result
-            if (taskDeleted)
+            if (taskDeleted) {
                 callBack.invoke(result)
-            else
                 onTaskDeleted()
+            }
+            else {
+                callBack.invoke(result)
+            }
         }
     }
 }
