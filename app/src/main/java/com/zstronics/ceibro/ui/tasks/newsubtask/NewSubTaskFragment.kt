@@ -3,6 +3,8 @@ package com.zstronics.ceibro.ui.tasks.newsubtask
 import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -19,11 +21,13 @@ import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.utils.FileUtils.getMimeType
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class NewSubTaskFragment :
@@ -97,7 +101,18 @@ class NewSubTaskFragment :
                             // Get the URI of the picked file
                             val fileUri = data.data
                             // Add the URI to the list
-                            viewModel.addUriToList(fileUri)
+                            val mimeType = getMimeType(requireContext(), fileUri)
+                            val attachmentType = if (mimeType.startsWith("image")) {
+                                "image"
+                            } else {
+                                "video"
+                            }
+                            viewModel.addUriToList(
+                                NewSubTaskVM.SubtaskAttachment(
+                                    attachmentType,
+                                    fileUri
+                                )
+                            )
                         }
                     }
                 }
@@ -170,9 +185,10 @@ class NewSubTaskFragment :
         viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
             attachmentAdapter.setList(list)
         }
-        attachmentAdapter.itemClickListener = { _: View, position: Int, data: Uri? ->
-            viewModel.removeFile(position)
-        }
+        attachmentAdapter.itemClickListener =
+            { _: View, position: Int, data: NewSubTaskVM.SubtaskAttachment? ->
+                viewModel.removeFile(position)
+            }
     }
 
     var cal: Calendar = Calendar.getInstance()
