@@ -28,6 +28,7 @@ class SubTaskAdapter @Inject constructor(
         null
     var childItemClickListener: ((view: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit) -> Unit)? =
         null
+    var simpleChildItemClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? = null
 
     private var list: MutableList<AllSubtask> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubTaskViewHolder {
@@ -103,6 +104,7 @@ class SubTaskAdapter @Inject constructor(
                 val isAdmin = isTaskAdmin(user?.id, item.taskData?.admins)
 
                 if (isAdmin && !isAssignee) {
+                    subTaskMoreMenuBtn.visibility = View.VISIBLE
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.VISIBLE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -135,6 +137,7 @@ class SubTaskAdapter @Inject constructor(
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
                 } else if (isAdmin && isAssignee) {
+                    subTaskMoreMenuBtn.visibility = View.VISIBLE
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.VISIBLE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -167,6 +170,7 @@ class SubTaskAdapter @Inject constructor(
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
                 } else if (!isAdmin && isAssignee) {
+                    subTaskMoreMenuBtn.visibility = View.GONE
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.GONE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -240,6 +244,10 @@ class SubTaskAdapter @Inject constructor(
 
                 itemView.setOnClickListener {
                     itemClickListener?.invoke(it, adapterPosition, item)
+                }
+
+                subTaskMoreMenuBtn.setOnClickListener {
+                    simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
                 }
 
                 assignedStateRejectBtn.setOnClickListener {

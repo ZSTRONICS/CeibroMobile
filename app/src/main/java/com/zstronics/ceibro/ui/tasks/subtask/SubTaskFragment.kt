@@ -26,6 +26,10 @@ class SubTaskFragment :
     override val layoutResId: Int = R.layout.fragment_sub_task
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
+        when (id) {
+            115 -> shortToastNow("Edit Details")
+            116 -> shortToastNow("Close Subtask")
+        }
     }
 
 
@@ -42,6 +46,9 @@ class SubTaskFragment :
 
         adapter.itemClickListener = { _: View, position: Int, data: AllSubtask ->
             navigateToSubTaskDetail(data)
+        }
+        adapter.simpleChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
+            viewModel.showSubtaskCardMenuPopup(childView)
         }
 
         adapter.childItemClickListener =

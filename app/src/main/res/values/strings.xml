@@ -247,5 +247,7 @@
     <string name="no_user_assigned_text">No user assigned</string>
     <string name="no_description_added_by_creator_text">No description added by creator</string>
     <string name="invalid_due_date_text">Invalid due date</string>
+    <string name="edit_details_heading">Edit Details</string>
+    <string name="close_subtask_heading">Close Subtask</string>
 
 </resources>

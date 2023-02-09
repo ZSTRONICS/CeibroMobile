@@ -55,6 +55,9 @@ class TaskDetailFragment :
         adapter.itemClickListener = { _: View, position: Int, data: AllSubtask ->
             navigateToSubTaskDetail(data)
         }
+        adapter.simpleChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
+            viewModel.showSubtaskCardMenuPopup(childView)
+        }
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
                 when (childView.id) {
