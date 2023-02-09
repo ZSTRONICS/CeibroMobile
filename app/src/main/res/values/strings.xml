@@ -163,7 +163,7 @@
     <string name="read_by_heading">Read By</string>
     <string name="delivered_to_heading">Delivered To</string>
     <string name="media_heading"><u>Media</u></string>
-    <string name="doc_heading"><u>Doc</u></string>
+    <string name="docs_heading"><u>Docs</u></string>
     <string name="voice_note_heading"><u>Voice note</u></string>
     <string name="view_all_text">View all</string>
     <string name="common_title">Title        </string>
@@ -249,5 +249,6 @@
     <string name="invalid_due_date_text">Invalid due date</string>
     <string name="edit_details_heading">Edit Details</string>
     <string name="close_subtask_heading">Close Subtask</string>
+    <string name="add_attachment_heading">Add attachment</string>
 
 </resources>

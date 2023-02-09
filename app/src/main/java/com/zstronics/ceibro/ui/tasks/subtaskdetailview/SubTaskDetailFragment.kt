@@ -31,6 +31,7 @@ class SubTaskDetailFragment :
             R.id.backBtn -> navigateBack()
             R.id.subTaskViewCommentsBtn -> navigateToAllComments()
             R.id.subTaskRejectionsBtn -> navigateToRejections()
+            R.id.subTaskAttachmentsBtn -> navigateToAttachments()
             R.id.subTaskDescriptionShowMoreBtn -> {
                 if (mViewDataBinding.subTaskDescriptionText.maxLines == 4) {
                     mViewDataBinding.subTaskDescriptionText.maxLines = Integer.MAX_VALUE
@@ -172,5 +173,8 @@ class SubTaskDetailFragment :
     }
     private fun navigateToRejections() {
         navigate(R.id.subTaskRejectionFragment)
+    }
+    private fun navigateToAttachments() {
+        navigate(R.id.attachmentFragment)
     }
 }

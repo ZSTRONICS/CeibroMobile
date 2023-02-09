@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.attachment.AttachmentState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.attachment.AttachmentVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mediaHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="38dp"
+                android:padding="3dp"
+                android:layout_marginStart="16dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appYellow" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/attachments_heading"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/attachmentsHeaderLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mediaHeader">
+
+            <TextView
+                android:id="@+id/attachmentMediaBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="13dp"
+                android:background="?attr/selectableItemBackground"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="10dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="6dp"
+                android:letterSpacing="0.04"
+                android:text="@string/media_heading"
+                android:textColor="@color/appYellow"
+                android:textSize="15.5sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/attachmentDocsBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:background="?attr/selectableItemBackground"
+                android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0.04"
+                android:paddingStart="10dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="6dp"
+                android:text="@string/docs_heading"
+                android:textColor="@color/black"
+                android:textSize="15.5sp"
+                app:layout_constraintBottom_toBottomOf="@+id/attachmentMediaBtn"
+                app:layout_constraintStart_toEndOf="@+id/attachmentMediaBtn"
+                app:layout_constraintTop_toTopOf="@+id/attachmentMediaBtn" />
+
+            <LinearLayout
+                android:id="@+id/attachmentAddBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:orientation="horizontal"
+                android:padding="2dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="3dp"
+                app:layout_constraintBottom_toBottomOf="@+id/attachmentMediaBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/attachmentMediaBtn">
+
+                <TextView
+                    android:id="@+id/subTaskAttachmentsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:padding="1dp"
+                    android:text="@string/add_attachment_heading"
+                    android:textColor="@color/appBlue"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/subTaskAttachmentsImg"
+                    android:layout_width="17dp"
+                    android:layout_height="15dp"
+                    android:layout_marginStart="3dp"
+                    android:fontFamily="@font/inter_regular"
+                    android:src="@drawable/icon_attachment"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:tint="@color/appBlue" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/attachmentMainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attachmentsHeaderLayout">
+
+            <GridView
+                android:id="@+id/attachmentGridView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:horizontalSpacing="6dp"
+                android:numColumns="4"
+                android:verticalSpacing="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

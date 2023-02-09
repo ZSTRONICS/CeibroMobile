@@ -438,6 +438,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="2dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:layout_marginTop="11dp"
                     android:orientation="horizontal"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -489,6 +491,8 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="horizontal"
                     android:padding="2dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     app:layout_constraintEnd_toStartOf="@+id/centerVLine"
                     app:layout_constraintTop_toBottomOf="@+id/subTaskDescriptionLayout">
 
@@ -582,6 +586,8 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="horizontal"
                     android:padding="2dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 

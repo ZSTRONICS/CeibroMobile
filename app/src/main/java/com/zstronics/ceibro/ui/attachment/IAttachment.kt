@@ -1,8 +1,8 @@
-package com.zstronics.ceibro.ui.chat.media
+package com.zstronics.ceibro.ui.attachment
 
 import com.zstronics.ceibro.base.interfaces.IBase
 
-interface IMedia {
+interface IAttachment {
     interface State : IBase.State {
     }
 
