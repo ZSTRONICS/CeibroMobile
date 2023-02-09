@@ -1,22 +1,26 @@
 package com.zstronics.ceibro.ui.tasks.newsubtask
 
+import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import com.yap.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
-import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -71,6 +75,33 @@ class NewSubTaskFragment :
                 }
 
             }
+            R.id.newSubTaskAttachmentBtn -> {
+                checkPermission(
+                    immutableListOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                    )
+                ) {
+                    requireActivity().openFilePicker(
+                        mimeTypes = arrayOf(
+                            "image/png",
+                            "image/jpg",
+                            "image/jpeg",
+                            "image/*",
+                            "video/mp4",
+                            "video/3gpp",
+                            "video/*"
+                        )
+                    ) { resultCode, data ->
+                        if (resultCode == Activity.RESULT_OK && data != null) {
+                            // Get the URI of the picked file
+                            val fileUri = data.data
+                            // Add the URI to the list
+                            viewModel.addUriToList(fileUri)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -79,6 +110,9 @@ class NewSubTaskFragment :
 
     @Inject
     lateinit var viewersChipsAdapter: MemberChipAdapter
+
+    @Inject
+    lateinit var attachmentAdapter: AttachmentAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -130,6 +164,15 @@ class NewSubTaskFragment :
 //        viewersChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
 //            viewModel.removeViewer(data)
 //        }
+
+        mViewDataBinding.attachmentRecyclerView.adapter = attachmentAdapter
+
+        viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
+            attachmentAdapter.setList(list)
+        }
+        attachmentAdapter.itemClickListener = { _: View, position: Int, data: Uri? ->
+            viewModel.removeFile(position)
+        }
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -171,5 +214,32 @@ class NewSubTaskFragment :
         viewState.startDate = sdf1.format(cal.time)
 
         mViewDataBinding.newSubTaskStartDateText.setText(sdf.format(cal.time))
+    }
+
+    private fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
+        PermissionX.init(this).permissions(
+            permissionsList
+        ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList, beforeRequest ->
+            if (beforeRequest)
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "${getString(R.string.common_text_permission)}",
+                    getString(R.string.common_text_allow),
+                    getString(R.string.common_text_deny)
+                )
+        }.onForwardToSettings { scope, deniedList ->
+            scope.showForwardToSettingsDialog(
+                permissions = deniedList,
+                message = getString(R.string.message_camera_permission_denied),
+                positiveText = getString(R.string.open_setting), cancelAble = true
+            )
+        }
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    function.invoke()
+                } else {
+                    toast(getString(R.string.common_text_permissions_denied))
+                }
+            }
     }
 }

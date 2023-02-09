@@ -181,9 +181,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:visibility="gone"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        android:visibility="gone"
                         app:endIconMode="dropdown_menu"
                         app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
                         app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
@@ -337,6 +337,7 @@
                         android:id="@+id/newSubTaskAttachmentBtn"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:padding="5dp"
                         android:src="@drawable/icon_attachment"
                         app:layout_constraintBottom_toBottomOf="@+id/newSubTaskCommentSwitch"
@@ -346,6 +347,18 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/attachmentRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newSubTaskMainLayout"
+                    tools:listitem="@layout/layout_attachment" />
+
                 <View
                     android:id="@+id/view20"
                     android:layout_width="match_parent"
@@ -354,8 +367,7 @@
                     android:background="@color/colorGrey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/newSubTaskMainLayout" />
-
+                    app:layout_constraintTop_toBottomOf="@+id/attachmentRecyclerView" />
 
                 <LinearLayout
                     android:id="@+id/newSubTaskAdvanceOptionBtn"
@@ -368,8 +380,8 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="horizontal"
                     android:padding="5dp"
-                    android:visibility="gone"
                     android:tooltipText="@string/advanced_options_heading"
+                    android:visibility="gone"
                     app:drawableStartCompat="@drawable/icon_navigate_next"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view20">

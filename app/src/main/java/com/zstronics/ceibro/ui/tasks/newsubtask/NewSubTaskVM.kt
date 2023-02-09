@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.newsubtask
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,6 +32,10 @@ class NewSubTaskVM @Inject constructor(
 
     private val _taskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
     val taskAssignee: MutableLiveData<ArrayList<Member>> = _taskAssignee
+
+
+    private val _fileUriList: MutableLiveData<ArrayList<Uri?>> = MutableLiveData(arrayListOf())
+    val fileUriList: MutableLiveData<ArrayList<Uri?>> = _fileUriList
 
 //    private val _viewers: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
 //    val viewers: MutableLiveData<ArrayList<Member>> = _viewers
@@ -197,7 +202,19 @@ class NewSubTaskVM @Inject constructor(
         }
     }
 
-    fun isAdmin(id: String): Boolean {
+    private fun isAdmin(id: String): Boolean {
         return id == user?.id
+    }
+
+    fun addUriToList(uri: Uri?) {
+        val files = fileUriList.value
+        files?.add(uri)
+        _fileUriList.postValue(files)
+    }
+
+    fun removeFile(position: Int) {
+        val files = fileUriList.value
+        files?.removeAt(position)
+        _fileUriList.postValue(files)
     }
 }
