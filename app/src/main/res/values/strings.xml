@@ -252,5 +252,7 @@
     <string name="add_attachment_heading">Add attachment</string>
     <string name="rejected_by_heading">Rejected by</string>
     <string name="see_attachments_heading">See Attachments</string>
+    <string name="click_to_add_more_files_heading"><u>Click to add more files</u></string>
+    <string name="upload_heading">Upload</string>
 
 </resources>

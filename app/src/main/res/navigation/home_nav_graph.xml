@@ -185,6 +185,9 @@
         <action
             android:id="@+id/action_taskDetailFragment_to_subTaskDetailFragment"
             app:destination="@id/subTaskDetailFragment" />
+        <action
+            android:id="@+id/action_taskDetailFragment_to_attachmentFragment"
+            app:destination="@id/attachmentFragment" />
     </fragment>
     <fragment
         android:id="@+id/newSubTaskFragment"
@@ -221,4 +224,9 @@
         android:name="com.zstronics.ceibro.ui.attachment.AttachmentFragment"
         android:label="AttachmentFragment"
         tools:layout="@layout/fragment_attachment" />
+    <fragment
+        android:id="@+id/addAttachmentFragment"
+        android:name="com.zstronics.ceibro.ui.attachment.addattachments.AddAttachmentFragment"
+        android:label="AddAttachmentFragment"
+        tools:layout="@layout/fragment_add_attachment"  />
 </navigation>
