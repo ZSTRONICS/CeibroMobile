@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.databinding.FragmentTaskDetailSheetBinding
 
-class FragmentTaskDetailSheet constructor(val taskDetail: String) :
+class FragmentTaskDetailSheet constructor(val taskTitle: String, val taskDetail: String) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentTaskDetailSheetBinding
 
@@ -39,12 +39,14 @@ class FragmentTaskDetailSheet constructor(val taskDetail: String) :
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
-        if (taskDetail.isNotEmpty()) {
-            binding.taskDescriptionText.setText(taskDetail)
-        }
-        else {
-            binding.taskDescriptionText.setText("No description added by creator")
-        }
+
+        binding.taskDescriptionText.setText(
+            taskDetail.ifEmpty { "No description added by creator" }
+        )
+
+        binding.taskTitleText.setText(
+            taskTitle.ifEmpty { "Can't fetch title" }
+        )
 
 //        binding.doneBtn.setOnClickListener {
 //            onDoneClick?.invoke(it, adapter.dataList)

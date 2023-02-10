@@ -50,23 +50,57 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/taskDescriptionField"
+            android:id="@+id/taskTitleField"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="17dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="25dp"
+            android:hint="@string/task_title_heading"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/appHintGrey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/taskTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="top|start"
+                android:inputType="none"
+                android:maxLines="3"
+                android:minLines="1"
+                android:paddingStart="11dp"
+                android:paddingEnd="11dp"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:focusable="false"
+                android:text=""
+                android:textColor="@color/black"
+                android:textColorHint="@color/appHintGrey"
+                android:textSize="14sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/taskDescriptionField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:hint="@string/description_heading"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:hintTextColor="@color/appHintGrey"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintTop_toBottomOf="@+id/taskTitleField">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/taskDescriptionText"
@@ -81,12 +115,52 @@
                 android:paddingEnd="11dp"
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
+                android:focusable="false"
                 android:text=""
                 android:textColor="@color/black"
                 android:textColorHint="@color/appHintGrey"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/taskSeeAttachmentBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="25dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="3dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/taskDescriptionField"
+            app:layout_constraintTop_toBottomOf="@+id/taskDescriptionField"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:id="@+id/taskSeeAttachmentText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:padding="1dp"
+                android:text="@string/see_attachments_heading"
+                android:textColor="@color/appBlue"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/taskSeeAttachmentImg"
+                android:layout_width="17dp"
+                android:layout_height="15dp"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/inter_regular"
+                android:src="@drawable/icon_attachment"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:tint="@color/appBlue" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
