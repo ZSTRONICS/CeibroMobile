@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -220,7 +221,7 @@ class NewSubTaskVM @Inject constructor(
     }
 
     data class SubtaskAttachment(
-        val attachmentType: String,
+        val attachmentType: AttachmentTypes,
         val attachmentUri: Uri?
     )
 }

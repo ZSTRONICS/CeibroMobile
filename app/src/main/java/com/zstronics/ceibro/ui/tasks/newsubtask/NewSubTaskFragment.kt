@@ -19,6 +19,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
 import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.FileUtils.getMimeType
@@ -94,7 +95,10 @@ class NewSubTaskFragment :
                             "image/*",
                             "video/mp4",
                             "video/3gpp",
-                            "video/*"
+                            "video/*",
+                            "application/pdf",
+                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
                         )
                     ) { resultCode, data ->
                         if (resultCode == Activity.RESULT_OK && data != null) {
@@ -102,10 +106,20 @@ class NewSubTaskFragment :
                             val fileUri = data.data
                             // Add the URI to the list
                             val mimeType = getMimeType(requireContext(), fileUri)
-                            val attachmentType = if (mimeType.startsWith("image")) {
-                                "image"
-                            } else {
-                                "video"
+                            val attachmentType = when {
+                                mimeType.startsWith("image") -> {
+                                    AttachmentTypes.Image
+                                }
+                                mimeType.startsWith("video") -> {
+                                    AttachmentTypes.Video
+                                }
+                                mimeType == "application/pdf" -> {
+                                    AttachmentTypes.Pdf
+                                }
+                                mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
+                                    AttachmentTypes.Doc
+                                }
+                                else -> AttachmentTypes.Doc
                             }
                             viewModel.addUriToList(
                                 NewSubTaskVM.SubtaskAttachment(
