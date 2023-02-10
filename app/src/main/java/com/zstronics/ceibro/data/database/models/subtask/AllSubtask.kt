@@ -19,7 +19,7 @@ data class AllSubtask(
     @PrimaryKey
     @SerializedName("_id") val id: String,
     @SerializedName("access") val access: List<String>,
-    @SerializedName("removedAccess") val removedAccess: List<String>?,
+    @SerializedName("rejectedBy") val rejectedBy: List<TaskMember>?,
     @SerializedName("advanceOptions") val advanceOptions: SubTaskAdvanceOptions,
     @SerializedName("assignedTo") val assignedTo: List<AssignedTo>,
     @SerializedName("comments") val comments: List<String>?,

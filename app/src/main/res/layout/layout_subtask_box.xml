@@ -178,7 +178,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:gravity="start"
+            android:gravity="start|center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
             app:layout_constraintStart_toStartOf="@+id/subTaskCreatorLayout"
@@ -200,7 +200,7 @@
                 android:id="@+id/subTaskAssignToName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="7dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="start"
@@ -208,6 +208,45 @@
                 android:text="Kristo Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="13.5sp" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/subTaskRejectedByLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end|center"
+                android:layout_marginStart="25dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
+                app:layout_constraintStart_toStartOf="@+id/subTaskCreatorLayout"
+                app:layout_constraintTop_toBottomOf="@+id/subTaskCreatorLayout">
+
+                <TextView
+                    android:id="@+id/subTaskRejectedByHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/rejected_by_heading"
+                    android:textColor="@color/appBlue"
+                    android:textSize="12.5sp" />
+
+                <TextView
+                    android:id="@+id/subTaskRejectedByCount"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/badge_back"
+                    android:backgroundTint="@color/appRed"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="11.5sp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <TextView

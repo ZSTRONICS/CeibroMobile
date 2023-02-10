@@ -250,5 +250,7 @@
     <string name="edit_details_heading">Edit Details</string>
     <string name="close_subtask_heading">Close Subtask</string>
     <string name="add_attachment_heading">Add attachment</string>
+    <string name="rejected_by_heading">Rejected by</string>
+    <string name="see_attachments_heading">See Attachments</string>
 
 </resources>

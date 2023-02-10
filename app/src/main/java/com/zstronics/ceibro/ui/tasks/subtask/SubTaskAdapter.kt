@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.subtask
 
+import android.os.Build
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +10,6 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.AssignedTo
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -231,6 +232,14 @@ class SubTaskAdapter @Inject constructor(
                     subTaskAssignToName.text = context.getString(R.string.no_user_assigned_text)
                 }
 
+                if (item.rejectedBy?.isNotEmpty() == true) {
+                    subTaskRejectedByCount.text = item.rejectedBy.size.toString()
+                }
+                else {
+                    subTaskRejectedByCount.text = "0"
+                }
+
+
 
                 subTaskTitle.text = item.title
                 if (item.description?.isNotEmpty() == true) {
@@ -244,6 +253,38 @@ class SubTaskAdapter @Inject constructor(
 
                 itemView.setOnClickListener {
                     itemClickListener?.invoke(it, adapterPosition, item)
+                }
+
+                subTaskRejectedByLayout.setOnClickListener {
+                    if (item.rejectedBy?.isNotEmpty() == true) {
+                        var allUsers = ""
+                        var count = 0
+                        for (rejectedUser in item.rejectedBy) {
+                            count++
+                            if (count == 1) {
+                                allUsers = "${rejectedUser.firstName} ${rejectedUser.surName}"
+                            }
+                            else {
+                                allUsers += ", ${rejectedUser.firstName} ${rejectedUser.surName}"
+                            }
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            subTaskRejectedByLayout.tooltipText = allUsers
+                        }
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            subTaskRejectedByLayout.tooltipText = "No rejections found"
+                        }
+                    }
+                    subTaskRejectedByLayout.performLongClick()
+
+                    val handler = Handler()
+                    handler.postDelayed(Runnable {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            subTaskRejectedByLayout.tooltipText = null
+                        }
+
+                    }, 1700)
                 }
 
                 subTaskMoreMenuBtn.setOnClickListener {

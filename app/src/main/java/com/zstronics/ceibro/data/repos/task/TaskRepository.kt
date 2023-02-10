@@ -128,6 +128,7 @@ class TaskRepository @Inject constructor(
                 val subTasks = response.data.allSubtasks
                 localSubTask.insertAllSubTasks(subTasks)
             }
+            else -> {}
         }
     }
 
@@ -137,12 +138,13 @@ class TaskRepository @Inject constructor(
                 val tasks = response.data.allTasks
                 localTask.insertAllTasks(tasks)
             }
+            else -> {}
         }
     }
 
     override suspend fun syncTasksAndSubTasks() {
-        syncSubTask()
         syncTask()
+        syncSubTask()
     }
 
     override suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean, Boolean, Boolean> {

@@ -147,7 +147,7 @@ class TaskDetailFragment :
     }
 
     private fun showTaskDetailSheet() {
-        val fragment = viewModel.task.value?.description?.let { FragmentTaskDetailSheet(it) }
+        val fragment = viewModel.task.value?.let { FragmentTaskDetailSheet(it.title, it.description?: "") }
         fragment?.show(childFragmentManager, "FragmentTaskDetailSheet")
     }
 
