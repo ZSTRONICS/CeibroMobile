@@ -100,7 +100,21 @@ class DashboardVM @Inject constructor(
                         }
 
                         SocketHandler.TaskEvent.TASK_UPDATE_PUBLIC.name -> {
-                            alert(socketData.eventType)
+                            val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
+                                arguments,
+                                object : TypeToken<SocketTaskCreatedResponse>() {}.type
+                            )
+                            // Need to check if task data object is null then don't do anything
+                            taskUpdatedData.data?._id?.let {
+                                //Following Code will run if the data object would not be null
+                                val taskCount = localTask.getSingleTaskCount(taskUpdatedData.data._id)
+                                if (taskCount < 1) {
+                                    localTask.insertTask(taskUpdatedData.data)
+                                } else {
+                                    localTask.updateTask(taskUpdatedData.data)
+                                }
+                            }
+                            EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                         }
                         SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
                             alert(socketData.eventType)

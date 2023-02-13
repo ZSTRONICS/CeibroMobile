@@ -71,6 +71,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_chat_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_comment_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_connection_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_delete_task.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_invitations_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_chip.xml" value="0.3194444444444444" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_bot.xml" value="0.5" />
@@ -84,6 +85,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_card_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_status_box.xml" value="0.23854166666666668" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_task_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_task_card_menu.xml" value="0.365625" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.18802083333333333" />
         <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/badge_back.xml" value="0.2675" />
         <entry key="..\:/Projects/Ceibro/app/src/main/res/drawable/bottom_nav_color.xml" value="0.2645" />

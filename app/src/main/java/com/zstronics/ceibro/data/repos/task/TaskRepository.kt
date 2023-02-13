@@ -48,7 +48,7 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteTask.newTask(newTask)) {
             is ApiResponse.Success -> {
-                localTask.insertTask(response.data.newTask)
+                response.data.newTask?.let { localTask.insertTask(it) }
                 callBack(true, "")
             }
             is ApiResponse.Error -> {
@@ -63,7 +63,26 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteTask.newTaskNoAdvanceOptions(newTask)) {
             is ApiResponse.Success -> {
-                localTask.insertTask(response.data.newTask)
+                response.data.newTask?.let { localTask.insertTask(it) }
+                callBack(true, "")
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun updateTaskByIdNoAdvanceOptions(
+        taskId: String,
+        updateTask: UpdateDraftTaskRequestNoAdvanceOptions,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteTask.updateTaskByIdNoAdvanceOptions(taskId, updateTask)) {
+            is ApiResponse.Success -> {
+                val responseObj = response.data.newTask
+                if (responseObj?._id != null) {
+                    localTask.updateTask(response.data.newTask)
+                }
                 callBack(true, "")
             }
             is ApiResponse.Error -> {

@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -28,10 +29,12 @@ class NewTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            1 -> navigateBack()
+            1, 2 -> navigateBack()
             R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
             R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskStatus.DRAFT.name.lowercase())
             R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskStatus.NEW.name.lowercase())
+            R.id.updateTaskAsDraftBtn -> viewModel.updateTask(viewModel.taskId, TaskStatus.DRAFT.name.lowercase())
+            R.id.updateTaskCreateBtn -> viewModel.updateTask(viewModel.taskId, TaskStatus.NEW.name.lowercase())
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -79,6 +82,56 @@ class NewTaskFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mViewDataBinding.newTaskSaveAsDraftBtn.visibility = View.VISIBLE
+        mViewDataBinding.newTaskCreateBtn.visibility = View.VISIBLE
+        mViewDataBinding.updateTaskAsDraftBtn.visibility = View.GONE
+        mViewDataBinding.updateTaskCreateBtn.visibility = View.GONE
+        mViewDataBinding.updateTaskNewStateBtn.visibility = View.GONE
+
+
+        viewModel.task.observe(viewLifecycleOwner) { item ->
+            mViewDataBinding.newTaskProjectSpinner.setText(
+                mViewDataBinding.newTaskProjectSpinner.adapter.getItem(viewModel.projectIndex).toString(), false)
+            viewModel.onProjectSelect(viewModel.projectIndex)
+
+            if (!viewModel.isNewTask) {        // If not a new task, then its in edit mode
+
+                viewState.dueDate = item.dueDate
+                mViewDataBinding.newTaskDueDateText.setText(item.dueDate)
+                viewState.taskTitle.value = item.title
+                viewState.description.value = item.description
+
+                mViewDataBinding.newTaskSaveAsDraftBtn.visibility = View.GONE
+                mViewDataBinding.newTaskCreateBtn.visibility = View.GONE
+
+                if (item.state.uppercase() == TaskStatus.DRAFT.name) {
+                    mViewDataBinding.updateTaskAsDraftBtn.visibility = View.VISIBLE
+                    mViewDataBinding.updateTaskCreateBtn.visibility = View.VISIBLE
+                    mViewDataBinding.updateTaskNewStateBtn.visibility = View.GONE
+                }
+                else {
+                    mViewDataBinding.updateTaskAsDraftBtn.visibility = View.GONE
+                    mViewDataBinding.updateTaskCreateBtn.visibility = View.GONE
+                    mViewDataBinding.updateTaskNewStateBtn.visibility = View.VISIBLE
+
+                    mViewDataBinding.newTaskDueDateText.isEnabled = false
+                    mViewDataBinding.newTaskDueDateText.isFocusable = false
+
+                    mViewDataBinding.newTaskTitleText.isEnabled = false
+                    mViewDataBinding.newTaskTitleText.isFocusable = false
+
+                    mViewDataBinding.newTaskProjectSpinner.dropDownHeight = 0
+                    mViewDataBinding.newTaskProjectSpinner.isEnabled = false
+                    mViewDataBinding.newTaskProjectSpinner.isFocusable = false
+
+                    mViewDataBinding.newTaskDescriptionText.isEnabled = false
+                    mViewDataBinding.newTaskDescriptionText.isFocusable = false
+                }
+
+            }
+        }
+
         viewModel.projectNames.observe(viewLifecycleOwner) {
             val arrayAdapter =
                 ArrayAdapter(

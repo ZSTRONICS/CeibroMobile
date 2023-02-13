@@ -2,11 +2,7 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.task.models.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface TaskRetroService {
     @GET("task")
@@ -25,6 +21,12 @@ interface TaskRetroService {
 
     @POST("task")
     suspend fun newTask(@Body requestBody: NewTaskRequest): Response<NewTaskResponse>
+
+    @PATCH("task/{taskId}")
+    suspend fun updateTaskByIdNoAdvanceOptions(
+        @Path("taskId") taskId: String,
+        @Body requestBody: UpdateDraftTaskRequestNoAdvanceOptions,
+    ): Response<NewTaskResponse>
 
     @GET("task/subtask")
     suspend fun getAllSubTasksForUser(

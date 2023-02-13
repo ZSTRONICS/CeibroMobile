@@ -254,5 +254,9 @@
     <string name="see_attachments_heading">See Attachments</string>
     <string name="click_to_add_more_files_heading"><u>Click to add more files</u></string>
     <string name="upload_heading">Upload</string>
+    <string name="are_you_sure_you_want_to_delete_the_task_heading">Are you sure you want to delete the task?</string>
+    <string name="save_as_draft_heading">Save as draft</string>
+    <string name="update_draft_heading">Update draft</string>
+    <string name="update_task_heading">Update Task</string>
 
 </resources>

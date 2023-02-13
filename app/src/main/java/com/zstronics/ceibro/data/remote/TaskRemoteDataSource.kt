@@ -31,4 +31,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
+    override suspend fun updateTaskByIdNoAdvanceOptions(taskId:String, updateTask: UpdateDraftTaskRequestNoAdvanceOptions,): ApiResponse<NewTaskResponse> =
+        executeSafely(
+            call =
+            {
+                service.updateTaskByIdNoAdvanceOptions(taskId, updateTask)
+            }
+        )
+
 }

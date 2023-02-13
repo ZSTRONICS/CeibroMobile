@@ -18,6 +18,12 @@ interface ITaskRepository {
         callBack: (isSuccess: Boolean, message: String) -> Unit
     )
 
+    suspend fun updateTaskByIdNoAdvanceOptions(
+        taskId: String,
+        updateTask: UpdateDraftTaskRequestNoAdvanceOptions,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    )
+
     suspend fun getAllSubtasks(): List<AllSubtask>
     suspend fun eraseSubTaskTable()
 
