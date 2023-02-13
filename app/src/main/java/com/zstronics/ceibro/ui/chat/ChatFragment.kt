@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.chat
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -16,7 +15,6 @@ import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.databinding.FragmentChatBinding
 import com.zstronics.ceibro.ui.chat.adapter.ChatRoomAdapter
 import com.zstronics.ceibro.ui.chat.bottomsheet.FragmentChatRoomActionSheet
-import com.zstronics.ceibro.ui.dashboard.DashboardFragment
 import com.zstronics.ceibro.ui.enums.ChatActions.*
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.socket.SocketHandler

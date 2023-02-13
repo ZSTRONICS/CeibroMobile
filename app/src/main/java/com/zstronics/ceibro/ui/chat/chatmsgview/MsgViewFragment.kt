@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.chat.chatmsgview
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -21,7 +22,6 @@ import com.google.gson.reflect.TypeToken
 import com.yap.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
@@ -84,20 +84,20 @@ class MsgViewFragment :
                     }
                 }
             }
-//            R.id.btPickFile -> checkPermission(
-//                immutableListOf(
-//                    Manifest.permission.READ_EXTERNAL_STORAGE,
-//                )
-//            ) {
-//                chooseFile(
-//                    arrayOf(
-//                        "image/png",
-//                        "image/jpg",
-//                        "image/jpeg",
-//                        "image/*"
-//                    )
-//                )
-//            }
+            R.id.btPickFile -> checkPermission(
+                immutableListOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                )
+            ) {
+                chooseFile(
+                    arrayOf(
+                        "image/png",
+                        "image/jpg",
+                        "image/jpeg",
+                        "image/*"
+                    )
+                )
+            }
 //            R.id.questionLL -> navigateToQuestionarieNavGraph()
         }
     }
@@ -336,7 +336,10 @@ class MsgViewFragment :
 
     private var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
         val file = FileUtils.getFile(requireContext(), intent?.data)
-        viewModel.composeFileMessageToSend(file)
+//        viewModel.composeFileMessageToSend(file)
+        val imageUri: Uri? = intent?.data
+        arguments?.putParcelable("imageUri", imageUri);
+        navigate(R.id.action_msgViewFragment_to_photoEditorFragment, arguments)
     }
 
     override fun call(vararg args: Any?) {

@@ -69,4 +69,5 @@ dependencies {
     }
     implementation("com.github.clans:fab:1.6.4")
     implementation("org.greenrobot:eventbus:3.3.1")
+    implementation("com.burhanrashid52:photoeditor:2.0.0")
 }

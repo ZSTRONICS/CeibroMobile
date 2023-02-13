@@ -53,7 +53,7 @@
         android:id="@+id/connectionsFragment"
         android:name="com.zstronics.ceibro.ui.connections.ConnectionsFragment"
         android:label="ConnectionsFragment"
-        tools:layout="@layout/fragment_connections" >
+        tools:layout="@layout/fragment_connections">
         <action
             android:id="@+id/action_connectionsFragment_to_invitationsFragment"
             app:destination="@id/invitationsFragment" />
@@ -100,6 +100,10 @@
         <action
             android:id="@+id/action_msgViewFragment_to_questionarie_nav_graph"
             app:destination="@id/questionarie_nav_graph" />
+        <action
+            android:id="@+id/action_msgViewFragment_to_photoEditorFragment"
+            app:destination="@id/photoEditorFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/chatMembersFragment"
@@ -130,7 +134,7 @@
         android:id="@+id/projectsFragment"
         android:name="com.zstronics.ceibro.ui.projects.ProjectsFragment"
         android:label="ProjectsFragment"
-        tools:layout="@layout/fragment_projects"  />
+        tools:layout="@layout/fragment_projects" />
     <fragment
         android:id="@+id/invitationsFragment"
         android:name="com.zstronics.ceibro.ui.invitations.InvitationsFragment"
@@ -140,7 +144,7 @@
         android:id="@+id/mainTasksFragment"
         android:name="com.zstronics.ceibro.ui.tasks.MainTasksFragment"
         android:label="MainTasksFragment"
-        tools:layout="@layout/fragment_main_tasks" >
+        tools:layout="@layout/fragment_main_tasks">
         <action
             android:id="@+id/action_mainTasksFragment_to_tasksFragment"
             app:destination="@id/tasksFragment" />
@@ -152,7 +156,7 @@
         android:id="@+id/tasksFragment"
         android:name="com.zstronics.ceibro.ui.tasks.task.TasksFragment"
         android:label="TasksFragment"
-        tools:layout="@layout/fragment_tasks" >
+        tools:layout="@layout/fragment_tasks">
         <action
             android:id="@+id/action_tasksFragment_to_newTaskFragment"
             app:destination="@id/newTaskFragment" />
@@ -164,7 +168,7 @@
         android:id="@+id/subTaskFragment"
         android:name="com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment"
         android:label="SubTaskFragment"
-        tools:layout="@layout/fragment_sub_task" >
+        tools:layout="@layout/fragment_sub_task">
         <action
             android:id="@+id/action_subTaskFragment_to_subTaskDetailFragment"
             app:destination="@id/subTaskDetailFragment" />
@@ -178,7 +182,7 @@
         android:id="@+id/taskDetailFragment"
         android:name="com.zstronics.ceibro.ui.tasks.taskdetailview.TaskDetailFragment"
         android:label="TaskDetailFragment"
-        tools:layout="@layout/fragment_task_detail" >
+        tools:layout="@layout/fragment_task_detail">
         <action
             android:id="@+id/action_taskDetailFragment_to_newSubTaskFragment"
             app:destination="@id/newSubTaskFragment" />
@@ -198,7 +202,7 @@
         android:id="@+id/subTaskDetailFragment"
         android:name="com.zstronics.ceibro.ui.tasks.subtaskdetailview.SubTaskDetailFragment"
         android:label="SubTaskDetailFragment"
-        tools:layout="@layout/fragment_sub_task_detail" >
+        tools:layout="@layout/fragment_sub_task_detail">
         <action
             android:id="@+id/action_subTaskDetailFragment_to_subTaskCommentsFragment"
             app:destination="@id/subTaskCommentsFragment" />
@@ -228,5 +232,10 @@
         android:id="@+id/addAttachmentFragment"
         android:name="com.zstronics.ceibro.ui.attachment.addattachments.AddAttachmentFragment"
         android:label="AddAttachmentFragment"
-        tools:layout="@layout/fragment_add_attachment"  />
+        tools:layout="@layout/fragment_add_attachment" />
+    <fragment
+        android:id="@+id/photoEditorFragment"
+        android:name="com.zstronics.ceibro.ui.photoeditor.PhotoEditorFragment"
+        android:label="PhotoEditorFragment"
+        tools:layout="@layout/fragment_photo_editor" />
 </navigation>
