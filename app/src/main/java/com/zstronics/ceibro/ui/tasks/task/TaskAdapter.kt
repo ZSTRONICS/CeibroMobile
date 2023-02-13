@@ -6,16 +6,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutTaskBoxBinding
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
-class TaskAdapter @Inject constructor() :
+class TaskAdapter @Inject constructor(
+    val sessionManager: SessionManager
+) :
     RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+    val user = sessionManager.getUser().value
     var itemClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? = null
     var itemLongClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? =
         null
     var childItemClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? = null
+    var menuChildItemClickListener: ((view: View, position: Int, data: CeibroTask) -> Unit)? = null
 
     private var list: MutableList<CeibroTask> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -71,13 +77,25 @@ class TaskAdapter @Inject constructor() :
                         item.state
                     )
                 }
-                val (background, stringRes) = taskStatusNameBg
+                val (background, stringStatus) = taskStatusNameBg
                 taskCardLayout.setBackgroundResource(background)
                 taskStatusName.setBackgroundResource(background)
-                taskStatusName.text = stringRes
+                taskStatusName.text = stringStatus
+
+
+                val isAdmin = isTaskAdmin(user?.id, item.admins)
+                val isCreator = isTaskCreator(user?.id, item.creator)
+
+                if (isAdmin || isCreator) {
+                    taskMoreMenuBtn.visibility = View.VISIBLE
+                }
+                else {
+                    taskMoreMenuBtn.visibility = View.GONE
+                }
+
+
 
                 /// setting started date.
-
                 taskCreationDateText.text = DateUtils.reformatStringDate(
                     date = item.createdAt,
                     DateUtils.SERVER_DATE_FULL_FORMAT,
@@ -119,17 +137,35 @@ class TaskAdapter @Inject constructor() :
                 taskSubTasksRV.visibility = View.INVISIBLE
 
                 taskSubTaskTotalCountText.text = "${item.totalSubTaskCount} subtask(s)"
-                taskSubTaskCount.text = if (item.subTaskStatusCount?.done != null)
-                    "${item.subTaskStatusCount.done}/${item.totalSubTaskCount}"
-                else
-                    "0/${item.totalSubTaskCount}"
+
 
 
                 itemView.setOnClickListener {
                     itemClickListener?.invoke(it, adapterPosition, item)
                 }
 
+                taskMoreMenuBtn.setOnClickListener {
+                    menuChildItemClickListener?.invoke(it, adapterPosition, item)
+                }
+
             }
         }
+    }
+
+    fun isTaskAdmin(userId: String?, admins: List<TaskMember>): Boolean {
+        var isAdmin = false
+        val member = admins.find { it.id == userId }
+        if (member?.id.equals(userId)) {
+            isAdmin = true
+        }
+        return isAdmin
+    }
+
+    fun isTaskCreator(userId: String?, creator: TaskMember?): Boolean {
+        var isCreator = false
+        if (creator?.id.equals(userId)) {
+            isCreator = true
+        }
+        return isCreator
     }
 }

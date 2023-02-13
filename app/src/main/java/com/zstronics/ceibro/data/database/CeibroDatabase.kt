@@ -15,7 +15,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 @Database(
     entities = [CeibroTask::class, AdvanceOptions::class, SubTaskStatusCount::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
         Viewer::class, SubTaskAdvanceOptions::class, SubTaskStateItem::class, SubTaskComments::class, TaskDataOfSubTask::class, SubTaskProject::class],
-    version = 37,
+    version = 38,
     exportSchema = false
 )
 @TypeConverters(
