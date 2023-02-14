@@ -258,5 +258,8 @@
     <string name="save_as_draft_heading">Save as draft</string>
     <string name="update_draft_heading">Update draft</string>
     <string name="update_task_heading">Update Task</string>
+    <string name="delete_subtask_heading">Delete Subtask</string>
+    <string name="edit_subtask_heading">Edit Subtask</string>
+    <string name="update_subtask_heading">Update Subtask</string>
 
 </resources>

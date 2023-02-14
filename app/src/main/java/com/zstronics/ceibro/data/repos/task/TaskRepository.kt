@@ -91,6 +91,48 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun updateTaskNoStateNoAdvanceOptions(
+        taskId: String,
+        updateTask: UpdateTaskRequestNoAdvanceOptions,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteTask.updateTaskNoStateNoAdvanceOptions(taskId, updateTask)) {
+            is ApiResponse.Success -> {
+                val responseObj = response.data.newTask
+                if (responseObj?._id != null) {
+                    localTask.updateTask(response.data.newTask)
+                }
+                callBack(true, "")
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun deleteTask(
+        taskId: String,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteTask.deleteTask(taskId)) {
+            is ApiResponse.Success -> {
+                val responseObj = response.data.message
+
+                localTask.deleteTaskById(taskId)
+                localSubTask.deleteSubtaskByTaskId(taskId)
+
+                callBack(true, response.data.message)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
+
+
+
+
     /// Following calls are for Sub-Task
     override suspend fun getAllSubtasks(): List<AllSubtask> {
         val list = localSubTask.getSubTasks()
@@ -130,7 +172,39 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteSubTask.newSubTask(newTask)) {
             is ApiResponse.Success -> {
-                localSubTask.insertSubTask(response.data.newSubtask)
+                response.data.newSubtask?.let { localSubTask.insertSubTask(it) }
+                callBack(true, "")
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun updateSubTaskById(
+        subtaskId: String,
+        updateSubTask: UpdateDraftSubtaskRequest,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteSubTask.updateSubTaskById(subtaskId, updateSubTask)) {
+            is ApiResponse.Success -> {
+                response.data.newSubtask?.let { localSubTask.updateSubTask(it) }
+                callBack(true, "")
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun updateSubTask(
+        subtaskId: String,
+        updateSubTask: UpdateSubtaskRequest,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteSubTask.updateSubTask(subtaskId, updateSubTask)) {
+            is ApiResponse.Success -> {
+                response.data.newSubtask?.let { localSubTask.updateSubTask(it) }
                 callBack(true, "")
             }
             is ApiResponse.Error -> {

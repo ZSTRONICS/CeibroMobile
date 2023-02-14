@@ -17,6 +17,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
+import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +26,11 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskDetailVM @Inject constructor(
     override val viewState: TaskDetailState,
+    val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
 ) : HiltBaseViewModel<ITaskDetail.State>(), ITaskDetail.ViewModel {
+    val user = sessionManager.getUser().value
+
     private val _task: MutableLiveData<CeibroTask> = MutableLiveData()
     val task: LiveData<CeibroTask> = _task
 
@@ -47,37 +51,6 @@ class TaskDetailVM @Inject constructor(
         }
     }
 
-    override fun showSubtaskCardMenuPopup(v: View) {
-        val popUpWindowObj = popUpMenu(v)
-        popUpWindowObj.showAsDropDown(v.findViewById(R.id.subTaskMoreMenuBtn), 0, 10)
-    }
-
-    override fun popUpMenu(v: View): PopupWindow {
-        val popupWindow = PopupWindow(v.context)
-        val context: Context = v.context
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.layout_subtask_card_menu, null)
-
-        val editDetails = view.findViewById<View>(R.id.editDetails)
-        val closeSubtask = view.findViewById<View>(R.id.closeSubtask)
-
-        editDetails.setOnClickListener {
-            clickEvent?.postValue(115)
-            popupWindow.dismiss()
-        }
-        closeSubtask.setOnClickListener {
-            clickEvent?.postValue(116)
-            popupWindow.dismiss()
-        }
-
-        popupWindow.isFocusable = true
-        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.contentView = view
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 13f
-        return popupWindow
-    }
 
 
     override fun onResume() {

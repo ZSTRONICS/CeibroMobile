@@ -2,10 +2,12 @@ package com.zstronics.ceibro.ui.tasks.newsubtask
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.chat.room.Member
@@ -13,6 +15,8 @@ import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -27,9 +31,14 @@ class NewSubTaskVM @Inject constructor(
     private val taskRepository: ITaskRepository,
 ) : HiltBaseViewModel<INewSubTask.State>(), INewSubTask.ViewModel {
     val user = sessionManager.getUser().value
+    var isNewSubTask = true
+    var subtaskId = ""
 
     private val _task: MutableLiveData<CeibroTask> = MutableLiveData()
     val task: LiveData<CeibroTask> = _task
+
+    private val _subtask: MutableLiveData<AllSubtask> = MutableLiveData()
+    val subtask: LiveData<AllSubtask> = _subtask
 
     private val _taskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
     val taskAssignee: MutableLiveData<ArrayList<Member>> = _taskAssignee
@@ -50,20 +59,30 @@ class NewSubTaskVM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
+        val isNSubTask: Boolean = bundle?.getBoolean("newSubTask") ?: true
+        isNewSubTask = isNSubTask
         val taskParcel: CeibroTask? = bundle?.getParcelable("task")
-        _task.value = taskParcel
+        val subtaskParcel: AllSubtask? = bundle?.getParcelable("subtask")
 
-        val list = taskParcel?.assignedTo?.map {
-            Member(
-                companyName = "",
-                firstName = it.firstName,
-                surName = it.surName,
-                id = it.id,
-                profilePic = it.profilePic
-            )
+        if (isNSubTask) {
+            val list = taskParcel?.assignedTo?.map {
+                Member(
+                    companyName = "",
+                    firstName = it.firstName,
+                    surName = it.surName,
+                    id = it.id,
+                    profilePic = it.profilePic
+                )
+            }
+            _taskAssignee.value = list as ArrayList<Member>?
+            _task.value = taskParcel
+
+            taskParcel?.project?.id?.let { loadMemberByProjectId(it) }
         }
-        _taskAssignee.value = list as ArrayList<Member>?
-        taskParcel?.project?.id?.let { loadMemberByProjectId(it) }
+        else {
+            _task.value = taskParcel
+            subtaskParcel?.taskData?.project?.id?.let { loadMemberByProjectIdBySubTask(it, subtaskParcel) }
+        }
     }
 
     private fun loadMemberByProjectId(projectId: String) {
@@ -82,6 +101,54 @@ class NewSubTaskVM @Inject constructor(
                     loading(false)
                 }
             }
+        }
+    }
+
+    private fun loadMemberByProjectIdBySubTask(projectId: String, subtaskParcel: AllSubtask) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.getMemberByProjectId(projectId)) {
+                is ApiResponse.Success -> {
+                    response.data.members.let { members ->
+                        _projectMembers.postValue(members)
+                        _projectMemberNames.postValue(members.map { it.firstName + " " + it.surName })
+                    }
+                    loading(false)
+                    val handler = Handler()
+                    handler.postDelayed(Runnable {
+                        setEditSubTaskDetails(subtaskParcel)
+                    }, 50)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false)
+                }
+            }
+        }
+    }
+
+    private fun setEditSubTaskDetails(subtaskParcel: AllSubtask) {
+        subtaskParcel.let {
+            subtaskId = subtaskParcel.id
+            _subtask.value = subtaskParcel
+
+            val members: ArrayList<TaskMember> = ArrayList()
+            for (assign in subtaskParcel.assignedTo) {
+                for (member in assign.members) {
+                    members.add(member)
+                }
+            }
+
+            val assigneeList = members.map {
+                Member(
+                    companyName = "",
+                    firstName = it.firstName,
+                    surName = it.surName,
+                    id = it.id,
+                    profilePic = it.profilePic
+                )
+            }
+            _taskAssignee.value = assigneeList as ArrayList<Member>?
         }
     }
 
@@ -165,7 +232,7 @@ class NewSubTaskVM @Inject constructor(
             }
         }
 
-        var adminsStates = adminsId?.map { id ->
+        val adminsStates = adminsId?.map { id ->
             NewSubtaskRequest.State(
                 userId = id,
                 userState = highestState
@@ -203,6 +270,99 @@ class NewSubTaskVM @Inject constructor(
             }
         }
     }
+
+
+    fun updateDraftSubTask(subTaskId: String, state: String) {
+        val assigneeMembersId = taskAssignee.value?.map { it.id }
+        val assignedTo: List<UpdateDraftSubtaskRequest.AssignedTo> = listOf(
+            UpdateDraftSubtaskRequest.AssignedTo(
+                addedBy = user?.id,
+                members = assigneeMembersId
+            )
+        )
+
+        val adminsId = task.value?.admins?.map { it.id }
+
+        var highestState = TaskStatus.ASSIGNED.name.lowercase()
+
+
+        val assigneeStates = if (state == TaskStatus.DRAFT.name.lowercase()) {
+            listOf(
+                UpdateDraftSubtaskRequest.State(
+                    userId = user?.id,
+                    userState = state
+                )
+            )
+        } else {
+            assigneeMembersId?.map { id ->
+                UpdateDraftSubtaskRequest.State(
+                    userId = id,
+                    userState = if (isAdmin(id)) {
+                        highestState = TaskStatus.ACCEPTED.name.lowercase()
+                        highestState
+                    } else state
+                )
+            }
+        }
+
+        val adminsStates = adminsId?.map { id ->
+            UpdateDraftSubtaskRequest.State(
+                userId = id,
+                userState = highestState
+            )
+        }
+        val finalStates = arrayListOf<UpdateDraftSubtaskRequest.State>()
+
+        if (assigneeStates != null) {
+            finalStates.addAll(assigneeStates)
+        }
+        if (adminsStates != null) {
+            finalStates.addAll(adminsStates)
+        }
+        val states = finalStates.distinctBy { it.userId }
+
+        val updateDraftSubtask = UpdateDraftSubtaskRequest(
+            assignedTo = assignedTo,
+            description = viewState.description.value.toString(),
+            dueDate = viewState.dueDate,
+            state = states,
+            title = viewState.subtaskTitle.value.toString()
+        )
+
+        launch {
+            loading(true)
+            taskRepository.updateSubTaskById(subTaskId, updateDraftSubtask) { isSuccess, error ->
+                if (isSuccess) {
+                    loading(false, "SubTask Updated Successfully")
+                    clickEvent?.postValue(3)
+                }
+                else {
+                    loading(false, error)
+                }
+            }
+        }
+    }
+
+
+    fun updateAssignedSubTask(subTaskId: String) {
+        val updateSubtask = UpdateSubtaskRequest(
+            description = viewState.description.value.toString()
+        )
+
+        launch {
+            loading(true)
+            taskRepository.updateSubTask(subTaskId, updateSubtask) { isSuccess, error ->
+                if (isSuccess) {
+                    loading(false, "SubTask Updated Successfully")
+                    clickEvent?.postValue(3)
+                }
+                else {
+                    loading(false, error)
+                }
+            }
+        }
+    }
+
 
     private fun isAdmin(id: String): Boolean {
         return id == user?.id

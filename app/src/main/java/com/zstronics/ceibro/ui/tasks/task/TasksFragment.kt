@@ -117,7 +117,7 @@ class TasksFragment :
             popupWindow.dismiss()
         }
         deleteTask.setOnClickListener {
-            showDialog(v,context.getString(R.string.are_you_sure_you_want_to_delete_the_task_heading))
+            showDialog(v,context.getString(R.string.are_you_sure_you_want_to_delete_the_task_heading), taskData)
             popupWindow.dismiss()
         }
 
@@ -130,7 +130,7 @@ class TasksFragment :
         return popupWindow
     }
 
-    private fun showDialog(v: View, title: String) {
+    private fun showDialog(v: View, title: String, taskData: CeibroTask) {
         val dialog = Dialog(v.context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -142,7 +142,7 @@ class TasksFragment :
         val cancelTaskBtn = dialog.findViewById(R.id.cancelTaskBtn) as AppCompatButton
         deleteTaskBtn.setOnClickListener {
             dialog.dismiss()
-            shortToastNow("Delete button tapped")
+            viewModel.deleteTask(taskData._id)
         }
         cancelTaskBtn.setOnClickListener {
             dialog.dismiss()

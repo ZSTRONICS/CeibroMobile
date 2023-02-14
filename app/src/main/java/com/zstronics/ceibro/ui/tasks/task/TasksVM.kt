@@ -18,6 +18,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -42,4 +43,21 @@ class TasksVM @Inject constructor(
             _tasks.postValue(taskRepository.tasks())
         }
     }
+
+    fun deleteTask(taskId: String) {
+        launch {
+            loading(true)
+            taskRepository.deleteTask(taskId) { isSuccess, message ->
+                if (isSuccess) {
+                    loading(false, "Task Deleted Successfully")
+                    getTasks()
+                }
+                else {
+                    loading(false, message)
+                }
+            }
+        }
+    }
+
+
 }

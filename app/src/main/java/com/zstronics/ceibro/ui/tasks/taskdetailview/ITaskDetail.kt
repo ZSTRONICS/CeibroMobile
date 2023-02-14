@@ -10,7 +10,5 @@ interface ITaskDetail {
 
     interface ViewModel : IBase.ViewModel<State> {
         fun getSubTasks(taskId: String)
-        fun showSubtaskCardMenuPopup(v : View)
-        fun popUpMenu(v : View): PopupWindow
     }
 }

@@ -35,6 +35,7 @@ class NewTaskFragment :
             R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskStatus.NEW.name.lowercase())
             R.id.updateTaskAsDraftBtn -> viewModel.updateTask(viewModel.taskId, TaskStatus.DRAFT.name.lowercase())
             R.id.updateTaskCreateBtn -> viewModel.updateTask(viewModel.taskId, TaskStatus.NEW.name.lowercase())
+            R.id.updateTaskNewStateBtn -> viewModel.updateTaskWithNoState(viewModel.taskId)
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -96,6 +97,7 @@ class NewTaskFragment :
             viewModel.onProjectSelect(viewModel.projectIndex)
 
             if (!viewModel.isNewTask) {        // If not a new task, then its in edit mode
+                mViewDataBinding.taskHeading.text = requireContext().getString(R.string.update_task_heading)
 
                 viewState.dueDate = item.dueDate
                 mViewDataBinding.newTaskDueDateText.setText(item.dueDate)
@@ -125,8 +127,6 @@ class NewTaskFragment :
                     mViewDataBinding.newTaskProjectSpinner.isEnabled = false
                     mViewDataBinding.newTaskProjectSpinner.isFocusable = false
 
-                    mViewDataBinding.newTaskDescriptionText.isEnabled = false
-                    mViewDataBinding.newTaskDescriptionText.isFocusable = false
                 }
 
             }

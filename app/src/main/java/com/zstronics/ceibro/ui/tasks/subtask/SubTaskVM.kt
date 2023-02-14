@@ -49,13 +49,13 @@ class SubTaskVM @Inject constructor(
         val view: View = inflater.inflate(R.layout.layout_subtask_card_menu, null)
 
         val editDetails = view.findViewById<View>(R.id.editDetails)
-        val closeSubtask = view.findViewById<View>(R.id.closeSubtask)
+        val deleteSubtask = view.findViewById<View>(R.id.deleteSubtask)
 
         editDetails.setOnClickListener {
             clickEvent?.postValue(115)
             popupWindow.dismiss()
         }
-        closeSubtask.setOnClickListener {
+        deleteSubtask.setOnClickListener {
             clickEvent?.postValue(116)
             popupWindow.dismiss()
         }

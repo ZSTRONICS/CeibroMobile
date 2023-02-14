@@ -18,10 +18,9 @@
             android:id="@+id/deleteTaskDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="15dp"
-            android:background="?attr/selectableItemBackground"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="10dp"
             android:gravity="start|center"
             android:orientation="horizontal"
             android:padding="2dp"
@@ -31,13 +30,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:fontFamily="@font/inter_regular"
-                android:paddingStart="5dp"
-                android:paddingTop="3dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="3dp"
+                android:paddingStart="3dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="2dp"
                 android:src="@drawable/icon_info"
                 app:tint="@color/appRed" />
             <androidx.appcompat.widget.AppCompatTextView
@@ -46,22 +45,22 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="start|center"
-                android:paddingStart="13dp"
+                android:paddingStart="12dp"
                 android:paddingTop="3dp"
-                android:paddingEnd="10dp"
+                android:paddingEnd="2dp"
                 android:paddingBottom="3dp"
                 android:text="@string/are_you_sure_you_want_to_delete_the_task_heading"
                 android:textColor="@color/appRed"
-                android:textSize="16sp" />
+                android:textSize="16.5sp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/deleteTaskBtn"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="22dp"
+            android:layout_marginBottom="25dp"
             android:background="@drawable/status_reject_outline"
             android:fontFamily="@font/inter_medium"
             android:paddingStart="20dp"

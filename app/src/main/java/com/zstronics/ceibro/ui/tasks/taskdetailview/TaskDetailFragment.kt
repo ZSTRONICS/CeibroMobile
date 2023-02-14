@@ -1,7 +1,13 @@
 package com.zstronics.ceibro.ui.tasks.taskdetailview
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -9,6 +15,7 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.databinding.FragmentTaskDetailBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.questioner.createquestion.members.FragmentQuestionParticipantsSheet
@@ -32,6 +39,8 @@ class TaskDetailFragment :
     override val viewModel: TaskDetailVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_task_detail
     override fun toolBarVisibility(): Boolean = false
+    var isTaskAdmin = false
+    var isTaskCreator = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
@@ -56,7 +65,7 @@ class TaskDetailFragment :
             navigateToSubTaskDetail(data)
         }
         adapter.simpleChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
-            viewModel.showSubtaskCardMenuPopup(childView)
+            showSubtaskCardMenuPopup(childView, data)
         }
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
@@ -89,6 +98,11 @@ class TaskDetailFragment :
             }
 
         viewModel.task.observe(viewLifecycleOwner) { item ->
+            val isAdmin = isTaskAdmin(viewModel.user?.id, item.admins)
+            val isCreator = isTaskCreator(viewModel.user?.id, item.creator)
+            isTaskAdmin = isAdmin
+            isTaskCreator = isCreator
+
             with(mViewDataBinding) {
                 val taskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
                     TaskStatus.NEW.name -> Pair(
@@ -117,6 +131,14 @@ class TaskDetailFragment :
                 taskDetailStatusName.setBackgroundResource(background)
                 taskDetailStatusName.text = stringRes
 
+                if (isAdmin || isCreator) {
+                    createSubTaskBtn.visibility = View.VISIBLE
+                }
+                else {
+                    createSubTaskBtn.visibility = View.GONE
+                }
+
+
                 taskDetailDueDate.text = DateUtils.reformatStringDate(
                     date = item.dueDate,
                     DateUtils.FORMAT_YEAR_MON_DATE,
@@ -143,12 +165,115 @@ class TaskDetailFragment :
     }
 
     private fun navigateToNewSubTaskCreation() {
-        navigate(R.id.newSubTaskFragment, arguments)
+        val bundle = Bundle()
+        bundle.putBoolean("newSubTask", true)
+        bundle.putParcelable("task", viewModel.task.value)
+        navigate(R.id.newSubTaskFragment, bundle)
+    }
+    private fun navigateToEditSubTask(subtaskData: AllSubtask) {
+        val bundle = Bundle()
+        bundle.putBoolean("newSubTask", false)
+        bundle.putParcelable("task", viewModel.task.value)
+        bundle.putParcelable("subtask", subtaskData)
+        navigate(R.id.newSubTaskFragment, bundle)
     }
 
     private fun showTaskDetailSheet() {
         val fragment = viewModel.task.value?.let { FragmentTaskDetailSheet(it.title, it.description?: "") }
         fragment?.show(childFragmentManager, "FragmentTaskDetailSheet")
+    }
+
+
+    private fun showSubtaskCardMenuPopup(v: View, subtaskData: AllSubtask) {
+        val popUpWindowObj = popUpMenu(v, subtaskData)
+        popUpWindowObj.showAsDropDown(v.findViewById(R.id.subTaskMoreMenuBtn), 0, 10)
+    }
+
+    private fun popUpMenu(v: View, subtaskData: AllSubtask): PopupWindow {
+        val popupWindow = PopupWindow(v.context)
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_subtask_card_menu, null)
+
+        val editSubTask = view.findViewById<View>(R.id.editSubTask)
+        val editDetails = view.findViewById<View>(R.id.editDetails)
+        val deleteSubtask = view.findViewById<View>(R.id.deleteSubtask)
+
+        val isSubTaskCreator = isSubTaskCreator(viewModel.user?.id, subtaskData.creator)
+        val userState = subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
+            ?: TaskStatus.DRAFT.name
+
+        if (isSubTaskCreator || isTaskAdmin) {
+            if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
+                deleteSubtask.visibility = View.VISIBLE
+                editSubTask.visibility = View.VISIBLE
+                editDetails.visibility = View.GONE
+            }
+            else if (userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
+                deleteSubtask.visibility = View.VISIBLE
+                editSubTask.visibility = View.VISIBLE
+                editDetails.visibility = View.VISIBLE
+            }
+            else {
+                deleteSubtask.visibility = View.GONE
+                editSubTask.visibility = View.GONE
+                editDetails.visibility = View.VISIBLE
+            }
+        }
+        else {
+            deleteSubtask.visibility = View.GONE
+            editSubTask.visibility = View.GONE
+            editDetails.visibility = View.GONE
+        }
+
+
+        editSubTask.setOnClickListener {
+            navigateToEditSubTask(subtaskData)
+            popupWindow.dismiss()
+        }
+        editDetails.setOnClickListener {
+            shortToastNow("Edit Details")
+            popupWindow.dismiss()
+        }
+        deleteSubtask.setOnClickListener {
+            shortToastNow("Delete SubTask")
+            popupWindow.dismiss()
+        }
+
+        popupWindow.isFocusable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 13f
+        return popupWindow
+    }
+
+
+
+    private fun isTaskAdmin(userId: String?, admins: List<TaskMember>): Boolean {
+        var isAdmin = false
+        val member = admins.find { it.id == userId }
+        if (member?.id.equals(userId)) {
+            isAdmin = true
+        }
+        return isAdmin
+    }
+
+    private fun isTaskCreator(userId: String?, creator: TaskMember?): Boolean {
+        var isCreator = false
+        if (creator?.id.equals(userId)) {
+            isCreator = true
+        }
+        return isCreator
+    }
+
+    private fun isSubTaskCreator(userId: String?, creator: TaskMember?): Boolean {
+        var isCreator = false
+        if (creator?.id.equals(userId)) {
+            isCreator = true
+        }
+        return isCreator
     }
 
     private fun navigateToSubTaskDetail(data: AllSubtask) {

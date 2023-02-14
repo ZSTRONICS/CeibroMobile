@@ -8,7 +8,7 @@ import com.zstronics.ceibro.data.base.BaseResponse
 @Keep
 data class GenericResponse(
     @SerializedName("code")
-    val code: Int,
+    val code: Int?,
     @SerializedName("message")
     val message: String
 ): BaseResponse()

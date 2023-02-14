@@ -37,4 +37,8 @@ class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTask
     override suspend fun deleteSubtaskById(subTaskId: String) {
         subTaskDao.deleteSubtaskById(subTaskId)
     }
+
+    override suspend fun deleteSubtaskByTaskId(taskId: String) {
+        subTaskDao.deleteSubtaskByTaskId(taskId)
+    }
 }

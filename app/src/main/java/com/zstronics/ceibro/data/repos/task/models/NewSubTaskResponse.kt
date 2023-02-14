@@ -9,5 +9,5 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
 @Keep
 data class NewSubTaskResponse(
-    @SerializedName("newSubtask") val newSubtask: AllSubtask
+    @SerializedName("newSubtask") val newSubtask: AllSubtask?
 ) : BaseResponse()

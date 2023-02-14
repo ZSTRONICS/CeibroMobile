@@ -34,4 +34,7 @@ interface SubTaskDao {
 
     @Query("DELETE FROM sub_tasks WHERE id = :subTaskId")
     suspend fun deleteSubtaskById(subTaskId: String)
+
+    @Query("DELETE FROM sub_tasks WHERE taskId = :taskId")
+    suspend fun deleteSubtaskByTaskId(taskId: String)
 }

@@ -102,10 +102,22 @@ class SubTaskAdapter @Inject constructor(
 
 
                 val isAssignee = isAssignToMember(user?.id, item.assignedTo)
-                val isAdmin = isTaskAdmin(user?.id, item.taskData?.admins)
+                val isTaskAdmin = isTaskAdmin(user?.id, item.taskData?.admins)
+                val isSubTaskCreator = isSubTaskCreator(user?.id, item.creator)
 
-                if (isAdmin && !isAssignee) {
-                    subTaskMoreMenuBtn.visibility = View.VISIBLE
+                if (isTaskAdmin || isSubTaskCreator) {
+                    if (state.uppercase() == SubTaskStatus.DONE.name || state.uppercase() == SubTaskStatus.REJECTED.name) {
+                        subTaskMoreMenuBtn.visibility = View.GONE
+                    }
+                    else {
+                        subTaskMoreMenuBtn.visibility = View.VISIBLE
+                    }
+                }
+                else {
+                    subTaskMoreMenuBtn.visibility = View.GONE
+                }
+
+                if (isTaskAdmin && !isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.VISIBLE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -137,8 +149,7 @@ class SubTaskAdapter @Inject constructor(
                         acceptedStateBtnLayout.visibility = View.GONE
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
-                } else if (isAdmin && isAssignee) {
-                    subTaskMoreMenuBtn.visibility = View.VISIBLE
+                } else if (isTaskAdmin && isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.VISIBLE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -170,8 +181,7 @@ class SubTaskAdapter @Inject constructor(
                         acceptedStateBtnLayout.visibility = View.GONE
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
-                } else if (!isAdmin && isAssignee) {
-                    subTaskMoreMenuBtn.visibility = View.GONE
+                } else if (!isTaskAdmin && isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
                         draftStateBtnLayout.visibility = View.GONE
                         assignedStateBtnLayout.visibility = View.GONE
@@ -373,5 +383,13 @@ class SubTaskAdapter @Inject constructor(
         }
 
         return isAdmin
+    }
+
+    fun isSubTaskCreator(userId: String?, creator: TaskMember?): Boolean {
+        var isCreator = false
+        if (creator?.id.equals(userId)) {
+            isCreator = true
+        }
+        return isCreator
     }
 }

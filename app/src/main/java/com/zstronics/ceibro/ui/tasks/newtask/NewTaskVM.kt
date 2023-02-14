@@ -16,6 +16,7 @@ import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -314,9 +315,37 @@ class NewTaskVM @Inject constructor(
         launch {
             loading(true)
             taskRepository.updateTaskByIdNoAdvanceOptions(taskId, updateTaskRequest) { isSuccess, error ->
-                loading(false, error)
-                if (isSuccess)
-                    handlePressOnView(2)
+                if (isSuccess) {
+                    loading(false, "Task Updated Successfully")
+                    clickEvent?.postValue(2)
+                }
+                else {
+                    loading(false, error)
+                }
+            }
+        }
+    }
+
+    fun updateTaskWithNoState(taskId: String) {
+
+        val admins = taskAdmins.value?.map { it.id } as MutableList
+        val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
+        val updateTaskRequest = UpdateTaskRequestNoAdvanceOptions(
+            admins = admins,
+            assignedTo = assignedTo,
+            description = viewState.description.value.toString()
+        )
+
+        launch {
+            loading(true)
+            taskRepository.updateTaskNoStateNoAdvanceOptions(taskId, updateTaskRequest) { isSuccess, error ->
+                if (isSuccess) {
+                    loading(false, "Task Updated Successfully")
+                    clickEvent?.postValue(2)
+                }
+                else {
+                    loading(false, error)
+                }
             }
         }
     }

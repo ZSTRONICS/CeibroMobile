@@ -21,6 +21,7 @@ import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.FileUtils.getMimeType
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,9 +42,12 @@ class NewSubTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn, 1, R.id.newSubTaskCancelBtn -> navigateBack()
-            R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(TaskStatus.DRAFT.name.lowercase())
-            R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(TaskStatus.ASSIGNED.name.lowercase())
+            R.id.closeBtn, 1, R.id.newSubTaskCancelBtn, 3 -> navigateBack()
+            R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(SubTaskStatus.DRAFT.name.lowercase())
+            R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(SubTaskStatus.ASSIGNED.name.lowercase())
+            R.id.updateSubTaskAsDraftBtn -> viewModel.updateDraftSubTask(viewModel.subtaskId, SubTaskStatus.DRAFT.name.lowercase())
+            R.id.updateSubTaskSaveAndAssignBtn -> viewModel.updateDraftSubTask(viewModel.subtaskId, SubTaskStatus.ASSIGNED.name.lowercase())
+            R.id.updateSubTaskBtn -> viewModel.updateAssignedSubTask(viewModel.subtaskId)
             R.id.newSubTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -148,6 +152,49 @@ class NewSubTaskFragment :
         viewModel.task.observe(viewLifecycleOwner) { item ->
         }
 
+        viewModel.subtask.observe(viewLifecycleOwner) { item ->
+            if (!viewModel.isNewSubTask) {        // If not a new task, then its in edit mode
+                mViewDataBinding.subtaskHeading.text = requireContext().getString(R.string.update_subtask_heading)
+
+                viewState.dueDate = item.dueDate
+                mViewDataBinding.newSubTaskDueDateText.setText(item.dueDate)
+                viewState.subtaskTitle.value = item.title
+                viewState.description.value = item.description
+
+                mViewDataBinding.newSubTaskSaveAsDraftBtn.visibility = View.GONE
+                mViewDataBinding.newSubTaskSaveAndAssignBtn.visibility = View.GONE
+
+                val userState = item.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
+                    ?: TaskStatus.DRAFT.name
+
+                if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
+                    mViewDataBinding.updateSubTaskAsDraftBtn.visibility = View.VISIBLE
+                    mViewDataBinding.updateSubTaskSaveAndAssignBtn.visibility = View.VISIBLE
+                    mViewDataBinding.updateSubTaskBtn.visibility = View.GONE
+                }
+                else {
+                    mViewDataBinding.updateSubTaskAsDraftBtn.visibility = View.GONE
+                    mViewDataBinding.updateSubTaskSaveAndAssignBtn.visibility = View.GONE
+                    mViewDataBinding.updateSubTaskBtn.visibility = View.VISIBLE
+
+                    mViewDataBinding.newSubTaskTitleText.isEnabled = false
+                    mViewDataBinding.newSubTaskTitleText.isFocusable = false
+
+                    assigneeChipsAdapter.itemClickListener = null
+
+                    mViewDataBinding.newSubTaskDueDateText.isEnabled = false
+                    mViewDataBinding.newSubTaskDueDateText.isFocusable = false
+
+                    mViewDataBinding.newSubTaskAssignToSpinner.dropDownHeight = 0
+                    mViewDataBinding.newSubTaskAssignToSpinner.isEnabled = false
+                    mViewDataBinding.newSubTaskAssignToSpinner.isFocusable = false
+                }
+
+            }
+
+
+        }
+
         viewModel.taskAssignee.observe(viewLifecycleOwner) {
             assigneeChipsAdapter.setList(it)
         }
@@ -179,15 +226,17 @@ class NewSubTaskFragment :
                 viewModel.onAssigneeSelect(position)
             }
 
-//        mViewDataBinding.newSubTaskViewerSpinner.onItemClickListener =
-//            AdapterView.OnItemClickListener { _, _, position, _ ->
-//                viewModel.onViewerSelect(position)
-//            }
-
         mViewDataBinding.assigneeChipsRV.adapter = assigneeChipsAdapter
         assigneeChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
             viewModel.removeAssignee(data)
         }
+
+
+
+//        mViewDataBinding.newSubTaskViewerSpinner.onItemClickListener =
+//            AdapterView.OnItemClickListener { _, _, position, _ ->
+//                viewModel.onViewerSelect(position)
+//            }
 
 //        mViewDataBinding.viewersChipsRV.adapter = viewersChipsAdapter
 //        viewersChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
