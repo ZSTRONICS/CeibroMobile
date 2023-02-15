@@ -58,6 +58,9 @@ class NetworkModule {
     fun provideSubTaskDao(database: CeibroDatabase) = database.getSubTaskDao()
 
     @Provides
+    fun provideFileAttachmentsDao(database: CeibroDatabase) = database.getFileAttachmentsDao()
+
+    @Provides
     fun providesTaskRepoService(): TaskRetroService =
         RetroNetwork().createService(TaskRetroService::class.java)
 

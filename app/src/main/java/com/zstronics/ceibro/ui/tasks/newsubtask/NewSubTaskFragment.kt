@@ -43,10 +43,22 @@ class NewSubTaskFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn, 1, R.id.newSubTaskCancelBtn, 3 -> navigateBack()
-            R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(SubTaskStatus.DRAFT.name.lowercase())
-            R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(SubTaskStatus.ASSIGNED.name.lowercase())
-            R.id.updateSubTaskAsDraftBtn -> viewModel.updateDraftSubTask(viewModel.subtaskId, SubTaskStatus.DRAFT.name.lowercase())
-            R.id.updateSubTaskSaveAndAssignBtn -> viewModel.updateDraftSubTask(viewModel.subtaskId, SubTaskStatus.ASSIGNED.name.lowercase())
+            R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(
+                SubTaskStatus.DRAFT.name.lowercase(),
+                requireContext()
+            )
+            R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(
+                SubTaskStatus.ASSIGNED.name.lowercase(),
+                requireContext()
+            )
+            R.id.updateSubTaskAsDraftBtn -> viewModel.updateDraftSubTask(
+                viewModel.subtaskId,
+                SubTaskStatus.DRAFT.name.lowercase()
+            )
+            R.id.updateSubTaskSaveAndAssignBtn -> viewModel.updateDraftSubTask(
+                viewModel.subtaskId,
+                SubTaskStatus.ASSIGNED.name.lowercase()
+            )
             R.id.updateSubTaskBtn -> viewModel.updateAssignedSubTask(viewModel.subtaskId)
             R.id.newSubTaskDueDateText -> {
                 val datePicker =
@@ -152,9 +164,16 @@ class NewSubTaskFragment :
         viewModel.task.observe(viewLifecycleOwner) { item ->
         }
 
+        mViewDataBinding.newSubTaskSaveAsDraftBtn.visibility = View.VISIBLE
+        mViewDataBinding.newSubTaskSaveAndAssignBtn.visibility = View.VISIBLE
+        mViewDataBinding.updateSubTaskAsDraftBtn.visibility = View.GONE
+        mViewDataBinding.updateSubTaskSaveAndAssignBtn.visibility = View.GONE
+        mViewDataBinding.updateSubTaskBtn.visibility = View.GONE
+
         viewModel.subtask.observe(viewLifecycleOwner) { item ->
             if (!viewModel.isNewSubTask) {        // If not a new task, then its in edit mode
-                mViewDataBinding.subtaskHeading.text = requireContext().getString(R.string.update_subtask_heading)
+                mViewDataBinding.subtaskHeading.text =
+                    requireContext().getString(R.string.update_subtask_heading)
 
                 viewState.dueDate = item.dueDate
                 mViewDataBinding.newSubTaskDueDateText.setText(item.dueDate)
@@ -164,15 +183,15 @@ class NewSubTaskFragment :
                 mViewDataBinding.newSubTaskSaveAsDraftBtn.visibility = View.GONE
                 mViewDataBinding.newSubTaskSaveAndAssignBtn.visibility = View.GONE
 
-                val userState = item.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
-                    ?: TaskStatus.DRAFT.name
+                val userState =
+                    item.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
+                        ?: TaskStatus.DRAFT.name
 
                 if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
                     mViewDataBinding.updateSubTaskAsDraftBtn.visibility = View.VISIBLE
                     mViewDataBinding.updateSubTaskSaveAndAssignBtn.visibility = View.VISIBLE
                     mViewDataBinding.updateSubTaskBtn.visibility = View.GONE
-                }
-                else {
+                } else {
                     mViewDataBinding.updateSubTaskAsDraftBtn.visibility = View.GONE
                     mViewDataBinding.updateSubTaskSaveAndAssignBtn.visibility = View.GONE
                     mViewDataBinding.updateSubTaskBtn.visibility = View.VISIBLE
@@ -230,7 +249,6 @@ class NewSubTaskFragment :
         assigneeChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
             viewModel.removeAssignee(data)
         }
-
 
 
 //        mViewDataBinding.newSubTaskViewerSpinner.onItemClickListener =

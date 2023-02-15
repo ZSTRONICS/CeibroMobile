@@ -130,9 +130,6 @@ class TaskRepository @Inject constructor(
     }
 
 
-
-
-
     /// Following calls are for Sub-Task
     override suspend fun getAllSubtasks(): List<AllSubtask> {
         val list = localSubTask.getSubTasks()
@@ -183,15 +180,15 @@ class TaskRepository @Inject constructor(
 
     override suspend fun newSubTask(
         newTask: NewSubtaskRequest,
-        callBack: (isSuccess: Boolean, message: String) -> Unit
+        callBack: (isSuccess: Boolean, message: String, data: AllSubtask?) -> Unit
     ) {
         when (val response = remoteSubTask.newSubTask(newTask)) {
             is ApiResponse.Success -> {
                 response.data.newSubtask?.let { localSubTask.insertSubTask(it) }
-                callBack(true, "")
+                callBack(true, "", response.data.newSubtask)
             }
             is ApiResponse.Error -> {
-                callBack(false, response.error.message)
+                callBack(false, response.error.message, null)
             }
         }
     }

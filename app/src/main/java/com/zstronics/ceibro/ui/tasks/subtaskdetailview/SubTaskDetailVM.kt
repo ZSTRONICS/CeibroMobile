@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -17,6 +18,7 @@ class SubTaskDetailVM @Inject constructor(
     override val viewState: SubTaskDetailState,
     val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
+    private val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<ISubTaskDetail.State>(), ISubTaskDetail.ViewModel {
     private val userObj = sessionManager.getUser().value
 
@@ -40,13 +42,9 @@ class SubTaskDetailVM @Inject constructor(
 //            }
 //        }
         _subtask.value = subtaskParcel
-
-    }
-
-    override fun getTaskById(taskId: String) {
-//        launch {
-//            _task.postValue(taskRepository.getTaskById(taskId))
-//        }
+        launch {
+            subtaskParcel?.id?.let { fileAttachmentsDataSource.getAttachmentsById("SubTask", it) }
+        }
     }
 
 }

@@ -14,4 +14,5 @@ object TableNames {
     const val TaskProject = "task_project"
     const val AssignedTo = "assigned_to"
     const val Viewer = "viewer"
+    const val FilesAttachments = "files_attachments"
 }

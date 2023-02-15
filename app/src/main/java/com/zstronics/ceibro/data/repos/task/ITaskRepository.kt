@@ -46,7 +46,7 @@ interface ITaskRepository {
 
     suspend fun newSubTask(
         newTask: NewSubtaskRequest,
-        callBack: (isSuccess: Boolean, message: String) -> Unit
+        callBack: (isSuccess: Boolean, message: String, data: AllSubtask?) -> Unit
     )
 
     suspend fun updateSubTaskById(

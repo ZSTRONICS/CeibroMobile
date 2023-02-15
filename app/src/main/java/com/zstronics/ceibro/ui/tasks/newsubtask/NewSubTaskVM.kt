@@ -1,8 +1,10 @@
 package com.zstronics.ceibro.ui.tasks.newsubtask
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -10,7 +12,11 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.chat.room.Member
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
@@ -20,6 +26,7 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -29,6 +36,8 @@ class NewSubTaskVM @Inject constructor(
     val sessionManager: SessionManager,
     private val projectRepository: IProjectRepository,
     private val taskRepository: ITaskRepository,
+    private val dashboardRepository: IDashboardRepository,
+    private val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<INewSubTask.State>(), INewSubTask.ViewModel {
     val user = sessionManager.getUser().value
     var isNewSubTask = true
@@ -78,10 +87,14 @@ class NewSubTaskVM @Inject constructor(
             _task.value = taskParcel
 
             taskParcel?.project?.id?.let { loadMemberByProjectId(it) }
-        }
-        else {
+        } else {
             _task.value = taskParcel
-            subtaskParcel?.taskData?.project?.id?.let { loadMemberByProjectIdBySubTask(it, subtaskParcel) }
+            subtaskParcel?.taskData?.project?.id?.let {
+                loadMemberByProjectIdBySubTask(
+                    it,
+                    subtaskParcel
+                )
+            }
         }
     }
 
@@ -194,7 +207,7 @@ class NewSubTaskVM @Inject constructor(
 //        _viewers.value = viewers
 //    }
 
-    fun createNewSubTask(state: String) {
+    fun createNewSubTask(state: String, context: Context) {
         val assigneeMembersId = taskAssignee.value?.map { it.id }
         val assignedTo: List<NewSubtaskRequest.AssignedTo> = listOf(
             NewSubtaskRequest.AssignedTo(
@@ -268,10 +281,15 @@ class NewSubTaskVM @Inject constructor(
 
         launch {
             loading(true)
-            taskRepository.newSubTask(newTaskRequest) { isSuccess, error ->
-                loading(false, error)
-                if (isSuccess)
-                    handlePressOnView(1)
+            taskRepository.newSubTask(newTaskRequest) { isSuccess, error, subtaskData ->
+                if (isSuccess) {
+                    if (fileUriList.value?.isEmpty() == true) {
+                        handlePressOnView(1)
+                        loading(false, error)
+                    } else {
+                        subtaskData?.id?.let { uploadFiles(it, context) }
+                    }
+                }
             }
         }
     }
@@ -345,8 +363,7 @@ class NewSubTaskVM @Inject constructor(
                 if (isSuccess) {
                     loading(false, "SubTask Updated Successfully")
                     clickEvent?.postValue(3)
-                }
-                else {
+                } else {
                     loading(false, error)
                 }
             }
@@ -365,8 +382,7 @@ class NewSubTaskVM @Inject constructor(
                 if (isSuccess) {
                     loading(false, "SubTask Updated Successfully")
                     clickEvent?.postValue(3)
-                }
-                else {
+                } else {
                     loading(false, error)
                 }
             }
@@ -394,4 +410,35 @@ class NewSubTaskVM @Inject constructor(
         val attachmentType: AttachmentTypes,
         val attachmentUri: Uri?
     )
+
+    private fun uploadFiles(id: String, context: Context) {
+        val fileUriList = fileUriList.value
+
+        val attachmentUriList = fileUriList?.map {
+            FileUtils.getFile(
+                context,
+                it?.attachmentUri
+            )?.absolutePath.toString()
+        }
+
+
+        val request = AttachmentUploadRequest(
+            _id = id,
+            moduleName = AttachmentModules.SubTask,
+            files = attachmentUriList
+        )
+        launch {
+            when (val response = dashboardRepository.uploadFiles(request)) {
+                is ApiResponse.Success -> {
+                    fileAttachmentsDataSource.insertAll(response.data.results.files)
+                    handlePressOnView(1)
+                    loading(false)
+                }
+                is ApiResponse.Error -> {
+                    loading(false)
+                    handlePressOnView(1)
+                }
+            }
+        }
+    }
 }
