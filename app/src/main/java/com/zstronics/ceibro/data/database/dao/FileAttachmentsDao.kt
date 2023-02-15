@@ -22,4 +22,7 @@ interface FileAttachmentsDao {
 
     @Query("DELETE FROM files_attachments WHERE id = :id")
     suspend fun deleteAttachmentById(id: String)
+
+    @Update
+    suspend fun updateFileAttachments(fileAttachments: List<FilesAttachments>)
 }

@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.data.local
 
 import com.zstronics.ceibro.data.database.dao.FileAttachmentsDao
-import com.zstronics.ceibro.data.database.dao.SubTaskDao
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import javax.inject.Inject
 
@@ -19,4 +18,6 @@ class FileAttachmentsDataSource @Inject constructor(private val dao: FileAttachm
         dao.updateAttachment(filesAttachments)
 
     suspend fun deleteAttachmentById(id: String) = dao.deleteAttachmentById(id)
+    suspend fun updateFileAttachments(fileAttachments: List<FilesAttachments>) =
+        dao.updateFileAttachments(fileAttachments = fileAttachments)
 }

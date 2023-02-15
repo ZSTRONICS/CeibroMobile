@@ -3,14 +3,12 @@ package com.zstronics.ceibro.ui.dashboard
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
-import com.zstronics.ceibro.data.repos.task.models.SubTaskByTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -24,7 +22,8 @@ class DashboardVM @Inject constructor(
     val sessionManager: SessionManager,
     private val localTask: TaskLocalDataSource,
     private val localSubTask: SubTaskLocalDataSource,
-    private val repository: ITaskRepository
+    private val repository: ITaskRepository,
+    val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     init {
         sessionManager.setUser()
@@ -61,7 +60,8 @@ class DashboardVM @Inject constructor(
                             // Need to check if task data object is null then don't do anything
                             taskUpdatedData.data?._id?.let {
                                 //Following Code will run if the data object would not be null
-                                val taskCount = localTask.getSingleTaskCount(taskUpdatedData.data._id)
+                                val taskCount =
+                                    localTask.getSingleTaskCount(taskUpdatedData.data._id)
                                 if (taskCount < 1) {
                                     localTask.insertTask(taskUpdatedData.data)
                                 } else {
@@ -87,11 +87,11 @@ class DashboardVM @Inject constructor(
                             )
                             // Need to check if subtask data object is null then don't do anything
                             subtask.data?.id?.let {
-                                val subtaskCount = localSubTask.getSingleSubTaskCount(subtask.data.id)
+                                val subtaskCount =
+                                    localSubTask.getSingleSubTaskCount(subtask.data.id)
                                 if (subtaskCount < 1) {
                                     localSubTask.insertSubTask(subtask.data)
-                                }
-                                else {
+                                } else {
                                     localSubTask.updateSubTask(subtask.data)
                                 }
                             }
@@ -107,7 +107,8 @@ class DashboardVM @Inject constructor(
                             // Need to check if task data object is null then don't do anything
                             taskUpdatedData.data?._id?.let {
                                 //Following Code will run if the data object would not be null
-                                val taskCount = localTask.getSingleTaskCount(taskUpdatedData.data._id)
+                                val taskCount =
+                                    localTask.getSingleTaskCount(taskUpdatedData.data._id)
                                 if (taskCount < 1) {
                                     localTask.insertTask(taskUpdatedData.data)
                                 } else {
@@ -121,10 +122,11 @@ class DashboardVM @Inject constructor(
                         }
 
                         SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {
-                            val taskSubtaskUpdateResponse = gson.fromJson<SocketTaskSubtaskUpdateResponse>(
-                                arguments,
-                                object : TypeToken<SocketTaskSubtaskUpdateResponse>() {}.type
-                            )
+                            val taskSubtaskUpdateResponse =
+                                gson.fromJson<SocketTaskSubtaskUpdateResponse>(
+                                    arguments,
+                                    object : TypeToken<SocketTaskSubtaskUpdateResponse>() {}.type
+                                )
                             val taskSubtaskUpdatedData = taskSubtaskUpdateResponse.data.results
 
                             val subTasks = taskSubtaskUpdatedData.subtasks

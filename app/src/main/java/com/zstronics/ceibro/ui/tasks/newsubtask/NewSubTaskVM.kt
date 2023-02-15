@@ -226,8 +226,7 @@ class NewSubTaskVM @Inject constructor(
         val adminsId = task.value?.admins?.map { it.id }
         var highestState = if (state == TaskStatus.DRAFT.name.lowercase()) {
             TaskStatus.DRAFT.name.lowercase()
-        }
-        else {
+        } else {
             TaskStatus.ASSIGNED.name.lowercase()
         }
 
@@ -308,8 +307,7 @@ class NewSubTaskVM @Inject constructor(
 
         var highestState = if (state == TaskStatus.DRAFT.name.lowercase()) {
             TaskStatus.DRAFT.name.lowercase()
-        }
-        else {
+        } else {
             TaskStatus.ASSIGNED.name.lowercase()
         }
 
@@ -435,7 +433,7 @@ class NewSubTaskVM @Inject constructor(
                     loading(false)
                 }
                 is ApiResponse.Error -> {
-                    loading(false)
+                    loading(false, response.error.message)
                     handlePressOnView(1)
                 }
             }

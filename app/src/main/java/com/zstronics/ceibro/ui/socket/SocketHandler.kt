@@ -23,6 +23,10 @@ object SocketHandler {
         TASK_SUBTASK_UPDATED
     }
 
+    enum class FileAttachmentEvents {
+        FILE_UPLOAD_PROGRESS, FILE_UPLOADED, FILES_UPLOAD_COMPLETED
+    }
+
     @Synchronized
     fun setSocket() {
         try {
