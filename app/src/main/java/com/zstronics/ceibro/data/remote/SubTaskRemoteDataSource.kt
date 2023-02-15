@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
+import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
 import javax.inject.Inject
 
@@ -36,6 +37,14 @@ class SubTaskRemoteDataSource @Inject constructor(private val service: TaskRetro
             call =
             {
                 service.updateSubTask(subtaskId, updateSubTask)
+            }
+        )
+
+    override suspend fun deleteSubTask(subtaskId: String): ApiResponse<GenericResponse> =
+        executeSafely(
+            call =
+            {
+                service.deleteSubTask(subtaskId)
             }
         )
 

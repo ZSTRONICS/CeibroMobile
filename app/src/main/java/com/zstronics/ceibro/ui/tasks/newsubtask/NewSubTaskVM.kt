@@ -211,7 +211,12 @@ class NewSubTaskVM @Inject constructor(
 //            )
 //        )
         val adminsId = task.value?.admins?.map { it.id }
-        var highestState = TaskStatus.ASSIGNED.name.lowercase()
+        var highestState = if (state == TaskStatus.DRAFT.name.lowercase()) {
+            TaskStatus.DRAFT.name.lowercase()
+        }
+        else {
+            TaskStatus.ASSIGNED.name.lowercase()
+        }
 
         val assigneeStates = if (state == TaskStatus.DRAFT.name.lowercase()) {
             listOf(
@@ -281,9 +286,14 @@ class NewSubTaskVM @Inject constructor(
             )
         )
 
-        val adminsId = task.value?.admins?.map { it.id }
+        val adminsId = subtask.value?.taskData?.admins?.map { it }
 
-        var highestState = TaskStatus.ASSIGNED.name.lowercase()
+        var highestState = if (state == TaskStatus.DRAFT.name.lowercase()) {
+            TaskStatus.DRAFT.name.lowercase()
+        }
+        else {
+            TaskStatus.ASSIGNED.name.lowercase()
+        }
 
 
         val assigneeStates = if (state == TaskStatus.DRAFT.name.lowercase()) {

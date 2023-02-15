@@ -62,4 +62,9 @@ interface ITaskRepository {
 
     suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean,Boolean, Boolean>
     suspend fun updateSubtaskStatus(updateSubTaskStatusRequest: UpdateSubTaskStatusWithoutCommentRequest): Triple<Boolean,Boolean, Boolean>
+
+    suspend fun deleteSubTask(
+        subtaskId: String,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    )
 }

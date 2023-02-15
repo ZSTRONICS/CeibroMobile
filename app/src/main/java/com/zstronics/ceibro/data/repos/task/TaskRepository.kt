@@ -213,6 +213,24 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteSubTask(
+        subtaskId: String,
+        callBack: (isSuccess: Boolean, message: String) -> Unit
+    ) {
+        when (val response = remoteSubTask.deleteSubTask(subtaskId)) {
+            is ApiResponse.Success -> {
+                val responseObj = response.data.message
+
+                localSubTask.deleteSubtaskById(subtaskId)
+
+                callBack(true, response.data.message)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
     override suspend fun eraseSubTaskTable() = localSubTask.eraseSubTaskTable()
 
     private suspend fun syncSubTask() {

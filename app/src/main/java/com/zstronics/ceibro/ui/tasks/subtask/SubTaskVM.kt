@@ -16,14 +16,18 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SubTaskVM @Inject constructor(
     override val viewState: SubTaskState,
+    val sessionManager: SessionManager,
     val taskRepository: TaskRepository
 ) : HiltBaseViewModel<ISubTask.State>(), ISubTask.ViewModel {
+    val user = sessionManager.getUser().value
+
     private val _subTasks: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasks: LiveData<List<AllSubtask>> = _subTasks
 
@@ -37,38 +41,20 @@ class SubTaskVM @Inject constructor(
         }
     }
 
-    override fun showSubtaskCardMenuPopup(v: View) {
-        val popUpWindowObj = popUpMenu(v)
-        popUpWindowObj.showAsDropDown(v.findViewById(R.id.subTaskMoreMenuBtn), 0, 10)
-    }
-
-    override fun popUpMenu(v: View): PopupWindow {
-        val popupWindow = PopupWindow(v.context)
-        val context: Context = v.context
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.layout_subtask_card_menu, null)
-
-        val editDetails = view.findViewById<View>(R.id.editDetails)
-        val deleteSubtask = view.findViewById<View>(R.id.deleteSubtask)
-
-        editDetails.setOnClickListener {
-            clickEvent?.postValue(115)
-            popupWindow.dismiss()
+    fun deleteSubTask(subtaskId: String) {
+        launch {
+            loading(true)
+            taskRepository.deleteSubTask(subtaskId) { isSuccess, message ->
+                if (isSuccess) {
+                    loading(false, "Subtask Deleted Successfully")
+                    getSubTasks()
+                }
+                else {
+                    loading(false, message)
+                }
+            }
         }
-        deleteSubtask.setOnClickListener {
-            clickEvent?.postValue(116)
-            popupWindow.dismiss()
-        }
-
-        popupWindow.isFocusable = true
-        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.contentView = view
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 13f
-        return popupWindow
     }
-
 
     fun rejectSubTask(
         data: AllSubtask,

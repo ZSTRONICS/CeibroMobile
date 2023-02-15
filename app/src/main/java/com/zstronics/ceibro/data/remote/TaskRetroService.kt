@@ -63,6 +63,11 @@ interface TaskRetroService {
         @Body requestBody: UpdateSubtaskRequest
     ): Response<NewSubTaskResponse>
 
+    @DELETE("task/subtask/{subTaskId}")
+    suspend fun deleteSubTask(
+        @Path("subTaskId") taskId: String
+    ): Response<GenericResponse>
+
     @GET("task/{taskId}")
     suspend fun getSubTaskByTaskId(
         @Path("taskId") taskId: String,

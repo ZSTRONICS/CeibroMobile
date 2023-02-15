@@ -1,13 +1,17 @@
 package com.zstronics.ceibro.ui.tasks.taskdetailview
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.PopupWindow
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -236,7 +240,7 @@ class TaskDetailFragment :
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {
-            shortToastNow("Delete SubTask")
+            showDialog(v,context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading), subtaskData)
             popupWindow.dismiss()
         }
 
@@ -249,6 +253,25 @@ class TaskDetailFragment :
         return popupWindow
     }
 
+    private fun showDialog(v: View, title: String, subtaskData: AllSubtask) {
+        val dialog = Dialog(v.context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.layout_delete_task)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val descriptionText = dialog.findViewById(R.id.descriptionText) as AppCompatTextView
+        descriptionText.text = title
+        val deleteTaskBtn = dialog.findViewById(R.id.deleteTaskBtn) as AppCompatButton
+        val cancelTaskBtn = dialog.findViewById(R.id.cancelTaskBtn) as AppCompatButton
+        deleteTaskBtn.setOnClickListener {
+            dialog.dismiss()
+            viewModel.deleteSubTask(subtaskData.id)
+        }
+        cancelTaskBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 
 
     private fun isTaskAdmin(userId: String?, admins: List<TaskMember>): Boolean {

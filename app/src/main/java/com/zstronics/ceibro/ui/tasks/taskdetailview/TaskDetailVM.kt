@@ -51,7 +51,20 @@ class TaskDetailVM @Inject constructor(
         }
     }
 
-
+    fun deleteSubTask(subtaskId: String) {
+        launch {
+            loading(true)
+            taskRepository.deleteSubTask(subtaskId) { isSuccess, message ->
+                if (isSuccess) {
+                    loading(false, "Subtask Deleted Successfully")
+                    task.value?._id?.let { getSubTasks(it) }
+                }
+                else {
+                    loading(false, message)
+                }
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
