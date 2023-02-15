@@ -40,8 +40,7 @@ class SubTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            115 -> shortToastNow("Edit Details")
-            116 -> shortToastNow("Close Subtask")
+
         }
     }
 
@@ -141,7 +140,7 @@ class SubTaskFragment :
             popupWindow.dismiss()
         }
         editDetails.setOnClickListener {
-            shortToastNow("Edit Details")
+            navigateToEditDetails(subtaskData)
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {
@@ -200,6 +199,12 @@ class SubTaskFragment :
         bundle.putBoolean("newSubTask", false)
         bundle.putParcelable("subtask", subtaskData)
         navigate(R.id.newSubTaskFragment, bundle)
+    }
+
+    private fun navigateToEditDetails(subtaskData: AllSubtask) {
+        val bundle = Bundle()
+        bundle.putParcelable("subtask", subtaskData)
+        navigate(R.id.editSubTaskDetailsFragment, bundle)
     }
 
     private fun navigateToSubTaskDetail(data: AllSubtask) {

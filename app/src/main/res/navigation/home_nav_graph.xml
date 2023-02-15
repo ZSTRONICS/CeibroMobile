@@ -172,6 +172,9 @@
         <action
             android:id="@+id/action_subTaskFragment_to_subTaskDetailFragment"
             app:destination="@id/subTaskDetailFragment" />
+        <action
+            android:id="@+id/action_subTaskFragment_to_editSubTaskDetailsFragment"
+            app:destination="@id/editSubTaskDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/newTaskFragment"
@@ -192,6 +195,9 @@
         <action
             android:id="@+id/action_taskDetailFragment_to_attachmentFragment"
             app:destination="@id/attachmentFragment" />
+        <action
+            android:id="@+id/action_taskDetailFragment_to_editSubTaskDetailsFragment"
+            app:destination="@id/editSubTaskDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/newSubTaskFragment"
@@ -238,4 +244,9 @@
         android:name="com.zstronics.ceibro.ui.photoeditor.PhotoEditorFragment"
         android:label="PhotoEditorFragment"
         tools:layout="@layout/fragment_photo_editor" />
+    <fragment
+        android:id="@+id/editSubTaskDetailsFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.editsubtaskdetails.EditSubTaskDetailsFragment"
+        android:label="EditSubTaskDetailsFragment"
+        tools:layout="@layout/fragment_edit_sub_task_details" />
 </navigation>

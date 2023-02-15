@@ -150,6 +150,21 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun getSubtaskStatuses(
+        subTaskId: String,
+        callBack: (isSuccess: Boolean, message: String, subtaskStatusData: List<SubtaskStatusData>?) -> Unit
+    ) {
+        when (val response = remoteSubTask.getSubtaskStatuses(subTaskId)) {
+            is ApiResponse.Success -> {
+                val subTaskStatuses = response.data.result
+                callBack(true, "", subTaskStatuses)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message, emptyList())
+            }
+        }
+    }
+
     override suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask> {
         val list = localSubTask.getSubTaskByTaskId(taskId)
         return if (list.isEmpty()) {

@@ -15,6 +15,8 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/input_field_rectangle.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/receiver_message_box.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/rounded_bottom_dialog.xml" value="0.223" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/rounded_green_filled.xml" value="0.306" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/rounded_yellow_filled.xml" value="0.306" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/sender_message_box.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/signin_button_back.xml" value="0.2995" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/drawable/status_accepted_filled.xml" value="0.3055" />
@@ -44,6 +46,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_connections.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_create_question.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_dashboard.xml" value="0.18802083333333333" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_edit_sub_task_details.xml" value="0.3536458333333333" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_invitations.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/fragment_main_tasks.xml" value="0.36666666666666664" />
@@ -74,6 +77,7 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_delete_task.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_invitations_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_chip.xml" value="0.3194444444444444" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_edit_members.xml" value="0.3546875" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_bot.xml" value="0.5" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_receive.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_sender.xml" value="0.36666666666666664" />

@@ -37,6 +37,11 @@ interface ITaskRepository {
 
 
     suspend fun getAllSubtasks(): List<AllSubtask>
+    suspend fun getSubtaskStatuses(
+        subTaskId: String,
+        callBack: (isSuccess: Boolean, message: String, subtaskStatusData: List<SubtaskStatusData>?) -> Unit
+    )
+
     suspend fun eraseSubTaskTable()
 
     suspend fun newSubTask(

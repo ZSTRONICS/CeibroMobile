@@ -16,6 +16,14 @@ class SubTaskRemoteDataSource @Inject constructor(private val service: TaskRetro
             }
         )
 
+    override suspend fun getSubtaskStatuses(subTaskId: String): ApiResponse<SubtaskStatusResponse> =
+        executeSafely(
+            call =
+            {
+                service.getSubtaskStatuses(subTaskId)
+            }
+        )
+
     override suspend fun newSubTask(newTask: NewSubtaskRequest): ApiResponse<NewSubTaskResponse> =
         executeSafely(
             call =

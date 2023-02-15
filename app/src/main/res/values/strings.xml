@@ -262,5 +262,8 @@
     <string name="delete_subtask_heading">Delete Subtask</string>
     <string name="edit_subtask_heading">Edit Subtask</string>
     <string name="update_subtask_heading">Update Subtask</string>
+    <string name="members_heading">Members</string>
+    <string name="add_heading">Add</string>
+    <string name="mark_as_done_heading">Mark As Done</string>
 
 </resources>

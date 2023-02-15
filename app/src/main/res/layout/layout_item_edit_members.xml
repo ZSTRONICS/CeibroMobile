@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/memberImgCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:elevation="0dp"
+            android:outlineSpotShadowColor="@color/white"
+            app:cardBackgroundColor="@color/appLightGrey"
+            app:cardCornerRadius="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/memberStateName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/memberName">
+
+            <ImageView
+                android:id="@+id/memberImg"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_img"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/memberImgText"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="center"
+                android:maxLength="3"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="KD"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:id="@+id/memberName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="Kristo Vunukainen"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toStartOf="@+id/stateBtnLayout"
+            app:layout_constraintStart_toEndOf="@+id/memberImgCard"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/memberStateName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/status_ongoing_filled"
+            android:elevation="1dp"
+            android:fontFamily="@font/inter_regular"
+            android:paddingStart="7dp"
+            android:paddingTop="1dp"
+            android:paddingEnd="7dp"
+            android:paddingBottom="2dp"
+            android:text="@string/ongoing_heading"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/memberName"
+            app:layout_constraintTop_toBottomOf="@+id/memberName" />
+
+        <LinearLayout
+            android:id="@+id/stateBtnLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="15dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/deleteMemberBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:background="@drawable/status_reject_outline"
+                android:elevation="2dp"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="11dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="4dp"
+                android:visibility="gone"
+                android:text="@string/delete_heading"
+                android:textColor="@color/appRed"
+                android:textSize="13.5sp" />
+
+            <TextView
+                android:id="@+id/markDoneMemberStateBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/status_done_outline"
+                android:elevation="2dp"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="11dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="4dp"
+                android:visibility="gone"
+                android:text="@string/mark_as_done_heading"
+                android:textColor="@color/appGreen"
+                android:textSize="13.5sp" />
+
+            <ImageView
+                android:id="@+id/doneStateTick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/rounded_green_filled"
+                android:src="@drawable/icon_tick_mark"
+                android:elevation="2dp"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="2dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="2dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

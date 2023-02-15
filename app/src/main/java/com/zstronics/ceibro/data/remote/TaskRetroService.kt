@@ -48,6 +48,11 @@ interface TaskRetroService {
         @Query("noPaginate") noPaginate: Boolean
     ): Response<AllSubtasksResponse>
 
+    @GET("task/st/getStatus/{subTaskId}")
+    suspend fun getSubtaskStatuses(
+        @Path("subTaskId") subTaskId: String
+    ): Response<SubtaskStatusResponse>
+
     @POST("task/subtask")
     suspend fun newSubTask(@Body requestBody: NewSubtaskRequest): Response<NewSubTaskResponse>
 

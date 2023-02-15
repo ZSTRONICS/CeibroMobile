@@ -148,6 +148,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="16dp"
                         android:hint="@string/subtask_title_heading"
+                        android:textColorHint="@color/grey"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -162,6 +163,7 @@
                             android:inputType="text"
                             android:maxLines="1"
                             android:scrollHorizontally="true"
+                            android:textColorHint="@color/grey"
                             android:text="@={viewState.subtaskTitle}"
                             android:textSize="15sp" />
 
@@ -175,6 +177,7 @@
                         android:layout_marginTop="10dp"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
+                        android:textColorHint="@color/grey"
                         app:endIconMode="dropdown_menu"
                         app:layout_constraintEnd_toEndOf="@+id/newSubTaskTitleField"
                         app:layout_constraintStart_toStartOf="@+id/newSubTaskTitleField"
@@ -186,6 +189,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:hint="@string/assign_to_heading"
+                            android:textColorHint="@color/grey"
                             android:inputType="text"
                             android:maxLines="2"
                             android:textSize="15sp" />
@@ -256,6 +260,7 @@
                         app:boxStrokeWidth="1dp"
                         app:endIconDrawable="@drawable/ic_calendar"
                         app:endIconMode="custom"
+                        android:textColorHint="@color/grey"
                         app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
                         app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
                         app:layout_constraintTop_toBottomOf="@+id/viewersChipsRV">
@@ -269,6 +274,7 @@
                             android:fontFamily="@font/inter_regular"
                             android:inputType="none"
                             android:maxLines="1"
+                            android:textColorHint="@color/grey"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:paddingStart="18dp"
                             android:paddingEnd="28dp"
@@ -311,6 +317,7 @@
                         android:hint="@string/description_heading"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
+                        android:textColorHint="@color/grey"
                         app:layout_constraintEnd_toEndOf="@+id/newSubTaskDueDateField"
                         app:layout_constraintStart_toStartOf="@+id/newSubTaskDueDateField"
                         app:layout_constraintTop_toBottomOf="@+id/newSubTaskProjectField">
@@ -322,6 +329,7 @@
                             android:fontFamily="@font/inter_regular"
                             android:inputType="none"
                             android:maxLines="6"
+                            android:textColorHint="@color/grey"
                             android:text="@={viewState.description}"
                             android:textSize="15sp" />
 
