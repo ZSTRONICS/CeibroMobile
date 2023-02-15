@@ -1,16 +1,13 @@
 package com.zstronics.ceibro.ui.photoeditor
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentPhotoEditorBinding
 import dagger.hilt.android.AndroidEntryPoint
-import ja.burhanrashid52.photoeditor.PhotoEditor
 
 
 @AndroidEntryPoint

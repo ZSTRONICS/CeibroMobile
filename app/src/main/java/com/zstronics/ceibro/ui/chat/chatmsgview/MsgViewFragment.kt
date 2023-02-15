@@ -336,10 +336,10 @@ class MsgViewFragment :
 
     private var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
         val file = FileUtils.getFile(requireContext(), intent?.data)
-//        viewModel.composeFileMessageToSend(file)
-        val imageUri: Uri? = intent?.data
-        arguments?.putParcelable("imageUri", imageUri);
-        navigate(R.id.action_msgViewFragment_to_photoEditorFragment, arguments)
+        viewModel.composeFileMessageToSend(file)
+//        val imageUri: Uri? = intent?.data
+//        arguments?.putParcelable("imageUri", imageUri);
+//        navigate(R.id.action_msgViewFragment_to_photoEditorFragment, arguments)
     }
 
     override fun call(vararg args: Any?) {
