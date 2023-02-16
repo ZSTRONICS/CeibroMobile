@@ -40,7 +40,7 @@ class TasksVM @Inject constructor(
 
     override fun getTasks() {
         launch {
-            _tasks.postValue(taskRepository.tasks())
+            _tasks.postValue(taskRepository.tasks().reversed())
         }
     }
 
@@ -51,8 +51,7 @@ class TasksVM @Inject constructor(
                 if (isSuccess) {
                     loading(false, "Task Deleted Successfully")
                     getTasks()
-                }
-                else {
+                } else {
                     loading(false, message)
                 }
             }

@@ -35,10 +35,10 @@
                 android:id="@+id/backBtn"
                 android:layout_width="34dp"
                 android:layout_height="38dp"
-                android:padding="3dp"
                 android:layout_marginStart="16dp"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
@@ -82,11 +82,12 @@
                 android:layout_marginBottom="13dp"
                 android:background="?attr/selectableItemBackground"
                 android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0.04"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="10dp"
                 android:paddingTop="6dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="6dp"
-                android:letterSpacing="0.04"
                 android:text="@string/media_heading"
                 android:textColor="@color/appYellow"
                 android:textSize="15.5sp"
@@ -102,6 +103,7 @@
                 android:background="?attr/selectableItemBackground"
                 android:fontFamily="@font/inter_medium"
                 android:letterSpacing="0.04"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="10dp"
                 android:paddingTop="6dp"
                 android:paddingEnd="10dp"
@@ -163,17 +165,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/attachmentsHeaderLayout">
 
-            <GridView
-                android:id="@+id/attachmentGridView"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/attachmentRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:horizontalSpacing="6dp"
-                android:numColumns="4"
-                android:verticalSpacing="6dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:spanCount="3"
+                tools:listitem="@layout/layout_attachment" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

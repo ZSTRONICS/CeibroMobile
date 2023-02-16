@@ -10,6 +10,7 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.databinding.FragmentSubTaskDetailBinding
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -31,14 +32,20 @@ class SubTaskDetailFragment :
             R.id.backBtn -> navigateBack()
             R.id.subTaskViewCommentsBtn -> navigateToAllComments()
             R.id.subTaskRejectionsBtn -> navigateToRejections()
-            R.id.subTaskAttachmentsBtn -> navigateToAttachments()
+            R.id.subTaskAttachmentsBtn -> viewModel.subtask.value?.id?.let {
+                navigateToAttachments(
+                    it
+                )
+            }
             R.id.subTaskDescriptionShowMoreBtn -> {
                 if (mViewDataBinding.subTaskDescriptionText.maxLines == 4) {
                     mViewDataBinding.subTaskDescriptionText.maxLines = Integer.MAX_VALUE
-                    mViewDataBinding.subTaskDescriptionShowMoreBtn.text = resources.getString(R.string.show_less_heading)
+                    mViewDataBinding.subTaskDescriptionShowMoreBtn.text =
+                        resources.getString(R.string.show_less_heading)
                 } else {
                     mViewDataBinding.subTaskDescriptionText.maxLines = 4
-                    mViewDataBinding.subTaskDescriptionShowMoreBtn.text = resources.getString(R.string.show_more_heading)
+                    mViewDataBinding.subTaskDescriptionShowMoreBtn.text =
+                        resources.getString(R.string.show_more_heading)
                 }
             }
         }
@@ -104,7 +111,8 @@ class SubTaskDetailFragment :
                         DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                     )
                     if (subTaskDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
-                        subTaskDueDate.text = requireContext().getString(R.string.invalid_due_date_text)
+                        subTaskDueDate.text =
+                            requireContext().getString(R.string.invalid_due_date_text)
                     }
                 }
                 subTaskCreationDate.text = DateUtils.reformatStringDate(
@@ -131,20 +139,20 @@ class SubTaskDetailFragment :
                         count++
                         if (count == assignMembers.size) {
                             subTaskAssignToName.append("${member.firstName} ${member.surName}")
-                        }
-                        else {
+                        } else {
                             subTaskAssignToName.append("${member.firstName} ${member.surName}, ")
                         }
                     }
                 } else {
-                    subTaskAssignToName.text = requireContext().getString(R.string.no_user_assigned_text)
+                    subTaskAssignToName.text =
+                        requireContext().getString(R.string.no_user_assigned_text)
                 }
 
                 if (item.description?.isNotEmpty() == true) {
                     subTaskDescriptionText.text = item.description
-                }
-                else {
-                    subTaskDescriptionText.text = requireContext().getString(R.string.no_description_added_by_creator_text)
+                } else {
+                    subTaskDescriptionText.text =
+                        requireContext().getString(R.string.no_description_added_by_creator_text)
                 }
                 subTaskDescriptionText.post(Runnable {
                     if (subTaskDescriptionText.lineCount <= 4) {
@@ -171,10 +179,14 @@ class SubTaskDetailFragment :
     private fun navigateToAllComments() {
         navigate(R.id.subTaskCommentsFragment)
     }
+
     private fun navigateToRejections() {
         navigate(R.id.subTaskRejectionFragment)
     }
-    private fun navigateToAttachments() {
-        navigate(R.id.attachmentFragment)
+
+    private fun navigateToAttachments(moduleId: String) {
+        arguments?.putString("moduleType", AttachmentModules.SubTask.name)
+        arguments?.putString("moduleId", moduleId)
+        navigate(R.id.attachmentFragment, arguments)
     }
 }
