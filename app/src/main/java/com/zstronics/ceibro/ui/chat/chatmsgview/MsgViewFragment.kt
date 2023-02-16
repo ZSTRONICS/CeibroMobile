@@ -101,33 +101,6 @@ class MsgViewFragment :
         }
     }
 
-    private fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
-        PermissionX.init(this).permissions(
-            permissionsList
-        ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList, beforeRequest ->
-            if (beforeRequest)
-                scope.showRequestReasonDialog(
-                    deniedList,
-                    "${getString(R.string.common_text_permission)}",
-                    getString(R.string.common_text_allow),
-                    getString(R.string.common_text_deny)
-                )
-        }.onForwardToSettings { scope, deniedList ->
-            scope.showForwardToSettingsDialog(
-                permissions = deniedList,
-                message = getString(R.string.message_camera_permission_denied),
-                positiveText = getString(R.string.open_setting), cancelAble = true
-            )
-        }
-            .request { allGranted, grantedList, deniedList ->
-                if (allGranted) {
-                    function.invoke()
-                } else {
-                    toast(getString(R.string.common_text_permissions_denied))
-                }
-            }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(viewModel) {

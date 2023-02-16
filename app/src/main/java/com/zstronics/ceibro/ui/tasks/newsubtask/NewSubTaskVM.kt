@@ -52,11 +52,6 @@ class NewSubTaskVM @Inject constructor(
     private val _taskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
     val taskAssignee: MutableLiveData<ArrayList<Member>> = _taskAssignee
 
-
-    private val _fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>> =
-        MutableLiveData(arrayListOf())
-    val fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>> = _fileUriList
-
 //    private val _viewers: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
 //    val viewers: MutableLiveData<ArrayList<Member>> = _viewers
 
@@ -392,18 +387,6 @@ class NewSubTaskVM @Inject constructor(
         return id == user?.id
     }
 
-    fun addUriToList(data: SubtaskAttachment) {
-        val files = fileUriList.value
-        files?.add(data)
-        _fileUriList.postValue(files)
-    }
-
-    fun removeFile(position: Int) {
-        val files = fileUriList.value
-        files?.removeAt(position)
-        _fileUriList.postValue(files)
-    }
-
     data class SubtaskAttachment(
         val attachmentType: AttachmentTypes,
         val attachmentUri: Uri?
@@ -411,15 +394,12 @@ class NewSubTaskVM @Inject constructor(
 
     private fun uploadFiles(id: String, context: Context) {
         val fileUriList = fileUriList.value
-
         val attachmentUriList = fileUriList?.map {
             FileUtils.getFile(
                 context,
                 it?.attachmentUri
             )
         }
-
-
         val request = AttachmentUploadRequest(
             _id = id,
             moduleName = AttachmentModules.SubTask,

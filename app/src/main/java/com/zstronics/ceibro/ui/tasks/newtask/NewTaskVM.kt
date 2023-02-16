@@ -1,6 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.newtask
 
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.LiveData
@@ -8,16 +8,19 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
-import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
+import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.chat.room.Member
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -26,7 +29,9 @@ class NewTaskVM @Inject constructor(
     override val viewState: NewTaskState,
     private val projectRepository: IProjectRepository,
     private val taskRepository: ITaskRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val dashboardRepository: IDashboardRepository,
+    private val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<INewTask.State>(), INewTask.ViewModel {
     val user = sessionManager.getUser().value
     var isNewTask = true
@@ -51,9 +56,6 @@ class NewTaskVM @Inject constructor(
     var projectId = ""
     var taskId = ""
 
-    init {
-
-    }
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -62,8 +64,7 @@ class NewTaskVM @Inject constructor(
         if (isNTask) {
             //Do nothing just keep going with flow to create new task
             loadProjects()
-        }
-        else {
+        } else {
             val taskParcel: CeibroTask? = bundle?.getParcelable("task")
             taskParcel?.let {
                 loadProjects(taskParcel)
@@ -211,10 +212,9 @@ class NewTaskVM @Inject constructor(
         val selectedMember = admins?.find { it.id == member?.id }
 
         if (selectedMember != null) {
-            if ((member?.id ?: "") == user?.id){
+            if ((member?.id ?: "") == user?.id) {
                 alert("Creator cannot be removed")
-            }
-            else {
+            } else {
                 admins.remove(selectedMember)
             }
         } else {
@@ -244,10 +244,9 @@ class NewTaskVM @Inject constructor(
     fun removeAdmin(data: Member) {
         val admins = _taskAdmins.value
 
-        if (data.id == user?.id){
+        if (data.id == user?.id) {
             alert("Creator cannot be removed")
-        }
-        else {
+        } else {
             admins?.remove(data)
         }
         _taskAdmins.value = admins
@@ -259,18 +258,15 @@ class NewTaskVM @Inject constructor(
         _taskAssignee.value = assignee
     }
 
-    fun createNewTask(state: String) {
+    fun createNewTask(state: String, context: Context) {
 
         if (viewState.taskTitle.value.toString() == "") {
             alert("Please enter task title")
-        }
-        else if (projectId == "") {
+        } else if (projectId == "") {
             alert("Please select a project")
-        }
-        else if (viewState.dueDate == "") {
+        } else if (viewState.dueDate == "") {
             alert("Please select a due date")
-        }
-        else {
+        } else {
             val admins = taskAdmins.value?.map { it.id } as MutableList
             val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
             val newTaskRequest = NewTaskRequestNoAdvanceOptions(
@@ -282,15 +278,23 @@ class NewTaskVM @Inject constructor(
                 project = projectId,
                 state = state,
                 description = viewState.description.value.toString(),
-                title = viewState.taskTitle.value.toString() ?: ""
+                title = viewState.taskTitle.value.toString()
             )
 
             launch {
                 loading(true)
-                taskRepository.newTaskNoAdvanceOptions(newTaskRequest) { isSuccess, error ->
+                taskRepository.newTaskNoAdvanceOptions(newTaskRequest) { isSuccess, error, data ->
                     loading(false, error)
-                    if (isSuccess)
-                        handlePressOnView(1)
+                    if (isSuccess) {
+                        if (fileUriList.value?.isEmpty() == true) {
+                            handlePressOnView(1)
+                            loading(false, error)
+                        } else {
+                            data?._id?.let { uploadFiles(it, context) }
+                        }
+                    } else {
+                        loading(false, error)
+                    }
                 }
             }
         }
@@ -314,12 +318,14 @@ class NewTaskVM @Inject constructor(
 
         launch {
             loading(true)
-            taskRepository.updateTaskByIdNoAdvanceOptions(taskId, updateTaskRequest) { isSuccess, error ->
+            taskRepository.updateTaskByIdNoAdvanceOptions(
+                taskId,
+                updateTaskRequest
+            ) { isSuccess, error ->
                 if (isSuccess) {
                     loading(false, "Task Updated Successfully")
                     clickEvent?.postValue(2)
-                }
-                else {
+                } else {
                     loading(false, error)
                 }
             }
@@ -338,16 +344,45 @@ class NewTaskVM @Inject constructor(
 
         launch {
             loading(true)
-            taskRepository.updateTaskNoStateNoAdvanceOptions(taskId, updateTaskRequest) { isSuccess, error ->
+            taskRepository.updateTaskNoStateNoAdvanceOptions(
+                taskId,
+                updateTaskRequest
+            ) { isSuccess, error ->
                 if (isSuccess) {
                     loading(false, "Task Updated Successfully")
                     clickEvent?.postValue(2)
-                }
-                else {
+                } else {
                     loading(false, error)
                 }
             }
         }
     }
 
+    private fun uploadFiles(id: String, context: Context) {
+        val fileUriList = fileUriList.value
+        val attachmentUriList = fileUriList?.map {
+            FileUtils.getFile(
+                context,
+                it?.attachmentUri
+            )
+        }
+        val request = AttachmentUploadRequest(
+            _id = id,
+            moduleName = AttachmentModules.Task,
+            files = attachmentUriList
+        )
+        launch {
+            when (val response = dashboardRepository.uploadFiles(request)) {
+                is ApiResponse.Success -> {
+                    fileAttachmentsDataSource.insertAll(response.data.results.files)
+                    handlePressOnView(1)
+                    loading(false)
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    handlePressOnView(1)
+                }
+            }
+        }
+    }
 }

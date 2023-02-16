@@ -93,57 +93,7 @@ class NewSubTaskFragment :
                 }
 
             }
-            R.id.newSubTaskAttachmentBtn -> {
-                checkPermission(
-                    immutableListOf(
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                    )
-                ) {
-                    requireActivity().openFilePicker(
-                        mimeTypes = arrayOf(
-                            "image/png",
-                            "image/jpg",
-                            "image/jpeg",
-                            "image/*",
-                            "video/mp4",
-                            "video/3gpp",
-                            "video/*",
-                            "application/pdf",
-                            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-
-                        )
-                    ) { resultCode, data ->
-                        if (resultCode == Activity.RESULT_OK && data != null) {
-                            // Get the URI of the picked file
-                            val fileUri = data.data
-                            // Add the URI to the list
-                            val mimeType = getMimeType(requireContext(), fileUri)
-                            val attachmentType = when {
-                                mimeType.startsWith("image") -> {
-                                    AttachmentTypes.Image
-                                }
-                                mimeType.startsWith("video") -> {
-                                    AttachmentTypes.Video
-                                }
-                                mimeType == "application/pdf" -> {
-                                    AttachmentTypes.Pdf
-                                }
-                                mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
-                                    AttachmentTypes.Doc
-                                }
-                                else -> AttachmentTypes.Doc
-                            }
-                            viewModel.addUriToList(
-                                NewSubTaskVM.SubtaskAttachment(
-                                    attachmentType,
-                                    fileUri
-                                )
-                            )
-                        }
-                    }
-                }
-            }
+            R.id.newSubTaskAttachmentBtn -> pickAttachment()
         }
     }
 
@@ -308,32 +258,5 @@ class NewSubTaskFragment :
         viewState.startDate = sdf1.format(cal.time)
 
         mViewDataBinding.newSubTaskStartDateText.setText(sdf.format(cal.time))
-    }
-
-    private fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
-        PermissionX.init(this).permissions(
-            permissionsList
-        ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList, beforeRequest ->
-            if (beforeRequest)
-                scope.showRequestReasonDialog(
-                    deniedList,
-                    "${getString(R.string.common_text_permission)}",
-                    getString(R.string.common_text_allow),
-                    getString(R.string.common_text_deny)
-                )
-        }.onForwardToSettings { scope, deniedList ->
-            scope.showForwardToSettingsDialog(
-                permissions = deniedList,
-                message = getString(R.string.message_camera_permission_denied),
-                positiveText = getString(R.string.open_setting), cancelAble = true
-            )
-        }
-            .request { allGranted, grantedList, deniedList ->
-                if (allGranted) {
-                    function.invoke()
-                } else {
-                    toast(getString(R.string.common_text_permissions_denied))
-                }
-            }
     }
 }

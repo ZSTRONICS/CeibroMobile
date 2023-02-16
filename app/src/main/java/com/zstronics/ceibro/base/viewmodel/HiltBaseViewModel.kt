@@ -5,11 +5,13 @@ import android.content.Context
 import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.state.UIState
+import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
@@ -97,6 +99,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     override fun alert(message: String) {
         viewState.uiState.postValue(UIState.Alert(message))
+    }
+
+    private val _fileUriList: MutableLiveData<ArrayList<NewSubTaskVM.SubtaskAttachment?>> =
+        MutableLiveData(arrayListOf())
+    val fileUriList: MutableLiveData<ArrayList<NewSubTaskVM.SubtaskAttachment?>> = _fileUriList
+
+    fun addUriToList(data: NewSubTaskVM.SubtaskAttachment) {
+        val files = fileUriList.value
+        files?.add(data)
+        _fileUriList.postValue(files)
+    }
+
+    fun removeFile(position: Int) {
+        val files = fileUriList.value
+        files?.removeAt(position)
+        _fileUriList.postValue(files)
     }
 }
 

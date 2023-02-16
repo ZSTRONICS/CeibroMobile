@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.base.navgraph
 
+import android.Manifest
+import android.app.Activity
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.Fade
@@ -14,11 +16,18 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.attachment.AttachmentTypes
+import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
+import com.zstronics.ceibro.utils.FileUtils
+import okhttp3.internal.immutableListOf
 import kotlin.properties.Delegates
 
 private const val ARGUMENT_NAVIGATION_REQUEST_CODE = "NAVIGATION_REQUEST_CODE"
@@ -269,4 +278,82 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         return backStackPopped
     }
 
+    fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
+        PermissionX.init(this).permissions(
+            permissionsList
+        ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList, beforeRequest ->
+            if (beforeRequest)
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "${getString(R.string.common_text_permission)}",
+                    getString(R.string.common_text_allow),
+                    getString(R.string.common_text_deny)
+                )
+        }.onForwardToSettings { scope, deniedList ->
+            scope.showForwardToSettingsDialog(
+                permissions = deniedList,
+                message = getString(R.string.message_camera_permission_denied),
+                positiveText = getString(R.string.open_setting), cancelAble = true
+            )
+        }
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    function.invoke()
+                } else {
+                    toast(getString(R.string.common_text_permissions_denied))
+                }
+            }
+    }
+
+    fun pickAttachment (){
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+            )
+        ) {
+            requireActivity().openFilePicker(
+                mimeTypes = arrayOf(
+                    "image/png",
+                    "image/jpg",
+                    "image/jpeg",
+                    "image/*",
+                    "video/mp4",
+                    "video/3gpp",
+                    "video/*",
+                    "application/pdf",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+                )
+            ) { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    // Get the URI of the picked file
+                    val fileUri = data.data
+                    // Add the URI to the list
+                    val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
+                    val attachmentType = when {
+                        mimeType.startsWith("image") -> {
+                            AttachmentTypes.Image
+                        }
+                        mimeType.startsWith("video") -> {
+                            AttachmentTypes.Video
+                        }
+                        mimeType == "application/pdf" -> {
+                            AttachmentTypes.Pdf
+                        }
+                        mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
+                            AttachmentTypes.Doc
+                        }
+                        else -> AttachmentTypes.Doc
+                    }
+                    viewModel.addUriToList(
+                        NewSubTaskVM.SubtaskAttachment(
+                            attachmentType,
+                            fileUri
+                        )
+                    )
+                }
+            }
+        }
+    }
 }

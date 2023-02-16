@@ -15,7 +15,7 @@ interface ITaskRepository {
 
     suspend fun newTaskNoAdvanceOptions(
         newTask: NewTaskRequestNoAdvanceOptions,
-        callBack: (isSuccess: Boolean, message: String) -> Unit
+        callBack: (isSuccess: Boolean, message: String, data: CeibroTask?) -> Unit
     )
 
     suspend fun updateTaskByIdNoAdvanceOptions(
@@ -79,8 +79,8 @@ interface ITaskRepository {
 
     suspend fun syncTasksAndSubTasks()
 
-    suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean,Boolean, Boolean>
-    suspend fun updateSubtaskStatus(updateSubTaskStatusRequest: UpdateSubTaskStatusWithoutCommentRequest): Triple<Boolean,Boolean, Boolean>
+    suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): Triple<Boolean, Boolean, Boolean>
+    suspend fun updateSubtaskStatus(updateSubTaskStatusRequest: UpdateSubTaskStatusWithoutCommentRequest): Triple<Boolean, Boolean, Boolean>
 
     suspend fun deleteSubTask(
         subtaskId: String,

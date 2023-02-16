@@ -59,15 +59,15 @@ class TaskRepository @Inject constructor(
 
     override suspend fun newTaskNoAdvanceOptions(
         newTask: NewTaskRequestNoAdvanceOptions,
-        callBack: (isSuccess: Boolean, message: String) -> Unit
+        callBack: (isSuccess: Boolean, message: String, data: CeibroTask?) -> Unit
     ) {
         when (val response = remoteTask.newTaskNoAdvanceOptions(newTask)) {
             is ApiResponse.Success -> {
                 response.data.newTask?.let { localTask.insertTask(it) }
-                callBack(true, "")
+                callBack(true, "", response.data.newTask)
             }
             is ApiResponse.Error -> {
-                callBack(false, response.error.message)
+                callBack(false, response.error.message, null)
             }
         }
     }

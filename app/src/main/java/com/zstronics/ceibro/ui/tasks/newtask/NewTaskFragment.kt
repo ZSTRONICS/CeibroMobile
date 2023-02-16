@@ -12,6 +12,8 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
+import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
+import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -31,10 +33,22 @@ class NewTaskFragment :
         when (id) {
             1, 2 -> navigateBack()
             R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
-            R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(TaskStatus.DRAFT.name.lowercase())
-            R.id.newTaskCreateBtn -> viewModel.createNewTask(TaskStatus.NEW.name.lowercase())
-            R.id.updateTaskAsDraftBtn -> viewModel.updateTask(viewModel.taskId, TaskStatus.DRAFT.name.lowercase())
-            R.id.updateTaskCreateBtn -> viewModel.updateTask(viewModel.taskId, TaskStatus.NEW.name.lowercase())
+            R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(
+                TaskStatus.DRAFT.name.lowercase(),
+                requireContext()
+            )
+            R.id.newTaskCreateBtn -> viewModel.createNewTask(
+                TaskStatus.NEW.name.lowercase(),
+                requireContext()
+            )
+            R.id.updateTaskAsDraftBtn -> viewModel.updateTask(
+                viewModel.taskId,
+                TaskStatus.DRAFT.name.lowercase()
+            )
+            R.id.updateTaskCreateBtn -> viewModel.updateTask(
+                viewModel.taskId,
+                TaskStatus.NEW.name.lowercase()
+            )
             R.id.updateTaskNewStateBtn -> viewModel.updateTaskWithNoState(viewModel.taskId)
             R.id.newTaskDueDateText -> {
                 val datePicker =
@@ -72,6 +86,7 @@ class NewTaskFragment :
                 }
 
             }
+            R.id.newTaskAttachmentBtn -> pickAttachment()
         }
     }
 
@@ -80,6 +95,9 @@ class NewTaskFragment :
 
     @Inject
     lateinit var assigneeChipsAdapter: MemberChipAdapter
+
+    @Inject
+    lateinit var attachmentAdapter: AttachmentAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,14 +108,26 @@ class NewTaskFragment :
         mViewDataBinding.updateTaskCreateBtn.visibility = View.GONE
         mViewDataBinding.updateTaskNewStateBtn.visibility = View.GONE
 
+        mViewDataBinding.attachmentRecyclerView.adapter = attachmentAdapter
+
+        viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
+            attachmentAdapter.setList(list)
+        }
+        attachmentAdapter.itemClickListener =
+            { _: View, position: Int, data: NewSubTaskVM.SubtaskAttachment? ->
+                viewModel.removeFile(position)
+            }
 
         viewModel.task.observe(viewLifecycleOwner) { item ->
             mViewDataBinding.newTaskProjectSpinner.setText(
-                mViewDataBinding.newTaskProjectSpinner.adapter.getItem(viewModel.projectIndex).toString(), false)
+                mViewDataBinding.newTaskProjectSpinner.adapter.getItem(viewModel.projectIndex)
+                    .toString(), false
+            )
             viewModel.onProjectSelect(viewModel.projectIndex)
 
             if (!viewModel.isNewTask) {        // If not a new task, then its in edit mode
-                mViewDataBinding.taskHeading.text = requireContext().getString(R.string.update_task_heading)
+                mViewDataBinding.taskHeading.text =
+                    requireContext().getString(R.string.update_task_heading)
 
                 viewState.dueDate = item.dueDate
                 mViewDataBinding.newTaskDueDateText.setText(item.dueDate)
@@ -111,8 +141,7 @@ class NewTaskFragment :
                     mViewDataBinding.updateTaskAsDraftBtn.visibility = View.VISIBLE
                     mViewDataBinding.updateTaskCreateBtn.visibility = View.VISIBLE
                     mViewDataBinding.updateTaskNewStateBtn.visibility = View.GONE
-                }
-                else {
+                } else {
                     mViewDataBinding.updateTaskAsDraftBtn.visibility = View.GONE
                     mViewDataBinding.updateTaskCreateBtn.visibility = View.GONE
                     mViewDataBinding.updateTaskNewStateBtn.visibility = View.VISIBLE
