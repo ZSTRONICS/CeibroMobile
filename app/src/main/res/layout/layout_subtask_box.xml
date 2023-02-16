@@ -139,12 +139,13 @@
             android:id="@+id/subTaskCreatorLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
             android:gravity="start"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/topBar"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBar">
 
             <TextView
@@ -177,10 +178,11 @@
             android:id="@+id/subTaskAssignToLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
             android:gravity="start|center"
             android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
+            app:layout_constraintEnd_toStartOf="@+id/subTaskRejectedByLayout"
             app:layout_constraintStart_toStartOf="@+id/subTaskCreatorLayout"
             app:layout_constraintTop_toBottomOf="@+id/subTaskCreatorLayout">
 
@@ -208,60 +210,58 @@
                 android:text="Kristo Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="13.5sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/subTaskRejectedByLayout"
-                android:layout_width="match_parent"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/subTaskRejectedByLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="13dp"
+            android:gravity="end|center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/subTaskAssignToLayout"
+            app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
+            app:layout_constraintTop_toTopOf="@+id/subTaskAssignToLayout">
+
+            <TextView
+                android:id="@+id/subTaskRejectedByHeading"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="end|center"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="20dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
-                app:layout_constraintStart_toStartOf="@+id/subTaskCreatorLayout"
-                app:layout_constraintTop_toBottomOf="@+id/subTaskCreatorLayout">
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/rejected_by_heading"
+                android:textColor="@color/appBlue"
+                android:textSize="12.5sp" />
 
-                <TextView
-                    android:id="@+id/subTaskRejectedByHeading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:text="@string/rejected_by_heading"
-                    android:textColor="@color/appBlue"
-                    android:textSize="12.5sp" />
-
-                <TextView
-                    android:id="@+id/subTaskRejectedByCount"
-                    android:layout_width="23dp"
-                    android:layout_height="23dp"
-                    android:layout_marginStart="6dp"
-                    android:background="@drawable/badge_back"
-                    android:backgroundTint="@color/appRed"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="11.5sp" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
+            <TextView
+                android:id="@+id/subTaskRejectedByCount"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/badge_back"
+                android:backgroundTint="@color/appRed"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="11.5sp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <TextView
             android:id="@+id/subTaskTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
             android:maxLines="2"
-            android:layout_marginTop="13dp"
             android:text="Magnis dis parturient montes, nascetur ridiculus dis mus."
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="@+id/subTaskAssignToLayout"
-            app:layout_constraintStart_toStartOf="@+id/subTaskAssignToLayout"
+            app:layout_constraintEnd_toEndOf="@+id/subTaskCreatorLayout"
+            app:layout_constraintStart_toStartOf="@+id/subTaskCreatorLayout"
             app:layout_constraintTop_toBottomOf="@+id/subTaskAssignToLayout" />
 
         <TextView

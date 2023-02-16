@@ -78,14 +78,16 @@
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_invitations_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_chip.xml" value="0.3194444444444444" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_edit_members.xml" value="0.3546875" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_edit_members_added_by.xml" value="0.3546875" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_bot.xml" value="0.5" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_receive.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_item_message_sender.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_new_connection_box.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_profile_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_project_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_reject_subtask.xml" value="0.3536458333333333" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_rejection_box.xml" value="0.36666666666666664" />
-        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_box.xml" value="0.36666666666666664" />
+        <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_box.xml" value="0.5131459655485041" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_card_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_subtask_status_box.xml" value="0.23854166666666668" />
         <entry key="..\:/Ceibro/CeibroMobile/app/src/main/res/layout/layout_task_box.xml" value="0.36666666666666664" />

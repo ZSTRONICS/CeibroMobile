@@ -1,18 +1,30 @@
 package com.zstronics.ceibro.ui.tasks.editsubtaskdetails
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AutoCompleteTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.AssignedTo
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.models.SubTaskEditDetailRequest
 import com.zstronics.ceibro.data.repos.task.models.SubtaskStatusData
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import koleton.Koleton
+import koleton.SkeletonLoader
+import koleton.api.hideSkeleton
+import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +42,9 @@ class EditSubTaskDetailsVM @Inject constructor(
     private val _subTaskStatus: MutableLiveData<List<SubtaskStatusData>> = MutableLiveData()
     val subTaskStatus: LiveData<List<SubtaskStatusData>> = _subTaskStatus
 
+    private val _assignToMembers: MutableLiveData<List<AssignedTo>> = MutableLiveData()
+    val assignToMembers: LiveData<List<AssignedTo>> = _assignToMembers
+
     private val _projectMembers: MutableLiveData<List<Member>> = MutableLiveData(arrayListOf())
     val projectMembers: LiveData<List<Member>> = _projectMembers
 
@@ -40,34 +55,56 @@ class EditSubTaskDetailsVM @Inject constructor(
     val subtaskAssignee: MutableLiveData<ArrayList<Member>> = _subtaskAssignee
 
     override fun getSubTaskStatuses(subTaskId: String) {
-        launch {
-            loading(true)
-            taskRepository.getSubtaskStatuses(subTaskId) { isSuccess, message, subtaskStatusData ->
-                if (isSuccess) {
-                    loading(false, "")
-                    _subTaskStatus.postValue(subtaskStatusData)
-                }
-                else {
-                    loading(false, message)
-                }
-            }
-        }
+//        launch {
+//            loading(true)
+//            taskRepository.getSubtaskStatuses(subTaskId) { isSuccess, message, subtaskStatusData ->
+//                if (isSuccess) {
+//                    loading(false, "")
+//                    _subTaskStatus.postValue(subtaskStatusData)
+//                }
+//                else {
+//                    loading(false, message)
+//                }
+//            }
+//        }
     }
 
-    private fun loadMemberByProjectId(projectId: String) {
+    fun loadMemberByProjectId(
+        projectId: String,
+        skeletonLayout: ConstraintLayout,
+        editDetailsMemberSpinner: AutoCompleteTextView
+    ) {
         launch {
-            loading(true)
+            editDetailsMemberSpinner.visibility = View.GONE
+            skeletonLayout.visibility = View.VISIBLE
+            skeletonLayout.loadSkeleton()
+
+            val subT = subtask.value
+            val subTaskMemList: ArrayList<TaskMember> = ArrayList()
+            if (subT != null) {
+                for (assign in subT.assignedTo) {
+                    for (member in assign.members) {
+                        subTaskMemList.add(member)
+                    }
+                }
+            }
+
             when (val response = projectRepository.getMemberByProjectId(projectId)) {
                 is ApiResponse.Success -> {
+                    val responseMembers = response.data.members
                     response.data.members.let { members ->
                         _projectMembers.postValue(members)
                         _projectMemberNames.postValue(members.map { it.firstName + " " + it.surName })
                     }
-                    loading(false)
+                    editDetailsMemberSpinner.visibility = View.VISIBLE
+                    skeletonLayout.visibility = View.GONE
+                    skeletonLayout.hideSkeleton()
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false)
+                    editDetailsMemberSpinner.visibility = View.VISIBLE
+                    skeletonLayout.visibility = View.GONE
+                    skeletonLayout.hideSkeleton()
                 }
             }
         }
@@ -80,8 +117,9 @@ class EditSubTaskDetailsVM @Inject constructor(
         val subtaskParcel: AllSubtask? = bundle?.getParcelable("subtask")
 
         _subtask.value = subtaskParcel
-        subtaskParcel?.id?.let { getSubTaskStatuses(it) }
-        subtaskParcel?.taskData?.project?.id?.let { loadMemberByProjectId(it) }
+
+        val assignTo = subtaskParcel?.assignedTo
+        _assignToMembers.postValue(assignTo)
 
     }
 
@@ -106,6 +144,45 @@ class EditSubTaskDetailsVM @Inject constructor(
         val assignee = _subtaskAssignee.value
         assignee?.remove(data)
         _subtaskAssignee.value = assignee
+    }
+
+
+
+
+    fun removeMemberFromSubtask(taskId: String, subTaskId: String, memberId: String) {
+        launch {
+            loading(true)
+            taskRepository.removeSubTaskMember(taskId, subTaskId, memberId) { isSuccess, error, changedSubTask ->
+                if (isSuccess) {
+                    loading(false, "")
+                    val assignTo = changedSubTask?.assignedTo
+                    if (assignTo != null) {
+                        _assignToMembers.postValue(assignTo)
+                    }
+                }
+                else {
+                    loading(false, error)
+                }
+            }
+        }
+    }
+
+    fun markAsDoneForSubtaskMember(taskId: String, subTaskId: String, memberId: String) {
+        launch {
+            loading(true)
+            taskRepository.markAsDoneForSubtaskMember(taskId, subTaskId, memberId) { isSuccess, error, changedSubTask ->
+                if (isSuccess) {
+                    loading(false, "")
+                    val assignTo = changedSubTask?.assignedTo
+                    if (assignTo != null) {
+                        _assignToMembers.postValue(assignTo)
+                    }
+                }
+                else {
+                    loading(false, error)
+                }
+            }
+        }
     }
 
 }

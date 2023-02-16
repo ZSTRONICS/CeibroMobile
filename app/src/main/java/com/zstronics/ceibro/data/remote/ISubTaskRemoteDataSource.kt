@@ -10,6 +10,8 @@ interface ISubTaskRemoteDataSource {
     suspend fun newSubTask(newTask: NewSubtaskRequest): ApiResponse<NewSubTaskResponse>
     suspend fun updateSubTaskById(subtaskId: String, updateSubTask: UpdateDraftSubtaskRequest): ApiResponse<NewSubTaskResponse>
     suspend fun updateSubTask(subtaskId: String, updateSubTask: UpdateSubtaskRequest): ApiResponse<NewSubTaskResponse>
+    suspend fun removeSubTaskMember(editDetailRequest: SubTaskEditDetailRequest): ApiResponse<SubTaskByTaskResponse>
+    suspend fun markAsDoneForSubtaskMember(editDetailRequest: SubTaskEditDetailRequest): ApiResponse<SubTaskByTaskResponse>
     suspend fun deleteSubTask(subtaskId: String): ApiResponse<GenericResponse>
     suspend fun getSubTaskByTaskId(taskId: String, noPaginate: Boolean = true): ApiResponse<SubTaskByTaskResponse>
     suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): ApiResponse<SubTaskByTaskResponse>

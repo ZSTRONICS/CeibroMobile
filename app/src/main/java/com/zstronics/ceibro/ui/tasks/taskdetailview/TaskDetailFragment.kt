@@ -13,6 +13,7 @@ import android.widget.PopupWindow
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.viewModels
+import com.google.android.material.textfield.TextInputEditText
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -74,10 +75,35 @@ class TaskDetailFragment :
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
                 when (childView.id) {
-                    R.id.assignedStateRejectBtn, R.id.acceptedStateRejectBtn ->
-                        viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack) {
-                            navigateBack()
+                    R.id.assignedStateRejectBtn, R.id.acceptedStateRejectBtn -> {
+                        val dialog = Dialog(childView.context)
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                        dialog.setCancelable(false)
+                        dialog.setContentView(R.layout.layout_reject_subtask)
+                        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                        val descriptionText = dialog.findViewById(R.id.descriptionText) as AppCompatTextView
+                        descriptionText.text = requireContext().getString(R.string.are_you_sure_you_want_to_reject_this_subtask_heading)
+                        val rejectDescriptionText = dialog.findViewById(R.id.rejectDescriptionText) as TextInputEditText
+                        val rejectSubTaskBtn = dialog.findViewById(R.id.rejectSubTaskBtn) as AppCompatButton
+                        val cancelSubTaskBtn = dialog.findViewById(R.id.cancelSubTaskBtn) as AppCompatButton
+
+                        rejectSubTaskBtn.setOnClickListener {
+                            if (rejectDescriptionText.text.toString() == "") {
+                                shortToastNow(requireContext().getString(R.string.please_enter_a_reason_to_reject_heading))
+                            }
+                            else {
+                                dialog.dismiss()
+                                viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack) {
+                                    navigateBack()
+                                }
+                            }
                         }
+                        cancelSubTaskBtn.setOnClickListener {
+                            dialog.dismiss()
+                        }
+                        dialog.show()
+                    }
+
                     R.id.draftStateAssignBtn -> {
                         if (data.assignedTo.isNotEmpty()) {
                             viewModel.updateSubtaskStatus(
@@ -181,6 +207,12 @@ class TaskDetailFragment :
         bundle.putParcelable("subtask", subtaskData)
         navigate(R.id.newSubTaskFragment, bundle)
     }
+    private fun navigateToEditDetails(subtaskData: AllSubtask) {
+        val bundle = Bundle()
+        bundle.putParcelable("subtask", subtaskData)
+        navigate(R.id.editSubTaskDetailsFragment, bundle)
+    }
+
 
     private fun showTaskDetailSheet() {
         val fragment = viewModel.task.value?.let { FragmentTaskDetailSheet(it.title, it.description?: "") }
@@ -227,7 +259,7 @@ class TaskDetailFragment :
         else {
             deleteSubtask.visibility = View.GONE
             editSubTask.visibility = View.GONE
-            editDetails.visibility = View.GONE
+            editDetails.visibility = View.VISIBLE
         }
 
 
@@ -236,7 +268,7 @@ class TaskDetailFragment :
             popupWindow.dismiss()
         }
         editDetails.setOnClickListener {
-            shortToastNow("Edit Details")
+            navigateToEditDetails(subtaskData)
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {

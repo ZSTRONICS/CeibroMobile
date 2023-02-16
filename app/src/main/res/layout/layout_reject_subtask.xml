@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_bottom_dialog"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/rejectSubTaskDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="15dp"
+            android:gravity="start|center"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:fontFamily="@font/inter_regular"
+                android:paddingStart="3dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="2dp"
+                android:src="@drawable/icon_info"
+                app:tint="@color/appRed" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/descriptionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="start|center"
+                android:paddingStart="13dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="3dp"
+                android:text="@string/are_you_sure_you_want_to_reject_this_subtask_heading"
+                android:textColor="@color/appRed"
+                android:textSize="16.5sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/rejectSubTaskDescriptionField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="13dp"
+            android:hint="@string/reason_heading"
+            android:textColorHint="@color/grey"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rejectSubTaskDesc">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/rejectDescriptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:inputType="none"
+                android:maxLines="4"
+                android:minLines="2"
+                android:gravity="top|start"
+                android:paddingStart="11dp"
+                android:paddingEnd="11dp"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:text=""
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/rejectSubTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/status_reject_outline"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/reject_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/appRed"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rejectSubTaskDescriptionField"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelSubTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="30dp"
+            android:background="@drawable/status_draft_outline"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/cancel_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/rejectSubTaskBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/rejectSubTaskBtn"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -256,6 +256,8 @@
     <string name="upload_heading">Upload</string>
     <string name="are_you_sure_you_want_to_delete_the_task_heading">Are you sure you want to delete the task?</string>
     <string name="are_you_sure_you_want_to_delete_this_subtask_heading">Are you sure you want to delete this subtask?</string>
+    <string name="are_you_sure_you_want_to_reject_this_subtask_heading">Are you sure you want to reject this subtask?</string>
+    <string name="please_enter_a_reason_to_reject_heading">Please enter a reason to reject</string>
     <string name="save_as_draft_heading">Save as draft</string>
     <string name="update_draft_heading">Update draft</string>
     <string name="update_task_heading">Update Task</string>
@@ -265,5 +267,6 @@
     <string name="members_heading">Members</string>
     <string name="add_heading">Add</string>
     <string name="mark_as_done_heading">Mark As Done</string>
+    <string name="reason_heading">Reason</string>
 
 </resources>

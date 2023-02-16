@@ -93,6 +93,18 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/skeletonLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="3dp"
+            android:background="@color/colorGrey"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/editDetailsMemberToField"
+            app:layout_constraintEnd_toEndOf="@+id/editDetailsMemberToField"
+            app:layout_constraintStart_toStartOf="@+id/editDetailsMemberToField"
+            app:layout_constraintTop_toTopOf="@+id/editDetailsMemberToField"/>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/editDetailsAddMemberBtn"
             android:layout_width="wrap_content"
@@ -155,7 +167,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:itemCount="10"
-                    tools:listitem="@layout/layout_item_edit_members" />
+                    tools:listitem="@layout/layout_item_edit_members_added_by" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

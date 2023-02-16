@@ -228,6 +228,80 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun removeSubTaskMember(
+        taskId: String,
+        subTaskId: String,
+        memberId: String,
+        callBack: (isSuccess: Boolean, message: String, subtask: AllSubtask?) -> Unit
+    ) {
+        val editDetailRequest = SubTaskEditDetailRequest(
+            taskId = taskId,
+            subTaskId = subTaskId,
+            memberId = memberId
+        )
+        var changedSubTask: AllSubtask? = null
+
+        when (val response = remoteSubTask.removeSubTaskMember(editDetailRequest)) {
+            is ApiResponse.Success -> {
+                val subTasks = response.data.results.subtasks
+                val task = response.data.results.task
+
+                if (subTasks.isNotEmpty()) {
+                    val subTask = subTasks.find { it.id == subTaskId }
+                    if (subTask != null) {
+                        localSubTask.updateSubTask(subTask)
+                        changedSubTask = subTask
+                    }
+                }
+                if (task?._id != null) {
+                    localTask.updateTask(task)
+                }
+
+                callBack(true, "", changedSubTask)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message, changedSubTask)
+            }
+        }
+    }
+
+    override suspend fun markAsDoneForSubtaskMember(
+        taskId: String,
+        subTaskId: String,
+        memberId: String,
+        callBack: (isSuccess: Boolean, message: String, subtask: AllSubtask?) -> Unit
+    ) {
+        val editDetailRequest = SubTaskEditDetailRequest(
+            taskId = taskId,
+            subTaskId = subTaskId,
+            memberId = memberId
+        )
+        var changedSubTask: AllSubtask? = null
+
+        when (val response = remoteSubTask.markAsDoneForSubtaskMember(editDetailRequest)) {
+            is ApiResponse.Success -> {
+                val subTasks = response.data.results.subtasks
+                val task = response.data.results.task
+
+                if (subTasks.isNotEmpty()) {
+                    val subTask = subTasks.find { it.id == subTaskId }
+                    if (subTask != null) {
+                        localSubTask.updateSubTask(subTask)
+                        changedSubTask = subTask
+                    }
+                }
+                if (task?._id != null) {
+                    localTask.updateTask(task)
+                }
+
+                callBack(true, "", changedSubTask)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message, changedSubTask)
+            }
+        }
+    }
+
     override suspend fun deleteSubTask(
         subtaskId: String,
         callBack: (isSuccess: Boolean, message: String) -> Unit

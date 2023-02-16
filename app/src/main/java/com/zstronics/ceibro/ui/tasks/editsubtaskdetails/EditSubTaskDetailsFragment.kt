@@ -4,15 +4,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentEditSubTaskDetailsBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
-import com.zstronics.ceibro.ui.tasks.subtask.SubTaskAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,17 +37,32 @@ class EditSubTaskDetailsFragment :
     lateinit var addMembersChipsAdapter: MemberChipAdapter
 
     @Inject
-    lateinit var adapter: EditSubTaskDetailsAdapter
+    lateinit var addedByAdapter: EditSubTaskDetailsAddedByAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.subtask.observe(viewLifecycleOwner) {
+        viewModel.subtask.observe(viewLifecycleOwner) { it ->
+            it?.taskData?.project?.id?.let { viewModel.loadMemberByProjectId(it, mViewDataBinding.skeletonLayout, mViewDataBinding.editDetailsMemberSpinner) }
         }
 
         viewModel.subTaskStatus.observe(viewLifecycleOwner) {
-            adapter.setList(it, viewModel.subtask.value)
+
         }
-        mViewDataBinding.allMembersRV.adapter = adapter
+
+        viewModel.assignToMembers.observe(viewLifecycleOwner) {
+            addedByAdapter.setList(it, viewModel.subtask.value)
+        }
+        mViewDataBinding.allMembersRV.adapter = addedByAdapter
+
+
+        addedByAdapter.deleteItemClickListener = { childView: View, position: Int, taskId: String, subTaskId: String, memberId: String ->
+            viewModel.removeMemberFromSubtask(taskId, subTaskId, memberId)
+        }
+
+        addedByAdapter.doneItemClickListener = { childView: View, position: Int, taskId: String, subTaskId: String, memberId: String ->
+            viewModel.markAsDoneForSubtaskMember(taskId, subTaskId, memberId)
+        }
+
 
 
 

@@ -61,6 +61,20 @@ interface ITaskRepository {
         callBack: (isSuccess: Boolean, message: String) -> Unit
     )
 
+    suspend fun removeSubTaskMember(
+        taskId: String,
+        subTaskId: String,
+        memberId: String,
+        callBack: (isSuccess: Boolean, message: String, subtask: AllSubtask?) -> Unit
+    )
+
+    suspend fun markAsDoneForSubtaskMember(
+        taskId: String,
+        subTaskId: String,
+        memberId: String,
+        callBack: (isSuccess: Boolean, message: String, subtask: AllSubtask?) -> Unit
+    )
+
     suspend fun getSubTaskByTaskId(taskId: String): List<AllSubtask>
 
     suspend fun syncTasksAndSubTasks()

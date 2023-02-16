@@ -64,7 +64,7 @@ class SubTaskAdapter @Inject constructor(
             with(binding) {
                 /// Setting Status background and the status string.
                 val state = item.state?.find { it.userId == user?.id }?.userState?.uppercase()
-                    ?: TaskStatus.DRAFT.name
+                    ?: SubTaskStatus.DRAFT.name
 
                 val subTaskStatusNameBg: Pair<Int, String> = when (state) {
                     SubTaskStatus.ONGOING.name -> Pair(
@@ -105,17 +105,17 @@ class SubTaskAdapter @Inject constructor(
                 val isTaskAdmin = isTaskAdmin(user?.id, item.taskData?.admins)
                 val isSubTaskCreator = isSubTaskCreator(user?.id, item.creator)
 
-                if (isTaskAdmin || isSubTaskCreator) {
-                    if (state.uppercase() == SubTaskStatus.DONE.name || state.uppercase() == SubTaskStatus.REJECTED.name) {
-                        subTaskMoreMenuBtn.visibility = View.GONE
-                    }
-                    else {
-                        subTaskMoreMenuBtn.visibility = View.VISIBLE
-                    }
-                }
-                else {
-                    subTaskMoreMenuBtn.visibility = View.GONE
-                }
+//                if (isTaskAdmin || isSubTaskCreator) {
+//                    if (state.uppercase() == SubTaskStatus.DONE.name || state.uppercase() == SubTaskStatus.REJECTED.name) {
+//                        subTaskMoreMenuBtn.visibility = View.GONE
+//                    }
+//                    else {
+//                        subTaskMoreMenuBtn.visibility = View.VISIBLE
+//                    }
+//                }
+//                else {
+//                    subTaskMoreMenuBtn.visibility = View.GONE
+//                }
 
                 if (isTaskAdmin && !isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
