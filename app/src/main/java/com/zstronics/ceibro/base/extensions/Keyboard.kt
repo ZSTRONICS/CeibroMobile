@@ -143,6 +143,6 @@ fun Fragment.showKeyboard() {
  * *Extenssion to copy text to clipboard */
 fun String?.copyToClipboard(context: Context) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText("YapAccount", this)
+    val clip = ClipData.newPlainText("Ceibro App", this)
     clipboard.setPrimaryClip(clip)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Digitify, PermissionX Open Source Project
+ * Copyright (C) Zstronics, PermissionX Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx.dialog
+package com.ceibro.permissionx.dialog
 
 import android.Manifest
 import android.content.Context
@@ -25,14 +25,14 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import com.yap.permissionx.R
-import com.yap.permissionx.databinding.PermissionxDefaultDialogLayoutBinding
-import com.yap.permissionx.databinding.PermissionxPermissionItemBinding
+import com.ceibro.permissionx.R
+import com.ceibro.permissionx.databinding.PermissionxDefaultDialogLayoutBinding
+import com.ceibro.permissionx.databinding.PermissionxPermissionItemBinding
 
 /**
  * Default rationale dialog to show if developers did not implement their own custom rationale dialog.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2020/8/27
  */
 class DefaultDialog(context: Context,

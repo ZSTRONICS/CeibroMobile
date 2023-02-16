@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 import java.util.*
 
 /**
  * Implementation for request normal permissions.
- * @author Digitify
+ * @author Zstronics
  * @since 2020/6/10
  */
 internal class RequestNormalPermissions internal constructor(permissionBuilder: PermissionBuilder) :

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx.request;
+package com.ceibro.permissionx.request;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import java.util.List;
  * Not all permissions can be requested at one time. Some permissions need to request separately.
  * So each permission request need to implement this interface, and do the request logic in their implementations.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2020/6/10
  */
 public interface ChainTask {

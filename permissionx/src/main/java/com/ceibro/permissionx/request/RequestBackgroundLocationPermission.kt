@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
 import android.Manifest
 import android.os.Build
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 
 /**
  * Implementation for request ACCESS_BACKGROUND_LOCATION permission.
- * @author Digitify
+ * @author Zstronics
  * @since 2020/6/10
  */
 internal class RequestBackgroundLocationPermission internal constructor(permissionBuilder: PermissionBuilder)

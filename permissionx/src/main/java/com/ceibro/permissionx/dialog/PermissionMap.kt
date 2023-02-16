@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx.dialog
+package com.ceibro.permissionx.dialog
 
 import android.Manifest
 import android.annotation.TargetApi
 import android.os.Build
-import com.yap.permissionx.request.RequestBackgroundLocationPermission
-import com.yap.permissionx.request.RequestInstallPackagesPermission
-import com.yap.permissionx.request.RequestManageExternalStoragePermission
+import com.ceibro.permissionx.request.RequestBackgroundLocationPermission
+import com.ceibro.permissionx.request.RequestInstallPackagesPermission
+import com.ceibro.permissionx.request.RequestManageExternalStoragePermission
 
 /**
  * Maintains all the special permissions that we need to handle by special case.

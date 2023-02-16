@@ -1,5 +1,5 @@
 /*
- * Copyright (C)  Digitify, PermissionX Open Source Project
+ * Copyright (C)  Zstronics, PermissionX Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx;
+package com.ceibro.permissionx;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionGroupInfo;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -38,7 +37,7 @@ import java.util.List;
  *      }
  * </pre>
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2021/8/2
  */
 public class PermissionX {

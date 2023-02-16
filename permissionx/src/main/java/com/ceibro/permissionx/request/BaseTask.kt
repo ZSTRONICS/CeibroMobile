@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
 import android.Manifest
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 import java.util.*
 
 /**
  * Define a BaseTask to implement the duplicate logic codes. No need to implement them in every task.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2020/6/10
  */
 internal abstract class BaseTask(@JvmField var pb: PermissionBuilder) : ChainTask {

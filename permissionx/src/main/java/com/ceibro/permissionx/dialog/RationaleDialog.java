@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx.dialog;
+package com.ceibro.permissionx.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -29,7 +29,7 @@ import java.util.List;
  *  Base Dialog class to inherits to display a rationale dialog and show user why you need the permissions that you asked.
  *  Your dialog must have a positive button to proceed request and an optional negative button to cancel request. Override
  *  {@link RationaleDialog#getPositiveButton()} and {@link RationaleDialog#getNegativeButton()} to implement that.
- *  @author Digitify
+ *  @author Zstronics
  *  @since 2020/7/6
  */
 public abstract class RationaleDialog extends Dialog {

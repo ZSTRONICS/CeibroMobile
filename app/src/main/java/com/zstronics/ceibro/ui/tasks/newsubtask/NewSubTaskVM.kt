@@ -416,7 +416,7 @@ class NewSubTaskVM @Inject constructor(
             FileUtils.getFile(
                 context,
                 it?.attachmentUri
-            )?.absolutePath.toString()
+            )
         }
 
 

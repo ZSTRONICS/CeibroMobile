@@ -1,5 +1,5 @@
 /*
- * Copyright (C)  Digitify, PermissionX Open Source Project
+ * Copyright (C)  Zstronics, PermissionX Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx.callback;
+package com.ceibro.permissionx.callback;
 
 import androidx.annotation.NonNull;
 
-
-import com.yap.permissionx.request.ForwardScope;
+import com.ceibro.permissionx.request.ExplainScope;
 
 import java.util.List;
 
 /**
- * Callback for {@link com.yap.permissionx.request.PermissionBuilder#onForwardToSettings(ForwardToSettingsCallback)} method.
+ * Callback for {@link com.ceibro.permissionx.request.PermissionBuilder#onExplainRequestReason(ExplainReasonCallback)} method.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2020/6/7
  */
-public interface ForwardToSettingsCallback {
+public interface ExplainReasonCallback {
 
     /**
-     * Called when you should tell user to allow these permissions in settings.
+     * Called when you should explain why you need these permissions.
      * @param scope
      *          Scope to show rationale dialog.
      * @param deniedList
-     *          Permissions that should allow in settings.
+     *          Permissions that you should explain.
      */
-    void onForwardToSettings(@NonNull ForwardScope scope, @NonNull List<String> deniedList);
+    void onExplainReason(@NonNull ExplainScope scope, @NonNull List<String> deniedList);
 
 }

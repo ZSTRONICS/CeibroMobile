@@ -73,8 +73,7 @@ class DashboardRepository @Inject constructor(
         )
         val id = RequestBody.create("text/plain".toMediaTypeOrNull(), attachmentUploadRequest._id)
 
-        val parts = attachmentUploadRequest.files?.map { filePath ->
-            val file = File(filePath)
+        val parts = attachmentUploadRequest.files?.map { file ->
             val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
             MultipartBody.Part.createFormData("files", file.name, reqFile)
         }

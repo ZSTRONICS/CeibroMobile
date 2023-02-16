@@ -7,7 +7,7 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.fragment.app.viewModels
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish

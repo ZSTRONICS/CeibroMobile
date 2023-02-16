@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -25,19 +25,19 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.yap.permissionx.callback.ExplainReasonCallback
-import com.yap.permissionx.callback.ExplainReasonCallbackWithBeforeParam
-import com.yap.permissionx.callback.ForwardToSettingsCallback
-import com.yap.permissionx.callback.RequestCallback
-import com.yap.permissionx.dialog.DefaultDialog
-import com.yap.permissionx.dialog.RationaleDialog
-import com.yap.permissionx.dialog.RationaleDialogFragment
+import com.ceibro.permissionx.callback.ExplainReasonCallback
+import com.ceibro.permissionx.callback.ExplainReasonCallbackWithBeforeParam
+import com.ceibro.permissionx.callback.ForwardToSettingsCallback
+import com.ceibro.permissionx.callback.RequestCallback
+import com.ceibro.permissionx.dialog.DefaultDialog
+import com.ceibro.permissionx.dialog.RationaleDialog
+import com.ceibro.permissionx.dialog.RationaleDialogFragment
 import java.util.*
 
 /**
  * More APIs for developers to control PermissionX functions.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2019/11/17
  */
 class PermissionBuilder(

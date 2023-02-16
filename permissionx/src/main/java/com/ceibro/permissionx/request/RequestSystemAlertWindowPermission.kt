@@ -13,33 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
 import android.Manifest
 import android.os.Build
 import android.provider.Settings
-import com.yap.permissionx.request.BaseTask
-import com.yap.permissionx.request.PermissionBuilder
 
 /**
- * Implementation for request android.permission.WRITE_SETTINGS.
+ * Implementation for request android.permission.SYSTEM_ALERT_WINDOW.
  *
- * @author Digitify
- * @since 2021/2/21
+ * @author Zstronics
+ * @since 2020/12/28
  */
-internal class RequestWriteSettingsPermission internal constructor(permissionBuilder: PermissionBuilder) :
+internal class RequestSystemAlertWindowPermission internal constructor(permissionBuilder: PermissionBuilder) :
     BaseTask(permissionBuilder) {
 
     override fun request() {
-        if (pb.shouldRequestWriteSettingsPermission()) {
+        if (pb.shouldRequestSystemAlertWindowPermission()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && pb.targetSdkVersion >= Build.VERSION_CODES.M) {
-                if (Settings.System.canWrite(pb.activity)) {
-                    // WRITE_SETTINGS permission has already granted, we can finish this task now.
+                if (Settings.canDrawOverlays(pb.activity)) {
+                    // SYSTEM_ALERT_WINDOW permission has already granted, we can finish this task now.
                     finish()
                     return
                 }
                 if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
-                    val requestList = mutableListOf(Manifest.permission.WRITE_SETTINGS)
+                    val requestList = mutableListOf(Manifest.permission.SYSTEM_ALERT_WINDOW)
                     if (pb.explainReasonCallbackWithBeforeParam != null) {
                         // callback ExplainReasonCallbackWithBeforeParam prior to ExplainReasonCallback
                         pb.explainReasonCallbackWithBeforeParam!!.onExplainReason(explainScope, requestList, true)
@@ -48,24 +46,24 @@ internal class RequestWriteSettingsPermission internal constructor(permissionBui
                     }
                 } else {
                     // No implementation of explainReasonCallback, we can't request
-                    // WRITE_SETTINGS permission at this time, because user won't understand why.
+                    // SYSTEM_ALERT_WINDOW permission at this time, because user won't understand why.
                     finish()
                 }
             } else {
-                // WRITE_SETTINGS permission is automatically granted below Android M.
-                pb.grantedPermissions.add(Manifest.permission.WRITE_SETTINGS)
-                // At this time, WRITE_SETTINGS permission shouldn't be special treated anymore.
-                pb.specialPermissions.remove(Manifest.permission.WRITE_SETTINGS)
+                // SYSTEM_ALERT_WINDOW permission is automatically granted below Android M.
+                pb.grantedPermissions.add(Manifest.permission.SYSTEM_ALERT_WINDOW)
+                // At this time, SYSTEM_ALERT_WINDOW permission shouldn't be special treated anymore.
+                pb.specialPermissions.remove(Manifest.permission.SYSTEM_ALERT_WINDOW)
                 finish()
             }
         } else {
-            // shouldn't request WRITE_SETTINGS permission at this time, so we call finish() to finish this task.
+            // shouldn't request SYSTEM_ALERT_WINDOW permission at this time, so we call finish() to finish this task.
             finish()
         }
     }
 
     override fun requestAgain(permissions: List<String>) {
-        // don't care what the permissions param is, always request WRITE_SETTINGS permission.
-        pb.requestWriteSettingsPermissionNow(this)
+        // don't care what the permissions param is, always request SYSTEM_ALERT_WINDOW permission.
+        pb.requestSystemAlertWindowPermissionNow(this)
     }
 }

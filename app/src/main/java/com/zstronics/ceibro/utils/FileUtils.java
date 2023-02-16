@@ -311,49 +311,18 @@ public class FileUtils {
 
                 if ("primary".equalsIgnoreCase(type)) {
                     if (isAndroid11) {
-                        return Filer.INSTANCE.copyFileToInternalStorage(context, uri, "yapTemp");
+                        return Filer.INSTANCE.copyFileToInternalStorage(context, uri, "ceibroTemp");
                     } else
-                        return Environment.getExternalStorageDirectory() + "/" + split[1];
+                        // Copy the file to internal storage and return the internal file path
+                        return copyFileToInternalStorage(context, uri, "ceibroTemp");
                 } else if ("home".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/documents/" + split[1];
+                    return copyFileToInternalStorage(context, uri, "ceibroTemp");
                 }
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
-
-                String id = DocumentsContract.getDocumentId(uri);
-                if (id != null && id.startsWith("raw:")) {
-                    return id.substring(4);
-                } else {
-                    if (id != null && id.contains(":"))
-                        id = id.split(":")[1];
-                }
-                String[] contentUriPrefixesToTry = new String[]{
-                        "content://downloads/public_downloads",
-                        "content://downloads/my_downloads"
-                };
-                for (String contentUriPrefix : contentUriPrefixesToTry) {
-                    Uri contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), Long.valueOf(id));
-                    try {
-                        String path = getDataColumn(context, contentUri, null, null);
-                        if (path != null) {
-                            return path;
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-
-                // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
-                String fileName = getFileName(context, uri);
-                File cacheDir = getDocumentCacheDir(context);
-                File file = generateFileName(fileName, cacheDir);
-                String destinationPath = null;
-                if (file != null) {
-                    destinationPath = file.getAbsolutePath();
-                    saveFileFromUri(context, uri, destinationPath);
-                }
-
-                return destinationPath;
+                // Copy the file to internal storage and return the internal file path
+                return copyFileToInternalStorage(context, uri, "ceibroTemp");
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -361,8 +330,8 @@ public class FileUtils {
                     String docId = DocumentsContract.getDocumentId(uri);
                     List<String> split = Arrays.asList(docId.split(":"));
                     String type = split.get(0);
-                    //TODO Convert this Function to Java or Convert this file to Kotlin.
-                    return Filer.INSTANCE.copyFileToInternalStorage(context, uri, "yapTemp");
+                    // Copy the file to internal storage and return the internal file path
+                    return Filer.INSTANCE.copyFileToInternalStorage(context, uri, "ceibroTemp");
                 } else {
                     final String docId = DocumentsContract.getDocumentId(uri);
                     final String[] split = docId.split(":");
@@ -406,6 +375,30 @@ public class FileUtils {
 
         return null;
     }
+
+    private static String copyFileToInternalStorage(Context context, Uri uri, String directoryName) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            File directory = new File(context.getFilesDir(), directoryName);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            File file = new File(directory, getFileName(context, uri));
+            FileOutputStream outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[4 * 1024]; // or other buffer size
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            outputStream.flush();
+            outputStream.close();
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     /**
      * Convert Uri into File, if possible.

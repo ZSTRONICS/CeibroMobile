@@ -43,7 +43,12 @@ class SubTaskDetailVM @Inject constructor(
 //        }
         _subtask.value = subtaskParcel
         launch {
-            subtaskParcel?.id?.let { fileAttachmentsDataSource.getAttachmentsById("SubTask", it) }
+            val attachments = subtaskParcel?.id?.let {
+                fileAttachmentsDataSource.getAttachmentsById(
+                    "SubTask",
+                    it
+                )
+            }
         }
     }
 

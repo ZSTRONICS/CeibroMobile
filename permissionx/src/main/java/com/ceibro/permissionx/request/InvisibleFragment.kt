@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
 import android.Manifest
 import android.content.Intent
@@ -24,14 +24,14 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 import java.util.*
 
 /**
  * An invisible fragment to embedded into activity for handling permission requests.
  * This is very lightweight. Will not affect your app's efficiency.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2021/8/2
  */
 class InvisibleFragment : Fragment() {

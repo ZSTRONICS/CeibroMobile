@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Digitify, PermissionX Open Source Project
+ * Copyright (C) Zstronics, PermissionX Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx
+package com.ceibro.permissionx
 
 import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.yap.permissionx.dialog.allSpecialPermissions
-import com.yap.permissionx.request.PermissionBuilder
-import com.yap.permissionx.request.RequestBackgroundLocationPermission
+import com.ceibro.permissionx.dialog.allSpecialPermissions
+import com.ceibro.permissionx.request.PermissionBuilder
+import com.ceibro.permissionx.request.RequestBackgroundLocationPermission
 import kotlin.collections.LinkedHashSet
 
 /**
  * An internal class to provide specific scope for passing permissions param.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2021/8/2
  */
 class PermissionMediator {

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
 import kotlin.jvm.JvmOverloads
-import com.yap.permissionx.dialog.RationaleDialog
-import com.yap.permissionx.dialog.RationaleDialogFragment
+import com.ceibro.permissionx.dialog.RationaleDialog
+import com.ceibro.permissionx.dialog.RationaleDialogFragment
 
 /**
- * Provide specific scopes for [com.yap.permissionx.callback.ExplainReasonCallback]
- * and [com.yap.permissionx.callback.ExplainReasonCallbackWithBeforeParam] to give it specific functions to call.
- * @author Digitify
+ * Provide specific scopes for [com.ceibro.permissionx.callback.ExplainReasonCallback]
+ * and [com.ceibro.permissionx.callback.ExplainReasonCallbackWithBeforeParam] to give it specific functions to call.
+ * @author Zstronics
  * @since 2020/3/18
  */
 class ExplainScope internal constructor(

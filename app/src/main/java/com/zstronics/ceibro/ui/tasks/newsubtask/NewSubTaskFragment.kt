@@ -3,15 +3,12 @@ package com.zstronics.ceibro.ui.tasks.newsubtask
 import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
-import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toast

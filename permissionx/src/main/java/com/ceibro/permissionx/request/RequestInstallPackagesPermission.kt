@@ -1,5 +1,5 @@
 /*
- * Copyright (C) D, PermissionX Open Source Project
+ * Copyright (C) guolin, PermissionX Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.yap.permissionx.request
+package com.ceibro.permissionx.request
 
+import android.Manifest
 import android.os.Build
-import android.os.Environment
 
 /**
- * Implementation for request android.permission.MANAGE_EXTERNAL_STORAGE.
+ * Implementation for request android.permission.REQUEST_INSTALL_PACKAGES.
  *
- * @author Digitify
- * @since 2021/3/1
+ * @author guolin
+ * @since 2021/9/18
  */
-internal class RequestManageExternalStoragePermission internal constructor(permissionBuilder: PermissionBuilder) :
+internal class RequestInstallPackagesPermission internal constructor(permissionBuilder: PermissionBuilder) :
     BaseTask(permissionBuilder) {
 
     override fun request() {
-        if (pb.shouldRequestManageExternalStoragePermission() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                // MANAGE_EXTERNAL_STORAGE permission has already granted, we can finish this task now.
+        if (pb.shouldRequestInstallPackagesPermission()
+            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+            && pb.targetSdkVersion >= Build.VERSION_CODES.O) {
+            if (pb.activity.packageManager.canRequestPackageInstalls()) {
+                // REQUEST_INSTALL_PACKAGES permission has already granted, we can finish this task now.
                 finish()
                 return
             }
             if (pb.explainReasonCallback != null || pb.explainReasonCallbackWithBeforeParam != null) {
-                val requestList = mutableListOf(MANAGE_EXTERNAL_STORAGE)
+                val requestList = mutableListOf(Manifest.permission.REQUEST_INSTALL_PACKAGES)
                 if (pb.explainReasonCallbackWithBeforeParam != null) {
                     // callback ExplainReasonCallbackWithBeforeParam prior to ExplainReasonCallback
                     pb.explainReasonCallbackWithBeforeParam!!.onExplainReason(explainScope, requestList, true)
@@ -44,25 +46,24 @@ internal class RequestManageExternalStoragePermission internal constructor(permi
                 }
             } else {
                 // No implementation of explainReasonCallback, we can't request
-                // MANAGE_EXTERNAL_STORAGE permission at this time, because user won't understand why.
+                // REQUEST_INSTALL_PACKAGES permission at this time, because user won't understand why.
                 finish()
             }
-            return
+        } else {
+            // shouldn't request REQUEST_INSTALL_PACKAGES permission at this time, so we call finish() to finish this task.
+            finish()
         }
-        // shouldn't request MANAGE_EXTERNAL_STORAGE permission at this time, so we call finish()
-        // to finish this task.
-        finish()
     }
 
     override fun requestAgain(permissions: List<String>) {
-        // don't care what the permissions param is, always request WRITE_SETTINGS permission.
-        pb.requestManageExternalStoragePermissionNow(this)
+        // don't care what the permissions param is, always request REQUEST_INSTALL_PACKAGES permission.
+        pb.requestInstallPackagePermissionNow(this)
     }
 
     companion object {
         /**
-         * Define the const to compat with system lower than R.
+         * Define the const to compat with system lower than M.
          */
-        const val MANAGE_EXTERNAL_STORAGE = "android.permission.MANAGE_EXTERNAL_STORAGE"
+        const val REQUEST_INSTALL_PACKAGES = "android.permission.REQUEST_INSTALL_PACKAGES"
     }
 }

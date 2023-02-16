@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.chat.chatmsgview
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -19,7 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.yap.permissionx.PermissionX
+import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toast

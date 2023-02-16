@@ -1,5 +1,5 @@
 /*
- * Copyright (C)  Digitify, PermissionX Open Source Project
+ * Copyright (C)  Zstronics, PermissionX Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package com.yap.permissionx.callback;
+package com.ceibro.permissionx.callback;
 
 import androidx.annotation.NonNull;
+
+
+import com.ceibro.permissionx.request.ForwardScope;
 
 import java.util.List;
 
 /**
- * Callback for {@link PermissionBuilder#request(RequestCallback)} method.
+ * Callback for {@link com.ceibro.permissionx.request.PermissionBuilder#onForwardToSettings(ForwardToSettingsCallback)} method.
  *
- * @author Digitify
+ * @author Zstronics
  * @since 2020/6/7
  */
-public interface RequestCallback {
+public interface ForwardToSettingsCallback {
 
     /**
-     * Callback for the request result.
-     * @param allGranted
-     *          Indicate if all permissions that are granted.
-     * @param grantedList
-     *          All permissions that granted by user.
+     * Called when you should tell user to allow these permissions in settings.
+     * @param scope
+     *          Scope to show rationale dialog.
      * @param deniedList
-     *          All permissions that denied by user.
+     *          Permissions that should allow in settings.
      */
-    void onResult(boolean allGranted, @NonNull List<String> grantedList, @NonNull List<String> deniedList);
+    void onForwardToSettings(@NonNull ForwardScope scope, @NonNull List<String> deniedList);
 
 }
