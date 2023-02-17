@@ -1,7 +1,5 @@
 package com.zstronics.ceibro.ui.tasks.taskdetailview
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentTaskDetailSheetBinding
 
 class FragmentTaskDetailSheet constructor(val taskTitle: String, val taskDetail: String) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentTaskDetailSheetBinding
 
-//    var onDoneClick: ((view: View?, dataList: ArrayList<Member>) -> Unit)? =
-//        null
+    var onSeeAttachment: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,9 +46,9 @@ class FragmentTaskDetailSheet constructor(val taskTitle: String, val taskDetail:
             taskTitle.ifEmpty { "Can't fetch title" }
         )
 
-//        binding.doneBtn.setOnClickListener {
-//            onDoneClick?.invoke(it, adapter.dataList)
-//            dismiss()
-//        }
+        binding.taskSeeAttachmentBtn.setOnClickListener {
+            onSeeAttachment?.invoke()
+            dismiss()
+        }
     }
 }

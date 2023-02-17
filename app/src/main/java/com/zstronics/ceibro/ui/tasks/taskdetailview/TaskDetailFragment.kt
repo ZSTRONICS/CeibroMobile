@@ -19,11 +19,9 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.databinding.FragmentTaskDetailBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
-import com.zstronics.ceibro.ui.questioner.createquestion.members.FragmentQuestionParticipantsSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskAdapter
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
@@ -81,17 +79,21 @@ class TaskDetailFragment :
                         dialog.setCancelable(false)
                         dialog.setContentView(R.layout.layout_reject_subtask)
                         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                        val descriptionText = dialog.findViewById(R.id.descriptionText) as AppCompatTextView
-                        descriptionText.text = requireContext().getString(R.string.are_you_sure_you_want_to_reject_this_subtask_heading)
-                        val rejectDescriptionText = dialog.findViewById(R.id.rejectDescriptionText) as TextInputEditText
-                        val rejectSubTaskBtn = dialog.findViewById(R.id.rejectSubTaskBtn) as AppCompatButton
-                        val cancelSubTaskBtn = dialog.findViewById(R.id.cancelSubTaskBtn) as AppCompatButton
+                        val descriptionText =
+                            dialog.findViewById(R.id.descriptionText) as AppCompatTextView
+                        descriptionText.text =
+                            requireContext().getString(R.string.are_you_sure_you_want_to_reject_this_subtask_heading)
+                        val rejectDescriptionText =
+                            dialog.findViewById(R.id.rejectDescriptionText) as TextInputEditText
+                        val rejectSubTaskBtn =
+                            dialog.findViewById(R.id.rejectSubTaskBtn) as AppCompatButton
+                        val cancelSubTaskBtn =
+                            dialog.findViewById(R.id.cancelSubTaskBtn) as AppCompatButton
 
                         rejectSubTaskBtn.setOnClickListener {
                             if (rejectDescriptionText.text.toString() == "") {
                                 shortToastNow(requireContext().getString(R.string.please_enter_a_reason_to_reject_heading))
-                            }
-                            else {
+                            } else {
                                 dialog.dismiss()
                                 viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack) {
                                     navigateBack()
@@ -177,8 +179,7 @@ class TaskDetailFragment :
 
                 if (isAdmin || isCreator) {
                     createSubTaskBtn.visibility = View.VISIBLE
-                }
-                else {
+                } else {
                     createSubTaskBtn.visibility = View.GONE
                 }
 
@@ -195,7 +196,8 @@ class TaskDetailFragment :
                         DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                     )
                     if (taskDetailDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
-                        taskDetailDueDate.text = requireContext().getString(R.string.invalid_due_date_text)
+                        taskDetailDueDate.text =
+                            requireContext().getString(R.string.invalid_due_date_text)
                     }
                 }
 
@@ -214,6 +216,7 @@ class TaskDetailFragment :
         bundle.putParcelable("task", viewModel.task.value)
         navigate(R.id.newSubTaskFragment, bundle)
     }
+
     private fun navigateToEditSubTask(subtaskData: AllSubtask) {
         val bundle = Bundle()
         bundle.putBoolean("newSubTask", false)
@@ -221,6 +224,7 @@ class TaskDetailFragment :
         bundle.putParcelable("subtask", subtaskData)
         navigate(R.id.newSubTaskFragment, bundle)
     }
+
     private fun navigateToEditDetails(subtaskData: AllSubtask) {
         val bundle = Bundle()
         bundle.putParcelable("subtask", subtaskData)
@@ -229,10 +233,21 @@ class TaskDetailFragment :
 
 
     private fun showTaskDetailSheet() {
-        val fragment = viewModel.task.value?.let { FragmentTaskDetailSheet(it.title, it.description?: "") }
-        fragment?.show(childFragmentManager, "FragmentTaskDetailSheet")
+        viewModel.task.value?.let {
+            val fragment = FragmentTaskDetailSheet(it.title, it.description ?: "")
+
+            fragment.onSeeAttachment = {
+                navigateToAttachments(it._id)
+            }
+            fragment.show(childFragmentManager, "FragmentTaskDetailSheet")
+        }
     }
 
+    private fun navigateToAttachments(moduleId: String) {
+        arguments?.putString("moduleType", AttachmentModules.Task.name)
+        arguments?.putString("moduleId", moduleId)
+        navigate(R.id.attachmentFragment, arguments)
+    }
 
     private fun showSubtaskCardMenuPopup(v: View, subtaskData: AllSubtask) {
         val popUpWindowObj = popUpMenu(v, subtaskData)
@@ -250,27 +265,25 @@ class TaskDetailFragment :
         val deleteSubtask = view.findViewById<View>(R.id.deleteSubtask)
 
         val isSubTaskCreator = isSubTaskCreator(viewModel.user?.id, subtaskData.creator)
-        val userState = subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
-            ?: TaskStatus.DRAFT.name
+        val userState =
+            subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
+                ?: TaskStatus.DRAFT.name
 
         if (isSubTaskCreator || isTaskAdmin) {
             if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
                 deleteSubtask.visibility = View.VISIBLE
                 editSubTask.visibility = View.VISIBLE
                 editDetails.visibility = View.GONE
-            }
-            else if (userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
+            } else if (userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
                 deleteSubtask.visibility = View.VISIBLE
                 editSubTask.visibility = View.VISIBLE
                 editDetails.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 deleteSubtask.visibility = View.GONE
                 editSubTask.visibility = View.GONE
                 editDetails.visibility = View.VISIBLE
             }
-        }
-        else {
+        } else {
             deleteSubtask.visibility = View.GONE
             editSubTask.visibility = View.GONE
             editDetails.visibility = View.VISIBLE
@@ -286,7 +299,11 @@ class TaskDetailFragment :
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {
-            showDialog(v,context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading), subtaskData)
+            showDialog(
+                v,
+                context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading),
+                subtaskData
+            )
             popupWindow.dismiss()
         }
 
