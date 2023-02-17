@@ -12,6 +12,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
 import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -114,7 +115,7 @@ class NewTaskFragment :
             attachmentAdapter.setList(list)
         }
         attachmentAdapter.itemClickListener =
-            { _: View, position: Int, data: NewSubTaskVM.SubtaskAttachment? ->
+            { _: View, position: Int, data: SubtaskAttachment? ->
                 viewModel.removeFile(position)
             }
 

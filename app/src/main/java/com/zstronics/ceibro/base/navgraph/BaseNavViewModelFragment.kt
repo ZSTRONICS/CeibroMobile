@@ -2,6 +2,7 @@ package com.zstronics.ceibro.base.navgraph
 
 import android.Manifest
 import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.Fade
@@ -25,7 +26,7 @@ import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
-import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.utils.FileUtils
 import okhttp3.internal.immutableListOf
 import kotlin.properties.Delegates
@@ -305,7 +306,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             }
     }
 
-    fun pickAttachment (){
+    fun pickAttachment(allowMultiple: Boolean = false) {
         checkPermission(
             immutableListOf(
                 Manifest.permission.CAMERA,
@@ -313,6 +314,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             )
         ) {
             requireActivity().openFilePicker(
+                allowMultiple = allowMultiple,
                 mimeTypes = arrayOf(
                     "image/png",
                     "image/jpg",
@@ -327,33 +329,51 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 )
             ) { resultCode, data ->
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    // Get the URI of the picked file
-                    val fileUri = data.data
-                    // Add the URI to the list
-                    val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
-                    val attachmentType = when {
-                        mimeType.startsWith("image") -> {
-                            AttachmentTypes.Image
+                    val clipData = data.clipData
+                    if (clipData != null) {
+                        for (i in 0 until clipData.itemCount) {
+                            val fileUri = clipData.getItemAt(i).uri
+                            // Add the URI to the list
+                            addFileToUriList(fileUri)
                         }
-                        mimeType.startsWith("video") -> {
-                            AttachmentTypes.Video
-                        }
-                        mimeType == "application/pdf" -> {
-                            AttachmentTypes.Pdf
-                        }
-                        mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
-                            AttachmentTypes.Doc
-                        }
-                        else -> AttachmentTypes.Doc
+                    } else {
+                        val fileUri = data.data
+                        // Add the URI to the list
+                        addFileToUriList(fileUri)
                     }
-                    viewModel.addUriToList(
-                        NewSubTaskVM.SubtaskAttachment(
-                            attachmentType,
-                            fileUri
-                        )
-                    )
                 }
             }
         }
+    }
+
+    private fun addFileToUriList(fileUri: Uri?) {
+        val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
+        val fileName = FileUtils.getFileName(requireContext(), fileUri)
+        val fileSize = FileUtils.getFileSizeInBytes(requireContext(), fileUri)
+        val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+        val attachmentType = when {
+            mimeType.startsWith("image") -> {
+                AttachmentTypes.Image
+            }
+            mimeType.startsWith("video") -> {
+                AttachmentTypes.Video
+            }
+            mimeType == "application/pdf" -> {
+                AttachmentTypes.Pdf
+            }
+            mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
+                AttachmentTypes.Doc
+            }
+            else -> AttachmentTypes.Doc
+        }
+        viewModel.addUriToList(
+            SubtaskAttachment(
+                attachmentType,
+                fileUri,
+                fileSize,
+                fileSizeReadAble,
+                fileName
+            )
+        )
     }
 }

@@ -51,6 +51,7 @@ class TasksFragment :
         bundle.putBoolean("newTask", true)
         navigate(R.id.newTaskFragment, bundle)
     }
+
     private fun navigateToEditTask(data: CeibroTask) {
         val bundle = Bundle()
         bundle.putBoolean("newTask", false)
@@ -102,12 +103,10 @@ class TasksFragment :
         if (isCreator) {
             if (taskData.state.uppercase() == TaskStatus.DRAFT.name || taskData.state.uppercase() == TaskStatus.NEW.name) {
                 deleteTask.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 deleteTask.visibility = View.GONE
             }
-        }
-        else {
+        } else {
             deleteTask.visibility = View.GONE
         }
 
@@ -117,7 +116,11 @@ class TasksFragment :
             popupWindow.dismiss()
         }
         deleteTask.setOnClickListener {
-            showDialog(v,context.getString(R.string.are_you_sure_you_want_to_delete_the_task_heading), taskData)
+            showDialog(
+                v,
+                context.getString(R.string.are_you_sure_you_want_to_delete_the_task_heading),
+                taskData
+            )
             popupWindow.dismiss()
         }
 

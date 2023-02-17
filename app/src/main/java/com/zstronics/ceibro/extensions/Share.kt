@@ -266,12 +266,13 @@ fun Context.isApplicationInstalledAndEnable(packageName: String): Boolean {
 inline fun FragmentActivity.openFilePicker(
     title: String? = "",
     mimeTypes: Array<String> = arrayOf("image/*"),
+    allowMultiple: Boolean = false,
     noinline completionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = null
 ) {
 
     try {
         Intent(ACTION_OPEN_DOCUMENT).apply {
-            putExtra(EXTRA_ALLOW_MULTIPLE, false)
+            putExtra(EXTRA_ALLOW_MULTIPLE, allowMultiple)
             addCategory(CATEGORY_OPENABLE)
             addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             addFlags(FLAG_GRANT_READ_URI_PERMISSION)

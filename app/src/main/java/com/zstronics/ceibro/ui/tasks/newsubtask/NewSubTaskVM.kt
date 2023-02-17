@@ -387,11 +387,6 @@ class NewSubTaskVM @Inject constructor(
         return id == user?.id
     }
 
-    data class SubtaskAttachment(
-        val attachmentType: AttachmentTypes,
-        val attachmentUri: Uri?
-    )
-
     private fun uploadFiles(id: String, context: Context) {
         val fileUriList = fileUriList.value
         val attachmentUriList = fileUriList?.map {

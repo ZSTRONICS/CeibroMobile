@@ -426,28 +426,31 @@ public class FileUtils {
      * @author paulburke
      */
     public static String getReadableFileSize(int size) {
-        final int BYTES_IN_KILOBYTES = 1024;
+        final long BYTES_IN_KILOBYTES = 1024;
+        final long BYTES_IN_MEGABYTES = BYTES_IN_KILOBYTES * 1024;
+        final long BYTES_IN_GIGABYTES = BYTES_IN_MEGABYTES * 1024;
         final DecimalFormat dec = new DecimalFormat("###.#");
+        final String BYTES = " bytes";
         final String KILOBYTES = " KB";
         final String MEGABYTES = " MB";
         final String GIGABYTES = " GB";
-        float fileSize = 0;
-        String suffix = KILOBYTES;
+        String suffix = BYTES;
 
-        if (size > BYTES_IN_KILOBYTES) {
-            fileSize = size / BYTES_IN_KILOBYTES;
-            if (fileSize > BYTES_IN_KILOBYTES) {
-                fileSize = fileSize / BYTES_IN_KILOBYTES;
-                if (fileSize > BYTES_IN_KILOBYTES) {
-                    fileSize = fileSize / BYTES_IN_KILOBYTES;
-                    suffix = GIGABYTES;
-                } else {
-                    suffix = MEGABYTES;
-                }
-            }
+        float fileSize = size;
+        if (fileSize > BYTES_IN_GIGABYTES) {
+            fileSize = fileSize / BYTES_IN_GIGABYTES;
+            suffix = GIGABYTES;
+        } else if (fileSize > BYTES_IN_MEGABYTES) {
+            fileSize = fileSize / BYTES_IN_MEGABYTES;
+            suffix = MEGABYTES;
+        } else if (fileSize > BYTES_IN_KILOBYTES) {
+            fileSize = fileSize / BYTES_IN_KILOBYTES;
+            suffix = KILOBYTES;
         }
+
         return dec.format(fileSize) + suffix;
     }
+
 
     /**
      * Get the Intent for selecting content to be used in an Intent Chooser.
@@ -768,5 +771,19 @@ public class FileUtils {
             contentType = context.getContentResolver().getType(uri);// For files that is selected from the file manager.
         else contentType = getMimeType(context, uri); // For Image that is captured through Camera.
         return contentType;
+    }
+
+    public static Integer getFileSizeInBytes(Context context, Uri uri) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            if (inputStream != null) {
+                int size = inputStream.available();
+                inputStream.close();
+                return size;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

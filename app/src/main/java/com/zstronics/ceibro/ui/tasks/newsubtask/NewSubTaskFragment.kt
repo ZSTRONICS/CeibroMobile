@@ -1,28 +1,21 @@
 package com.zstronics.ceibro.ui.tasks.newsubtask
 
-import android.Manifest
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
-import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
-import com.zstronics.ceibro.extensions.openFilePicker
-import com.zstronics.ceibro.ui.attachment.AttachmentTypes
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.utils.FileUtils.getMimeType
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -214,7 +207,7 @@ class NewSubTaskFragment :
             attachmentAdapter.setList(list)
         }
         attachmentAdapter.itemClickListener =
-            { _: View, position: Int, data: NewSubTaskVM.SubtaskAttachment? ->
+            { _: View, position: Int, data: SubtaskAttachment? ->
                 viewModel.removeFile(position)
             }
     }

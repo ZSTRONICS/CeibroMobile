@@ -13,14 +13,15 @@ import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.databinding.LayoutAttachmentBinding
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import javax.inject.Inject
 
 class AttachmentAdapter @Inject constructor() :
     RecyclerView.Adapter<AttachmentAdapter.AttachmentViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: NewSubTaskVM.SubtaskAttachment?) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: SubtaskAttachment?) -> Unit)? =
         null
 
-    private var list: MutableList<NewSubTaskVM.SubtaskAttachment?> = mutableListOf()
+    private var list: MutableList<SubtaskAttachment?> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AttachmentViewHolder {
         return AttachmentViewHolder(
             LayoutAttachmentBinding.inflate(
@@ -40,7 +41,7 @@ class AttachmentAdapter @Inject constructor() :
         return list.size
     }
 
-    fun setList(list: ArrayList<NewSubTaskVM.SubtaskAttachment?>) {
+    fun setList(list: ArrayList<SubtaskAttachment?>) {
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
@@ -49,7 +50,7 @@ class AttachmentAdapter @Inject constructor() :
     inner class AttachmentViewHolder(private val binding: LayoutAttachmentBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O_MR1)
-        fun bind(item: NewSubTaskVM.SubtaskAttachment?) {
+        fun bind(item: SubtaskAttachment?) {
             binding.crossView.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

@@ -11,6 +11,7 @@ import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.state.UIState
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -101,11 +102,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         viewState.uiState.postValue(UIState.Alert(message))
     }
 
-    private val _fileUriList: MutableLiveData<ArrayList<NewSubTaskVM.SubtaskAttachment?>> =
+    private val _fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>> =
         MutableLiveData(arrayListOf())
-    val fileUriList: MutableLiveData<ArrayList<NewSubTaskVM.SubtaskAttachment?>> = _fileUriList
+    val fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>> = _fileUriList
 
-    fun addUriToList(data: NewSubTaskVM.SubtaskAttachment) {
+    fun addUriToList(data: SubtaskAttachment) {
         val files = fileUriList.value
         files?.add(data)
         _fileUriList.postValue(files)

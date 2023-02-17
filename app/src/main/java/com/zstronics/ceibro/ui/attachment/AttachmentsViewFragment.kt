@@ -8,13 +8,11 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.databinding.FragmentAttachmentBinding
-import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
-import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AttachmentFragment :
+class AttachmentsViewFragment :
     BaseNavViewModelFragment<FragmentAttachmentBinding, IAttachment.State, AttachmentVM>() {
 
     override val bindingVariableId = BR.viewModel
@@ -29,6 +27,7 @@ class AttachmentFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
+            R.id.attachmentAddBtn -> navigate(R.id.addAttachmentFragment, arguments)
         }
     }
 
@@ -54,5 +53,10 @@ class AttachmentFragment :
             { _: View, position: Int, data: FilesAttachments? ->
                 viewModel.removeFile(position)
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onFirsTimeUiCreate(arguments)
     }
 }

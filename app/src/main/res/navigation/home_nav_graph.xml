@@ -231,7 +231,7 @@
         tools:layout="@layout/fragment_sub_task_rejection" />
     <fragment
         android:id="@+id/attachmentFragment"
-        android:name="com.zstronics.ceibro.ui.attachment.AttachmentFragment"
+        android:name="com.zstronics.ceibro.ui.attachment.AttachmentsViewFragment"
         android:label="AttachmentFragment"
         tools:layout="@layout/fragment_attachment" />
     <fragment
