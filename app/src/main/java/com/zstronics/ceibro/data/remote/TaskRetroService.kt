@@ -68,6 +68,12 @@ interface TaskRetroService {
         @Body requestBody: UpdateSubtaskRequest
     ): Response<NewSubTaskResponse>
 
+    @PATCH("task/subTask/{subTaskId}")
+    suspend fun updateMemberInSubTask(
+        @Path("subTaskId") subTaskId: String,
+        @Body requestBody: AddMemberSubtaskRequest
+    ): Response<NewSubTaskResponse>
+
     @POST("task/st/removeMember")
     suspend fun removeSubTaskMember(
         @Body requestBody: SubTaskEditDetailRequest

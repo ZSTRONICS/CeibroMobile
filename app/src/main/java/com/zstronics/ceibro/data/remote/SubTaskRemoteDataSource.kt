@@ -48,6 +48,14 @@ class SubTaskRemoteDataSource @Inject constructor(private val service: TaskRetro
             }
         )
 
+    override suspend fun updateMemberInSubTask(subtaskId: String, addMemberSubTask: AddMemberSubtaskRequest): ApiResponse<NewSubTaskResponse> =
+        executeSafely(
+            call =
+            {
+                service.updateMemberInSubTask(subtaskId, addMemberSubTask)
+            }
+        )
+
     override suspend fun removeSubTaskMember(editDetailRequest: SubTaskEditDetailRequest): ApiResponse<SubTaskByTaskResponse> =
         executeSafely(
             call =

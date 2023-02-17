@@ -225,6 +225,29 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun updateMemberInSubTask(
+        subtaskId: String,
+        addMemberSubTask: AddMemberSubtaskRequest,
+        callBack: (isSuccess: Boolean, message: String, subtask: AllSubtask?) -> Unit
+    ) {
+        var changedSubTask: AllSubtask? = null
+
+        when (val response = remoteSubTask.updateMemberInSubTask(subtaskId, addMemberSubTask)) {
+            is ApiResponse.Success -> {
+                changedSubTask = response.data.newSubtask
+
+                if (changedSubTask != null) {
+                    localSubTask.updateSubTask(changedSubTask)
+                }
+
+                callBack(true, "", changedSubTask)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message, changedSubTask)
+            }
+        }
+    }
+
     override suspend fun removeSubTaskMember(
         taskId: String,
         subTaskId: String,

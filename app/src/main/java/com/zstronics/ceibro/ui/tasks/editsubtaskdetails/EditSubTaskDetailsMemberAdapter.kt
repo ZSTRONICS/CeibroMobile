@@ -72,7 +72,7 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
 
                 //jonsa member display hony lga hai us ki id find krein gy states ki array mn sy
                 val userState = subtask?.state?.find { it.userId == item.id }?.userState?.uppercase()
-                    ?: SubTaskStatus.DRAFT.name
+                    ?: "Unknown"
 
 //                println("Subtask in detail Adapter: $subtask")
                 val subTaskStatusNameBg: Pair<Int, String> = when (userState.uppercase()) {
@@ -135,7 +135,12 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
                 if (addedBy?.id == user?.id || isTaskAdmin || isCreator) {
                     if (userState.uppercase() == SubTaskStatus.DRAFT.name || userState.uppercase() == SubTaskStatus.ASSIGNED.name ||
                         userState.uppercase() == SubTaskStatus.ACCEPTED.name) {
-                        deleteMemberBtn.visibility = View.VISIBLE
+                        if (item.id == user?.id) {
+                            deleteMemberBtn.visibility = View.GONE
+                        }
+                        else {
+                            deleteMemberBtn.visibility = View.VISIBLE
+                        }
                         markDoneMemberStateBtn.visibility = View.GONE
                         doneStateTick.visibility = View.GONE
                     }

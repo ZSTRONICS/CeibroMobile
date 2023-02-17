@@ -311,6 +311,16 @@ class SubTaskAdapter @Inject constructor(
                         onApiResult(result, absoluteAdapterPosition, SubTaskStatus.REJECTED)
                     }
                 }
+                acceptedStateStartBtn.setOnClickListener {
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
+                        onApiResult(result, absoluteAdapterPosition, SubTaskStatus.ONGOING)
+                    }
+                }
+                ongoingStateDoneBtn.setOnClickListener {
+                    childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
+                        onApiResult(result, absoluteAdapterPosition, SubTaskStatus.DONE)
+                    }
+                }
                 draftStateAssignBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
                         onApiResult(result, absoluteAdapterPosition, SubTaskStatus.ASSIGNED)

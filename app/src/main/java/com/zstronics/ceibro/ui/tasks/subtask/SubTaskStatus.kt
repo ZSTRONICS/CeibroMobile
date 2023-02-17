@@ -6,5 +6,8 @@ enum class SubTaskStatus {
         ACCEPTED,
         REJECTED,
         DONE,
-        DRAFT
+        DRAFT,
+        START,
+        PAUSE,
+        RESUME
     }

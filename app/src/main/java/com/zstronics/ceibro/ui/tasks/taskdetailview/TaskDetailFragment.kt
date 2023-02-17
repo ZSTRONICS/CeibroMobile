@@ -124,6 +124,20 @@ class TaskDetailFragment :
                     ) {
                         navigateBack()
                     }
+                    R.id.acceptedStateStartBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.START,
+                        callBack
+                    ) {
+                        navigateBack()
+                    }
+                    R.id.ongoingStateDoneBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.DONE,
+                        callBack
+                    ) {
+                        navigateBack()
+                    }
                 }
             }
 

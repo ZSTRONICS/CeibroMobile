@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentEditSubTaskDetailsBinding
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,6 +30,15 @@ class EditSubTaskDetailsFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
+            R.id.editDetailsAddMemberBtn -> {
+                val assigneeMember = viewModel.subtaskAssignee.value
+                if (assigneeMember?.isEmpty() == true) {
+                    shortToastNow("Select members to add")
+                }
+                else {
+                    viewModel.addMemberToSubtask(viewModel.subtask.value, SubTaskStatus.ASSIGNED.name)
+                }
+            }
         }
     }
 
@@ -42,6 +52,7 @@ class EditSubTaskDetailsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.subtask.observe(viewLifecycleOwner) { it ->
+            mViewDataBinding.editDetailsMemberSpinner.setText("")
             it?.taskData?.project?.id?.let { viewModel.loadMemberByProjectId(it, mViewDataBinding.skeletonLayout, mViewDataBinding.editDetailsMemberSpinner) }
         }
 

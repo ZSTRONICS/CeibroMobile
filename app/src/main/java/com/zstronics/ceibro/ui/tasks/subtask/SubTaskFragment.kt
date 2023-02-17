@@ -110,6 +110,16 @@ class SubTaskFragment :
                         SubTaskStatus.ACCEPTED,
                         callBack
                     )
+                    R.id.acceptedStateStartBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.START,
+                        callBack
+                    )
+                    R.id.ongoingStateDoneBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.DONE,
+                        callBack
+                    )
                 }
             }
     }
