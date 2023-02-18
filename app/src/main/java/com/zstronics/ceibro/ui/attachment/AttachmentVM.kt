@@ -58,6 +58,6 @@ class AttachmentVM @Inject constructor(
             allAttachments.filter { allMediaExtensions.contains(it.fileType) }
         else
             allAttachments.filter { allDocumentExtensions.contains(it.fileType) }
-        _attachments.postValue(filtered)
+        _attachments.postValue(filtered.reversed())
     }
 }
