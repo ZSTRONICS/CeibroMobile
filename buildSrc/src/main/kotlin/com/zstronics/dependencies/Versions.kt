@@ -102,3 +102,6 @@
         const val COROUTINES = "1.4.2-native-mt"
         const val ANDROIDX_ARCH_CORE = "2.1.0"
     }
+    object WorkerVersion {
+        const val WORK_VERSION = "2.7.1"
+    }

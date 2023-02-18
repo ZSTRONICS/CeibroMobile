@@ -34,14 +34,38 @@ class NewTaskFragment :
         when (id) {
             1, 2 -> navigateBack()
             R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
-            R.id.newTaskSaveAsDraftBtn -> viewModel.createNewTask(
-                TaskStatus.DRAFT.name.lowercase(),
-                requireContext()
-            )
-            R.id.newTaskCreateBtn -> viewModel.createNewTask(
-                TaskStatus.NEW.name.lowercase(),
-                requireContext()
-            )
+            R.id.newTaskSaveAsDraftBtn -> {
+                viewModel.createNewTask(
+                    TaskStatus.DRAFT.name.lowercase(),
+                    requireContext()
+                ) {
+                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                        createNotification(
+                            it,
+                            "Task",
+                            "Uploading files for Task",
+                            isOngoing = true,
+                            indeterminate = true
+                        )
+                    }
+                }
+            }
+            R.id.newTaskCreateBtn -> {
+                viewModel.createNewTask(
+                    TaskStatus.NEW.name.lowercase(),
+                    requireContext()
+                ) {
+                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                        createNotification(
+                            it,
+                            "Task",
+                            "Uploading files for Task",
+                            isOngoing = true,
+                            indeterminate = true
+                        )
+                    }
+                }
+            }
             R.id.updateTaskAsDraftBtn -> viewModel.updateTask(
                 viewModel.taskId,
                 TaskStatus.DRAFT.name.lowercase()
@@ -87,7 +111,7 @@ class NewTaskFragment :
                 }
 
             }
-            R.id.newTaskAttachmentBtn -> pickAttachment()
+            R.id.newTaskAttachmentBtn -> pickAttachment(true)
         }
     }
 

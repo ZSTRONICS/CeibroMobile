@@ -51,6 +51,12 @@ dependencies {
     implementation(DependenciesManager.thirdPartyImplementation)
     implementation(DependenciesManager.networkImplementation)
     implementation(DependenciesManager.hiltImplementation)
+//    implementation("androidx.work:work-runtime:2.7.0")
+//    implementation("androidx.work:work-runtime-ktx:2.7.0")
+//    implementation("androidx.hilt:hilt-common:1.0.0")
+//    implementation("androidx.hilt:hilt-work:1.0.0")
+    implementation(DependenciesManager.workerDependencies)
+
     kapt(DependenciesManager.hiltKapt)
     kapt(DependenciesManager.networkKapt)
     testImplementation(DependenciesManager.testingImplementation)

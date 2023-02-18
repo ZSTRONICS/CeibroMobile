@@ -1,11 +1,8 @@
 package com.zstronics.ceibro.ui.dashboard
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,16 +19,19 @@ import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeRespo
 import com.zstronics.ceibro.data.repos.task.models.AllFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.chat.ChatFragment
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.home.HomeFragment
 import com.zstronics.ceibro.ui.projects.ProjectsFragment
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.MainTasksFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 @AndroidEntryPoint
@@ -108,13 +108,14 @@ class DashboardFragment :
 
                         val (notificationManager, builder) = createNotification(
                             fileProgress?.fileId,
-                            "${socketData.module}${fileProgress?.fileId}"
+                            "${socketData.module}${fileProgress?.fileId}",
+                            notificationTitle = "${fileProgress?.file?.fileName} uploading"
                         )
 
                         val totalSize = fileProgress?.totalSize ?: 100
                         val progress = ((fileProgress?.uploadedSize?.div(totalSize) ?: 1) * 100)
                         builder.setProgress(100, progress, false)
-                        notificationManager.notify(0, builder.build())
+                        notificationManager.notify(fileProgress?.fileId.hashCode(), builder.build())
                     }
                     SocketHandler.FileAttachmentEvents.FILE_UPLOADED.name -> {
                         val fileUploaded = gson.fromJson<FileUploadedEventResponse>(
@@ -122,74 +123,56 @@ class DashboardFragment :
                             object : TypeToken<FileUploadedEventResponse>() {}.type
                         ).data
 
-                        val (notificationManager, builder) = createNotification(
-                            fileUploaded?.id,
-                            "${socketData.module}${fileUploaded?.id}",
-                            "File uploaded",
-                            false
+                        EventBus.getDefault().post(
+                            fileUploaded?.id?.let {
+                                LocalEvents.CreateNotification(
+                                    moduleName = socketData.module,
+                                    moduleId = it,
+                                    notificationTitle = "${fileUploaded.fileName} uploaded",
+                                    isOngoing = false,
+                                    indeterminate = false
+                                )
+                            }
                         )
                         viewModel.launch {
                             fileUploaded?.let {
                                 viewModel.fileAttachmentsDataSource.insertFile(
                                     it
                                 )
+                                EventBus.getDefault().post(LocalEvents.AllFilesUploaded)
                             }
                         }
                     }
                     SocketHandler.FileAttachmentEvents.FILES_UPLOAD_COMPLETED.name -> {
+
+                        requireActivity().getSystemService(NotificationManager::class.java)
+                            ?.cancelAll()
                         val allFilesUploaded = gson.fromJson<AllFilesUploadedSocketEventResponse>(
                             arguments,
                             object : TypeToken<AllFilesUploadedSocketEventResponse>() {}.type
                         ).data
 
-                        val (notificationManager, builder) = createNotification(
-                            allFilesUploaded.moduleId,
-                            "${socketData.module}${allFilesUploaded.moduleId}",
-                            "All Files uploaded",
-                            false
+                        //// post local event to show notification
+                        EventBus.getDefault().post(
+                            LocalEvents.CreateNotification(
+                                moduleName = socketData.module,
+                                moduleId = allFilesUploaded.moduleId,
+                                notificationTitle = "All Files uploaded for ${socketData.module}",
+                                isOngoing = false,
+                                indeterminate = false
+                            )
                         )
+
                         viewModel.launch {
                             viewModel.fileAttachmentsDataSource.insertAll(
                                 allFilesUploaded.files
                             )
+                            EventBus.getDefault().post(LocalEvents.AllFilesUploaded)
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun createNotification(
-        channelId: String?,
-        chanelName: String,
-        notificationTitle: String = "Uploading file",
-        isOngoing: Boolean = true
-    ): Pair<NotificationManager, NotificationCompat.Builder> {
-        // Create a notification channel (for Android O and above)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager =
-                requireActivity().getSystemService(NotificationManager::class.java)
-            val channel = NotificationChannel(
-                channelId,
-                chanelName,
-                NotificationManager.IMPORTANCE_LOW
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-        // Create a notification builder
-        val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
-            .setSmallIcon(R.drawable.ic_upload)
-            .setContentTitle(notificationTitle)
-            .setOngoing(isOngoing)
-            .setOnlyAlertOnce(true)
-        if (isOngoing) {
-            builder.setProgress(100, 1, false)
-        }
-        // Show the notification
-        val notificationManager =
-            requireActivity().getSystemService(NotificationManager::class.java)
-        notificationManager.notify(0, builder.build())
-        return Pair(notificationManager, builder)
     }
 
     private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -242,5 +225,26 @@ class DashboardFragment :
 
     companion object {
         var selectedItem: Int = R.id.nav_home
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onCreateNotification(event: LocalEvents.CreateNotification) {
+        createNotification(
+            event.moduleId,
+            "${event.moduleName}${event.moduleId}",
+            notificationTitle = event.notificationTitle,
+            isOngoing = event.isOngoing,
+            indeterminate = event.indeterminate
+        )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 }

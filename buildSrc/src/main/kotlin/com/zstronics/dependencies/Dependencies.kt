@@ -75,7 +75,8 @@ object AndroidxDependencies {
     const val SECURITY = "androidx.security:security-crypto:${AndroidXVersions.SECURITY_CRYPTO}"
     const val MATERIAL = "com.google.android.material:material:${AndroidXVersions.MATERIAL}"
     const val PAGING_RUNTIME = "androidx.paging:paging-runtime:${AndroidXVersions.PAGING}"
-    const val SWIPE_REFRESH = "androidx.swiperefreshlayout:swiperefreshlayout:${AndroidXVersions.SWIPE_REFRESH}"
+    const val SWIPE_REFRESH =
+        "androidx.swiperefreshlayout:swiperefreshlayout:${AndroidXVersions.SWIPE_REFRESH}"
     const val WEB_KIT = "androidx.webkit:webkit:${AndroidXVersions.WEB_KIT}"
 }
 
@@ -132,7 +133,7 @@ object ThirdPartyDependencies {
     const val SSP = "com.intuit.ssp:ssp-android:${ThirdPartyVersions.SDP}"
     const val INLINE_ACTIVITY_RESULT =
         "com.github.florent37:inline-activity-result-kotlin:${ThirdPartyVersions.INLINE_ACTIVITY_RESULT}"
-    const val IMAGE_SLIDER ="com.github.denzcoskun:ImageSlideshow:0.1.0"
+    const val IMAGE_SLIDER = "com.github.denzcoskun:ImageSlideshow:0.1.0"
 }
 
 object HiltDaggerDependencies {
@@ -141,6 +142,7 @@ object HiltDaggerDependencies {
     const val DAGGER_COMPILER =
         "com.google.dagger:hilt-android-compiler:${HiltDaggerVersion.HILT_DI}"
     const val HILT_FRAGMENT = "androidx.hilt:hilt-navigation-fragment:${HiltDaggerVersion.HILT_VM}"
+    const val HILT_WORKER = "androidx.hilt:hilt-work:${HiltDaggerVersion.HILT_VM}"
 }
 
 object TestDependencies {
@@ -165,7 +167,7 @@ object TestDependencies {
         "androidx.arch.core:core-testing:${TestDependenciesVersions.ANDROIDX_ARCH_CORE}"
 }
 
-object Room{
-
+object WorkerDependencies {
+    const val WORKER_KOTLIN = "androidx.work:work-runtime-ktx:${WorkerVersion.WORK_VERSION}"
 }
 

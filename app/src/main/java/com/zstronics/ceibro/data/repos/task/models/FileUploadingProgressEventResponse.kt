@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.task.models
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 
 @Keep
 
@@ -14,6 +15,8 @@ data class FileUploadingProgressEventResponse(
 ) : BaseResponse() {
     @Keep
     data class FileUploadProgressData(
+        @SerializedName("file")
+        val file: FilesAttachments?,
         @SerializedName("fileId") val fileId: String,
         @SerializedName("fileName") val fileName: String,
         @SerializedName("moduleId") val moduleId: String,

@@ -33,14 +33,38 @@ class NewSubTaskFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn, 1, R.id.newSubTaskCancelBtn, 3 -> navigateBack()
-            R.id.newSubTaskSaveAsDraftBtn -> viewModel.createNewSubTask(
-                SubTaskStatus.DRAFT.name.lowercase(),
-                requireContext()
-            )
-            R.id.newSubTaskSaveAndAssignBtn -> viewModel.createNewSubTask(
-                SubTaskStatus.ASSIGNED.name.lowercase(),
-                requireContext()
-            )
+            R.id.newSubTaskSaveAsDraftBtn -> {
+                viewModel.createNewSubTask(
+                    SubTaskStatus.DRAFT.name.lowercase(),
+                    requireContext()
+                ) {
+                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                        createNotification(
+                            it,
+                            "Subtask",
+                            "Uploading files for Subtask",
+                            isOngoing = true,
+                            indeterminate = true
+                        )
+                    }
+                }
+            }
+            R.id.newSubTaskSaveAndAssignBtn -> {
+                viewModel.createNewSubTask(
+                    SubTaskStatus.ASSIGNED.name.lowercase(),
+                    requireContext()
+                ) {
+                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                        createNotification(
+                            it,
+                            "Subtask",
+                            "Uploading files for Subtask",
+                            isOngoing = true,
+                            indeterminate = true
+                        )
+                    }
+                }
+            }
             R.id.updateSubTaskAsDraftBtn -> viewModel.updateDraftSubTask(
                 viewModel.subtaskId,
                 SubTaskStatus.DRAFT.name.lowercase()
@@ -86,7 +110,7 @@ class NewSubTaskFragment :
                 }
 
             }
-            R.id.newSubTaskAttachmentBtn -> pickAttachment()
+            R.id.newSubTaskAttachmentBtn -> pickAttachment(true)
         }
     }
 

@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
+import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
@@ -81,6 +82,14 @@ class DashboardRepository @Inject constructor(
             service.uploadFiles(moduleName, id, parts)
         })
     }
+
+    override suspend fun getFilesByModuleId(
+        module: String,
+        moduleId: String
+    ): ApiResponse<GetAllFilesResponse> =
+        executeSafely(call = {
+            service.getFilesByModuleId(module, moduleId)
+        })
 
 
 }

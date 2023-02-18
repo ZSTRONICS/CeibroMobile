@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.dashboard
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
+import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
@@ -38,4 +39,10 @@ interface DashboardRepositoryService {
         @Part("_id") id: RequestBody,
         @Part files: List<MultipartBody.Part>?
     ): Response<UploadFilesResponse>
+
+    @GET("docs/viewFiles/{module}/{moduleId}")
+    suspend fun getFilesByModuleId(
+        @Path("module") module: String,
+        @Path("moduleId") moduleId: String
+    ): Response<GetAllFilesResponse>
 }

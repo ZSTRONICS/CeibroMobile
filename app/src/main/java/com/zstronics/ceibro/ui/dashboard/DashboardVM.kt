@@ -2,11 +2,14 @@ package com.zstronics.ceibro.ui.dashboard
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -14,6 +17,8 @@ import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +28,7 @@ class DashboardVM @Inject constructor(
     private val localTask: TaskLocalDataSource,
     private val localSubTask: SubTaskLocalDataSource,
     private val repository: ITaskRepository,
+    val dashboardRepository: IDashboardRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     init {
@@ -30,6 +36,10 @@ class DashboardVM @Inject constructor(
         launch {
             repository.syncTasksAndSubTasks()
         }
+    }
+
+    init {
+        EventBus.getDefault().register(this)
     }
 
     override fun handleSocketEvents() {
@@ -148,5 +158,32 @@ class DashboardVM @Inject constructor(
                 }
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUploadFilesToServer(uploadFilesToServer: LocalEvents.UploadFilesToServer) {
+        launch(Dispatcher.Main) {
+            when (val response = dashboardRepository.uploadFiles(uploadFilesToServer.request)) {
+                is ApiResponse.Success -> {
+                    val allFiles = response.data.results.files
+                    val updatedFiles = allFiles.mapIndexed { index, file ->
+                        if (uploadFilesToServer.fileUriList.size > index) {
+                            file.copy(fileUrl = uploadFilesToServer.fileUriList[index]?.attachmentUri.toString())
+                        } else {
+                            file // return the original file if no URI is available at the corresponding index
+                        }
+                    }
+                    fileAttachmentsDataSource.insertAll(updatedFiles)
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }

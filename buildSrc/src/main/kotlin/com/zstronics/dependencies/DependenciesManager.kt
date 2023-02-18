@@ -78,6 +78,7 @@ object DependenciesManager {
     val hiltImplementation = arrayListOf<String>().apply {
         add(HiltDaggerDependencies.DAGGER_HILT)
         add(HiltDaggerDependencies.HILT_FRAGMENT)
+        add(HiltDaggerDependencies.HILT_WORKER)
 //       add(HiltDaggerDependencies.HILT_VM)
     }
     val hiltKapt = arrayListOf<String>().apply {
@@ -103,6 +104,10 @@ object DependenciesManager {
         add(TestDependencies.MOCKITO_CORE)
         add(TestDependencies.MOCKITO_INLINE)
     }
+    val workerDependencies = arrayListOf<String>().apply {
+        add(WorkerDependencies.WORKER_KOTLIN)
+    }
+
 }
 
 //util functions for adding the different type dependencies from build.gradle file

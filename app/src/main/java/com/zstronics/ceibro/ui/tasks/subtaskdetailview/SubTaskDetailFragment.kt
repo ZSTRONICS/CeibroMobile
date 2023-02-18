@@ -176,6 +176,11 @@ class SubTaskDetailFragment :
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onFirsTimeUiCreate(arguments)
+    }
+
     private fun navigateToAllComments() {
         navigate(R.id.subTaskCommentsFragment)
     }

@@ -8,7 +8,9 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentAddAttachmentBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,12 +31,21 @@ class AddAttachmentFragment :
                 val moduleId = arguments?.getString("moduleId")
                 moduleName?.let {
                     moduleId?.let { it1 ->
+                        createNotification(
+                            moduleId,
+                            moduleName,
+                            "Uploading files for $moduleName",
+                            isOngoing = true,
+                            indeterminate = true
+                        )
                         viewModel.uploadFiles(
                             it,
                             it1,
                             requireContext()
                         )
                     }
+
+                    navigateBack()
                 }
             }
         }

@@ -12,7 +12,6 @@ import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
-import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
@@ -20,8 +19,9 @@ import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOption
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.utils.FileUtils
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -258,7 +258,7 @@ class NewTaskVM @Inject constructor(
         _taskAssignee.value = assignee
     }
 
-    fun createNewTask(state: String, context: Context) {
+    fun createNewTask(state: String, context: Context, success: (taskId: String) -> Unit) {
 
         if (viewState.taskTitle.value.toString() == "") {
             alert("Please enter task title")
@@ -284,14 +284,15 @@ class NewTaskVM @Inject constructor(
             launch {
                 loading(true)
                 taskRepository.newTaskNoAdvanceOptions(newTaskRequest) { isSuccess, error, data ->
-                    loading(false, error)
                     if (isSuccess) {
-                        if (fileUriList.value?.isEmpty() == true) {
-                            handlePressOnView(1)
-                            loading(false, error)
-                        } else {
-                            data?._id?.let { uploadFiles(it, context) }
+                        if (fileUriList.value?.isNotEmpty() == true) {
+                            data?._id?.let {
+                                success(it)
+                                uploadFiles(AttachmentModules.Task.name, it, context)
+                            }
                         }
+                        loading(false)
+                        handlePressOnView(1)
                     } else {
                         loading(false, error)
                     }
@@ -353,34 +354,6 @@ class NewTaskVM @Inject constructor(
                     clickEvent?.postValue(2)
                 } else {
                     loading(false, error)
-                }
-            }
-        }
-    }
-
-    private fun uploadFiles(id: String, context: Context) {
-        val fileUriList = fileUriList.value
-        val attachmentUriList = fileUriList?.map {
-            FileUtils.getFile(
-                context,
-                it?.attachmentUri
-            )
-        }
-        val request = AttachmentUploadRequest(
-            _id = id,
-            moduleName = AttachmentModules.Task,
-            files = attachmentUriList
-        )
-        launch {
-            when (val response = dashboardRepository.uploadFiles(request)) {
-                is ApiResponse.Success -> {
-                    fileAttachmentsDataSource.insertAll(response.data.results.files)
-                    handlePressOnView(1)
-                    loading(false)
-                }
-                is ApiResponse.Error -> {
-                    loading(false, response.error.message)
-                    handlePressOnView(1)
                 }
             }
         }

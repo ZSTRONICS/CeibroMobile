@@ -1,25 +1,19 @@
 package com.zstronics.ceibro.ui.tasks.taskdetailview
 
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
-import android.widget.PopupWindow
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,6 +22,8 @@ class TaskDetailVM @Inject constructor(
     override val viewState: TaskDetailState,
     val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
+    private val fileAttachmentsDataSource: FileAttachmentsDataSource,
+    private val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<ITaskDetail.State>(), ITaskDetail.ViewModel {
     val user = sessionManager.getUser().value
 
@@ -43,6 +39,16 @@ class TaskDetailVM @Inject constructor(
         _task.value = taskParcel
 
         taskParcel?._id?.let { getSubTasks(it) }
+        taskParcel?.let {
+            launch {
+                when (val response =
+                    dashboardRepository.getFilesByModuleId(module = "Task", moduleId = it._id)) {
+                    is ApiResponse.Success -> {
+                        response.data.results?.let { it1 -> fileAttachmentsDataSource.insertAll(it1) }
+                    }
+                }
+            }
+        }
     }
 
     override fun getSubTasks(taskId: String) {
@@ -58,8 +64,7 @@ class TaskDetailVM @Inject constructor(
                 if (isSuccess) {
                     loading(false, "Subtask Deleted Successfully")
                     task.value?._id?.let { getSubTasks(it) }
-                }
-                else {
+                } else {
                     loading(false, message)
                 }
             }
@@ -93,8 +98,7 @@ class TaskDetailVM @Inject constructor(
             if (taskDeleted) {
                 callBack.invoke(result)
                 onTaskDeleted()
-            }
-            else {
+            } else {
                 callBack.invoke(result)
             }
         }
@@ -117,8 +121,7 @@ class TaskDetailVM @Inject constructor(
             if (taskDeleted) {
                 callBack.invoke(result)
                 onTaskDeleted()
-            }
-            else {
+            } else {
                 callBack.invoke(result)
             }
         }

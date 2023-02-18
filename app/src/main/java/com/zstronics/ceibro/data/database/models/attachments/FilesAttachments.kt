@@ -22,5 +22,6 @@ data class FilesAttachments(
     @SerializedName("updatedAt") val updatedAt: String,
     @SerializedName("uploadStatus") val uploadStatus: String,
     @SerializedName("uploadedBy") val uploadedBy: String,
-    @SerializedName("version") val version: Int
+    @SerializedName("version") val version: Int,
+    @SerializedName("fileSize") val fileSize: Int
 ) : BaseResponse()

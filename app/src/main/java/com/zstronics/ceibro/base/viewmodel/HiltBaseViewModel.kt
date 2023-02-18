@@ -11,10 +11,15 @@ import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.state.UIState
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
+import com.zstronics.ceibro.utils.FileUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 
 abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     IBase.ViewModel<VS>, OnClickHandler {
@@ -116,6 +121,55 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         val files = fileUriList.value
         files?.removeAt(position)
         _fileUriList.postValue(files)
+    }
+
+    fun uploadFiles(module: String, id: String, context: Context) {
+        val fileUriList = fileUriList.value
+//        val fileUris = fileUriList?.map { it?.attachmentUri.toString() }?.toTypedArray()
+//
+//        val inputData = fileUris?.let {
+//
+//            Data.Builder()
+//                .putString("module", module)
+//                .putString("id", id)
+//                .putStringArray("fileUris", it)
+//                .build()
+//        }
+//
+//        val uploadWorkRequest = inputData?.let {
+//            OneTimeWorkRequestBuilder<FileUploadWorker>()
+//                .setInputData(it)
+//                .build()
+//        }
+//
+//        if (uploadWorkRequest != null) {
+//            val workManager = WorkManager.getInstance(context)
+//            workManager.enqueue(uploadWorkRequest)
+//        }
+//
+//        handlePressOnView(1)
+
+        val moduleName = when (module) {
+            "Task" -> AttachmentModules.Task
+            "SubTask" -> AttachmentModules.SubTask
+            "SubTaskComments" -> AttachmentModules.SubTaskComments
+            "Project" -> AttachmentModules.Project
+            else -> AttachmentModules.Task
+        }
+
+        val attachmentUriList = fileUriList?.map {
+            FileUtils.getFile(
+                context,
+                it?.attachmentUri
+            )
+        }
+        val request = AttachmentUploadRequest(
+            _id = id,
+            moduleName = moduleName,
+            files = attachmentUriList
+        )
+        EventBus.getDefault()
+            .post(fileUriList?.let { LocalEvents.UploadFilesToServer(request, it) })
     }
 }
 

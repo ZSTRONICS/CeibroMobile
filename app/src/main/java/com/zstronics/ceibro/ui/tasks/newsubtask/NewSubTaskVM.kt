@@ -1,10 +1,8 @@
 package com.zstronics.ceibro.ui.tasks.newsubtask
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -16,18 +14,16 @@ import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
-import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.attachment.AttachmentTypes
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -202,7 +198,7 @@ class NewSubTaskVM @Inject constructor(
 //        _viewers.value = viewers
 //    }
 
-    fun createNewSubTask(state: String, context: Context) {
+    fun createNewSubTask(state: String, context: Context, success: (subtaskId: String) -> Unit) {
         val assigneeMembersId = taskAssignee.value?.map { it.id }
         val assignedTo: List<NewSubtaskRequest.AssignedTo> = listOf(
             NewSubtaskRequest.AssignedTo(
@@ -277,12 +273,18 @@ class NewSubTaskVM @Inject constructor(
             loading(true)
             taskRepository.newSubTask(newTaskRequest) { isSuccess, error, subtaskData ->
                 if (isSuccess) {
-                    if (fileUriList.value?.isEmpty() == true) {
-                        handlePressOnView(1)
-                        loading(false, error)
-                    } else {
-                        subtaskData?.id?.let { uploadFiles(it, context) }
+                    if (fileUriList.value?.isNotEmpty() == true) {
+                        subtaskData?.id?.let {
+                            success(it)
+                            uploadFiles(
+                                AttachmentModules.SubTask.name,
+                                it,
+                                context
+                            )
+                        }
                     }
+                    handlePressOnView(1)
+                    loading(false)
                 }
             }
         }
@@ -385,33 +387,5 @@ class NewSubTaskVM @Inject constructor(
 
     private fun isAdmin(id: String): Boolean {
         return id == user?.id
-    }
-
-    private fun uploadFiles(id: String, context: Context) {
-        val fileUriList = fileUriList.value
-        val attachmentUriList = fileUriList?.map {
-            FileUtils.getFile(
-                context,
-                it?.attachmentUri
-            )
-        }
-        val request = AttachmentUploadRequest(
-            _id = id,
-            moduleName = AttachmentModules.SubTask,
-            files = attachmentUriList
-        )
-        launch {
-            when (val response = dashboardRepository.uploadFiles(request)) {
-                is ApiResponse.Success -> {
-                    fileAttachmentsDataSource.insertAll(response.data.results.files)
-                    handlePressOnView(1)
-                    loading(false)
-                }
-                is ApiResponse.Error -> {
-                    loading(false, response.error.message)
-                    handlePressOnView(1)
-                }
-            }
-        }
     }
 }

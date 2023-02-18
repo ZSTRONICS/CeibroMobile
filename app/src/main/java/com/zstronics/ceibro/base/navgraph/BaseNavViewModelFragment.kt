@@ -2,12 +2,16 @@ package com.zstronics.ceibro.base.navgraph
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.Fade
 import android.transition.Slide
 import androidx.annotation.IdRes
+import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -375,5 +379,39 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 fileName
             )
         )
+    }
+
+    fun createNotification(
+        channelId: String?,
+        chanelName: String,
+        notificationTitle: String = "Uploading file",
+        isOngoing: Boolean = true,
+        indeterminate: Boolean = false,
+    ): Pair<NotificationManager, NotificationCompat.Builder> {
+        // Create a notification channel (for Android O and above)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                requireActivity().getSystemService(NotificationManager::class.java)
+            val channel = NotificationChannel(
+                channelId,
+                chanelName,
+                NotificationManager.IMPORTANCE_LOW
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+        // Create a notification builder
+        val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
+            .setSmallIcon(R.drawable.ic_upload)
+            .setContentTitle(notificationTitle)
+            .setOngoing(isOngoing)
+            .setOnlyAlertOnce(true)
+        if (isOngoing) {
+            builder.setProgress(100, 1, indeterminate)
+        }
+        // Show the notification
+        val notificationManager =
+            requireActivity().getSystemService(NotificationManager::class.java)
+        notificationManager.notify(channelId.hashCode(), builder.build())
+        return Pair(notificationManager, builder)
     }
 }

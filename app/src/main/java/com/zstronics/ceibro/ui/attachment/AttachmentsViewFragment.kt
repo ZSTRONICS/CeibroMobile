@@ -8,7 +8,11 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.databinding.FragmentAttachmentBinding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -58,5 +62,20 @@ class AttachmentsViewFragment :
     override fun onResume() {
         super.onResume()
         viewModel.onFirsTimeUiCreate(arguments)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onAllFilesUploaded(event: LocalEvents.AllFilesUploaded?) {
+        viewModel.onFirsTimeUiCreate(arguments)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
     }
 }

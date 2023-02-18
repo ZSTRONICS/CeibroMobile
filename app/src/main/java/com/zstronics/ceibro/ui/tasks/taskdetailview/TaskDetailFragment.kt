@@ -368,6 +368,11 @@ class TaskDetailFragment :
         navigate(R.id.subTaskDetailFragment, bundle)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onFirsTimeUiCreate(arguments)
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSubTaskCreatedEvent(event: LocalEvents.SubTaskCreatedEvent?) {
         if (viewModel.isCurrentTaskId(event?.taskId))
