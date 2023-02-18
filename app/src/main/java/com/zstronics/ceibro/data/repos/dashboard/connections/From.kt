@@ -44,7 +44,7 @@ data class From(
     @SerializedName("surName")
     val surName: String,
     @SerializedName("profilePic")
-    var profilePic: String,
+    var profilePic: String? = "",
     @SerializedName("workEmail")
     val workEmail: String
 ) : BaseResponse()

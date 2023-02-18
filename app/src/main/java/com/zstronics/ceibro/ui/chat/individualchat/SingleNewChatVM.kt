@@ -49,7 +49,7 @@ class SingleNewChatVM @Inject constructor(
         val id = if (connection.sentByMe)
             connection.to.id
         else
-            connection.from.id
+            connection.from?.id
         _selectedMember.value = id
     }
 
