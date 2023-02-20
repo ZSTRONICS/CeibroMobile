@@ -25,7 +25,7 @@ class AddAttachmentFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn, R.id.addAttachmentCancelBtn, 1 -> navigateBack()
-            R.id.uploadImg, R.id.uploadText -> pickAttachment(true)
+            R.id.addMoreFilesBtn -> pickAttachment(true)
             R.id.addAttachmentUploadBtn -> {
                 val moduleName = arguments?.getString("moduleType")
                 val moduleId = arguments?.getString("moduleId")

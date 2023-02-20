@@ -21,8 +21,8 @@
                 android:id="@+id/attachmentImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_doc" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_doc" />
         </androidx.cardview.widget.CardView>
 
         <androidx.appcompat.widget.AppCompatImageView

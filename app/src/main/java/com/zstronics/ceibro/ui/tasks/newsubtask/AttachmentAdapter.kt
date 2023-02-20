@@ -84,7 +84,7 @@ class AttachmentAdapter @Inject constructor() :
                 AttachmentTypes.Doc -> {
                     binding.playButton.visibility = View.GONE
                     Glide.with(binding.attachmentImageView.context)
-                        .load(R.drawable.ic_doc)
+                        .load(R.drawable.icon_doc)
                         .thumbnail(0.1f)
                         .centerCrop()
                         .into(binding.attachmentImageView)
@@ -92,7 +92,7 @@ class AttachmentAdapter @Inject constructor() :
                 AttachmentTypes.Pdf -> {
                     binding.playButton.visibility = View.GONE
                     Glide.with(binding.attachmentImageView.context)
-                        .load(R.drawable.ic_pdf)
+                        .load(R.drawable.icon_pdf)
                         .thumbnail(0.1f)
                         .centerCrop()
                         .into(binding.attachmentImageView)
