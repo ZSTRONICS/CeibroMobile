@@ -64,7 +64,9 @@ class ChatFragment :
         initRecyclerView(adapter)
 
         viewModel.chatRooms.observe(viewLifecycleOwner) {
-            adapter.setList(it)
+            if (it != null) {
+                adapter.setList(it)
+            }
         }
         adapter.itemClickListener = { _: View, position: Int, data: ChatRoom ->
             navigateToMsgView(data)

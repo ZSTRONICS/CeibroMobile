@@ -47,7 +47,9 @@ class MessageInfoFragment :
         }
 
         viewModel.readBy.observe(viewLifecycleOwner) {
-            adapter.setList(it)
+            if (it != null) {
+                adapter.setList(it)
+            }
         }
     }
 }

@@ -14,6 +14,6 @@ interface ICreateQuestion {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        val questions: MutableLiveData<ArrayList<Question>>
+        val questions: MutableLiveData<ArrayList<Question>?>
     }
 }

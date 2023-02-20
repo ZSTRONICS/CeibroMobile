@@ -136,7 +136,9 @@ class NewTaskFragment :
         mViewDataBinding.attachmentRecyclerView.adapter = attachmentAdapter
 
         viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
-            attachmentAdapter.setList(list)
+            if (list != null) {
+                attachmentAdapter.setList(list)
+            }
         }
         attachmentAdapter.itemClickListener =
             { _: View, position: Int, data: SubtaskAttachment? ->
@@ -235,11 +237,15 @@ class NewTaskFragment :
             }
 
         viewModel.taskAdmins.observe(viewLifecycleOwner) {
-            adminsChipsAdapter.setList(it)
+            if (it != null) {
+                adminsChipsAdapter.setList(it)
+            }
         }
 
         viewModel.taskAssignee.observe(viewLifecycleOwner) {
-            assigneeChipsAdapter.setList(it)
+            if (it != null) {
+                assigneeChipsAdapter.setList(it)
+            }
         }
 
         mViewDataBinding.newTaskAdminsChipsRV.adapter = adminsChipsAdapter

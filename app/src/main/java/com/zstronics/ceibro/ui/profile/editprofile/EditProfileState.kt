@@ -11,7 +11,7 @@ class EditProfileState @Inject constructor() : BaseState(), IEditProfile.State {
     override var userContactNumber: MutableLiveData<String> = MutableLiveData("")
     override var userPassword: MutableLiveData<String> = MutableLiveData("")
     override var userConfirmPassword: MutableLiveData<String> = MutableLiveData("")
-    override var userCompanyName: MutableLiveData<String> = MutableLiveData("")
+    override var userCompanyName: MutableLiveData<String?> = MutableLiveData("")
     override var userCompanyVAT: MutableLiveData<String> = MutableLiveData("")
     override var userCompanyLocation: MutableLiveData<String> = MutableLiveData("")
     override var userCompanyContactNo: MutableLiveData<String> = MutableLiveData("")

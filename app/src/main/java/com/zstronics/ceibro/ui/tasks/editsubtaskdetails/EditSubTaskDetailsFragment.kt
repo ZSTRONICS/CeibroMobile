@@ -61,7 +61,9 @@ class EditSubTaskDetailsFragment :
         }
 
         viewModel.assignToMembers.observe(viewLifecycleOwner) {
-            addedByAdapter.setList(it, viewModel.subtask.value)
+            if (it != null) {
+                addedByAdapter.setList(it, viewModel.subtask.value)
+            }
         }
         mViewDataBinding.allMembersRV.adapter = addedByAdapter
 
@@ -78,7 +80,9 @@ class EditSubTaskDetailsFragment :
 
 
         viewModel.subtaskAssignee.observe(viewLifecycleOwner) {
-            addMembersChipsAdapter.setList(it)
+            if (it != null) {
+                addMembersChipsAdapter.setList(it)
+            }
         }
         mViewDataBinding.addMembersChipsRV.adapter = addMembersChipsAdapter
 

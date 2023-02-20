@@ -41,9 +41,9 @@ class MsgViewVM @Inject constructor(
             profilePic = user?.profilePic ?: "",
             companyName = user?.companyName ?: ""
         )
-    private val _chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> =
+    private val _chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>?> =
         MutableLiveData(arrayListOf())
-    val chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>> = _chatMessages
+    val chatMessages: MutableLiveData<MutableList<MessagesResponse.ChatMessage>?> = _chatMessages
     var chatRoom: ChatRoom? = null
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {

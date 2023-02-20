@@ -12,9 +12,9 @@ import javax.inject.Inject
 class MessageInfoVM @Inject constructor(
     override val viewState: MessageInfoState,
 ) : HiltBaseViewModel<IMessageInfo.State>(), IMessageInfo.ViewModel {
-    private val _readBy: MutableLiveData<List<MessagesResponse.ChatMessage.ReadBy>> =
+    private val _readBy: MutableLiveData<List<MessagesResponse.ChatMessage.ReadBy>?> =
         MutableLiveData()
-    val readBy: LiveData<List<MessagesResponse.ChatMessage.ReadBy>> = _readBy
+    val readBy: LiveData<List<MessagesResponse.ChatMessage.ReadBy>?> = _readBy
     override fun fetchExtras(extras: Bundle?) {
         super.fetchExtras(extras)
         extras?.let {

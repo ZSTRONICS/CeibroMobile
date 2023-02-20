@@ -20,8 +20,8 @@ class CreateQuestionVM @Inject constructor(
     private val chatRepository: IChatRepository
 ) : HiltBaseViewModel<ICreateQuestion.State>(), ICreateQuestion.ViewModel, QuestionCreateListener {
 
-    private val _questions: MutableLiveData<ArrayList<Question>> = MutableLiveData(arrayListOf())
-    override val questions: MutableLiveData<ArrayList<Question>> = _questions
+    private val _questions: MutableLiveData<ArrayList<Question>?> = MutableLiveData(arrayListOf())
+    override val questions: MutableLiveData<ArrayList<Question>?> = _questions
 
     @Inject
     lateinit var adapter: QuestionsAdapter

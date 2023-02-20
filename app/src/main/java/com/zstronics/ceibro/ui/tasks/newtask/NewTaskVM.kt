@@ -44,14 +44,14 @@ class NewTaskVM @Inject constructor(
     private val _projectMembers: MutableLiveData<List<Member>> = MutableLiveData(arrayListOf())
     private val _projectNames: MutableLiveData<List<String>> = MutableLiveData(arrayListOf())
     private val _projectMemberNames: MutableLiveData<List<String>> = MutableLiveData(arrayListOf())
-    private val _taskAdmins: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
-    private val _taskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
+    private val _taskAdmins: MutableLiveData<ArrayList<Member>?> = MutableLiveData(arrayListOf())
+    private val _taskAssignee: MutableLiveData<ArrayList<Member>?> = MutableLiveData(arrayListOf())
 
     val projectMembers: LiveData<List<Member>> = _projectMembers
     val projectNames: LiveData<List<String>> = _projectNames
     val projectMemberNames: LiveData<List<String>> = _projectMemberNames
-    val taskAdmins: MutableLiveData<ArrayList<Member>> = _taskAdmins
-    val taskAssignee: MutableLiveData<ArrayList<Member>> = _taskAssignee
+    val taskAdmins: MutableLiveData<ArrayList<Member>?> = _taskAdmins
+    val taskAssignee: MutableLiveData<ArrayList<Member>?> = _taskAssignee
 
     var projectId = ""
     var taskId = ""

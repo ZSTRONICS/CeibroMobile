@@ -113,7 +113,7 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
                 memberImgText.text = ""
                 if (item.profilePic == "" || item.profilePic.isNullOrEmpty()) {
                     memberImgText.text =
-                        "${item.firstName.get(0)?.uppercaseChar()}${item.surName.get(0)?.uppercaseChar()}"
+                        "${item.firstName.get(0).uppercaseChar()}${item.surName.get(0).uppercaseChar()}"
                     memberImgText.visibility = View.VISIBLE
                     memberImg.visibility = View.GONE
                 } else {

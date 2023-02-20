@@ -56,13 +56,15 @@ class InvitationsFragment :
         initRecyclerView(adapter)
 
         viewModel.allInvites.observe(viewLifecycleOwner) {
-            adapter.setList(it)
+            if (it != null) {
+                adapter.setList(it)
+            }
 
             if (viewModel.allInvites.value?.size == 0){
                 mViewDataBinding.acceptAllBtn.isEnabled = false
-                mViewDataBinding.acceptAllBtn.setTextColor(R.color.appTextGrey)
+                mViewDataBinding.acceptAllBtn.setTextColor(resources.getColor(R.color.appTextGrey))
                 mViewDataBinding.declineAllBtn.isEnabled = false
-                mViewDataBinding.declineAllBtn.setTextColor(R.color.appTextGrey)
+                mViewDataBinding.declineAllBtn.setTextColor(resources.getColor(R.color.appTextGrey))
             }
         }
 

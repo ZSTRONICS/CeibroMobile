@@ -107,9 +107,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         viewState.uiState.postValue(UIState.Alert(message))
     }
 
-    private val _fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>> =
+    private val _fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>?> =
         MutableLiveData(arrayListOf())
-    val fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>> = _fileUriList
+    val fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>?> = _fileUriList
 
     fun addUriToList(data: SubtaskAttachment) {
         val files = fileUriList.value

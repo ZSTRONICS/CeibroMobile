@@ -55,113 +55,118 @@ class SubTaskDetailFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.user.observe(viewLifecycleOwner) {
-            userData = it
+            if (it != null) {
+                userData = it
+            }
         }
 
         viewModel.subtask.observe(viewLifecycleOwner) { item ->
             with(mViewDataBinding) {
-                taskTitle.text = item.taskData?.title
-
-                val state = item.state?.find { it.userId == userData.id }?.userState?.uppercase()
-
-                val subTaskStatusNameBg: Pair<Int, String?> = when (state) {
-                    SubTaskStatus.ONGOING.name -> Pair(
-                        R.drawable.status_ongoing_filled,
-                        requireContext().getString(R.string.ongoing_heading)
-                    )
-                    SubTaskStatus.ASSIGNED.name -> Pair(
-                        R.drawable.status_assigned_filled,
-                        requireContext().getString(R.string.assigned_heading)
-                    )
-                    SubTaskStatus.ACCEPTED.name -> Pair(
-                        R.drawable.status_accepted_filled,
-                        requireContext().getString(R.string.accepted_heading)
-                    )
-                    SubTaskStatus.REJECTED.name -> Pair(
-                        R.drawable.status_reject_filled,
-                        requireContext().getString(R.string.rejected_heading)
-                    )
-                    SubTaskStatus.DONE.name -> Pair(
-                        R.drawable.status_done_filled,
-                        requireContext().getString(R.string.done_heading)
-                    )
-                    SubTaskStatus.DRAFT.name -> Pair(
-                        R.drawable.status_draft_filled,
-                        requireContext().getString(R.string.draft_heading)
-                    )
-                    else -> Pair(
-                        R.drawable.status_draft_filled,
-                        state
-                    )
-                }
-                val (background, stringRes) = subTaskStatusNameBg
-                subTaskStatusName.setBackgroundResource(background)
-                subTaskStatusName.text = stringRes
+                if (item != null) {
+                    taskTitle.text = item.taskData?.title
 
 
-                subTaskDueDate.text = DateUtils.reformatStringDate(
-                    date = item.dueDate,
-                    DateUtils.FORMAT_YEAR_MON_DATE,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR
-                )
-                if (subTaskDueDate.text == "") {                              // Checking if date format was not yyyy-MM-dd then it will be empty
+                    val state =
+                        item.state?.find { it.userId == userData.id }?.userState?.uppercase()
+
+                    val subTaskStatusNameBg: Pair<Int, String?> = when (state) {
+                        SubTaskStatus.ONGOING.name -> Pair(
+                            R.drawable.status_ongoing_filled,
+                            requireContext().getString(R.string.ongoing_heading)
+                        )
+                        SubTaskStatus.ASSIGNED.name -> Pair(
+                            R.drawable.status_assigned_filled,
+                            requireContext().getString(R.string.assigned_heading)
+                        )
+                        SubTaskStatus.ACCEPTED.name -> Pair(
+                            R.drawable.status_accepted_filled,
+                            requireContext().getString(R.string.accepted_heading)
+                        )
+                        SubTaskStatus.REJECTED.name -> Pair(
+                            R.drawable.status_reject_filled,
+                            requireContext().getString(R.string.rejected_heading)
+                        )
+                        SubTaskStatus.DONE.name -> Pair(
+                            R.drawable.status_done_filled,
+                            requireContext().getString(R.string.done_heading)
+                        )
+                        SubTaskStatus.DRAFT.name -> Pair(
+                            R.drawable.status_draft_filled,
+                            requireContext().getString(R.string.draft_heading)
+                        )
+                        else -> Pair(
+                            R.drawable.status_draft_filled,
+                            state
+                        )
+                    }
+                    val (background, stringRes) = subTaskStatusNameBg
+                    subTaskStatusName.setBackgroundResource(background)
+                    subTaskStatusName.text = stringRes
+
+
                     subTaskDueDate.text = DateUtils.reformatStringDate(
                         date = item.dueDate,
-                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                        DateUtils.FORMAT_YEAR_MON_DATE,
                         DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                     )
-                    if (subTaskDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
-                        subTaskDueDate.text =
-                            requireContext().getString(R.string.invalid_due_date_text)
-                    }
-                }
-                subTaskCreationDate.text = DateUtils.reformatStringDate(
-                    date = item.createdAt,
-                    DateUtils.SERVER_DATE_FULL_FORMAT,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR
-                )
-
-                subTaskTitleName.text = item.title
-                subTaskProjectName.text = item.taskData?.project?.title
-                subTaskCreatorName.text = item.creator.firstName + " " + item.creator.surName
-
-
-                val assignMembers: ArrayList<TaskMember> = ArrayList()
-                for (assign in item.assignedTo) {
-                    for (member in assign.members) {
-                        assignMembers.add(member)
-                    }
-                }
-                if (assignMembers.isNotEmpty()) {
-                    subTaskAssignToName.text = ""
-                    var count = 0
-                    for (member in assignMembers) {
-                        count++
-                        if (count == assignMembers.size) {
-                            subTaskAssignToName.append("${member.firstName} ${member.surName}")
-                        } else {
-                            subTaskAssignToName.append("${member.firstName} ${member.surName}, ")
+                    if (subTaskDueDate.text == "") {                              // Checking if date format was not yyyy-MM-dd then it will be empty
+                        subTaskDueDate.text = DateUtils.reformatStringDate(
+                            date = item.dueDate,
+                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                        )
+                        if (subTaskDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
+                            subTaskDueDate.text =
+                                requireContext().getString(R.string.invalid_due_date_text)
                         }
                     }
-                } else {
-                    subTaskAssignToName.text =
-                        requireContext().getString(R.string.no_user_assigned_text)
-                }
+                    subTaskCreationDate.text = DateUtils.reformatStringDate(
+                        date = item.createdAt,
+                        DateUtils.SERVER_DATE_FULL_FORMAT,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                    )
 
-                if (item.description?.isNotEmpty() == true) {
-                    subTaskDescriptionText.text = item.description
-                } else {
-                    subTaskDescriptionText.text =
-                        requireContext().getString(R.string.no_description_added_by_creator_text)
-                }
-                subTaskDescriptionText.post(Runnable {
-                    if (subTaskDescriptionText.lineCount <= 4) {
-                        subTaskDescriptionShowMoreBtn.visibility = View.GONE
-                    } else {
-                        subTaskDescriptionShowMoreBtn.visibility = View.VISIBLE
+                    subTaskTitleName.text = item.title
+                    subTaskProjectName.text = item.taskData?.project?.title
+                    subTaskCreatorName.text = item.creator.firstName + " " + item.creator.surName
+
+
+                    val assignMembers: ArrayList<TaskMember> = ArrayList()
+                    for (assign in item.assignedTo) {
+                        for (member in assign.members) {
+                            assignMembers.add(member)
+                        }
                     }
-                })
+                    if (assignMembers.isNotEmpty()) {
+                        subTaskAssignToName.text = ""
+                        var count = 0
+                        for (member in assignMembers) {
+                            count++
+                            if (count == assignMembers.size) {
+                                subTaskAssignToName.append("${member.firstName} ${member.surName}")
+                            } else {
+                                subTaskAssignToName.append("${member.firstName} ${member.surName}, ")
+                            }
+                        }
+                    } else {
+                        subTaskAssignToName.text =
+                            requireContext().getString(R.string.no_user_assigned_text)
+                    }
 
+                    if (item.description?.isNotEmpty() == true) {
+                        subTaskDescriptionText.text = item.description
+                    } else {
+                        subTaskDescriptionText.text =
+                            requireContext().getString(R.string.no_description_added_by_creator_text)
+                    }
+                    subTaskDescriptionText.post(Runnable {
+                        if (subTaskDescriptionText.lineCount <= 4) {
+                            subTaskDescriptionShowMoreBtn.visibility = View.GONE
+                        } else {
+                            subTaskDescriptionShowMoreBtn.visibility = View.VISIBLE
+                        }
+                    })
+                }
             }
         }
 

@@ -97,6 +97,7 @@ class AttachmentAdapter @Inject constructor() :
                         .centerCrop()
                         .into(binding.attachmentImageView)
                 }
+                else -> {}
             }
         }
     }

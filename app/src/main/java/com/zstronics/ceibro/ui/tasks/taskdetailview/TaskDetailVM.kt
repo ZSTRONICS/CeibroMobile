@@ -27,8 +27,8 @@ class TaskDetailVM @Inject constructor(
 ) : HiltBaseViewModel<ITaskDetail.State>(), ITaskDetail.ViewModel {
     val user = sessionManager.getUser().value
 
-    private val _task: MutableLiveData<CeibroTask> = MutableLiveData()
-    val task: LiveData<CeibroTask> = _task
+    private val _task: MutableLiveData<CeibroTask?> = MutableLiveData()
+    val task: LiveData<CeibroTask?> = _task
 
     private val _subTasks: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasks: LiveData<List<AllSubtask>> = _subTasks
@@ -46,6 +46,7 @@ class TaskDetailVM @Inject constructor(
                     is ApiResponse.Success -> {
                         response.data.results?.let { it1 -> fileAttachmentsDataSource.insertAll(it1) }
                     }
+                    else -> {}
                 }
             }
         }

@@ -23,8 +23,8 @@ class InvitationsVM @Inject constructor(
     private val dashboardRepository: DashboardRepository
 ) : HiltBaseViewModel<IInvitations.State>(), IInvitations.ViewModel, IValidator {
 
-    private val _allInvites: MutableLiveData<MutableList<MyInvitationsItem>> = MutableLiveData()
-    val allInvites: LiveData<MutableList<MyInvitationsItem>> = _allInvites
+    private val _allInvites: MutableLiveData<MutableList<MyInvitationsItem>?> = MutableLiveData()
+    val allInvites: LiveData<MutableList<MyInvitationsItem>?> = _allInvites
 
     override fun onResume() {
         super.onResume()

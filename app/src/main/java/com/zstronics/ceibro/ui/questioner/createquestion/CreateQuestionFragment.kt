@@ -49,7 +49,9 @@ class CreateQuestionFragment :
 
         with(viewModel) {
             questions.observe(viewLifecycleOwner) { list ->
-                adapter.setList(list)
+                if (list != null) {
+                    adapter.setList(list)
+                }
             }
             adapter.questionCreateListener = this
             mViewDataBinding.questionsRV.adapter = adapter

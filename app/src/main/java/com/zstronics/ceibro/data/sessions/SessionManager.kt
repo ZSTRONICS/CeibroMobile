@@ -35,11 +35,11 @@ class SessionManager constructor(
     }
 
     companion object {
-        private var _user: MutableLiveData<User> = MutableLiveData()
-        var user: LiveData<User> = _user
+        private var _user: MutableLiveData<User?> = MutableLiveData()
+        var user: LiveData<User?> = _user
     }
 
-    fun getUser(): LiveData<User> {
+    fun getUser(): LiveData<User?> {
         return user
     }
 

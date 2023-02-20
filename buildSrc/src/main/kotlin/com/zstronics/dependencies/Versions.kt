@@ -1,6 +1,6 @@
 
     object AndroidXVersions {
-        const val APPCOMPAT = "1.3.0"
+        const val APPCOMPAT = "1.6.1"
         const val FRAGMENT_KTX = "1.3.4"
         const val ACTIVITY_KTX = "1.2.3"
         const val CONSTRAINT_LAYOUT = "2.0.4"
@@ -19,7 +19,7 @@
     object LifeCycle_KTX {
         const val CORE_KTX = "1.5.0"
         const val Collection_KTX = "1.1.0"
-        const val LIFECYCLE = "2.3.1"
+        const val LIFECYCLE = "2.5.1"
         const val LIFECYCL_EEXTENSIONS = "2.2.0"
     }
 
@@ -50,7 +50,7 @@
     }
 
     object KotlinVersions {
-        const val STANDARD_LIBRARY = "1.6.10"
+        const val STANDARD_LIBRARY = "1.8.10"
         const val COROUTINE_VERSION = "1.4.1"
     }
 
@@ -75,7 +75,7 @@
 
     object BuildPluginsVersions {
         const val KOTLIN = KotlinVersions.STANDARD_LIBRARY
-        const val BUILDGRADLE = "7.0.4"
+        const val BUILDGRADLE = "7.4.1"
         const val HILT = "2.38.1"
         const val NAVIGATION = "2.3.5"
     }

@@ -23,11 +23,11 @@ class SubTaskDetailVM @Inject constructor(
 ) : HiltBaseViewModel<ISubTaskDetail.State>(), ISubTaskDetail.ViewModel {
     private val userObj = sessionManager.getUser().value
 
-    private val _user: MutableLiveData<User> = MutableLiveData()
-    val user: LiveData<User> = _user
+    private val _user: MutableLiveData<User?> = MutableLiveData()
+    val user: LiveData<User?> = _user
 
-    private val _subtask: MutableLiveData<AllSubtask> = MutableLiveData()
-    val subtask: LiveData<AllSubtask> = _subtask
+    private val _subtask: MutableLiveData<AllSubtask?> = MutableLiveData()
+    val subtask: LiveData<AllSubtask?> = _subtask
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         _user.value = userObj
@@ -41,6 +41,7 @@ class SubTaskDetailVM @Inject constructor(
                     is ApiResponse.Success -> {
                         response.data.results?.let { it1 -> fileAttachmentsDataSource.insertAll(it1) }
                     }
+                    else -> {}
                 }
             }
         }

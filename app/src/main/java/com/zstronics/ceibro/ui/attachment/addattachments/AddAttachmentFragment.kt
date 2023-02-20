@@ -57,7 +57,9 @@ class AddAttachmentFragment :
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.addAttachmentRV.adapter = addAttachmentsAdapter
         viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
-            addAttachmentsAdapter.setList(list)
+            if (list != null) {
+                addAttachmentsAdapter.setList(list)
+            }
         }
         addAttachmentsAdapter.itemClickListener =
             { _: View, position: Int, data: SubtaskAttachment? ->

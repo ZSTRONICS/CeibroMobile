@@ -15,7 +15,7 @@ class PhotoEditorVM @Inject constructor(
     override val viewState: PhotoEditorState,
     val sessionManager: SessionManager
 ) : HiltBaseViewModel<IPhotoEditor.State>(), IPhotoEditor.ViewModel {
-    private val _photoUri: MutableLiveData<Uri> = MutableLiveData()
+    private val _photoUri: MutableLiveData<Uri?> = MutableLiveData()
     val photoUri = _photoUri
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)

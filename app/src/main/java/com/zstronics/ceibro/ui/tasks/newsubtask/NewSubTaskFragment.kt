@@ -179,7 +179,9 @@ class NewSubTaskFragment :
         }
 
         viewModel.taskAssignee.observe(viewLifecycleOwner) {
-            assigneeChipsAdapter.setList(it)
+            if (it != null) {
+                assigneeChipsAdapter.setList(it)
+            }
         }
 
 //        viewModel.viewers.observe(viewLifecycleOwner) {
@@ -228,7 +230,9 @@ class NewSubTaskFragment :
         mViewDataBinding.attachmentRecyclerView.adapter = attachmentAdapter
 
         viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
-            attachmentAdapter.setList(list)
+            if (list != null) {
+                attachmentAdapter.setList(list)
+            }
         }
         attachmentAdapter.itemClickListener =
             { _: View, position: Int, data: SubtaskAttachment? ->

@@ -11,7 +11,7 @@ interface IEditProfile {
         var userContactNumber: MutableLiveData<String>
         var userPassword: MutableLiveData<String>
         var userConfirmPassword: MutableLiveData<String>
-        var userCompanyName: MutableLiveData<String>
+        var userCompanyName: MutableLiveData<String?>
         var userCompanyVAT: MutableLiveData<String>
         var userCompanyLocation: MutableLiveData<String>
         var userCompanyContactNo: MutableLiveData<String>

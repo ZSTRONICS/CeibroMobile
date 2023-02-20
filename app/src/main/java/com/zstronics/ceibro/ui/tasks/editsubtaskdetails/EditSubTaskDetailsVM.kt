@@ -32,14 +32,14 @@ class EditSubTaskDetailsVM @Inject constructor(
 ) : HiltBaseViewModel<IEditSubTaskDetails.State>(), IEditSubTaskDetails.ViewModel {
     val user = sessionManager.getUser().value
 
-    private val _subtask: MutableLiveData<AllSubtask> = MutableLiveData()
-    val subtask: LiveData<AllSubtask> = _subtask
+    private val _subtask: MutableLiveData<AllSubtask?> = MutableLiveData()
+    val subtask: LiveData<AllSubtask?> = _subtask
 
     private val _subTaskStatus: MutableLiveData<List<SubtaskStatusData>> = MutableLiveData()
     val subTaskStatus: LiveData<List<SubtaskStatusData>> = _subTaskStatus
 
-    private val _assignToMembers: MutableLiveData<List<AssignedTo>> = MutableLiveData()
-    val assignToMembers: LiveData<List<AssignedTo>> = _assignToMembers
+    private val _assignToMembers: MutableLiveData<List<AssignedTo>?> = MutableLiveData()
+    val assignToMembers: LiveData<List<AssignedTo>?> = _assignToMembers
 
     private val _projectMembers: MutableLiveData<List<Member>> = MutableLiveData(arrayListOf())
     val projectMembers: LiveData<List<Member>> = _projectMembers
@@ -47,8 +47,8 @@ class EditSubTaskDetailsVM @Inject constructor(
     private val _projectMemberNames: MutableLiveData<List<String>> = MutableLiveData(arrayListOf())
     val projectMemberNames: LiveData<List<String>> = _projectMemberNames
 
-    private val _subtaskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
-    val subtaskAssignee: MutableLiveData<ArrayList<Member>> = _subtaskAssignee
+    private val _subtaskAssignee: MutableLiveData<ArrayList<Member>?> = MutableLiveData(arrayListOf())
+    val subtaskAssignee: MutableLiveData<ArrayList<Member>?> = _subtaskAssignee
 
     override fun getSubTaskStatuses(subTaskId: String) {
 //        launch {

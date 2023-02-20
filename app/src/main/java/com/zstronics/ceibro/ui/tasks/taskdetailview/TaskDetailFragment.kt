@@ -144,68 +144,72 @@ class TaskDetailFragment :
             }
 
         viewModel.task.observe(viewLifecycleOwner) { item ->
-            val isAdmin = isTaskAdmin(viewModel.user?.id, item.admins)
-            val isCreator = isTaskCreator(viewModel.user?.id, item.creator)
-            isTaskAdmin = isAdmin
+            val isAdmin = item?.let { isTaskAdmin(viewModel.user?.id, it.admins) }
+            val isCreator = isTaskCreator(viewModel.user?.id, item?.creator)
+            if (isAdmin != null) {
+                isTaskAdmin = isAdmin
+            }
             isTaskCreator = isCreator
 
             with(mViewDataBinding) {
-                val taskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
-                    TaskStatus.NEW.name -> Pair(
-                        R.drawable.status_assigned_outline,
-                        requireContext().getString(R.string.new_heading)
-                    )
-                    TaskStatus.ACTIVE.name -> Pair(
-                        R.drawable.status_ongoing_outline,
-                        requireContext().getString(R.string.active_heading)
-                    )
-                    TaskStatus.DRAFT.name -> Pair(
-                        R.drawable.status_draft_outline,
-                        requireContext().getString(R.string.draft_heading)
-                    )
-                    TaskStatus.DONE.name -> Pair(
-                        R.drawable.status_done_outline,
-                        requireContext().getString(R.string.done_heading)
-                    )
-                    else -> Pair(
-                        R.drawable.status_draft_outline,
-                        item.state
-                    )
-                }
+                if (item != null) {
+                    val taskStatusNameBg: Pair<Int, String> = when (item.state.uppercase()) {
+                        TaskStatus.NEW.name -> Pair(
+                            R.drawable.status_assigned_outline,
+                            requireContext().getString(R.string.new_heading)
+                        )
+                        TaskStatus.ACTIVE.name -> Pair(
+                            R.drawable.status_ongoing_outline,
+                            requireContext().getString(R.string.active_heading)
+                        )
+                        TaskStatus.DRAFT.name -> Pair(
+                            R.drawable.status_draft_outline,
+                            requireContext().getString(R.string.draft_heading)
+                        )
+                        TaskStatus.DONE.name -> Pair(
+                            R.drawable.status_done_outline,
+                            requireContext().getString(R.string.done_heading)
+                        )
+                        else -> Pair(
+                            R.drawable.status_draft_outline,
+                            item.state
+                        )
+                    }
 
-                val (background, stringRes) = taskStatusNameBg
-                taskDetailStatusName.setBackgroundResource(background)
-                taskDetailStatusName.text = stringRes
+                    val (background, stringRes) = taskStatusNameBg
+                    taskDetailStatusName.setBackgroundResource(background)
+                    taskDetailStatusName.text = stringRes
 
-                if (isAdmin || isCreator) {
-                    createSubTaskBtn.visibility = View.VISIBLE
-                } else {
-                    createSubTaskBtn.visibility = View.GONE
-                }
+                    if (isAdmin == true || isCreator) {
+                        createSubTaskBtn.visibility = View.VISIBLE
+                    } else {
+                        createSubTaskBtn.visibility = View.GONE
+                    }
 
 
-                taskDetailDueDate.text = DateUtils.reformatStringDate(
-                    date = item.dueDate,
-                    DateUtils.FORMAT_YEAR_MON_DATE,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR
-                )
-                if (taskDetailDueDate.text == "") {                              // Checking if date format was not yyyy-MM-dd then it will be empty
                     taskDetailDueDate.text = DateUtils.reformatStringDate(
                         date = item.dueDate,
-                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                        DateUtils.FORMAT_YEAR_MON_DATE,
                         DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                     )
-                    if (taskDetailDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
-                        taskDetailDueDate.text =
-                            requireContext().getString(R.string.invalid_due_date_text)
+                    if (taskDetailDueDate.text == "") {                              // Checking if date format was not yyyy-MM-dd then it will be empty
+                        taskDetailDueDate.text = DateUtils.reformatStringDate(
+                            date = item.dueDate,
+                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                        )
+                        if (taskDetailDueDate.text == "") {                          // Checking if date format was not dd-MM-yyyy then still it is empty
+                            taskDetailDueDate.text =
+                                requireContext().getString(R.string.invalid_due_date_text)
+                        }
                     }
+
+                    taskTitle.text = item.title
+
+                    taskDetailProjectName.text = item.project.title
+                    taskDetailSubTaskCount.text =
+                        "${item.totalSubTaskCount}/${item.totalSubTaskCount}"
                 }
-
-                taskTitle.text = item.title
-
-                taskDetailProjectName.text = item.project.title
-                taskDetailSubTaskCount.text = "${item.totalSubTaskCount}/${item.totalSubTaskCount}"
-
             }
         }
     }

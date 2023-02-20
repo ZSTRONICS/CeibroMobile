@@ -39,7 +39,7 @@ class ProgressDialogueFragment : DialogFragment() {
         binding.layer.alpha = 0f
         binding.layer.animate().alpha(0.6f).setDuration(300)
             .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     binding.circularProgressBar.indeterminateMode = true
                     binding.layer.visibility = View.VISIBLE

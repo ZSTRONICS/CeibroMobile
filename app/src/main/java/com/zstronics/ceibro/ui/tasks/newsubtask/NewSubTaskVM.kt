@@ -39,14 +39,14 @@ class NewSubTaskVM @Inject constructor(
     var isNewSubTask = true
     var subtaskId = ""
 
-    private val _task: MutableLiveData<CeibroTask> = MutableLiveData()
-    val task: LiveData<CeibroTask> = _task
+    private val _task: MutableLiveData<CeibroTask?> = MutableLiveData()
+    val task: LiveData<CeibroTask?> = _task
 
     private val _subtask: MutableLiveData<AllSubtask> = MutableLiveData()
     val subtask: LiveData<AllSubtask> = _subtask
 
-    private val _taskAssignee: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
-    val taskAssignee: MutableLiveData<ArrayList<Member>> = _taskAssignee
+    private val _taskAssignee: MutableLiveData<ArrayList<Member>?> = MutableLiveData(arrayListOf())
+    val taskAssignee: MutableLiveData<ArrayList<Member>?> = _taskAssignee
 
 //    private val _viewers: MutableLiveData<ArrayList<Member>> = MutableLiveData(arrayListOf())
 //    val viewers: MutableLiveData<ArrayList<Member>> = _viewers

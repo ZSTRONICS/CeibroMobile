@@ -22,8 +22,8 @@ class ChatVM @Inject constructor(
     val user = sessionManager.getUser().value
     val userId = user?.id
 
-    private val _chatRooms: MutableLiveData<MutableList<ChatRoom>> = MutableLiveData()
-    val chatRooms: LiveData<MutableList<ChatRoom>> = _chatRooms
+    private val _chatRooms: MutableLiveData<MutableList<ChatRoom>?> = MutableLiveData()
+    val chatRooms: LiveData<MutableList<ChatRoom>?> = _chatRooms
 
     override fun onResume() {
         super.onResume()

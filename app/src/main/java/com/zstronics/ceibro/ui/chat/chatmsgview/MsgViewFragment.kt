@@ -107,7 +107,9 @@ class MsgViewFragment :
             initRecyclerView(adapter)
 
             viewModel.chatMessages.observe(viewLifecycleOwner) {
-                adapter.setList(it)
+                if (it != null) {
+                    adapter.setList(it)
+                }
 
                 /*
                     Saving the position of from which position new messages started loading.
@@ -115,10 +117,13 @@ class MsgViewFragment :
                     the top because the list is not reverted so we need to maintain the position by this way.
                     3 is the number of messages to scroll down till.
                  */
-                val position =
-                    if (currentPositionWhenLoadingMore >= 0) currentPositionWhenLoadingMore + 2 else it.size - 1
-                if (position < it.size)
-                    scrollToPosition(position, true)
+
+                if (it != null) {
+                    val position =
+                        if (currentPositionWhenLoadingMore >= 0) currentPositionWhenLoadingMore + 2 else it.size - 1
+                    if (position < it.size)
+                        scrollToPosition(position, true)
+                }
             }
             adapter.itemClickListener =
                 { _: View, position: Int, data: MessagesResponse.ChatMessage ->
