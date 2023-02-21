@@ -1,11 +1,9 @@
 package com.zstronics.ceibro.data.sessions
 
-import android.accounts.AccountManager.KEY_PASSWORD
 import android.content.Context
 import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import androidx.room.util.StringUtil
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
