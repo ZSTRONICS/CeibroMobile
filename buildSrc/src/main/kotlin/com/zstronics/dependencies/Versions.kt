@@ -90,8 +90,8 @@
         const val MOCKK = "1.12.1"
         const val ROBOLECTRIC = "4.4"
         const val TESTRUNNER = "1.1.0"
-        const val ESPRESSOCORE = "3.2.0"
-        const val ESPRESSOINTENTS = "3.1.0"
+        const val ESPRESSOCORE = "3.5.1"
+        const val ESPRESSOINTENTS = "3.5.1"
         const val TESTEXTENSIONS = "1.1.1"
         const val TESTRULES = "1.1.0"
         const val HILTTESTING = BuildPluginsVersions.HILT
