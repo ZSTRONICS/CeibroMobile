@@ -8,6 +8,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentMainTasksBinding
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment
+import com.zstronics.ceibro.ui.tasks.task.FragmentTaskFilterSheet
 import com.zstronics.ceibro.ui.tasks.task.TasksFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,6 +43,7 @@ class MainTasksFragment :
                     mViewDataBinding.subTaskHeading.setBackgroundResource(R.drawable.taskselectedback)
                 }
             }
+            R.id.taskFilterBtn -> showTaskFilterSheet()
         }
     }
 
@@ -52,5 +54,16 @@ class MainTasksFragment :
             .commit()
         selectedFragment = "TasksFragment"
         mViewDataBinding.taskHeading.setBackgroundResource(R.drawable.taskselectedback)
+    }
+
+    private fun showTaskFilterSheet() {
+//        viewModel.task.value?.let {
+        val fragment = FragmentTaskFilterSheet()
+
+//            fragment.onSeeAttachment = {
+//                navigateToAttachments(it._id)
+//            }
+        fragment.show(childFragmentManager, "FragmentTaskFilterSheet")
+//        }
     }
 }
