@@ -17,6 +17,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -48,8 +49,7 @@ class SubTaskVM @Inject constructor(
                 if (isSuccess) {
                     loading(false, "Subtask Deleted Successfully")
                     getSubTasks()
-                }
-                else {
+                } else {
                     loading(false, message)
                 }
             }
@@ -91,5 +91,9 @@ class SubTaskVM @Inject constructor(
             callBack.invoke(result)
             loading(false)
         }
+    }
+
+    fun applyFilter(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+        TODO("Implement filter logic here")
     }
 }

@@ -10,12 +10,14 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.FragmentMainTasksBinding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.FragmentTaskFilterSheet
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TasksFragment
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 
 @AndroidEntryPoint
 class MainTasksFragment :
@@ -31,7 +33,8 @@ class MainTasksFragment :
         when (id) {
             R.id.taskHeading -> {
                 if (selectedFragment == "SubTaskFragment") {
-                    childFragmentManager.beginTransaction().replace(R.id.task_fragment_container, TasksFragment())
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.task_fragment_container, TasksFragment())
                         .commit()
                     selectedFragment = "TasksFragment"
                     mViewDataBinding.subTaskHeading.setBackgroundResource(0)
@@ -40,7 +43,8 @@ class MainTasksFragment :
             }
             R.id.subTaskHeading -> {
                 if (selectedFragment == "TasksFragment") {
-                    childFragmentManager.beginTransaction().replace(R.id.task_fragment_container, SubTaskFragment())
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.task_fragment_container, SubTaskFragment())
                         .commit()
                     selectedFragment = "SubTaskFragment"
                     mViewDataBinding.taskHeading.setBackgroundResource(0)
@@ -56,8 +60,7 @@ class MainTasksFragment :
                     statusList.add(TaskStatus.DONE.name.toCamelCase())
                     statusList.add(TaskStatus.DRAFT.name.toCamelCase())
                     showTaskFilterSheet(viewModel.projects, statusList)
-                }
-                else if (selectedFragment == "SubTaskFragment") {
+                } else if (selectedFragment == "SubTaskFragment") {
                     val statusList: ArrayList<String> = arrayListOf()
                     statusList.add(SubTaskStatus.ALL.name.toCamelCase())
                     statusList.add(SubTaskStatus.ASSIGNED.name.toCamelCase())
@@ -75,7 +78,8 @@ class MainTasksFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        childFragmentManager.beginTransaction().replace(R.id.task_fragment_container, TasksFragment())
+        childFragmentManager.beginTransaction()
+            .replace(R.id.task_fragment_container, TasksFragment())
             .commit()
         selectedFragment = "TasksFragment"
         mViewDataBinding.taskHeading.setBackgroundResource(R.drawable.taskselectedback)
@@ -88,9 +92,14 @@ class MainTasksFragment :
 
         val fragment = FragmentTaskFilterSheet(projects, statusList)
 
-        fragment.onConfirmClickListener = { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: ArrayList<Member>? ->
-            //navigateToAttachments(it._id)
-        }
+        fragment.onConfirmClickListener =
+            { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: ArrayList<Member>? ->
+                EventBus.getDefault().post(
+                    LocalEvents.ApplyFilterOnTaskAndSubTask(
+                        projectId, selectedStatus, selectedDueDate, assigneeToMembers
+                    )
+                )
+            }
         fragment.show(childFragmentManager, "FragmentTaskFilterSheet")
     }
 }

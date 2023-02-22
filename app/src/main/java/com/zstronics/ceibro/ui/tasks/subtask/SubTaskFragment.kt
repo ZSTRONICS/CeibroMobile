@@ -73,17 +73,21 @@ class SubTaskFragment :
                         dialog.setCancelable(false)
                         dialog.setContentView(R.layout.layout_reject_subtask)
                         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                        val descriptionText = dialog.findViewById(R.id.descriptionText) as AppCompatTextView
-                        descriptionText.text = requireContext().getString(R.string.are_you_sure_you_want_to_reject_this_subtask_heading)
-                        val rejectDescriptionText = dialog.findViewById(R.id.rejectDescriptionText) as TextInputEditText
-                        val rejectSubTaskBtn = dialog.findViewById(R.id.rejectSubTaskBtn) as AppCompatButton
-                        val cancelSubTaskBtn = dialog.findViewById(R.id.cancelSubTaskBtn) as AppCompatButton
+                        val descriptionText =
+                            dialog.findViewById(R.id.descriptionText) as AppCompatTextView
+                        descriptionText.text =
+                            requireContext().getString(R.string.are_you_sure_you_want_to_reject_this_subtask_heading)
+                        val rejectDescriptionText =
+                            dialog.findViewById(R.id.rejectDescriptionText) as TextInputEditText
+                        val rejectSubTaskBtn =
+                            dialog.findViewById(R.id.rejectSubTaskBtn) as AppCompatButton
+                        val cancelSubTaskBtn =
+                            dialog.findViewById(R.id.cancelSubTaskBtn) as AppCompatButton
 
                         rejectSubTaskBtn.setOnClickListener {
                             if (rejectDescriptionText.text.toString() == "") {
                                 shortToastNow(requireContext().getString(R.string.please_enter_a_reason_to_reject_heading))
-                            }
-                            else {
+                            } else {
                                 dialog.dismiss()
                                 viewModel.rejectSubTask(data, SubTaskStatus.REJECTED, callBack)
                             }
@@ -142,27 +146,25 @@ class SubTaskFragment :
         val isSubTaskCreator = isSubTaskCreator(viewModel.user?.id, subtaskData.creator)
         val isTAdmin = isTaskAdmin(viewModel.user?.id, subtaskData.taskData?.admins)
 
-        val userState = subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
-            ?: SubTaskStatus.DRAFT.name
+        val userState =
+            subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
+                ?: SubTaskStatus.DRAFT.name
 
         if (isSubTaskCreator || isTAdmin) {
             if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
                 deleteSubtask.visibility = View.VISIBLE
                 editSubTask.visibility = View.VISIBLE
                 editDetails.visibility = View.GONE
-            }
-            else if (userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
+            } else if (userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
                 deleteSubtask.visibility = View.VISIBLE
                 editSubTask.visibility = View.VISIBLE
                 editDetails.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 deleteSubtask.visibility = View.GONE
                 editSubTask.visibility = View.GONE
                 editDetails.visibility = View.VISIBLE
             }
-        }
-        else {
+        } else {
             deleteSubtask.visibility = View.GONE
             editSubTask.visibility = View.GONE
             editDetails.visibility = View.VISIBLE
@@ -178,7 +180,11 @@ class SubTaskFragment :
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {
-            showDialog(v,context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading), subtaskData)
+            showDialog(
+                v,
+                context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading),
+                subtaskData
+            )
             popupWindow.dismiss()
         }
 
@@ -250,6 +256,11 @@ class SubTaskFragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onSubTaskCreatedEvent(event: LocalEvents.SubTaskCreatedEvent?) {
         viewModel.getSubTasks()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+        viewModel.applyFilter(event)
     }
 
     override fun onStart() {

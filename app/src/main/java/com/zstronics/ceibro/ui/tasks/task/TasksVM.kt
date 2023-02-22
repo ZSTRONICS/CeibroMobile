@@ -20,6 +20,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -56,6 +57,10 @@ class TasksVM @Inject constructor(
                 }
             }
         }
+    }
+
+    fun applyFilter(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+        TODO("Implement filter logic here")
     }
 
 

@@ -168,6 +168,11 @@ class TasksFragment :
         viewModel.getTasks()
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+        viewModel.applyFilter(event)
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
