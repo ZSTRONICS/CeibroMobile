@@ -8,12 +8,14 @@ import com.zstronics.ceibro.data.repos.chat.IChatRepository
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ProjectsVM @Inject constructor(
     override val viewState: ProjectsState,
+    val sessionManager: SessionManager,
     private val projectRepository: IProjectRepository
 ) : HiltBaseViewModel<IProjects.State>(), IProjects.ViewModel {
 

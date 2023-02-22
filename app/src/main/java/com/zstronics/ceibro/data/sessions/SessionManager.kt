@@ -6,6 +6,8 @@ import com.zstronics.ceibro.base.*
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 
 class SessionManager constructor(
     private val sharedPreferenceManager: SharedPreferenceManager
@@ -37,10 +39,15 @@ class SessionManager constructor(
     companion object {
         private var _user: MutableLiveData<User?> = MutableLiveData()
         var user: LiveData<User?> = _user
+        private var _projects: MutableLiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> = MutableLiveData()
+        var projects: LiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> = _projects
     }
 
     fun getUser(): LiveData<User?> {
         return user
+    }
+    fun getProjects(): LiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> {
+        return projects
     }
 
     fun getUserObj(): User? {
@@ -52,6 +59,15 @@ class SessionManager constructor(
         val userPref: User? = sharedPreferenceManager.getCompleteUserObj(KEY_USER)
         _user.postValue(userPref)
         user = _user
+    }
+    fun setProject() {
+        val projectList = sharedPreferenceManager.getCompleteProjectObj(KEY_PROJECT)
+        _projects.postValue(projectList)
+        projects = _projects
+    }
+    fun setNewProjectList(projectList: MutableList<ProjectsWithMembersResponse.ProjectDetail>?) {
+        sharedPreferenceManager.saveCompleteProjectObj(KEY_PROJECT, projectList)
+        _projects.postValue(projectList)
     }
 
     fun updateUser(userObj: User) {

@@ -10,6 +10,9 @@ import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -28,11 +31,13 @@ class DashboardVM @Inject constructor(
     private val localTask: TaskLocalDataSource,
     private val localSubTask: SubTaskLocalDataSource,
     private val repository: ITaskRepository,
+    private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     init {
         sessionManager.setUser()
+        loadProjectsWithMembers()
         launch {
             repository.syncTasksAndSubTasks()
         }
@@ -185,5 +190,24 @@ class DashboardVM @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         EventBus.getDefault().unregister(this)
+    }
+
+
+    private fun loadProjectsWithMembers() {
+        launch {
+            when (val response = projectRepository.getProjectsWithMembers(true)) {
+
+                is ApiResponse.Success -> {
+                    response.data.projectDetails.let { projects ->
+                        if (projects.isNotEmpty()) {
+                            sessionManager.setNewProjectList(projects as MutableList<ProjectsWithMembersResponse.ProjectDetail>?)
+                        }
+                    }
+                }
+                is ApiResponse.Error -> {
+
+                }
+            }
+        }
     }
 }

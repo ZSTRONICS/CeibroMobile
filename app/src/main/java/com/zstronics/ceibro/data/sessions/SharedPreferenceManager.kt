@@ -7,10 +7,14 @@ import android.security.keystore.KeyProperties
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.base.KEY_USERNAME
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -89,6 +93,16 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         editor.commit()
         editor.apply()
     }
+
+    fun saveCompleteProjectObj(KEY_NAME: String, projectList: MutableList<ProjectsWithMembersResponse.ProjectDetail>?) {
+        //For storing complete data object in shared preferences
+        val gson = Gson()
+        val json = gson.toJson(projectList)
+        val editor: SharedPreferences.Editor = sharedPref.edit()
+        editor.putString(KEY_NAME, json)
+        editor.commit()
+        editor.apply()
+    }
     fun saveInt(KEY_NAME: String, value: Int) {
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putInt(KEY_NAME, value)
@@ -118,6 +132,13 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         val gson = Gson()
         val json = sharedPref.getString(KEY_NAME, "")
         return gson.fromJson(json, Tokens::class.java)
+    }
+    fun getCompleteProjectObj(KEY_NAME: String): MutableList<ProjectsWithMembersResponse.ProjectDetail>? {
+        val gson = Gson()
+        val json = sharedPref.getString(KEY_NAME, "")
+        val type = object : TypeToken<MutableList<ProjectsWithMembersResponse.ProjectDetail>?>() {}.type
+        val projectsList: MutableList<ProjectsWithMembersResponse.ProjectDetail>? = gson.fromJson(json, type)
+        return projectsList
     }
 
     fun getValueInt(KEY_NAME: String): Int {

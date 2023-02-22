@@ -15,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeVM @Inject constructor(
     override val viewState: HomeState,
+    val sessionManager: SessionManager,
     private val projectRepository: IProjectRepository
 ) : HiltBaseViewModel<IHome.State>(), IHome.ViewModel {
 
