@@ -21,6 +21,7 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
@@ -215,13 +216,13 @@ class NewSubTaskVM @Inject constructor(
 //            )
 //        )
         val adminsId = task.value?.admins?.map { it.id }
-        var highestState = if (state == TaskStatus.DRAFT.name.lowercase()) {
-            TaskStatus.DRAFT.name.lowercase()
+        var highestState = if (state == SubTaskStatus.DRAFT.name.lowercase()) {
+            SubTaskStatus.DRAFT.name.lowercase()
         } else {
-            TaskStatus.ASSIGNED.name.lowercase()
+            SubTaskStatus.ASSIGNED.name.lowercase()
         }
 
-        val assigneeStates = if (state == TaskStatus.DRAFT.name.lowercase()) {
+        val assigneeStates = if (state == SubTaskStatus.DRAFT.name.lowercase()) {
             listOf(
                 NewSubtaskRequest.State(
                     userId = user?.id,
@@ -233,7 +234,7 @@ class NewSubTaskVM @Inject constructor(
                 NewSubtaskRequest.State(
                     userId = id,
                     userState = if (isAdmin(id)) {
-                        highestState = TaskStatus.ACCEPTED.name.lowercase()
+                        highestState = SubTaskStatus.ACCEPTED.name.lowercase()
                         highestState
                     } else state
                 )
@@ -302,14 +303,14 @@ class NewSubTaskVM @Inject constructor(
 
         val adminsId = subtask.value?.taskData?.admins?.map { it }
 
-        var highestState = if (state == TaskStatus.DRAFT.name.lowercase()) {
-            TaskStatus.DRAFT.name.lowercase()
+        var highestState = if (state == SubTaskStatus.DRAFT.name.lowercase()) {
+            SubTaskStatus.DRAFT.name.lowercase()
         } else {
-            TaskStatus.ASSIGNED.name.lowercase()
+            SubTaskStatus.ASSIGNED.name.lowercase()
         }
 
 
-        val assigneeStates = if (state == TaskStatus.DRAFT.name.lowercase()) {
+        val assigneeStates = if (state == SubTaskStatus.DRAFT.name.lowercase()) {
             listOf(
                 UpdateDraftSubtaskRequest.State(
                     userId = user?.id,
@@ -321,7 +322,7 @@ class NewSubTaskVM @Inject constructor(
                 UpdateDraftSubtaskRequest.State(
                     userId = id,
                     userState = if (isAdmin(id)) {
-                        highestState = TaskStatus.ACCEPTED.name.lowercase()
+                        highestState = SubTaskStatus.ACCEPTED.name.lowercase()
                         highestState
                     } else state
                 )

@@ -37,6 +37,7 @@ class DashboardVM @Inject constructor(
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     init {
         sessionManager.setUser()
+        sessionManager.setProject()
         loadProjectsWithMembers()
         launch {
             repository.syncTasksAndSubTasks()

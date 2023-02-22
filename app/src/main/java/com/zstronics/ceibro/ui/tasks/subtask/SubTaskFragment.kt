@@ -143,7 +143,7 @@ class SubTaskFragment :
         val isTAdmin = isTaskAdmin(viewModel.user?.id, subtaskData.taskData?.admins)
 
         val userState = subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
-            ?: TaskStatus.DRAFT.name
+            ?: SubTaskStatus.DRAFT.name
 
         if (isSubTaskCreator || isTAdmin) {
             if (userState.uppercase() == SubTaskStatus.DRAFT.name) {

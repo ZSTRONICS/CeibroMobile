@@ -14,7 +14,6 @@ import com.zstronics.ceibro.databinding.FragmentNewSubTaskBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -149,7 +148,7 @@ class NewSubTaskFragment :
 
                 val userState =
                     item.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
-                        ?: TaskStatus.DRAFT.name
+                        ?: SubTaskStatus.DRAFT.name
 
                 if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
                     mViewDataBinding.updateSubTaskAsDraftBtn.visibility = View.VISIBLE

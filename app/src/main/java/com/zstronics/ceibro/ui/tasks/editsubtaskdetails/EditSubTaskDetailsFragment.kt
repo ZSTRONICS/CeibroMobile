@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentEditSubTaskDetailsBinding
 import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter

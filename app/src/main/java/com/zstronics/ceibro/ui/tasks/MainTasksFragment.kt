@@ -5,12 +5,16 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.room.Member
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.FragmentMainTasksBinding
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.FragmentTaskFilterSheet
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TasksFragment
-import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +30,7 @@ class MainTasksFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.taskHeading -> {
-                if (selectedFragment.equals("SubTaskFragment")) {
+                if (selectedFragment == "SubTaskFragment") {
                     childFragmentManager.beginTransaction().replace(R.id.task_fragment_container, TasksFragment())
                         .commit()
                     selectedFragment = "TasksFragment"
@@ -35,7 +39,7 @@ class MainTasksFragment :
                 }
             }
             R.id.subTaskHeading -> {
-                if (selectedFragment.equals("TasksFragment")) {
+                if (selectedFragment == "TasksFragment") {
                     childFragmentManager.beginTransaction().replace(R.id.task_fragment_container, SubTaskFragment())
                         .commit()
                     selectedFragment = "SubTaskFragment"
@@ -43,7 +47,28 @@ class MainTasksFragment :
                     mViewDataBinding.subTaskHeading.setBackgroundResource(R.drawable.taskselectedback)
                 }
             }
-            R.id.taskFilterBtn -> showTaskFilterSheet()
+            R.id.taskFilterBtn -> {
+                if (selectedFragment == "TasksFragment") {
+                    val statusList: ArrayList<String> = arrayListOf()
+                    statusList.add(TaskStatus.ALL.name.toCamelCase())
+                    statusList.add(TaskStatus.NEW.name.toCamelCase())
+                    statusList.add(TaskStatus.ACTIVE.name.toCamelCase())
+                    statusList.add(TaskStatus.DONE.name.toCamelCase())
+                    statusList.add(TaskStatus.DRAFT.name.toCamelCase())
+                    showTaskFilterSheet(viewModel.projects, statusList)
+                }
+                else if (selectedFragment == "SubTaskFragment") {
+                    val statusList: ArrayList<String> = arrayListOf()
+                    statusList.add(SubTaskStatus.ALL.name.toCamelCase())
+                    statusList.add(SubTaskStatus.ASSIGNED.name.toCamelCase())
+                    statusList.add(SubTaskStatus.ACCEPTED.name.toCamelCase())
+                    statusList.add(SubTaskStatus.ONGOING.name.toCamelCase())
+                    statusList.add(SubTaskStatus.DONE.name.toCamelCase())
+                    statusList.add(SubTaskStatus.REJECTED.name.toCamelCase())
+                    statusList.add(SubTaskStatus.DRAFT.name.toCamelCase())
+                    showTaskFilterSheet(viewModel.projects, statusList)
+                }
+            }
         }
     }
 
@@ -56,14 +81,16 @@ class MainTasksFragment :
         mViewDataBinding.taskHeading.setBackgroundResource(R.drawable.taskselectedback)
     }
 
-    private fun showTaskFilterSheet() {
-//        viewModel.task.value?.let {
-        val fragment = FragmentTaskFilterSheet()
+    private fun showTaskFilterSheet(
+        projects: MutableList<ProjectsWithMembersResponse.ProjectDetail>?,
+        statusList: ArrayList<String>
+    ) {
 
-//            fragment.onSeeAttachment = {
-//                navigateToAttachments(it._id)
-//            }
+        val fragment = FragmentTaskFilterSheet(projects, statusList)
+
+        fragment.onConfirmClickListener = { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: ArrayList<Member>? ->
+            //navigateToAttachments(it._id)
+        }
         fragment.show(childFragmentManager, "FragmentTaskFilterSheet")
-//        }
     }
 }

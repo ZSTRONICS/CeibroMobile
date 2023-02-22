@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -14,7 +13,6 @@ import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.FragmentNewTaskBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
-import com.zstronics.ceibro.ui.tasks.newsubtask.NewSubTaskVM
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat

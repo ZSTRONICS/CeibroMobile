@@ -38,7 +38,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:fontFamily="@font/inter_bold"
-                android:text="@string/filter_heading"
+                android:text="@string/filters_heading"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -66,8 +66,9 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/taskFilterAssignToLayout"
+            android:id="@+id/taskFilterProjectLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,11 +84,11 @@
             app:layout_constraintTop_toBottomOf="@+id/header">
 
             <AutoCompleteTextView
-                android:id="@+id/taskFilterAssignToSpinner"
+                android:id="@+id/taskFilterProjectSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:hint="@string/assign_to_heading"
+                android:hint="@string/project_heading"
                 android:inputType="text"
                 android:maxLines="2"
                 android:textColorHint="@color/grey"
@@ -95,8 +96,9 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/taskFilterProjectLayout"
+            android:id="@+id/taskFilterAssignToLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -109,20 +111,33 @@
             app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskFilterAssignToLayout">
+            app:layout_constraintTop_toBottomOf="@+id/taskFilterProjectLayout">
 
             <AutoCompleteTextView
-                android:id="@+id/taskFilterProjectSpinner"
+                android:id="@+id/taskFilterAssignToSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:hint="@string/project_heading"
+                android:hint="@string/assign_to_heading"
                 android:inputType="text"
                 android:maxLines="2"
                 android:textColorHint="@color/grey"
                 android:textSize="15sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/taskFilterAssigneeChipsRV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="@+id/taskFilterAssignToLayout"
+            app:layout_constraintStart_toStartOf="@+id/taskFilterAssignToLayout"
+            app:layout_constraintTop_toBottomOf="@+id/taskFilterAssignToLayout"
+            tools:itemCount="10"
+            tools:listitem="@layout/layout_item_chip" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/taskFilterStatusLayout"
@@ -138,7 +153,7 @@
             app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskFilterProjectLayout">
+            app:layout_constraintTop_toBottomOf="@+id/taskFilterAssigneeChipsRV">
 
             <AutoCompleteTextView
                 android:id="@+id/taskFilterStatusSpinner"

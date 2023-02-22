@@ -268,7 +268,7 @@
     <string name="add_heading">Add</string>
     <string name="mark_as_done_heading">Mark As Done</string>
     <string name="reason_heading">Reason</string>
-    <string name="filter_heading">Filter</string>
+    <string name="filters_heading">Filters</string>
     <string name="status_heading">Status</string>
     <string name="clear_all_text">Clear all</string>
 
