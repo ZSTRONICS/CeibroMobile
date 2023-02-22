@@ -105,20 +105,20 @@
                 app:srcCompat="@drawable/icon_filter" />
 
 
-            <androidx.appcompat.widget.SearchView
+            <SearchView
                 android:id="@+id/msgViewSearchBar"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginStart="57dp"
                 android:layout_marginEnd="10dp"
+                android:layoutDirection="rtl"
+                android:searchIcon="@drawable/icon_search"
                 android:closeIcon="@drawable/icon_round_close"
                 android:elevation="1dp"
-                android:gravity="center"
-                android:layoutDirection="rtl"
-                android:queryBackground="@drawable/input_field_rectangle"
                 android:queryHint="Search"
-                android:searchIcon="@drawable/icon_search"
                 android:textSize="14sp"
+                android:gravity="center"
+                android:queryBackground="@drawable/input_field_rectangle"
                 app:layout_constraintBottom_toBottomOf="@+id/taskFilterBtn"
                 app:layout_constraintEnd_toStartOf="@+id/taskFilterBtn"
                 app:layout_constraintStart_toStartOf="@id/taskHeading"

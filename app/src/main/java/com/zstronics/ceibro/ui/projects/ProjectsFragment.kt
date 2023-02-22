@@ -1,8 +1,6 @@
 package com.zstronics.ceibro.ui.projects
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.os.Handler
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -13,10 +11,8 @@ import androidx.transition.TransitionManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectsBinding
-import com.zstronics.ceibro.ui.chat.adapter.ChatRoomAdapter
 import com.zstronics.ceibro.ui.projects.adapter.AllProjectsAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
