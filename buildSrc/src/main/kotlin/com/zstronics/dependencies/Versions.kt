@@ -11,7 +11,7 @@
         const val VIEWPAGER2 = "1.0.0"
         const val VECTOR_DRAWABLE = "1.1.0"
         const val PAGING = "3.0.0"
-        const val SECURITY_CRYPTO = "1.1.0-alpha03"
+        const val SECURITY_CRYPTO = "1.1.0-alpha01"
         const val WEB_KIT = "1.4.0"
         const val SWIPE_REFRESH = "1.1.0"
     }
