@@ -639,7 +639,7 @@
                         android:gravity="top|start"
                         android:hint="@string/type_new_comment_heading"
                         android:inputType="textMultiLine"
-                        android:maxLines="5"
+                        android:maxLines="6"
                         android:minLines="4"
                         android:overScrollMode="always"
                         android:paddingStart="7dp"
