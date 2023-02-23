@@ -76,8 +76,10 @@ class TasksVM @Inject constructor(
             return true
         }
 
-        // Check if the assigneeToMembers id is found in the list
-        return list.any { it.id == assigneeToMembers[0].id }
+        // Check if any of the assigneeToMembers ids are found in the list
+        return assigneeToMembers.any { assignee ->
+            list.any { it.id == assignee.id }
+        }
     }
 
 

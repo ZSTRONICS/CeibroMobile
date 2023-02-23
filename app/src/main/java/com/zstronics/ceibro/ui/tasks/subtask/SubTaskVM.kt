@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
@@ -96,18 +96,22 @@ class SubTaskVM @Inject constructor(
     fun onApplyFilters(filter: LocalEvents.ApplyFilterOnSubTask) {
         val filtered =
             originalSubTasks.filter {
-                haveMembers(
-                    it.assignedTo[0].members,
-                    filter.assigneeToMembers
-                ) || (it.dueDate ==
-                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty())
+                (it.taskData?.project?.id == filter.projectId || filter.projectId.isEmpty())
+                        && haveMembers(it.assignedToMembersOnly, filter.assigneeToMembers)
+                        && (getState(it.state).equals(
+                    filter.selectedStatus,
+                    true
+                ) || filter.selectedStatus == "All")
+                        && (it.dueDate == filter.selectedDueDate || filter.selectedDueDate.isEmpty())
 
             }
+
+        val i = ""
         _subTasks.postValue(filtered)
     }
 
     private fun haveMembers(
-        list: List<TaskMember>,
+        list: List<TaskMember>?,
         assigneeToMembers: List<TaskMember>?
     ): Boolean {
         // Return true if assigneeToMembers is null or empty
@@ -115,8 +119,19 @@ class SubTaskVM @Inject constructor(
             return true
         }
 
-        // Check if the assigneeToMembers id is found in the list
-        return list.any { it.id == assigneeToMembers[0].id }
+        // Check if any of the assigneeToMembers ids are found in the list
+        return if (list != null) {
+            assigneeToMembers.any { assignee ->
+                list.any { it.id == assignee.id }
+            }
+        } else {
+            true
+        }
+    }
+
+    private fun getState(state: List<SubTaskStateItem>?): String {
+        val foundState = state?.find { it.userId == user?.id }?.userState
+        return foundState.toString()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

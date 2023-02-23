@@ -420,4 +420,16 @@ class TaskRepository @Inject constructor(
             else -> return Triple(false, false, false)
         }
     }
+
+    override suspend fun postCommentSubtask(
+        request: SubtaskCommentRequest,
+        callBack: (isSuccess: Boolean, message: String, data: SubtaskCommentResponse.Result?) -> Unit
+    ) {
+        when (val response = remoteSubTask.postCommentSubtask(request)) {
+            is ApiResponse.Success -> {
+                callBack(true, "", response.data.result)
+            }
+            else -> callBack(false, "", null)
+        }
+    }
 }

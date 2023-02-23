@@ -32,9 +32,7 @@ class NewSubTaskVM @Inject constructor(
     override val viewState: NewSubTaskState,
     val sessionManager: SessionManager,
     private val projectRepository: IProjectRepository,
-    private val taskRepository: ITaskRepository,
-    private val dashboardRepository: IDashboardRepository,
-    private val fileAttachmentsDataSource: FileAttachmentsDataSource
+    private val taskRepository: ITaskRepository
 ) : HiltBaseViewModel<INewSubTask.State>(), INewSubTask.ViewModel {
     val user = sessionManager.getUser().value
     var isNewSubTask = true
