@@ -97,11 +97,8 @@ class SubTaskVM @Inject constructor(
         val filtered =
             originalSubTasks.filter {
                 (it.taskData?.project?.id == filter.projectId || filter.projectId.isEmpty())
-                        && haveMembers(it.assignedToMembersOnly, filter.assigneeToMembers)
-                        && (getState(it.state).equals(
-                    filter.selectedStatus,
-                    true
-                ) || filter.selectedStatus == "All")
+                        && haveMembers(it.assignedToMembersOnly, filter.assigneeToMembers) == true
+                        && (getState(it.state).equals(filter.selectedStatus, true) || filter.selectedStatus == "All")
                         && (it.dueDate == filter.selectedDueDate || filter.selectedDueDate.isEmpty())
 
             }
@@ -113,20 +110,14 @@ class SubTaskVM @Inject constructor(
     private fun haveMembers(
         list: List<TaskMember>?,
         assigneeToMembers: List<TaskMember>?
-    ): Boolean {
+    ): Boolean? {
         // Return true if assigneeToMembers is null or empty
         if (assigneeToMembers == null || assigneeToMembers.isEmpty()) {
             return true
         }
 
-        // Check if any of the assigneeToMembers ids are found in the list
-        return if (list != null) {
-            assigneeToMembers.any { assignee ->
-                list.any { it.id == assignee.id }
-            }
-        } else {
-            true
-        }
+        // Check if the assigneeToMembers id is found in the list
+        return list?.any { it.id == assigneeToMembers[0].id }
     }
 
     private fun getState(state: List<SubTaskStateItem>?): String {
