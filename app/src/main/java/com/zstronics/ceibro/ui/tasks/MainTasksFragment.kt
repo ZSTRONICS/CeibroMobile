@@ -128,14 +128,17 @@ class MainTasksFragment :
 
         fragment.onClearAllClickListener =
             {
-                if (selectedFragment == "TasksFragment")
+                if (selectedFragment == "TasksFragment") {
                     EventBus.getDefault().post(
                         LocalEvents.ClearTaskFilters
                     )
-                else
+                    viewModel.taskFilters = null
+                } else {
                     EventBus.getDefault().post(
                         LocalEvents.ClearSubtaskFilters
                     )
+                    viewModel.subTaskFilters = null
+                }
             }
         fragment.show(childFragmentManager, "FragmentTaskFilterSheet")
     }
