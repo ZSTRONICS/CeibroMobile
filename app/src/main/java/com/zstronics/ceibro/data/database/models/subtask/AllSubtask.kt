@@ -21,6 +21,7 @@ data class AllSubtask(
     @SerializedName("access") val access: List<String>,
     @SerializedName("rejectedBy") val rejectedBy: List<TaskMember>?,
     @SerializedName("advanceOptions") val advanceOptions: SubTaskAdvanceOptions,
+    @SerializedName("assignedToMembersOnly") val assignedToMembersOnly: List<TaskMember>?,
     @SerializedName("assignedTo") val assignedTo: List<AssignedTo>,
     @SerializedName("comments") val comments: List<String>?,
     @SerializedName("createdAt") val createdAt: String,
