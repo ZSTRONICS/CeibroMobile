@@ -106,12 +106,18 @@ class MainTasksFragment :
                     )
                 }
                 if (selectedFragment == "TasksFragment") {
+                    viewModel.taskFilters = LocalEvents.ApplyFilterOnTask(
+                        projectId, selectedStatus, selectedDueDate, newMembers
+                    )
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnTask(
                             projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
                 } else {
+                    viewModel.subTaskFilters = LocalEvents.ApplyFilterOnSubTask(
+                        projectId, selectedStatus, selectedDueDate, newMembers
+                    )
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnSubTask(
                             projectId, selectedStatus, selectedDueDate, newMembers

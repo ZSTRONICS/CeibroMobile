@@ -28,6 +28,7 @@ class TasksVM @Inject constructor(
 
     init {
         getTasks()
+        EventBus.getDefault().register(this)
     }
 
     override fun getTasks() {
@@ -85,9 +86,6 @@ class TasksVM @Inject constructor(
         _tasks.postValue(originalTasks)
     }
 
-    init {
-        EventBus.getDefault().register(this)
-    }
 
     override fun onCleared() {
         super.onCleared()

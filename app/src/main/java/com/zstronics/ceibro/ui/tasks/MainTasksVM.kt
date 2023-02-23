@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks
 
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -12,5 +13,6 @@ class MainTasksVM @Inject constructor(
 ) : HiltBaseViewModel<IMainTasks.State>(), IMainTasks.ViewModel {
     val user = sessionManager.getUser().value
     val projects = sessionManager.getProjects().value
-
+    var taskFilters: LocalEvents.ApplyFilterOnTask? = null
+    var subTaskFilters: LocalEvents.ApplyFilterOnSubTask? = null
 }
