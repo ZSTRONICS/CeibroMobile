@@ -56,11 +56,12 @@ class TasksVM @Inject constructor(
     fun onApplyFilters(filter: LocalEvents.ApplyFilterOnTask) {
         val filtered =
             originalTasks.filter {
-                (it.project.id == filter.projectId && haveMembers(
+                /// check the project filter and assigneeToMembers 2 filters
+                (it.project.id == filter.projectId || filter.projectId.isEmpty()) && haveMembers(
                     it.assignedTo,
                     filter.assigneeToMembers
-                )) || (it.state == filter.selectedStatus && filter.selectedStatus != "All") && (it.dueDate ==
-                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty())
+                ) && (it.state.equals(filter.selectedStatus, true) || filter.selectedStatus == "All")
+                        && (it.dueDate == filter.selectedDueDate || filter.selectedDueDate.isEmpty())
 
             }
         _tasks.postValue(filtered)
