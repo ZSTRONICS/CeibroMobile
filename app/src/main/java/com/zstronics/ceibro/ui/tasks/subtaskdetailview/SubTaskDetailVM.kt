@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -19,7 +20,8 @@ class SubTaskDetailVM @Inject constructor(
     override val viewState: SubTaskDetailState,
     val sessionManager: SessionManager,
     private val fileAttachmentsDataSource: FileAttachmentsDataSource,
-    private val dashboardRepository: IDashboardRepository
+    private val dashboardRepository: IDashboardRepository,
+    private val taskRepository: ITaskRepository
 ) : HiltBaseViewModel<ISubTaskDetail.State>(), ISubTaskDetail.ViewModel {
     private val userObj = sessionManager.getUser().value
 
@@ -43,6 +45,27 @@ class SubTaskDetailVM @Inject constructor(
                     }
                     else -> {}
                 }
+            }
+        }
+    }
+
+    fun postComment(message: String, success: (subtaskId: String?) -> Unit) {
+        launch {
+            loading(true)
+            val request = SubtaskCommentRequest(
+                access = subtask.value?.access,
+                isFileAttached = false,
+                message = message,
+                seenBy = arrayListOf(),
+                sender = userObj?.id,
+                subTaskId = subtask.value?.id,
+                taskId = subtask.value?.taskId,
+                userState = ""
+            )
+            taskRepository.postCommentSubtask(request) { isSuccess, error, subtaskData ->
+                if (isSuccess)
+                    success(subtaskData?.id)
+                loading(false)
             }
         }
     }

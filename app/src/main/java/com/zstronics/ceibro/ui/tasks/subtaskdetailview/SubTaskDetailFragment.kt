@@ -52,9 +52,14 @@ class SubTaskDetailFragment :
                 }
             }
             R.id.subTaskCommentAttachmentBtn -> pickAttachment(true)
+            R.id.sendCommentBtn -> {
+                val message: String = mViewDataBinding.subTaskCommentField.text.toString()
+                viewModel.postComment(message) {
+                    navigateBack()
+                }
+            }
         }
     }
-
 
 
     @Inject
