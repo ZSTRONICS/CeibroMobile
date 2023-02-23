@@ -21,7 +21,10 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMembersResponse.ProjectDetail>?, _statusList: ArrayList<String>) :
+class FragmentTaskFilterSheet constructor(
+    projects: MutableList<ProjectsWithMembersResponse.ProjectDetail>?,
+    _statusList: ArrayList<String>
+) :
     BottomSheetDialogFragment() {
     var allProjects: MutableList<ProjectsWithMembersResponse.ProjectDetail>? = projects
     var statusList: ArrayList<String> = _statusList
@@ -45,10 +48,12 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
     var projectId = ""
     var selectedStatus = ""
     var selectedDueDate = ""
+
     @Inject
     lateinit var assigneeChipsAdapter: MemberChipAdapter
 
-    var onConfirmClickListener: ((view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: List<Member>?) -> Unit)? = null
+    var onConfirmClickListener: ((view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: List<Member>?) -> Unit)? =
+        null
     var onClearAllClickListener: (() -> Unit)? = null
 
     override fun onCreateView(
@@ -93,7 +98,7 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
             binding.taskFilterStatusSpinner.setAdapter(arrayAdapter)
 
             selectedStatus = statusList[0]
-            binding.taskFilterStatusSpinner.setText(selectedStatus,false)
+            binding.taskFilterStatusSpinner.setText(selectedStatus, false)
         }
         binding.taskFilterStatusSpinner.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
@@ -118,22 +123,19 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
         binding.taskFilterProjectSpinner.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 if (position == 0) {
-                    val tempAssignee = _assigneeTo.value
-                    tempAssignee?.removeAll(tempAssignee)
-                    _assigneeTo.value = tempAssignee
+                    _assigneeTo.value = arrayListOf()
+                    projectId = ""
                     binding.taskFilterAssignToSpinner.setText("")
                     binding.taskFilterAssignToSpinner.setAdapter(null)
-                }
-                else {
-                    val selectedProject = allProjects?.get(position-1)
+                } else {
+                    val selectedProject = allProjects?.get(position - 1)
                     if (selectedProject?.id != projectId) {
-                        val tempAssignee = _assigneeTo.value
-                        tempAssignee?.removeAll(tempAssignee)
-                        _assigneeTo.value = tempAssignee
+                        _assigneeTo.value = arrayListOf()
+                        projectId = ""
                         binding.taskFilterAssignToSpinner.setText("")
                         binding.taskFilterAssignToSpinner.setAdapter(null)
                     }
-                    onProjectSelect(position-1)
+                    onProjectSelect(position - 1)
                 }
             }
 
@@ -198,10 +200,16 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
             dismiss()
         }
         binding.confirmFilterBtn.setOnClickListener {
-            onConfirmClickListener?.invoke(it, projectId, selectedStatus, selectedDueDate, assigneeTo.value)
+            onConfirmClickListener?.invoke(
+                it,
+                projectId,
+                selectedStatus,
+                selectedDueDate,
+                assigneeTo.value
+            )
             dismiss()
         }
-        
+
     }
 
     private fun onProjectSelect(position: Int) {
@@ -232,6 +240,7 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
         }
         _assigneeTo.value = assignees
     }
+
     fun removeAssignee(data: Member) {
         val assignee = _assigneeTo.value
         assignee?.remove(data)

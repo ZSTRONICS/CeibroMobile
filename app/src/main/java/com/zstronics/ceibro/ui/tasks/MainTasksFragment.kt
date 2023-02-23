@@ -105,30 +105,40 @@ class MainTasksFragment :
                         TaskMemberId = 0
                     )
                 }
-                if (selectedFragment == "TasksFragment")
+                if (selectedFragment == "TasksFragment") {
+                    viewModel.taskFilters = LocalEvents.ApplyFilterOnTask(
+                        projectId, selectedStatus, selectedDueDate, newMembers
+                    )
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnTask(
                             projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
-                else
+                } else {
+                    viewModel.subTaskFilters = LocalEvents.ApplyFilterOnSubTask(
+                        projectId, selectedStatus, selectedDueDate, newMembers
+                    )
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnSubTask(
                             projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
+                }
             }
 
         fragment.onClearAllClickListener =
             {
-                if (selectedFragment == "TasksFragment")
+                if (selectedFragment == "TasksFragment") {
                     EventBus.getDefault().post(
                         LocalEvents.ClearTaskFilters
                     )
-                else
+                    viewModel.taskFilters = null
+                } else {
                     EventBus.getDefault().post(
                         LocalEvents.ClearSubtaskFilters
                     )
+                    viewModel.subTaskFilters = null
+                }
             }
         fragment.show(childFragmentManager, "FragmentTaskFilterSheet")
     }

@@ -93,6 +93,4 @@ interface ITaskRepository {
         subtaskId: String,
         callBack: (isSuccess: Boolean, message: String) -> Unit
     )
-
-    suspend fun applyFilterOnTask(applyFilterOnTask: LocalEvents.ApplyFilterOnTask): List<CeibroTask>
 }

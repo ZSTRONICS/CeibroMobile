@@ -256,15 +256,6 @@ class SubTaskFragment :
         viewModel.getSubTasks()
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnSubTask) {
-        viewModel.applyFilter(event)
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onClearSubtaskFilters(event: LocalEvents.ClearSubtaskFilters) {
-        viewModel.getSubTasks()
-    }
-
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
