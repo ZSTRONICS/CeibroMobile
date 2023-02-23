@@ -17,7 +17,6 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.databinding.FragmentTasksBinding
@@ -169,8 +168,13 @@ class TasksFragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnTask) {
         viewModel.applyFilter(event)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onClearTaskFilters(event: LocalEvents.ClearTaskFilters) {
+        viewModel.getTasks()
     }
 
     override fun onStart() {

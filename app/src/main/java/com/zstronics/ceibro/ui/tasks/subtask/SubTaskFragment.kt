@@ -19,11 +19,9 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.databinding.FragmentSubTaskBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -259,8 +257,12 @@ class SubTaskFragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnSubTask) {
         viewModel.applyFilter(event)
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onClearSubtaskFilters(event: LocalEvents.ClearSubtaskFilters) {
+        viewModel.getSubTasks()
     }
 
     override fun onStart() {

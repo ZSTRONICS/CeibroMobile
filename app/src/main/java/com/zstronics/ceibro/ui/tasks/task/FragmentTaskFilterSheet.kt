@@ -194,6 +194,7 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
             dismiss()
         }
         binding.taskFilterClearAllBtn.setOnClickListener {
+            onClearAllClickListener?.invoke()
             dismiss()
         }
         binding.confirmFilterBtn.setOnClickListener {

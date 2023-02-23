@@ -13,5 +13,4 @@ class MainTasksVM @Inject constructor(
     val user = sessionManager.getUser().value
     val projects = sessionManager.getProjects().value
 
-
 }

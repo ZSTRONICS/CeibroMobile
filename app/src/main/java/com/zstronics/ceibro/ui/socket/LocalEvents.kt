@@ -21,10 +21,20 @@ object LocalEvents {
         val indeterminate: Boolean,
     )
 
-    data class ApplyFilterOnTaskAndSubTask(
+    data class ApplyFilterOnTask(
         val projectId: String,
         val selectedStatus: String,
         val selectedDueDate: String,
         val assigneeToMembers: ArrayList<Member>?
     )
+
+    data class ApplyFilterOnSubTask(
+        val projectId: String,
+        val selectedStatus: String,
+        val selectedDueDate: String,
+        val assigneeToMembers: ArrayList<Member>?
+    )
+
+    object ClearTaskFilters
+    object ClearSubtaskFilters
 }

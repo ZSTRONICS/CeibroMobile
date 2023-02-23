@@ -94,11 +94,31 @@ class MainTasksFragment :
 
         fragment.onConfirmClickListener =
             { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: ArrayList<Member>? ->
-                EventBus.getDefault().post(
-                    LocalEvents.ApplyFilterOnTaskAndSubTask(
-                        projectId, selectedStatus, selectedDueDate, assigneeToMembers
+
+                if (selectedFragment == "TasksFragment")
+                    EventBus.getDefault().post(
+                        LocalEvents.ApplyFilterOnTask(
+                            projectId, selectedStatus, selectedDueDate, assigneeToMembers
+                        )
                     )
-                )
+                else
+                    EventBus.getDefault().post(
+                        LocalEvents.ApplyFilterOnSubTask(
+                            projectId, selectedStatus, selectedDueDate, assigneeToMembers
+                        )
+                    )
+            }
+
+        fragment.onClearAllClickListener =
+            {
+                if (selectedFragment == "TasksFragment")
+                    EventBus.getDefault().post(
+                        LocalEvents.ClearTaskFilters
+                    )
+                else
+                    EventBus.getDefault().post(
+                        LocalEvents.ClearSubtaskFilters
+                    )
             }
         fragment.show(childFragmentManager, "FragmentTaskFilterSheet")
     }

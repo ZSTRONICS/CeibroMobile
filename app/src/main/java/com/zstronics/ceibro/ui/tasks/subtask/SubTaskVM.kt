@@ -1,18 +1,9 @@
 package com.zstronics.ceibro.ui.tasks.subtask
 
-import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
-import android.widget.PopupWindow
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
@@ -93,7 +84,7 @@ class SubTaskVM @Inject constructor(
         }
     }
 
-    fun applyFilter(event: LocalEvents.ApplyFilterOnTaskAndSubTask) {
+    fun applyFilter(event: LocalEvents.ApplyFilterOnSubTask) {
         TODO("Implement filter logic here")
     }
 }
