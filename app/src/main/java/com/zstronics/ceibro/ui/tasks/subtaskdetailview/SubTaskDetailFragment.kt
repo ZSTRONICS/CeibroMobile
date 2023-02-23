@@ -12,10 +12,13 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.databinding.FragmentSubTaskDetailBinding
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
+import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SubTaskDetailFragment :
@@ -48,11 +51,30 @@ class SubTaskDetailFragment :
                         resources.getString(R.string.show_more_heading)
                 }
             }
+            R.id.subTaskCommentAttachmentBtn -> pickAttachment(true)
         }
     }
 
+
+
+    @Inject
+    lateinit var attachmentAdapter: AttachmentAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mViewDataBinding.commentAttachmentRecyclerView.adapter = attachmentAdapter
+
+        viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
+            if (list != null) {
+                attachmentAdapter.setList(list)
+            }
+        }
+        attachmentAdapter.itemClickListener =
+            { _: View, position: Int, data: SubtaskAttachment? ->
+                viewModel.removeFile(position)
+            }
+
 
         viewModel.user.observe(viewLifecycleOwner) {
             if (it != null) {
