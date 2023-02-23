@@ -182,7 +182,7 @@ class FragmentTaskFilterSheet constructor(
                     cal.get(Calendar.MONTH),
                     cal.get(Calendar.DAY_OF_MONTH)
                 )
-            datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
+//            datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
             datePicker.show()
         }
 
