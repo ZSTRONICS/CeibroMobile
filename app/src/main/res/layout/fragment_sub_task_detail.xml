@@ -454,7 +454,6 @@
                         android:fontFamily="@font/inter_regular"
                         android:src="@drawable/icon_attachment"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
                         app:tint="@color/appBlue" />
 
                     <TextView
@@ -564,7 +563,7 @@
                         android:id="@+id/subTaskCommentsRV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -634,12 +633,12 @@
                         android:id="@+id/subTaskCommentField"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/input_field_rectangle"
+                        android:background="@drawable/input_field_rectangle_corners"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="top|start"
                         android:hint="@string/type_new_comment_heading"
                         android:inputType="textMultiLine"
-                        android:maxLines="5"
+                        android:maxLines="6"
                         android:minLines="4"
                         android:overScrollMode="always"
                         android:paddingStart="7dp"
@@ -651,17 +650,43 @@
                         android:textColorHint="@color/appHintGrey"
                         android:textSize="14.5sp" />
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/commentAttachmentRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/newTaskMainLayout"
+                        tools:listitem="@layout/layout_attachment" />
+
+
                     <LinearLayout
                         android:id="@+id/subTaskCommentSendLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:layout_marginBottom="3dp"
-                        android:gravity="end"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="6dp"
+                        android:gravity="end|center_vertical"
                         android:orientation="horizontal">
 
+                        <ImageView
+                            android:id="@+id/subTaskCommentAttachmentBtn"
+                            android:layout_width="30dp"
+                            android:layout_height="28dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:src="@drawable/icon_attachment"
+                            android:padding="4dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:layout_marginEnd="10dp"
+                            app:tint="@color/appBlue" />
+
                         <TextView
-                            android:id="@+id/draftStateAssignBtn"
+                            android:id="@+id/sendCommentBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
@@ -676,6 +701,7 @@
                             android:paddingTop="4dp"
                             android:paddingEnd="11dp"
                             android:paddingBottom="4dp"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:text="@string/send_heading"
                             android:textColor="@color/white"
                             android:textSize="13.5sp" />
