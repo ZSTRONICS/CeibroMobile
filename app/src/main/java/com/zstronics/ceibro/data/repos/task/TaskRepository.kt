@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -418,5 +419,14 @@ class TaskRepository @Inject constructor(
             }
             else -> return Triple(false, false, false)
         }
+    }
+
+    override suspend fun applyFilterOnTask(applyFilterOnTask: LocalEvents.ApplyFilterOnTask): List<CeibroTask> {
+        return localTask.getFilteredTasks(
+            projectId = applyFilterOnTask.projectId.takeIf { it.isNotEmpty() } ?: "",
+            selectedStatus = applyFilterOnTask.selectedStatus.takeIf { it.isNotEmpty() } ?: "",
+            selectedDueDate = applyFilterOnTask.selectedDueDate.takeIf { it.isNotEmpty() } ?: "",
+            assigneeToMembers = applyFilterOnTask.assigneeToMembers?.takeIf { it.isNotEmpty() }
+        )
     }
 }

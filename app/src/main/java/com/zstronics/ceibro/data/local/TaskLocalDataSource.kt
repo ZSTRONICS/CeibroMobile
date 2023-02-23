@@ -1,8 +1,8 @@
 package com.zstronics.ceibro.data.local
 
-import androidx.lifecycle.LiveData
 import com.zstronics.ceibro.data.database.dao.TaskDao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import javax.inject.Inject
 
 class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : ITaskLocalDataSource {
@@ -20,11 +20,11 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
         taskDao.insertTask(task)
     }
 
-    override suspend fun getSingleTaskCount(taskId: String) : Int {
+    override suspend fun getSingleTaskCount(taskId: String): Int {
         return taskDao.getSingleTask(taskId)
     }
 
-    override suspend fun getTaskById(taskId: String) : CeibroTask {
+    override suspend fun getTaskById(taskId: String): CeibroTask {
         return taskDao.getTaskById(taskId)
     }
 
@@ -34,5 +34,18 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
 
     override suspend fun deleteTaskById(taskId: String) {
         taskDao.deleteTaskById(taskId)
+    }
+
+    override suspend fun getFilteredTasks(
+        projectId: String,
+        selectedStatus: String,
+        selectedDueDate: String,
+        assigneeToMembers: List<TaskMember>?
+    ): List<CeibroTask> {
+        return taskDao.getFilteredTasks(
+            selectedStatus = selectedStatus,
+            selectedDueDate = selectedDueDate,
+            assigneeToMembers = assigneeToMembers
+        )
     }
 }

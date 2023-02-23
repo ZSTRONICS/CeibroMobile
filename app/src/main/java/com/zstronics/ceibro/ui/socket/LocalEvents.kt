@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.socket
 
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
@@ -25,14 +26,14 @@ object LocalEvents {
         val projectId: String,
         val selectedStatus: String,
         val selectedDueDate: String,
-        val assigneeToMembers: ArrayList<Member>?
+        val assigneeToMembers: List<TaskMember>?
     )
 
     data class ApplyFilterOnSubTask(
         val projectId: String,
         val selectedStatus: String,
         val selectedDueDate: String,
-        val assigneeToMembers: ArrayList<Member>?
+        val assigneeToMembers: List<TaskMember>?
     )
 
     object ClearTaskFilters

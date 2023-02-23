@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.task
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.ui.socket.LocalEvents
 
 interface ITaskRepository {
     suspend fun tasks(): List<CeibroTask>
@@ -92,4 +93,6 @@ interface ITaskRepository {
         subtaskId: String,
         callBack: (isSuccess: Boolean, message: String) -> Unit
     )
+
+    suspend fun applyFilterOnTask(applyFilterOnTask: LocalEvents.ApplyFilterOnTask): List<CeibroTask>
 }

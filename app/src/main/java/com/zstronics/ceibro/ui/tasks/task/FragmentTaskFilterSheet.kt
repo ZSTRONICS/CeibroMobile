@@ -48,7 +48,7 @@ class FragmentTaskFilterSheet constructor(projects: MutableList<ProjectsWithMemb
     @Inject
     lateinit var assigneeChipsAdapter: MemberChipAdapter
 
-    var onConfirmClickListener: ((view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: ArrayList<Member>?) -> Unit)? = null
+    var onConfirmClickListener: ((view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: List<Member>?) -> Unit)? = null
     var onClearAllClickListener: (() -> Unit)? = null
 
     override fun onCreateView(

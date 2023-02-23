@@ -7,6 +7,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.FragmentMainTasksBinding
@@ -93,18 +94,27 @@ class MainTasksFragment :
         val fragment = FragmentTaskFilterSheet(projects, statusList)
 
         fragment.onConfirmClickListener =
-            { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: ArrayList<Member>? ->
+            { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: List<Member>? ->
 
+                val newMembers = assigneeToMembers?.map {
+                    TaskMember(
+                        firstName = it.firstName,
+                        surName = it.surName,
+                        profilePic = it.profilePic,
+                        id = it.id,
+                        TaskMemberId = 0
+                    )
+                }
                 if (selectedFragment == "TasksFragment")
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnTask(
-                            projectId, selectedStatus, selectedDueDate, assigneeToMembers
+                            projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
                 else
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnSubTask(
-                            projectId, selectedStatus, selectedDueDate, assigneeToMembers
+                            projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
             }

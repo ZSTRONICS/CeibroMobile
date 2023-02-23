@@ -3,6 +3,8 @@ package com.zstronics.ceibro.data.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.repos.chat.room.Member
 
 @Dao
 interface TaskDao {
@@ -29,4 +31,11 @@ interface TaskDao {
 
     @Query("DELETE FROM tasks WHERE _id = :taskId")
     suspend fun deleteTaskById(taskId: String)
+
+    @Query("SELECT * FROM tasks WHERE (:selectedStatus = '' OR subTaskStatusCount = :selectedStatus) AND (:selectedDueDate = '' OR dueDate = :selectedDueDate) AND (:assigneeToMembers IS NULL OR assignedTo IN (:assigneeToMembers))")
+    suspend fun getFilteredTasks(
+        selectedStatus: String = "",
+        selectedDueDate: String = "",
+        assigneeToMembers: List<TaskMember>? = null
+    ): List<CeibroTask>
 }

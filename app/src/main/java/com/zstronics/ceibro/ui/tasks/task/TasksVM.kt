@@ -46,7 +46,9 @@ class TasksVM @Inject constructor(
     }
 
     fun applyFilter(event: LocalEvents.ApplyFilterOnTask) {
-        TODO("Implement filter logic here")
+        launch {
+            _tasks.postValue(taskRepository.applyFilterOnTask(event).reversed())
+        }
     }
 
 
