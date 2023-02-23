@@ -60,8 +60,7 @@ class TasksVM @Inject constructor(
                     it.assignedTo,
                     filter.assigneeToMembers
                 )) || (it.state == filter.selectedStatus && filter.selectedStatus != "All") && (it.dueDate ==
-                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty()) &&
-                        (filter.assigneeToMembers?.isNotEmpty() == true)
+                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty())
 
             }
         _tasks.postValue(filtered)

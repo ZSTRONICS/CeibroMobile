@@ -100,8 +100,7 @@ class SubTaskVM @Inject constructor(
                     it.assignedTo[0].members,
                     filter.assigneeToMembers
                 ) || (it.dueDate ==
-                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty()) &&
-                        (filter.assigneeToMembers?.isNotEmpty() == true)
+                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty())
 
             }
         _subTasks.postValue(filtered)
