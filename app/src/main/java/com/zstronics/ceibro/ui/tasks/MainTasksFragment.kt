@@ -105,18 +105,19 @@ class MainTasksFragment :
                         TaskMemberId = 0
                     )
                 }
-                if (selectedFragment == "TasksFragment")
+                if (selectedFragment == "TasksFragment") {
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnTask(
                             projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
-                else
+                } else {
                     EventBus.getDefault().post(
                         LocalEvents.ApplyFilterOnSubTask(
                             projectId, selectedStatus, selectedDueDate, newMembers
                         )
                     )
+                }
             }
 
         fragment.onClearAllClickListener =

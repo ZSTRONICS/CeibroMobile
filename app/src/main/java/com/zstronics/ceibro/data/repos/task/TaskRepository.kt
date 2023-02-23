@@ -420,13 +420,4 @@ class TaskRepository @Inject constructor(
             else -> return Triple(false, false, false)
         }
     }
-
-    override suspend fun applyFilterOnTask(applyFilterOnTask: LocalEvents.ApplyFilterOnTask): List<CeibroTask> {
-        return localTask.getFilteredTasks(
-            projectId = applyFilterOnTask.projectId.takeIf { it.isNotEmpty() } ?: "",
-            selectedStatus = applyFilterOnTask.selectedStatus.takeIf { it.isNotEmpty() } ?: "",
-            selectedDueDate = applyFilterOnTask.selectedDueDate.takeIf { it.isNotEmpty() } ?: "",
-            assigneeToMembers = applyFilterOnTask.assigneeToMembers?.takeIf { it.isNotEmpty() }
-        )
-    }
 }

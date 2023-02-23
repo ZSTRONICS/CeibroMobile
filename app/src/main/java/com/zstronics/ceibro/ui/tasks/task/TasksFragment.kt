@@ -166,17 +166,6 @@ class TasksFragment :
 //        showToast("New Task Created")
         viewModel.getTasks()
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onApplyFilterOnTaskAndSubTask(event: LocalEvents.ApplyFilterOnTask) {
-        viewModel.applyFilter(event)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onClearTaskFilters(event: LocalEvents.ClearTaskFilters) {
-        viewModel.getTasks()
-    }
-
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

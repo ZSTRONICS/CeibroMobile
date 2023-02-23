@@ -4,10 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +24,7 @@ class TasksVM @Inject constructor(
 
     private val _tasks: MutableLiveData<List<CeibroTask>> = MutableLiveData()
     val tasks: LiveData<List<CeibroTask>> = _tasks
+    var originalTasks: List<CeibroTask> = listOf()
 
     init {
         getTasks()
@@ -27,7 +32,8 @@ class TasksVM @Inject constructor(
 
     override fun getTasks() {
         launch {
-            _tasks.postValue(taskRepository.tasks().reversed())
+            originalTasks = taskRepository.tasks().reversed()
+            _tasks.postValue(originalTasks)
         }
     }
 
@@ -45,11 +51,46 @@ class TasksVM @Inject constructor(
         }
     }
 
-    fun applyFilter(event: LocalEvents.ApplyFilterOnTask) {
-        launch {
-            _tasks.postValue(taskRepository.applyFilterOnTask(event).reversed())
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onApplyFilters(filter: LocalEvents.ApplyFilterOnTask) {
+        val filtered =
+            originalTasks.filter {
+                (it.project.id == filter.projectId && haveMembers(
+                    it.assignedTo,
+                    filter.assigneeToMembers
+                )) || (it.state == filter.selectedStatus && filter.selectedStatus != "All") && (it.dueDate ==
+                        filter.selectedDueDate && filter.selectedDueDate.isNotEmpty()) &&
+                        (filter.assigneeToMembers?.isNotEmpty() == true)
+
+            }
+        _tasks.postValue(filtered)
+    }
+
+    private fun haveMembers(
+        list: List<TaskMember>,
+        assigneeToMembers: List<TaskMember>?
+    ): Boolean {
+        // Return true if assigneeToMembers is null or empty
+        if (assigneeToMembers == null || assigneeToMembers.isEmpty()) {
+            return true
         }
+
+        // Check if the assigneeToMembers id is found in the list
+        return list.any { it.id == assigneeToMembers[0].id }
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun resetFilters(event: LocalEvents.ClearTaskFilters) {
+        _tasks.postValue(originalTasks)
+    }
+
+    init {
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
+    }
 }
