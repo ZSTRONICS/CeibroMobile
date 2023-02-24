@@ -38,8 +38,8 @@ interface SubTaskDao {
     suspend fun getSubTaskById(subTaskId: String): AllSubtask?
 
     // Add a new comment to the recentComments list
-    suspend fun addComment(subTaskId: String, comment: SubTaskComments) {
-        val subtask = getSubTaskById(subTaskId)
+    suspend fun addComment(subTaskId: String?, comment: SubTaskComments) {
+        val subtask = subTaskId?.let { getSubTaskById(it) }
         val comments = subtask?.recentComments
         comments?.add(comment)
         subtask?.recentComments = comments

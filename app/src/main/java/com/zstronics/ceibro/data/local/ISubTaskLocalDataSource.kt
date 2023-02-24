@@ -13,5 +13,5 @@ interface ISubTaskLocalDataSource {
     suspend fun updateSubTask(subTask: AllSubtask)
     suspend fun deleteSubtaskById(subTaskId: String)
     suspend fun deleteSubtaskByTaskId(taskId: String)
-    suspend fun addComment(subTaskId: String, comment: SubTaskComments)
+    suspend fun addComment(subTaskId: String?, comment: SubTaskComments)
 }

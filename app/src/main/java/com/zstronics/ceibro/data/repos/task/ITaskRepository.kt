@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.task
 
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.models.*
 
@@ -94,7 +95,7 @@ interface ITaskRepository {
     )
     suspend fun postCommentSubtask(
         request: SubtaskCommentRequest,
-        callBack: (isSuccess: Boolean, message: String, data: SubtaskCommentResponse.Result?) -> Unit
+        callBack: (isSuccess: Boolean, message: String, data: SubTaskComments?) -> Unit
     )
 
 }

@@ -4,8 +4,6 @@ package com.zstronics.ceibro.data.repos.task.models
 import com.google.gson.annotations.SerializedName
 
 data class SubtaskCommentRequest(
-    @SerializedName("access")
-    val access: List<String>?,
     @SerializedName("isFileAttached")
     val isFileAttached: Boolean?,
     @SerializedName("message")

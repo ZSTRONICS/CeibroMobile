@@ -1,14 +1,17 @@
 package com.zstronics.ceibro.data.database.models.attachments
 
+import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.TableNames
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = TableNames.FilesAttachments)
 @Keep
+@Parcelize
 data class FilesAttachments(
     @PrimaryKey
     @SerializedName("_id") val id: String,
@@ -24,4 +27,4 @@ data class FilesAttachments(
     @SerializedName("uploadedBy") val uploadedBy: String,
     @SerializedName("version") val version: Int,
     @SerializedName("fileSize") val fileSize: Int
-) : BaseResponse()
+) : BaseResponse(), Parcelable
