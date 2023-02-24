@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.local
 import com.zstronics.ceibro.data.database.dao.SubTaskDao
 import com.zstronics.ceibro.data.database.dao.TaskDao
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import javax.inject.Inject
 
@@ -40,5 +41,8 @@ class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTask
 
     override suspend fun deleteSubtaskByTaskId(taskId: String) {
         subTaskDao.deleteSubtaskByTaskId(taskId)
+    }
+    override suspend fun addComment(subTaskId: String, comment: SubTaskComments){
+        subTaskDao.addComment(subTaskId,comment)
     }
 }

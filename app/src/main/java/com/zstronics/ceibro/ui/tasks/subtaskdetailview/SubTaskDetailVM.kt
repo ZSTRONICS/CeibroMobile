@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.subtaskdetailview
 
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,9 +10,12 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
+import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -49,23 +53,40 @@ class SubTaskDetailVM @Inject constructor(
         }
     }
 
-    fun postComment(message: String, success: (subtaskId: String?) -> Unit) {
+    fun postComment(
+        message: String,
+        context: Context,
+        success: (data: SubtaskCommentResponse.Result?) -> Unit
+    ) {
         launch {
-            loading(true)
+            val userState =
+                subtask.value?.state?.find { it.userId == userObj?.id }?.userState?.lowercase()
+                    ?: TaskStatus.DRAFT.name.lowercase()
             val request = SubtaskCommentRequest(
                 access = subtask.value?.access,
-                isFileAttached = false,
+                isFileAttached = fileUriList.value?.isNotEmpty() == true,
                 message = message,
-                seenBy = arrayListOf(),
+                seenBy = arrayListOf(userObj?.id.toString()),
                 sender = userObj?.id,
                 subTaskId = subtask.value?.id,
                 taskId = subtask.value?.taskId,
-                userState = ""
+                userState = userState
             )
-            taskRepository.postCommentSubtask(request) { isSuccess, error, subtaskData ->
-                if (isSuccess)
-                    success(subtaskData?.id)
+            taskRepository.postCommentSubtask(request) { isSuccess, error, commentData ->
                 loading(false)
+                if (isSuccess) {
+                    alert("Comment sent")
+                    success(commentData)
+                    if (fileUriList.value?.isNotEmpty() == true) {
+                        commentData?.id?.let {
+                            uploadFiles(
+                                AttachmentModules.SubTaskComments.name,
+                                it,
+                                context
+                            )
+                        }
+                    }
+                } else alert(error)
             }
         }
     }

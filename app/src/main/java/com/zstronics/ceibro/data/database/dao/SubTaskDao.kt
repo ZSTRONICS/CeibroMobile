@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.*
+import com.zstronics.ceibro.data.database.TableNames
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 
 @Dao
 interface SubTaskDao {
@@ -31,4 +33,16 @@ interface SubTaskDao {
 
     @Query("DELETE FROM sub_tasks WHERE taskId = :taskId")
     suspend fun deleteSubtaskByTaskId(taskId: String)
+
+    @Query("SELECT * FROM ${TableNames.SubTasks} WHERE id = :subTaskId")
+    suspend fun getSubTaskById(subTaskId: String): AllSubtask?
+
+    // Add a new comment to the recentComments list
+    suspend fun addComment(subTaskId: String, comment: SubTaskComments) {
+        val subtask = getSubTaskById(subTaskId)
+        val comments = subtask?.recentComments
+        comments?.add(comment)
+        subtask?.recentComments = comments
+        subtask?.let { updateSubTask(it) }
+    }
 }

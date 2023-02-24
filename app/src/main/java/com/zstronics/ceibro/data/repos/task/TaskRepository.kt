@@ -427,9 +427,10 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteSubTask.postCommentSubtask(request)) {
             is ApiResponse.Success -> {
+//                localSubTask.addComment()
                 callBack(true, "", response.data.result)
             }
-            else -> callBack(false, "", null)
+            is ApiResponse.Error -> callBack(false, response.error.message, null)
         }
     }
 }

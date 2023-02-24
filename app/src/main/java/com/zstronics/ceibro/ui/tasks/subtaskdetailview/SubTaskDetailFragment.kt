@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.auth.login.User
@@ -54,8 +55,12 @@ class SubTaskDetailFragment :
             R.id.subTaskCommentAttachmentBtn -> pickAttachment(true)
             R.id.sendCommentBtn -> {
                 val message: String = mViewDataBinding.subTaskCommentField.text.toString()
-                viewModel.postComment(message) {
-                    navigateBack()
+                if (viewModel.fileUriList.value?.isNotEmpty() == true || message.isNotEmpty())
+                    viewModel.postComment(message, requireContext()) {
+
+                    }
+                else {
+                    toast("You need to write something in comments or attach a file")
                 }
             }
         }

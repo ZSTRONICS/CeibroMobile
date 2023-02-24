@@ -33,7 +33,7 @@ data class AllSubtask(
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("files") val files: List<String>?,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
-    @SerializedName("recentComments") val recentComments: List<SubTaskComments>?,
+    @SerializedName("recentComments") var recentComments: ArrayList<SubTaskComments>?,
     @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>?,
     @SerializedName("state") var state: List<SubTaskStateItem>?,
     @SerializedName("taskId") val taskId: String,
