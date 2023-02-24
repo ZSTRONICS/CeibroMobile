@@ -43,7 +43,7 @@ data class AllSubtask(
     @SerializedName("title") val title: String,
     @SerializedName("updatedAt") val updatedAt: String,
     @SerializedName("viewer") val viewer: List<Viewer>,
-//    @SerializedName("unSeenCommentsCount") val unSeenCommentsCount: Int,
+    @SerializedName("unSeenCommentsCount") val unSeenCommentsCount: Int,
     @SerializedName("attachmentsCount") val attachmentsCount: Int
 ) : Parcelable
 
