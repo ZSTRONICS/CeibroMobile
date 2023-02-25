@@ -7,6 +7,8 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.extensions.toCamelCase
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.auth.login.User
@@ -15,6 +17,7 @@ import com.zstronics.ceibro.databinding.FragmentSubTaskDetailBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus.Companion.stateToHeadingAndBg
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,8 +57,12 @@ class SubTaskDetailFragment :
             R.id.subTaskCommentAttachmentBtn -> pickAttachment(true)
             R.id.sendCommentBtn -> {
                 val message: String = mViewDataBinding.subTaskCommentField.text.toString()
-                viewModel.postComment(message) {
-                    navigateBack()
+                if (viewModel.fileUriList.value?.isNotEmpty() == true || message.isNotEmpty())
+                    viewModel.postComment(message, requireContext()) {
+                        mViewDataBinding.subTaskCommentField.setText("")
+                    }
+                else {
+                    toast("You need to write something in comments or attach a file")
                 }
             }
         }
@@ -65,10 +72,14 @@ class SubTaskDetailFragment :
     @Inject
     lateinit var attachmentAdapter: AttachmentAdapter
 
+    @Inject
+    lateinit var commentsAdapter: CommentsAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mViewDataBinding.commentAttachmentRecyclerView.adapter = attachmentAdapter
+        mViewDataBinding.subTaskCommentsRV.adapter = commentsAdapter
 
         viewModel.fileUriList.observe(viewLifecycleOwner) { list ->
             if (list != null) {
@@ -80,55 +91,30 @@ class SubTaskDetailFragment :
                 viewModel.removeFile(position)
             }
 
-
         viewModel.user.observe(viewLifecycleOwner) {
             if (it != null) {
                 userData = it
             }
         }
 
+        viewModel.recentComments.observe(viewLifecycleOwner) { comments ->
+            commentsAdapter.setList(comments)
+        }
         viewModel.subtask.observe(viewLifecycleOwner) { item ->
             with(mViewDataBinding) {
                 if (item != null) {
                     taskTitle.text = item.taskData?.title
 
-
                     val state =
                         item.state?.find { it.userId == userData.id }?.userState?.uppercase()
 
-                    val subTaskStatusNameBg: Pair<Int, String?> = when (state) {
-                        SubTaskStatus.ONGOING.name -> Pair(
-                            R.drawable.status_ongoing_filled,
-                            requireContext().getString(R.string.ongoing_heading)
-                        )
-                        SubTaskStatus.ASSIGNED.name -> Pair(
-                            R.drawable.status_assigned_filled,
-                            requireContext().getString(R.string.assigned_heading)
-                        )
-                        SubTaskStatus.ACCEPTED.name -> Pair(
-                            R.drawable.status_accepted_filled,
-                            requireContext().getString(R.string.accepted_heading)
-                        )
-                        SubTaskStatus.REJECTED.name -> Pair(
-                            R.drawable.status_reject_filled,
-                            requireContext().getString(R.string.rejected_heading)
-                        )
-                        SubTaskStatus.DONE.name -> Pair(
-                            R.drawable.status_done_filled,
-                            requireContext().getString(R.string.done_heading)
-                        )
-                        SubTaskStatus.DRAFT.name -> Pair(
-                            R.drawable.status_draft_filled,
-                            requireContext().getString(R.string.draft_heading)
-                        )
-                        else -> Pair(
-                            R.drawable.status_draft_filled,
-                            state
-                        )
+                    val subTaskStatusNameBg: Pair<Int, SubTaskStatus>? =
+                        state?.stateToHeadingAndBg()
+                    subTaskStatusNameBg?.let {
+                        val (background, heading) = subTaskStatusNameBg
+                        subTaskStatusName.setBackgroundResource(background)
+                        subTaskStatusName.text = heading.name.toCamelCase()
                     }
-                    val (background, stringRes) = subTaskStatusNameBg
-                    subTaskStatusName.setBackgroundResource(background)
-                    subTaskStatusName.text = stringRes
 
 
                     subTaskDueDate.text = DateUtils.reformatStringDate(

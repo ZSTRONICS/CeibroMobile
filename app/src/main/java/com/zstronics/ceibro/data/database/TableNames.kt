@@ -8,6 +8,7 @@ object TableNames {
     const val SubTasksStatus = "sub_tasks_status"
     const val SubTasksState = "sub_tasks_state"
     const val SubTaskComments = "sub_task_comments"
+    const val SubTaskRejectionComments = "sub_task_rejection_comments"
     const val SubTaskProject = "sub_task_project"
     const val TaskDataOfSubTask = "task_data_of_sub_task"
     const val TaskMember = "task_member"

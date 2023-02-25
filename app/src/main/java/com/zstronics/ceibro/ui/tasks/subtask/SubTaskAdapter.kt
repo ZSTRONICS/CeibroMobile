@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.AssignedTo
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
@@ -14,7 +15,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutSubtaskBoxBinding
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus.Companion.stateToHeadingAndBg
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
@@ -66,39 +67,10 @@ class SubTaskAdapter @Inject constructor(
                 val state = item.state?.find { it.userId == user?.id }?.userState?.uppercase()
                     ?: SubTaskStatus.DRAFT.name
 
-                val subTaskStatusNameBg: Pair<Int, String> = when (state) {
-                    SubTaskStatus.ONGOING.name -> Pair(
-                        R.drawable.status_ongoing_filled,
-                        context.getString(R.string.ongoing_heading)
-                    )
-                    SubTaskStatus.ASSIGNED.name -> Pair(
-                        R.drawable.status_assigned_filled,
-                        context.getString(R.string.assigned_heading)
-                    )
-                    SubTaskStatus.ACCEPTED.name -> Pair(
-                        R.drawable.status_accepted_filled,
-                        context.getString(R.string.accepted_heading)
-                    )
-                    SubTaskStatus.REJECTED.name -> Pair(
-                        R.drawable.status_reject_filled,
-                        context.getString(R.string.rejected_heading)
-                    )
-                    SubTaskStatus.DONE.name -> Pair(
-                        R.drawable.status_done_filled,
-                        context.getString(R.string.done_heading)
-                    )
-                    SubTaskStatus.DRAFT.name -> Pair(
-                        R.drawable.status_draft_filled,
-                        context.getString(R.string.draft_heading)
-                    )
-                    else -> Pair(
-                        R.drawable.status_draft_filled,
-                        state
-                    )
-                }
-                val (background, stringRes) = subTaskStatusNameBg
+                val headingAndBg: Pair<Int, SubTaskStatus> = state.stateToHeadingAndBg()
+                val (background, heading) = headingAndBg
                 subTaskStatusName.setBackgroundResource(background)
-                subTaskStatusName.text = stringRes
+                subTaskStatusName.text = heading.name.toCamelCase()
 
 
                 val isAssignee = isAssignToMember(user?.id, item.assignedTo)
@@ -118,36 +90,43 @@ class SubTaskAdapter @Inject constructor(
 //                }
 
                 if (isTaskAdmin && !isAssignee) {
-                    if (state == SubTaskStatus.DRAFT.name) {
-                        draftStateBtnLayout.visibility = View.VISIBLE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.ASSIGNED.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.ACCEPTED.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.ONGOING.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.DONE.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.REJECTED.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
+                    when (state) {
+                        SubTaskStatus.DRAFT.name -> {
+                            draftStateBtnLayout.visibility = View.VISIBLE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.ASSIGNED.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.ACCEPTED.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.ONGOING.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.DONE.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.REJECTED.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
                     }
                 } else if (isTaskAdmin && isAssignee) {
                     if (state == SubTaskStatus.DRAFT.name) {
@@ -182,36 +161,43 @@ class SubTaskAdapter @Inject constructor(
                         ongoingStateBtnLayout.visibility = View.GONE
                     }
                 } else if (!isTaskAdmin && isAssignee) {
-                    if (state == SubTaskStatus.DRAFT.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.ASSIGNED.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.VISIBLE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.ACCEPTED.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.VISIBLE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.ONGOING.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.VISIBLE
-                    } else if (state == SubTaskStatus.DONE.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
-                    } else if (state == SubTaskStatus.REJECTED.name) {
-                        draftStateBtnLayout.visibility = View.GONE
-                        assignedStateBtnLayout.visibility = View.GONE
-                        acceptedStateBtnLayout.visibility = View.GONE
-                        ongoingStateBtnLayout.visibility = View.GONE
+                    when (state) {
+                        SubTaskStatus.DRAFT.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.ASSIGNED.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.VISIBLE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.ACCEPTED.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.VISIBLE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.ONGOING.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.VISIBLE
+                        }
+                        SubTaskStatus.DONE.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
+                        SubTaskStatus.REJECTED.name -> {
+                            draftStateBtnLayout.visibility = View.GONE
+                            assignedStateBtnLayout.visibility = View.GONE
+                            acceptedStateBtnLayout.visibility = View.GONE
+                            ongoingStateBtnLayout.visibility = View.GONE
+                        }
                     }
                 } else {
                     draftStateBtnLayout.visibility = View.GONE

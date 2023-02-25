@@ -6,7 +6,9 @@ import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.TableNames
+import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import kotlinx.parcelize.Parcelize
 
@@ -33,14 +35,16 @@ data class AllSubtask(
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("files") val files: List<String>?,
     @SerializedName("isMultiTaskSubTask") val isMultiTaskSubTask: Boolean,
-    @SerializedName("recentComments") val recentComments: List<SubTaskComments>?,
-    @SerializedName("rejectionComments") val rejectionComments: List<SubTaskComments>?,
+    @SerializedName("recentComments") var recentComments: ArrayList<SubTaskComments>?,
+//    @SerializedName("rejectionComments") val rejectionComments: List<RejectionComment>?,
     @SerializedName("state") var state: List<SubTaskStateItem>?,
     @SerializedName("taskId") val taskId: String,
     @SerializedName("taskData") val taskData: TaskDataOfSubTask?,
     @SerializedName("title") val title: String,
     @SerializedName("updatedAt") val updatedAt: String,
-    @SerializedName("viewer") val viewer: List<Viewer>
+    @SerializedName("viewer") val viewer: List<Viewer>,
+    @SerializedName("unSeenCommentsCount") val unSeenCommentsCount: Int,
+    @SerializedName("attachmentsCount") val attachmentsCount: Int
 ) : Parcelable
 
 
@@ -83,16 +87,29 @@ data class SubTaskStateItem(
 @Parcelize
 @Keep
 data class SubTaskComments(
-    @PrimaryKey(autoGenerate = true)
-    val subTaskCommentId: Int,
-    @SerializedName("comment")
-    val comment: String,
-    @SerializedName("creator")
-    val creator: TaskMember,
+    @PrimaryKey
     @SerializedName("_id")
     val id: String,
-    @SerializedName("subtaskStateAtComment")
-    val subtaskStateAtComment: String
+    @SerializedName("access")
+    val access: List<String>,
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("isFileAttached")
+    val isFileAttached: Boolean,
+    @SerializedName("message")
+    val message: String,
+    @SerializedName("seenBy")
+    val seenBy: List<String>,
+    @SerializedName("sender")
+    val sender: TaskMember,
+    @SerializedName("subTaskId")
+    val subTaskId: String,
+    @SerializedName("taskId")
+    val taskId: String,
+    @SerializedName("updatedAt")
+    val updatedAt: String,
+    @SerializedName("userState")
+    val userState: String
 ) : Parcelable
 
 @Entity(tableName = TableNames.TaskDataOfSubTask)
@@ -116,4 +133,17 @@ data class SubTaskProject(
     val SubTaskProjectId: Int,
     @SerializedName("title") val title: String,
     @SerializedName("_id") val id: String,
+) : Parcelable
+
+@Entity(tableName = TableNames.SubTaskRejectionComments)
+@Parcelize
+@Keep
+data class RejectionComment(
+    @PrimaryKey
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("comment")
+    val comment: String,
+    @SerializedName("subtaskStateAtComment")
+    val subtaskStateAtComment: String
 ) : Parcelable

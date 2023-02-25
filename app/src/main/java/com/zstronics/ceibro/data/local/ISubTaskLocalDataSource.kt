@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.local
 
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 
 interface ISubTaskLocalDataSource {
     suspend fun getSubTasks(): List<AllSubtask>
@@ -12,4 +13,5 @@ interface ISubTaskLocalDataSource {
     suspend fun updateSubTask(subTask: AllSubtask)
     suspend fun deleteSubtaskById(subTaskId: String)
     suspend fun deleteSubtaskByTaskId(taskId: String)
+    suspend fun addComment(subTaskId: String?, comment: SubTaskComments)
 }

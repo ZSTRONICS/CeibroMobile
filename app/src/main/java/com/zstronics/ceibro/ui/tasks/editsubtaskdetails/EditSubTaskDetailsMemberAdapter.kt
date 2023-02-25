@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.repos.task.models.SubtaskStatusData
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutItemEditMembersBinding
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
+import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus.Companion.stateToHeadingAndBg
 import javax.inject.Inject
 
 class EditSubTaskDetailsMemberAdapter @Inject constructor(
@@ -26,8 +27,10 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
     RecyclerView.Adapter<EditSubTaskDetailsMemberAdapter.SubtaskMemberStatusViewHolder>() {
     val user = sessionManager.getUser().value
 
-    var deleteItemClickListener: ((view: View, position: Int, taskId: String, subTaskId: String, memberId: String) -> Unit)? = null
-    var doneItemClickListener: ((view: View, position: Int, taskId: String, subTaskId: String, memberId: String) -> Unit)? = null
+    var deleteItemClickListener: ((view: View, position: Int, taskId: String, subTaskId: String, memberId: String) -> Unit)? =
+        null
+    var doneItemClickListener: ((view: View, position: Int, taskId: String, subTaskId: String, memberId: String) -> Unit)? =
+        null
 
     private var list: MutableList<TaskMember> = mutableListOf()
     private var subtask: AllSubtask?
@@ -39,7 +42,10 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
         setList(memberList)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubtaskMemberStatusViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): SubtaskMemberStatusViewHolder {
         return SubtaskMemberStatusViewHolder(
             LayoutItemEditMembersBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -71,49 +77,24 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
             with(binding) {
 
                 //jonsa member display hony lga hai us ki id find krein gy states ki array mn sy
-                val userState = subtask?.state?.find { it.userId == item.id }?.userState?.uppercase()
-                    ?: "Unknown"
+                val userState =
+                    subtask?.state?.find { it.userId == item.id }?.userState?.uppercase()
+                        ?: "Unknown"
 
 //                println("Subtask in detail Adapter: $subtask")
-                val subTaskStatusNameBg: Pair<Int, String> = when (userState.uppercase()) {
-                    SubTaskStatus.ONGOING.name -> Pair(
-                        R.drawable.status_ongoing_filled,
-                        context.getString(R.string.ongoing_heading)
-                    )
-                    SubTaskStatus.ASSIGNED.name -> Pair(
-                        R.drawable.status_assigned_filled,
-                        context.getString(R.string.assigned_heading)
-                    )
-                    SubTaskStatus.ACCEPTED.name -> Pair(
-                        R.drawable.status_accepted_filled,
-                        context.getString(R.string.accepted_heading)
-                    )
-                    SubTaskStatus.REJECTED.name -> Pair(
-                        R.drawable.status_reject_filled,
-                        context.getString(R.string.rejected_heading)
-                    )
-                    SubTaskStatus.DONE.name -> Pair(
-                        R.drawable.status_done_filled,
-                        context.getString(R.string.done_heading)
-                    )
-                    SubTaskStatus.DRAFT.name -> Pair(
-                        R.drawable.status_draft_filled,
-                        context.getString(R.string.draft_heading)
-                    )
-                    else -> Pair(
-                        R.drawable.status_draft_filled,
-                        userState.toCamelCase()
-                    )
-                }
-                val (background, stringRes) = subTaskStatusNameBg
+                val subTaskStatusNameBg: Pair<Int, SubTaskStatus> =
+                    userState.stateToHeadingAndBg()
+                val (background, heading) = subTaskStatusNameBg
                 memberStateName.setBackgroundResource(background)
-                memberStateName.text = stringRes
+                memberStateName.text = heading.name.toCamelCase()
 
 
                 memberImgText.text = ""
                 if (item.profilePic == "" || item.profilePic.isNullOrEmpty()) {
                     memberImgText.text =
-                        "${item.firstName.get(0).uppercaseChar()}${item.surName.get(0).uppercaseChar()}"
+                        "${item.firstName.get(0).uppercaseChar()}${
+                            item.surName.get(0).uppercaseChar()
+                        }"
                     memberImgText.visibility = View.VISIBLE
                     memberImg.visibility = View.GONE
                 } else {
@@ -134,38 +115,33 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
 
                 if (addedBy?.id == user?.id || isTaskAdmin || isCreator) {
                     if (userState.uppercase() == SubTaskStatus.DRAFT.name || userState.uppercase() == SubTaskStatus.ASSIGNED.name ||
-                        userState.uppercase() == SubTaskStatus.ACCEPTED.name) {
+                        userState.uppercase() == SubTaskStatus.ACCEPTED.name
+                    ) {
                         if (item.id == user?.id) {
                             deleteMemberBtn.visibility = View.GONE
-                        }
-                        else {
+                        } else {
                             deleteMemberBtn.visibility = View.VISIBLE
                         }
                         markDoneMemberStateBtn.visibility = View.GONE
                         doneStateTick.visibility = View.GONE
-                    }
-                    else if (userState.uppercase() == SubTaskStatus.ONGOING.name) {
+                    } else if (userState.uppercase() == SubTaskStatus.ONGOING.name) {
                         if (addedBy?.id == user?.id && !isTaskAdmin && !isCreator) {
                             markDoneMemberStateBtn.visibility = View.GONE
-                        }
-                        else {
+                        } else {
                             markDoneMemberStateBtn.visibility = View.VISIBLE
                         }
                         deleteMemberBtn.visibility = View.GONE
                         doneStateTick.visibility = View.GONE
-                    }
-                    else if (userState.uppercase() == SubTaskStatus.DONE.name || userState.uppercase() == SubTaskStatus.REJECTED.name) {
+                    } else if (userState.uppercase() == SubTaskStatus.DONE.name || userState.uppercase() == SubTaskStatus.REJECTED.name) {
                         deleteMemberBtn.visibility = View.GONE
                         markDoneMemberStateBtn.visibility = View.GONE
                         doneStateTick.visibility = View.VISIBLE
-                    }
-                    else {
+                    } else {
                         deleteMemberBtn.visibility = View.GONE
                         markDoneMemberStateBtn.visibility = View.GONE
                         doneStateTick.visibility = View.GONE
                     }
-                }
-                else {
+                } else {
                     deleteMemberBtn.visibility = View.GONE
                     markDoneMemberStateBtn.visibility = View.GONE
                     doneStateTick.visibility = View.GONE
@@ -173,11 +149,23 @@ class EditSubTaskDetailsMemberAdapter @Inject constructor(
 
 
                 deleteMemberBtn.setOnClickListener {
-                    deleteItemClickListener?.invoke(it, adapterPosition, subtask?.taskId ?: "", subtask?.id ?: "", item.id)
+                    deleteItemClickListener?.invoke(
+                        it,
+                        adapterPosition,
+                        subtask?.taskId ?: "",
+                        subtask?.id ?: "",
+                        item.id
+                    )
                 }
 
                 markDoneMemberStateBtn.setOnClickListener {
-                    doneItemClickListener?.invoke(it, adapterPosition, subtask?.taskId ?: "", subtask?.id ?: "", item.id)
+                    doneItemClickListener?.invoke(
+                        it,
+                        adapterPosition,
+                        subtask?.taskId ?: "",
+                        subtask?.id ?: "",
+                        item.id
+                    )
                 }
 
 //                taskMoreMenuBtn.setOnClickListener {

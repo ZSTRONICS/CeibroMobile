@@ -2,13 +2,13 @@ package com.zstronics.ceibro.data.repos.task
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.*
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -423,13 +423,14 @@ class TaskRepository @Inject constructor(
 
     override suspend fun postCommentSubtask(
         request: SubtaskCommentRequest,
-        callBack: (isSuccess: Boolean, message: String, data: SubtaskCommentResponse.Result?) -> Unit
+        callBack: (isSuccess: Boolean, message: String, data: SubTaskComments?) -> Unit
     ) {
         when (val response = remoteSubTask.postCommentSubtask(request)) {
             is ApiResponse.Success -> {
+                localSubTask.addComment(request.subTaskId,response.data.result)
                 callBack(true, "", response.data.result)
             }
-            else -> callBack(false, "", null)
+            is ApiResponse.Error -> callBack(false, response.error.message, null)
         }
     }
 }
