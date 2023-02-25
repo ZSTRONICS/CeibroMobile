@@ -28,7 +28,7 @@ jobs:
     - name: Install Snapd
       run: sudo apt-get install snapd
     - name: Install slacktee
-      run: sudo apt-get install -y slacktee
+      run: sudo snap install slacktee
       
     - name: Build with Gradle
       run: ./gradlew assembleDebug
