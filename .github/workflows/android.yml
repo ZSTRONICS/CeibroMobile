@@ -26,10 +26,12 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew assembleDebug
 
-    - name: Install slack-cli
-      run: sudo snap install slack-cli
+    - name: Install slacktee
+      run: sudo apt-get install -y slacktee
 
     - name: Send APK to Slack
       run: |
         apk_path=$(find . -name "*.apk")
+        slacktee --config slacktee.conf -p #ceibro-github-mobile -f $apk_path
+
         slack-cli -f $apk_path -c #ceibro-github-mobile
