@@ -52,7 +52,7 @@ dependencies {
     implementation(DependenciesManager.thirdPartyImplementation)
     implementation(DependenciesManager.networkImplementation)
     implementation(DependenciesManager.hiltImplementation)
-    implementation("androidx.work:work-runtime:2.8.0")
+//    implementation("androidx.work:work-runtime:2.8.0")
 //    implementation("androidx.work:work-runtime-ktx:2.8.0")
 //    implementation("androidx.work:work-runtime-ktx:2.7.0")
 //    implementation("androidx.hilt:hilt-common:1.0.0")
