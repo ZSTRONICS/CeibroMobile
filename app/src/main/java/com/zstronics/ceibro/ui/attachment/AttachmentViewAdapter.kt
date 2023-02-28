@@ -48,6 +48,7 @@ class AttachmentViewAdapter @Inject constructor() :
         @RequiresApi(Build.VERSION_CODES.O_MR1)
         fun bind(item: FilesAttachments?) {
             binding.crossView.visibility = View.GONE
+            binding.attachmentTitle.text = item?.fileName
             // Load the thumbnail into the ImageView using Glide
             when {
                 imageExtensions.contains(item?.fileType) -> {
