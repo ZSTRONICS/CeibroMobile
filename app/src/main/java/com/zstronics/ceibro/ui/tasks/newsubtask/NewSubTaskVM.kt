@@ -282,7 +282,7 @@ class NewSubTaskVM @Inject constructor(
                             )
                         }
                     }
-                    handlePressOnView(1)
+                    clickEvent?.postValue(1)
                     loading(false)
                 }
                 else {
