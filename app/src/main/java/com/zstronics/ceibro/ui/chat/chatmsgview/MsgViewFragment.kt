@@ -78,9 +78,9 @@ class MsgViewFragment :
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                     )
                 ) {
-                    requireActivity().openCamera { resultCode, intent ->
-                        val file = FileUtils.getFile(requireContext(), intent?.data)
-                    }
+//                    requireActivity().openCamera { resultCode, intent ->
+//                        val file = FileUtils.getFile(requireContext(), intent?.data)
+//                    }
                 }
             }
             R.id.btPickFile -> checkPermission(

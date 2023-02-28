@@ -359,21 +359,16 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 Manifest.permission.READ_EXTERNAL_STORAGE,
             )
         ) {
-            requireActivity().openCamera { resultCode, intent ->
-//                addFileToUriList(intent?.data)
+            requireActivity().openCamera { imageUri ->
+                if (imageUri != null) {
+                    addFileToUriList(imageUri)
+                } else {
+                    // handle the case when the image capture failed
+                }
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = data?.data
-            // do something with the image URI
-            addFileToUriList(imageUri)
-        }
-    }
 
     private fun addFileToUriList(fileUri: Uri?) {
         val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
