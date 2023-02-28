@@ -70,4 +70,8 @@
         <item name="cornerSizeBottomLeft">@dimen/_8sdp</item>
         <item name="cornerSizeBottomRight">@dimen/_8sdp</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.App.CornerSize10Percent" parent="">
+        <item name="cornerSize">10%</item>
+    </style>
 </resources>

@@ -54,6 +54,7 @@ class AttachmentAdapter @Inject constructor() :
             binding.crossView.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
+            binding.attachmentTitle.text = item?.fileName
             // Load the thumbnail into the ImageView using Glide
             when (item?.attachmentType) {
                 AttachmentTypes.Image -> {
