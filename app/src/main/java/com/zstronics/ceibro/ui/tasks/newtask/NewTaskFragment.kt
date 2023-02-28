@@ -110,6 +110,7 @@ class NewTaskFragment :
 
             }
             R.id.newTaskAttachmentBtn -> pickAttachment(true)
+            R.id.newTaskCameraBtn -> captureAttachment()
         }
     }
 
