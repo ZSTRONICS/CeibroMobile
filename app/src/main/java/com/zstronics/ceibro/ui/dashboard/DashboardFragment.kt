@@ -17,6 +17,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.task.models.AllFilesUploadedSocketEventResponse
+import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
@@ -170,6 +171,16 @@ class DashboardFragment :
                             EventBus.getDefault().post(LocalEvents.AllFilesUploaded)
                         }
                     }
+                }
+            } else if (socketData.module == "SubTaskComments") {
+                if (socketData.eventType == SocketHandler.TaskEvent.COMMENT_WITH_FILES.name) {
+                    val commentsFilesUploaded =
+                        gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
+                            arguments,
+                            object : TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
+                        ).data
+                    requireActivity().getSystemService(NotificationManager::class.java)
+                        ?.cancelAll()
                 }
             }
         }

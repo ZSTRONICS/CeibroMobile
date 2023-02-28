@@ -20,7 +20,7 @@ object SocketHandler {
 
     enum class TaskEvent {
         TASK_CREATED, TASK_UPDATE_PUBLIC, TASK_UPDATE_PRIVATE, SUB_TASK_CREATED, SUB_TASK_UPDATE_PUBLIC, SUB_TASK_UPDATE_PRIVATE,
-        TASK_SUBTASK_UPDATED
+        TASK_SUBTASK_UPDATED,COMMENT_WITH_FILES
     }
 
     enum class FileAttachmentEvents {
