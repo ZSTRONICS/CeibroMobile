@@ -28,6 +28,7 @@ import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.extensions.openCamera
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
@@ -346,6 +347,19 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                         addFileToUriList(fileUri)
                     }
                 }
+            }
+        }
+    }
+
+    fun captureAttachment() {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+            )
+        ) {
+            requireActivity().openCamera { resultCode, intent ->
+                addFileToUriList(intent?.data)
             }
         }
     }

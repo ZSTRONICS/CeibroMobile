@@ -123,6 +123,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         _fileUriList.postValue(files)
     }
 
+    fun removeAllFiles() {
+        _fileUriList.postValue(arrayListOf())
+    }
+
     fun uploadFiles(module: String, id: String, context: Context) {
         val fileUriList = fileUriList.value
 //        val fileUris = fileUriList?.map { it?.attachmentUri.toString() }?.toTypedArray()
