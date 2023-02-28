@@ -2,17 +2,20 @@ package com.zstronics.ceibro.base.navgraph
 
 import android.Manifest
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.transition.ChangeBounds
 import android.transition.Fade
 import android.transition.Slide
 import androidx.annotation.IdRes
 import androidx.core.app.NotificationCompat
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -29,11 +32,11 @@ import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.extensions.openCamera
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.utils.FileUtils
+import com.zstronics.ceibro.utils.FileUtils.createTempImageFile
 import okhttp3.internal.immutableListOf
 import kotlin.properties.Delegates
 
@@ -47,6 +50,7 @@ const val NAVIGATION_RESULT_OK = -1
 
 abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, VM : HiltBaseViewModel<VS>> :
     BaseBindingViewModelFragment<VB, VS, VM>() {
+    private var imageUri: Uri? = null
     protected open val hasUpNavigation: Boolean = true
     private val requestCode: Int
         get() = arguments?.getInt(ARGUMENT_NAVIGATION_REQUEST_CODE, REQUEST_CODE_NOT_SET)
@@ -355,20 +359,28 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     fun captureAttachment() {
         checkPermission(
             immutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
             )
         ) {
-            requireActivity().openCamera { imageUri ->
-                if (imageUri != null) {
-                    addFileToUriList(imageUri)
-                } else {
-                    // handle the case when the image capture failed
-                }
-            }
+//            requireActivity().openCamera { resultCode, intent ->
+//                addFileToUriList(intent?.data)
+//                intent?.extras?.get("data") as Bitmap
+//            }
+
+
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+            val photoFile = createTempImageFile(requireContext(), "tempImage")
+            imageUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireActivity().packageName}.provider",
+                photoFile
+            )
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
         }
     }
-
 
     private fun addFileToUriList(fileUri: Uri?) {
         val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
@@ -437,5 +449,17 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 
     companion object {
         const val REQUEST_IMAGE_CAPTURE = 333
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // Do something with the image URI
+            imageUri?.let { uri ->
+                addFileToUriList(uri)
+                // Use the URI to load or save the image
+            }
+        }
     }
 }

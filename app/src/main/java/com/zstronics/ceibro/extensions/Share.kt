@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.extensions
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -344,42 +343,34 @@ inline fun FragmentActivity.openGallery(
 
 }
 
-inline fun FragmentActivity.openCamera(crossinline completionHandler: ((imageUri: Uri?) -> Unit)) {
+
+inline fun FragmentActivity.openCamera(
+    noinline completionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = null
+) {
     try {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
             val possibleActivitiesList: List<ResolveInfo> =
-                packageManager.queryIntentActivities(intent, PackageManager.MATCH_ALL)
+                packageManager.queryIntentActivities(it, PackageManager.MATCH_ALL)
             if (possibleActivitiesList.size > 1) {
-                intent.resolveActivity(packageManager)?.run {
-                    this@openCamera.startForResult(createChooser(intent, title ?: "")) { result ->
-                        if (result.resultCode == Activity.RESULT_OK) {
-                            val imageUri: Uri? = result.data?.data
-                            completionHandler(imageUri)
-                        } else {
-                            completionHandler(null)
-                        }
+                it.resolveActivity(packageManager)?.run {
+                    this@openCamera.startForResult(createChooser(it, title ?: "")) { result ->
+                        completionHandler?.invoke(result.resultCode, result.data)
                     }.onFailed { result ->
-                        completionHandler(null)
+                        completionHandler?.invoke(result.resultCode, result.data)
                     }
                 }
             } else {
-                intent.resolveActivity(packageManager)?.run {
-                    this@openCamera.startForResult(createChooser(intent, title ?: "")) { result ->
-                        if (result.resultCode == Activity.RESULT_OK) {
-                            val imageUri: Uri? = result.data?.data
-                            completionHandler(imageUri)
-                        } else {
-                            completionHandler(null)
-                        }
+                it.resolveActivity(packageManager)?.run {
+                    this@openCamera.startForResult(createChooser(it, title ?: "")) { result ->
+                        completionHandler?.invoke(result.resultCode, result.data)
                     }.onFailed { result ->
-                        completionHandler(null)
+                        completionHandler?.invoke(result.resultCode, result.data)
                     }
                 }
             }
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        completionHandler(null)
     }
 }
 
