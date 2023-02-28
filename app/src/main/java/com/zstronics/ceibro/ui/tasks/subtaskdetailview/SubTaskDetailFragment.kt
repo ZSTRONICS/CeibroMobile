@@ -60,6 +60,17 @@ class SubTaskDetailFragment :
                 if (viewModel.fileUriList.value?.isNotEmpty() == true || message.isNotEmpty())
                     viewModel.postComment(message, requireContext()) {
                         mViewDataBinding.subTaskCommentField.setText("")
+
+                        if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                            createNotification(
+                                it?.id,
+                                AttachmentModules.SubTaskComments.name,
+                                "Uploading files in comment",
+                                isOngoing = true,
+                                indeterminate = true
+                            )
+                        }
+
                     }
                 else {
                     toast("You need to write something in comments or attach a file")
