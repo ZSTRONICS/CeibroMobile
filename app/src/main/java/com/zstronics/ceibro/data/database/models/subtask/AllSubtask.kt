@@ -99,7 +99,7 @@ data class SubTaskComments(
     @SerializedName("message")
     val message: String,
     @SerializedName("seenBy")
-    val seenBy: List<String>,
+    val seenBy: List<TaskMember>?,
     @SerializedName("sender")
     val sender: TaskMember,
     @SerializedName("subTaskId")

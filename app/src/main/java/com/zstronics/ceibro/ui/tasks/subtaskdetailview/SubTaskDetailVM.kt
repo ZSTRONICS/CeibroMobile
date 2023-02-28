@@ -118,7 +118,7 @@ class SubTaskDetailVM @Inject constructor(
             updatedAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
             isFileAttached = request.isFileAttached ?: false,
             message = request.message.toString(),
-            seenBy = request.seenBy ?: listOf(),
+            seenBy = null,
             sender = sender,
             subTaskId = request.subTaskId.toString(),
             taskId = request.taskId.toString(),
