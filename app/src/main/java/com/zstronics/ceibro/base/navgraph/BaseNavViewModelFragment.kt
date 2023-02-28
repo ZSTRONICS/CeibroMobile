@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -364,6 +365,16 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            val imageUri: Uri? = data?.data
+            // do something with the image URI
+            addFileToUriList(imageUri)
+        }
+    }
+
     private fun addFileToUriList(fileUri: Uri?) {
         val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
         val fileName = FileUtils.getFileName(requireContext(), fileUri)
@@ -427,5 +438,9 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             requireActivity().getSystemService(NotificationManager::class.java)
         notificationManager.notify(channelId.hashCode(), builder.build())
         return Pair(notificationManager, builder)
+    }
+
+    companion object {
+        const val REQUEST_IMAGE_CAPTURE = 333
     }
 }
