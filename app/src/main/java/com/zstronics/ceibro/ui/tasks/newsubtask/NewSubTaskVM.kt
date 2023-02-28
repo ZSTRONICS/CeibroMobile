@@ -285,6 +285,9 @@ class NewSubTaskVM @Inject constructor(
                     handlePressOnView(1)
                     loading(false)
                 }
+                else {
+                    loading(false, error)
+                }
             }
         }
     }
