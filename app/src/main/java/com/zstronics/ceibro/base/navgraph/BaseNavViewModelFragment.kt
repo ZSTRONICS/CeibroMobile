@@ -360,7 +360,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             )
         ) {
             requireActivity().openCamera { resultCode, intent ->
-                addFileToUriList(intent?.data)
+//                addFileToUriList(intent?.data)
             }
         }
     }
