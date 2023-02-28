@@ -134,7 +134,22 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                         }
                         SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
-                            alert(socketData.eventType)
+                            val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
+                                arguments,
+                                object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
+                            )
+                            // Need to check if subtask data object is null then don't do anything
+                            subtask.data?.id?.let {
+                                val subtaskCount =
+                                    localSubTask.getSingleSubTaskCount(subtask.data.id)
+                                if (subtaskCount < 1) {
+                                    localSubTask.insertSubTask(subtask.data)
+                                } else {
+                                    localSubTask.updateSubTask(subtask.data)
+                                }
+                            }
+                            EventBus.getDefault()
+                                .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
                         }
 
                         SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {

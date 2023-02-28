@@ -19,6 +19,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.databinding.FragmentSubTaskBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -148,13 +149,24 @@ class SubTaskFragment :
             subtaskData.state?.find { it.userId == viewModel.user?.id }?.userState?.uppercase()
                 ?: SubTaskStatus.DRAFT.name
 
+        val allUsersOnAssignState = areAllOnAssignedState(subtaskData.state)
+
+
         if (isSubTaskCreator || isTAdmin) {
             if (userState.uppercase() == SubTaskStatus.DRAFT.name) {
-                deleteSubtask.visibility = View.VISIBLE
+                if (isSubTaskCreator) {
+                    deleteSubtask.visibility = View.VISIBLE
+                } else {
+                    deleteSubtask.visibility = View.GONE
+                }
                 editSubTask.visibility = View.VISIBLE
                 editDetails.visibility = View.GONE
-            } else if (userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
-                deleteSubtask.visibility = View.VISIBLE
+            } else if (allUsersOnAssignState) {
+                if (isSubTaskCreator) {
+                    deleteSubtask.visibility = View.VISIBLE
+                } else {
+                    deleteSubtask.visibility = View.GONE
+                }
                 editSubTask.visibility = View.VISIBLE
                 editDetails.visibility = View.VISIBLE
             } else {
@@ -163,9 +175,16 @@ class SubTaskFragment :
                 editDetails.visibility = View.VISIBLE
             }
         } else {
-            deleteSubtask.visibility = View.GONE
-            editSubTask.visibility = View.GONE
-            editDetails.visibility = View.VISIBLE
+            if (userState.uppercase() == SubTaskStatus.DRAFT.name || userState.uppercase() == SubTaskStatus.ASSIGNED.name || userState.uppercase() == SubTaskStatus.REJECTED.name) {
+                deleteSubtask.visibility = View.GONE
+                editSubTask.visibility = View.GONE
+                editDetails.visibility = View.GONE
+            }
+            else {
+                deleteSubtask.visibility = View.GONE
+                editSubTask.visibility = View.GONE
+                editDetails.visibility = View.VISIBLE
+            }
         }
 
 
@@ -230,6 +249,24 @@ class SubTaskFragment :
             isCreator = true
         }
         return isCreator
+    }
+
+    private fun areAllOnAssignedState(state: List<SubTaskStateItem>?): Boolean {
+        var allOnAssignState = false
+        var size = 0
+
+        if (state != null) {
+            for (userState in state) {
+                if (userState.userState.uppercase() == SubTaskStatus.ASSIGNED.name) {
+                    size++
+                }
+            }
+            if (size == state.size) {
+                allOnAssignState = true
+            }
+        }
+
+        return allOnAssignState
     }
 
     private fun navigateToEditSubTask(subtaskData: AllSubtask) {
