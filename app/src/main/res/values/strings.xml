@@ -164,6 +164,7 @@
     <string name="delivered_to_heading">Delivered To</string>
     <string name="media_heading"><u>Media</u></string>
     <string name="docs_heading"><u>Docs</u></string>
+    <string name="all_media_heading"><u>All</u></string>
     <string name="voice_note_heading"><u>Voice note</u></string>
     <string name="view_all_text">View all</string>
     <string name="common_title">Title        </string>

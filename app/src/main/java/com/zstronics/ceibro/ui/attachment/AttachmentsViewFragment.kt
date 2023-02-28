@@ -44,13 +44,23 @@ class AttachmentsViewFragment :
             attachmentAdapter.setList(list)
         }
 
-        viewModel.showMedia.observe(viewLifecycleOwner) { showMedia ->
-            if (showMedia) {
-                mViewDataBinding.attachmentDocsBtn.setTextColor(requireContext().getColor(R.color.black))
-                mViewDataBinding.attachmentMediaBtn.setTextColor(requireContext().getColor(R.color.appYellow))
-            } else {
-                mViewDataBinding.attachmentDocsBtn.setTextColor(requireContext().getColor(R.color.appYellow))
-                mViewDataBinding.attachmentMediaBtn.setTextColor(requireContext().getColor(R.color.black))
+        viewModel.selectedTab.observe(viewLifecycleOwner) { selectedTab ->
+            when (selectedTab) {
+                "media" -> {
+                    mViewDataBinding.attachmentMediaBtn.setTextColor(requireContext().getColor(R.color.appYellow))
+                    mViewDataBinding.attachmentAll.setTextColor(requireContext().getColor(R.color.black))
+                    mViewDataBinding.attachmentDocsBtn.setTextColor(requireContext().getColor(R.color.black))
+                }
+                "doc" -> {
+                    mViewDataBinding.attachmentDocsBtn.setTextColor(requireContext().getColor(R.color.appYellow))
+                    mViewDataBinding.attachmentMediaBtn.setTextColor(requireContext().getColor(R.color.black))
+                    mViewDataBinding.attachmentAll.setTextColor(requireContext().getColor(R.color.black))
+                }
+                "all" -> {
+                    mViewDataBinding.attachmentAll.setTextColor(requireContext().getColor(R.color.appYellow))
+                    mViewDataBinding.attachmentDocsBtn.setTextColor(requireContext().getColor(R.color.black))
+                    mViewDataBinding.attachmentMediaBtn.setTextColor(requireContext().getColor(R.color.black))
+                }
             }
         }
         attachmentAdapter.itemClickListener =

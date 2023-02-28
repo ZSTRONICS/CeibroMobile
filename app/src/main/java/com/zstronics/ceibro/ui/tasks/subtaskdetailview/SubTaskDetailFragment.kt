@@ -10,6 +10,7 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
@@ -100,6 +101,14 @@ class SubTaskDetailFragment :
         attachmentAdapter.itemClickListener =
             { _: View, position: Int, data: SubtaskAttachment? ->
                 viewModel.removeFile(position)
+            }
+
+        commentsAdapter.itemClickListener =
+            { _: View, position: Int, data: SubTaskComments ->
+                arguments?.putString("moduleType", AttachmentModules.SubTaskComments.name)
+                arguments?.putString("moduleId", data.id)
+                arguments?.putParcelable("SubTaskComments", data)
+                navigate(R.id.attachmentFragment, arguments)
             }
 
         viewModel.user.observe(viewLifecycleOwner) {

@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -18,19 +20,23 @@ class AttachmentVM @Inject constructor(
     private val _attachments: MutableLiveData<List<FilesAttachments>> = MutableLiveData()
     val attachments = _attachments
     var allAttachments = listOf<FilesAttachments>()
-    private val _showMedia: MutableLiveData<Boolean> = MutableLiveData(true)
-    val showMedia: LiveData<Boolean> = _showMedia
+    private val _selectedTab: MutableLiveData<String> = MutableLiveData("All")
+    val selectedTab: LiveData<String> = _selectedTab
     override fun handleOnClick(id: Int) {
         super.handleOnClick(id)
         when (id) {
             R.id.attachmentDocsBtn -> {
                 filterFiles(false)
-                _showMedia.postValue(false)
+                _selectedTab.postValue("doc")
             }
 
             R.id.attachmentMediaBtn -> {
                 filterFiles(true)
-                _showMedia.postValue(true)
+                _selectedTab.postValue("media")
+            }
+            R.id.attachmentAll -> {
+                showAll()
+                _selectedTab.postValue("all")
             }
         }
     }
@@ -38,16 +44,26 @@ class AttachmentVM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         val moduleId = bundle?.getString("moduleId")
-        val moduleType = bundle?.getString("moduleType")
-
-        launch {
-            moduleType?.let {
-                moduleId?.let { it1 ->
-                    allAttachments = fileAttachmentsDataSource.getAttachmentsById(
-                        it,
-                        it1
-                    )
-                    filterFiles(true)
+        when (val moduleType = bundle?.getString("moduleType")) {
+            AttachmentModules.SubTaskComments.name -> {
+                if (bundle.getParcelable<SubTaskComments>("SubTaskComments") != null) {
+                    allAttachments =
+                        bundle.getParcelable<SubTaskComments>("SubTaskComments")?.files
+                            ?: arrayListOf()
+                    showAll()
+                }
+            }
+            else -> {
+                launch {
+                    moduleType?.let {
+                        moduleId?.let { it1 ->
+                            allAttachments = fileAttachmentsDataSource.getAttachmentsById(
+                                it,
+                                it1
+                            )
+                            showAll()
+                        }
+                    }
                 }
             }
         }
@@ -59,5 +75,9 @@ class AttachmentVM @Inject constructor(
         else
             allAttachments.filter { allDocumentExtensions.contains(it.fileType) }
         _attachments.postValue(filtered.reversed())
+    }
+
+    private fun showAll() {
+        _attachments.postValue(allAttachments.reversed())
     }
 }

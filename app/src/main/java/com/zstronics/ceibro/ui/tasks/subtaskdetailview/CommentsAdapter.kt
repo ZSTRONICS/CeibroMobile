@@ -57,6 +57,9 @@ class CommentsAdapter @Inject constructor(
             val (background, heading) = headingAndBg
             binding.commentStatusName.setBackgroundResource(background)
             binding.commentStatusName.text = heading.name.toCamelCase()
+            binding.commentsAttachment.setOnClickListener {
+                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
         }
     }
 }

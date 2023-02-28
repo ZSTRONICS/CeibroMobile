@@ -122,7 +122,8 @@ class SubTaskDetailVM @Inject constructor(
             sender = sender,
             subTaskId = request.subTaskId.toString(),
             taskId = request.taskId.toString(),
-            userState = request.userState.toString()
+            userState = request.userState.toString(),
+            files = arrayListOf()
         )
         comments.add(comment)
         _recentComments.postValue(comments)
