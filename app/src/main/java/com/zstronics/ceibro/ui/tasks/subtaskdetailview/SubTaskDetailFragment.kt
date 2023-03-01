@@ -36,7 +36,7 @@ class SubTaskDetailFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
-            R.id.subTaskViewCommentsBtn -> navigateToAllComments()
+            R.id.subTaskViewCommentsBtn -> navigateToAllComments(viewModel.subtask.value)
             R.id.subTaskRejectionsBtn -> navigateToRejections(viewModel.subtask.value)
             R.id.subTaskAttachmentsBtn -> viewModel.subtask.value?.id?.let {
                 navigateToAttachments(
@@ -202,8 +202,7 @@ class SubTaskDetailFragment :
                     val isAdmin = isTaskAdmin(userData.id, item.taskData?.admins)
                     if (isAdmin) {
                         subTaskRejectionsBtn.visibility = View.VISIBLE
-                    }
-                    else {
+                    } else {
                         subTaskRejectionsBtn.visibility = View.GONE
                     }
 
@@ -227,8 +226,10 @@ class SubTaskDetailFragment :
         viewModel.onFirsTimeUiCreate(arguments)
     }
 
-    private fun navigateToAllComments() {
-        navigate(R.id.subTaskCommentsFragment)
+    private fun navigateToAllComments(data: AllSubtask?) {
+        val bundle = Bundle()
+        bundle.putParcelable("subtask", data)
+        navigate(R.id.subTaskCommentsFragment, bundle)
     }
 
     private fun navigateToRejections(data: AllSubtask?) {

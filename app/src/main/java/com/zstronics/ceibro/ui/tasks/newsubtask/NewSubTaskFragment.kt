@@ -37,7 +37,8 @@ class NewSubTaskFragment :
                     SubTaskStatus.DRAFT.name.lowercase(),
                     requireContext()
                 ) {
-                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                    if (viewModel.fileUriList.value?.isNotEmpty() == true && it.isNotEmpty()) {
+                        navigateBack()
                         createNotification(
                             it,
                             "Subtask",
@@ -45,6 +46,8 @@ class NewSubTaskFragment :
                             isOngoing = true,
                             indeterminate = true
                         )
+                    } else {
+                        navigateBack()
                     }
                 }
             }
@@ -53,7 +56,7 @@ class NewSubTaskFragment :
                     SubTaskStatus.ASSIGNED.name.lowercase(),
                     requireContext()
                 ) {
-                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                    if (viewModel.fileUriList.value?.isNotEmpty() == true && it.isNotEmpty()) {
                         createNotification(
                             it,
                             "Subtask",
@@ -61,6 +64,8 @@ class NewSubTaskFragment :
                             isOngoing = true,
                             indeterminate = true
                         )
+                    } else {
+                        navigateBack()
                     }
                 }
             }

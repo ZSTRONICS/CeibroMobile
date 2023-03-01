@@ -93,6 +93,7 @@ interface ITaskRepository {
         subtaskId: String,
         callBack: (isSuccess: Boolean, message: String) -> Unit
     )
+
     suspend fun postCommentSubtask(
         request: SubtaskCommentRequest,
         callBack: (isSuccess: Boolean, message: String, data: SubTaskComments?) -> Unit
@@ -101,6 +102,11 @@ interface ITaskRepository {
     suspend fun getSubtaskRejections(
         subTaskId: String,
         callBack: (isSuccess: Boolean, message: String, subTaskRejections: List<SubTaskRejections>) -> Unit
+    )
+
+    suspend fun getAllCommentsOfSubtask(
+        subTaskId: String,
+        callBack: (isSuccess: Boolean, message: String, allComments: ArrayList<SubTaskComments>) -> Unit
     )
 
 }
