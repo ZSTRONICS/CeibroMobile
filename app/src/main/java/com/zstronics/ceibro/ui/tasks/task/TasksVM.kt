@@ -22,6 +22,9 @@ class TasksVM @Inject constructor(
 ) : HiltBaseViewModel<ITasks.State>(), ITasks.ViewModel {
     val user = sessionManager.getUser().value
 
+    private val _tasksForStatus: MutableLiveData<List<CeibroTask>> = MutableLiveData()
+    val tasksForStatus: LiveData<List<CeibroTask>> = _tasksForStatus
+
     private val _tasks: MutableLiveData<List<CeibroTask>> = MutableLiveData()
     val tasks: LiveData<List<CeibroTask>> = _tasks
     var originalTasks: List<CeibroTask> = listOf()
@@ -35,6 +38,7 @@ class TasksVM @Inject constructor(
         launch {
             originalTasks = taskRepository.tasks().reversed()
             _tasks.postValue(originalTasks)
+            _tasksForStatus.postValue(originalTasks)
         }
     }
 
@@ -65,6 +69,20 @@ class TasksVM @Inject constructor(
 
             }
         _tasks.postValue(filtered)
+        _tasksForStatus.postValue(filtered)
+    }
+
+    fun applyStatusFilter(selectedStatus: String) {
+        val filtered =
+            originalTasks.filter {
+                // Only status filters on tasks
+                (it.state.equals(selectedStatus, true) || selectedStatus.equals("ALL", true))
+            }
+        _tasks.postValue(filtered)
+
+        if (tasksForStatus.value?.size != originalTasks.size) {
+            _tasksForStatus.postValue(originalTasks)
+        }
     }
 
     private fun haveMembers(
@@ -86,6 +104,7 @@ class TasksVM @Inject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun resetFilters(event: LocalEvents.ClearTaskFilters) {
         _tasks.postValue(originalTasks)
+        _tasksForStatus.postValue(originalTasks)
     }
 
 

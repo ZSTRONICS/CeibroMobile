@@ -83,14 +83,14 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/subTaskRejectionRV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:itemCount="12"
+                    tools:itemCount="7"
                     tools:listitem="@layout/layout_rejection_box" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

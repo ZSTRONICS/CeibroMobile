@@ -126,4 +126,12 @@ class SubTaskRemoteDataSource @Inject constructor(private val service: TaskRetro
                 service.postCommentSubtask(request)
             }
         )
+
+    override suspend fun getSubtaskRejections(subTaskId: String): ApiResponse<SubTaskRejectionsResponse> =
+        executeSafely(
+            call =
+            {
+                service.getSubtaskRejections(subTaskId)
+            }
+        )
 }

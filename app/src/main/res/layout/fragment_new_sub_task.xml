@@ -140,20 +140,53 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newSubTaskTitleField"
+                        android:id="@+id/newSubTaskDueDateField"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="16dp"
+                        android:hint="@string/due_date_heading"
+                        android:textColorHint="@color/grey"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        app:endIconDrawable="@drawable/ic_calendar"
+                        app:endIconMode="custom"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/newSubTaskDueDateText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:fontFamily="@font/inter_regular"
+                            android:inputType="none"
+                            android:maxLines="1"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:paddingStart="18dp"
+                            android:paddingEnd="28dp"
+                            android:textColorHint="@color/grey"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/newSubTaskTitleField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:hint="@string/subtask_title_heading"
                         android:textColorHint="@color/grey"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskDueDateField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskDueDateField"
+                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskDueDateField">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/newSubTaskTitleText"
@@ -163,8 +196,8 @@
                             android:inputType="text"
                             android:maxLines="1"
                             android:scrollHorizontally="true"
-                            android:textColorHint="@color/grey"
                             android:text="@={viewState.subtaskTitle}"
+                            android:textColorHint="@color/grey"
                             android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -249,38 +282,7 @@
                         tools:itemCount="10"
                         tools:listitem="@layout/layout_item_chip" />
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/newSubTaskDueDateField"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:hint="@string/due_date_heading"
-                        app:boxStrokeColor="@color/colorGrey"
-                        app:boxStrokeWidth="1dp"
-                        app:endIconDrawable="@drawable/ic_calendar"
-                        app:endIconMode="custom"
-                        android:textColorHint="@color/grey"
-                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
-                        app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
-                        app:layout_constraintTop_toBottomOf="@+id/viewersChipsRV">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/newSubTaskDueDateText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="false"
-                            android:fontFamily="@font/inter_regular"
-                            android:inputType="none"
-                            android:maxLines="1"
-                            android:textColorHint="@color/grey"
-                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:paddingStart="18dp"
-                            android:paddingEnd="28dp"
-                            android:textSize="15sp" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/newSubTaskProjectField"
@@ -315,12 +317,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:hint="@string/description_heading"
+                        android:textColorHint="@color/grey"
                         app:boxStrokeColor="@color/colorGrey"
                         app:boxStrokeWidth="1dp"
-                        android:textColorHint="@color/grey"
-                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskDueDateField"
-                        app:layout_constraintStart_toStartOf="@+id/newSubTaskDueDateField"
-                        app:layout_constraintTop_toBottomOf="@+id/newSubTaskProjectField">
+                        app:layout_constraintEnd_toEndOf="@+id/newSubTaskAssignToField"
+                        app:layout_constraintStart_toStartOf="@+id/newSubTaskAssignToField"
+                        app:layout_constraintTop_toBottomOf="@+id/assigneeChipsRV">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/newSubTaskDescriptionText"
@@ -329,8 +331,8 @@
                             android:fontFamily="@font/inter_regular"
                             android:inputType="none"
                             android:maxLines="6"
-                            android:textColorHint="@color/grey"
                             android:text="@={viewState.description}"
+                            android:textColorHint="@color/grey"
                             android:textSize="15sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>

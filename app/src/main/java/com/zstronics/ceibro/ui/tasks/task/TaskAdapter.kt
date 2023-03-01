@@ -133,7 +133,6 @@ class TaskAdapter @Inject constructor(
                 taskName.text = item.title
                 taskCommentCountText.text = item.unSeenSubTaskCommentCount.toString()
 
-                taskProjectName.text = item.project.title
                 taskSubTasksRV.visibility = View.INVISIBLE
 
                 taskSubTaskTotalCountText.text = "${item.totalSubTaskCount} subtask(s)"

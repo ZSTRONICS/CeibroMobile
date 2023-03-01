@@ -6,10 +6,10 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.auth.login.User
@@ -19,7 +19,6 @@ import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus.Companion.stateToHeadingAndBg
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,7 +37,7 @@ class SubTaskDetailFragment :
         when (id) {
             R.id.backBtn -> navigateBack()
             R.id.subTaskViewCommentsBtn -> navigateToAllComments()
-            R.id.subTaskRejectionsBtn -> navigateToRejections()
+            R.id.subTaskRejectionsBtn -> navigateToRejections(viewModel.subtask.value)
             R.id.subTaskAttachmentsBtn -> viewModel.subtask.value?.id?.let {
                 navigateToAttachments(
                     it
@@ -199,6 +198,15 @@ class SubTaskDetailFragment :
                             subTaskDescriptionShowMoreBtn.visibility = View.VISIBLE
                         }
                     })
+
+                    val isAdmin = isTaskAdmin(userData.id, item.taskData?.admins)
+                    if (isAdmin) {
+                        subTaskRejectionsBtn.visibility = View.VISIBLE
+                    }
+                    else {
+                        subTaskRejectionsBtn.visibility = View.GONE
+                    }
+
                 }
             }
         }
@@ -223,13 +231,25 @@ class SubTaskDetailFragment :
         navigate(R.id.subTaskCommentsFragment)
     }
 
-    private fun navigateToRejections() {
-        navigate(R.id.subTaskRejectionFragment)
+    private fun navigateToRejections(data: AllSubtask?) {
+        val bundle = Bundle()
+        bundle.putParcelable("subtask", data)
+        navigate(R.id.subTaskRejectionFragment, bundle)
     }
 
     private fun navigateToAttachments(moduleId: String) {
         arguments?.putString("moduleType", AttachmentModules.SubTask.name)
         arguments?.putString("moduleId", moduleId)
         navigate(R.id.attachmentFragment, arguments)
+    }
+
+    fun isTaskAdmin(userId: String?, admins: List<String>?): Boolean {
+        var isAdmin = false
+        val id: String? = admins?.find { it == userId }
+        if (id.equals(userId)) {
+            isAdmin = true
+        }
+
+        return isAdmin
     }
 }

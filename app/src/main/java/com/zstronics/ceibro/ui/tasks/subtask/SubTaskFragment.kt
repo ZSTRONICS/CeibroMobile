@@ -23,6 +23,7 @@ import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.databinding.FragmentSubTaskBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -40,7 +41,13 @@ class SubTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-
+            R.id.allSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.ALL.name)
+            R.id.ongoingSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.ONGOING.name)
+            R.id.assignedSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.ASSIGNED.name)
+            R.id.acceptedSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.ACCEPTED.name)
+            R.id.rejectedSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.REJECTED.name)
+            R.id.doneSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.DONE.name)
+            R.id.draftSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.DRAFT.name)
         }
     }
 
@@ -52,8 +59,83 @@ class SubTaskFragment :
         super.onViewCreated(view, savedInstanceState)
         viewModel.subTasks.observe(viewLifecycleOwner) {
             adapter.setList(it)
-            mViewDataBinding.allSubTaskCount.text = it.size.toString()
         }
+
+        viewModel.subTasksForStatus.observe(viewLifecycleOwner) {
+            var allCount = 0
+            var ongoingCount = 0
+            var assignedCount = 0
+            var acceptedCount = 0
+            var rejectedCount = 0
+            var doneCount = 0
+            var draftCount = 0
+
+            allCount = it.size
+
+            for (subtask in it) {
+                if (viewModel.getState(subtask.state).equals(SubTaskStatus.ONGOING.name, true)) {
+                    ongoingCount++
+                }
+                else if (viewModel.getState(subtask.state).equals(SubTaskStatus.ASSIGNED.name, true)) {
+                    assignedCount++
+                }
+                else if (viewModel.getState(subtask.state).equals(SubTaskStatus.ACCEPTED.name, true)) {
+                    acceptedCount++
+                }
+                else if (viewModel.getState(subtask.state).equals(SubTaskStatus.REJECTED.name, true)) {
+                    rejectedCount++
+                }
+                else if (viewModel.getState(subtask.state).equals(SubTaskStatus.DONE.name, true)) {
+                    doneCount++
+                }
+                else if (viewModel.getState(subtask.state).equals(SubTaskStatus.DRAFT.name, true)) {
+                    draftCount++
+                }
+            }
+            mViewDataBinding.allSubTaskCount.text =
+                if (allCount > 99)
+                    "99+"
+                else
+                    allCount.toString()
+
+            mViewDataBinding.ongoingSubTaskCount.text =
+                if (ongoingCount > 99)
+                    "99+"
+                else
+                    ongoingCount.toString()
+
+            mViewDataBinding.assignedSubTaskCount.text =
+                if (assignedCount > 99)
+                    "99+"
+                else
+                    assignedCount.toString()
+
+            mViewDataBinding.acceptedSubTaskCount.text =
+                if (acceptedCount > 99)
+                    "99+"
+                else
+                    acceptedCount.toString()
+
+            mViewDataBinding.rejectedSubTaskCount.text =
+                if (rejectedCount > 99)
+                    "99+"
+                else
+                    rejectedCount.toString()
+
+            mViewDataBinding.doneSubTaskCount.text =
+                if (doneCount > 99)
+                    "99+"
+                else
+                    doneCount.toString()
+
+            mViewDataBinding.draftSubTaskCount.text =
+                if (draftCount > 99)
+                    "99+"
+                else
+                    draftCount.toString()
+        }
+
+
         mViewDataBinding.subTaskRV.adapter = adapter
 
         adapter.itemClickListener = { _: View, position: Int, data: AllSubtask ->

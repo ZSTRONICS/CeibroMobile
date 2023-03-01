@@ -98,4 +98,9 @@ interface ITaskRepository {
         callBack: (isSuccess: Boolean, message: String, data: SubTaskComments?) -> Unit
     )
 
+    suspend fun getSubtaskRejections(
+        subTaskId: String,
+        callBack: (isSuccess: Boolean, message: String, subTaskRejections: List<SubTaskRejections>) -> Unit
+    )
+
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -27,11 +28,15 @@ class TaskDetailVM @Inject constructor(
 ) : HiltBaseViewModel<ITaskDetail.State>(), ITaskDetail.ViewModel {
     val user = sessionManager.getUser().value
 
+    private val _subTasksForStatus: MutableLiveData<List<AllSubtask>> = MutableLiveData()
+    val subTasksForStatus: LiveData<List<AllSubtask>> = _subTasksForStatus
+
     private val _task: MutableLiveData<CeibroTask?> = MutableLiveData()
     val task: LiveData<CeibroTask?> = _task
 
     private val _subTasks: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasks: LiveData<List<AllSubtask>> = _subTasks
+    var originalSubTasks: List<AllSubtask> = listOf()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -54,7 +59,9 @@ class TaskDetailVM @Inject constructor(
 
     override fun getSubTasks(taskId: String) {
         launch {
-            _subTasks.postValue(taskRepository.getSubTaskByTaskId(taskId))
+           originalSubTasks = taskRepository.getSubTaskByTaskId(taskId)
+            _subTasks.postValue(originalSubTasks)
+            _subTasksForStatus.postValue(originalSubTasks)
         }
     }
 
@@ -126,5 +133,25 @@ class TaskDetailVM @Inject constructor(
                 callBack.invoke(result)
             }
         }
+    }
+
+
+
+    fun applyStatusFilter(selectedStatus: String) {
+        val filtered =
+            originalSubTasks.filter {
+                (getState(it.state).equals(selectedStatus, true) || selectedStatus.equals("ALL", true))
+            }
+        _subTasks.postValue(filtered)
+
+        if (subTasksForStatus.value?.size != originalSubTasks.size) {
+            _subTasksForStatus.postValue(originalSubTasks)
+        }
+    }
+
+
+    fun getState(state: List<SubTaskStateItem>?): String {
+        val foundState = state?.find { it.userId == user?.id }?.userState
+        return foundState.toString()
     }
 }
