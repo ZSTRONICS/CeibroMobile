@@ -42,6 +42,11 @@ class TasksFragment :
             R.id.createTaskBtn -> navigateToNewTaskCreation()
             119 -> shortToastNow("Edit Task")
             120 -> shortToastNow("Delete Task")
+            R.id.allTaskFilter -> viewModel.applyStatusFilter(TaskStatus.ALL.name)
+            R.id.newTaskFilter -> viewModel.applyStatusFilter(TaskStatus.NEW.name)
+            R.id.activeTaskFilter -> viewModel.applyStatusFilter(TaskStatus.ACTIVE.name)
+            R.id.doneTaskFilter -> viewModel.applyStatusFilter(TaskStatus.DONE.name)
+            R.id.draftTaskFilter -> viewModel.applyStatusFilter(TaskStatus.DRAFT.name)
         }
     }
 
@@ -66,6 +71,38 @@ class TasksFragment :
         viewModel.tasks.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
+
+        viewModel.tasksForStatus.observe(viewLifecycleOwner) {
+            var allCount = 0
+            var newCount = 0
+            var activeCount = 0
+            var doneCount = 0
+            var draftCount = 0
+
+            allCount = it.size
+
+            for (task in it) {
+                if (task.state.equals(TaskStatus.NEW.name, true)) {
+                    newCount++
+                }
+                else if (task.state.equals(TaskStatus.ACTIVE.name, true)) {
+                    activeCount++
+                }
+                else if (task.state.equals(TaskStatus.DONE.name, true)) {
+                    doneCount++
+                }
+                else if (task.state.equals(TaskStatus.DRAFT.name, true)) {
+                    draftCount++
+                }
+            }
+            mViewDataBinding.allTaskCount.text = allCount.toString()
+            mViewDataBinding.newTaskCount.text = newCount.toString()
+            mViewDataBinding.activeTaskCount.text = activeCount.toString()
+            mViewDataBinding.doneTaskCount.text = doneCount.toString()
+            mViewDataBinding.draftTaskCount.text = draftCount.toString()
+
+        }
+
         mViewDataBinding.taskRV.adapter = adapter
 
         adapter.itemClickListener = { _: View, position: Int, data: CeibroTask ->

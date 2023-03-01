@@ -25,6 +25,9 @@ class SubTaskVM @Inject constructor(
 ) : HiltBaseViewModel<ISubTask.State>(), ISubTask.ViewModel {
     val user = sessionManager.getUser().value
 
+    private val _subTasksForStatus: MutableLiveData<List<AllSubtask>> = MutableLiveData()
+    val subTasksForStatus: LiveData<List<AllSubtask>> = _subTasksForStatus
+
     private val _subTasks: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasks: LiveData<List<AllSubtask>> = _subTasks
     var originalSubTasks: List<AllSubtask> = listOf()
@@ -38,6 +41,7 @@ class SubTaskVM @Inject constructor(
         launch {
             originalSubTasks = taskRepository.getAllSubtasks()
             _subTasks.postValue(originalSubTasks)
+            _subTasksForStatus.postValue(originalSubTasks)
         }
     }
 
@@ -108,6 +112,19 @@ class SubTaskVM @Inject constructor(
 
         val i = ""
         _subTasks.postValue(filtered)
+        _subTasksForStatus.postValue(filtered)
+    }
+
+    fun applyStatusFilter(selectedStatus: String) {
+        val filtered =
+            originalSubTasks.filter {
+                (getState(it.state).equals(selectedStatus, true) || selectedStatus.equals("ALL", true))
+            }
+        _subTasks.postValue(filtered)
+
+        if (subTasksForStatus.value?.size != originalSubTasks.size) {
+            _subTasksForStatus.postValue(originalSubTasks)
+        }
     }
 
     private fun haveMembers(
@@ -129,7 +146,7 @@ class SubTaskVM @Inject constructor(
         }
     }
 
-    private fun getState(state: List<SubTaskStateItem>?): String {
+    fun getState(state: List<SubTaskStateItem>?): String {
         val foundState = state?.find { it.userId == user?.id }?.userState
         return foundState.toString()
     }
@@ -137,6 +154,7 @@ class SubTaskVM @Inject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun resetFilters(event: LocalEvents.ClearSubtaskFilters) {
         _subTasks.postValue(originalSubTasks)
+        _subTasksForStatus.postValue(originalSubTasks)
     }
 
     override fun onCleared() {

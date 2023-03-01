@@ -38,6 +38,7 @@ import okhttp3.internal.immutableListOf
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 private const val ARGUMENT_NAVIGATION_REQUEST_CODE = "NAVIGATION_REQUEST_CODE"
@@ -366,7 +367,12 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 try {
                     val bitmap: Bitmap = intent?.extras?.get("data") as Bitmap
                     // Create a File object to save the bitmap
-                    val file = File(context?.cacheDir, "image.jpg")
+                    val timeStamp: String = java.lang.String.valueOf(
+                        TimeUnit.MILLISECONDS.toSeconds(
+                            System.currentTimeMillis()
+                        )
+                    )
+                    val file = File(context?.cacheDir, "IMG-$timeStamp.jpg")
                     file.createNewFile()
 
                     val byteArrayOutputStream = ByteArrayOutputStream()

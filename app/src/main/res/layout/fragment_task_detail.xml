@@ -260,6 +260,8 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -275,18 +277,16 @@
 
                     <TextView
                         android:id="@+id/allSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appAllGrey"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -298,6 +298,8 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="@+id/allSubTaskFilter"
                     app:layout_constraintStart_toEndOf="@+id/allSubTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/allSubTaskFilter">
@@ -314,18 +316,16 @@
 
                     <TextView
                         android:id="@+id/ongoingSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appYellow"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -337,6 +337,8 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="@+id/ongoingSubTaskFilter"
                     app:layout_constraintStart_toEndOf="@+id/ongoingSubTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/ongoingSubTaskFilter">
@@ -353,8 +355,8 @@
 
                     <TextView
                         android:id="@+id/assignedSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appBlue"
@@ -362,9 +364,9 @@
                         android:gravity="center"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -376,6 +378,8 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="@+id/assignedSubTaskFilter"
                     app:layout_constraintStart_toEndOf="@+id/assignedSubTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/assignedSubTaskFilter">
@@ -392,8 +396,8 @@
 
                     <TextView
                         android:id="@+id/acceptedSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appAcceptBlue"
@@ -401,9 +405,9 @@
                         android:gravity="center"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -415,6 +419,8 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="@+id/acceptedSubTaskFilter"
                     app:layout_constraintStart_toEndOf="@+id/acceptedSubTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/acceptedSubTaskFilter">
@@ -431,8 +437,8 @@
 
                     <TextView
                         android:id="@+id/rejectedSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appRed"
@@ -440,9 +446,9 @@
                         android:gravity="center"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -454,6 +460,8 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="7dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="@+id/rejectedSubTaskFilter"
                     app:layout_constraintStart_toEndOf="@+id/rejectedSubTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/rejectedSubTaskFilter">
@@ -470,8 +478,8 @@
 
                     <TextView
                         android:id="@+id/doneSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appGreen"
@@ -479,9 +487,9 @@
                         android:gravity="center"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -492,10 +500,13 @@
                     android:layout_marginStart="18dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center"
+                    android:background="?attr/selectableItemBackground"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="horizontal"
                     android:padding="7dp"
                     app:layout_constraintBottom_toBottomOf="@+id/doneSubTaskFilter"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@+id/doneSubTaskFilter"
                     app:layout_constraintTop_toTopOf="@+id/doneSubTaskFilter">
 
@@ -511,8 +522,8 @@
 
                     <TextView
                         android:id="@+id/draftSubTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="6dp"
                         android:background="@drawable/badge_back"
                         android:backgroundTint="@color/appDraftGrey"
@@ -520,9 +531,9 @@
                         android:gravity="center"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:text="4"
+                        android:text="0"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 

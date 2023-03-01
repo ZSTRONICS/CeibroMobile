@@ -434,4 +434,17 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Error -> callBack(false, response.error.message, null)
         }
     }
+
+    override suspend fun getSubtaskRejections(
+        subTaskId: String,
+        callBack: (isSuccess: Boolean, message: String, subTaskRejections: List<SubTaskRejections>) -> Unit
+    ) {
+        when (val response = remoteSubTask.getSubtaskRejections(subTaskId)) {
+            is ApiResponse.Success -> {
+                val rejections = response.data.result
+                callBack(true, "", rejections)
+            }
+            is ApiResponse.Error -> callBack(false, response.error.message, emptyList())
+        }
+    }
 }

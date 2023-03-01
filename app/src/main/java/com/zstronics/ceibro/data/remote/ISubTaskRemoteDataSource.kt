@@ -18,4 +18,5 @@ interface ISubTaskRemoteDataSource {
     suspend fun rejectSubtask(updateSubTaskStatusRequest: UpdateSubTaskStatusRequest): ApiResponse<SubTaskByTaskResponse>
     suspend fun updateSubtaskStatus(updateSubTaskStatusRequest: UpdateSubTaskStatusWithoutCommentRequest): ApiResponse<SubTaskByTaskResponse>
     suspend fun postCommentSubtask(request: SubtaskCommentRequest): ApiResponse<SubtaskCommentResponse>
+    suspend fun getSubtaskRejections(subTaskId: String): ApiResponse<SubTaskRejectionsResponse>
 }

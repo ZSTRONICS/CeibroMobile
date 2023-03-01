@@ -86,7 +86,7 @@ interface TaskRetroService {
 
     @DELETE("task/subtask/{subTaskId}")
     suspend fun deleteSubTask(
-        @Path("subTaskId") taskId: String
+        @Path("subTaskId") subTaskId: String
     ): Response<GenericResponse>
 
     @GET("task/{taskId}")
@@ -103,5 +103,10 @@ interface TaskRetroService {
 
     @POST("task/st/comment")
     suspend fun postCommentSubtask(@Body request: SubtaskCommentRequest): Response<SubtaskCommentResponse>
+
+    @GET("task/st/getRejections/{subTaskId}")
+    suspend fun getSubtaskRejections(
+        @Path("subTaskId") subTaskId: String
+    ): Response<SubTaskRejectionsResponse>
 
 }
