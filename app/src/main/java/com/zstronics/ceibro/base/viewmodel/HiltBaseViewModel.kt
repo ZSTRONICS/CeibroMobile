@@ -174,6 +174,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         )
         EventBus.getDefault()
             .post(fileUriList?.let { LocalEvents.UploadFilesToServer(request, it) })
+        removeAllFiles()
     }
 }
 

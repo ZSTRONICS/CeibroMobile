@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
@@ -16,8 +17,11 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.attachment.AttachmentTypes
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
+import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -82,7 +86,7 @@ class SubTaskDetailVM @Inject constructor(
                 taskId = subtask.value?.taskId,
                 userState = userState
             )
-            addComment(request)
+            addComment(context, request, fileUriList.value)
             taskRepository.postCommentSubtask(request) { isSuccess, error, commentData ->
                 loading(false)
                 if (isSuccess) {
@@ -102,7 +106,53 @@ class SubTaskDetailVM @Inject constructor(
         }
     }
 
-    private fun addComment(request: SubtaskCommentRequest) {
+    private fun addComment(
+        context: Context,
+        request: SubtaskCommentRequest,
+        commentsAttachments: ArrayList<SubtaskAttachment?>?
+    ) {
+        val files = try {
+            commentsAttachments?.map {
+
+                val mimeType = FileUtils.getMimeType(context, it?.attachmentUri)
+                val fileName = FileUtils.getFileName(context, it?.attachmentUri)
+                val fileSize = FileUtils.getFileSizeInBytes(context, it?.attachmentUri)
+                val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+                val attachmentType = when {
+                    mimeType.startsWith("image") -> {
+                        AttachmentTypes.Image
+                    }
+                    mimeType.startsWith("video") -> {
+                        AttachmentTypes.Video
+                    }
+                    mimeType == "application/pdf" -> {
+                        AttachmentTypes.Pdf
+                    }
+                    mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
+                        AttachmentTypes.Doc
+                    }
+                    else -> AttachmentTypes.Doc
+                }
+
+                FilesAttachments(
+                    id = "ABCHD67",
+                    access = listOf(),
+                    createdAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
+                    updatedAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
+                    fileName = fileName,
+                    fileType = attachmentType.name,
+                    fileUrl = it?.attachmentUri.toString(),
+                    moduleId = "",
+                    moduleType = AttachmentModules.SubTaskComments.name,
+                    uploadStatus = "inprogress",
+                    uploadedBy = userObj?.id.toString(),
+                    version = 1,
+                    fileSize = fileSize
+                )
+            } as ArrayList<FilesAttachments>?
+        } catch (e: Exception) {
+            arrayListOf()
+        }
         val comments = _recentComments.value ?: arrayListOf()
         val sender = TaskMember(
             TaskMemberId = 0,
@@ -123,7 +173,7 @@ class SubTaskDetailVM @Inject constructor(
             subTaskId = request.subTaskId.toString(),
             taskId = request.taskId.toString(),
             userState = request.userState.toString(),
-            files = arrayListOf()
+            files = files
         )
         comments.add(comment)
         _recentComments.postValue(comments)
