@@ -19,9 +19,7 @@ import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOption
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -258,7 +256,12 @@ class NewTaskVM @Inject constructor(
         _taskAssignee.value = assignee
     }
 
-    fun createNewTask(state: String, context: Context, success: (taskId: String) -> Unit) {
+    fun createNewTask(
+        state: String,
+        context: Context,
+        success: (taskId: String) -> Unit,
+        back: () -> Unit
+    ) {
 
         if (viewState.taskTitle.value.toString() == "") {
             alert("Please enter task title")
@@ -291,8 +294,8 @@ class NewTaskVM @Inject constructor(
                                 uploadFiles(AttachmentModules.Task.name, it, context)
                             }
                         }
-                        loading(false)
-                        handlePressOnView(1)
+                        loading(false, "")
+                        back.invoke()
                     } else {
                         loading(false, error)
                     }
@@ -302,7 +305,7 @@ class NewTaskVM @Inject constructor(
     }
 
 
-    fun updateTask(taskId: String, state: String) {
+    fun updateTask(taskId: String, state: String, back: () -> Unit) {
 
         val admins = taskAdmins.value?.map { it.id } as MutableList
         val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
@@ -325,7 +328,7 @@ class NewTaskVM @Inject constructor(
             ) { isSuccess, error ->
                 if (isSuccess) {
                     loading(false, "Task Updated Successfully")
-                    clickEvent?.postValue(2)
+                    back.invoke()
                 } else {
                     loading(false, error)
                 }
@@ -333,7 +336,7 @@ class NewTaskVM @Inject constructor(
         }
     }
 
-    fun updateTaskWithNoState(taskId: String) {
+    fun updateTaskWithNoState(taskId: String, back: () -> Unit) {
 
         val admins = taskAdmins.value?.map { it.id } as MutableList
         val assignedTo = taskAssignee.value?.map { it.id } ?: listOf()
@@ -351,7 +354,7 @@ class NewTaskVM @Inject constructor(
             ) { isSuccess, error ->
                 if (isSuccess) {
                     loading(false, "Task Updated Successfully")
-                    clickEvent?.postValue(2)
+                    back.invoke()
                 } else {
                     loading(false, error)
                 }

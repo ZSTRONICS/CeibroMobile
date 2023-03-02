@@ -30,49 +30,57 @@ class NewTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            1, 2 -> navigateBack()
             R.id.closeBtn, R.id.newTaskCancelBtn -> navigateBack()
             R.id.newTaskSaveAsDraftBtn -> {
                 viewModel.createNewTask(
                     TaskStatus.DRAFT.name.lowercase(),
-                    requireContext()
-                ) {
-                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
-                        createNotification(
-                            it,
-                            "Task",
-                            "Uploading files for Task",
-                            isOngoing = true,
-                            indeterminate = true
-                        )
-                    }
-                }
+                    requireContext(), {
+                        if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                            createNotification(
+                                it,
+                                "Task",
+                                "Uploading files for Task",
+                                isOngoing = true,
+                                indeterminate = true
+                            )
+                        }
+                    }, {
+                        navigateBack()
+                    })
             }
             R.id.newTaskCreateBtn -> {
                 viewModel.createNewTask(
                     TaskStatus.NEW.name.lowercase(),
-                    requireContext()
-                ) {
-                    if (viewModel.fileUriList.value?.isNotEmpty() == true) {
-                        createNotification(
-                            it,
-                            "Task",
-                            "Uploading files for Task",
-                            isOngoing = true,
-                            indeterminate = true
-                        )
-                    }
-                }
+                    requireContext(),
+                    {
+                        if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                            createNotification(
+                                it,
+                                "Task",
+                                "Uploading files for Task",
+                                isOngoing = true,
+                                indeterminate = true
+                            )
+                        }
+                    }, {
+                        navigateBack()
+                    })
             }
             R.id.updateTaskAsDraftBtn -> viewModel.updateTask(
                 viewModel.taskId,
                 TaskStatus.DRAFT.name.lowercase()
-            )
+            ) {
+                navigateBack()
+            }
             R.id.updateTaskCreateBtn -> viewModel.updateTask(
                 viewModel.taskId,
                 TaskStatus.NEW.name.lowercase()
-            )
-            R.id.updateTaskNewStateBtn -> viewModel.updateTaskWithNoState(viewModel.taskId)
+            ) {
+                navigateBack()
+            }
+            R.id.updateTaskNewStateBtn -> viewModel.updateTaskWithNoState(viewModel.taskId) {
+                navigateBack()
+            }
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
