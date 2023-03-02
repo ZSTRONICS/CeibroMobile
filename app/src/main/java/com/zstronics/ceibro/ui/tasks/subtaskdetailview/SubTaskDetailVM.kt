@@ -86,7 +86,7 @@ class SubTaskDetailVM @Inject constructor(
                 taskId = subtask.value?.taskId,
                 userState = userState
             )
-            addComment(context, request, fileUriList.value)
+            addComment(request, fileUriList.value)
             taskRepository.postCommentSubtask(request) { isSuccess, error, commentData ->
                 loading(false)
                 if (isSuccess) {
@@ -107,47 +107,26 @@ class SubTaskDetailVM @Inject constructor(
     }
 
     private fun addComment(
-        context: Context,
         request: SubtaskCommentRequest,
         commentsAttachments: ArrayList<SubtaskAttachment?>?
     ) {
         val files = try {
             commentsAttachments?.map {
 
-                val mimeType = FileUtils.getMimeType(context, it?.attachmentUri)
-                val fileName = FileUtils.getFileName(context, it?.attachmentUri)
-                val fileSize = FileUtils.getFileSizeInBytes(context, it?.attachmentUri)
-                val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
-                val attachmentType = when {
-                    mimeType.startsWith("image") -> {
-                        AttachmentTypes.Image
-                    }
-                    mimeType.startsWith("video") -> {
-                        AttachmentTypes.Video
-                    }
-                    mimeType == "application/pdf" -> {
-                        AttachmentTypes.Pdf
-                    }
-                    mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
-                        AttachmentTypes.Doc
-                    }
-                    else -> AttachmentTypes.Doc
-                }
-
                 FilesAttachments(
                     id = "ABCHD67",
                     access = listOf(),
                     createdAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
                     updatedAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
-                    fileName = fileName,
-                    fileType = attachmentType.name,
+                    fileName = it?.fileName.toString(),
+                    fileType = it?.attachmentType?.name.toString(),
                     fileUrl = it?.attachmentUri.toString(),
                     moduleId = "",
                     moduleType = AttachmentModules.SubTaskComments.name,
                     uploadStatus = "inprogress",
                     uploadedBy = userObj?.id.toString(),
                     version = 1,
-                    fileSize = fileSize
+                    fileSize = it?.fileSize ?: 0
                 )
             } as ArrayList<FilesAttachments>?
         } catch (e: Exception) {
