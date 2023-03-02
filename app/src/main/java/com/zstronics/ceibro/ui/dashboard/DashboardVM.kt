@@ -195,7 +195,6 @@ class DashboardVM @Inject constructor(
                         }
                     }
                     fileAttachmentsDataSource.insertAll(updatedFiles)
-                    removeAllFiles()
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)

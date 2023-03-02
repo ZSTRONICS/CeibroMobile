@@ -292,6 +292,7 @@ class NewTaskVM @Inject constructor(
                             data?._id?.let {
                                 success(it)
                                 uploadFiles(AttachmentModules.Task.name, it, context)
+
                             }
                         }
                         loading(false, "")
