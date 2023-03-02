@@ -31,6 +31,7 @@ class SubTaskAdapter @Inject constructor(
     var childItemClickListener: ((view: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit) -> Unit)? =
         null
     var simpleChildItemClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? = null
+    var deleteChildItemClickListener: ((view: View, position: Int, data: AllSubtask) -> Unit)? = null
 
     private var list: MutableList<AllSubtask> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubTaskViewHolder {
@@ -206,12 +207,24 @@ class SubTaskAdapter @Inject constructor(
                     ongoingStateBtnLayout.visibility = View.GONE
                 }
 
-                subTaskCDate.text = DateUtils.reformatStringDate(
-                    date = item.createdAt,
-                    DateUtils.SERVER_DATE_FULL_FORMAT,
+
+                subTaskDueDate.text = DateUtils.reformatStringDate(
+                    date = item.dueDate,
+                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )
-                subTaskCreatorName.text = "${item.creator?.firstName} ${item.creator?.surName}"
+                if (subTaskDueDate.text == "") {                              // Checking if date format was not dd-MM-yyyy then still it is empty
+                    subTaskDueDate.text = DateUtils.reformatStringDate(
+                        date = item.dueDate,
+                        DateUtils.FORMAT_YEAR_MON_DATE,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                    )                                                         // Checking if date format was not yyyy-MM-dd then it will be empty
+                    if (subTaskDueDate.text == "") {
+                        subTaskDueDate.text = context.getString(R.string.invalid_due_date_text)
+                    }
+                }
+
+                subTaskCreatorName.text = "${item.creator.firstName} ${item.creator.surName}"
 
                 val members: ArrayList<TaskMember> = ArrayList()
                 for (assign in item.assignedTo) {
@@ -264,21 +277,15 @@ class SubTaskAdapter @Inject constructor(
                                 allUsers += ", ${rejectedUser.firstName} ${rejectedUser.surName}"
                             }
                         }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            subTaskRejectedByLayout.tooltipText = allUsers
-                        }
+                        subTaskRejectedByLayout.tooltipText = allUsers
                     } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            subTaskRejectedByLayout.tooltipText = "No rejections found"
-                        }
+                        subTaskRejectedByLayout.tooltipText = "No rejections found"
                     }
                     subTaskRejectedByLayout.performLongClick()
 
                     val handler = Handler()
                     handler.postDelayed(Runnable {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            subTaskRejectedByLayout.tooltipText = null
-                        }
+                        subTaskRejectedByLayout.tooltipText = null
 
                     }, 1700)
                 }
@@ -311,6 +318,9 @@ class SubTaskAdapter @Inject constructor(
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->
                         onApiResult(result, absoluteAdapterPosition, SubTaskStatus.ASSIGNED)
                     }
+                }
+                draftStateDeleteBtn.setOnClickListener {
+                    deleteChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
                 }
                 assignedStateAcceptBtn.setOnClickListener {
                     childItemClickListener?.invoke(it, absoluteAdapterPosition, item) { result ->

@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
@@ -27,6 +28,7 @@ class TaskDetailVM @Inject constructor(
     private val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<ITaskDetail.State>(), ITaskDetail.ViewModel {
     val user = sessionManager.getUser().value
+    val projects = sessionManager.getProjects().value
 
     private val _subTasksForStatus: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasksForStatus: LiveData<List<AllSubtask>> = _subTasksForStatus
@@ -135,7 +137,28 @@ class TaskDetailVM @Inject constructor(
         }
     }
 
+    fun onApplyFilters(
+        projectId: String,
+        selectedStatus: String,
+        selectedDueDate: String,
+        newMembers: List<TaskMember>?
+    ) {
+        val filtered =
+            originalSubTasks.filter {
+                (it.taskData?.project?.id == projectId || projectId.isEmpty())
+                        && haveMembers(it.assignedToMembersOnly, newMembers)
+                        && (getState(it.state).equals(selectedStatus, true) || selectedStatus.equals("All", true))
+                        && (it.dueDate == selectedDueDate || selectedDueDate.isEmpty())
+            }
 
+        _subTasks.postValue(filtered)
+        _subTasksForStatus.postValue(filtered)
+    }
+
+    fun resetFilters() {
+        _subTasks.postValue(originalSubTasks)
+        _subTasksForStatus.postValue(originalSubTasks)
+    }
 
     fun applyStatusFilter(selectedStatus: String) {
         val filtered =
@@ -149,6 +172,24 @@ class TaskDetailVM @Inject constructor(
         }
     }
 
+    private fun haveMembers(
+        list: List<TaskMember>?,
+        assigneeToMembers: List<TaskMember>?
+    ): Boolean {
+        // Return true if assigneeToMembers is null or empty
+        if (assigneeToMembers == null || assigneeToMembers.isEmpty()) {
+            return true
+        }
+
+        // Check if any of the assigneeToMembers ids are found in the list
+        return if (list != null) {
+            assigneeToMembers.any { assignee ->
+                list.any { it.id == assignee.id }
+            }
+        } else {
+            true
+        }
+    }
 
     fun getState(state: List<SubTaskStateItem>?): String {
         val foundState = state?.find { it.userId == user?.id }?.userState

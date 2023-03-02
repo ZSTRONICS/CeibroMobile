@@ -17,11 +17,14 @@ import com.google.android.material.textfield.TextInputEditText
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskStateItem
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.FragmentTaskDetailBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskAdapter
@@ -57,6 +60,17 @@ class TaskDetailFragment :
             R.id.rejectedSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.REJECTED.name)
             R.id.doneSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.DONE.name)
             R.id.draftSubTaskFilter -> viewModel.applyStatusFilter(SubTaskStatus.DRAFT.name)
+            R.id.subtaskDetailFilterBtn -> {
+                val statusList: ArrayList<String> = arrayListOf()
+                statusList.add(SubTaskStatus.ALL.name.toCamelCase())
+                statusList.add(SubTaskStatus.ASSIGNED.name.toCamelCase())
+                statusList.add(SubTaskStatus.ACCEPTED.name.toCamelCase())
+                statusList.add(SubTaskStatus.ONGOING.name.toCamelCase())
+                statusList.add(SubTaskStatus.DONE.name.toCamelCase())
+                statusList.add(SubTaskStatus.REJECTED.name.toCamelCase())
+                statusList.add(SubTaskStatus.DRAFT.name.toCamelCase())
+                viewModel.task.value?.project?.id?.let { showSubTaskFilterSheet(it, viewModel.projects, statusList) }
+            }
         }
     }
 
@@ -153,6 +167,13 @@ class TaskDetailFragment :
         adapter.simpleChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
             showSubtaskCardMenuPopup(childView, data)
         }
+        adapter.deleteChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
+            showDeleteDialog(
+                childView,
+                requireContext().getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading),
+                data
+            )
+        }
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
                 when (childView.id) {
@@ -212,6 +233,13 @@ class TaskDetailFragment :
                     R.id.acceptedStateStartBtn -> viewModel.updateSubtaskStatus(
                         data,
                         SubTaskStatus.START,
+                        callBack
+                    ) {
+                        navigateBack()
+                    }
+                    R.id.ongoingStateDoneBtn -> viewModel.updateSubtaskStatus(
+                        data,
+                        SubTaskStatus.DONE,
                         callBack
                     ) {
                         navigateBack()
@@ -318,6 +346,35 @@ class TaskDetailFragment :
         navigate(R.id.editSubTaskDetailsFragment, bundle)
     }
 
+    private fun showSubTaskFilterSheet(
+        _projectId: String,
+        projects: MutableList<ProjectsWithMembersResponse.ProjectDetail>?,
+        statusList: ArrayList<String>
+    ) {
+        val fragment = FragmentSubTaskFilterSheet(_projectId, projects, statusList)
+
+        fragment.onConfirmClickListener =
+            { view: View, projectId: String, selectedStatus: String, selectedDueDate: String, assigneeToMembers: List<Member>? ->
+                val newMembers = assigneeToMembers?.map {
+                    TaskMember(
+                        firstName = it.firstName,
+                        surName = it.surName,
+                        profilePic = it.profilePic,
+                        id = it.id,
+                        TaskMemberId = 0
+                    )
+                }
+                viewModel.onApplyFilters(projectId, selectedStatus, selectedDueDate, newMembers)
+            }
+
+        fragment.onClearAllClickListener =
+            {
+                viewModel.resetFilters()
+            }
+
+        fragment.show(childFragmentManager, "FragmentSubTaskFilterSheet")
+    }
+
 
     private fun showTaskDetailSheet() {
         viewModel.task.value?.let {
@@ -403,7 +460,7 @@ class TaskDetailFragment :
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {
-            showDialog(
+            showDeleteDialog(
                 v,
                 context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading),
                 subtaskData
@@ -420,7 +477,7 @@ class TaskDetailFragment :
         return popupWindow
     }
 
-    private fun showDialog(v: View, title: String, subtaskData: AllSubtask) {
+    private fun showDeleteDialog(v: View, title: String, subtaskData: AllSubtask) {
         val dialog = Dialog(v.context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
