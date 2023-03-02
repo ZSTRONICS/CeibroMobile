@@ -64,7 +64,7 @@ class TasksVM @Inject constructor(
                 (it.project.id == filter.projectId || filter.projectId.isEmpty()) && haveMembers(
                     it.assignedTo,
                     filter.assigneeToMembers
-                ) && (it.state.equals(filter.selectedStatus, true) || filter.selectedStatus == "All")
+                ) && (it.state.equals(filter.selectedStatus, true) || filter.selectedStatus.equals("All", true))
                         && (it.dueDate == filter.selectedDueDate || filter.selectedDueDate.isEmpty())
 
             }

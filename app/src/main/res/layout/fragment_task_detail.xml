@@ -44,7 +44,7 @@
 
 
             <ImageView
-                android:id="@+id/taskDetailFilterBtn"
+                android:id="@+id/subtaskDetailFilterBtn"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:layout_marginEnd="15dp"
@@ -74,7 +74,7 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
                 app:layout_constraintEnd_toStartOf="@+id/closeBtn"
-                app:layout_constraintStart_toEndOf="@+id/taskDetailFilterBtn"
+                app:layout_constraintStart_toEndOf="@+id/subtaskDetailFilterBtn"
                 app:layout_constraintTop_toTopOf="@+id/taskTitleLayout" />
 
             <androidx.appcompat.widget.LinearLayoutCompat

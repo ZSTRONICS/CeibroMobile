@@ -105,7 +105,7 @@ class SubTaskVM @Inject constructor(
                         && (getState(it.state).equals(
                     filter.selectedStatus,
                     true
-                ) || filter.selectedStatus == "All")
+                ) || filter.selectedStatus.equals("All", true))
                         && (it.dueDate == filter.selectedDueDate || filter.selectedDueDate.isEmpty())
 
             }

@@ -144,7 +144,13 @@ class SubTaskFragment :
         adapter.simpleChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
             showSubtaskCardMenuPopup(childView, data)
         }
-
+        adapter.deleteChildItemClickListener = { childView: View, position: Int, data: AllSubtask ->
+            showDeleteDialog(
+                childView,
+                requireContext().getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading),
+                data
+            )
+        }
         adapter.childItemClickListener =
             { childView: View, position: Int, data: AllSubtask, callBack: (result: Triple<Boolean, Boolean, Boolean>) -> Unit ->
                 when (childView.id) {
@@ -279,7 +285,7 @@ class SubTaskFragment :
             popupWindow.dismiss()
         }
         deleteSubtask.setOnClickListener {
-            showDialog(
+            showDeleteDialog(
                 v,
                 context.getString(R.string.are_you_sure_you_want_to_delete_this_subtask_heading),
                 subtaskData
@@ -296,7 +302,7 @@ class SubTaskFragment :
         return popupWindow
     }
 
-    private fun showDialog(v: View, title: String, subtaskData: AllSubtask) {
+    private fun showDeleteDialog(v: View, title: String, subtaskData: AllSubtask) {
         val dialog = Dialog(v.context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
