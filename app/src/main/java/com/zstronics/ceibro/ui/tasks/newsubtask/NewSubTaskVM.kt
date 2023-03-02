@@ -274,18 +274,17 @@ class NewSubTaskVM @Inject constructor(
                 if (isSuccess) {
                     if (fileUriList.value?.isNotEmpty() == true) {
                         subtaskData?.id?.let {
-                            success(it)
+                            success.invoke(it)
                             uploadFiles(
                                 AttachmentModules.SubTask.name,
                                 it,
                                 context
                             )
                         }
-                    }
-                    clickEvent?.postValue(1)
-                    loading(false)
-                }
-                else {
+                    } else
+                        success.invoke("")
+                    loading(false,"")
+                } else {
                     loading(false, error)
                 }
             }

@@ -109,4 +109,9 @@ interface TaskRetroService {
         @Path("subTaskId") subTaskId: String
     ): Response<SubTaskRejectionsResponse>
 
+    @GET("task/st/comment/{subTaskId}")
+    suspend fun getAllCommentsOfSubtask(
+        @Path("subTaskId") subTaskId: String
+    ): Response<AllCommentsResponse>
+
 }

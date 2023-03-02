@@ -427,7 +427,7 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteSubTask.postCommentSubtask(request)) {
             is ApiResponse.Success -> {
-                localSubTask.addComment(request.subTaskId,response.data.result)
+                localSubTask.addComment(request.subTaskId, response.data.result)
                 callBack(true, "", response.data.result)
 
             }
@@ -445,6 +445,18 @@ class TaskRepository @Inject constructor(
                 callBack(true, "", rejections)
             }
             is ApiResponse.Error -> callBack(false, response.error.message, emptyList())
+        }
+    }
+
+    override suspend fun getAllCommentsOfSubtask(
+        subTaskId: String,
+        callBack: (isSuccess: Boolean, message: String, subTaskRejections: ArrayList<SubTaskComments>) -> Unit
+    ) {
+        when (val response = remoteSubTask.getAllCommentsOfSubtask(subTaskId)) {
+            is ApiResponse.Success -> {
+                callBack(true, "", response.data.result)
+            }
+            is ApiResponse.Error -> callBack(false, response.error.message, arrayListOf())
         }
     }
 }
