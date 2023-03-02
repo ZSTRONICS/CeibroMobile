@@ -197,7 +197,12 @@ class NewSubTaskVM @Inject constructor(
 //        _viewers.value = viewers
 //    }
 
-    fun createNewSubTask(state: String, context: Context, success: (subtaskId: String) -> Unit) {
+    fun createNewSubTask(
+        state: String,
+        context: Context,
+        success: (subtaskId: String) -> Unit,
+        back: () -> Unit
+    ) {
         val assigneeMembersId = taskAssignee.value?.map { it.id }
         val assignedTo: List<NewSubtaskRequest.AssignedTo> = listOf(
             NewSubtaskRequest.AssignedTo(
@@ -281,9 +286,9 @@ class NewSubTaskVM @Inject constructor(
                                 context
                             )
                         }
-                    } else
-                        success.invoke("")
-                    loading(false,"")
+                    }
+                    back.invoke()
+                    loading(false, "")
                 } else {
                     loading(false, error)
                 }
@@ -292,7 +297,7 @@ class NewSubTaskVM @Inject constructor(
     }
 
 
-    fun updateDraftSubTask(subTaskId: String, state: String) {
+    fun updateDraftSubTask(subTaskId: String, state: String, back: () -> Unit) {
         val assigneeMembersId = taskAssignee.value?.map { it.id }
         val assignedTo: List<UpdateDraftSubtaskRequest.AssignedTo> = listOf(
             UpdateDraftSubtaskRequest.AssignedTo(
@@ -358,7 +363,7 @@ class NewSubTaskVM @Inject constructor(
             taskRepository.updateSubTaskById(subTaskId, updateDraftSubtask) { isSuccess, error ->
                 if (isSuccess) {
                     loading(false, "SubTask Updated Successfully")
-                    clickEvent?.postValue(3)
+                    back.invoke()
                 } else {
                     loading(false, error)
                 }
@@ -367,7 +372,7 @@ class NewSubTaskVM @Inject constructor(
     }
 
 
-    fun updateAssignedSubTask(subTaskId: String) {
+    fun updateAssignedSubTask(subTaskId: String, back: () -> Unit) {
         val updateSubtask = UpdateSubtaskRequest(
             description = viewState.description.value.toString()
         )
@@ -377,7 +382,7 @@ class NewSubTaskVM @Inject constructor(
             taskRepository.updateSubTask(subTaskId, updateSubtask) { isSuccess, error ->
                 if (isSuccess) {
                     loading(false, "SubTask Updated Successfully")
-                    clickEvent?.postValue(3)
+                    back.invoke()
                 } else {
                     loading(false, error)
                 }

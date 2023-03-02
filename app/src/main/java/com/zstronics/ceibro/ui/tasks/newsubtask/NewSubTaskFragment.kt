@@ -31,54 +31,63 @@ class NewSubTaskFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn, 1, R.id.newSubTaskCancelBtn, 3 -> navigateBack()
+            R.id.closeBtn, R.id.newSubTaskCancelBtn -> navigateBack()
             R.id.newSubTaskSaveAsDraftBtn -> {
                 viewModel.createNewSubTask(
                     SubTaskStatus.DRAFT.name.lowercase(),
-                    requireContext()
-                ) {
-                    if (viewModel.fileUriList.value?.isNotEmpty() == true && it.isNotEmpty()) {
-                        navigateBack()
-                        createNotification(
-                            it,
-                            "Subtask",
-                            "Uploading files for Subtask",
-                            isOngoing = true,
-                            indeterminate = true
-                        )
-                    } else {
+                    requireContext(),
+                    {
+                        if (viewModel.fileUriList.value?.isNotEmpty() == true) {
+                            navigateBack()
+                            createNotification(
+                                it,
+                                "Subtask",
+                                "Uploading files for Subtask",
+                                isOngoing = true,
+                                indeterminate = true
+                            )
+                        }
+                    }, {
                         navigateBack()
                     }
-                }
+                )
             }
             R.id.newSubTaskSaveAndAssignBtn -> {
                 viewModel.createNewSubTask(
                     SubTaskStatus.ASSIGNED.name.lowercase(),
-                    requireContext()
-                ) {
-                    if (viewModel.fileUriList.value?.isNotEmpty() == true && it.isNotEmpty()) {
-                        createNotification(
-                            it,
-                            "Subtask",
-                            "Uploading files for Subtask",
-                            isOngoing = true,
-                            indeterminate = true
-                        )
-                    } else {
+                    requireContext(), {
+                        if (viewModel.fileUriList.value?.isNotEmpty() == true && it.isNotEmpty()) {
+                            createNotification(
+                                it,
+                                "Subtask",
+                                "Uploading files for Subtask",
+                                isOngoing = true,
+                                indeterminate = true
+                            )
+                        } else {
+                            navigateBack()
+                        }
+                    }, {
                         navigateBack()
-                    }
-                }
+                    })
             }
             R.id.updateSubTaskAsDraftBtn -> viewModel.updateDraftSubTask(
                 viewModel.subtaskId,
                 SubTaskStatus.DRAFT.name.lowercase()
-            )
+            ) {
+                navigateBack()
+            }
             R.id.updateSubTaskSaveAndAssignBtn -> viewModel.updateDraftSubTask(
                 viewModel.subtaskId,
                 SubTaskStatus.ASSIGNED.name.lowercase()
-            )
-            R.id.updateSubTaskBtn -> viewModel.updateAssignedSubTask(viewModel.subtaskId)
-            R.id.newSubTaskDueDateText -> {
+            ) {
+                navigateBack()
+            }
+            R.id.updateSubTaskBtn -> viewModel.updateAssignedSubTask(viewModel.subtaskId) {
+                navigateBack()
+            }
+            R.id.newSubTaskDueDateText
+            -> {
                 val datePicker =
                     DatePickerDialog(
                         requireContext(),
