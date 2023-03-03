@@ -320,7 +320,6 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         checkPermission(
             immutableListOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
             )
         ) {
             requireActivity().openFilePicker(
@@ -359,8 +358,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     fun captureAttachment() {
         checkPermission(
             immutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.CAMERA
             )
         ) {
             requireActivity().openCamera { resultCode, intent ->
