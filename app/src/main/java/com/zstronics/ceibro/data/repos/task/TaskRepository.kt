@@ -429,7 +429,6 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 localSubTask.addComment(request.subTaskId, response.data.result)
                 callBack(true, "", response.data.result)
-
             }
             is ApiResponse.Error -> callBack(false, response.error.message, null)
         }

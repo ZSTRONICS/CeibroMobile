@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.*
 import com.zstronics.ceibro.data.database.TableNames
+import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 
@@ -42,6 +43,25 @@ interface SubTaskDao {
         val subtask = subTaskId?.let { getSubTaskById(it) }
         val comments = subtask?.recentComments
         comments?.add(comment)
+        subtask?.recentComments = comments
+        subtask?.let { updateSubTask(it) }
+    }
+
+    suspend fun addFilesUnderComment(
+        subTaskId: String?,
+        comment: SubTaskComments,
+        commentId: String
+    ) {
+        val subtask = subTaskId?.let { getSubTaskById(it) }
+        val comments = subtask?.recentComments
+        val desireComment = comments?.find { it.id == commentId }
+        if (desireComment != null) {
+            val desireCommentIndex = comments.indexOf(desireComment)
+            desireComment.files = comment.files
+            comments.removeAt(desireCommentIndex)
+            comments.add(desireComment)
+        } else
+            comments?.add(comment)
         subtask?.recentComments = comments
         subtask?.let { updateSubTask(it) }
     }

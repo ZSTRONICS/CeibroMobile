@@ -174,11 +174,18 @@ class DashboardFragment :
                 }
             } else if (socketData.module == "SubTaskComments") {
                 if (socketData.eventType == SocketHandler.TaskEvent.COMMENT_WITH_FILES.name) {
-                    val commentsFilesUploaded =
+                    val commentWithFile =
                         gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
                             arguments,
                             object : TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
                         ).data
+                    viewModel.launch {
+                        viewModel.localSubTask.addFilesUnderComment(
+                            commentWithFile.subTaskId,
+                            commentWithFile,
+                            commentWithFile.id
+                        )
+                    }
                     requireActivity().getSystemService(NotificationManager::class.java)
                         ?.cancelAll()
                 }
