@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.dashboard
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -11,7 +12,6 @@ import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.*
@@ -175,6 +175,28 @@ class DashboardVM @Inject constructor(
                                 EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                             }
                         }
+                    }
+                } else if (socketData.module == "SubTaskComments") {
+                    if (socketData.eventType == SocketHandler.TaskEvent.SUBTASK_NEW_COMMENT.name) {
+                        val newComment =
+                            gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
+                                arguments,
+                                object : TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
+                            ).data
+                        localSubTask.addFilesUnderComment(newComment.subTaskId, newComment, newComment.id)
+                        EventBus.getDefault()
+                            .post(LocalEvents.NewSubTaskComment(newComment, newComment.id))
+
+                        EventBus.getDefault().post(
+                            LocalEvents.CreateNotification(
+                                moduleName = socketData.module,
+                                moduleId = newComment.id,
+                                notificationTitle = "New Comment received",
+                                isOngoing = false,
+                                indeterminate = false,
+                                notificationIcon = R.drawable.icon_chat
+                            )
+                        )
                     }
                 }
             }

@@ -427,6 +427,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         notificationTitle: String = "Uploading file",
         isOngoing: Boolean = true,
         indeterminate: Boolean = false,
+        notificationIcon: Int = R.drawable.icon_upload
     ): Pair<NotificationManager, NotificationCompat.Builder> {
         // Create a notification channel (for Android O and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -441,7 +442,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
         // Create a notification builder
         val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
-            .setSmallIcon(R.drawable.ic_upload)
+            .setSmallIcon(notificationIcon)
             .setContentTitle(notificationTitle)
             .setOngoing(isOngoing)
             .setOnlyAlertOnce(true)

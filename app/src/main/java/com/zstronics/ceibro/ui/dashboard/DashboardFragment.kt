@@ -186,6 +186,8 @@ class DashboardFragment :
                             commentWithFile.id
                         )
                     }
+                    EventBus.getDefault()
+                        .post(LocalEvents.NewSubTaskComment(commentWithFile, commentWithFile.id))
                     requireActivity().getSystemService(NotificationManager::class.java)
                         ?.cancelAll()
                 }
@@ -252,7 +254,8 @@ class DashboardFragment :
             "${event.moduleName}${event.moduleId}",
             notificationTitle = event.notificationTitle,
             isOngoing = event.isOngoing,
-            indeterminate = event.indeterminate
+            indeterminate = event.indeterminate,
+            notificationIcon = event.notificationIcon
         )
     }
 
