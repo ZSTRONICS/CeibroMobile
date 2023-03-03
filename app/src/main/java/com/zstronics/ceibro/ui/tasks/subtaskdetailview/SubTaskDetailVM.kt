@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.subtaskdetailview
 
 import android.content.Context
 import android.os.Bundle
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -86,7 +87,7 @@ class SubTaskDetailVM @Inject constructor(
                 taskId = subtask.value?.taskId,
                 userState = userState
             )
-            addComment(request, fileUriList.value)
+            addComment(context, request, fileUriList.value)
             taskRepository.postCommentSubtask(request) { isSuccess, error, commentData ->
                 loading(false)
                 if (isSuccess) {
@@ -107,19 +108,25 @@ class SubTaskDetailVM @Inject constructor(
     }
 
     private fun addComment(
+        context: Context,
         request: SubtaskCommentRequest,
         commentsAttachments: ArrayList<SubtaskAttachment?>?
     ) {
         val files = try {
             commentsAttachments?.map {
-
+                val mimeTypeMap = MimeTypeMap.getSingleton()
+                val extension = mimeTypeMap.getExtensionFromMimeType(it?.attachmentUri?.let { it1 ->
+                    context.contentResolver.getType(
+                        it1
+                    )
+                })
                 FilesAttachments(
                     id = "ABCHD67",
                     access = listOf(),
                     createdAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
                     updatedAt = DateUtils.getCurrentDateWithFormat(DateUtils.SERVER_DATE_FULL_FORMAT),
                     fileName = it?.fileName.toString(),
-                    fileType = it?.attachmentType?.name.toString(),
+                    fileType = ".$extension",
                     fileUrl = it?.attachmentUri.toString(),
                     moduleId = "",
                     moduleType = AttachmentModules.SubTaskComments.name,
