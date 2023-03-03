@@ -50,9 +50,6 @@ class CommentsAdapter @Inject constructor(
 
         fun bind(item: SubTaskComments) {
             binding.comment = item
-            binding.commentCreationDate.text = DateUtils.reformatStringDate(
-                item.createdAt, DateUtils.SERVER_DATE_FULL_FORMAT, DateUtils.FORMAT_TIME_24H
-            )
             val headingAndBg: Pair<Int, SubTaskStatus> = item.userState.stateToHeadingAndBg()
             val (background, heading) = headingAndBg
             binding.commentStatusName.setBackgroundResource(background)

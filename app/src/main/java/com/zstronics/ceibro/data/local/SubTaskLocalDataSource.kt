@@ -25,7 +25,7 @@ class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTask
         subTaskDao.getSubTaskByTaskId(taskId)
 
 
-    override suspend fun getSingleSubTaskCount(subtaskId: String) : Int {
+    override suspend fun getSingleSubTaskCount(subtaskId: String): Int {
         return subTaskDao.getSingleSubTask(subtaskId)
     }
 
@@ -40,7 +40,16 @@ class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTask
     override suspend fun deleteSubtaskByTaskId(taskId: String) {
         subTaskDao.deleteSubtaskByTaskId(taskId)
     }
-    override suspend fun addComment(subTaskId: String?, comment: SubTaskComments){
-        subTaskDao.addComment(subTaskId,comment)
+
+    override suspend fun addComment(subTaskId: String?, comment: SubTaskComments) {
+        subTaskDao.addComment(subTaskId, comment)
+    }
+
+    override suspend fun addFilesUnderComment(
+        subTaskId: String?,
+        comment: SubTaskComments,
+        commentId: String
+    ) {
+        subTaskDao.addFilesUnderComment(subTaskId, comment, commentId)
     }
 }

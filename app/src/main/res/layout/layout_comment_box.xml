@@ -60,7 +60,7 @@
                 android:textSize="12.5sp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/commentCreationDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,12 +76,13 @@
             android:paddingTop="2.5dp"
             android:paddingEnd="2dp"
             android:paddingBottom="2.5dp"
-            android:text="22.05.2021"
             android:textColor="@color/grey"
             android:textSize="11.5sp"
             app:layout_constraintBottom_toBottomOf="@+id/topBar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBar" />
+            app:layout_constraintTop_toTopOf="@+id/topBar"
+            app:setDateAndTime="@{comment.createdAt}"
+            tools:text="22.05.2021" />
 
         <TextView
             android:id="@+id/commentDetail"
@@ -101,17 +102,16 @@
 
         <LinearLayout
             android:id="@+id/commentsAttachment"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
-            android:layout_marginEnd="@dimen/_5sdp"
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="2dp"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/commentCreationDate"
             app:layout_constraintTop_toBottomOf="@+id/topBar">
 
             <ImageView
@@ -142,7 +142,7 @@
             android:layout_marginTop="7dp"
             android:alpha="0.8"
             android:background="@color/appLightGrey"
-            app:layout_constraintEnd_toEndOf="@+id/commentDetail"
+            app:layout_constraintEnd_toEndOf="@+id/commentsAttachment"
             app:layout_constraintStart_toStartOf="@+id/commentDetail"
             app:layout_constraintTop_toBottomOf="@+id/commentDetail" />
 

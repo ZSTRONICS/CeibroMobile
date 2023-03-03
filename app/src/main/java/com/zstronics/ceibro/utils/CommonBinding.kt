@@ -26,4 +26,15 @@ object CommonBinding {
             }
         }
     }
+
+    @JvmStatic
+    @BindingAdapter("app:setDateAndTime")
+    fun setDateAndTime(
+        textView: AppCompatTextView,
+        createdAt: String,
+    ) {
+        textView.text = DateUtils.reformatStringDate(
+            createdAt, DateUtils.SERVER_DATE_FULL_FORMAT, DateUtils.FXRATE_DATE_TIME_FORMAT
+        )
+    }
 }

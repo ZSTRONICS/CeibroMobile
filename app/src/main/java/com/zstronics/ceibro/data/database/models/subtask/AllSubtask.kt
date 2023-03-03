@@ -93,7 +93,7 @@ data class SubTaskComments(
     @SerializedName("access")
     val access: List<String>,
     @SerializedName("files")
-    val files: ArrayList<FilesAttachments>?,
+    var files: ArrayList<FilesAttachments>?,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("isFileAttached")

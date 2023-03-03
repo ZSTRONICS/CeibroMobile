@@ -29,7 +29,7 @@ class DashboardVM @Inject constructor(
     override val viewState: DashboardState,
     val sessionManager: SessionManager,
     private val localTask: TaskLocalDataSource,
-    private val localSubTask: SubTaskLocalDataSource,
+    val localSubTask: SubTaskLocalDataSource,
     private val repository: ITaskRepository,
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
