@@ -248,6 +248,8 @@ class SubTaskAdapter @Inject constructor(
                     subTaskRejectedByCount.text = "0"
                 }
 
+                subTaskCommentCountText.text = item.unSeenCommentsCount.toString()
+                subTaskAttachmentCountText.text = item.attachmentsCount.toString()
 
 
                 subTaskTitle.text = item.title

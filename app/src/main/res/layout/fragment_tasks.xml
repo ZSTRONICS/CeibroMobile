@@ -68,8 +68,6 @@
                         android:backgroundTint="@color/appAllGrey"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
                         android:text="0"
                         android:textColor="@color/white"
                         android:textSize="11sp" />
@@ -109,8 +107,6 @@
                         android:backgroundTint="@color/appBlue"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
                         android:text="0"
                         android:textColor="@color/white"
                         android:textSize="11sp" />
@@ -162,8 +158,6 @@
                         android:backgroundTint="@color/appYellow"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
                         android:text="0"
                         android:textColor="@color/white"
                         android:textSize="11sp" />
@@ -203,8 +197,6 @@
                         android:backgroundTint="@color/appGreen"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
                         android:text="0"
                         android:textColor="@color/white"
                         android:textSize="11sp" />
@@ -247,8 +239,6 @@
                         android:backgroundTint="@color/appDraftGrey"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
                         android:text="0"
                         android:textColor="@color/white"
                         android:textSize="11sp" />
