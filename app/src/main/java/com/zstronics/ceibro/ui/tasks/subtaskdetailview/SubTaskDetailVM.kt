@@ -20,10 +20,14 @@ import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +49,11 @@ class SubTaskDetailVM @Inject constructor(
 
     private val _recentComments: MutableLiveData<ArrayList<SubTaskComments>> = MutableLiveData()
     val recentComments: LiveData<ArrayList<SubTaskComments>> = _recentComments
+
+    init {
+        EventBus.getDefault().register(this)
+    }
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         _user.value = userObj
@@ -165,4 +174,25 @@ class SubTaskDetailVM @Inject constructor(
         _recentComments.postValue(comments)
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNewSubTaskComment(event: LocalEvents.NewSubTaskComment?) {
+        val comments = recentComments.value ?: arrayListOf()
+        val desireComment = comments.find { it.id == event?.commentId }
+        if (desireComment != null) {
+            val desireCommentIndex = comments.indexOf(desireComment)
+            desireComment.files = event?.newComment?.files
+            comments.removeAt(desireCommentIndex)
+            comments.add(desireComment)
+        } else {
+            event?.newComment?.let { comments.add(it) }
+        }
+
+        _recentComments.postValue(comments)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
+    }
 }

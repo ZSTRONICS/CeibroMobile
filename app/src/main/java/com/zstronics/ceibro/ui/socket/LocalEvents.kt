@@ -1,13 +1,15 @@
 package com.zstronics.ceibro.ui.socket
 
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
-import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 
 object LocalEvents {
     class TaskCreatedEvent
     data class SubTaskCreatedEvent(val taskId: String)
+    data class NewSubTaskComment(val newComment: SubTaskComments, val commentId: String)
     data class UploadFilesToServer(
         val request: AttachmentUploadRequest,
         val fileUriList: ArrayList<SubtaskAttachment?>
@@ -20,6 +22,7 @@ object LocalEvents {
         val notificationTitle: String,
         val isOngoing: Boolean,
         val indeterminate: Boolean,
+        val notificationIcon: Int = R.drawable.icon_upload
     )
 
     data class ApplyFilterOnTask(
