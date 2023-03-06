@@ -4,6 +4,7 @@ import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.data.base.CookiesManager
 import io.socket.client.IO
 import io.socket.client.Socket
+import io.socket.emitter.Emitter
 import java.net.URISyntaxException
 
 object SocketHandler {
@@ -54,6 +55,13 @@ object SocketHandler {
                 args
             }
 
+            mSocket.on(Socket.EVENT_DISCONNECT
+            ) {
+                println("Socket Disconnected")
+                establishConnection()
+                println("Socket Connected again")
+            }
+
         } catch (exception: URISyntaxException) {
             exception.message
         }
@@ -66,6 +74,7 @@ object SocketHandler {
 
     @Synchronized
     fun establishConnection() {
+        println("Socket Connected")
         mSocket.connect()
     }
 
