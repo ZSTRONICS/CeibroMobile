@@ -11,17 +11,18 @@ import android.view.WindowManager
 import android.widget.PopupWindow
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.databinding.FragmentStatusViewSheetBinding
-import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 
-class ProjectStatusViewSheet constructor(private val projectStatuses: List<ProjectOverviewVM.ProjectStatus>) :
+class ProjectStatusViewSheet constructor(private val projectStatuses: LiveData<ArrayList<ProjectOverviewVM.ProjectStatus>>) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentStatusViewSheetBinding
     var onEdit: ((position: Int, updated: ProjectOverviewVM.ProjectStatus) -> Unit)? = null
     var onDelete: ((position: Int) -> Unit)? = null
+    var onAddNew: (() -> Unit)? = null
+    var onSelect: ((status: String) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,13 +35,17 @@ class ProjectStatusViewSheet constructor(private val projectStatuses: List<Proje
             container,
             false
         )
-        return binding.root
+        val view = binding.root
+        val windowHeight = resources.displayMetrics.heightPixels
+        val halfWindowHeight = windowHeight / 2
+        view.layoutParams?.height = halfWindowHeight
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = ProjectStatusAdapter()
-        adapter.setList(projectStatuses)
         adapter.simpleChildItemClickListener =
             { childView: View, position: Int, data: ProjectOverviewVM.ProjectStatus ->
                 val popUpWindowObj = popUpMenu(position, childView, data)
@@ -50,9 +55,21 @@ class ProjectStatusViewSheet constructor(private val projectStatuses: List<Proje
                     10
                 )
             }
+
+        adapter.itemClickListener =
+            { childView: View, position: Int, data: ProjectOverviewVM.ProjectStatus ->
+                onSelect?.invoke(data.status)
+                dismiss()
+            }
         binding.statusRV.adapter = adapter
         binding.closeBtn.setOnClickListener {
             dismiss()
+        }
+        binding.addNewStatusTV.setOnClickListener {
+            onAddNew?.invoke()
+        }
+        projectStatuses.observe(viewLifecycleOwner) {
+            adapter.setList(it)
         }
     }
 

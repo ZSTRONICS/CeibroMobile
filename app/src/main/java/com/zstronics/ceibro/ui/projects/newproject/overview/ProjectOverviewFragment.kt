@@ -11,7 +11,8 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentProjectOverviewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
-import com.zstronics.ceibro.ui.tasks.taskdetailview.FragmentTaskDetailSheet
+import com.zstronics.ceibro.ui.projects.newproject.overview.addnewstatus.AddNewStatusSheet
+import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.OwnerSelectionSheet
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
@@ -33,10 +34,6 @@ class ProjectOverviewFragment :
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-            val myFormat = "dd-MM-yyyy"
-            val sdf = SimpleDateFormat(myFormat, Locale.US)
-
             val formatToSend = "dd-MM-yyyy"
             val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
 
@@ -45,6 +42,54 @@ class ProjectOverviewFragment :
 
     override fun onClick(id: Int) {
         when (id) {
+            R.id.createProjectBtn -> {
+                with(viewState) {
+                    var checkPass = 0
+                    if (!projectPhoto.value.isNullOrEmpty()) {
+                        checkPass++
+                    }
+
+                    if (!projectTitle.value.isNullOrEmpty()) {
+                        checkPass++
+                    }
+
+                    if (!location.value.isNullOrEmpty()) {
+                        checkPass++
+                    }
+
+                    if (!description.value.isNullOrEmpty()) {
+                        checkPass++
+                    }
+                    if (!dueDate.value.isNullOrEmpty()) {
+                        checkPass++
+                    }
+
+                    if (!status.value.isNullOrEmpty()) {
+                        checkPass++
+                    }
+                    if (checkPass == 6) {
+                        viewModel.createProject()
+                    } else {
+                        if (projectPhoto.value.isNullOrEmpty()) {
+                            showToast("Attach photo")
+                        } else if (projectTitle.value.isNullOrEmpty()) {
+                            showToast("Project title required")
+                        }
+                        else if (location.value.isNullOrEmpty()) {
+                            showToast("Project location required")
+                        }
+                        else if (description.value.isNullOrEmpty()) {
+                            showToast("Project description required")
+                        }
+                        else if (dueDate.value.isNullOrEmpty()) {
+                            showToast("Project dueDate required")
+                        }
+                        else if (status.value.isNullOrEmpty()) {
+                            showToast("Project status required")
+                        }
+                    }
+                }
+            }
             R.id.projectPhoto -> {
                 checkPermission(
                     immutableListOf(
@@ -75,6 +120,7 @@ class ProjectOverviewFragment :
                 datePicker.show()
             }
             R.id.statusText -> showStatusSheet()
+            R.id.projectOwner -> showOwnersSelectionSheet()
         }
     }
 
@@ -95,22 +141,49 @@ class ProjectOverviewFragment :
     }
 
     private fun showStatusSheet() {
-        viewModel.projectStatuses.value?.let {
-            val fragment = ProjectStatusViewSheet(it)
-            fragment.onEdit = { position, updated ->
-                /// do edit the status
-            }
-            fragment.onDelete = { position ->
-                /// do edit the status
-            }
-            fragment.show(childFragmentManager, "ProjectStatusViewSheet")
+        val fragment = ProjectStatusViewSheet(viewModel.projectStatuses)
+        fragment.onEdit = { position, updated ->
+            /// do edit the status
         }
+        fragment.onDelete = { position ->
+            /// do edit the status
+            viewModel.deleteStatus(position)
+        }
+
+        fragment.onSelect = { status ->
+            viewState.status.value = status
+        }
+        fragment.onAddNew = {
+            val addNewStatusSheet = AddNewStatusSheet()
+
+            addNewStatusSheet.onAdd = { status ->
+                viewModel.addStatus(status)
+            }
+            addNewStatusSheet.show(childFragmentManager, "AddNewStatusSheet")
+        }
+        fragment.show(childFragmentManager, "ProjectStatusViewSheet")
+    }
+
+    private fun showOwnersSelectionSheet() {
+        val fragment = OwnerSelectionSheet(
+            viewModel.allConnections.value,
+            viewModel.sessionManager,
+            viewModel.owners
+        )
+        fragment.onSelect = { ownerId ->
+            viewModel.addOrRemoveOwner(ownerId)
+        }
+        fragment.show(childFragmentManager, "OwnerSelectionSheet")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.projectStatuses.observe(viewLifecycleOwner) {
-
+        viewModel.owners.observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                mViewDataBinding.projectOwner.setText("No Owner Selected")
+            } else {
+                mViewDataBinding.projectOwner.setText("${it.size} Owners Selected")
+            }
         }
     }
 }

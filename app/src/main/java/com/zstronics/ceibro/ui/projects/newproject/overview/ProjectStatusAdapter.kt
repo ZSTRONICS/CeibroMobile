@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class ProjectStatusAdapter @Inject constructor() :
     RecyclerView.Adapter<ProjectStatusAdapter.ProjectStatusViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: ProjectOverviewVM.ProjectStatus?) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: ProjectOverviewVM.ProjectStatus) -> Unit)? =
         null
 
     private var list: MutableList<ProjectOverviewVM.ProjectStatus> = mutableListOf()
@@ -49,6 +49,9 @@ class ProjectStatusAdapter @Inject constructor() :
             binding.statusTitle.text = item.status
             binding.optionMenu.setOnClickListener {
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+            binding.root.setOnClickListener {
+                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
         }
     }

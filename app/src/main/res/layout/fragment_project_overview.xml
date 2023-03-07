@@ -162,6 +162,7 @@
                 android:fontFamily="@font/inter_regular"
                 android:inputType="text"
                 android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:scrollHorizontally="true"
                 android:textColorHint="@color/grey"
                 android:textSize="15sp" />
@@ -246,7 +247,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/newSubTaskSaveAndAssignBtn"
+            android:id="@+id/createProjectBtn"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginEnd="12dp"
