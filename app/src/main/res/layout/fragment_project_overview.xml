@@ -103,6 +103,7 @@
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="18dp"
                 android:paddingEnd="28dp"
+                android:text="@{viewState.status}"
                 android:textColorHint="@color/grey"
                 android:textSize="15sp" />
 

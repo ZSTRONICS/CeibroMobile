@@ -3,12 +3,15 @@ package com.zstronics.ceibro.ui.projects.newproject.overview
 import android.Manifest
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentProjectOverviewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.tasks.taskdetailview.FragmentTaskDetailSheet
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
@@ -71,6 +74,7 @@ class ProjectOverviewFragment :
                 datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
                 datePicker.show()
             }
+            R.id.statusText -> showStatusSheet()
         }
     }
 
@@ -87,6 +91,26 @@ class ProjectOverviewFragment :
             intentData.dataString?.let {
                 viewState.projectPhoto.value = it
             }
+        }
+    }
+
+    private fun showStatusSheet() {
+        viewModel.projectStatuses.value?.let {
+            val fragment = ProjectStatusViewSheet(it)
+            fragment.onEdit = { position, updated ->
+                /// do edit the status
+            }
+            fragment.onDelete = { position ->
+                /// do edit the status
+            }
+            fragment.show(childFragmentManager, "ProjectStatusViewSheet")
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.projectStatuses.observe(viewLifecycleOwner) {
+
         }
     }
 }
