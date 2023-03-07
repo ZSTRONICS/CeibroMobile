@@ -32,12 +32,12 @@ class ProjectsFragment :
             R.id.projectFilterBtn -> {
                 if (mViewDataBinding.filterScrollLayout.visibility == View.VISIBLE) {
                     mViewDataBinding.filterScrollLayout.moveView(250, false)
-                }
-                else {
+                } else {
                     mViewDataBinding.filterScrollLayout.moveView(300, true)
                 }
 
             }
+            R.id.createProject -> navigate(R.id.createProjectMainFragment)
         }
     }
 
@@ -60,13 +60,15 @@ class ProjectsFragment :
         viewModel.allProjects.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
-        adapter.itemClickListener = { _: View, position: Int, data: AllProjectsResponse.Result.Projects ->
-            //navigateToMsgView(data)
-        }
-        adapter.childItemClickListener = { view: View, position: Int, data: AllProjectsResponse.Result.Projects ->
-            //if (view.id == R.id.chatFavIcon)
+        adapter.itemClickListener =
+            { _: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+                //navigateToMsgView(data)
+            }
+        adapter.childItemClickListener =
+            { view: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+                //if (view.id == R.id.chatFavIcon)
                 //viewModel.addChatToFav(data.id)
-        }
+            }
     }
 
     private fun initRecyclerView(adapter: AllProjectsAdapter) {

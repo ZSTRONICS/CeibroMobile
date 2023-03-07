@@ -273,4 +273,8 @@
     <string name="status_heading">Status</string>
     <string name="clear_all_text">Clear all</string>
 
+    <string name="new_projects_title">Create Projects</string>
+    <string name="create_heading">Create</string>
+    <string name="add_project_photo">Add Project Photo</string>
+
 </resources>

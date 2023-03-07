@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/appHomeBack">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/projectHeader"
             android:layout_width="match_parent"
@@ -36,11 +37,11 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginBottom="19dp"
+                android:elevation="0dp"
                 android:fontFamily="@font/inter_semibold"
                 android:text="@string/projects_heading"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:elevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -50,8 +51,8 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginEnd="17dp"
-                android:padding="4dp"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
@@ -63,14 +64,14 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="58dp"
                 android:layout_marginEnd="10dp"
-                android:layoutDirection="rtl"
-                android:searchIcon="@drawable/icon_search"
                 android:closeIcon="@drawable/icon_round_close"
                 android:elevation="1dp"
-                android:queryHint="Search"
-                android:textSize="14sp"
                 android:gravity="center"
+                android:layoutDirection="rtl"
                 android:queryBackground="@drawable/input_field_rectangle"
+                android:queryHint="Search"
+                android:searchIcon="@drawable/icon_search"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -84,8 +85,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/appbar_scrolling_view_behavior"
             android:fillViewport="true"
-            android:scrollbars="none"
             android:padding="7dp"
+            android:scrollbars="none"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -314,6 +315,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/filterScrollLayout">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -324,19 +326,32 @@
                     android:id="@+id/projectRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:itemCount="10"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
                     tools:listitem="@layout/layout_project_box" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/createProject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="6dp"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:src="@drawable/ic_add"
+            android:tooltipText="@string/new_task_heading"
+            app:elevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

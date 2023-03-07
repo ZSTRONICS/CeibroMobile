@@ -249,4 +249,9 @@
         android:name="com.zstronics.ceibro.ui.tasks.editsubtaskdetails.EditSubTaskDetailsFragment"
         android:label="EditSubTaskDetailsFragment"
         tools:layout="@layout/fragment_edit_sub_task_details" />
+    <fragment
+        android:id="@+id/createProjectMainFragment"
+        android:name="com.zstronics.ceibro.ui.projects.newproject.CreateProjectMainFragment"
+        android:label="CreateProjectMainFragment"
+        tools:layout="@layout/fragment_create_project_main" />
 </navigation>

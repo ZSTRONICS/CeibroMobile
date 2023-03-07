@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -22,6 +23,8 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
             style="@style/Ceibro.App.Widget.TextView.ToolBar"
-            android:text="@{toolbarTitle}" />
+            android:layout_gravity="start"
+            android:text="@{toolbarTitle}"
+            tools:text="Toolbar Title" />
     </androidx.appcompat.widget.Toolbar>
 </layout>

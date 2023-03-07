@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.projects.newproject.group.ProjectGroupState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.projects.newproject.group.ProjectGroupVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F6F7F8">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

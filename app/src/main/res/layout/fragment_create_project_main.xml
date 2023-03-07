@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.projects.newproject.CreateProjectMainState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.projects.newproject.CreateProjectMainVM" />
+
+        <import type="com.zstronics.ceibro.ui.projects.newproject.CreateProjectMainFragment.CreateProjectTabs" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F6F7F8">
+
+        <HorizontalScrollView
+            android:id="@+id/projectHeader"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/Overview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Overview"
+                    android:textColor="@{viewState.selectedTabId == CreateProjectTabs.Overview.name ? @color/appYellow:@color/black}" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/Group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:enabled="@{viewState.isProjectCreated}"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Group(s)"
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/Role"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:enabled="@{viewState.isProjectCreated}"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Role(s)"
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/Member"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:enabled="@{viewState.isProjectCreated}"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Member(s)"
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/Document"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:enabled="@{viewState.isProjectCreated}"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Document(s)"
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:id="@+id/project_fragment_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/projectHeader" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
