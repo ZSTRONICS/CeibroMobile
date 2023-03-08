@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="15dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_round_close"
+                app:tint="@color/appYellow" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Add Status"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/statusField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_marginTop="10dp"
+            android:hint="Status"
+            android:textColorHint="@color/grey"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/statusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:hint="Enter status name"
+                android:inputType="text"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/signin_button_back"
+            android:backgroundTint="@color/colorGrey"
+            android:fontFamily="@font/inter_semibold"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/cancel_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/appTextGrey"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusField"
+            app:layout_goneMarginBottom="@dimen/_10sdp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addStatusBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_semibold"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="Add"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
+            app:layout_constraintEnd_toStartOf="@+id/cancelButton"
+            app:layout_constraintTop_toTopOf="@+id/cancelButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
