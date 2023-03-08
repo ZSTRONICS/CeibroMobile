@@ -23,21 +23,21 @@
                 android:layout_marginStart="15dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintBottom_toBottomOf="@+id/headingText"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:layout_constraintTop_toTopOf="@+id/headingText"
                 app:srcCompat="@drawable/icon_round_close"
                 app:tint="@color/appYellow" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/headingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:fontFamily="@font/inter_bold"
-                android:text="Add Status"
+                android:text="@string/add_status_heading"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -49,10 +49,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/statusField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_margin="@dimen/_10sdp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="10dp"
             android:hint="Status"
             android:textColorHint="@color/grey"
@@ -67,11 +67,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_regular"
-                android:hint="Enter status name"
                 android:inputType="text"
                 android:maxLines="1"
                 android:scrollHorizontally="true"
-                android:textColorHint="@color/grey"
                 android:textSize="15sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -80,8 +78,9 @@
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_margin="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_margin="@dimen/_13sdp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/signin_button_back"
             android:backgroundTint="@color/colorGrey"
             android:fontFamily="@font/inter_semibold"
@@ -91,15 +90,17 @@
             android:textAllCaps="false"
             android:textColor="@color/appTextGrey"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/statusField"
+            app:layout_constraintVertical_bias="0.0"
             app:layout_goneMarginBottom="@dimen/_10sdp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/addStatusBtn"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="13dp"
             android:background="@drawable/signin_button_back"
             android:fontFamily="@font/inter_semibold"
             android:paddingStart="20dp"

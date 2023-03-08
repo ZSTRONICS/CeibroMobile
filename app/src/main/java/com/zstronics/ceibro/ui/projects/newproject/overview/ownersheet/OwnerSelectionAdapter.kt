@@ -60,7 +60,7 @@ class OwnerSelectionAdapter @Inject constructor() :
 
                 binding.connectionPendingStatus.visibility = View.VISIBLE
 
-                binding.connectionImgText.text = "${item.email.get(0)?.uppercaseChar()}"
+                binding.connectionImgText.text = "${item.email[0].uppercaseChar()}"
 
                 binding.connectionUserName.text = "${item.email}"
                 binding.connectionUserCompany.text = "No company added"

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:padding="@dimen/_10sdp"
-            android:text="Ongoing"
+            android:text="@string/ongoing_heading"
             android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/optionMenu"
             app:layout_constraintStart_toStartOf="parent"

@@ -134,7 +134,11 @@
         android:id="@+id/projectsFragment"
         android:name="com.zstronics.ceibro.ui.projects.ProjectsFragment"
         android:label="ProjectsFragment"
-        tools:layout="@layout/fragment_projects" />
+        tools:layout="@layout/fragment_projects" >
+        <action
+            android:id="@+id/action_projectsFragment_to_createProjectMainFragment"
+            app:destination="@id/createProjectMainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/invitationsFragment"
         android:name="com.zstronics.ceibro.ui.invitations.InvitationsFragment"

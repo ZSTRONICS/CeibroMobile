@@ -45,7 +45,7 @@ class ProjectRepository @Inject constructor(
         val dueDate = getRequestBody(createProjectRequest.dueDate)
         val publishStatus = getRequestBody(createProjectRequest.publishStatus)
 
-        val ownersList = createProjectRequest.owners.map {
+        val ownersList = createProjectRequest.owner.map {
             getRequestBody(it)
         }
 

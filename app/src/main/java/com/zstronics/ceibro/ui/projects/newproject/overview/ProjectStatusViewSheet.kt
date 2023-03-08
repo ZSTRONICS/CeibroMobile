@@ -19,9 +19,9 @@ import com.zstronics.ceibro.databinding.FragmentStatusViewSheetBinding
 class ProjectStatusViewSheet constructor(private val projectStatuses: LiveData<ArrayList<ProjectOverviewVM.ProjectStatus>>) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentStatusViewSheetBinding
-    var onEdit: ((position: Int, updated: ProjectOverviewVM.ProjectStatus) -> Unit)? = null
     var onDelete: ((position: Int) -> Unit)? = null
     var onAddNew: (() -> Unit)? = null
+    var onEditStatus: ((position: Int, status: String) -> Unit)? = null
     var onSelect: ((status: String) -> Unit)? = null
 
     override fun onCreateView(
@@ -52,7 +52,7 @@ class ProjectStatusViewSheet constructor(private val projectStatuses: LiveData<A
                 popUpWindowObj.showAsDropDown(
                     childView.findViewById(R.id.optionMenu),
                     0,
-                    10
+                    1
                 )
             }
 
@@ -62,6 +62,7 @@ class ProjectStatusViewSheet constructor(private val projectStatuses: LiveData<A
                 dismiss()
             }
         binding.statusRV.adapter = adapter
+
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
@@ -87,6 +88,7 @@ class ProjectStatusViewSheet constructor(private val projectStatuses: LiveData<A
         val remove = view.findViewById<LinearLayoutCompat>(R.id.remove)
 
         edit.setOnClickListener {
+            onEditStatus?.invoke(position, data.status)
             popupWindow.dismiss()
         }
         remove.setOnClickListener {

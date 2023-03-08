@@ -8,52 +8,53 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:padding="@dimen/_5sdp">
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/groupNameTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:padding="@dimen/_5sdp"
-            android:text="Group Name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/backGrey"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/groupNameTV" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/groupTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:fontFamily="@font/inter_medium"
-            android:padding="@dimen/_5sdp"
-            android:text="Admin"
+            android:padding="@dimen/_6sdp"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:text="@string/admin_heading"
+            android:textSize="14.5sp"
             android:textColor="@color/black"
+            android:gravity="start|center"
+            android:drawableStart="@drawable/icon_navigate_next"
+            android:drawablePadding="@dimen/_3sdp"
             app:layout_constraintEnd_toStartOf="@+id/optionMenu"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/optionMenu"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_21sdp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_menu_dots"
             android:visibility="visible"
+            android:padding="@dimen/_1sdp"
             app:layout_constraintBottom_toBottomOf="@+id/groupTitle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider" />
+            app:layout_constraintTop_toTopOf="@+id/groupTitle" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/appLightGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/optionMenu"
+            app:layout_constraintStart_toStartOf="@+id/groupTitle"
+            app:layout_constraintTop_toBottomOf="@+id/groupTitle" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

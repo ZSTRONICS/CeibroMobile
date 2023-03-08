@@ -8,5 +8,5 @@ data class CreateProjectRequest(
     val dueDate:String,
     val publishStatus:String,
     val extraStatus:List<String>,
-    val owners:List<String>,
+    val owner:List<String>,
 )
