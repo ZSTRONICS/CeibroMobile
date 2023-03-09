@@ -40,6 +40,7 @@ class ProjectStatusViewSheet constructor(private val projectStatuses: LiveData<A
         val halfWindowHeight = windowHeight / 2
         view.layoutParams?.height = halfWindowHeight
 
+//        view.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         return view
     }
 
