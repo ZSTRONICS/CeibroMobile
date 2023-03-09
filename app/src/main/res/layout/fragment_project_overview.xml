@@ -45,7 +45,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/status"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/dueDateField"
-                    app:loadImageFromUrl="@{viewState.projectPhoto}"
+                    app:loadImageFromUrl="@{String.valueOf(viewState.projectPhoto)}"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
                     tools:src="@drawable/profile_img" />
 

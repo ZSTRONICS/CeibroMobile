@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.Fade
 import android.transition.Slide
+import android.view.Menu
+import android.view.MenuInflater
 import androidx.annotation.IdRes
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
@@ -455,4 +457,10 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         notificationManager.notify(channelId.hashCode(), builder.build())
         return Pair(notificationManager, builder)
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_add, menu)
+    }
+
 }

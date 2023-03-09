@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.ui.projects.newproject.overview
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.state.BaseState
+import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import javax.inject.Inject
 
 class ProjectOverviewState @Inject constructor() : BaseState(), IProjectOverview.State {
@@ -11,5 +13,7 @@ class ProjectOverviewState @Inject constructor() : BaseState(), IProjectOverview
     override val location: MutableLiveData<String> = MutableLiveData("")
     override val description: MutableLiveData<String> = MutableLiveData("")
     override val projectOwners: MutableLiveData<ArrayList<String>> = MutableLiveData(arrayListOf())
-    override var projectPhoto: MutableLiveData<String> = MutableLiveData("")
+    override var projectPhoto: MutableLiveData<Uri> = MutableLiveData()
+    override val project: MutableLiveData<CreateNewProjectResponse.CreateProject> =
+        MutableLiveData()
 }
