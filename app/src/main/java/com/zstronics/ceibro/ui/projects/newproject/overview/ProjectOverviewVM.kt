@@ -20,6 +20,8 @@ class ProjectOverviewVM @Inject constructor(
     private val projectRepository: IProjectRepository,
     private val dashboardRepository: DashboardRepository
 ) : HiltBaseViewModel<IProjectOverview.State>(), IProjectOverview.ViewModel {
+    val user = sessionManager.getUser().value
+
     private val _projectStatuses: MutableLiveData<ArrayList<ProjectStatus>> =
         MutableLiveData(arrayListOf())
     val projectStatuses: LiveData<ArrayList<ProjectStatus>> = _projectStatuses
@@ -47,6 +49,15 @@ class ProjectOverviewVM @Inject constructor(
         }
     }
 
+    fun updateStatus(position: Int, status: String) {
+        val oldStatusList = projectStatuses.value
+        oldStatusList?.removeAt(position)
+        oldStatusList?.add(position, ProjectStatus(status))
+        oldStatusList?.let {
+            _projectStatuses.value = it
+        }
+    }
+
     fun addOrRemoveOwner(ownerId: String) {
         val oldOwners = owners.value
         val ownerExist = oldOwners?.find { it == ownerId }
@@ -54,7 +65,9 @@ class ProjectOverviewVM @Inject constructor(
         if (ownerExist == null) {
             oldOwners?.add(ownerId)
         } else {
-            oldOwners.remove(ownerId)
+            if (ownerId != user?.id) {
+                oldOwners.remove(ownerId)
+            }
         }
         oldOwners?.let {
             _owners.value = it
@@ -64,6 +77,7 @@ class ProjectOverviewVM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         loadConnections()
+        user?.id?.let { addOrRemoveOwner(it) }
     }
 
     private fun loadConnections() {
@@ -96,7 +110,7 @@ class ProjectOverviewVM @Inject constructor(
                         dueDate = viewState.dueDate.value.toString(),
                         publishStatus = viewState.status.value.toString(),
                         extraStatus = it,
-                        owners = it1
+                        owner = it1
                     )
                 }
             }

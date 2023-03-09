@@ -24,8 +24,8 @@
         <HorizontalScrollView
             android:id="@+id/projectHeader"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:background="@color/white"
             android:elevation="2dp"
             android:scrollbars="none"
@@ -39,7 +39,7 @@
                 android:layout_gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/_5sdp"
-                android:paddingEnd="@dimen/_5sdp">
+                android:paddingEnd="@dimen/_4sdp">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/Overview"
@@ -48,8 +48,8 @@
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="@dimen/_5sdp"
-                    android:text="Overview"
+                    android:padding="@dimen/_6sdp"
+                    android:text="@string/overview_heading"
                     android:textColor="@{viewState.selectedTabId == CreateProjectTabs.Overview.name ? @color/appYellow:@color/black}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -60,8 +60,8 @@
                     android:enabled="@{viewState.isProjectCreated}"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="@dimen/_5sdp"
-                    android:text="Group(s)"
+                    android:padding="@dimen/_6sdp"
+                    android:text="@string/groups_heading"
                     android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -72,8 +72,8 @@
                     android:enabled="@{viewState.isProjectCreated}"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="@dimen/_5sdp"
-                    android:text="Role(s)"
+                    android:padding="@dimen/_6sdp"
+                    android:text="@string/roles_heading"
                     android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -84,8 +84,8 @@
                     android:enabled="@{viewState.isProjectCreated}"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="@dimen/_5sdp"
-                    android:text="Member(s)"
+                    android:padding="@dimen/_6sdp"
+                    android:text="@string/member_s_heading"
                     android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -96,8 +96,8 @@
                     android:enabled="@{viewState.isProjectCreated}"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="@dimen/_5sdp"
-                    android:text="Document(s)"
+                    android:padding="@dimen/_6sdp"
+                    android:text="@string/document_s_heading"
                     android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>

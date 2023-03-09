@@ -121,6 +121,7 @@ class ProjectOverviewFragment :
             }
             R.id.statusText -> showStatusSheet()
             R.id.projectOwner -> showOwnersSelectionSheet()
+            R.id.cancelButton -> navigateBack()
         }
     }
 
@@ -142,9 +143,7 @@ class ProjectOverviewFragment :
 
     private fun showStatusSheet() {
         val fragment = ProjectStatusViewSheet(viewModel.projectStatuses)
-        fragment.onEdit = { position, updated ->
-            /// do edit the status
-        }
+
         fragment.onDelete = { position ->
             /// do edit the status
             viewModel.deleteStatus(position)
@@ -154,13 +153,22 @@ class ProjectOverviewFragment :
             viewState.status.value = status
         }
         fragment.onAddNew = {
-            val addNewStatusSheet = AddNewStatusSheet()
+            val addNewStatusSheet = AddNewStatusSheet("")
 
             addNewStatusSheet.onAdd = { status ->
                 viewModel.addStatus(status)
             }
             addNewStatusSheet.show(childFragmentManager, "AddNewStatusSheet")
         }
+        fragment.onEditStatus = { position, status ->
+            val addNewStatusSheet = AddNewStatusSheet(status)
+
+            addNewStatusSheet.onEdited = { updatedStatus ->
+                viewModel.updateStatus(position, updatedStatus)
+            }
+            addNewStatusSheet.show(childFragmentManager, "AddNewStatusSheet")
+        }
+
         fragment.show(childFragmentManager, "ProjectStatusViewSheet")
     }
 
@@ -182,7 +190,7 @@ class ProjectOverviewFragment :
             if (it.isEmpty()) {
                 mViewDataBinding.projectOwner.setText("No Owner Selected")
             } else {
-                mViewDataBinding.projectOwner.setText("${it.size} Owners Selected")
+                mViewDataBinding.projectOwner.setText("${it.size} Owner(s) selected")
             }
         }
     }

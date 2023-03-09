@@ -273,8 +273,18 @@
     <string name="status_heading">Status</string>
     <string name="clear_all_text">Clear all</string>
 
-    <string name="new_projects_title">Create Projects</string>
+    <string name="new_projects_title">Create Project</string>
     <string name="create_heading">Create</string>
     <string name="add_project_photo">Add Project Photo</string>
+    <string name="overview_heading">Overview</string>
+    <string name="groups_heading">Group(s)</string>
+    <string name="roles_heading">Role(s)</string>
+    <string name="member_s_heading">Member(s)</string>
+    <string name="document_s_heading">Document(s)</string>
+    <string name="project_title_heading">Project Title</string>
+    <string name="add_new_status_heading">Add new status</string>
+    <string name="add_status_heading">Add Status</string>
+    <string name="update_status_heading">Update Status</string>
+    <string name="group_name_heading1">Group Name</string>
 
 </resources>
