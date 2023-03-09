@@ -286,5 +286,8 @@
     <string name="add_status_heading">Add Status</string>
     <string name="update_status_heading">Update Status</string>
     <string name="group_name_heading1">Group Name</string>
+    <string name="add_group_heading">Add Group</string>
+    <string name="edit_group_heading">Edit Group</string>
+    <string name="group_heading">Group</string>
 
 </resources>
