@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ProjectRepository @Inject constructor(
     private val service: ProjectRepositoryService
 ) : IProjectRepository, BaseNetworkRepository() {
-    override suspend fun getProjects(publishStatus: String): ApiResponse<AllProjectsResponse> =
+    override suspend fun getProjects(): ApiResponse<AllProjectsResponse> =
         executeSafely(
             call =
             {

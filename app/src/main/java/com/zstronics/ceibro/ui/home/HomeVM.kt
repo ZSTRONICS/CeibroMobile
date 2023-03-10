@@ -29,7 +29,7 @@ class HomeVM @Inject constructor(
     override fun loadProjects(publishStatus: String) {
         launch {
             loading(true)
-            when (val response = projectRepository.getProjects(publishStatus)) {
+            when (val response = projectRepository.getProjects()) {
 
                 is ApiResponse.Success -> {
                     loading(false)
