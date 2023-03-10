@@ -10,13 +10,14 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectGroupBinding
 import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.AddNewGroupSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class ProjectGroupFragment(private val projectLive: MutableLiveData<CreateNewProjectResponse.CreateProject>) :
+class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsResponse.Projects>) :
     BaseNavViewModelFragment<FragmentProjectGroupBinding, IProjectGroup.State, ProjectGroupVM>() {
 
     override val bindingVariableId = BR.viewModel

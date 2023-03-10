@@ -6,7 +6,7 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentCreateProjectMainBinding
 import com.zstronics.ceibro.ui.projects.newproject.group.ProjectGroupFragment
 import com.zstronics.ceibro.ui.projects.newproject.overview.ProjectOverviewFragment
@@ -74,7 +74,7 @@ class CreateProjectMainFragment :
         Overview, Group, Role, Member, Document
     }
 
-    override fun onProjectCreated(project: CreateNewProjectResponse.CreateProject?) {
+    override fun onProjectCreated(project: AllProjectsResponse.Projects?) {
         viewState.isProjectCreated.value = true
         viewState.project.value = project
     }

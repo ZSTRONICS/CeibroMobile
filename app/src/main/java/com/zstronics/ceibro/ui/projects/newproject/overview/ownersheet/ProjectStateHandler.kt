@@ -1,7 +1,7 @@
 package com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet
 
-import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 
 interface ProjectStateHandler {
-    fun onProjectCreated(project: CreateNewProjectResponse.CreateProject?)
+    fun onProjectCreated(project: AllProjectsResponse.Projects?)
 }

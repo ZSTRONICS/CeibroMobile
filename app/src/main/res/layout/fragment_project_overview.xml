@@ -256,7 +256,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/projectDescriptionField"
                     app:layout_constraintVertical_bias="1.0"
-                    tools:ignore="TouchTargetSizeCheck"/>
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/createProjectBtn"
@@ -268,7 +268,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
-                    android:text="@string/create_heading"
+                    android:text="@{viewState.projectCreated ? @string/create_heading :  @string/update_project_heading , default = @string/create_heading}"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"

@@ -7,6 +7,10 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRe
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
 
 class ProjectRepository @Inject constructor(
@@ -16,7 +20,7 @@ class ProjectRepository @Inject constructor(
         executeSafely(
             call =
             {
-                service.getProjects(publishStatus)
+                service.getProjects()
             }
         )
 
@@ -34,12 +38,37 @@ class ProjectRepository @Inject constructor(
         )
 
     override suspend fun createProject(createProjectRequest: CreateProjectRequest): ApiResponse<CreateNewProjectResponse> {
+        val title = getRequestBody(createProjectRequest.title)
+        val location = getRequestBody(createProjectRequest.location)
+        val description = getRequestBody(createProjectRequest.description)
+        val dueDate = getRequestBody(createProjectRequest.dueDate)
+        val publishStatus = getRequestBody(createProjectRequest.publishStatus)
+
+        val file = createProjectRequest.projectPhoto
+        val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+        val projectPhoto: MultipartBody.Part =
+            MultipartBody.Part.createFormData("projectPhoto", file.name, reqFile)
+
         return executeSafely(
             call = {
                 service.createProject(
-                    createProjectRequest
+                    projectPhoto,
+                    title,
+                    location,
+                    description,
+                    dueDate,
+                    publishStatus,
+                    getRequestBody(createProjectRequest.extraStatus),
+                    getRequestBody(createProjectRequest.owner)
                 )
             }
+        )
+    }
+
+    private fun getRequestBody(value: String): RequestBody {
+        return RequestBody.create(
+            "text/plain".toMediaTypeOrNull(),
+            value
         )
     }
 }

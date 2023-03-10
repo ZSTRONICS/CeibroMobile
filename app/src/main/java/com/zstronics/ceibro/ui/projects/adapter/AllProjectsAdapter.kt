@@ -15,12 +15,12 @@ import javax.inject.Inject
 class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager) :
     RecyclerView.Adapter<AllProjectsAdapter.AllProjectsViewHolder>() {
     val user = sessionManager.getUser().value
-    var itemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Result.Projects) -> Unit)? = null
-    var itemLongClickListener: ((view: View, position: Int, data: AllProjectsResponse.Result.Projects) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? = null
+    var itemLongClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? =
         null
-    var childItemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Result.Projects) -> Unit)? = null
+    var childItemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? = null
 
-    private var list: MutableList<AllProjectsResponse.Result.Projects> = mutableListOf()
+    private var list: MutableList<AllProjectsResponse.Projects> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllProjectsViewHolder {
         return AllProjectsViewHolder(
             LayoutProjectBoxBinding.inflate(
@@ -39,7 +39,7 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
         return list.size
     }
 
-    fun setList(list: List<AllProjectsResponse.Result.Projects>) {
+    fun setList(list: List<AllProjectsResponse.Projects>) {
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
@@ -48,7 +48,7 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
     inner class AllProjectsViewHolder(private val binding: LayoutProjectBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: AllProjectsResponse.Result.Projects) {
+        fun bind(item: AllProjectsResponse.Projects) {
             val context = binding.root.context
             //val otherUser: Member? = item.members.find { member -> member.id != user?.id }
             binding.allProjects = item

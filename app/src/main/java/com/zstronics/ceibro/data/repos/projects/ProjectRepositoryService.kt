@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
-import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -12,7 +11,7 @@ import retrofit2.http.*
 
 interface ProjectRepositoryService {
     @GET("project")
-    suspend fun getProjects(@Query("publishStatus") publishStatus: String = "all"): Response<AllProjectsResponse>
+    suspend fun getProjects(): Response<AllProjectsResponse>
 
     @POST("project/getProjectsWithMembers")
     suspend fun getProjectsWithMembers(@Query("includeMe") includeMe: Boolean = false): Response<ProjectsWithMembersResponse>
@@ -22,7 +21,16 @@ interface ProjectRepositoryService {
 
     @Multipart
     @POST("project")
-    suspend fun createProject(@Body request: CreateProjectRequest): Response<CreateNewProjectResponse>
+    suspend fun createProject(
+        @Part projectPhoto: MultipartBody.Part,
+        @Part("title") title: RequestBody,
+        @Part("location") location: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("dueDate") dueDate: RequestBody,
+        @Part("publishStatus") publishStatus: RequestBody,
+        @Part("extraStatus") extraStatus: RequestBody,
+        @Part("owner") owner: RequestBody
+        ): Response<CreateNewProjectResponse>
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
 //    for method ProjectRepositoryService.createProject

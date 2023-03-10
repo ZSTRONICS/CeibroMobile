@@ -289,5 +289,5 @@
     <string name="add_group_heading">Add Group</string>
     <string name="edit_group_heading">Edit Group</string>
     <string name="group_heading">Group</string>
-
+    <string name="update_project_heading">Update Project</string>
 </resources>

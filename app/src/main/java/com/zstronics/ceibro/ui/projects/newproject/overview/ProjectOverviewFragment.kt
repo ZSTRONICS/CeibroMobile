@@ -48,9 +48,9 @@ class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandl
     override fun onClick(id: Int) {
         when (id) {
             R.id.createProjectBtn -> {
-                val projectData = viewModel.getMockedProject()
-                projectStateHandler.onProjectCreated(projectData?.createProject)
-                viewState.project.postValue(projectData?.createProject)
+//                val projectData = viewModel.getMockedProject()
+//                projectStateHandler.onProjectCreated(projectData?.createProject)
+//                viewState.project.postValue(projectData?.createProject)
                 with(viewState) {
                     var checkPass = 0
                     if (projectPhoto.value != null) {

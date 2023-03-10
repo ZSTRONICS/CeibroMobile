@@ -19,8 +19,9 @@ class ProjectsVM @Inject constructor(
     private val projectRepository: IProjectRepository
 ) : HiltBaseViewModel<IProjects.State>(), IProjects.ViewModel {
 
-    private val _allProjects: MutableLiveData<MutableList<AllProjectsResponse.Result.Projects>> = MutableLiveData()
-    val allProjects: LiveData<MutableList<AllProjectsResponse.Result.Projects>> = _allProjects
+    private val _allProjects: MutableLiveData<MutableList<AllProjectsResponse.Projects>> =
+        MutableLiveData()
+    val allProjects: LiveData<MutableList<AllProjectsResponse.Projects>> = _allProjects
 
     override fun onResume() {
         super.onResume()
@@ -35,7 +36,7 @@ class ProjectsVM @Inject constructor(
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    _allProjects.postValue(data.result.projects as MutableList<AllProjectsResponse.Result.Projects>?)
+                    _allProjects.postValue(data.projects as MutableList<AllProjectsResponse.Projects>?)
 //                    _allProjects.postValue(data.result.projects.toMutableList())
                 }
 

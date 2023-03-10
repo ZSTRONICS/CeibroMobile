@@ -61,11 +61,11 @@ class ProjectsFragment :
             adapter.setList(it)
         }
         adapter.itemClickListener =
-            { _: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+            { _: View, position: Int, data: AllProjectsResponse.Projects ->
                 //navigateToMsgView(data)
             }
         adapter.childItemClickListener =
-            { view: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+            { view: View, position: Int, data: AllProjectsResponse.Projects ->
                 //if (view.id == R.id.chatFavIcon)
                 //viewModel.addChatToFav(data.id)
             }
@@ -75,7 +75,7 @@ class ProjectsFragment :
         mViewDataBinding.projectRV.adapter = adapter
 
         adapter.itemLongClickListener =
-            { _: View, _: Int, data: AllProjectsResponse.Result.Projects ->
+            { _: View, _: Int, data: AllProjectsResponse.Projects ->
                 //showChatActionSheet(data)
             }
     }
