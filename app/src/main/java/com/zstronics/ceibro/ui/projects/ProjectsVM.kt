@@ -39,7 +39,7 @@ class ProjectsVM @Inject constructor(
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false)
+                    loading(false, response.error.message)
                 }
             }
         }

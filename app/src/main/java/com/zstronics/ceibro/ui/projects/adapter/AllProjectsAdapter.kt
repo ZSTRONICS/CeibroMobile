@@ -94,10 +94,9 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_accepted_filled)
             }
 
-
-//            itemView.setOnClickListener {
-//                itemClickListener?.invoke(it, adapterPosition, item)
-//            }
+            itemView.setOnClickListener {
+                itemClickListener?.invoke(it, adapterPosition, item)
+            }
 //
 //            itemView.setOnLongClickListener {
 //                itemLongClickListener?.invoke(it, adapterPosition, item)

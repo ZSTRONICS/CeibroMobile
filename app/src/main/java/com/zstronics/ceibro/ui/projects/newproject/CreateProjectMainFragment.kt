@@ -75,7 +75,6 @@ class CreateProjectMainFragment :
     }
 
     override fun onProjectCreated(project: AllProjectsResponse.Projects?) {
-        viewState.isProjectCreated.value = true
-        viewState.project.value = project
+        viewModel.onProjectCreated(project)
     }
 }

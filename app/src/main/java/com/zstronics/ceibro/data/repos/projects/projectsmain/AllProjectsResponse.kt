@@ -9,16 +9,8 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class AllProjectsResponse(
-    @SerializedName("limit")
-    val limit: Int,
-    @SerializedName("page")
-    val page: Int,
     @SerializedName("results")
-    val projects: List<Projects>,
-    @SerializedName("totalPages")
-    val totalPages: Int,
-    @SerializedName("totalResults")
-    val totalResults: Int
+    val projects: List<Projects>
 ) : BaseResponse(), Parcelable {
     @Keep
     @Parcelize

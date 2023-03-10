@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -62,7 +63,7 @@ class ProjectsFragment :
         }
         adapter.itemClickListener =
             { _: View, position: Int, data: AllProjectsResponse.Projects ->
-                //navigateToMsgView(data)
+                navigate(R.id.createProjectMainFragment, bundleOf(AllProjectsResponse.Projects::class.java.name to  data))
             }
         adapter.childItemClickListener =
             { view: View, position: Int, data: AllProjectsResponse.Projects ->
