@@ -13,13 +13,14 @@ import com.zstronics.ceibro.databinding.FragmentProjectOverviewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projects.newproject.overview.addnewstatus.AddNewStatusSheet
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.OwnerSelectionSheet
+import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class ProjectOverviewFragment :
+class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandler) :
     BaseNavViewModelFragment<FragmentProjectOverviewBinding, IProjectOverview.State, ProjectOverviewVM>() {
 
     override val bindingVariableId = BR.viewModel
@@ -27,6 +28,10 @@ class ProjectOverviewFragment :
     override val viewModel: ProjectOverviewVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_project_overview
     override fun toolBarVisibility(): Boolean = true
+    override fun getToolBarTitle() =
+        viewState.project.value?.title ?: getString(R.string.new_projects_title)
+
+    override fun hasOptionMenu(): Boolean = false
     var cal: Calendar = Calendar.getInstance()
 
     private val dueDateSetListener =
@@ -43,9 +48,12 @@ class ProjectOverviewFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.createProjectBtn -> {
+                val projectData = viewModel.getMockedProject()
+                projectStateHandler.onProjectCreated(projectData?.createProject)
+                viewState.project.postValue(projectData?.createProject)
                 with(viewState) {
                     var checkPass = 0
-                    if (!projectPhoto.value.isNullOrEmpty()) {
+                    if (projectPhoto.value != null) {
                         checkPass++
                     }
 
@@ -68,23 +76,19 @@ class ProjectOverviewFragment :
                         checkPass++
                     }
                     if (checkPass == 6) {
-                        viewModel.createProject()
+                        viewModel.createProject(requireContext(), projectStateHandler)
                     } else {
-                        if (projectPhoto.value.isNullOrEmpty()) {
+                        if (projectPhoto.value == null) {
                             showToast("Attach photo")
                         } else if (projectTitle.value.isNullOrEmpty()) {
                             showToast("Project title required")
-                        }
-                        else if (location.value.isNullOrEmpty()) {
+                        } else if (location.value.isNullOrEmpty()) {
                             showToast("Project location required")
-                        }
-                        else if (description.value.isNullOrEmpty()) {
+                        } else if (description.value.isNullOrEmpty()) {
                             showToast("Project description required")
-                        }
-                        else if (dueDate.value.isNullOrEmpty()) {
+                        } else if (dueDate.value.isNullOrEmpty()) {
                             showToast("Project dueDate required")
-                        }
-                        else if (status.value.isNullOrEmpty()) {
+                        } else if (status.value.isNullOrEmpty()) {
                             showToast("Project status required")
                         }
                     }
@@ -134,10 +138,7 @@ class ProjectOverviewFragment :
 
     private var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
         intent?.let { intentData ->
-
-            intentData.dataString?.let {
-                viewState.projectPhoto.value = it
-            }
+            viewState.projectPhoto.value = intentData.data
         }
     }
 

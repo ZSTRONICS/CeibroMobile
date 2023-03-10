@@ -92,10 +92,6 @@ class ChatRepository @Inject constructor(
         executeSafely(
             call =
             {
-                val body: RequestBody = RequestBody.create(
-                    "application/json".toMediaTypeOrNull(),
-                    request.toString()
-                )
                 service.createGroupChat(request)
             }
         )

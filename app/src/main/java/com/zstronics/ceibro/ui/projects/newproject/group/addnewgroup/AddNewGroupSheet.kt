@@ -14,7 +14,7 @@ import com.zstronics.ceibro.databinding.FragmentAddNewStatusBinding
 class AddNewGroupSheet constructor(groupName: String) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupBinding
-    var onGroupAdd: ((status: String) -> Unit)? = null
+    var onGroupAdd: ((groupName: String) -> Unit)? = null
     var onGroupEdited: ((status: String) -> Unit)? = null
     var oldGroupName = groupName
 
@@ -48,10 +48,10 @@ class AddNewGroupSheet constructor(groupName: String) :
         }
 
         binding.addGroupBtn.setOnClickListener {
-            val status = binding.groupText.text ?: ""
+            val groupText = binding.groupText.text ?: ""
             if (oldGroupName != "") {
-                if (status.isNotEmpty()) {
-                    onGroupEdited?.invoke(status.toString())
+                if (groupText.isNotEmpty()) {
+                    onGroupEdited?.invoke(groupText.toString())
                     dismiss()
                 }
                 else {
@@ -59,8 +59,8 @@ class AddNewGroupSheet constructor(groupName: String) :
                 }
             }
             else {
-                if (status.isNotEmpty()) {
-                    onGroupAdd?.invoke(status.toString())
+                if (groupText.isNotEmpty()) {
+                    onGroupAdd?.invoke(groupText.toString())
                     dismiss()
                 }
                 else {

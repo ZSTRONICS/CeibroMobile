@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -785,5 +786,13 @@ public class FileUtils {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static String getFileAsBase64(File file) throws IOException {
+        byte[] buffer = new byte[(int) file.length()];
+        FileInputStream inputStream = new FileInputStream(file);
+        inputStream.read(buffer);
+        inputStream.close();
+        return Base64.encodeToString(buffer, Base64.NO_WRAP);
     }
 }

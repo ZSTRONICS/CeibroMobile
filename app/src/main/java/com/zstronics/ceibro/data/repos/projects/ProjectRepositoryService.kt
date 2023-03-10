@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -21,14 +22,8 @@ interface ProjectRepositoryService {
 
     @Multipart
     @POST("project")
-    suspend fun createProject(
-        @Part projectPhoto: MultipartBody.Part,
-        @Part("title") title: RequestBody,
-        @Part("location") location: RequestBody,
-        @Part("description") description: RequestBody,
-        @Part("dueDate") dueDate: RequestBody,
-        @Part("publishStatus") publishStatus: RequestBody,
-        @Part("owner") owner: List<RequestBody>,
-        @Part("extraStatus") extraStatus: List<RequestBody>,
-    ): Response<CreateNewProjectResponse>
+    suspend fun createProject(@Body request: CreateProjectRequest): Response<CreateNewProjectResponse>
+
+//    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
+//    for method ProjectRepositoryService.createProject
 }
