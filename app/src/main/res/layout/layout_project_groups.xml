@@ -38,7 +38,7 @@
             android:layout_marginEnd="@dimen/_8sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_menu_dots"
-            android:visibility="visible"
+            android:visibility="invisible"
             android:padding="@dimen/_1sdp"
             app:layout_constraintBottom_toBottomOf="@+id/groupTitle"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projects.newproject.group
+package com.zstronics.ceibro.ui.projects.newproject.role
 
 import android.os.Bundle
 import android.view.Menu
@@ -12,21 +12,21 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.databinding.FragmentProjectGroupBinding
-import com.zstronics.ceibro.ui.projects.newproject.group.adapter.ProjectGroupsAdapter
+import com.zstronics.ceibro.databinding.FragmentProjectRoleBinding
 import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.AddNewGroupSheet
+import com.zstronics.ceibro.ui.projects.newproject.role.adapter.ProjectRolesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsResponse.Projects>) :
-    BaseNavViewModelFragment<FragmentProjectGroupBinding, IProjectGroup.State, ProjectGroupVM>() {
+class ProjectRoleFragment(private val projectLive: MutableLiveData<AllProjectsResponse.Projects>) :
+    BaseNavViewModelFragment<FragmentProjectRoleBinding, IProjectRole.State, ProjectRoleVM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: ProjectGroupVM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_project_group
+    override val viewModel: ProjectRoleVM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_project_role
     override fun getToolBarTitle() =
         projectLive.value?.title ?: getString(R.string.new_projects_title)
 
@@ -46,20 +46,21 @@ class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsR
         addMenuBtn.setOnClick {
             val sheet = AddNewGroupSheet("")
             sheet.onGroupAdd = { groupText ->
-                viewModel.addGroup(projectLive.value?.id, groupText)
+//                viewModel.addGroup(projectLive.value?.id, groupText)
             }
             sheet.show(childFragmentManager, "AddNewStatusSheet")
         }
     }
 
     @Inject
-    lateinit var adapter: ProjectGroupsAdapter
+    lateinit var adapter: ProjectRolesAdapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getProjects(projectLive.value?.id)
-        mViewDataBinding.groupsRV.adapter = adapter
-        viewModel.groups.observe(viewLifecycleOwner) {
+        viewModel.getRoles("63b42df8adc12f7c2980d7d9")
+//        viewModel.getRoles(projectLive.value?.id)
+        mViewDataBinding.rolesRV.adapter = adapter
+        viewModel.roles.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
     }

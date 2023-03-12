@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="role"
+            type="com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse.ProjectRole" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/expandedImageView"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:src="@drawable/icon_navigate_next"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleTV" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/titleTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:drawablePadding="@dimen/_3sdp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start|center"
+            android:padding="@dimen/_6sdp"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:text="@{role.name}"
+            android:textColor="@color/black"
+            android:textSize="14.5sp"
+            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+            app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Role Name" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/optionMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="@dimen/_1sdp"
+            android:src="@drawable/ic_menu_dots"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTV"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleTV" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/expandView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/optionMenu"
+            app:layout_constraintStart_toStartOf="@+id/titleTV"
+            app:layout_constraintTop_toBottomOf="@+id/titleTV">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/adminView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/_5sdp"
+                android:visibility="@{role.admin ? View.VISIBLE:View.GONE,default = visible}">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/adminHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="start|center"
+                    android:text="@string/project_admin_heading"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                    app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/permissionView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/_5sdp"
+                android:visibility="@{role.admin ? View.GONE:View.VISIBLE,default = gone}">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/rolePermissionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/role_heading"
+                        android:textSize="@dimen/_12sdp"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/createPermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:drawableStart="@drawable/ic_vertical_separator"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/create_heading"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="@{role.rolePermission.create?View.VISIBLE:View.GONE}"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/editPermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:drawableStart="@drawable/ic_vertical_separator"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/edit_heading"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="@{role.rolePermission.edit?View.VISIBLE:View.GONE}"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/deletePermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:drawableStart="@drawable/ic_vertical_separator"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/delete_heading"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="@{role.rolePermission.delete?View.VISIBLE:View.GONE}"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:id="@+id/permissionDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginBottom="3dp"
+                    android:background="@color/appLightGrey" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/memberPermissionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/member_heading"
+                        android:textSize="@dimen/_12sdp"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/memberCreatePermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:drawableStart="@drawable/ic_vertical_separator"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/create_heading"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="@{role.memberPermission.create?View.VISIBLE:View.GONE}"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/memberEditPermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:drawableStart="@drawable/ic_vertical_separator"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/edit_heading"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="@{role.memberPermission.edit?View.VISIBLE:View.GONE}"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/memberDeletePermission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:drawableStart="@drawable/ic_vertical_separator"
+                        android:drawablePadding="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center"
+                        android:text="@string/delete_heading"
+                        android:textSize="@dimen/_8sdp"
+                        android:visibility="@{role.memberPermission.delete?View.VISIBLE:View.GONE}"
+                        app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+                        app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/appLightGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/optionMenu"
+            app:layout_constraintStart_toStartOf="@+id/titleTV"
+            app:layout_constraintTop_toBottomOf="@+id/expandView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

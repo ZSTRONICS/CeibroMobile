@@ -4,9 +4,13 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
+import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.CreateGroupRequest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -71,4 +75,23 @@ class ProjectRepository @Inject constructor(
             value
         )
     }
+
+    override suspend fun createGroup(
+        projectId: String,
+        body: CreateGroupRequest
+    ): ApiResponse<CreateProjectGroupResponse> =
+        executeSafely {
+            service.createGroup(projectId, body)
+
+        }
+
+    override suspend fun getGroups(projectId: String): ApiResponse<GetProjectGroupsResponse> =
+        executeSafely {
+            service.getGroups(projectId)
+        }
+
+    override suspend fun getRoles(projectId: String): ApiResponse<ProjectRolesResponse> =
+        executeSafely {
+            service.getRoles(projectId)
+        }
 }

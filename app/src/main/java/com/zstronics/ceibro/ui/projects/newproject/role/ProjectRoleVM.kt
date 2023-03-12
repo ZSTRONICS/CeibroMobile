@@ -1,31 +1,31 @@
-package com.zstronics.ceibro.ui.projects.newproject.group
+package com.zstronics.ceibro.ui.projects.newproject.role
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
+import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.CreateGroupRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ProjectGroupVM @Inject constructor(
-    override val viewState: ProjectGroupState,
+class ProjectRoleVM @Inject constructor(
+    override val viewState: ProjectRoleState,
     val sessionManager: SessionManager,
     private val projectRepository: IProjectRepository
-) : HiltBaseViewModel<IProjectGroup.State>(), IProjectGroup.ViewModel {
+) : HiltBaseViewModel<IProjectRole.State>(), IProjectRole.ViewModel {
 
-    private val _groups: MutableLiveData<ArrayList<ProjectGroup>> =
+    private val _roles: MutableLiveData<ArrayList<ProjectRolesResponse.ProjectRole>> =
         MutableLiveData(arrayListOf())
-    val groups: LiveData<ArrayList<ProjectGroup>> = _groups
-    fun getProjects(id: String?) {
+    val roles: LiveData<ArrayList<ProjectRolesResponse.ProjectRole>> = _roles
+    fun getRoles(id: String?) {
         launch {
-            when (val response = projectRepository.getGroups(id ?: "")) {
+            when (val response = projectRepository.getRoles(id ?: "")) {
                 is ApiResponse.Success -> {
-                    _groups.postValue(response.data.result as ArrayList<ProjectGroup>?)
+                    _roles.postValue(response.data.roles as ArrayList<ProjectRolesResponse.ProjectRole>?)
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
@@ -34,26 +34,13 @@ class ProjectGroupVM @Inject constructor(
         }
     }
 
-    fun addGroup(id: String?, group: String) {
-        val oldList = groups.value
-        val groupExist = oldList?.find { it.name == group }
-        if (groupExist != null) {
-            alert("Duplicate group")
-            return
-        }
-        oldList?.add(ProjectGroup(name = group))
-        oldList?.let {
-            _groups.value = it
-        }
-        addGroupAPI(id, group)
-    }
 
-    private fun addGroupAPI(id: String?, group: String) {
+    private fun addRoleAPI(id: String?, group: String) {
         launch {
             when (val response =
                 projectRepository.createGroup(id ?: "", CreateGroupRequest(group))) {
                 is ApiResponse.Success -> {
-                    getProjects(id)
+                    getRoles(id)
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)

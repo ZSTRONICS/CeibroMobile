@@ -48,8 +48,12 @@ class ProjectOverviewVM @Inject constructor(
 
     fun addStatus(status: String) {
 
-        /// DO not add same status value
         val oldStatusList = projectStatuses.value
+        val statusExist = oldStatusList?.find { it.status == status }
+        if (statusExist != null) {
+            alert("Duplicate status")
+            return
+        }
         oldStatusList?.add(ProjectStatus(status))
         oldStatusList?.let {
             _projectStatuses.value = it

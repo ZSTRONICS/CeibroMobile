@@ -11,6 +11,7 @@ import com.zstronics.ceibro.databinding.FragmentCreateProjectMainBinding
 import com.zstronics.ceibro.ui.projects.newproject.group.ProjectGroupFragment
 import com.zstronics.ceibro.ui.projects.newproject.overview.ProjectOverviewFragment
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
+import com.zstronics.ceibro.ui.projects.newproject.role.ProjectRoleFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -51,7 +52,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project)
+                        ProjectRoleFragment(viewState.project)
                     ).commit()
             }
             R.id.Member -> {

@@ -18,6 +18,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/Ceibro.App.Widget.ToolBar"
+        android:paddingEnd="@dimen/_10sdp"
         android:visibility="@{toolsBarVisibility? View.VISIBLE : View.GONE }">
 
         <androidx.appcompat.widget.AppCompatTextView
