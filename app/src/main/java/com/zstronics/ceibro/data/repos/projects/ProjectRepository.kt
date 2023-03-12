@@ -114,7 +114,6 @@ class ProjectRepository @Inject constructor(
     ): ApiResponse<CreateRoleResponse> = executeSafely {
         service.createRoles(projectId, body)
     }
-
     override suspend fun updateRoles(
         projectId: String,
         body: CreateRoleRequest
