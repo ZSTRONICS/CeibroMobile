@@ -57,8 +57,7 @@ class ProjectRoleFragment(private val projectLive: MutableLiveData<AllProjectsRe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getRoles("63b42df8adc12f7c2980d7d9")
-//        viewModel.getRoles(projectLive.value?.id)
+        viewModel.getRoles(projectLive.value?.id)
         mViewDataBinding.rolesRV.adapter = adapter
         viewModel.roles.observe(viewLifecycleOwner) {
             adapter.setList(it)
