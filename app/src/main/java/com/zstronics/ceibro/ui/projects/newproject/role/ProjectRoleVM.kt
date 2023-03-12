@@ -102,4 +102,72 @@ class ProjectRoleVM @Inject constructor(
             }
         }
     }
+
+    fun createRoleAPI(
+        roleData: CreateRoleRequest,
+        success: () -> Unit
+    ) {
+        launch {
+            loading(true)
+
+            when (val response = projectRepository.createRoles(roleData.project, roleData)) {
+                is ApiResponse.Success -> {
+                    loading(false)
+                    getRoles(roleData.project)
+                    success.invoke()
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    fun updateRoleAPI(
+        roleId: String,
+        roleData: CreateRoleRequest,
+        success: () -> Unit
+    ) {
+        launch {
+            loading(true)
+
+            when (val response = projectRepository.updateRoles(roleId, roleData)) {
+                is ApiResponse.Success -> {
+                    loading(false)
+                    getRoles(roleData.project)
+                    success.invoke()
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    fun deleteRole(position: Int, data: ProjectRolesResponse.ProjectRole) {
+        if (!data.isDefaultRole) {
+            val old = roles.value
+            old?.removeAt(position)
+            old?.let {
+                _roles.value = it
+            }
+            deleteRoleAPI(data)
+        } else {
+            alert("Cannot remove default role")
+        }
+    }
+
+    private fun deleteRoleAPI(data: ProjectRolesResponse.ProjectRole) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.deleteRole(data.id)) {
+                is ApiResponse.Success -> {
+                    loading(false)
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
 }
