@@ -88,6 +88,14 @@ class ProjectRepository @Inject constructor(
 
         }
 
+    override suspend fun updateGroup(
+        groupId: String,
+        body: CreateGroupRequest
+    ): ApiResponse<CreateProjectGroupResponse> =
+        executeSafely {
+            service.updateGroup(groupId, body)
+        }
+
     override suspend fun getGroups(projectId: String): ApiResponse<GetProjectGroupsResponse> =
         executeSafely {
             service.getGroups(projectId)
@@ -104,6 +112,7 @@ class ProjectRepository @Inject constructor(
     ): ApiResponse<CreateRoleResponse> = executeSafely {
         service.createRoles(projectId, body)
     }
+
     override suspend fun updateRoles(
         projectId: String,
         body: CreateRoleRequest
@@ -113,5 +122,8 @@ class ProjectRepository @Inject constructor(
 
     override suspend fun deleteRole(roleId: String): ApiResponse<BaseResponse> = executeSafely {
         service.deleteRole(roleId)
+    }
+    override suspend fun deleteGroup(id: String): ApiResponse<BaseResponse> = executeSafely {
+        service.deleteGroup(id)
     }
 }

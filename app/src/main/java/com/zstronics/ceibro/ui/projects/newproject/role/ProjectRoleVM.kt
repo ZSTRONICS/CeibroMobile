@@ -35,21 +35,6 @@ class ProjectRoleVM @Inject constructor(
         }
     }
 
-
-    private fun addRoleAPI(id: String?, group: String) {
-        launch {
-            when (val response =
-                projectRepository.createGroup(id ?: "", CreateGroupRequest(group))) {
-                is ApiResponse.Success -> {
-                    getRoles(id)
-                }
-                is ApiResponse.Error -> {
-                    alert(response.error.message)
-                }
-            }
-        }
-    }
-
     fun createRoleAPI(
         roleData: CreateRoleRequest,
         success: () -> Unit

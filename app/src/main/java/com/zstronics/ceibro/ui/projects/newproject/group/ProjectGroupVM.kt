@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -18,10 +18,10 @@ class ProjectGroupVM @Inject constructor(
     private val projectRepository: IProjectRepository
 ) : HiltBaseViewModel<IProjectGroup.State>(), IProjectGroup.ViewModel {
 
-    private val _groups: MutableLiveData<ArrayList<ProjectGroup>> =
+    private val _groups: MutableLiveData<ArrayList<ProjectGroup>?> =
         MutableLiveData(arrayListOf())
-    val groups: LiveData<ArrayList<ProjectGroup>> = _groups
-    fun getProjects(id: String?) {
+    val groups: LiveData<ArrayList<ProjectGroup>?> = _groups
+    fun getGroups(id: String?) {
         launch {
             when (val response = projectRepository.getGroups(id ?: "")) {
                 is ApiResponse.Success -> {
@@ -53,10 +53,65 @@ class ProjectGroupVM @Inject constructor(
             when (val response =
                 projectRepository.createGroup(id ?: "", CreateGroupRequest(group))) {
                 is ApiResponse.Success -> {
-                    getProjects(id)
+                    getGroups(id)
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    fun updateGroup(projectId: String, id: String?, group: String) {
+        val old = groups.value
+        val groupFound = old?.find { it.id == id }
+        if (groupFound != null) {
+            val index = old.indexOf(groupFound)
+            if (index != -1) {
+                old.removeAt(index)
+                groupFound.name = group
+                old.add(index, groupFound)
+            }
+            old.let {
+                _groups.value = it
+            }
+        }
+        updateGroupAPI(projectId, id, group)
+    }
+
+    private fun updateGroupAPI(projectId: String, id: String?, group: String) {
+
+        launch {
+            when (val response =
+                projectRepository.updateGroup(id ?: "", CreateGroupRequest(group))) {
+                is ApiResponse.Success -> {
+                    getGroups(projectId)
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    fun deleteGroup(projectId: String, position: Int, id: String) {
+        val old = groups.value
+        old?.removeAt(position)
+        old?.let {
+            _groups.value = it
+        }
+        deleteGroupAPI(projectId, id)
+    }
+
+    private fun deleteGroupAPI(projectId: String, id: String) {
+        launch {
+            when (val response =
+                projectRepository.deleteGroup(id)) {
+                is ApiResponse.Success -> {
+                    getGroups(projectId)
+                }
+                is ApiResponse.Error -> {
+                    getGroups(projectId)
                 }
             }
         }

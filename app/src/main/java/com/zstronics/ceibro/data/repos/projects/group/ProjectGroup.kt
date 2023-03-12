@@ -16,7 +16,7 @@ data class ProjectGroup(
     @SerializedName("members")
     val members: List<Member> = listOf(),
     @SerializedName("name")
-    val name: String = "",
+    var name: String = "",
     @SerializedName("project")
     val project: String = "",
     @SerializedName("updatedAt")

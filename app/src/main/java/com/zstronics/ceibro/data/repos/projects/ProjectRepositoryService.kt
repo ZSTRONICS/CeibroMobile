@@ -45,6 +45,15 @@ interface ProjectRepositoryService {
         @Body body: CreateGroupRequest
     ): Response<CreateProjectGroupResponse>
 
+    @PATCH("project/group/{id}")
+    suspend fun updateGroup(
+        @Path("id") groupId: String,
+        @Body body: CreateGroupRequest
+    ): Response<CreateProjectGroupResponse>
+
+    @DELETE("project/group/{id}")
+    suspend fun deleteGroup(@Path("id") id: String): Response<BaseResponse>
+
     @GET("project/group/{id}")
     suspend fun getGroups(@Path("id") projectId: String): Response<GetProjectGroupsResponse>
 
@@ -57,7 +66,7 @@ interface ProjectRepositoryService {
         @Body body: CreateRoleRequest
     ): Response<CreateRoleResponse>
 
-   @PATCH("project/role/{id}")
+    @PATCH("project/role/{id}")
     suspend fun updateRoles(
         @Path("id") projectId: String,
         @Body body: CreateRoleRequest

@@ -24,6 +24,12 @@ interface IProjectRepository {
         body: CreateGroupRequest
     ): ApiResponse<CreateProjectGroupResponse>
 
+    suspend fun updateGroup(
+        groupId: String,
+        body: CreateGroupRequest
+    ): ApiResponse<CreateProjectGroupResponse>
+
+
     suspend fun getGroups(projectId: String): ApiResponse<GetProjectGroupsResponse>
     suspend fun getRoles(projectId: String): ApiResponse<ProjectRolesResponse>
 
@@ -38,5 +44,6 @@ interface IProjectRepository {
     ): ApiResponse<CreateRoleResponse>
 
     suspend fun deleteRole(roleId: String): ApiResponse<BaseResponse>
+    suspend fun deleteGroup(id: String): ApiResponse<BaseResponse>
 
 }
