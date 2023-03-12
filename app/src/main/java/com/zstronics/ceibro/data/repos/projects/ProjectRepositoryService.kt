@@ -1,13 +1,16 @@
 package com.zstronics.ceibro.data.repos.projects
 
+import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
+import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
-import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.CreateGroupRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -47,6 +50,22 @@ interface ProjectRepositoryService {
 
     @GET("project/role/{id}")
     suspend fun getRoles(@Path("id") projectId: String): Response<ProjectRolesResponse>
+
+    @POST("project/role/{id}")
+    suspend fun createRoles(
+        @Path("id") projectId: String,
+        @Body body: CreateRoleRequest
+    ): Response<CreateRoleResponse>
+
+   @PATCH("project/role/{id}")
+    suspend fun updateRoles(
+        @Path("id") projectId: String,
+        @Body body: CreateRoleRequest
+    ): Response<CreateRoleResponse>
+
+    @DELETE("project/role/{id}")
+    suspend fun deleteRole(@Path("id") roleId: String): Response<BaseResponse>
+
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
 //    for method ProjectRepositoryService.createProject

@@ -7,8 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
@@ -23,17 +21,12 @@ class ProjectOverviewVM @Inject constructor(
     override val viewState: ProjectOverviewState,
     val sessionManager: SessionManager,
     private val projectRepository: IProjectRepository,
-    private val dashboardRepository: DashboardRepository
 ) : HiltBaseViewModel<IProjectOverview.State>(), IProjectOverview.ViewModel {
     val user = sessionManager.getUser().value
 
     private val _projectStatuses: MutableLiveData<ArrayList<ProjectStatus>> =
         MutableLiveData(arrayListOf(ProjectStatus("Completed"), ProjectStatus("In Progress")))
     val projectStatuses: LiveData<ArrayList<ProjectStatus>> = _projectStatuses
-
-    private val _allConnections: MutableLiveData<ArrayList<MyConnection>> =
-        MutableLiveData(arrayListOf())
-    val allConnections: LiveData<ArrayList<MyConnection>> = _allConnections
 
     private val _owners: MutableLiveData<ArrayList<String>> = MutableLiveData(arrayListOf())
     val owners: LiveData<ArrayList<String>> = _owners
@@ -87,23 +80,7 @@ class ProjectOverviewVM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
-        loadConnections()
         user?.id?.let { addOrRemoveOwner(it) }
-    }
-
-    private fun loadConnections() {
-        launch {
-            when (val response = dashboardRepository.getAllConnections()) {
-                is ApiResponse.Success -> {
-                    val data = response.data
-                    _allConnections.postValue(data.myConnections as ArrayList<MyConnection>?)
-                }
-
-                is ApiResponse.Error -> {
-                    alert(response.error.message)
-                }
-            }
-        }
     }
 
     fun createProject(context: Context, projectStateHandler: ProjectStateHandler) {

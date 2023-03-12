@@ -7,7 +7,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.CreateGroupRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

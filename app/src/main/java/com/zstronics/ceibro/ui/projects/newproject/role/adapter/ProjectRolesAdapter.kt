@@ -58,7 +58,7 @@ class ProjectRolesAdapter @Inject constructor() :
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
                 if (binding.expandView.isGone()) {
                     binding.expandedImageView.setImageResource(R.drawable.icon_navigate_down)
-                    binding.expandView.visiable()
+                    binding.expandView.visible()
                 } else {
                     binding.expandedImageView.setImageResource(R.drawable.icon_navigate_next)
                     binding.expandView.gone()

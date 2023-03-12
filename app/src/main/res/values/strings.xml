@@ -294,4 +294,7 @@
     <string name="role_heading">Role</string>
     <string name="member_heading">Member</string>
     <string name="project_admin_heading">Project admin</string>
+    <string name="add_role_heading">Add role</string>
+    <string name="edit_role_heading">Edit role</string>
+    <string name="project_admin_label">Project Admin</string>
 </resources>

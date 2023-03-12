@@ -35,7 +35,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project)
+                        ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
                     ).commit()
 
             }
@@ -52,7 +52,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectRoleFragment(viewState.project)
+                        ProjectRoleFragment(viewState.project,viewModel.allConnections)
                     ).commit()
             }
             R.id.Member -> {
@@ -60,7 +60,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project)
+                        ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
                     ).commit()
             }
             R.id.Document -> {
@@ -68,7 +68,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project)
+                        ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
                     ).commit()
             }
         }
@@ -79,7 +79,7 @@ class CreateProjectMainFragment :
         childFragmentManager.beginTransaction()
             .replace(
                 R.id.project_fragment_container,
-                ProjectOverviewFragment(this, viewState.project)
+                ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
             ).commit()
     }
 

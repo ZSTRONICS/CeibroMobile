@@ -2,15 +2,18 @@ package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
+import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
+import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
-import com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup.CreateGroupRequest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -94,4 +97,21 @@ class ProjectRepository @Inject constructor(
         executeSafely {
             service.getRoles(projectId)
         }
+
+    override suspend fun createRoles(
+        projectId: String,
+        body: CreateRoleRequest
+    ): ApiResponse<CreateRoleResponse> = executeSafely {
+        service.createRoles(projectId, body)
+    }
+    override suspend fun updateRoles(
+        projectId: String,
+        body: CreateRoleRequest
+    ): ApiResponse<CreateRoleResponse> = executeSafely {
+        service.updateRoles(projectId, body)
+    }
+
+    override suspend fun deleteRole(roleId: String): ApiResponse<BaseResponse> = executeSafely {
+        service.deleteRole(roleId)
+    }
 }

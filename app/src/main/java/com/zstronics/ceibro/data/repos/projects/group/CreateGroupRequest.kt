@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projects.newproject.group.addnewgroup
+package com.zstronics.ceibro.data.repos.projects.group
 
 
 import com.google.gson.annotations.SerializedName

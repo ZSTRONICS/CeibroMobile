@@ -6,10 +6,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectOverviewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -24,7 +26,8 @@ import java.util.*
 @AndroidEntryPoint
 class ProjectOverviewFragment(
     private val projectStateHandler: ProjectStateHandler,
-    private val projectLive: MutableLiveData<AllProjectsResponse.Projects>
+    private val projectLive: MutableLiveData<AllProjectsResponse.Projects>,
+    private val allConnections: LiveData<ArrayList<MyConnection>>
 ) :
     BaseNavViewModelFragment<FragmentProjectOverviewBinding, IProjectOverview.State, ProjectOverviewVM>() {
 
@@ -180,7 +183,7 @@ class ProjectOverviewFragment(
 
     private fun showOwnersSelectionSheet() {
         val fragment = OwnerSelectionSheet(
-            viewModel.allConnections.value,
+            allConnections.value,
             viewModel.sessionManager,
             viewModel.owners
         )
@@ -198,6 +201,9 @@ class ProjectOverviewFragment(
             } else {
                 mViewDataBinding.projectOwner.setText("${it.size} Owner(s) selected")
             }
+        }
+        if (projectLive.value != null) {
+            viewState.projectCreated.postValue(true)
         }
         projectLive.observe(viewLifecycleOwner) {
             viewState.dueDate.postValue(it.dueDate)

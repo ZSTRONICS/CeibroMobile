@@ -82,7 +82,7 @@ fun View.detachFromParent() {
     (this.parent as ViewGroup?)?.removeView(this)
 }
 
-fun View.visiable() {
+fun View.visible() {
     if (visibility != View.VISIBLE) {
         visibility = View.VISIBLE
     }
