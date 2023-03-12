@@ -69,7 +69,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
+                        ProjectOverviewFragment(this, viewState.project)
                     ).commit()
             }
         }
