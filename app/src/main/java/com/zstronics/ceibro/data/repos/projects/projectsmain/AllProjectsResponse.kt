@@ -22,7 +22,7 @@ data class AllProjectsResponse(
         @SerializedName("createdAt")
         val createdAt: String,
         @SerializedName("creator")
-        val creator: String,
+        val creator: Owner,
         @SerializedName("description")
         val description: String,
         @SerializedName("docsCount")

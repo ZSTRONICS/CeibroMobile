@@ -14,7 +14,6 @@ interface IProjectOverview {
         val description: MutableLiveData<String>
         val projectOwners: MutableLiveData<ArrayList<String>>
         var projectPhoto: MutableLiveData<Uri>
-        val project: MutableLiveData<AllProjectsResponse.Projects>
         val projectCreated: MutableLiveData<Boolean>
     }
 

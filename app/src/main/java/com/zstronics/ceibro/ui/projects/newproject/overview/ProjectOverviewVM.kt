@@ -10,8 +10,8 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import com.zstronics.ceibro.utils.FileUtils
@@ -89,16 +89,14 @@ class ProjectOverviewVM @Inject constructor(
 
     private fun loadConnections() {
         launch {
-            loading(true)
             when (val response = dashboardRepository.getAllConnections()) {
                 is ApiResponse.Success -> {
-                    loading(false)
                     val data = response.data
                     _allConnections.postValue(data.myConnections as ArrayList<MyConnection>?)
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false)
+                    alert(response.error.message)
                 }
             }
         }
@@ -128,7 +126,6 @@ class ProjectOverviewVM @Inject constructor(
             loading(true)
             when (val response = request?.let { projectRepository.createProject(it) }) {
                 is ApiResponse.Success -> {
-                    viewState.project.postValue(response.data.createProject)
                     viewState.projectCreated.postValue(true)
                     projectStateHandler.onProjectCreated(response.data.createProject)
                     loading(false, "")
@@ -139,6 +136,15 @@ class ProjectOverviewVM @Inject constructor(
                 else -> loading(false, "")
             }
         }
+    }
+
+    fun addAllStatus(extraStatus: List<String>) {
+        val statusList = extraStatus.map { ProjectStatus(it) } as ArrayList<ProjectStatus>
+        _projectStatuses.value = statusList
+    }
+
+    fun setSelectedOwners(owner: List<AllProjectsResponse.Projects.Owner>) {
+        _owners.postValue(owner.map { it.id } as ArrayList<String>?)
     }
 
     data class ProjectStatus(val status: String)

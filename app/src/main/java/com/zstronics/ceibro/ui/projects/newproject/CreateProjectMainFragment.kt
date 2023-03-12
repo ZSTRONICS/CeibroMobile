@@ -27,15 +27,15 @@ class CreateProjectMainFragment :
     override fun getToolBarTitle() =
         viewState.project.value?.title ?: getString(R.string.new_projects_title)
 
-    private
-    val projectOverview = ProjectOverviewFragment(this)
-
     override fun onClick(id: Int) {
         when (id) {
             R.id.Overview -> {
                 viewState.selectedTabId.value = CreateProjectTabs.Overview.name
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.project_fragment_container, projectOverview).commit()
+                    .replace(
+                        R.id.project_fragment_container,
+                        ProjectOverviewFragment(this, viewState.project)
+                    ).commit()
 
             }
             R.id.Group -> {
@@ -49,17 +49,26 @@ class CreateProjectMainFragment :
             R.id.Role -> {
                 viewState.selectedTabId.value = CreateProjectTabs.Role.name
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.project_fragment_container, projectOverview).commit()
+                    .replace(
+                        R.id.project_fragment_container,
+                        ProjectOverviewFragment(this, viewState.project)
+                    ).commit()
             }
             R.id.Member -> {
                 viewState.selectedTabId.value = CreateProjectTabs.Member.name
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.project_fragment_container, projectOverview).commit()
+                    .replace(
+                        R.id.project_fragment_container,
+                        ProjectOverviewFragment(this, viewState.project)
+                    ).commit()
             }
             R.id.Document -> {
                 viewState.selectedTabId.value = CreateProjectTabs.Document.name
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.project_fragment_container, projectOverview).commit()
+                    .replace(
+                        R.id.project_fragment_container,
+                        ProjectOverviewFragment(this, viewState.project)
+                    ).commit()
             }
         }
     }
@@ -67,7 +76,10 @@ class CreateProjectMainFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         childFragmentManager.beginTransaction()
-            .replace(R.id.project_fragment_container, projectOverview).commit()
+            .replace(
+                R.id.project_fragment_container,
+                ProjectOverviewFragment(this, viewState.project)
+            ).commit()
     }
 
     enum class CreateProjectTabs {
