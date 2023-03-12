@@ -24,7 +24,7 @@ import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 class AddNewRoleSheet constructor(
     val projectId: String?,
     val connections: ArrayList<MyConnection>,
-    val roleData: ProjectRolesResponse.ProjectRole?
+    private val roleData: ProjectRolesResponse.ProjectRole?
 ) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewRoleBinding

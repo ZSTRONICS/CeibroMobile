@@ -7,6 +7,9 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRe
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -46,4 +49,12 @@ interface IProjectRepository {
     suspend fun deleteRole(roleId: String): ApiResponse<BaseResponse>
     suspend fun deleteGroup(id: String): ApiResponse<BaseResponse>
 
+    suspend fun createProjectMember(
+        projectId: String,
+        body: CreateProjectMemberRequest
+    ): ApiResponse<CreateProjectMemberResponse>
+
+    suspend fun getProjectMembers(
+        projectId: String
+    ): ApiResponse<GetProjectMemberResponse>
 }

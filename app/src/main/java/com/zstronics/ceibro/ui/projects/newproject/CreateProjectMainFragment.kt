@@ -9,6 +9,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentCreateProjectMainBinding
 import com.zstronics.ceibro.ui.projects.newproject.group.ProjectGroupFragment
+import com.zstronics.ceibro.ui.projects.newproject.members.ProjectMembersFragment
 import com.zstronics.ceibro.ui.projects.newproject.overview.ProjectOverviewFragment
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import com.zstronics.ceibro.ui.projects.newproject.role.ProjectRoleFragment
@@ -52,7 +53,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectRoleFragment(viewState.project,viewModel.allConnections)
+                        ProjectRoleFragment(viewState.project, viewModel.allConnections)
                     ).commit()
             }
             R.id.Member -> {
@@ -60,7 +61,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
+                        ProjectMembersFragment(viewState.project, viewModel.allConnections)
                     ).commit()
             }
             R.id.Document -> {

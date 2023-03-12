@@ -5,6 +5,9 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjec
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -74,6 +77,17 @@ interface ProjectRepositoryService {
 
     @DELETE("project/role/{id}")
     suspend fun deleteRole(@Path("id") roleId: String): Response<BaseResponse>
+
+    @POST("project/member/{id}")
+    suspend fun createProjectMember(
+        @Path("id") projectId: String,
+        @Body body: CreateProjectMemberRequest
+    ): Response<CreateProjectMemberResponse>
+
+    @GET("project/member/{id}")
+    suspend fun getProjectMembers(
+        @Path("id") projectId: String
+    ): Response<GetProjectMemberResponse>
 
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
