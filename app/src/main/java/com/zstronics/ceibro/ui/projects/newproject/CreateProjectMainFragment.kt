@@ -53,7 +53,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectRoleFragment(viewState.project, viewModel.allConnections)
+                        ProjectRoleFragment(this, viewState.project, viewModel.availableMembers)
                     ).commit()
             }
             R.id.Member -> {
@@ -61,7 +61,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectMembersFragment(viewState.project, viewModel.allConnections)
+                        ProjectMembersFragment(this, viewState.project, viewModel.availableMembers)
                     ).commit()
             }
             R.id.Document -> {
@@ -90,5 +90,13 @@ class CreateProjectMainFragment :
 
     override fun onProjectCreated(project: AllProjectsResponse.Projects?) {
         viewModel.onProjectCreated(project)
+    }
+
+    override fun onMemberDelete() {
+        viewModel.updateMembersList()
+    }
+
+    override fun onMemberAdd() {
+        viewModel.updateMembersList()
     }
 }

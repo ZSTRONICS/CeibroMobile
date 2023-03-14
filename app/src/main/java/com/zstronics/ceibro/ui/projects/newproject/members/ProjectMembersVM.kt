@@ -7,9 +7,11 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberRequest
 import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,9 +22,9 @@ class ProjectMembersVM @Inject constructor(
     private val projectRepository: IProjectRepository
 ) : HiltBaseViewModel<IProjectMembers.State>(), IProjectMembers.ViewModel {
 
-    private val _groupMembers: MutableLiveData<ArrayList<GetProjectMemberResponse.ProjectMember>?> =
+    private val _groupMembers: MutableLiveData<MutableList<GetProjectMemberResponse.ProjectMember>?> =
         MutableLiveData(arrayListOf())
-    val groupMembers: LiveData<ArrayList<GetProjectMemberResponse.ProjectMember>?> = _groupMembers
+    val groupMembers: LiveData<MutableList<GetProjectMemberResponse.ProjectMember>?> = _groupMembers
 
     private val _groups: MutableLiveData<ArrayList<ProjectGroup>?> =
         MutableLiveData(arrayListOf())
@@ -35,7 +37,8 @@ class ProjectMembersVM @Inject constructor(
         launch {
             when (val response = projectRepository.getProjectMembers(id ?: "")) {
                 is ApiResponse.Success -> {
-                    _groupMembers.postValue(response.data.members as ArrayList<GetProjectMemberResponse.ProjectMember>?)
+                    val pureMembers = response.data.members.filter { it.user != null }
+                    _groupMembers.postValue(pureMembers as MutableList<GetProjectMemberResponse.ProjectMember>)
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
@@ -88,90 +91,66 @@ class ProjectMembersVM @Inject constructor(
 
     }
 
-    fun deleteMember(position: Int) {
-
+    fun deleteMember(
+        position: Int,
+        member: GetProjectMemberResponse.ProjectMember,
+        projectStateHandler: ProjectStateHandler
+    ) {
+        if (!member.isOwner) {
+            val old = groupMembers.value
+            old?.removeAt(position)
+            old?.let {
+                _groupMembers.value = it
+            }
+            deleteMemberAPI(member.id, projectStateHandler)
+        } else {
+            alert("Owner cannot be removed")
+        }
     }
 
-//    fun addGroup(id: String?, group: String) {
-//        val oldList = groups.value
-//        val groupExist = oldList?.find { it.name == group }
-//        if (groupExist != null) {
-//            alert("Duplicate group")
-//            return
-//        }
-//        oldList?.add(ProjectGroup(name = group))
-//        oldList?.let {
-//            _groups.value = it
-//        }
-//        addGroupAPI(id, group)
-//    }
-//
-//    private fun addGroupAPI(id: String?, group: String) {
-//        launch {
-//            when (val response =
-//                projectRepository.createGroup(id ?: "", CreateGroupRequest(group))) {
-//                is ApiResponse.Success -> {
-//                    getGroups(id)
-//                }
-//                is ApiResponse.Error -> {
-//                    alert(response.error.message)
-//                }
-//            }
-//        }
-//    }
-//
-//    fun updateGroup(projectId: String, id: String?, group: String) {
-//        val old = groups.value
-//        val groupFound = old?.find { it.id == id }
-//        if (groupFound != null) {
-//            val index = old.indexOf(groupFound)
-//            if (index != -1) {
-//                old.removeAt(index)
-//                groupFound.name = group
-//                old.add(index, groupFound)
-//            }
-//            old.let {
-//                _groups.value = it
-//            }
-//        }
-//        updateGroupAPI(projectId, id, group)
-//    }
-//
-//    private fun updateGroupAPI(projectId: String, id: String?, group: String) {
-//
-//        launch {
-//            when (val response =
-//                projectRepository.updateGroup(id ?: "", CreateGroupRequest(group))) {
-//                is ApiResponse.Success -> {
-//                    getGroups(projectId)
-//                }
-//                is ApiResponse.Error -> {
-//                    alert(response.error.message)
-//                }
-//            }
-//        }
-//    }
-//
-//    fun deleteGroup(projectId: String, position: Int, id: String) {
-//        val old = groups.value
-//        old?.removeAt(position)
-//        old?.let {
-//            _groups.value = it
-//        }
-//        deleteGroupAPI(projectId, id)
-//    }
-//
-//    private fun deleteGroupAPI(projectId: String, id: String) {
-//        launch {
-//            when (val response =
-//                projectRepository.deleteGroup(id)) {
-//                is ApiResponse.Success -> {
-//                    getGroups(projectId)
-//                }
-//                is ApiResponse.Error -> {
-//                    getGroups(projectId)
-//                }
-//            }
-//        }
-//    }
+    private fun deleteMemberAPI(id: String, projectStateHandler: ProjectStateHandler) {
+        launch {
+            when (val response = projectRepository.deleteMember(id)) {
+                is ApiResponse.Success -> {
+                    alert(response.data.message)
+                    projectStateHandler.onMemberDelete()
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    fun editMember(
+        projectId: String,
+        id: String,
+        body: EditProjectMemberRequest,
+        success: () -> Unit?
+    ) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.updateProjectMember(id, body)) {
+                is ApiResponse.Success -> {
+                    getMembers(projectId)
+                    // update local member
+                    val updatedMember = response.data.updatedMember
+                    val old = groupMembers.value
+                    val oldMember = old?.find { it.id == id }
+                    if (oldMember != null) {
+                        val index = old.indexOf(oldMember)
+                        if (index != -1) {
+                            old.removeAt(index)
+                            old.add(index, updatedMember)
+                        }
+                    }
+                    success()
+                    loading(false)
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
 }

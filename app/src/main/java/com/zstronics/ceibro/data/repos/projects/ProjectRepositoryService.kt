@@ -5,10 +5,9 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjec
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
-import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
-import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
-import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
@@ -84,11 +83,31 @@ interface ProjectRepositoryService {
         @Body body: CreateProjectMemberRequest
     ): Response<CreateProjectMemberResponse>
 
+    @DELETE("project/member/remove/{id}")
+    suspend fun deleteProjectMember(
+        @Path("id") memberId: String
+    ): Response<CreateProjectMemberResponse>
+
     @GET("project/member/{id}")
     suspend fun getProjectMembers(
         @Path("id") projectId: String
     ): Response<GetProjectMemberResponse>
 
+    @GET("project/members/available/{id}")
+    suspend fun getAvailableMembers(
+        @Path("id") projectId: String
+    ): Response<GetAvailableMemberResponse>
+
+    @DELETE("project/member/remove/{id}")
+    suspend fun deleteMember(
+        @Path("id") id: String
+    ): Response<DeleteMemberResponse>
+
+    @PATCH("project/member/update/{memberId}")
+    suspend fun updateProjectMember(
+        @Path("memberId") memberId: String,
+        @Body body: EditProjectMemberRequest
+    ): Response<EditProjectMemberResponse>
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
 //    for method ProjectRepositoryService.createProject

@@ -37,7 +37,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:fontFamily="@font/inter_bold"
-                android:text="@string/add_member_heading"
+                android:text="@string/edit_members_heading"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -55,47 +55,135 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/membersSelectionField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profileLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_13sdp"
-            android:layout_marginTop="10dp"
-            android:hint="Select Member(s)"
-            android:textColorHint="@color/grey"
-            app:boxStrokeColor="@color/colorGrey"
-            app:boxStrokeWidth="1dp"
-            app:endIconMode="dropdown_menu"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header">
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="@+id/roleSelectionField"
+            app:layout_constraintStart_toStartOf="@+id/roleSelectionField"
+            app:layout_constraintTop_toBottomOf="@id/header">
 
-            <AutoCompleteTextView
-                android:id="@+id/memberSelectionSpinner"
-                android:layout_width="match_parent"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/memberPhotoCard"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="0dp"
+                android:elevation="0dp"
+                android:outlineSpotShadowColor="@color/white"
+                app:cardBackgroundColor="@color/appLightGrey"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/phone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/memberPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+                    tools:src="@drawable/profile_img" />
+
+                <TextView
+                    android:id="@+id/memberPhotoInitials"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:maxLength="3"
+                    android:text="KV"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_15sdp"
+                    android:visibility="gone" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
                 android:ellipsize="end"
-                android:inputType="text"
-                android:maxLines="2"
-                android:paddingStart="@dimen/_10sdp"
-                android:textColorHint="@color/grey"
-                android:textSize="15sp" />
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Kristo Vunukainen"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintStart_toEndOf="@+id/memberPhotoCard"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/companyName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="@string/company_heading"
+                android:textColor="@color/appTextGrey"
+                android:textSize="@dimen/_9sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/userName"
+                app:layout_constraintStart_toEndOf="@+id/userName"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/membersChipsRV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:layout_constraintEnd_toEndOf="@+id/membersSelectionField"
-            app:layout_constraintStart_toStartOf="@+id/membersSelectionField"
-            app:layout_constraintTop_toBottomOf="@+id/membersSelectionField"
-            tools:itemCount="10"
-            tools:listitem="@layout/layout_item_chip" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/emailIcon"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/email"
+                app:layout_constraintStart_toEndOf="@+id/memberPhotoCard"
+                app:layout_constraintTop_toBottomOf="@id/userName"
+                app:srcCompat="@drawable/email_icon_solid"
+                app:tint="@color/grey" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="Ilja.Nikolajev@ceibro.ee"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintStart_toEndOf="@+id/emailIcon"
+                app:layout_constraintTop_toBottomOf="@id/userName" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/phoneIcon"
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/phone"
+                app:layout_constraintStart_toEndOf="@+id/memberPhotoCard"
+                app:layout_constraintTop_toBottomOf="@id/email"
+                app:srcCompat="@drawable/ic_phone"
+                app:tint="@color/grey" />
+
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="+372  5679 7470"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintStart_toEndOf="@+id/phoneIcon"
+                app:layout_constraintTop_toBottomOf="@id/email" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/roleSelectionField"
@@ -111,7 +199,7 @@
             app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/membersChipsRV">
+            app:layout_constraintTop_toBottomOf="@+id/profileLayout">
 
             <AutoCompleteTextView
                 android:id="@+id/roleSelectionSpinner"
@@ -186,7 +274,7 @@
             android:fontFamily="@font/inter_semibold"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/add_heading"
+            android:text="@string/update_btn_text"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="14sp"

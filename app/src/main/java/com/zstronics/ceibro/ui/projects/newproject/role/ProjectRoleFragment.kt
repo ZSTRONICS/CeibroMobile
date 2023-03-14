@@ -19,10 +19,12 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.databinding.FragmentProjectRoleBinding
+import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import com.zstronics.ceibro.ui.projects.newproject.role.adapter.ProjectRolesAdapter
 import com.zstronics.ceibro.ui.projects.newproject.role.addrole.AddNewRoleSheet
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,8 +33,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProjectRoleFragment(
+    private val projectStateHandler: ProjectStateHandler,
     private val projectLive: MutableLiveData<AllProjectsResponse.Projects>,
-    private val allConnections: LiveData<ArrayList<MyConnection>>
+    private val availableMembers: LiveData<List<Member>>
 ) :
     BaseNavViewModelFragment<FragmentProjectRoleBinding, IProjectRole.State, ProjectRoleVM>() {
 
@@ -56,10 +59,10 @@ class ProjectRoleFragment(
 
         addMenuBtn.setOnClick {
             val sheet =
-                allConnections.value?.let { allConnections ->
+                availableMembers.value?.let { availableMembers ->
                     AddNewRoleSheet(
                         projectLive.value?.id,
-                        allConnections,
+                        availableMembers,
                         null
                     )
                 }
@@ -100,15 +103,15 @@ class ProjectRoleFragment(
         roleData: ProjectRolesResponse.ProjectRole
     ) {
         val sheet =
-            allConnections.value?.let { allConnections ->
+            availableMembers.value?.let { availableMembers ->
                 AddNewRoleSheet(
                     projectLive.value?.id,
-                    allConnections,
+                    availableMembers,
                     roleData
                 )
             }
         sheet?.onUpdate = { updatedRole ->
-            viewModel.updateRoleAPI(roleData.id,updatedRole) {
+            viewModel.updateRoleAPI(roleData.id, updatedRole) {
                 sheet?.hideSheet()
             }
         }

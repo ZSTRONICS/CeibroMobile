@@ -13,7 +13,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.data.repos.chat.room.Member
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
@@ -22,7 +21,7 @@ import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 
 class ProjectAddNewMemberSheet constructor(
     val projectId: String?,
-    val connections: ArrayList<MyConnection>,
+    private val availableMembers: List<Member>,
     val groups: List<ProjectGroup>,
     val roles: List<ProjectRolesResponse.ProjectRole>
 ) :
@@ -30,7 +29,6 @@ class ProjectAddNewMemberSheet constructor(
     lateinit var binding: FragmentProjectAddNewMemberBinding
     var onMemberAdd: ((body: CreateProjectMemberRequest) -> Unit)? = null
     private val _roleAssignee: MutableLiveData<ArrayList<Member>?> = MutableLiveData(arrayListOf())
-    private var allMembers: List<Member> = listOf()
     var selectedRole = ""
     var selectedGroup = ""
     override fun onCreateView(
@@ -57,16 +55,6 @@ class ProjectAddNewMemberSheet constructor(
             removeAssignee(data)
         }
 
-        allMembers = connections.map { it.from }.map { from ->
-            Member(
-                companyName = "",
-                firstName = from?.firstName ?: "",
-                surName = from?.surName ?: "",
-                id = from?.id ?: "",
-                profilePic = from?.profilePic
-            )
-        }
-
         _roleAssignee.observe(viewLifecycleOwner) {
             if (it != null) {
                 assigneeChipsAdapter.setList(it)
@@ -75,7 +63,7 @@ class ProjectAddNewMemberSheet constructor(
         binding.membersChipsRV.adapter = assigneeChipsAdapter
 
         /// Members spinner
-        val membersStrings = connections.map { "${it.from?.firstName} ${it.from?.surName}" }
+        val membersStrings = availableMembers.map { "${it.firstName} ${it.surName}" }
         val arrayAdapter =
             ArrayAdapter(
                 requireContext(),
@@ -171,7 +159,7 @@ class ProjectAddNewMemberSheet constructor(
     }
 
     private fun onAssigneeSelect(position: Int) {
-        val member: Member = allMembers[position]
+        val member: Member = availableMembers[position]
         val oldAssignees = _roleAssignee.value
 
         val selectedMember = oldAssignees?.find { it.id == member.id }

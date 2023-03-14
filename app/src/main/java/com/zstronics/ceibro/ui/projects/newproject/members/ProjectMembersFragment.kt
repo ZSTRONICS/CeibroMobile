@@ -19,20 +19,24 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectMembersBinding
 import com.zstronics.ceibro.ui.projects.newproject.members.adapter.ProjectMembersAdapter
+import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.EditProjectMemberSheet
 import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.ProjectAddNewMemberSheet
+import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.ViewProjectMemberSheet
+import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class ProjectMembersFragment(
+    private val projectStateHandler: ProjectStateHandler,
     private val projectLive: MutableLiveData<AllProjectsResponse.Projects>,
-    private val allConnections: LiveData<ArrayList<MyConnection>>
+    private val availableMembers: LiveData<List<Member>>
 ) :
     BaseNavViewModelFragment<FragmentProjectMembersBinding, IProjectMembers.State, ProjectMembersVM>() {
 
@@ -57,12 +61,12 @@ class ProjectMembersFragment(
         val addMenuBtn = addMenuLayout.findViewById<AppCompatButton>(R.id.addMenuBtn)
 
         addMenuBtn.setOnClick {
-            val sheet = allConnections.value?.let { allConnections ->
+            val sheet = availableMembers.value?.let { availableMembers ->
                 viewModel.groups.value?.let { groups ->
                     viewModel.roles.value?.let { roles ->
                         ProjectAddNewMemberSheet(
                             projectId = projectLive.value?.id,
-                            connections = allConnections,
+                            availableMembers = availableMembers,
                             groups = groups,
                             roles = roles
                         )
@@ -71,6 +75,7 @@ class ProjectMembersFragment(
             }
             sheet?.onMemberAdd = { body ->
                 viewModel.createMember(projectLive.value?.id, body) {
+                    projectStateHandler.onMemberAdd()
                     sheet?.dismiss()
                 }
             }
@@ -109,6 +114,19 @@ class ProjectMembersFragment(
                     1
                 )
             }
+        adapter.itemClickListener =
+            { childView: View, position: Int, member: GetProjectMemberResponse.ProjectMember ->
+                val sheet = availableMembers.value?.let { availableMembers ->
+                    viewModel.groups.value?.let { groups ->
+                        viewModel.roles.value?.let { roles ->
+                            ViewProjectMemberSheet(
+                                member = member
+                            )
+                        }
+                    }
+                }
+                sheet?.show(childFragmentManager, "ViewProjectMemberSheet")
+            }
     }
 
     private fun popUpMenu(
@@ -125,10 +143,30 @@ class ProjectMembersFragment(
         val remove = view.findViewById<LinearLayoutCompat>(R.id.remove)
 
         edit.setOnClick {
-
+            val sheet = availableMembers.value?.let { availableMembers ->
+                viewModel.groups.value?.let { groups ->
+                    viewModel.roles.value?.let { roles ->
+                        EditProjectMemberSheet(
+                            projectId = projectLive.value?.id,
+                            groups = groups,
+                            roles = roles,
+                            member = member
+                        )
+                    }
+                }
+            }
+            sheet?.onMemberUpdate = { body ->
+                viewModel.editMember(projectLive.value?.id ?: "", member.id, body) {
+                    projectStateHandler.onMemberAdd()
+                    sheet?.dismiss()
+                }
+                popupWindow.dismiss()
+            }
+            sheet?.isCancelable = false
+            sheet?.show(childFragmentManager, "ProjectAddNewMemberSheet")
         }
         remove.setOnClick {
-            viewModel.deleteMember(position)
+            viewModel.deleteMember(position, member, projectStateHandler)
             popupWindow.dismiss()
         }
 

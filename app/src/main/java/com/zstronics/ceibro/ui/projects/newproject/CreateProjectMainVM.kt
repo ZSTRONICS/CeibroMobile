@@ -5,12 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -26,6 +26,10 @@ class CreateProjectMainVM @Inject constructor(
         MutableLiveData(arrayListOf())
     val allConnections: LiveData<ArrayList<MyConnection>> = _allConnections
 
+    private val _availableMembers: MutableLiveData<List<Member>> =
+        MutableLiveData(arrayListOf())
+    val availableMembers: LiveData<List<Member>> = _availableMembers
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         bundle?.let {
@@ -35,7 +39,6 @@ class CreateProjectMainVM @Inject constructor(
                 onProjectCreated(project)
         }
         loadConnections()
-
     }
 
     private fun loadConnections() {
@@ -53,8 +56,28 @@ class CreateProjectMainVM @Inject constructor(
         }
     }
 
+    private fun getAvailableMembers(projectId: String) {
+        launch {
+            when (val response = projectRepository.getAvailableMembers(projectId)) {
+                is ApiResponse.Success -> {
+                    val data = response.data
+                    _availableMembers.postValue(data.members)
+                }
+
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
     fun onProjectCreated(project: AllProjectsResponse.Projects?) {
         viewState.isProjectCreated.value = true
         viewState.project.value = project
+        getAvailableMembers(project?.id ?: "")
+    }
+
+    fun updateMembersList() {
+        getAvailableMembers(viewState.project.value?.id ?: "")
     }
 }

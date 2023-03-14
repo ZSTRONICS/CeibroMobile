@@ -7,10 +7,9 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRe
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
-import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
-import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
-import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
@@ -57,4 +56,14 @@ interface IProjectRepository {
     suspend fun getProjectMembers(
         projectId: String
     ): ApiResponse<GetProjectMemberResponse>
+
+    suspend fun getAvailableMembers(
+        projectId: String
+    ): ApiResponse<GetAvailableMemberResponse>
+
+    suspend fun deleteMember(id: String): ApiResponse<DeleteMemberResponse>
+    suspend fun updateProjectMember(
+        id: String,
+        body: EditProjectMemberRequest
+    ): ApiResponse<EditProjectMemberResponse>
 }

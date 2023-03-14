@@ -15,7 +15,6 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.gone
 import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.data.repos.chat.room.Member
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.databinding.FragmentAddNewRoleBinding
@@ -23,14 +22,13 @@ import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 
 class AddNewRoleSheet constructor(
     val projectId: String?,
-    val connections: ArrayList<MyConnection>,
+    private val availableMembers: List<Member>,
     private val roleData: ProjectRolesResponse.ProjectRole?
 ) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewRoleBinding
 
     private val _roleAssignee: MutableLiveData<ArrayList<Member>?> = MutableLiveData(arrayListOf())
-    private var allMembers: List<Member> = listOf()
 
     var onAdd: ((roleData: CreateRoleRequest) -> Unit)? = null
     var onUpdate: ((roleData: CreateRoleRequest) -> Unit)? = null
@@ -88,29 +86,9 @@ class AddNewRoleSheet constructor(
                 createMemberCheckbox.isChecked = roleData.memberPermission.create
                 editMemberCheckbox.isChecked = roleData.memberPermission.edit
                 deleteMemberCheckbox.isChecked = roleData.memberPermission.delete
-                val allMembers = connections.map { it.from }.map { from ->
-                    Member(
-                        companyName = "",
-                        firstName = from?.firstName ?: "",
-                        surName = from?.surName ?: "",
-                        id = from?.id ?: "",
-                        profilePic = from?.profilePic
-                    )
-                }
-
                 val previousMembers =
-                    allMembers.filter { member -> roleData.members.any { it.id == member.id } }
+                    availableMembers.filter { member -> roleData.members.any { it.id == member.id } }
                 _roleAssignee.value = previousMembers as ArrayList<Member>
-            }
-
-            allMembers = connections.map { it.from }.map { from ->
-                Member(
-                    companyName = "",
-                    firstName = from?.firstName ?: "",
-                    surName = from?.surName ?: "",
-                    id = from?.id ?: "",
-                    profilePic = from?.profilePic
-                )
             }
 
             _roleAssignee.observe(viewLifecycleOwner) {
@@ -121,7 +99,7 @@ class AddNewRoleSheet constructor(
             membersChipsRV.adapter = assigneeChipsAdapter
 
             /// spinner
-            val membersStrings = connections.map { "${it.from?.firstName} ${it.from?.surName}" }
+            val membersStrings = availableMembers.map { "${it.firstName} ${it.surName}" }
             val arrayAdapter =
                 ArrayAdapter(
                     requireContext(),
@@ -262,7 +240,7 @@ class AddNewRoleSheet constructor(
     }
 
     private fun onAssigneeSelect(position: Int) {
-        val member: Member = allMembers[position]
+        val member: Member = availableMembers[position]
         val oldAssignees = _roleAssignee.value
 
         val selectedMember = oldAssignees?.find { it.id == member.id }
