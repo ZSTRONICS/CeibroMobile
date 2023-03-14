@@ -2,6 +2,9 @@ package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
+import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
@@ -108,6 +111,17 @@ interface ProjectRepositoryService {
         @Path("memberId") memberId: String,
         @Body body: EditProjectMemberRequest
     ): Response<EditProjectMemberResponse>
+
+    @POST("project/folder/{id}")
+    suspend fun createProjectFolder(
+        @Path("id") projectId: String,
+        @Body body: CreateProjectFolderRequest
+    ): Response<CreateProjectFolderResponse>
+
+    @GET("project/documents/{id}")
+    suspend fun getProjectDocuments(
+        @Path("id") projectId: String
+    ): Response<ProjectDocumentsResponse>
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
 //    for method ProjectRepositoryService.createProject
