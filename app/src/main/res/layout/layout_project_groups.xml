@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -8,52 +9,88 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/expandedImageView"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:src="@drawable/icon_navigate_next"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleTV" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/groupTitle"
+            android:id="@+id/titleTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_6sdp"
+            android:drawablePadding="@dimen/_3sdp"
             android:fontFamily="@font/inter_medium"
+            android:gravity="start|center"
             android:padding="@dimen/_6sdp"
             android:paddingStart="0dp"
             android:paddingEnd="@dimen/_5sdp"
-            android:text="@string/admin_heading"
-            android:textSize="14.5sp"
             android:textColor="@color/black"
-            android:gravity="start|center"
-            android:drawableStart="@drawable/icon_navigate_next"
-            android:drawablePadding="@dimen/_3sdp"
+            android:textSize="14.5sp"
             app:layout_constraintEnd_toStartOf="@+id/optionMenu"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/expandedImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Group Name" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/optionMenu"
-            android:layout_width="@dimen/_21sdp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_menu_dots"
             android:padding="@dimen/_1sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/groupTitle"
+            android:src="@drawable/ic_menu_dots"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTV"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/groupTitle" />
+            app:layout_constraintTop_toTopOf="@+id/titleTV" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/expandView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTV">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/memberRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_project_group_nested_member" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginBottom="3dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/optionMenu"
-            app:layout_constraintStart_toStartOf="@+id/groupTitle"
-            app:layout_constraintTop_toBottomOf="@+id/groupTitle" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expandView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

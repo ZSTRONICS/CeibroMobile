@@ -6,6 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
+import com.zstronics.ceibro.base.extensions.gone
+import com.zstronics.ceibro.base.extensions.isGone
+import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
 import com.zstronics.ceibro.databinding.LayoutProjectGroupsBinding
 import javax.inject.Inject
@@ -47,12 +52,22 @@ class ProjectGroupsAdapter @Inject constructor() :
     inner class ProjectGroupViewHolder(private val binding: LayoutProjectGroupsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ProjectGroup) {
-            binding.groupTitle.text = item.name
+            binding.titleTV.text = item.name
+            val adapter = ProjectGroupsNestedMemberAdapter()
+            adapter.setList(item.members)
+            binding.memberRV.adapter = adapter
             binding.optionMenu.setOnClickListener {
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
-            binding.root.setOnClickListener {
+            binding.root.setOnClick {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                if (binding.expandView.isGone()) {
+                    binding.expandedImageView.setImageResource(R.drawable.icon_navigate_down)
+                    binding.expandView.visible()
+                } else {
+                    binding.expandedImageView.setImageResource(R.drawable.icon_navigate_next)
+                    binding.expandView.gone()
+                }
             }
         }
     }

@@ -160,10 +160,10 @@ class ProjectMembersFragment(
                     projectStateHandler.onMemberAdd()
                     sheet?.dismiss()
                 }
-                popupWindow.dismiss()
             }
             sheet?.isCancelable = false
             sheet?.show(childFragmentManager, "ProjectAddNewMemberSheet")
+            popupWindow.dismiss()
         }
         remove.setOnClick {
             viewModel.deleteMember(position, member, projectStateHandler)

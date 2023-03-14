@@ -25,7 +25,7 @@ class ProjectOverviewVM @Inject constructor(
     val user = sessionManager.getUser().value
 
     private val _projectStatuses: MutableLiveData<ArrayList<ProjectStatus>> =
-        MutableLiveData(arrayListOf(ProjectStatus("Completed"), ProjectStatus("In Progress")))
+        MutableLiveData(arrayListOf())
     val projectStatuses: LiveData<ArrayList<ProjectStatus>> = _projectStatuses
 
     private val _owners: MutableLiveData<ArrayList<String>> = MutableLiveData(arrayListOf())
