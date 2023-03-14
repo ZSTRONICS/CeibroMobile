@@ -3,7 +3,7 @@ package com.zstronics.ceibro.ui.projects.newproject.overview
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
-import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 
 interface IProjectOverview {
     interface State : IBase.State {
@@ -14,7 +14,7 @@ interface IProjectOverview {
         val description: MutableLiveData<String>
         val projectOwners: MutableLiveData<ArrayList<String>>
         var projectPhoto: MutableLiveData<Uri>
-        val project: MutableLiveData<CreateNewProjectResponse.CreateProject>
+        val projectCreated: MutableLiveData<Boolean>
     }
 
     interface ViewModel : IBase.ViewModel<State> {

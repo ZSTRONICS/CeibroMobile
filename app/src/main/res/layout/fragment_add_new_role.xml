@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="15dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/headingText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/headingText"
+                app:srcCompat="@drawable/icon_round_close"
+                app:tint="@color/appYellow" />
+
+            <TextView
+                android:id="@+id/headingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/add_group_heading"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/roleField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_13sdp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/role_heading"
+            android:textColorHint="@color/grey"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/roleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:inputType="text"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/membersSelectionField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_13sdp"
+            android:layout_marginTop="10dp"
+            android:hint="Select Member(s)"
+            android:textColorHint="@color/grey"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:endIconMode="dropdown_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/roleField">
+
+            <AutoCompleteTextView
+                android:id="@+id/memberSelectionSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:inputType="text"
+                android:maxLines="2"
+                android:paddingStart="@dimen/_10sdp"
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/membersChipsRV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="@+id/membersSelectionField"
+            app:layout_constraintStart_toStartOf="@+id/membersSelectionField"
+            app:layout_constraintTop_toBottomOf="@+id/membersSelectionField"
+            tools:itemCount="10"
+            tools:listitem="@layout/layout_item_chip" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/appLightGrey"
+            app:layout_constraintEnd_toEndOf="@+id/membersChipsRV"
+            app:layout_constraintStart_toStartOf="@+id/membersChipsRV"
+            app:layout_constraintTop_toBottomOf="@+id/membersChipsRV" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/projectAdminSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/project_admin_label"
+            app:layout_constraintEnd_toEndOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/roleSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/role_heading"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/projectAdminSwitch" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/roleLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/roleSwitch">
+
+            <CheckBox
+                android:id="@+id/createRoleCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_heading" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="@color/appGrey" />
+
+            <CheckBox
+                android:id="@+id/editRoleCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:text="@string/edit_heading" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="@color/appGrey" />
+
+            <CheckBox
+                android:id="@+id/deleteRoleCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:text="@string/delete_heading" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/memberSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/member_heading"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/roleLayout" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/memberPermissionLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/divider"
+            app:layout_constraintStart_toStartOf="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/memberSwitch">
+
+            <CheckBox
+                android:id="@+id/createMemberCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_heading" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="@color/appGrey" />
+
+            <CheckBox
+                android:id="@+id/editMemberCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:text="@string/edit_heading" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="@color/appGrey" />
+
+            <CheckBox
+                android:id="@+id/deleteMemberCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:text="@string/delete_heading" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_margin="@dimen/_13sdp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/signin_button_back"
+            android:backgroundTint="@color/colorGrey"
+            android:fontFamily="@font/inter_semibold"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/cancel_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/appTextGrey"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/memberPermissionLayout"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_goneMarginBottom="@dimen/_10sdp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginEnd="13dp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_semibold"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/add_heading"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
+            app:layout_constraintEnd_toStartOf="@+id/cancelButton"
+            app:layout_constraintTop_toTopOf="@+id/cancelButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

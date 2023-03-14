@@ -7,7 +7,7 @@
 
         <variable
             name="allProjects"
-            type="com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse.Result.Projects" />
+            type="com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse.Projects" />
 
         <import type="android.view.View" />
     </data>

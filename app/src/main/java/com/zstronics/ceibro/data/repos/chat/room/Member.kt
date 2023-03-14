@@ -20,5 +20,9 @@ data class Member(
     val profilePic: String?,
     @SerializedName("surName")
     val surName: String,
+    @SerializedName("companyPhone")
+    val companyPhone: String = "",
+    @SerializedName("workEmail")
+    val workEmail: String = "",
     var isChecked: Boolean = false
 ) : BaseResponse(), Parcelable

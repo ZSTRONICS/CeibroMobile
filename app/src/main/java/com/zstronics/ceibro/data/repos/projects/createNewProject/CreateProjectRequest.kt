@@ -1,10 +1,11 @@
 package com.zstronics.ceibro.data.repos.projects.createNewProject
 
 import com.google.gson.annotations.SerializedName
+import java.io.File
 
 data class CreateProjectRequest(
     @SerializedName("projectPhoto")
-    val projectPhoto: String,
+    val projectPhoto: File,
     @SerializedName("title")
     val title: String,
     @SerializedName("location")
@@ -16,12 +17,7 @@ data class CreateProjectRequest(
     @SerializedName("publishStatus")
     val publishStatus: String,
     @SerializedName("extraStatus")
-    val extraStatus: JsonWithDataObject,
+    val extraStatus: String,
     @SerializedName("owner")
-    val owner: JsonWithDataObject,
-)
-
-data class JsonWithDataObject(
-    @SerializedName("data")
-    val data: List<String>
+    val owner: String,
 )

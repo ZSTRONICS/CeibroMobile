@@ -6,9 +6,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectOverviewBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projects.newproject.overview.addnewstatus.AddNewStatusSheet
@@ -20,7 +24,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandler) :
+class ProjectOverviewFragment(
+    private val projectStateHandler: ProjectStateHandler,
+    private val projectLive: MutableLiveData<AllProjectsResponse.Projects>,
+    private val allConnections: LiveData<ArrayList<MyConnection>>
+) :
     BaseNavViewModelFragment<FragmentProjectOverviewBinding, IProjectOverview.State, ProjectOverviewVM>() {
 
     override val bindingVariableId = BR.viewModel
@@ -29,7 +37,7 @@ class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandl
     override val layoutResId: Int = R.layout.fragment_project_overview
     override fun toolBarVisibility(): Boolean = true
     override fun getToolBarTitle() =
-        viewState.project.value?.title ?: getString(R.string.new_projects_title)
+        projectLive.value?.title ?: getString(R.string.new_projects_title)
 
     override fun hasOptionMenu(): Boolean = false
     var cal: Calendar = Calendar.getInstance()
@@ -48,9 +56,9 @@ class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandl
     override fun onClick(id: Int) {
         when (id) {
             R.id.createProjectBtn -> {
-                val projectData = viewModel.getMockedProject()
-                projectStateHandler.onProjectCreated(projectData?.createProject)
-                viewState.project.postValue(projectData?.createProject)
+//                val projectData = viewModel.getMockedProject()
+//                projectStateHandler.onProjectCreated(projectData?.createProject)
+//                viewState.project.postValue(projectData?.createProject)
                 with(viewState) {
                     var checkPass = 0
                     if (projectPhoto.value != null) {
@@ -175,7 +183,7 @@ class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandl
 
     private fun showOwnersSelectionSheet() {
         val fragment = OwnerSelectionSheet(
-            viewModel.allConnections.value,
+            allConnections.value,
             viewModel.sessionManager,
             viewModel.owners
         )
@@ -193,6 +201,18 @@ class ProjectOverviewFragment(private val projectStateHandler: ProjectStateHandl
             } else {
                 mViewDataBinding.projectOwner.setText("${it.size} Owner(s) selected")
             }
+        }
+        if (projectLive.value != null) {
+            viewState.projectCreated.postValue(true)
+        }
+        projectLive.observe(viewLifecycleOwner) {
+            viewState.dueDate.postValue(it.dueDate)
+            viewState.status.postValue(it.publishStatus)
+            viewState.projectTitle.postValue(it.title)
+            viewState.location.postValue(it.location)
+            viewState.description.postValue(it.description)
+            viewModel.addAllStatus(it.extraStatus)
+            viewModel.setSelectedOwners(it.owner)
         }
     }
 }

@@ -289,5 +289,13 @@
     <string name="add_group_heading">Add Group</string>
     <string name="edit_group_heading">Edit Group</string>
     <string name="group_heading">Group</string>
-
+    <string name="update_project_heading">Update Project</string>
+    <string name="role_name_heading1">Role Name</string>
+    <string name="role_heading">Role</string>
+    <string name="member_heading">Member</string>
+    <string name="project_admin_heading">Project admin</string>
+    <string name="add_role_heading">Add role</string>
+    <string name="edit_role_heading">Edit role</string>
+    <string name="project_admin_label">Project Admin</string>
+    <string name="add_member_heading">Add Member</string>
 </resources>

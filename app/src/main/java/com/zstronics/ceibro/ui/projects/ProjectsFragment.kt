@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -61,11 +62,11 @@ class ProjectsFragment :
             adapter.setList(it)
         }
         adapter.itemClickListener =
-            { _: View, position: Int, data: AllProjectsResponse.Result.Projects ->
-                //navigateToMsgView(data)
+            { _: View, position: Int, data: AllProjectsResponse.Projects ->
+                navigate(R.id.createProjectMainFragment, bundleOf(AllProjectsResponse.Projects::class.java.name to  data))
             }
         adapter.childItemClickListener =
-            { view: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+            { view: View, position: Int, data: AllProjectsResponse.Projects ->
                 //if (view.id == R.id.chatFavIcon)
                 //viewModel.addChatToFav(data.id)
             }
@@ -75,7 +76,7 @@ class ProjectsFragment :
         mViewDataBinding.projectRV.adapter = adapter
 
         adapter.itemLongClickListener =
-            { _: View, _: Int, data: AllProjectsResponse.Result.Projects ->
+            { _: View, _: Int, data: AllProjectsResponse.Projects ->
                 //showChatActionSheet(data)
             }
     }

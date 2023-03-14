@@ -12,6 +12,8 @@
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.projects.newproject.overview.ProjectOverviewVM" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -252,11 +254,12 @@
                     android:textAllCaps="false"
                     android:textColor="@color/appTextGrey"
                     android:textSize="14sp"
+                    android:visibility="@{viewState.projectCreated ?View.GONE:View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/projectDescriptionField"
                     app:layout_constraintVertical_bias="1.0"
-                    tools:ignore="TouchTargetSizeCheck"/>
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/createProjectBtn"
@@ -272,6 +275,7 @@
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"
+                    android:visibility="@{viewState.projectCreated ?View.GONE:View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
                     app:layout_constraintEnd_toStartOf="@+id/cancelButton"
                     app:layout_constraintTop_toTopOf="@+id/cancelButton"

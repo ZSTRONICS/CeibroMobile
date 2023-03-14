@@ -42,10 +42,10 @@ class HomeFragment :
         viewModel.homeProjects.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
-        adapter.itemClickListener = { _: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+        adapter.itemClickListener = { _: View, position: Int, data: AllProjectsResponse.Projects ->
             //navigateToMsgView(data)
         }
-        adapter.childItemClickListener = { view: View, position: Int, data: AllProjectsResponse.Result.Projects ->
+        adapter.childItemClickListener = { view: View, position: Int, data: AllProjectsResponse.Projects ->
             //if (view.id == R.id.chatFavIcon)
             //viewModel.addChatToFav(data.id)
         }
@@ -63,7 +63,7 @@ class HomeFragment :
         mViewDataBinding.homeProjectRV.adapter = adapter
 
         adapter.itemLongClickListener =
-            { _: View, _: Int, data: AllProjectsResponse.Result.Projects ->
+            { _: View, _: Int, data: AllProjectsResponse.Projects ->
                 //showChatActionSheet(data)
             }
     }
