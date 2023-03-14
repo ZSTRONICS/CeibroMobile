@@ -8,6 +8,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentCreateProjectMainBinding
+import com.zstronics.ceibro.ui.projects.newproject.documents.ProjectDocumentsFragment
 import com.zstronics.ceibro.ui.projects.newproject.group.ProjectGroupFragment
 import com.zstronics.ceibro.ui.projects.newproject.members.ProjectMembersFragment
 import com.zstronics.ceibro.ui.projects.newproject.overview.ProjectOverviewFragment
@@ -69,7 +70,7 @@ class CreateProjectMainFragment :
                 childFragmentManager.beginTransaction()
                     .replace(
                         R.id.project_fragment_container,
-                        ProjectOverviewFragment(this, viewState.project, viewModel.allConnections)
+                        ProjectDocumentsFragment(viewState.project)
                     ).commit()
             }
         }

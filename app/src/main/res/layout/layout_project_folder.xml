@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toStartOf="@+id/optionMenu"
             app:layout_constraintStart_toEndOf="@+id/expandedImageView"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Group Name" />
+            tools:text="Folder name" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/optionMenu"
@@ -62,10 +62,11 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTV">
+            app:layout_constraintTop_toBottomOf="@+id/titleTV"
+            tools:visibility="visible">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/memberRV"
+                android:id="@+id/nestedFilesRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="3dp"
@@ -76,7 +77,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:itemCount="3"
-                tools:listitem="@layout/layout_project_group_nested_member" />
+                tools:listitem="@layout/layout_project_file" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <View

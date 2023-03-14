@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projects.newproject.group.adapter
+package com.zstronics.ceibro.ui.projects.newproject.documents.adapter
 
 import android.os.Build
 import android.view.LayoutInflater
@@ -11,22 +11,22 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.gone
 import com.zstronics.ceibro.base.extensions.isGone
 import com.zstronics.ceibro.base.extensions.visible
-import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
-import com.zstronics.ceibro.databinding.LayoutProjectGroupsBinding
+import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.databinding.LayoutProjectFolderBinding
 import javax.inject.Inject
 
-class ProjectGroupsAdapter @Inject constructor() :
-    RecyclerView.Adapter<ProjectGroupsAdapter.ProjectGroupViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: ProjectGroup) -> Unit)? =
+class ProjectFoldersAdapter @Inject constructor() :
+    RecyclerView.Adapter<ProjectFoldersAdapter.ProjectFoldersViewHolder>() {
+    var itemClickListener: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
         null
 
-    private var list: MutableList<ProjectGroup> = mutableListOf()
-    var simpleChildItemClickListener: ((view: View, position: Int, data: ProjectGroup) -> Unit)? =
+    private var list: MutableList<CreateProjectFolderResponse.ProjectFolder> = mutableListOf()
+    var simpleChildItemClickListener: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
         null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectGroupViewHolder {
-        return ProjectGroupViewHolder(
-            LayoutProjectGroupsBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectFoldersViewHolder {
+        return ProjectFoldersViewHolder(
+            LayoutProjectFolderBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -35,7 +35,7 @@ class ProjectGroupsAdapter @Inject constructor() :
     }
 
     @RequiresApi(Build.VERSION_CODES.O_MR1)
-    override fun onBindViewHolder(holder: ProjectGroupViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProjectFoldersViewHolder, position: Int) {
         holder.bind(list[position])
     }
 
@@ -43,19 +43,20 @@ class ProjectGroupsAdapter @Inject constructor() :
         return list.size
     }
 
-    fun setList(list: List<ProjectGroup>) {
+    fun setList(list: List<CreateProjectFolderResponse.ProjectFolder>) {
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
     }
 
-    inner class ProjectGroupViewHolder(private val binding: LayoutProjectGroupsBinding) :
+    inner class ProjectFoldersViewHolder(private val binding: LayoutProjectFolderBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ProjectGroup) {
+        fun bind(item: CreateProjectFolderResponse.ProjectFolder) {
             binding.titleTV.text = item.name
-            val adapter = ProjectGroupsNestedMemberAdapter()
-            adapter.setList(item.members)
-            binding.memberRV.adapter = adapter
+            val filesAdapter = ProjectFilesNestedAdapter()
+            item.files?.let { filesAdapter.setList(it) }
+            binding.nestedFilesRV.adapter = filesAdapter
+
             binding.optionMenu.setOnClickListener {
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

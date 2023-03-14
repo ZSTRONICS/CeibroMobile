@@ -24,7 +24,7 @@ data class ProjectRolesResponse(
         @SerializedName("memberPermission")
         val memberPermission: Permission,
         @SerializedName("members")
-        val members: List<Member>,
+        val members: List<Member> = listOf(),
         @SerializedName("name")
         val name: String,
         @SerializedName("permissions")

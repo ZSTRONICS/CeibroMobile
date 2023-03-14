@@ -4,7 +4,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/_10sdp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
@@ -35,7 +36,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:fontFamily="@font/inter_bold"
-                android:text="@string/add_group_heading"
+                android:text="@string/add_folder_heading"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -54,13 +55,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/groupField"
+            android:id="@+id/inputField"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="10dp"
-            android:hint="@string/group_heading"
+            android:hint="@string/folder_heading"
             android:textColorHint="@color/grey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
@@ -69,7 +70,7 @@
             app:layout_constraintTop_toBottomOf="@+id/header">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/groupText"
+                android:id="@+id/inputText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_regular"
@@ -96,14 +97,13 @@
             android:textAllCaps="false"
             android:textColor="@color/appTextGrey"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/groupField"
+            app:layout_constraintTop_toBottomOf="@+id/inputField"
             app:layout_constraintVertical_bias="0.0"
             app:layout_goneMarginBottom="@dimen/_10sdp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/addGroupBtn"
+            android:id="@+id/addBtn"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginEnd="13dp"

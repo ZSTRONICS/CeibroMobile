@@ -123,7 +123,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         _fileUriList.postValue(files)
     }
 
-    fun removeAllFiles() {
+    private fun removeAllFiles() {
         _fileUriList.postValue(arrayListOf())
     }
 

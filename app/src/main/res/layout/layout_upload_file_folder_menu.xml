@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/yellow_outline_rectangle"
+    android:orientation="vertical"
+    android:padding="@dimen/_5sdp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/uploadFolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="start|center"
+        android:padding="@dimen/_4sdp"
+        android:text="@string/new_folder_heading"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11sdp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:background="@color/appLightGrey"
+        android:clickable="false" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/uploadFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="start|center"
+        android:padding="@dimen/_4sdp"
+        android:text="@string/upload_files_heading"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11sdp" />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

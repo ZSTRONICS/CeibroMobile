@@ -298,4 +298,9 @@
     <string name="edit_role_heading">Edit role</string>
     <string name="project_admin_label">Project Admin</string>
     <string name="add_member_heading">Add Member</string>
+    <string name="add_folder_heading">Add Folder</string>
+    <string name="new_folder_heading">New Folder</string>
+    <string name="upload_files_heading">Upload Files</string>
+    <string name="folder_heading">Folder</string>
+    <string name="save_heading">Save</string>
 </resources>

@@ -5,6 +5,9 @@ import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
+import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
+import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
@@ -114,7 +117,6 @@ class ProjectRepository @Inject constructor(
     ): ApiResponse<CreateRoleResponse> = executeSafely {
         service.createRoles(projectId, body)
     }
-
     override suspend fun updateRoles(
         projectId: String,
         body: CreateRoleRequest
@@ -157,5 +159,18 @@ class ProjectRepository @Inject constructor(
         body: EditProjectMemberRequest
     ): ApiResponse<EditProjectMemberResponse> = executeSafely {
         service.updateProjectMember(id, body)
+    }
+
+    override suspend fun createProjectFolder(
+        projectId: String,
+        folderName: String
+    ): ApiResponse<CreateProjectFolderResponse> = executeSafely {
+        service.createProjectFolder(projectId, CreateProjectFolderRequest(folderName))
+    }
+
+    override suspend fun getProjectDocuments(
+        projectId: String
+    ): ApiResponse<ProjectDocumentsResponse> = executeSafely {
+        service.getProjectDocuments(projectId)
     }
 }
