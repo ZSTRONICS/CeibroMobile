@@ -46,8 +46,8 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/membersCount"
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
             android:layout_marginStart="@dimen/_5sdp"
             android:background="@drawable/badge_back"
             android:backgroundTint="@color/appBlue"
