@@ -40,10 +40,28 @@
             android:text="@{role.name}"
             android:textColor="@color/black"
             android:textSize="14.5sp"
-            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
             app:layout_constraintStart_toEndOf="@+id/expandedImageView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Role Name" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/membersCount"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:background="@drawable/badge_back"
+            android:backgroundTint="@color/appBlue"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@{String.valueOf(role.members.size())}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_9sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/titleTV"
+            app:layout_constraintStart_toEndOf="@+id/titleTV"
+            app:layout_constraintTop_toTopOf="@+id/titleTV"
+            tools:text="10" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/optionMenu"
@@ -84,7 +102,7 @@
                     android:fontFamily="@font/inter_medium"
                     android:gravity="start|center"
                     android:text="@string/project_admin_heading"
-                    android:textSize="@dimen/_12sdp"
+                    android:textSize="@dimen/_10sdp"
                     app:layout_constraintEnd_toStartOf="@+id/optionMenu"
                     app:layout_constraintStart_toEndOf="@+id/expandedImageView"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -111,7 +129,7 @@
                         android:fontFamily="@font/inter_medium"
                         android:gravity="start|center"
                         android:text="@string/role_heading"
-                        android:textSize="@dimen/_12sdp"
+                        android:textSize="@dimen/_10sdp"
                         app:layout_constraintEnd_toStartOf="@+id/optionMenu"
                         app:layout_constraintStart_toEndOf="@+id/expandedImageView"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -190,7 +208,7 @@
                         android:fontFamily="@font/inter_medium"
                         android:gravity="start|center"
                         android:text="@string/member_heading"
-                        android:textSize="@dimen/_12sdp"
+                        android:textSize="@dimen/_10sdp"
                         app:layout_constraintEnd_toStartOf="@+id/optionMenu"
                         app:layout_constraintStart_toEndOf="@+id/expandedImageView"
                         app:layout_constraintTop_toTopOf="parent" />
