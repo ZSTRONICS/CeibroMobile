@@ -20,6 +20,7 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.gone
 import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectDocumentsBinding
@@ -128,18 +129,22 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
 
         foldersAdapter.simpleChildItemClickListener =
             { childView: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder ->
-                val folderOptionPopupMenu =
+                val folderPopUp =
                     folderOptionPopupMenu(
                         position = position,
                         v = childView,
-                        folder = data
+                        folderId = data.id,
+                        true
                     )
-                folderOptionPopupMenu.showAsDropDown(
+                folderPopUp.showAsDropDown(
                     childView.findViewById(R.id.optionMenu),
                     0,
                     1
                 )
             }
+
+        filesAdapter.simpleChildItemClickListener = fileOptionMenuClick
+        foldersAdapter.shoFileMenu = fileOptionMenuClick
 
         foldersAdapter.onFolderExpand =
             { childView: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder ->
@@ -170,10 +175,26 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
         }
     }
 
+    val fileOptionMenuClick = { childView: View, position: Int, data: FilesAttachments ->
+        val filePopup =
+            folderOptionPopupMenu(
+                position = position,
+                v = childView,
+                folderId = data.id,
+                false
+            )
+        filePopup.showAsDropDown(
+            childView.findViewById(R.id.optionMenu),
+            0,
+            1
+        )
+    }
+
     private fun folderOptionPopupMenu(
         position: Int,
         v: View,
-        folder: CreateProjectFolderResponse.ProjectFolder,
+        folderId: String,
+        showUploadFiles: Boolean
     ): PopupWindow {
         val popupWindow = PopupWindow(v.context)
         val context: Context = v.context
@@ -191,9 +212,13 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
             popupWindow.dismiss()
         }
         val uploadFiles = view.findViewById<AppCompatTextView>(R.id.uploadFiles)
+        if (showUploadFiles) {
+            uploadFiles.visible()
+        } else
+            uploadFiles.gone()
         uploadFiles.setOnClick {
             viewModel.isRootSelected = false
-            viewModel.selectedFolderId = folder.id
+            viewModel.selectedFolderId = folderId
             pickAttachment(true)
             popupWindow.dismiss()
         }

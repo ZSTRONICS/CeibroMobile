@@ -51,6 +51,9 @@ class ProjectFilesNestedAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FilesAttachments) {
             binding.fileNameTV.text = item.fileName
+            binding.optionMenu.setOnClickListener {
+                simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
         }
     }
 }
