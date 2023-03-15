@@ -13,7 +13,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 import javax.inject.Inject
 
 class DashboardRepository @Inject constructor(
@@ -61,16 +60,9 @@ class DashboardRepository @Inject constructor(
         )
 
     override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadRequest): ApiResponse<UploadFilesResponse> {
-//        val files = attachmentUploadRequest.files?.map { filePath ->
-//            val file = File(filePath)
-//            val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
-//            val multiPartImageFile: MultipartBody.Part =
-//                MultipartBody.Part.createFormData("files", file.name, reqFile)
-//            multiPartImageFile
-//        }
         val moduleName = RequestBody.create(
             "text/plain".toMediaTypeOrNull(),
-            attachmentUploadRequest.moduleName.name
+            attachmentUploadRequest.moduleName
         )
         val id = RequestBody.create("text/plain".toMediaTypeOrNull(), attachmentUploadRequest._id)
 

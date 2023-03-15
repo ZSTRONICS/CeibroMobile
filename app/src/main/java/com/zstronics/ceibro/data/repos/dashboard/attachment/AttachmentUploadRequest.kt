@@ -10,7 +10,7 @@ data class AttachmentUploadRequest(
     @SerializedName("files")
     val files: List<File>?,
     @SerializedName("moduleName")
-    val moduleName: AttachmentModules,
+    val moduleName: String,
     @SerializedName("_id")
     val _id: String
 )

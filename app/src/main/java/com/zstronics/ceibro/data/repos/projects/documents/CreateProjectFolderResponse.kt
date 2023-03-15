@@ -34,6 +34,6 @@ data class CreateProjectFolderResponse(
         @SerializedName("updatedAt")
         val updatedAt: String,
         @SerializedName("files")
-        val files: List<FilesAttachments>?
+        var files: ArrayList<FilesAttachments>? = arrayListOf()
     ) : BaseResponse()
 }

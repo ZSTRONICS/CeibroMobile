@@ -303,4 +303,5 @@
     <string name="upload_files_heading">Upload Files</string>
     <string name="folder_heading">Folder</string>
     <string name="save_heading">Save</string>
+    <string name="manage_access_heading">Manage Access</string>
 </resources>

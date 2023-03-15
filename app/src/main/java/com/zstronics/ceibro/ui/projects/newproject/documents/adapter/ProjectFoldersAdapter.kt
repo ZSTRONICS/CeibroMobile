@@ -19,6 +19,8 @@ class ProjectFoldersAdapter @Inject constructor() :
     RecyclerView.Adapter<ProjectFoldersAdapter.ProjectFoldersViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
         null
+    var onFolderExpand: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
+        null
 
     private var list: MutableList<CreateProjectFolderResponse.ProjectFolder> = mutableListOf()
     var simpleChildItemClickListener: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
@@ -61,7 +63,7 @@ class ProjectFoldersAdapter @Inject constructor() :
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
             binding.root.setOnClick {
-                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                    onFolderExpand?.invoke(it, absoluteAdapterPosition, item)
                 if (binding.expandView.isGone()) {
                     binding.expandedImageView.setImageResource(R.drawable.icon_navigate_down)
                     binding.expandView.visible()
