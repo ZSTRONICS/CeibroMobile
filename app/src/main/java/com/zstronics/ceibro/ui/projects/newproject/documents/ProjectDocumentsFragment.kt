@@ -26,6 +26,7 @@ import com.zstronics.ceibro.databinding.FragmentProjectDocumentsBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.projects.newproject.documents.adapter.ProjectFilesNestedAdapter
 import com.zstronics.ceibro.ui.projects.newproject.documents.adapter.ProjectFoldersAdapter
+import com.zstronics.ceibro.ui.projects.newproject.documents.manageaccess.FragmentManageDocumentAccessSheet
 import com.zstronics.ceibro.ui.projects.newproject.documents.newfolder.NewFolderSheet
 import com.zstronics.ceibro.ui.tasks.newsubtask.AttachmentAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -181,6 +182,12 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
 
         val manageAccess = view.findViewById<AppCompatTextView>(R.id.manageAccess)
         manageAccess.setOnClick {
+            val sheet =
+                FragmentManageDocumentAccessSheet(viewModel.projectMembers, viewModel.projectGroups)
+            sheet.onManageAccess = {
+
+            }
+            sheet.show(childFragmentManager, "FragmentManageDocumentAccessSheet")
             popupWindow.dismiss()
         }
         val uploadFiles = view.findViewById<AppCompatTextView>(R.id.uploadFiles)

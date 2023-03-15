@@ -6,10 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,10 +31,21 @@ class ProjectDocumentsVM @Inject constructor(
     private val _folders: MutableLiveData<ArrayList<CreateProjectFolderResponse.ProjectFolder>> =
         MutableLiveData(arrayListOf())
     val folders: LiveData<ArrayList<CreateProjectFolderResponse.ProjectFolder>> = _folders
+
+    private val _projectMembers: MutableLiveData<List<Member?>> = MutableLiveData(arrayListOf())
+    val projectMembers: LiveData<List<Member?>> = _projectMembers
+
+    private val _projectGroups: MutableLiveData<List<ProjectsWithMembersResponse.ProjectDetail.Group>> =
+        MutableLiveData(arrayListOf())
+    val projectGroups: LiveData<List<ProjectsWithMembersResponse.ProjectDetail.Group>> =
+        _projectGroups
+
     var isRootSelected = true
     var selectedFolderId = ""
     var projectId = ""
     fun documents(projectId: String) {
+        getGroups(projectId)
+        getMembers(projectId)
         launch {
             when (val response = projectRepository.getProjectDocuments(projectId)) {
                 is ApiResponse.Success -> {
@@ -144,6 +157,40 @@ class ProjectDocumentsVM @Inject constructor(
             files.addAll(result)
         files.let {
             _files.postValue(it)
+        }
+    }
+
+    private fun getGroups(id: String?) {
+        launch {
+            when (val response = projectRepository.getGroups(id ?: "")) {
+                is ApiResponse.Success -> {
+                    val groups = response.data.result.map {
+                        ProjectsWithMembersResponse.ProjectDetail.Group(
+                            it.id, it.members, it.name
+                        )
+                    }
+                    _projectGroups.postValue(groups)
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    private fun getMembers(id: String?) {
+        launch {
+            when (val response = projectRepository.getProjectMembers(id ?: "")) {
+                is ApiResponse.Success -> {
+                    val pureMembers = response.data.members.filter { it.user != null }.map {
+                        it.user
+                    }
+                    _projectMembers.postValue(pureMembers)
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
         }
     }
 }

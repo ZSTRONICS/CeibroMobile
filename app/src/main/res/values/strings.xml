@@ -304,4 +304,7 @@
     <string name="folder_heading">Folder</string>
     <string name="save_heading">Save</string>
     <string name="manage_access_heading">Manage Access</string>
+    <string name="update_access_heading">Update Access</string>
+    <string name="select_groups_heading">Select groups</string>
+    <string name="select_members_heading">Select members</string>
 </resources>
