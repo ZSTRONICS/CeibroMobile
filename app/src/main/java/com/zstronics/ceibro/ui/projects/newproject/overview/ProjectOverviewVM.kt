@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
@@ -30,6 +31,24 @@ class ProjectOverviewVM @Inject constructor(
 
     private val _owners: MutableLiveData<ArrayList<String>> = MutableLiveData(arrayListOf())
     val owners: LiveData<ArrayList<String>> = _owners
+
+    private val _ownersMemberList: MutableLiveData<ArrayList<Member>> =
+        MutableLiveData(arrayListOf())
+    val ownersMemberList: LiveData<ArrayList<Member>> = _ownersMemberList
+    var project: AllProjectsResponse.Projects? = null
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+        user?.id?.let {
+            val member = Member(
+                id = it,
+                firstName = user.firstName,
+                surName = user.surName,
+                companyName = "",
+                profilePic = ""
+            )
+            addOrRemoveOwner(member)
+        }
+    }
 
     fun deleteStatus(position: Int) {
         val oldStatusList = projectStatuses.value
@@ -62,25 +81,62 @@ class ProjectOverviewVM @Inject constructor(
         }
     }
 
-    fun addOrRemoveOwner(ownerId: String) {
+    fun addOrRemoveOwner(member: Member) {
+        val ownerId = member.id
         val oldOwners = owners.value
         val ownerExist = oldOwners?.find { it == ownerId }
 
         if (ownerExist == null) {
             oldOwners?.add(ownerId)
         } else {
-            if (ownerId != user?.id) {
+            if (!isCreator(ownerId)) {
                 oldOwners.remove(ownerId)
             }
         }
         oldOwners?.let {
             _owners.value = it
         }
+
+
+        /// set chips selection
+        val ownersMemberList = ownersMemberList.value
+        val ownersMemberExits = ownersMemberList?.find { it.id == ownerId }
+
+        if (ownersMemberExits == null) {
+            ownersMemberList?.add(member)
+        } else {
+            if (!isCreator(ownerId)) {
+                ownersMemberList.remove(ownersMemberExits)
+            }
+        }
+        ownersMemberList?.let {
+            _ownersMemberList.value = it
+        }
     }
 
-    override fun onFirsTimeUiCreate(bundle: Bundle?) {
-        super.onFirsTimeUiCreate(bundle)
-        user?.id?.let { addOrRemoveOwner(it) }
+    fun removeOwner(member: Member) {
+        val ownersMemberList = ownersMemberList.value
+        val oldOwners = owners.value
+        if (!isCreator(member.id)) {
+            ownersMemberList?.remove(member)
+            oldOwners?.remove(member.id)
+        } else {
+            alert("The project creator cannot be removed")
+        }
+        ownersMemberList?.let {
+            _ownersMemberList.value = it
+        }
+
+        oldOwners?.let {
+            _owners.value = it
+        }
+    }
+
+    private fun isCreator(id: String): Boolean {
+        val creatorId = if (viewState.projectCreated.value == true) {
+            project?.creator?.id.toString()
+        } else user?.id.toString()
+        return id == creatorId
     }
 
     fun createProject(context: Context, projectStateHandler: ProjectStateHandler) {
@@ -108,6 +164,7 @@ class ProjectOverviewVM @Inject constructor(
             when (val response = request?.let { projectRepository.createProject(it) }) {
                 is ApiResponse.Success -> {
                     viewState.projectCreated.postValue(true)
+                    project = response.data.createProject
                     projectStateHandler.onProjectCreated(response.data.createProject)
                     loading(false, "")
                 }

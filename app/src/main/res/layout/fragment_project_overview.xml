@@ -182,6 +182,20 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/membersChipsRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/projectOwnerField"
+                    app:layout_constraintStart_toStartOf="@+id/projectOwnerField"
+                    app:layout_constraintTop_toBottomOf="@+id/projectOwnerField"
+                    tools:itemCount="10"
+                    tools:listitem="@layout/layout_item_chip" />
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/projectLocationField"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -194,7 +208,7 @@
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/projectOwnerField">
+                    app:layout_constraintTop_toBottomOf="@+id/membersChipsRV">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/projectLocation"

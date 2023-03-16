@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
-import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutOwnerBinding
 import javax.inject.Inject
 
 class OwnerSelectionAdapter @Inject constructor() :
     RecyclerView.Adapter<OwnerSelectionAdapter.OwnerSelectionViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: String) -> Unit)? = null
+    var itemClickListener: ((view: View, position: Int, data: Member) -> Unit)? = null
 
     private var list: MutableList<MyConnection> = mutableListOf()
     var selectedConnections: ArrayList<String> = arrayListOf()
@@ -95,7 +95,19 @@ class OwnerSelectionAdapter @Inject constructor() :
                 if (userToObj.companyName == "" || userToObj.companyName.isNullOrEmpty()) {
                     binding.connectionUserCompany.text = "No company added"
                 }
-
+                binding.mainLayout.setOnClickListener {
+                    itemClickListener?.invoke(
+                        it, absoluteAdapterPosition,
+                        Member(
+                            id = userToObj.id,
+                            firstName = userToObj.firstName,
+                            surName = userToObj.surName,
+                            companyName = "",
+                            profilePic = ""
+                        )
+                    )
+                    notifyDataSetChanged()
+                }
             } else {
                 val userFromObj =
                     item.from             //Getting data from "From" class. because in "To" that's our user object, as we received the request
@@ -125,20 +137,23 @@ class OwnerSelectionAdapter @Inject constructor() :
                 if (userFromObj?.companyName == "" || userFromObj?.companyName.isNullOrEmpty()) {
                     binding.connectionUserCompany.text = "No company added"
                 }
-
+                binding.mainLayout.setOnClickListener {
+                    itemClickListener?.invoke(
+                        it, absoluteAdapterPosition,
+                        Member(
+                            id = userFromObj?.id.toString(),
+                            firstName = userFromObj?.firstName.toString(),
+                            surName = userFromObj?.surName.toString(),
+                            companyName = "",
+                            profilePic = ""
+                        )
+                    )
+                    notifyDataSetChanged()
+                }
             }
 
             with(binding.connectionRadio) {
                 isChecked = selectedConnections.find { it == connectionId } != null
-                binding.mainLayout.setOnClickListener {
-                    connectionId?.let { it1 ->
-                        itemClickListener?.invoke(
-                            it, absoluteAdapterPosition,
-                            it1
-                        )
-                    }
-                    notifyDataSetChanged()
-                }
             }
 
         }
