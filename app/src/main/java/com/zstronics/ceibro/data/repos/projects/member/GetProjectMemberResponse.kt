@@ -19,7 +19,7 @@ data class GetProjectMemberResponse(
         @SerializedName("creator")
         val creator: String,
         @SerializedName("group")
-        val group: ProjectGroup,
+        val group: ProjectGroup?,
         @SerializedName("_id")
         val id: String,
         @SerializedName("isOwner")
@@ -27,7 +27,7 @@ data class GetProjectMemberResponse(
         @SerializedName("project")
         val project: String,
         @SerializedName("role")
-        val role: ProjectRolesResponse.ProjectRole,
+        val role: ProjectRolesResponse.ProjectRole?,
         @SerializedName("updatedAt")
         val updatedAt: String,
         @SerializedName("user")

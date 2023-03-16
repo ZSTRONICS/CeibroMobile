@@ -21,6 +21,7 @@
             android:id="@+id/expandedImageView"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_3sdp"
             android:src="@drawable/icon_navigate_next"
             app:layout_constraintBottom_toBottomOf="@+id/titleTV"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,27 +29,32 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/titleTV"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            android:maxWidth="260dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
-            android:drawablePadding="@dimen/_3sdp"
+            android:layout_marginEnd="@dimen/_35sdp"
+            android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
             android:gravity="start|center"
+            android:maxLines="2"
             android:padding="@dimen/_6sdp"
-            android:paddingStart="0dp"
-            android:paddingEnd="@dimen/_5sdp"
+            android:paddingStart="4dp"
+            android:paddingEnd="@dimen/_2sdp"
             android:text="@{role.name}"
             android:textColor="@color/black"
             android:textSize="14.5sp"
+            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/expandedImageView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Role Name" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/membersCount"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_marginStart="@dimen/_7sdp"
             android:background="@drawable/badge_back"
             android:backgroundTint="@color/appBlue"
             android:fontFamily="@font/inter_regular"
@@ -80,10 +86,13 @@
             android:id="@+id/expandView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_19sdp"
+            android:layout_marginEnd="@dimen/_9sdp"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/optionMenu"
-            app:layout_constraintStart_toStartOf="@+id/titleTV"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleTV">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -194,7 +203,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/_6sdp"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="@dimen/_4sdp"
                     android:background="@color/appLightGrey" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -277,12 +286,14 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_6sdp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginBottom="1dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/optionMenu"
-            app:layout_constraintStart_toStartOf="@+id/titleTV"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/expandView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

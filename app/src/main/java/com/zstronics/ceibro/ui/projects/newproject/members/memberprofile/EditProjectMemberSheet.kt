@@ -48,11 +48,17 @@ class EditProjectMemberSheet constructor(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roleId = member.role.id
-        binding.roleSelectionSpinner.setText(member.role.name)
+        roleId =
+            if (member.role?.id != null)
+                member.role.id
+            else ""
+        binding.roleSelectionSpinner.setText(member.role?.name)
 
-        groupId = member.group.id
-        binding.groupSelectionSpinner.setText(member.group.name)
+        groupId =
+            if (member.group?.id != null)
+                member.group.id
+            else ""
+        binding.groupSelectionSpinner.setText(member.group?.name)
 
         /// Set user information
         val user = member.user
@@ -74,9 +80,21 @@ class EditProjectMemberSheet constructor(
         }
 
         binding.userName.text = "${user?.firstName} ${user?.surName}"
-        binding.companyName.text = user?.companyName
-        binding.email.text = user?.workEmail
-        binding.phone.text = user?.companyPhone
+        binding.companyName.text =
+            if (user?.companyName != null)
+                user.companyName
+            else "No company added"
+
+        binding.email.text =
+            if (user?.workEmail != null)
+                user.workEmail
+            else "No work email added"
+
+        binding.phone.text =
+            if (user?.companyPhone != null)
+                user.companyPhone
+            else "No phone number added"
+
         /// Role spinner
         val roleStrings = roles.map { it.name }
         val rolesArrayAdapter =

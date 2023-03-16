@@ -127,8 +127,9 @@
                 android:textColor="@color/appTextGrey"
                 android:textSize="@dimen/_9sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/userName"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/userName"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/userName" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/emailIcon"
@@ -149,10 +150,11 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center_vertical"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:text="Ilja.Nikolajev@ceibro.ee"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_11sdp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/emailIcon"
                 app:layout_constraintTop_toBottomOf="@id/userName" />
 
@@ -164,7 +166,7 @@
                 android:layout_marginStart="@dimen/_5sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/phone"
                 app:layout_constraintStart_toEndOf="@+id/memberPhotoCard"
-                app:layout_constraintTop_toBottomOf="@id/email"
+                app:layout_constraintTop_toTopOf="@+id/phone"
                 app:srcCompat="@drawable/ic_phone"
                 app:tint="@color/grey" />
 
@@ -177,9 +179,10 @@
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center_vertical"
                 android:maxLines="1"
-                android:text="+372  5679 7470"
+                android:text="+372 5679 7470"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_11sdp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/phoneIcon"
                 app:layout_constraintTop_toBottomOf="@id/email" />
 
@@ -190,8 +193,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_13sdp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="@dimen/_13sdp"
+            android:layout_marginEnd="@dimen/_13sdp"
+            android:layout_marginTop="12dp"
             android:hint="@string/role_heading"
             android:textColorHint="@color/grey"
             app:boxStrokeColor="@color/colorGrey"

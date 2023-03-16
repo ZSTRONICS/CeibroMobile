@@ -307,4 +307,5 @@
     <string name="update_access_heading">Update Access</string>
     <string name="select_groups_heading">Select groups</string>
     <string name="select_members_heading">Select members</string>
+    <string name="creation_date_heading">Creation Date</string>
 </resources>

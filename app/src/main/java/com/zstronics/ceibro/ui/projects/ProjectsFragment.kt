@@ -30,14 +30,7 @@ class ProjectsFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.projectFilterBtn -> {
-                if (mViewDataBinding.filterScrollLayout.visibility == View.VISIBLE) {
-                    mViewDataBinding.filterScrollLayout.moveView(250, false)
-                } else {
-                    mViewDataBinding.filterScrollLayout.moveView(300, true)
-                }
-
-            }
+            R.id.projectFilterBtn -> { }
             R.id.createProject -> navigate(R.id.createProjectMainFragment)
         }
     }

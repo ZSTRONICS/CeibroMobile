@@ -51,6 +51,11 @@ class ProjectRolesAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ProjectRolesResponse.ProjectRole) {
             binding.role = item
+
+            if (item.isDefaultRole) {
+                binding.optionMenu.visibility = View.GONE
+            }
+
             binding.optionMenu.setOnClick {
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

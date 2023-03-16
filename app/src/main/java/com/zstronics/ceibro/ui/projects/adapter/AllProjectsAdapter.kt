@@ -4,8 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.gone
 import com.zstronics.ceibro.base.extensions.toCamelCase
+import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutProjectBoxBinding
@@ -53,46 +57,59 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
             //val otherUser: Member? = item.members.find { member -> member.id != user?.id }
             binding.allProjects = item
 
-            binding.projectOwnerNameText.text = item.owner.get(0).firstName + " " + item.owner.get(0).surName
+            binding.projectOwnerNameText.text = if (item.owner.size > 1)
+                "${item.owner[0].firstName} ${item.owner[0].surName}  +${item.owner.size - 1}"
+            else
+                "${item.owner[0].firstName} ${item.owner[0].surName}"
 
+            binding.creatorNameText.text =
+                if (item.creator != null)
+                    "${item.creator.firstName} ${item.creator.surName}"
+                else " - -"
 
-
-            if (item.dueDate == null || item.dueDate == "") {
-                binding.projectDueDateText.text = "No expiry"
-                binding.projectCDate.text = "No expiry"
-            }
-            else {
-                val date = item.dueDate
+            binding.projectDueDateText.text = DateUtils.reformatStringDate(
+                date = item.dueDate,
+                DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+            )
+            if (binding.projectDueDateText.text == "") {                              // Checking if date format was not dd-MM-yyyy then still it is empty
                 binding.projectDueDateText.text = DateUtils.reformatStringDate(
-                    item.dueDate, DateUtils.SERVER_DATE_FULL_FORMAT, DateUtils.FORMAT_YEAR_MON_DATE
-                )
-                binding.projectCDate.text = DateUtils.reformatStringDate(
-                    item.dueDate, DateUtils.SERVER_DATE_FULL_FORMAT, DateUtils.FORMAT_YEAR_MON_DATE
-                )
+                    date = item.dueDate,
+                    DateUtils.FORMAT_YEAR_MON_DATE,
+                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+                )                                                         // Checking if date format was not yyyy-MM-dd then it will be empty
+                if (binding.projectDueDateText.text == "") {
+                    binding.projectDueDateText.text = context.getString(R.string.invalid_due_date_text)
+                }
             }
 
+            binding.creationDateText.text = DateUtils.reformatStringDate(
+                date = item.createdAt,
+                DateUtils.SERVER_DATE_FULL_FORMAT,
+                DateUtils.FORMAT_SHORT_DATE_MON_YEAR
+            )
+
+            if (item.projectPhoto == "" || item.projectPhoto.isNullOrEmpty()) {
+                binding.projectImg.setBackgroundResource(R.drawable.splash_background)
+            } else {
+                Glide.with(binding.projectImg.context)
+                    .load(item.projectPhoto)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.splash_background)
+                    .into(binding.projectImg)
+            }
 
             binding.projectStatusName.text = item.publishStatus.toCamelCase()
-            if (item.publishStatus.toLowerCase() == "draft") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_draft_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_draft_filled)
-            }
-            else if (item.publishStatus.toLowerCase() == "ongoing") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_ongoing_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_ongoing_filled)
-            }
-            else if (item.publishStatus.toLowerCase() == "approved" || item.publishStatus.toLowerCase() == "approve") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_assigned_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_assigned_filled)
-            }
-            else if (item.publishStatus.toLowerCase() == "done" || item.publishStatus.toLowerCase() == "complete" || item.publishStatus.toLowerCase() == "completed") {
+            if (item.publishStatus.toLowerCase() == "done" || item.publishStatus.toLowerCase() == "complete" || item.publishStatus.toLowerCase() == "completed"
+                || item.publishStatus.toLowerCase() == "finish" || item.publishStatus.toLowerCase() == "finished") {
                 binding.projectCardLayout.setBackgroundResource(R.drawable.status_done_outline)
                 binding.projectStatusName.background = context.getDrawable(R.drawable.status_done_filled)
             }
-            else if (item.publishStatus.toLowerCase() == "published" || item.publishStatus.toLowerCase() == "publish") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_accepted_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_accepted_filled)
+            else {
+                binding.projectCardLayout.setBackgroundResource(R.drawable.status_draft_outline)
+                binding.projectStatusName.background = context.getDrawable(R.drawable.status_draft_filled)
             }
+
 
             itemView.setOnClickListener {
                 itemClickListener?.invoke(it, adapterPosition, item)

@@ -57,11 +57,31 @@ class ViewProjectMemberSheet constructor(
         }
 
         binding.userName.text = "${user?.firstName} ${user?.surName}"
-        binding.companyName.text = user?.companyName
-        binding.email.text = user?.workEmail
-        binding.phone.text = user?.companyPhone
-        binding.roleText.setText(member.role.name)
-        binding.groupText.setText(member.group.name)
+        binding.companyName.text =
+            if (user?.companyName != null)
+                user.companyName
+            else "No company added"
+
+        binding.email.text =
+            if (user?.workEmail != null)
+                user.workEmail
+            else "No work email added"
+
+        binding.phone.text =
+            if (user?.companyPhone != null)
+                user.companyPhone
+            else "No phone number added"
+
+        binding.roleText.setText(
+            if (member.role?.name != null)
+                member.role.name
+            else ""
+        )
+        binding.groupText.setText(
+            if (member.group?.name != null)
+                member.group.name
+            else ""
+        )
 
         binding.closeBtn.setOnClick {
             dismiss()
