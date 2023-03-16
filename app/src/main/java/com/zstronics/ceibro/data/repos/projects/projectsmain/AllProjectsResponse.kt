@@ -22,7 +22,7 @@ data class AllProjectsResponse(
         @SerializedName("createdAt")
         val createdAt: String,
         @SerializedName("creator")
-        val creator: Owner,
+        val creator: Owner?,
         @SerializedName("description")
         val description: String,
         @SerializedName("docsCount")
@@ -42,7 +42,7 @@ data class AllProjectsResponse(
         @SerializedName("owner")
         val owner: List<Owner>,
         @SerializedName("projectPhoto")
-        val projectPhoto: String,
+        val projectPhoto: String?,
         @SerializedName("publishStatus")
         val publishStatus: String,
         @SerializedName("tasksCount")

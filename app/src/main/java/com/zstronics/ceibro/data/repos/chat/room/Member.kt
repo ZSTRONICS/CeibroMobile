@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Member(
     @SerializedName("companyName")
-    val companyName: String,
+    val companyName: String?,
     @SerializedName("firstName")
     val firstName: String,
     @SerializedName("_id")
@@ -21,8 +21,8 @@ data class Member(
     @SerializedName("surName")
     val surName: String,
     @SerializedName("companyPhone")
-    val companyPhone: String = "",
+    val companyPhone: String? = "",
     @SerializedName("workEmail")
-    val workEmail: String = "",
+    val workEmail: String? = "",
     var isChecked: Boolean = false
 ) : BaseResponse(), Parcelable

@@ -7,10 +7,8 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/addMenuBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_28sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_26sdp"
         android:background="@drawable/signin_button_back"
         android:fontFamily="@font/inter_semibold"
         android:paddingStart="20dp"
@@ -19,6 +17,7 @@
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />

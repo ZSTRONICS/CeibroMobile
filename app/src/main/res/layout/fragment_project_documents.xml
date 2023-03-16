@@ -83,15 +83,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider"
-                    tools:itemCount="5"
+                    tools:itemCount="2"
                     tools:listitem="@layout/layout_project_folder" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/filesRV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="3dp"
-                    android:paddingEnd="3dp"
+                    android:layout_marginTop="1dp"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="1dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

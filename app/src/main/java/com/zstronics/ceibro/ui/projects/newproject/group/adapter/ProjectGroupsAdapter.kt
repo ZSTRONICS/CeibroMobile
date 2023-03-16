@@ -56,6 +56,11 @@ class ProjectGroupsAdapter @Inject constructor() :
             val adapter = ProjectGroupsNestedMemberAdapter()
             adapter.setList(item.members)
             binding.memberRV.adapter = adapter
+
+            if (item.isDefaultGroup) {
+                binding.optionMenu.visibility = View.GONE
+            }
+
             binding.optionMenu.setOnClickListener {
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

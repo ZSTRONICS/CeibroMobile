@@ -5,8 +5,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/_20sdp">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
@@ -162,7 +161,7 @@
             android:layout_height="32dp"
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="@dimen/_19sdp"
             android:background="@drawable/signin_button_back"
             android:backgroundTint="@color/colorGrey"
             android:fontFamily="@font/inter_semibold"
@@ -172,6 +171,7 @@
             android:textAllCaps="false"
             android:textColor="@color/appTextGrey"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/groupSelectionField"
             app:layout_constraintVertical_bias="0.0"

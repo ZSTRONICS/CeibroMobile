@@ -15,12 +15,15 @@
             android:id="@+id/fileNameTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_3sdp"
             android:fontFamily="@font/inter_medium"
             android:gravity="start|center"
             android:padding="@dimen/_6sdp"
             android:text="Filename-2.jpg"
             android:textSize="@dimen/_11sdp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,7 +31,7 @@
             android:id="@+id/optionMenu"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="@dimen/_1sdp"
             android:src="@drawable/ic_menu_dots"
@@ -41,11 +44,13 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="0.5dp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/memberName"
-            app:layout_constraintStart_toStartOf="@+id/memberName"
-            app:layout_constraintTop_toBottomOf="@+id/memberName" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fileNameTV" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

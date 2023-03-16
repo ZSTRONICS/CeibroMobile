@@ -20,9 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="13dp"
             android:layout_marginEnd="9dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="9dp"
             app:cardCornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,9 +39,9 @@
                     android:id="@+id/cardView"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="18dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="16dp"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -76,33 +76,28 @@
                             android:textColor="@color/black"
                             android:textSize="12sp" />
 
-                        <TextView
-                            android:id="@+id/projectCDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="-10dp"
-                            android:background="@drawable/status_draft_filled"
-                            android:backgroundTint="@color/white"
-                            android:elevation="0dp"
-                            android:fontFamily="@font/inter_regular"
-                            android:paddingStart="18dp"
-                            android:paddingTop="2.5dp"
-                            android:paddingEnd="12dp"
-                            android:paddingBottom="2.5dp"
-                            android:text="22.05.2021"
-                            android:textColor="@color/black"
-                            android:textSize="12sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.cardview.widget.CardView>
+
+                <View
+                    android:id="@+id/projectCenterPoint"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@+id/projectName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.54"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
                 <LinearLayout
                     android:id="@+id/dueDateLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
                     android:gravity="start"
                     android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@+id/projectDocumentLayout"
+                    app:layout_constraintEnd_toStartOf="@+id/projectCenterPoint"
                     app:layout_constraintStart_toStartOf="@+id/cardView"
                     app:layout_constraintTop_toBottomOf="@+id/cardView">
 
@@ -128,16 +123,50 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ownerLayout"
+                    android:id="@+id/creationDateLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="10dp"
                     android:gravity="start"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="@+id/cardView"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/dueDateLayout"
+                    app:layout_constraintStart_toEndOf="@+id/projectCenterPoint"
                     app:layout_constraintTop_toTopOf="@+id/dueDateLayout">
+
+                    <TextView
+                        android:id="@+id/creationDateHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:text="@string/created_on_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/creationDateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:text="16.05.2021"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ownerLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:layout_marginEnd="5dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toStartOf="@+id/projectCenterPoint"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/dueDateLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/dueDateLayout">
 
                     <TextView
                         android:id="@+id/ownerHeading"
@@ -160,141 +189,56 @@
                         android:textSize="13.5sp" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/creatorLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="start"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="@+id/creationDateLayout"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/projectCenterPoint"
+                    app:layout_constraintTop_toTopOf="@+id/ownerLayout">
+
+                    <TextView
+                        android:id="@+id/creatorHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:text="@string/creator_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="12.5sp" />
+
+                    <TextView
+                        android:id="@+id/creatorNameText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:text="Ilja Nikolajev"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/projectName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="@dimen/_17sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
                     android:fontFamily="@font/inter_bold"
                     android:text="@{allProjects.title}"
                     android:textColor="@color/black"
                     android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="@+id/cardView"
-                    app:layout_constraintStart_toStartOf="@+id/cardView"
-                    app:layout_constraintTop_toBottomOf="@+id/dueDateLayout" />
-
-                <TextView
-                    android:id="@+id/projectViewMapBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/inter_regular"
-                    android:text="@string/view_map_heading"
-                    android:textColor="@color/appYellow"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="@+id/cardView"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/cardView"
-                    app:layout_constraintTop_toBottomOf="@+id/projectName" />
-
-                <View
-                    android:id="@+id/view15"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@color/appLightGrey"
-                    app:layout_constraintEnd_toEndOf="@+id/cardView"
-                    app:layout_constraintStart_toStartOf="@+id/cardView"
-                    app:layout_constraintTop_toBottomOf="@+id/projectViewMapBtn" />
-
-                <LinearLayout
-                    android:id="@+id/projectTaskLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="15dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/view15"
-                    app:layout_constraintTop_toBottomOf="@+id/view15"
-                    app:layout_constraintVertical_bias="0.0">
+                    app:layout_constraintEnd_toEndOf="@+id/cardView"
+                    app:layout_constraintStart_toStartOf="@+id/cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/ownerLayout" />
 
-                    <ImageView
-                        android:id="@+id/projTaskImg"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:src="@drawable/icon_task"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        app:tint="@color/appYellow" />
-
-                    <TextView
-                        android:id="@+id/projTaskCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="3dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:padding="1dp"
-                        android:text="@{String.valueOf(allProjects.tasksCount) + ` task(s)`}"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/projectMemberLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="1dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="@+id/view15"
-                    app:layout_constraintTop_toTopOf="@+id/projectTaskLayout">
-
-                    <ImageView
-                        android:id="@+id/projMemberImg"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:src="@drawable/icon_member"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        app:tint="@color/appYellow" />
-
-                    <TextView
-                        android:id="@+id/projMemberCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:padding="1dp"
-                        android:text="@{String.valueOf(allProjects.usersCount) + ``}"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/projectDocumentLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toStartOf="@+id/projectMemberLayout"
-                    app:layout_constraintStart_toEndOf="@+id/projectTaskLayout"
-                    app:layout_constraintTop_toTopOf="@+id/projectTaskLayout">
-
-                    <ImageView
-                        android:id="@+id/projDocumentImg"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:src="@drawable/icon_folder"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        app:tint="@color/appYellow" />
-
-                    <TextView
-                        android:id="@+id/projDocumentCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:padding="1dp"
-                        android:text="@{String.valueOf(allProjects.docsCount) + ` doc(s)`}"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-                </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

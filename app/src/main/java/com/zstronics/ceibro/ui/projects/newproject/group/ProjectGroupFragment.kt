@@ -56,7 +56,7 @@ class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsR
             sheet.onGroupAdd = { groupText ->
                 viewModel.addGroup(projectLive.value?.id, groupText)
             }
-            sheet.show(childFragmentManager, "AddNewStatusSheet")
+            sheet.show(childFragmentManager, "AddNewGroupSheet")
         }
     }
 
@@ -111,7 +111,7 @@ class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsR
             sheet.onGroupEdited = { groupText ->
                 viewModel.updateGroup(projectId, groupId, groupText)
             }
-            sheet.show(childFragmentManager, "AddNewStatusSheet")
+            sheet.show(childFragmentManager, "AddNewGroupSheet")
             popupWindow.dismiss()
         }
         remove.setOnClick {

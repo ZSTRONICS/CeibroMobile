@@ -20,6 +20,8 @@
             android:padding="@dimen/_6sdp"
             android:text="@string/member_heading"
             android:textSize="@dimen/_11sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
