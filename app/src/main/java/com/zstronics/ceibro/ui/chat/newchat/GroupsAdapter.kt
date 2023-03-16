@@ -4,10 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.LayoutItemGroupBinding
-import com.zstronics.ceibro.databinding.LayoutItemQuestionParticipantsBinding
 import javax.inject.Inject
 
 class GroupsAdapter @Inject constructor() : RecyclerView.Adapter<GroupsAdapter.GroupsViewHolder>() {
@@ -42,6 +40,13 @@ class GroupsAdapter @Inject constructor() : RecyclerView.Adapter<GroupsAdapter.G
 
         fun bind(item: ProjectsWithMembersResponse.ProjectDetail.Group) {
             binding.group = item
+            binding.appCompatCheckBox.isChecked = item.isChecked
+            binding.root.setOnClickListener {
+                item.isChecked = !item.isChecked
+                dataList[absoluteAdapterPosition].isChecked = item.isChecked
+                notifyItemChanged(absoluteAdapterPosition)
+                itemClickListener?.invoke(it, position, item)
+            }
         }
     }
 }

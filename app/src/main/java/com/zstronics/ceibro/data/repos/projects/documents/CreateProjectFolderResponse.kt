@@ -16,13 +16,13 @@ data class CreateProjectFolderResponse(
     @Keep
     data class ProjectFolder(
         @SerializedName("access")
-        val access: List<Member>,
+        var access: List<Member>,
         @SerializedName("createdAt")
         val createdAt: String,
         @SerializedName("creator")
         val creator: Member,
         @SerializedName("group")
-        val group: ProjectGroup?,
+        val group: List<ProjectGroup>?,
         @SerializedName("_id")
         val id: String,
         @SerializedName("name")
@@ -34,6 +34,6 @@ data class CreateProjectFolderResponse(
         @SerializedName("updatedAt")
         val updatedAt: String,
         @SerializedName("files")
-        val files: List<FilesAttachments>?
+        var files: ArrayList<FilesAttachments>? = arrayListOf()
     ) : BaseResponse()
 }

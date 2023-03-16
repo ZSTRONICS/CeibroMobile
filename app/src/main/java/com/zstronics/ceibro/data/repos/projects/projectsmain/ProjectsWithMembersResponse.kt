@@ -21,8 +21,9 @@ data class ProjectsWithMembersResponse(
         @Keep
         data class Group(
             @SerializedName("_id") val id: String,
-            @SerializedName("members") val members: List<Any>,
-            @SerializedName("name") val name: String
+            @SerializedName("members") val members: List<Member>,
+            @SerializedName("name") val name: String,
+            var isChecked: Boolean = false
         )
 
     }

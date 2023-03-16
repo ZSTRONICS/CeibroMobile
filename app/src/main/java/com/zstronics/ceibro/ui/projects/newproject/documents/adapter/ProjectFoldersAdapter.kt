@@ -11,6 +11,7 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.gone
 import com.zstronics.ceibro.base.extensions.isGone
 import com.zstronics.ceibro.base.extensions.visible
+import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.databinding.LayoutProjectFolderBinding
 import javax.inject.Inject
@@ -19,9 +20,13 @@ class ProjectFoldersAdapter @Inject constructor() :
     RecyclerView.Adapter<ProjectFoldersAdapter.ProjectFoldersViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
         null
+    var onFolderExpand: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
+        null
 
     private var list: MutableList<CreateProjectFolderResponse.ProjectFolder> = mutableListOf()
     var simpleChildItemClickListener: ((view: View, position: Int, data: CreateProjectFolderResponse.ProjectFolder) -> Unit)? =
+        null
+    var shoFileMenu: ((view: View, position: Int, data: FilesAttachments) -> Unit)? =
         null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectFoldersViewHolder {
@@ -53,7 +58,15 @@ class ProjectFoldersAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CreateProjectFolderResponse.ProjectFolder) {
             binding.titleTV.text = item.name
+            binding.memberCountTV.text =
+                if (item.access.size > 1) "${item.access.size} Members" else "${item.access.size} Member"
+
             val filesAdapter = ProjectFilesNestedAdapter()
+            filesAdapter.simpleChildItemClickListener =
+                { childView: View, position: Int, data: FilesAttachments ->
+                    shoFileMenu?.invoke(childView, position, data)
+                }
+
             item.files?.let { filesAdapter.setList(it) }
             binding.nestedFilesRV.adapter = filesAdapter
 
@@ -61,7 +74,7 @@ class ProjectFoldersAdapter @Inject constructor() :
                 simpleChildItemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
             binding.root.setOnClick {
-                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                onFolderExpand?.invoke(it, absoluteAdapterPosition, item)
                 if (binding.expandView.isGone()) {
                     binding.expandedImageView.setImageResource(R.drawable.icon_navigate_down)
                     binding.expandView.visible()

@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
@@ -122,6 +123,12 @@ interface ProjectRepositoryService {
     suspend fun getProjectDocuments(
         @Path("id") projectId: String
     ): Response<ProjectDocumentsResponse>
+
+    @PATCH("project/documents/updateAccess/{id}")
+    suspend fun updateDocumentAccess(
+        @Path("id") fileOrFolderId: String,
+        @Body body: ManageProjectDocumentAccessRequest
+    ): Response<BaseResponse>
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
 //    for method ProjectRepositoryService.createProject

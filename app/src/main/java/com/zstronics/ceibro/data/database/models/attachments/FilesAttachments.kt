@@ -15,7 +15,7 @@ import kotlinx.parcelize.Parcelize
 data class FilesAttachments(
     @PrimaryKey
     @SerializedName("_id") val id: String,
-    @SerializedName("access") val access: List<String>,
+    @SerializedName("access") var access: List<String>,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("fileName") val fileName: String,
     @SerializedName("fileType") val fileType: String,

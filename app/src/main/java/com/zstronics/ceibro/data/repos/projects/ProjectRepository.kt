@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjec
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
@@ -117,6 +118,7 @@ class ProjectRepository @Inject constructor(
     ): ApiResponse<CreateRoleResponse> = executeSafely {
         service.createRoles(projectId, body)
     }
+
     override suspend fun updateRoles(
         projectId: String,
         body: CreateRoleRequest
@@ -173,4 +175,9 @@ class ProjectRepository @Inject constructor(
     ): ApiResponse<ProjectDocumentsResponse> = executeSafely {
         service.getProjectDocuments(projectId)
     }
+
+    override suspend fun updateDocumentAccess(request: ManageProjectDocumentAccessRequest): ApiResponse<BaseResponse> =
+        executeSafely {
+            service.updateDocumentAccess(request.fileOrFolderId, request)
+        }
 }
