@@ -8,34 +8,47 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
+      - uses: actions/checkout@v3
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
 
-    - name: Get Update
-      run: sudo apt-get update
-    - name: Install Snapd
-      run: sudo apt-get install snapd
-    - name: Install slacktee
-      run: sudo snap install slacktee
-      
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Send APK to Slack
-      run: |
-        apk_path=$(find . -name "*.apk")
-        slacktee --config slacktee.conf -p #ceibro-github-mobile -f $apk_path
+      - name: Get Update
+        run: sudo apt-get update
 
-        slack-cli -f $apk_path -c #ceibro-github-mobile
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Changes in this Release:
+            - Bug fixes
+            - Enhancements
+          draft: false
+          prerelease: false
+
+      - name: Upload APK to Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: MyApp
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: New Ceibrp Release Created
+        run: |
+          echo "Release ${{ steps.create_release.outputs.release_id }} created"
+          echo "https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}"
