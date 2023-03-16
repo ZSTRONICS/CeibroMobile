@@ -64,6 +64,15 @@ class FragmentManageDocumentAccessSheet(
         binding.cancelButton.setOnClickListener {
             dismiss()
         }
+        groupsAdapter.itemClickListener =
+            { _: View, position: Int, data: ProjectsWithMembersResponse.ProjectDetail.Group ->
+                adapter.setMembersCheckedUnChecked(data.isChecked, data.members.map { it.id })
+            }
+
+        adapter.itemClickListener =
+            { _: View, position: Int, data: Member ->
+                groupsAdapter.setGroupCheckedUnChecked(data.isChecked, data.id)
+            }
         binding.updateBtn.setOnClickListener {
             val selectedGroupsId = groupsAdapter.dataList.filter { it.isChecked }.map { it.id }
             val selectedUsersId = adapter.dataList.filter { it.isChecked }.map { it.id }

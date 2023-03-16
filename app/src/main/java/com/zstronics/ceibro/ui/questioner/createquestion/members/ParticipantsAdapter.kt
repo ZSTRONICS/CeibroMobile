@@ -33,6 +33,13 @@ class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.ChaMembersV
         notifyDataSetChanged()
     }
 
+    fun setMembersCheckedUnChecked(checked: Boolean, accessList: List<String>) {
+        val updatedMembers = dataList.map { member ->
+            member.copy(isChecked = if (accessList.contains(member.id)) checked else member.isChecked)
+        }
+        setList(updatedMembers)
+    }
+
     inner class ChaMembersViewHolder(private val binding: LayoutItemQuestionParticipantsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -43,6 +50,7 @@ class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.ChaMembersV
                 item.isChecked = !item.isChecked
                 dataList[absoluteAdapterPosition].isChecked = item.isChecked
                 notifyItemChanged(absoluteAdapterPosition)
+                itemClickListener?.invoke(it, position, item)
             }
         }
     }
