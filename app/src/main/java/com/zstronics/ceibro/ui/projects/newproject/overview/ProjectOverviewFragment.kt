@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectOverviewBinding
@@ -18,6 +19,7 @@ import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projects.newproject.overview.addnewstatus.AddNewStatusSheet
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.OwnerSelectionSheet
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
+import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import java.text.SimpleDateFormat
@@ -40,6 +42,7 @@ class ProjectOverviewFragment(
         projectLive.value?.title ?: getString(R.string.new_projects_title)
 
     override fun hasOptionMenu(): Boolean = false
+    private lateinit var assigneeChipsAdapter: MemberChipAdapter
     var cal: Calendar = Calendar.getInstance()
 
     private val dueDateSetListener =
@@ -187,8 +190,8 @@ class ProjectOverviewFragment(
             viewModel.sessionManager,
             viewModel.owners
         )
-        fragment.onSelect = { ownerId ->
-            viewModel.addOrRemoveOwner(ownerId)
+        fragment.onSelect = { member ->
+            viewModel.addOrRemoveOwner(member)
         }
         fragment.show(childFragmentManager, "OwnerSelectionSheet")
     }
@@ -204,6 +207,7 @@ class ProjectOverviewFragment(
         }
         if (projectLive.value != null) {
             viewState.projectCreated.postValue(true)
+            viewModel.project = projectLive.value
         }
         projectLive.observe(viewLifecycleOwner) {
             viewState.dueDate.postValue(it.dueDate)
@@ -214,5 +218,18 @@ class ProjectOverviewFragment(
             viewModel.addAllStatus(it.extraStatus)
             viewModel.setSelectedOwners(it.owner)
         }
+
+        assigneeChipsAdapter = MemberChipAdapter()
+
+        assigneeChipsAdapter.itemClickListener = { _: View, position: Int, data: Member ->
+            viewModel.removeOwner(data)
+        }
+
+        viewModel.ownersMemberList.observe(viewLifecycleOwner) {
+            if (it != null) {
+                assigneeChipsAdapter.setList(it)
+            }
+        }
+        mViewDataBinding.membersChipsRV.adapter = assigneeChipsAdapter
     }
 }

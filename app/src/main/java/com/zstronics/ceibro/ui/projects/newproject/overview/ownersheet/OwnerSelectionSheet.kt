@@ -8,7 +8,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
+import com.zstronics.ceibro.data.repos.dashboard.connections.toMember
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.FragmentOwnersSelectionBinding
 
@@ -19,7 +21,7 @@ class OwnerSelectionSheet constructor(
 ) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentOwnersSelectionBinding
-    var onSelect: ((connectionId: String) -> Unit)? = null
+    var onSelect: ((member: Member) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +45,8 @@ class OwnerSelectionSheet constructor(
             adapter.setList(connections)
         }
         adapter.itemClickListener =
-            { childView: View, position: Int, connectionId: String ->
-                onSelect?.invoke(connectionId)
+            { childView: View, position: Int, member: Member ->
+                onSelect?.invoke(member)
             }
         binding.closeBtn.setOnClickListener {
             dismiss()

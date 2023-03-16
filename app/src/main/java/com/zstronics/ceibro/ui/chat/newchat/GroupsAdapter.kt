@@ -35,6 +35,13 @@ class GroupsAdapter @Inject constructor() : RecyclerView.Adapter<GroupsAdapter.G
         notifyDataSetChanged()
     }
 
+    fun setGroupCheckedUnChecked(checked: Boolean, id: String) {
+        val updatedGroups = dataList.map { group ->
+            group.copy(isChecked = if (group.members.map { it.id }
+                    .contains(id)) checked else group.isChecked)
+        }
+        setList(updatedGroups)
+    }
     inner class GroupsViewHolder(private val binding: LayoutItemGroupBinding) :
         RecyclerView.ViewHolder(binding.root) {
 

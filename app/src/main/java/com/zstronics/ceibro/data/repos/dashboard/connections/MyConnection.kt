@@ -4,6 +4,7 @@ package com.zstronics.ceibro.data.repos.dashboard.connections
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.repos.chat.room.Member
 
 @Keep
 data class MyConnection(
@@ -22,3 +23,13 @@ data class MyConnection(
     @SerializedName("to")
     val to: To
 ) : BaseResponse()
+
+fun MyConnection.toMember(): Member {
+    return Member(
+        id = this.from?.id.toString(),
+        firstName = this.from?.firstName.toString(),
+        surName = this.from?.surName.toString(),
+        companyName = this.from?.companyName.toString(),
+        profilePic = this.from?.profilePic.toString(),
+    )
+}
