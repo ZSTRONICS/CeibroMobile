@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -192,5 +193,80 @@ class ProjectDocumentsVM @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateDocumentAccess(request: ManageProjectDocumentAccessRequest) {
+        updateLocalAccessOfFileOrFolder(request.accessType, request.fileOrFolderId, request.access)
+        launch {
+            loading(true)
+            when (val response = projectRepository.updateDocumentAccess(request)) {
+                is ApiResponse.Success -> {
+                    loading(false)
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    private fun updateLocalAccessOfFileOrFolder(
+        accessType: String,
+        fileOrFolderId: String,
+        access: List<String>
+    ) {
+        when (accessType) {
+            AccessType.Folder.name -> {
+                updateFolderAccess(fileOrFolderId, access)
+            }
+            AccessType.File.name -> {
+                updateFileAccess(fileOrFolderId, access)
+            }
+        }
+    }
+
+    private fun updateFileAccess(fileId: String, access: List<String>) {
+        val files = files.value
+        val file = files?.find { it.id == fileId }
+        if (file !== null) {
+            val index = files.indexOf(file)
+            if (index > -1) {
+                file.access = access
+                files.removeAt(index)
+                files.add(index, file)
+                files.let {
+                    _files.postValue(it)
+                }
+            }
+        }
+    }
+
+    private fun updateFolderAccess(folderId: String, access: List<String>) {
+        val membersAccess = access.map {
+            Member(
+                id = it,
+                companyName = "",
+                firstName = "",
+                surName = "",
+                profilePic = ""
+            )
+        }
+        val folders = folders.value
+        val folder = folders?.find { it.id == folderId }
+        if (folder !== null) {
+            val index = folders.indexOf(folder)
+            if (index > -1) {
+                folder.access = membersAccess
+                folders.removeAt(index)
+                folders.add(index, folder)
+                folders.let {
+                    _folders.postValue(it)
+                }
+            }
+        }
+    }
+
+    enum class AccessType {
+        Folder, File
     }
 }

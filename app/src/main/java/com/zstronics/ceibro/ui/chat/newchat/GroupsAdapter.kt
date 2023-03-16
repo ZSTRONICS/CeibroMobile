@@ -45,6 +45,7 @@ class GroupsAdapter @Inject constructor() : RecyclerView.Adapter<GroupsAdapter.G
                 item.isChecked = !item.isChecked
                 dataList[absoluteAdapterPosition].isChecked = item.isChecked
                 notifyItemChanged(absoluteAdapterPosition)
+                itemClickListener?.invoke(it, position, item)
             }
         }
     }

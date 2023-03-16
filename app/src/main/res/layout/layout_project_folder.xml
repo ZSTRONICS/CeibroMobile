@@ -34,10 +34,28 @@
             android:paddingEnd="@dimen/_5sdp"
             android:textColor="@color/black"
             android:textSize="14.5sp"
-            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+            app:layout_constraintEnd_toStartOf="@+id/memberCountTV"
             app:layout_constraintStart_toEndOf="@+id/expandedImageView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Folder name" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/memberCountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:drawablePadding="@dimen/_3sdp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start|center"
+            android:padding="@dimen/_6sdp"
+            android:paddingStart="0dp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:textColor="@color/black"
+            android:textSize="14.5sp"
+            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+            app:layout_constraintStart_toEndOf="@+id/titleTV"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5 Members" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/optionMenu"

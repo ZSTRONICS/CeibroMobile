@@ -22,6 +22,7 @@ import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
+import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectDocumentsBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
@@ -73,44 +74,6 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
         }
     }
 
-    private fun uploadPopupMenu(
-        v: View,
-    ): PopupWindow {
-        val popupWindow = PopupWindow(v.context)
-        val context: Context = v.context
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.layout_upload_file_folder_menu, null)
-
-        val uploadFolder = view.findViewById<AppCompatTextView>(R.id.uploadFolder)
-        val uploadFiles = view.findViewById<AppCompatTextView>(R.id.uploadFiles)
-
-        uploadFolder.setOnClick {
-            val sheet = NewFolderSheet()
-            sheet.onFolderAdd = { folderName ->
-                projectLive.value?.id?.let { projectId ->
-                    viewModel.addFolder(
-                        projectId,
-                        folderName
-                    )
-                }
-            }
-            sheet.show(childFragmentManager, "NewFolderSheet")
-            popupWindow.dismiss()
-        }
-        uploadFiles.setOnClick {
-            viewModel.isRootSelected = true
-            pickAttachment(true)
-            popupWindow.dismiss()
-        }
-
-        popupWindow.isFocusable = true
-        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.contentView = view
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 13f
-        return popupWindow
-    }
 
     @Inject
     lateinit var foldersAdapter: ProjectFoldersAdapter
@@ -133,8 +96,9 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
                     folderOptionPopupMenu(
                         position = position,
                         v = childView,
-                        folderId = data.id,
-                        true
+                        fileOrFolderId = data.id,
+                        true,
+                        data.access.map { it.id }
                     )
                 folderPopUp.showAsDropDown(
                     childView.findViewById(R.id.optionMenu),
@@ -180,8 +144,9 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
             folderOptionPopupMenu(
                 position = position,
                 v = childView,
-                folderId = data.id,
-                false
+                fileOrFolderId = data.id,
+                false,
+                data.access
             )
         filePopup.showAsDropDown(
             childView.findViewById(R.id.optionMenu),
@@ -193,8 +158,9 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
     private fun folderOptionPopupMenu(
         position: Int,
         v: View,
-        folderId: String,
-        showUploadFiles: Boolean
+        fileOrFolderId: String,
+        showUploadFiles: Boolean,
+        accessList: List<String>
     ): PopupWindow {
         val popupWindow = PopupWindow(v.context)
         val context: Context = v.context
@@ -204,11 +170,25 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
         val manageAccess = view.findViewById<AppCompatTextView>(R.id.manageAccess)
         manageAccess.setOnClick {
             val sheet =
-                FragmentManageDocumentAccessSheet(viewModel.projectMembers, viewModel.projectGroups)
-            sheet.onManageAccess = {
-
+                viewModel.projectMembers.value?.let { projectMembers ->
+                    viewModel.projectGroups.value?.let { projectGroups ->
+                        FragmentManageDocumentAccessSheet(
+                            projectMembers,
+                            projectGroups,
+                            accessList
+                        )
+                    }
+                }
+            sheet?.onManageAccess = { groups, users ->
+                val request = ManageProjectDocumentAccessRequest(
+                    access = users,
+                    group = groups,
+                    accessType = if (showUploadFiles) ProjectDocumentsVM.AccessType.Folder.name else ProjectDocumentsVM.AccessType.File.name,
+                    fileOrFolderId = fileOrFolderId
+                )
+                viewModel.updateDocumentAccess(request)
             }
-            sheet.show(childFragmentManager, "FragmentManageDocumentAccessSheet")
+            sheet?.show(childFragmentManager, "FragmentManageDocumentAccessSheet")
             popupWindow.dismiss()
         }
         val uploadFiles = view.findViewById<AppCompatTextView>(R.id.uploadFiles)
@@ -218,7 +198,46 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
             uploadFiles.gone()
         uploadFiles.setOnClick {
             viewModel.isRootSelected = false
-            viewModel.selectedFolderId = folderId
+            viewModel.selectedFolderId = fileOrFolderId
+            pickAttachment(true)
+            popupWindow.dismiss()
+        }
+
+        popupWindow.isFocusable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 13f
+        return popupWindow
+    }
+
+    private fun uploadPopupMenu(
+        v: View,
+    ): PopupWindow {
+        val popupWindow = PopupWindow(v.context)
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_upload_file_folder_menu, null)
+
+        val uploadFolder = view.findViewById<AppCompatTextView>(R.id.uploadFolder)
+        val uploadFiles = view.findViewById<AppCompatTextView>(R.id.uploadFiles)
+
+        uploadFolder.setOnClick {
+            val sheet = NewFolderSheet()
+            sheet.onFolderAdd = { folderName ->
+                projectLive.value?.id?.let { projectId ->
+                    viewModel.addFolder(
+                        projectId,
+                        folderName
+                    )
+                }
+            }
+            sheet.show(childFragmentManager, "NewFolderSheet")
+            popupWindow.dismiss()
+        }
+        uploadFiles.setOnClick {
+            viewModel.isRootSelected = true
             pickAttachment(true)
             popupWindow.dismiss()
         }

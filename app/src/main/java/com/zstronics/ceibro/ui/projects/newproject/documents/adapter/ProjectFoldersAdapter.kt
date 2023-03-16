@@ -58,6 +58,8 @@ class ProjectFoldersAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CreateProjectFolderResponse.ProjectFolder) {
             binding.titleTV.text = item.name
+            binding.memberCountTV.text =
+                if (item.access.size > 1) "${item.access.size} Members" else "${item.access.size} Member"
 
             val filesAdapter = ProjectFilesNestedAdapter()
             filesAdapter.simpleChildItemClickListener =

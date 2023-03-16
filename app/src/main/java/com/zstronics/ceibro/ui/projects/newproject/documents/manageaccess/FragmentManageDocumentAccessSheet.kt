@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.FragmentManageDocumentAccessBinding
@@ -15,12 +15,16 @@ import com.zstronics.ceibro.ui.chat.newchat.GroupsAdapter
 import com.zstronics.ceibro.ui.questioner.createquestion.members.ParticipantsAdapter
 
 class FragmentManageDocumentAccessSheet(
-    private val projectMembers: LiveData<List<Member?>>,
-    private val projectGroups: LiveData<List<ProjectsWithMembersResponse.ProjectDetail.Group>>
+    private val projectMembers: List<Member?>,
+    private val projectGroups: List<ProjectsWithMembersResponse.ProjectDetail.Group>,
+    private val accessList: List<String>
 ) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentManageDocumentAccessBinding
-    var onManageAccess: (() -> Unit)? = null
+    var onManageAccess: ((
+        groups: List<String>,
+        users: List<String>,
+    ) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,18 +52,27 @@ class FragmentManageDocumentAccessSheet(
         binding.recyclerView.adapter = adapter
         binding.groupsRecyclerView.adapter = groupsAdapter
 
-        projectMembers.observe(viewLifecycleOwner) {
-            adapter.setList(it as List<Member>)
+        val updatedMembers = projectMembers.map { member ->
+            member?.copy(isChecked = accessList.contains(member.id))
         }
-        projectGroups.observe(viewLifecycleOwner) {
-            groupsAdapter.setList(it)
-        }
+        adapter.setList(updatedMembers as List<Member>)
+        groupsAdapter.setList(projectGroups)
 
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
         binding.cancelButton.setOnClickListener {
             dismiss()
+        }
+        binding.updateBtn.setOnClickListener {
+            val selectedGroupsId = groupsAdapter.dataList.filter { it.isChecked }.map { it.id }
+            val selectedUsersId = adapter.dataList.filter { it.isChecked }.map { it.id }
+            if (selectedUsersId.isNotEmpty()) {
+                onManageAccess?.invoke(selectedGroupsId, selectedUsersId)
+                dismiss()
+            } else {
+                toast("Select the members to update access")
+            }
         }
     }
 }
