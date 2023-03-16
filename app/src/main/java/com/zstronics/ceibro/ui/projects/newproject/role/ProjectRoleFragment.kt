@@ -62,7 +62,7 @@ class ProjectRoleFragment(
                 availableMembers.value?.let { availableMembers ->
                     AddNewRoleSheet(
                         projectLive.value?.id,
-                        availableMembers,
+                        availableMembers as ArrayList<Member>,
                         null
                     )
                 }
@@ -106,7 +106,7 @@ class ProjectRoleFragment(
             availableMembers.value?.let { availableMembers ->
                 AddNewRoleSheet(
                     projectLive.value?.id,
-                    availableMembers,
+                    availableMembers as ArrayList<Member>,
                     roleData
                 )
             }

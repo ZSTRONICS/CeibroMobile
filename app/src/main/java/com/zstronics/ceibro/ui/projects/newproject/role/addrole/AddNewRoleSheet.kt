@@ -22,7 +22,7 @@ import com.zstronics.ceibro.ui.tasks.newtask.MemberChipAdapter
 
 class AddNewRoleSheet constructor(
     val projectId: String?,
-    private val availableMembers: List<Member>,
+    private val members: ArrayList<Member>,
     private val roleData: ProjectRolesResponse.ProjectRole?
 ) :
     BottomSheetDialogFragment() {
@@ -34,6 +34,7 @@ class AddNewRoleSheet constructor(
     var onUpdate: ((roleData: CreateRoleRequest) -> Unit)? = null
 
     private lateinit var assigneeChipsAdapter: MemberChipAdapter
+    private val availableMembers = members.map { it } as ArrayList<Member>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,8 +87,7 @@ class AddNewRoleSheet constructor(
                 createMemberCheckbox.isChecked = roleData.memberPermission.create
                 editMemberCheckbox.isChecked = roleData.memberPermission.edit
                 deleteMemberCheckbox.isChecked = roleData.memberPermission.delete
-                val previousMembers =
-                    availableMembers.filter { member -> roleData.members.any { it.id == member.id } }
+                val previousMembers = roleData.members
                 _roleAssignee.value = previousMembers as ArrayList<Member>
             }
 
@@ -99,25 +99,7 @@ class AddNewRoleSheet constructor(
             membersChipsRV.adapter = assigneeChipsAdapter
 
             /// spinner
-            val membersStrings = availableMembers.map { "${it.firstName} ${it.surName}" }
-            val arrayAdapter =
-                ArrayAdapter(
-                    requireContext(),
-                    android.R.layout.simple_spinner_dropdown_item,
-                    membersStrings
-                )
-
-            arrayAdapter.setDropDownViewResource(
-                android.R.layout
-                    .simple_spinner_dropdown_item
-            )
-
-            memberSelectionSpinner.setAdapter(arrayAdapter)
-
-            memberSelectionSpinner.onItemClickListener =
-                AdapterView.OnItemClickListener { _, _, position, _ ->
-                    onAssigneeSelect(position)
-                }
+            setMemberSelectionSpinner(availableMembers)
             /// End spinner
             closeBtn.setOnClickListener {
                 dismiss()
@@ -235,6 +217,29 @@ class AddNewRoleSheet constructor(
         }
     }
 
+    private fun setMemberSelectionSpinner(
+        availableMembers: List<Member>
+    ) {
+        val arrayAdapter =
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                availableMembers.map { "${it.firstName} ${it.surName}" }
+            )
+
+        arrayAdapter.setDropDownViewResource(
+            android.R.layout
+                .simple_spinner_dropdown_item
+        )
+
+        binding.memberSelectionSpinner.setAdapter(arrayAdapter)
+
+        binding.memberSelectionSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                onAssigneeSelect(position)
+            }
+    }
+
     fun hideSheet() {
         dismiss()
     }
@@ -254,6 +259,8 @@ class AddNewRoleSheet constructor(
     }
 
     private fun removeAssignee(data: Member) {
+        availableMembers.add(data)
+        setMemberSelectionSpinner(availableMembers)
         val assignee = _roleAssignee.value
         assignee?.remove(data)
         _roleAssignee.value = assignee
