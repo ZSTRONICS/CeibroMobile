@@ -20,7 +20,6 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Member
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.databinding.FragmentProjectRoleBinding
@@ -68,6 +67,7 @@ class ProjectRoleFragment(
                 }
             sheet?.onAdd = { roleData ->
                 viewModel.createRoleAPI(roleData) {
+                    projectStateHandler.onMemberAdd()
                     sheet?.hideSheet()
                 }
             }
@@ -112,6 +112,7 @@ class ProjectRoleFragment(
             }
         sheet?.onUpdate = { updatedRole ->
             viewModel.updateRoleAPI(roleData.id, updatedRole) {
+                projectStateHandler.onMemberAdd()
                 sheet?.hideSheet()
             }
         }
@@ -138,6 +139,7 @@ class ProjectRoleFragment(
         }
         remove.setOnClick {
             viewModel.deleteRole(position, data)
+            projectStateHandler.onMemberAdd()
             popupWindow.dismiss()
         }
 
