@@ -208,6 +208,7 @@ class ProjectOverviewFragment(
         if (projectLive.value != null) {
             viewState.projectCreated.postValue(true)
             viewModel.project = projectLive.value
+            viewModel.preSelectMemberChip()
         }
         projectLive.observe(viewLifecycleOwner) {
             viewState.dueDate.postValue(it.dueDate)

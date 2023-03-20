@@ -185,5 +185,20 @@ class ProjectOverviewVM @Inject constructor(
         _owners.postValue(owner.map { it.id } as ArrayList<String>?)
     }
 
+    fun preSelectMemberChip() {
+        project?.owner?.let {
+            val selectedMembers = it.map { owner ->
+                Member(
+                    id = owner.id,
+                    firstName = owner.firstName,
+                    surName = owner.surName,
+                    companyName = owner.companyName,
+                    profilePic = owner.profilePic
+                )
+            }
+            _ownersMemberList.postValue(selectedMembers as ArrayList<Member>?)
+        }
+    }
+
     data class ProjectStatus(val status: String)
 }
