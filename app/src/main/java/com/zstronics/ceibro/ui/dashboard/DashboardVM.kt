@@ -12,7 +12,10 @@ import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -197,6 +200,87 @@ class DashboardVM @Inject constructor(
                                 notificationIcon = R.drawable.icon_chat
                             )
                         )
+                    }
+                }  else if (socketData.module == "project") {
+                    when (socketData.eventType) {
+                        SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
+                            val newProject =
+                                gson.fromJson<ProjectCreatedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<ProjectCreatedSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.ProjectCreatedEvent(newProject))
+
+                            EventBus.getDefault().post(
+                                LocalEvents.CreateNotification(
+                                    moduleName = socketData.module,
+                                    moduleId = newProject.id,
+                                    notificationTitle = "New Project Created as ${newProject.title}",
+                                    isOngoing = false,
+                                    indeterminate = false,
+                                    notificationIcon = R.drawable.app_logo
+                                )
+                            )
+                        }
+                        SocketHandler.ProjectEvent.PROJECT_UPDATED.name -> {
+                            val updatedProject =
+                                gson.fromJson<ProjectCreatedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<ProjectCreatedSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.ProjectCreatedEvent(updatedProject))
+
+                            EventBus.getDefault().post(
+                                LocalEvents.CreateNotification(
+                                    moduleName = socketData.module,
+                                    moduleId = updatedProject.id,
+                                    notificationTitle = "${updatedProject.title} Updated",
+                                    isOngoing = false,
+                                    indeterminate = false,
+                                    notificationIcon = R.drawable.app_logo
+                                )
+                            )
+                        }
+                        SocketHandler.ProjectEvent.REFRESH_PROJECTS.name -> {
+
+                            EventBus.getDefault().post(LocalEvents.ProjectRefreshEvent())
+
+                        }
+                        SocketHandler.ProjectEvent.ROLE_CREATED.name -> {
+                            val newRole =
+                                gson.fromJson<RoleCreatedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<RoleCreatedSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(newRole))
+                        }
+                        SocketHandler.ProjectEvent.ROLE_UPDATED.name -> {
+                            try {
+                                val updatedRole =
+                                    gson.fromJson<RoleCreatedSocketResponse>(
+                                        arguments,
+                                        object : TypeToken<RoleCreatedSocketResponse>() {}.type
+                                    ).data
+
+                                EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(updatedRole))
+                            }
+                            catch (e: Exception) {
+                                print("Some data error")
+                            }
+                        }
+                        SocketHandler.ProjectEvent.REFRESH_ROLES.name -> {
+                            val refreshRole =
+                                gson.fromJson<RoleRefreshSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<RoleRefreshSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
+
+                        }
                     }
                 }
             }

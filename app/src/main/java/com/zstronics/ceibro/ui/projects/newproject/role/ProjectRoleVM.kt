@@ -6,10 +6,15 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,11 +27,33 @@ class ProjectRoleVM @Inject constructor(
     private val _roles: MutableLiveData<ArrayList<ProjectRolesResponse.ProjectRole>> =
         MutableLiveData(arrayListOf())
     val roles: LiveData<ArrayList<ProjectRolesResponse.ProjectRole>> = _roles
+
+    init {
+        EventBus.getDefault().register(this)
+    }
+
+
     fun getRoles(id: String?) {
         launch {
             when (val response = projectRepository.getRoles(id ?: "")) {
                 is ApiResponse.Success -> {
-                    _roles.postValue(response.data.roles as ArrayList<ProjectRolesResponse.ProjectRole>?)
+                    val newRoles = response.data.roles as ArrayList<ProjectRolesResponse.ProjectRole>?
+
+                    val adminRole = newRoles?.find { it.isDefaultRole }
+                    val adminIndex = newRoles?.indexOf(adminRole)
+                    val newRoleList: ArrayList<ProjectRolesResponse.ProjectRole> = arrayListOf()
+                    adminRole?.let { newRoleList.add(it) }                  //keeping the admin role on top of the list
+
+                    if (adminIndex != null) {
+                        newRoles.removeAt(adminIndex)
+                    }
+                    val sortedList = newRoles?.sortedBy { it.createdAt }
+                    val reversedList = sortedList?.asReversed()
+                    if (reversedList != null) {
+                        newRoleList.addAll(reversedList)
+                    }
+
+                    _roles.postValue(newRoleList)
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
@@ -101,5 +128,52 @@ class ProjectRoleVM @Inject constructor(
                 }
             }
         }
+    }
+
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRoleCreatedEvent(event: LocalEvents.RoleCreatedEvent?) {
+        val oldRoles = roles.value
+        val selectedRole = oldRoles?.find { it.id == event?.newRole?.id }
+
+        if (selectedRole == null) {
+            //it means new role added
+            event?.newRole?.let { oldRoles?.add(it) }
+        }
+        else {
+            //it means an update of a role is received
+            val index = oldRoles.indexOf(selectedRole)
+            if (index > -1) {
+                event?.newRole?.let { oldRoles.set(index, it) }
+            }
+        }
+
+        val adminRole = oldRoles?.find { it.isDefaultRole }
+        val adminIndex = oldRoles?.indexOf(adminRole)
+        val newRoleList: ArrayList<ProjectRolesResponse.ProjectRole> = arrayListOf()
+        adminRole?.let { newRoleList.add(it) }                  //keeping the admin role on top of the list
+
+        if (adminIndex != null && adminIndex > -1) {
+            oldRoles.removeAt(adminIndex)
+        }
+        val sortedList = oldRoles?.sortedBy { it.createdAt }
+        val reversedList = sortedList?.asReversed()          //sorting that newly created comes on top
+
+        if (reversedList != null) {
+            newRoleList.addAll(reversedList)
+        }
+
+        _roles.postValue(newRoleList)
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRoleRefreshEvent(event: LocalEvents.RoleRefreshEvent?) {
+        getRoles(event?.projectId ?: "")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }
