@@ -44,7 +44,7 @@ class ProjectRoleVM @Inject constructor(
                     val newRoleList: ArrayList<ProjectRolesResponse.ProjectRole> = arrayListOf()
                     adminRole?.let { newRoleList.add(it) }                  //keeping the admin role on top of the list
 
-                    if (adminIndex != null) {
+                    if (adminIndex != null && adminIndex > -1) {
                         newRoles.removeAt(adminIndex)
                     }
                     val sortedList = newRoles?.sortedBy { it.createdAt }
