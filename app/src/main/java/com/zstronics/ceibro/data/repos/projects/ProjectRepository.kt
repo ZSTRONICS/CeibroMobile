@@ -58,9 +58,9 @@ class ProjectRepository @Inject constructor(
         val publishStatus = getRequestBody(createProjectRequest.publishStatus)
 
         val file = createProjectRequest.projectPhoto
-        val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
-        val projectPhoto: MultipartBody.Part =
-            MultipartBody.Part.createFormData("projectPhoto", file.name, reqFile)
+        val reqFile = file?.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+        val projectPhoto: MultipartBody.Part? =
+            reqFile?.let { MultipartBody.Part.createFormData("projectPhoto", file.name, it) }
 
         return executeSafely(
             call = {
@@ -78,7 +78,60 @@ class ProjectRepository @Inject constructor(
         )
     }
 
+    override suspend fun updateProject(
+        createProjectRequest: CreateProjectRequest,
+        projectId: String
+    ): ApiResponse<CreateNewProjectResponse> {
+        val title = getRequestBodyOrNull(createProjectRequest.title)
+        val location = getRequestBodyOrNull(createProjectRequest.location)
+        val description = getRequestBodyOrNull(createProjectRequest.description)
+        val dueDate = getRequestBodyOrNull(createProjectRequest.dueDate)
+        val publishStatus = getRequestBodyOrNull(createProjectRequest.publishStatus)
+
+        val file = createProjectRequest.projectPhoto
+        val reqFile = file?.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+        val projectPhoto: MultipartBody.Part? =
+            reqFile?.let { MultipartBody.Part.createFormData("projectPhoto", file.name, it) }
+
+        return executeSafely(
+            call = {
+                if (file != null)
+                    service.updateProject(
+                        projectId,
+                        projectPhoto,
+                        title,
+                        location,
+                        description,
+                        dueDate,
+                        publishStatus,
+                        getRequestBodyOrNull(createProjectRequest.extraStatus),
+                        getRequestBodyOrNull(createProjectRequest.owner)
+                    )
+                else
+                    service.updateProject(
+                        projectId,
+                        title,
+                        location,
+                        description,
+                        dueDate,
+                        publishStatus,
+                        getRequestBodyOrNull(createProjectRequest.extraStatus),
+                        getRequestBodyOrNull(createProjectRequest.owner)
+                    )
+            }
+        )
+    }
+
     private fun getRequestBody(value: String): RequestBody {
+        return RequestBody.create(
+            "text/plain".toMediaTypeOrNull(),
+            value
+        )
+    }
+
+    private fun getRequestBodyOrNull(value: String): RequestBody? {
+        if (value.isNullOrEmpty())
+            return null
         return RequestBody.create(
             "text/plain".toMediaTypeOrNull(),
             value

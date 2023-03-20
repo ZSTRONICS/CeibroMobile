@@ -15,4 +15,5 @@ class ProjectOverviewState @Inject constructor() : BaseState(), IProjectOverview
     override val projectOwners: MutableLiveData<ArrayList<String>> = MutableLiveData(arrayListOf())
     override var projectPhoto: MutableLiveData<Uri> = MutableLiveData()
     override val projectCreated: MutableLiveData<Boolean> = MutableLiveData(false)
+    override var photoAttached: Boolean = false
 }

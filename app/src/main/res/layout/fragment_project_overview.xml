@@ -257,7 +257,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="15dp"
                     android:background="@drawable/signin_button_back"
                     android:backgroundTint="@color/colorGrey"
                     android:fontFamily="@font/inter_semibold"
@@ -269,31 +268,30 @@
                     android:textColor="@color/appTextGrey"
                     android:textSize="14sp"
                     android:visibility="@{viewState.projectCreated ?View.GONE:View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/projectDescriptionField"
-                    app:layout_constraintVertical_bias="1.0"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/createProjectBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:layout_marginEnd="14dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/signin_button_back"
                     android:fontFamily="@font/inter_semibold"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="20dp"
+                    android:layout_marginEnd="@dimen/_10sdp"
                     android:paddingEnd="20dp"
-                    android:text="@string/create_heading"
+                    app:layout_constraintEnd_toStartOf="@id/cancelButton"
+                    android:text="@{viewState.projectCreated ? @string/update_project_heading :  @string/create_heading , default = @string/create_heading}"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:visibility="@{viewState.projectCreated ?View.GONE:View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
-                    app:layout_constraintEnd_toStartOf="@+id/cancelButton"
-                    app:layout_constraintTop_toTopOf="@+id/cancelButton"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    app:layout_constraintTop_toBottomOf="@+id/projectDescriptionField"
+                    tools:ignore="TouchTargetSizeCheck"
+                    tools:layout_editor_absoluteX="206dp"
+                    tools:layout_editor_absoluteY="518dp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

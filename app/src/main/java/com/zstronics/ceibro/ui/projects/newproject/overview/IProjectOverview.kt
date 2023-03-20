@@ -15,6 +15,7 @@ interface IProjectOverview {
         val projectOwners: MutableLiveData<ArrayList<String>>
         var projectPhoto: MutableLiveData<Uri>
         val projectCreated: MutableLiveData<Boolean>
+        var photoAttached: Boolean
     }
 
     interface ViewModel : IBase.ViewModel<State> {

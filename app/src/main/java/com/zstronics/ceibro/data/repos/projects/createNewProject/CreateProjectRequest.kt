@@ -5,7 +5,7 @@ import java.io.File
 
 data class CreateProjectRequest(
     @SerializedName("projectPhoto")
-    val projectPhoto: File,
+    val projectPhoto: File?,
     @SerializedName("title")
     val title: String,
     @SerializedName("location")
