@@ -176,6 +176,45 @@ class ProjectOverviewVM @Inject constructor(
         }
     }
 
+    fun updateProject(context: Context, projectStateHandler: ProjectStateHandler) {
+        //// api call create project
+        launch {
+            val request = projectStatuses.value?.map { it.status }?.let { statusList ->
+                owners.value?.let { owners ->
+
+                    CreateProjectRequest(
+                        projectPhoto = if (viewState.photoAttached) FileUtils.getFile(
+                            context,
+                            viewState.projectPhoto.value
+                        ) else null,
+                        title = viewState.projectTitle.value ?: "",
+                        location = viewState.location.value ?: "",
+                        description = viewState.description.value ?: "",
+                        dueDate = viewState.dueDate.value ?: "",
+                        publishStatus = viewState.status.value ?: "",
+                        extraStatus = if (statusList.isNotEmpty()) Gson().toJson(statusList) else "",
+                        owner = if (statusList.isNotEmpty()) Gson().toJson(owners) else ""
+                    )
+                }
+            }
+
+            loading(true)
+            when (val response =
+                request?.let { projectRepository.updateProject(it, project?.id.toString()) }) {
+                is ApiResponse.Success -> {
+                    viewState.projectCreated.postValue(true)
+//                    project = response.data.createProject
+//                    projectStateHandler.onProjectCreated(response.data.createProject)
+                    loading(false, "")
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+                else -> loading(false, "")
+            }
+        }
+    }
+
     fun addAllStatus(extraStatus: List<String>) {
         val statusList = extraStatus.map { ProjectStatus(it) } as ArrayList<ProjectStatus>
         _projectStatuses.value = statusList

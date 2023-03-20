@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -59,6 +60,10 @@ class ProjectOverviewFragment(
     override fun onClick(id: Int) {
         when (id) {
             R.id.createProjectBtn -> {
+                if (viewState.projectCreated.value == true) {
+                    viewModel.updateProject(requireContext(), projectStateHandler)
+                    return
+                }
 //                val projectData = viewModel.getMockedProject()
 //                projectStateHandler.onProjectCreated(projectData?.createProject)
 //                viewState.project.postValue(projectData?.createProject)
@@ -149,6 +154,7 @@ class ProjectOverviewFragment(
 
     private var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
         intent?.let { intentData ->
+            viewState.photoAttached = true
             viewState.projectPhoto.value = intentData.data
         }
     }
@@ -218,6 +224,7 @@ class ProjectOverviewFragment(
             viewState.description.postValue(it.description)
             viewModel.addAllStatus(it.extraStatus)
             viewModel.setSelectedOwners(it.owner)
+            viewState.projectPhoto.value = it.projectPhoto?.toUri()
         }
 
         assigneeChipsAdapter = MemberChipAdapter()

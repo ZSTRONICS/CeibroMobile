@@ -35,7 +35,7 @@ interface ProjectRepositoryService {
     @Multipart
     @POST("project")
     suspend fun createProject(
-        @Part projectPhoto: MultipartBody.Part,
+        @Part projectPhoto: MultipartBody.Part?,
         @Part("title") title: RequestBody,
         @Part("location") location: RequestBody,
         @Part("description") description: RequestBody,
@@ -43,6 +43,33 @@ interface ProjectRepositoryService {
         @Part("publishStatus") publishStatus: RequestBody,
         @Part("extraStatus") extraStatus: RequestBody,
         @Part("owner") owner: RequestBody
+    ): Response<CreateNewProjectResponse>
+
+    @Multipart
+    @PATCH("project/{projectId}")
+    suspend fun updateProject(
+        @Path("projectId") projectId: String,
+        @Part projectPhoto: MultipartBody.Part?,
+        @Part("title") title: RequestBody?,
+        @Part("location") location: RequestBody?,
+        @Part("description") description: RequestBody?,
+        @Part("dueDate") dueDate: RequestBody?,
+        @Part("publishStatus") publishStatus: RequestBody?,
+        @Part("extraStatus") extraStatus: RequestBody?,
+        @Part("owner") owner: RequestBody?
+    ): Response<CreateNewProjectResponse>
+
+    @Multipart
+    @PATCH("project/{projectId}")
+    suspend fun updateProject(
+        @Path("projectId") projectId: String,
+        @Part("title") title: RequestBody?,
+        @Part("location") location: RequestBody?,
+        @Part("description") description: RequestBody?,
+        @Part("dueDate") dueDate: RequestBody?,
+        @Part("publishStatus") publishStatus: RequestBody?,
+        @Part("extraStatus") extraStatus: RequestBody?,
+        @Part("owner") owner: RequestBody?
     ): Response<CreateNewProjectResponse>
 
     @POST("project/group/{id}")

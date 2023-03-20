@@ -24,6 +24,11 @@ interface IProjectRepository {
     suspend fun getProjectsWithMembers(includeMe: Boolean): ApiResponse<ProjectsWithMembersResponse>
     suspend fun getMemberByProjectId(projectId: String): ApiResponse<ProjectMembersResponse>
     suspend fun createProject(createProjectRequest: CreateProjectRequest): ApiResponse<CreateNewProjectResponse>
+    suspend fun updateProject(
+        createProjectRequest: CreateProjectRequest,
+        projectId: String
+    ): ApiResponse<CreateNewProjectResponse>
+
     suspend fun createGroup(
         projectId: String,
         body: CreateGroupRequest
