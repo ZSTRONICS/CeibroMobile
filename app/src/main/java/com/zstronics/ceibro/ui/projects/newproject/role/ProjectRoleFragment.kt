@@ -90,11 +90,7 @@ class ProjectRoleFragment(
         adapter.simpleChildItemClickListener =
             { childView: View, position: Int, data: ProjectRolesResponse.ProjectRole ->
                 val popUpWindowObj = popUpMenu(position, childView, data)
-                popUpWindowObj.showAsDropDown(
-                    childView.findViewById(R.id.optionMenu),
-                    0,
-                    1
-                )
+
             }
     }
 
@@ -129,6 +125,29 @@ class ProjectRoleFragment(
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_edit_remove_menu, null)
+
+        //following code is to make popup at top if the view is at bottom
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.isOutsideTouchable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, 0, -375)
+        } else {
+            popupWindow.showAsDropDown(v, 0, 5)
+        }
+        //////////////////////
 
         val edit = view.findViewById<View>(R.id.edit)
         val remove = view.findViewById<LinearLayoutCompat>(R.id.remove)

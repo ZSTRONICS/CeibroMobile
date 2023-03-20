@@ -4,6 +4,8 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 
 object LocalEvents {
@@ -41,4 +43,13 @@ object LocalEvents {
 
     object ClearTaskFilters
     object ClearSubtaskFilters
+
+
+    data class ProjectCreatedEvent(val newProject: AllProjectsResponse.Projects)
+    class ProjectRefreshEvent
+
+
+    data class RoleCreatedEvent(val newRole: ProjectRolesResponse.ProjectRole)
+    data class RoleRefreshEvent(val projectId: String)
+
 }
