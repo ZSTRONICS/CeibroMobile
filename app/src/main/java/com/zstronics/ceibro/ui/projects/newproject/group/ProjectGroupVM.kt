@@ -7,8 +7,13 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
+import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,11 +26,34 @@ class ProjectGroupVM @Inject constructor(
     private val _groups: MutableLiveData<ArrayList<ProjectGroup>?> =
         MutableLiveData(arrayListOf())
     val groups: LiveData<ArrayList<ProjectGroup>?> = _groups
+
+    init {
+        EventBus.getDefault().register(this)
+    }
+
     fun getGroups(id: String?) {
         launch {
             when (val response = projectRepository.getGroups(id ?: "")) {
                 is ApiResponse.Success -> {
-                    _groups.postValue(response.data.result as ArrayList<ProjectGroup>?)
+                    val newGroups = response.data.result as ArrayList<ProjectGroup>?
+
+                    val adminGroup = newGroups?.find { it.isDefaultGroup }
+                    val adminIndex = newGroups?.indexOf(adminGroup)
+                    val newGroupList: ArrayList<ProjectGroup> = arrayListOf()
+                    adminGroup?.let { newGroupList.add(it) }                  //keeping the admin group on top of the list
+
+                    if (adminIndex != null && adminIndex > -1) {
+                        newGroups.removeAt(adminIndex)
+                    }
+                    val sortedList = newGroups?.sortedBy { it.createdAt }
+                    val reversedList = sortedList?.asReversed()          //sorting that newly created comes on top
+
+                    if (reversedList != null) {
+                        newGroupList.addAll(reversedList)
+                    }
+
+                    _groups.postValue(newGroupList)
+
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
@@ -115,5 +143,52 @@ class ProjectGroupVM @Inject constructor(
                 }
             }
         }
+    }
+
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onGroupCreatedEvent(event: LocalEvents.GroupCreatedEvent?) {
+        val oldGroups = groups.value
+        val selectedGroup = oldGroups?.find { it.id == event?.newGroup?.id }
+
+        if (selectedGroup == null) {
+            //it means new group added
+            event?.newGroup?.let { oldGroups?.add(it) }
+        }
+        else {
+            //it means an update of a group is received
+            val index = oldGroups.indexOf(selectedGroup)
+            if (index > -1) {
+                event?.newGroup?.let { oldGroups.set(index, it) }
+            }
+        }
+
+        val adminGroup = oldGroups?.find { it.isDefaultGroup }
+        val adminIndex = oldGroups?.indexOf(adminGroup)
+        val newGroupList: ArrayList<ProjectGroup> = arrayListOf()
+        adminGroup?.let { newGroupList.add(it) }                  //keeping the admin group on top of the list
+
+        if (adminIndex != null && adminIndex > -1) {
+            oldGroups.removeAt(adminIndex)
+        }
+        val sortedList = oldGroups?.sortedBy { it.createdAt }
+        val reversedList = sortedList?.asReversed()          //sorting that newly created comes on top
+
+        if (reversedList != null) {
+            newGroupList.addAll(reversedList)
+        }
+
+        _groups.postValue(newGroupList)
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onGroupRefreshEvent(event: LocalEvents.GroupRefreshEvent?) {
+        getGroups(event?.projectId ?: "")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }

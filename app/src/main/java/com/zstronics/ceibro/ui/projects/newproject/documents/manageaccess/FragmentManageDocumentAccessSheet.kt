@@ -61,9 +61,7 @@ class FragmentManageDocumentAccessSheet(
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
-        binding.cancelButton.setOnClickListener {
-            dismiss()
-        }
+
         groupsAdapter.itemClickListener =
             { _: View, position: Int, data: ProjectsWithMembersResponse.ProjectDetail.Group ->
                 adapter.setMembersCheckedUnChecked(data.isChecked, data.members.map { it.id })

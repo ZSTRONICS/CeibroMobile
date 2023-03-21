@@ -128,7 +128,8 @@ class ProjectRoleFragment(
 
         //following code is to make popup at top if the view is at bottom
         popupWindow.isFocusable = true
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 13F
         popupWindow.isOutsideTouchable = true
         popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
         popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT

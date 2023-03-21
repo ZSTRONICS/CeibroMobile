@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp"
+        android:layout_margin="@dimen/_3sdp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,15 +24,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginBottom="@dimen/_4sdp"
             android:elevation="0dp"
             android:outlineSpotShadowColor="@color/white"
             app:cardBackgroundColor="@color/appLightGrey"
             app:cardCornerRadius="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/userCompany"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/userName">
+
+            <ImageView
+                android:id="@+id/connectionImg"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_img"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/connectionImgText"
@@ -58,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="5dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
             android:gravity="start"
@@ -75,7 +82,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
@@ -83,14 +89,14 @@
             android:text="@{member.companyName}"
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/userName"
             app:layout_constraintStart_toStartOf="@+id/userName"
             app:layout_constraintTop_toBottomOf="@id/userName"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="Company · Electrician" />
+            tools:text="Company" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/appCompatCheckBox"
-            android:layout_width="@dimen/_20sdp"
+            android:layout_width="@dimen/_22sdp"
             android:layout_height="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:clickable="false"
@@ -101,12 +107,12 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="7dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/userName"
-            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
-            app:layout_constraintTop_toBottomOf="@+id/userCompany"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatCheckBox"
+            app:layout_constraintStart_toStartOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toBottomOf="@+id/connectionImgCard"
             app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
