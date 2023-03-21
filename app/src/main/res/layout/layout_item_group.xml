@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp"
+        android:layout_margin="@dimen/_3sdp"
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginBottom="@dimen/_4sdp"
             android:elevation="0dp"
             android:outlineSpotShadowColor="@color/white"
@@ -56,6 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="7dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
             android:gravity="start"
@@ -71,7 +72,7 @@
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/appCompatCheckBox"
-            android:layout_width="@dimen/_20sdp"
+            android:layout_width="@dimen/_23sdp"
             android:layout_height="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:clickable="false"
@@ -82,12 +83,12 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/userName"
-            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintEnd_toEndOf="@+id/appCompatCheckBox"
+            app:layout_constraintStart_toStartOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toBottomOf="@+id/connectionImgCard" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

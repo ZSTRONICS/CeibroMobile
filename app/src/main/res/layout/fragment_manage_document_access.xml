@@ -19,7 +19,7 @@
                 android:id="@+id/closeBtn"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="13dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/headingText"
@@ -32,9 +32,9 @@
                 android:id="@+id/headingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="15.5dp"
+                android:layout_marginBottom="15.5dp"
                 android:fontFamily="@font/inter_bold"
                 android:text="@string/manage_access_heading"
                 android:textColor="@color/black"
@@ -43,6 +43,24 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/closeBtn"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/updateBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_semibold"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/update_access_heading"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <View
                 android:layout_width="match_parent"
@@ -54,14 +72,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fillViewport="true"
-            app:layout_constraintBottom_toTopOf="@+id/updateBtn"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header">
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintVertical_bias="0.0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -84,12 +104,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/groupsList"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/layout_item_question_participants" />
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_item_group" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/contactList"
@@ -108,6 +129,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:paddingBottom="55dp"
+                    android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -118,41 +141,8 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_margin="@dimen/_13sdp"
-            android:background="@drawable/signin_button_back"
-            android:backgroundTint="@color/colorGrey"
-            android:fontFamily="@font/inter_semibold"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="@string/cancel_btn_text"
-            android:textAllCaps="false"
-            android:textColor="@color/appTextGrey"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/updateBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_marginEnd="13dp"
-            android:background="@drawable/signin_button_back"
-            android:fontFamily="@font/inter_semibold"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="@string/update_access_heading"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
-            app:layout_constraintEnd_toStartOf="@+id/cancelButton"
-            app:layout_constraintTop_toTopOf="@+id/cancelButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

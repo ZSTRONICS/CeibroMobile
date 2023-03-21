@@ -64,13 +64,8 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
         val addMenuBtn = addMenuLayout.findViewById<AppCompatButton>(R.id.addMenuBtn)
 
         addMenuBtn.setOnClick {
-            val popUpWindowObj =
-                uploadPopupMenu(addMenuLayout)
-            popUpWindowObj.showAsDropDown(
-                addMenuLayout.findViewById(R.id.addMenuBtn),
-                0,
-                5
-            )
+            val popUpWindowObj = uploadPopupMenu(addMenuLayout)
+
         }
     }
 
@@ -100,11 +95,6 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
                         true,
                         data.access.map { it.id }
                     )
-                folderPopUp.showAsDropDown(
-                    childView.findViewById(R.id.optionMenu),
-                    0,
-                    1
-                )
             }
 
         filesAdapter.simpleChildItemClickListener = fileOptionMenuClick
@@ -148,11 +138,6 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
                 false,
                 data.access
             )
-        filePopup.showAsDropDown(
-            childView.findViewById(R.id.optionMenu),
-            0,
-            1
-        )
     }
 
     private fun folderOptionPopupMenu(
@@ -166,6 +151,30 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_folder_option_menu, null)
+
+        //following code is to make popup at top if the view is at bottom
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, 0, -375)
+        } else {
+            popupWindow.showAsDropDown(v, 0, 5)
+        }
+        //////////////////////
 
         val manageAccess = view.findViewById<AppCompatTextView>(R.id.manageAccess)
         manageAccess.setOnClick {
@@ -203,12 +212,6 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
             popupWindow.dismiss()
         }
 
-        popupWindow.isFocusable = true
-        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.contentView = view
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 13f
         return popupWindow
     }
 
@@ -219,6 +222,30 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_upload_file_folder_menu, null)
+
+        //following code is to make popup at top if the view is at bottom
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, 0, -375)
+        } else {
+            popupWindow.showAsDropDown(v, 0, 0)
+        }
+        //////////////////////
 
         val uploadFolder = view.findViewById<AppCompatTextView>(R.id.uploadFolder)
         val uploadFiles = view.findViewById<AppCompatTextView>(R.id.uploadFiles)
@@ -242,12 +269,6 @@ class ProjectDocumentsFragment(private val projectLive: MutableLiveData<AllProje
             popupWindow.dismiss()
         }
 
-        popupWindow.isFocusable = true
-        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.contentView = view
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 13f
         return popupWindow
     }
 }

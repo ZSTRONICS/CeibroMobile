@@ -12,6 +12,11 @@ import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.group.GroupCreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.group.GroupRefreshSocketResponse
+import com.zstronics.ceibro.data.repos.projects.member.MemberAddedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.member.MemberRefreshSocketResponse
+import com.zstronics.ceibro.data.repos.projects.member.MemberUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
@@ -248,6 +253,7 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault().post(LocalEvents.ProjectRefreshEvent())
 
                         }
+
                         SocketHandler.ProjectEvent.ROLE_CREATED.name -> {
                             val newRole =
                                 gson.fromJson<RoleCreatedSocketResponse>(
@@ -279,7 +285,67 @@ class DashboardVM @Inject constructor(
                                 ).data
 
                             EventBus.getDefault().post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
+                        }
 
+                        SocketHandler.ProjectEvent.PROJECT_GROUP_CREATED.name -> {
+                            val newGroup =
+                                gson.fromJson<GroupCreatedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<GroupCreatedSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
+                        }
+                        SocketHandler.ProjectEvent.PROJECT_GROUP_UPDATED.name -> {
+                            try {
+                                val updatedGroup =
+                                    gson.fromJson<GroupCreatedSocketResponse>(
+                                        arguments,
+                                        object : TypeToken<GroupCreatedSocketResponse>() {}.type
+                                    ).data
+
+                                EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
+                            }
+                            catch (e: Exception) {
+                                print("Some data error")
+                            }
+                        }
+                        SocketHandler.ProjectEvent.REFRESH_PROJECT_GROUP.name -> {
+                            val refreshGroup =
+                                gson.fromJson<GroupRefreshSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<GroupRefreshSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.GroupRefreshEvent(refreshGroup.projectId))
+                        }
+
+                        SocketHandler.ProjectEvent.PROJECT_MEMBERS_ADDED.name -> {
+                            val newMember =
+                                gson.fromJson<MemberAddedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<MemberAddedSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.ProjectMemberAddedEvent(newMember))
+                        }
+                        SocketHandler.ProjectEvent.PROJECT_MEMBERS_UPDATED.name -> {
+                            val updatedMember =
+                                gson.fromJson<MemberUpdatedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<MemberUpdatedSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
+                        }
+                        SocketHandler.ProjectEvent.REFRESH_PROJECT_MEMBERS.name -> {
+                            val refreshMember =
+                                gson.fromJson<MemberRefreshSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<MemberRefreshSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
                         }
                     }
                 }

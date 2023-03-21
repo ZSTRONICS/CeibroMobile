@@ -11,7 +11,11 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +33,10 @@ class CreateProjectMainVM @Inject constructor(
     private val _availableMembers: MutableLiveData<List<Member>> =
         MutableLiveData(arrayListOf())
     val availableMembers: LiveData<List<Member>> = _availableMembers
+
+    init {
+        EventBus.getDefault().register(this)
+    }
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -79,5 +87,21 @@ class CreateProjectMainVM @Inject constructor(
 
     fun updateMembersList() {
         getAvailableMembers(viewState.project.value?.id ?: "")
+    }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProjectMemberAddedEvent(event: LocalEvents.ProjectMemberAddedEvent?) {
+        var projectId = ""
+
+        event?.newMember?.map { member ->
+            projectId = member.project
+        }
+        getAvailableMembers(projectId)
+    }
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }

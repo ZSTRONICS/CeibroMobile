@@ -12,7 +12,11 @@ import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,9 +33,14 @@ class ProjectMembersVM @Inject constructor(
     private val _groups: MutableLiveData<ArrayList<ProjectGroup>?> =
         MutableLiveData(arrayListOf())
     val groups: LiveData<ArrayList<ProjectGroup>?> = _groups
+
     private val _roles: MutableLiveData<ArrayList<ProjectRolesResponse.ProjectRole>> =
         MutableLiveData(arrayListOf())
     val roles: LiveData<ArrayList<ProjectRolesResponse.ProjectRole>> = _roles
+
+    init {
+        EventBus.getDefault().register(this)
+    }
 
     fun getMembers(id: String?) {
         launch {
@@ -152,5 +161,69 @@ class ProjectMembersVM @Inject constructor(
                 }
             }
         }
+    }
+
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProjectMemberAddedEvent(event: LocalEvents.ProjectMemberAddedEvent?) {
+        val oldGroupMembers = groupMembers.value
+        var projectId = ""
+
+        event?.newMember?.map { member ->
+            projectId = member.project
+            val selectedGroupMember = oldGroupMembers?.find { it.id == member.id }
+            if (member.user != null) {
+                if (selectedGroupMember == null) {
+                    //it means new member added
+                    oldGroupMembers?.add(member)
+                } else {
+                    //it means an update of a member is received
+                    val index = oldGroupMembers.indexOf(selectedGroupMember)
+                    if (index > -1) {
+                        oldGroupMembers.set(index, member)
+                    }
+                }
+            }
+        }
+        _groupMembers.postValue(oldGroupMembers)
+
+        getGroups(projectId)
+        getRoles(projectId)
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProjectMemberUpdatedEvent(event: LocalEvents.ProjectMemberUpdatedEvent?) {
+        val oldGroupMembers = groupMembers.value
+        val selectedGroupMember = oldGroupMembers?.find { it.id == event?.updatedMember?.id }
+
+        if (event?.updatedMember?.user != null) {
+            if (selectedGroupMember == null) {
+                //it means new member added
+                oldGroupMembers?.add(event.updatedMember)
+            } else {
+                //it means an update of a member is received
+                val index = oldGroupMembers.indexOf(selectedGroupMember)
+                if (index > -1) {
+                    oldGroupMembers.set(index, event.updatedMember)
+                }
+            }
+        }
+        _groupMembers.postValue(oldGroupMembers)
+
+        getGroups(event?.updatedMember?.project)
+        getRoles(event?.updatedMember?.project)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProjectMemberRefreshEvent(event: LocalEvents.ProjectMemberRefreshEvent?) {
+        getMembers(event?.projectId ?: "")
+        getGroups(event?.projectId ?: "")
+        getRoles(event?.projectId ?: "")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }

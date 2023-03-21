@@ -4,6 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.databinding.LayoutItemQuestionParticipantsBinding
 
@@ -51,6 +54,23 @@ class ParticipantsAdapter : RecyclerView.Adapter<ParticipantsAdapter.ChaMembersV
                 dataList[absoluteAdapterPosition].isChecked = item.isChecked
                 notifyItemChanged(absoluteAdapterPosition)
                 itemClickListener?.invoke(it, position, item)
+            }
+
+            if (item.profilePic == "" || item.profilePic.isNullOrEmpty()) {
+                binding.connectionImgText.text =
+                    "${item.firstName.get(0)?.uppercaseChar()}${
+                        item.surName.get(0)?.uppercaseChar()
+                    }"
+                binding.connectionImgText.visibility = View.VISIBLE
+                binding.connectionImg.visibility = View.GONE
+            } else {
+                Glide.with(binding.connectionImg.context)
+                    .load(item.profilePic)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.profile_img)
+                    .into(binding.connectionImg)
+                binding.connectionImg.visibility = View.VISIBLE
+                binding.connectionImgText.visibility = View.GONE
             }
         }
     }
