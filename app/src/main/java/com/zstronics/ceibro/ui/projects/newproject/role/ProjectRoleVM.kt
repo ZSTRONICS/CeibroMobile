@@ -106,27 +106,27 @@ class ProjectRoleVM @Inject constructor(
 
     fun deleteRole(position: Int, data: ProjectRolesResponse.ProjectRole) {
         if (!data.isDefaultRole) {
-            val old = roles.value
-            old?.removeAt(position)
-            old?.let {
-                _roles.value = it
-            }
-            deleteRoleAPI(data)
+            deleteRoleAPI(position, data)
         } else {
             alert("Cannot remove default role")
         }
     }
 
-    private fun deleteRoleAPI(data: ProjectRolesResponse.ProjectRole) {
+    private fun deleteRoleAPI(position: Int, data: ProjectRolesResponse.ProjectRole) {
         launch {
             loading(true)
             when (val response = projectRepository.deleteRole(data.id)) {
                 is ApiResponse.Success -> {
+                    val old = roles.value
+                    old?.removeAt(position)
+                    old?.let {
+                        _roles.value = it
+                    }
                     loading(false)
                 }
                 is ApiResponse.Error -> {
-                    loading(false)
-//                    loading(false, response.error.message)
+//                    loading(false)
+                    loading(false, response.error.message)
                 }
             }
         }

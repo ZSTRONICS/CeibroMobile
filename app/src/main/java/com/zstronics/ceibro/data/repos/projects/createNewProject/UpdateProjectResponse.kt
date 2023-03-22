@@ -3,10 +3,11 @@ package com.zstronics.ceibro.data.repos.projects.createNewProject
 
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 
 data class UpdateProjectResponse(
     @SerializedName("result")
-    val updatedProject: UpdateProject
+    val updatedProject: AllProjectsResponse.Projects
 ) : BaseResponse() {
     data class UpdateProject(
         @SerializedName("access")

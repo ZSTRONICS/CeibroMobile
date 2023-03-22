@@ -7,7 +7,6 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
-import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,10 +68,10 @@ class ProjectGroupVM @Inject constructor(
             alert("Duplicate group")
             return
         }
-        oldList?.add(ProjectGroup(name = group))
-        oldList?.let {
-            _groups.value = it
-        }
+//        oldList?.add(ProjectGroup(name = group))
+//        oldList?.let {
+//            _groups.value = it
+//        }
         addGroupAPI(id, group)
     }
 
@@ -122,23 +121,30 @@ class ProjectGroupVM @Inject constructor(
         }
     }
 
-    fun deleteGroup(projectId: String, position: Int, id: String) {
-        val old = groups.value
-        old?.removeAt(position)
-        old?.let {
-            _groups.value = it
+    fun deleteGroup(data: ProjectGroup, position: Int, id: String) {
+        if (!data.isDefaultGroup) {
+            deleteGroupAPI(position, data.project, id)
+        } else {
+            alert("Cannot remove default group")
         }
-        deleteGroupAPI(projectId, id)
     }
 
-    private fun deleteGroupAPI(projectId: String, id: String) {
+    private fun deleteGroupAPI(position: Int, projectId: String, id: String) {
         launch {
+            loading(true)
             when (val response =
                 projectRepository.deleteGroup(id)) {
                 is ApiResponse.Success -> {
+                    val old = groups.value
+                    old?.removeAt(position)
+                    old?.let {
+                        _groups.value = it
+                    }
+                    loading(false)
                     getGroups(projectId)
                 }
                 is ApiResponse.Error -> {
+                    loading(false, response.error.message)
                     getGroups(projectId)
                 }
             }

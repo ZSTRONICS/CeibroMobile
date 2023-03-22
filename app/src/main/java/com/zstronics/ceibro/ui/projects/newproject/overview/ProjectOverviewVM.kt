@@ -13,8 +13,12 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRe
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.projects.newproject.overview.ownersheet.ProjectStateHandler
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +40,14 @@ class ProjectOverviewVM @Inject constructor(
         MutableLiveData(arrayListOf())
     val ownersMemberList: LiveData<ArrayList<Member>> = _ownersMemberList
     var project: AllProjectsResponse.Projects? = null
+
+
+    private val _updatedProject: MutableLiveData<AllProjectsResponse.Projects> = MutableLiveData()
+    val updatedProject: LiveData<AllProjectsResponse.Projects> = _updatedProject
+    init {
+        EventBus.getDefault().register(this)
+    }
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         user?.id?.let {
@@ -203,8 +215,8 @@ class ProjectOverviewVM @Inject constructor(
                 request?.let { projectRepository.updateProject(it, project?.id.toString()) }) {
                 is ApiResponse.Success -> {
                     viewState.projectCreated.postValue(true)
-//                    projectStateHandler.onProjectCreated(response.data.createProject)
-                    loading(false, "")
+                    projectStateHandler.onProjectCreated(response.data.updatedProject)
+                    loading(false, "Update successful")
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
@@ -239,4 +251,20 @@ class ProjectOverviewVM @Inject constructor(
     }
 
     data class ProjectStatus(val status: String)
+
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onProjectCreatedEvent(event: LocalEvents.ProjectCreatedEvent?) {
+        val oldProjects = project
+        if (oldProjects?.id == event?.newProject?.id) {
+            _updatedProject.postValue(event?.newProject)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
+    }
 }
