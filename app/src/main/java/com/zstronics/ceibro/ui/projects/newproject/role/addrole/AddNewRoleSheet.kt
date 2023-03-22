@@ -159,9 +159,9 @@ class AddNewRoleSheet constructor(
             projectAdminSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     roleSwitch.gone()
-                    roleLayout.gone()
                     memberSwitch.gone()
-                    memberPermissionLayout.gone()
+                    roleLayout.visibility = View.GONE
+                    memberPermissionLayout.visibility = View.GONE
                     roleSwitch.isChecked = false
                     memberSwitch.isChecked = false
 
@@ -202,21 +202,6 @@ class AddNewRoleSheet constructor(
                     roleLayout.gone()
                 }
             }
-            createRoleCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    roleSwitch.isChecked = true
-                }
-            }
-            editRoleCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    roleSwitch.isChecked = true
-                }
-            }
-            deleteRoleCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    roleSwitch.isChecked = true
-                }
-            }
 
             // Member Switch handling
             memberSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -230,21 +215,6 @@ class AddNewRoleSheet constructor(
                 }
             }
 
-            createMemberCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    memberSwitch.isChecked = true
-                }
-            }
-            editMemberCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    memberSwitch.isChecked = true
-                }
-            }
-            deleteMemberCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    memberSwitch.isChecked = true
-                }
-            }
         }
     }
 
