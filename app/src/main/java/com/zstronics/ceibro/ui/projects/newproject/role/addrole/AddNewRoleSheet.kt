@@ -115,15 +115,13 @@ class AddNewRoleSheet constructor(
                 if (roleText.text?.isEmpty() == true) {
                     showToast("Role Title is required")
                     return@setOnClick
-                } else if (_roleAssignee.value?.isEmpty() == true) {
-                    showToast("Members are required")
-                    return@setOnClick
                 } else if (
                     projectAdminSwitch.isChecked ||
                     roleSwitch.isChecked ||
                     memberSwitch.isChecked
                 ) {
                     if (
+                        projectAdminSwitch.isChecked ||
                         createRoleCheckbox.isChecked ||
                         editRoleCheckbox.isChecked ||
                         deleteRoleCheckbox.isChecked ||
@@ -197,11 +195,26 @@ class AddNewRoleSheet constructor(
             roleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     roleLayout.visible()
-                    createRoleCheckbox.isChecked = false
-                    editRoleCheckbox.isChecked = false
-                    deleteRoleCheckbox.isChecked = false
+//                    createRoleCheckbox.isChecked = false
+//                    editRoleCheckbox.isChecked = false
+//                    deleteRoleCheckbox.isChecked = false
                 } else {
                     roleLayout.gone()
+                }
+            }
+            createRoleCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    roleSwitch.isChecked = true
+                }
+            }
+            editRoleCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    roleSwitch.isChecked = true
+                }
+            }
+            deleteRoleCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    roleSwitch.isChecked = true
                 }
             }
 
@@ -209,14 +222,29 @@ class AddNewRoleSheet constructor(
             memberSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     memberPermissionLayout.visible()
-                    createMemberCheckbox.isChecked = false
-                    editMemberCheckbox.isChecked = false
-                    deleteMemberCheckbox.isChecked = false
+//                    createMemberCheckbox.isChecked = false
+//                    editMemberCheckbox.isChecked = false
+//                    deleteMemberCheckbox.isChecked = false
                 } else {
                     memberPermissionLayout.gone()
                 }
             }
 
+            createMemberCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    memberSwitch.isChecked = true
+                }
+            }
+            editMemberCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    memberSwitch.isChecked = true
+                }
+            }
+            deleteMemberCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    memberSwitch.isChecked = true
+                }
+            }
         }
     }
 
