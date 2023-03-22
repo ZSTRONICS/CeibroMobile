@@ -4,6 +4,7 @@ package com.zstronics.ceibro.data.repos.projects.role
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.repos.chat.room.Member
 
 @Keep
 data class CreateRoleResponse(
@@ -23,7 +24,7 @@ data class CreateRoleResponse(
         @SerializedName("memberPermission")
         val memberPermission: ProjectRolesResponse.ProjectRole.Permission,
         @SerializedName("members")
-        val members: List<String>,
+        val members: List<Member>,
         @SerializedName("name")
         val name: String,
         @SerializedName("permissions")
