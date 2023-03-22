@@ -37,7 +37,8 @@ class ProjectRoleVM @Inject constructor(
         launch {
             when (val response = projectRepository.getRoles(id ?: "")) {
                 is ApiResponse.Success -> {
-                    val newRoles = response.data.roles as ArrayList<ProjectRolesResponse.ProjectRole>?
+                    val newRoles =
+                        response.data.roles as ArrayList<ProjectRolesResponse.ProjectRole>?
 
                     val adminRole = newRoles?.find { it.isDefaultRole }
                     val adminIndex = newRoles?.indexOf(adminRole)
@@ -124,13 +125,12 @@ class ProjectRoleVM @Inject constructor(
                     loading(false)
                 }
                 is ApiResponse.Error -> {
+                    loading(false)
 //                    loading(false, response.error.message)
                 }
             }
         }
     }
-
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -141,8 +141,7 @@ class ProjectRoleVM @Inject constructor(
         if (selectedRole == null) {
             //it means new role added
             event?.newRole?.let { oldRoles?.add(it) }
-        }
-        else {
+        } else {
             //it means an update of a role is received
             val index = oldRoles.indexOf(selectedRole)
             if (index > -1) {
@@ -159,7 +158,8 @@ class ProjectRoleVM @Inject constructor(
             oldRoles.removeAt(adminIndex)
         }
         val sortedList = oldRoles?.sortedBy { it.createdAt }
-        val reversedList = sortedList?.asReversed()          //sorting that newly created comes on top
+        val reversedList =
+            sortedList?.asReversed()          //sorting that newly created comes on top
 
         if (reversedList != null) {
             newRoleList.addAll(reversedList)
@@ -167,6 +167,7 @@ class ProjectRoleVM @Inject constructor(
 
         _roles.postValue(newRoleList)
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRoleRefreshEvent(event: LocalEvents.RoleRefreshEvent?) {
         getRoles(event?.projectId ?: "")

@@ -70,9 +70,10 @@ class AddNewRoleSheet constructor(
                 /// check role permissions
                 if (roleData.rolePermission.create || roleData.rolePermission.edit || roleData.rolePermission.delete) {
                     roleSwitch.isChecked = true
-                    roleSwitch.visible()
-                    roleLayout.visible()
                 }
+                roleSwitch.visible()
+                roleLayout.visible()
+
                 createRoleCheckbox.isChecked = roleData.rolePermission.create
                 editRoleCheckbox.isChecked = roleData.rolePermission.edit
                 deleteRoleCheckbox.isChecked = roleData.rolePermission.delete
@@ -81,9 +82,11 @@ class AddNewRoleSheet constructor(
 
                 if (roleData.memberPermission.create || roleData.memberPermission.edit || roleData.memberPermission.delete) {
                     memberSwitch.isChecked = true
-                    memberSwitch.visible()
-                    memberPermissionLayout.visible()
                 }
+
+                memberSwitch.visible()
+                memberPermissionLayout.visible()
+
                 createMemberCheckbox.isChecked = roleData.memberPermission.create
                 editMemberCheckbox.isChecked = roleData.memberPermission.edit
                 deleteMemberCheckbox.isChecked = roleData.memberPermission.delete
