@@ -5,6 +5,7 @@ import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
+import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
@@ -81,7 +82,7 @@ class ProjectRepository @Inject constructor(
     override suspend fun updateProject(
         createProjectRequest: CreateProjectRequest,
         projectId: String
-    ): ApiResponse<CreateNewProjectResponse> {
+    ): ApiResponse<UpdateProjectResponse> {
         val title = getRequestBodyOrNull(createProjectRequest.title)
         val location = getRequestBodyOrNull(createProjectRequest.location)
         val description = getRequestBodyOrNull(createProjectRequest.description)

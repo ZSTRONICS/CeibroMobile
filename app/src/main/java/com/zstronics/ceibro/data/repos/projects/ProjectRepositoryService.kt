@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
+import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
@@ -57,7 +58,7 @@ interface ProjectRepositoryService {
         @Part("publishStatus") publishStatus: RequestBody?,
         @Part("extraStatus") extraStatus: RequestBody?,
         @Part("owner") owner: RequestBody?
-    ): Response<CreateNewProjectResponse>
+    ): Response<UpdateProjectResponse>
 
     @Multipart
     @PATCH("project/{projectId}")
@@ -70,7 +71,7 @@ interface ProjectRepositoryService {
         @Part("publishStatus") publishStatus: RequestBody?,
         @Part("extraStatus") extraStatus: RequestBody?,
         @Part("owner") owner: RequestBody?
-    ): Response<CreateNewProjectResponse>
+    ): Response<UpdateProjectResponse>
 
     @POST("project/group/{id}")
     suspend fun createGroup(

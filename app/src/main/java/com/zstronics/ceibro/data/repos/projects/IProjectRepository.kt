@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
+import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
@@ -27,7 +28,7 @@ interface IProjectRepository {
     suspend fun updateProject(
         createProjectRequest: CreateProjectRequest,
         projectId: String
-    ): ApiResponse<CreateNewProjectResponse>
+    ): ApiResponse<UpdateProjectResponse>
 
     suspend fun createGroup(
         projectId: String,
