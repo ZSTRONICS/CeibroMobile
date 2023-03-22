@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.transition.Slide
@@ -30,7 +31,7 @@ class ProjectsFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.projectFilterBtn -> { }
+            R.id.projectFilterBtn -> {}
             R.id.createProject -> navigate(R.id.createProjectMainFragment)
         }
     }
@@ -56,13 +57,29 @@ class ProjectsFragment :
         }
         adapter.itemClickListener =
             { _: View, position: Int, data: AllProjectsResponse.Projects ->
-                navigate(R.id.createProjectMainFragment, bundleOf(AllProjectsResponse.Projects::class.java.name to  data))
+                navigate(
+                    R.id.createProjectMainFragment,
+                    bundleOf(AllProjectsResponse.Projects::class.java.name to data)
+                )
             }
         adapter.childItemClickListener =
             { view: View, position: Int, data: AllProjectsResponse.Projects ->
                 //if (view.id == R.id.chatFavIcon)
                 //viewModel.addChatToFav(data.id)
             }
+        mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.searchProject(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.searchProject(newText)
+                return true
+            }
+
+        })
     }
 
     private fun initRecyclerView(adapter: AllProjectsAdapter) {

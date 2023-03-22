@@ -70,9 +70,10 @@ class AddNewRoleSheet constructor(
                 /// check role permissions
                 if (roleData.rolePermission.create || roleData.rolePermission.edit || roleData.rolePermission.delete) {
                     roleSwitch.isChecked = true
-                    roleSwitch.visible()
-                    roleLayout.visible()
                 }
+                roleSwitch.visible()
+                roleLayout.visible()
+
                 createRoleCheckbox.isChecked = roleData.rolePermission.create
                 editRoleCheckbox.isChecked = roleData.rolePermission.edit
                 deleteRoleCheckbox.isChecked = roleData.rolePermission.delete
@@ -81,9 +82,11 @@ class AddNewRoleSheet constructor(
 
                 if (roleData.memberPermission.create || roleData.memberPermission.edit || roleData.memberPermission.delete) {
                     memberSwitch.isChecked = true
-                    memberSwitch.visible()
-                    memberPermissionLayout.visible()
                 }
+
+                memberSwitch.visible()
+                memberPermissionLayout.visible()
+
                 createMemberCheckbox.isChecked = roleData.memberPermission.create
                 editMemberCheckbox.isChecked = roleData.memberPermission.edit
                 deleteMemberCheckbox.isChecked = roleData.memberPermission.delete
@@ -112,15 +115,13 @@ class AddNewRoleSheet constructor(
                 if (roleText.text?.isEmpty() == true) {
                     showToast("Role Title is required")
                     return@setOnClick
-                } else if (_roleAssignee.value?.isEmpty() == true) {
-                    showToast("Members are required")
-                    return@setOnClick
                 } else if (
                     projectAdminSwitch.isChecked ||
                     roleSwitch.isChecked ||
                     memberSwitch.isChecked
                 ) {
                     if (
+                        projectAdminSwitch.isChecked ||
                         createRoleCheckbox.isChecked ||
                         editRoleCheckbox.isChecked ||
                         deleteRoleCheckbox.isChecked ||
@@ -158,9 +159,9 @@ class AddNewRoleSheet constructor(
             projectAdminSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     roleSwitch.gone()
-                    roleLayout.gone()
                     memberSwitch.gone()
-                    memberPermissionLayout.gone()
+                    roleLayout.visibility = View.GONE
+                    memberPermissionLayout.visibility = View.GONE
                     roleSwitch.isChecked = false
                     memberSwitch.isChecked = false
 
@@ -194,9 +195,9 @@ class AddNewRoleSheet constructor(
             roleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     roleLayout.visible()
-                    createRoleCheckbox.isChecked = false
-                    editRoleCheckbox.isChecked = false
-                    deleteRoleCheckbox.isChecked = false
+//                    createRoleCheckbox.isChecked = false
+//                    editRoleCheckbox.isChecked = false
+//                    deleteRoleCheckbox.isChecked = false
                 } else {
                     roleLayout.gone()
                 }
@@ -206,9 +207,9 @@ class AddNewRoleSheet constructor(
             memberSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     memberPermissionLayout.visible()
-                    createMemberCheckbox.isChecked = false
-                    editMemberCheckbox.isChecked = false
-                    deleteMemberCheckbox.isChecked = false
+//                    createMemberCheckbox.isChecked = false
+//                    editMemberCheckbox.isChecked = false
+//                    deleteMemberCheckbox.isChecked = false
                 } else {
                     memberPermissionLayout.gone()
                 }

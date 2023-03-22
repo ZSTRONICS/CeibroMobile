@@ -203,7 +203,6 @@ class ProjectOverviewVM @Inject constructor(
                 request?.let { projectRepository.updateProject(it, project?.id.toString()) }) {
                 is ApiResponse.Success -> {
                     viewState.projectCreated.postValue(true)
-//                    project = response.data.createProject
 //                    projectStateHandler.onProjectCreated(response.data.createProject)
                     loading(false, "")
                 }

@@ -25,7 +25,7 @@ class ProjectsVM @Inject constructor(
     private val _allProjects: MutableLiveData<MutableList<AllProjectsResponse.Projects>> =
         MutableLiveData()
     val allProjects: LiveData<MutableList<AllProjectsResponse.Projects>> = _allProjects
-
+    var originalAlProjects = mutableListOf<AllProjectsResponse.Projects>()
     override fun onResume() {
         super.onResume()
         loadProjects("all")
@@ -43,7 +43,8 @@ class ProjectsVM @Inject constructor(
                 is ApiResponse.Success -> {
                     loading(false)
                     val data = response.data
-                    _allProjects.postValue(data.projects as MutableList<AllProjectsResponse.Projects>?)
+                    originalAlProjects = data.projects as MutableList<AllProjectsResponse.Projects>
+                    _allProjects.postValue(originalAlProjects)
 //                    _allProjects.postValue(data.result.projects.toMutableList())
                 }
 
@@ -63,19 +64,20 @@ class ProjectsVM @Inject constructor(
         if (selectedProject == null) {
             //it means new project
             event?.newProject?.let { oldProjects?.add(it) }
-        }
-        else {
+        } else {
             //it means an update of a project
             val index = oldProjects.indexOf(selectedProject)
             if (index > -1) {
                 event?.newProject?.let { oldProjects.set(index, it) }
             }
         }
-        val sortedList: MutableList<AllProjectsResponse.Projects> = oldProjects?.sortedBy { it.createdAt } as MutableList<AllProjectsResponse.Projects>
+        val sortedList: MutableList<AllProjectsResponse.Projects> =
+            oldProjects?.sortedBy { it.createdAt } as MutableList<AllProjectsResponse.Projects>
         val reversedProjectList = sortedList.asReversed()
 
         _allProjects.postValue(reversedProjectList)
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProjectRefreshEvent(event: LocalEvents.ProjectRefreshEvent?) {
         loadProjects("all")
@@ -84,6 +86,15 @@ class ProjectsVM @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         EventBus.getDefault().unregister(this)
+    }
+
+    fun searchProject(query: String?) {
+        if (query?.isEmpty() == true) {
+            _allProjects.postValue(originalAlProjects)
+            return
+        }
+        val filterProjects = originalAlProjects.filter { it.title.contains(query.toString()) }
+        _allProjects.postValue(filterProjects as MutableList<AllProjectsResponse.Projects>?)
     }
 
 }

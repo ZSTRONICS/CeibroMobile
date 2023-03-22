@@ -30,13 +30,13 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/titleTV"
             android:layout_width="wrap_content"
-            android:maxWidth="260dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginEnd="@dimen/_35sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
             android:gravity="start|center"
+            android:maxWidth="260dp"
             android:maxLines="2"
             android:padding="@dimen/_6sdp"
             android:paddingStart="4dp"
@@ -86,8 +86,8 @@
             android:id="@+id/expandView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginStart="@dimen/_19sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_9sdp"
             android:orientation="vertical"
             android:visibility="gone"
@@ -129,7 +129,8 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="@{(role.rolePermission.create || role.rolePermission.delete || role.rolePermission.edit )?View.VISIBLE:View.GONE}">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/rolePermissionTitle"
@@ -204,11 +205,13 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
-                    android:background="@color/appLightGrey" />
+                    android:background="@color/appLightGrey"
+                    android:visibility="@{((role.rolePermission.create || role.rolePermission.delete || role.rolePermission.edit)&amp;&amp; (role.memberPermission.create || role.memberPermission.delete || role.memberPermission.edit))?View.VISIBLE:View.GONE}" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="@{(role.memberPermission.create || role.memberPermission.delete || role.memberPermission.edit )?View.VISIBLE:View.GONE}">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/memberPermissionTitle"
@@ -287,8 +290,8 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:layout_marginBottom="1dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
