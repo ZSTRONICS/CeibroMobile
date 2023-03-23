@@ -36,7 +36,7 @@ class EditProfileFragment :
             R.id.cancelBtn -> finish()
             R.id.userEditProfileImg -> checkPermission(
                 immutableListOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA,
                 )
             ) {
                 chooseFile(

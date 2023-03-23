@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.auth
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
@@ -26,6 +27,6 @@ interface AuthRepositoryService {
 
     @Multipart
     @PATCH("users/profile/pic")
-    suspend fun updateUserProfilePicture(@Part profilePicture: MultipartBody.Part): Response<User>
+    suspend fun updateUserProfilePicture(@Part profilePicture: MultipartBody.Part): Response<UserProfilePicUpdateResponse>
 
 }

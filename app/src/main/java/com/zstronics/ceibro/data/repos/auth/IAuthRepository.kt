@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
@@ -14,6 +15,6 @@ interface IAuthRepository {
     suspend fun updateProfileCall(editProfileRequest: EditProfileRequest): ApiResponse<EditProfileResponse>
     suspend fun getUserProfile(): ApiResponse<LoginResponse>
     suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse>
-    suspend fun uploadProfilePicture(fileUri: String): ApiResponse<User>
+    suspend fun uploadProfilePicture(fileUri: String): ApiResponse<UserProfilePicUpdateResponse>
 
 }

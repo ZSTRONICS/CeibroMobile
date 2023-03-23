@@ -74,8 +74,7 @@ class MsgViewFragment :
             R.id.captureImage -> {
                 checkPermission(
                     immutableListOf(
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA
                     )
                 ) {
 //                    requireActivity().openCamera { resultCode, intent ->
@@ -85,17 +84,17 @@ class MsgViewFragment :
             }
             R.id.btPickFile -> checkPermission(
                 immutableListOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA
                 )
             ) {
-                chooseFile(
-                    arrayOf(
-                        "image/png",
-                        "image/jpg",
-                        "image/jpeg",
-                        "image/*"
-                    )
-                )
+//                chooseFile(
+//                    arrayOf(
+//                        "image/png",
+//                        "image/jpg",
+//                        "image/jpeg",
+//                        "image/*"
+//                    )
+//                )
             }
 //            R.id.questionLL -> navigateToQuestionarieNavGraph()
         }

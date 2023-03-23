@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
+import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 import okhttp3.MultipartBody
@@ -14,6 +15,8 @@ import retrofit2.http.*
 interface DashboardRepositoryService {
     @GET("users/connections")
     suspend fun getAllConnections(): Response<AllConnectionsResponse>
+    @GET("users/connections/count")
+    suspend fun getConnectionCount(): Response<CountResponse>
 
     @GET("users/invite")
     suspend fun getAllInvites(): Response<MyInvitations>

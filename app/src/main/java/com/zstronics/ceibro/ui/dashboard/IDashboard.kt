@@ -6,6 +6,7 @@ import com.zstronics.ceibro.base.interfaces.IBase
 interface IDashboard {
     interface State : IBase.State {
         val selectedItem: MutableLiveData<Int>
+        var connectionCount: MutableLiveData<Int>
     }
 
     interface ViewModel : IBase.ViewModel<State> {
