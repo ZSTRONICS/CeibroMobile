@@ -43,8 +43,8 @@ jobs:
           name: Ceibro Debug
           path: app/build/outputs/apk/dev/debug/app-dev-debug.apk
 
-#      - name: Ceibro Release Created
-#        run: |
-#          echo "Ceibro Release ${{ steps.create_release.outputs.release_id }} created"
-#          echo "https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}"
+      - name: Ceibro Release Created
+        run: |
+          echo "Ceibro Release ${{ steps.create_release.outputs.release_id }} created"
+          echo "https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}"
 

@@ -16,8 +16,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.databinding.FragmentProjectsBinding
 import com.zstronics.ceibro.ui.projects.adapter.AllProjectsAdapter
-import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.EditProjectMemberSheet
-import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.FilterProjectsSheet
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -33,19 +31,7 @@ class ProjectsFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.projectFilterBtn -> {
-                val sheet = FilterProjectsSheet(
-                    statusesList = viewModel.statusesList, ownersList = viewModel.ownersList
-                )
-                sheet.onFilter = { ownerId: String, status: String ->
-                    viewModel.applyFilter(ownerId,status)
-                }
-                sheet.onClearFilter = { ->
-                    viewModel.clearFilter()
-                }
-                sheet.isCancelable = false
-                sheet.show(childFragmentManager, "FilterProjectsSheet")
-            }
+            R.id.projectFilterBtn -> {}
             R.id.createProject -> navigate(R.id.createProjectMainFragment)
         }
     }

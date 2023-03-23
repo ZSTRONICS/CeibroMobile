@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.projects
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
@@ -25,8 +26,6 @@ class ProjectsVM @Inject constructor(
         MutableLiveData()
     val allProjects: LiveData<MutableList<AllProjectsResponse.Projects>> = _allProjects
     var originalAlProjects = mutableListOf<AllProjectsResponse.Projects>()
-    var statusesList: List<String> = listOf()
-    var ownersList: List<AllProjectsResponse.Projects.Owner> = listOf()
     override fun onResume() {
         super.onResume()
         loadProjects("all")
@@ -45,7 +44,6 @@ class ProjectsVM @Inject constructor(
                     loading(false)
                     val data = response.data
                     originalAlProjects = data.projects as MutableList<AllProjectsResponse.Projects>
-                    prepareFiltersData(originalAlProjects)
                     _allProjects.postValue(originalAlProjects)
 //                    _allProjects.postValue(data.result.projects.toMutableList())
                 }
@@ -55,12 +53,6 @@ class ProjectsVM @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun prepareFiltersData(originalAlProjects: MutableList<AllProjectsResponse.Projects>) {
-        statusesList = originalAlProjects.map { it.publishStatus }.distinct()
-        ownersList =
-            originalAlProjects.flatMap { it.owner }.distinctBy { it.id }
     }
 
 
@@ -103,27 +95,6 @@ class ProjectsVM @Inject constructor(
         }
         val filterProjects = originalAlProjects.filter { it.title.contains(query.toString()) }
         _allProjects.postValue(filterProjects as MutableList<AllProjectsResponse.Projects>?)
-    }
-
-    fun clearFilter() {
-        _allProjects.postValue(originalAlProjects as MutableList<AllProjectsResponse.Projects>?)
-    }
-
-    fun applyFilter(ownerId: String, status: String) {
-        val allFilteredProject = arrayListOf<AllProjectsResponse.Projects>()
-        var statusFilteredProject = listOf<AllProjectsResponse.Projects>()
-        var ownerFilteredProject = listOf<AllProjectsResponse.Projects>()
-        if (status.isNotEmpty()) {
-            statusFilteredProject =
-                originalAlProjects.filter { it.publishStatus.lowercase() == status.lowercase() }
-        }
-        if (ownerId.isNotEmpty()) {
-            ownerFilteredProject =
-                originalAlProjects.filter { it.id == ownerId }
-        }
-        allFilteredProject.addAll(statusFilteredProject)
-        allFilteredProject.addAll(ownerFilteredProject)
-        _allProjects.postValue(allFilteredProject as MutableList<AllProjectsResponse.Projects>?)
     }
 
 }
