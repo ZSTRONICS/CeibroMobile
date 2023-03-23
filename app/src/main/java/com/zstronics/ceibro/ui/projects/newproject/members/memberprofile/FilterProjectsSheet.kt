@@ -41,36 +41,6 @@ class FilterProjectsSheet constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /// Status spinner
-        val statusStrings = statusesList
-        val statusArrayAdapter =
-            ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                statusStrings
-            )
-
-        statusArrayAdapter.setDropDownViewResource(
-            android.R.layout
-                .simple_spinner_dropdown_item
-        )
-
-        binding.statusSpinner.adapter = statusArrayAdapter
-        binding.statusSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                status = statusStrings[position]
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
-        /// End Status spinner
-
         /// Owners spinner
         val ownersStrings = ownersList.map { "${it.firstName} ${it.surName}" }
         val ownersArrayAdapter =
@@ -85,22 +55,34 @@ class FilterProjectsSheet constructor(
                 .simple_spinner_dropdown_item
         )
 
-        binding.ownerSpinner.adapter = ownersArrayAdapter
-
-        binding.ownerSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
+        binding.ownerSpinner.setAdapter(ownersArrayAdapter)
+        binding.ownerSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
                 ownerId = ownersList[position].id
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-        }
         /// End Owners spinner
+
+        /// Status spinner
+        val statusStrings = statusesList
+        val statusArrayAdapter =
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                statusStrings
+            )
+
+        statusArrayAdapter.setDropDownViewResource(
+            android.R.layout
+                .simple_spinner_dropdown_item
+        )
+
+        binding.statusSpinner.setAdapter(statusArrayAdapter)
+        binding.statusSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                status = statusStrings[position]
+            }
+        /// End Status spinner
 
         binding.closeBtn.setOnClickListener {
             dismiss()
