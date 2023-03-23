@@ -14,7 +14,11 @@ import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRes
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,6 +48,11 @@ class ProjectDocumentsVM @Inject constructor(
     var isRootSelected = true
     var selectedFolderId = ""
     var projectId = ""
+
+    init {
+        EventBus.getDefault().register(this)
+    }
+
     fun documents(projectId: String) {
         getGroups(projectId)
         getMembers(projectId)
@@ -268,5 +277,26 @@ class ProjectDocumentsVM @Inject constructor(
 
     enum class AccessType {
         Folder, File
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshRootDocumentEvent(event: LocalEvents.RefreshRootDocumentEvent?) {
+        if (event?.projectId != null) {
+            if (projectId == event.projectId) {
+                documents(event.projectId ?: "")
+            }
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshFolderEvent(event: LocalEvents.RefreshFolderEvent?) {
+        if (projectId == event?.projectId) {
+            getFilesUnderFolder(event?.folderId ?: "")
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }

@@ -218,29 +218,11 @@ class DashboardFragment :
     }
 
     private fun navigateToProfile() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = false
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.profileFragment
-            )
-        }
+        navigate(R.id.profileFragment)
     }
 
     private fun navigateToConnections() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = false
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.connectionsFragment
-            )
-        }
+        navigate(R.id.connectionsFragment)
     }
 
     companion object {

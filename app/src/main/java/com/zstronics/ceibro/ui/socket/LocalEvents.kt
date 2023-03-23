@@ -63,4 +63,8 @@ object LocalEvents {
     data class ProjectMemberUpdatedEvent(val updatedMember: GetProjectMemberResponse.ProjectMember)
     data class ProjectMemberRefreshEvent(val projectId: String)
 
+
+    data class RefreshRootDocumentEvent(val projectId: String)
+    data class RefreshFolderEvent(val projectId: String, val folderId: String)
+
 }

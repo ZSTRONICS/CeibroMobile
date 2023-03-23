@@ -12,6 +12,8 @@ import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.documents.RefreshFolderSocketResponse
+import com.zstronics.ceibro.data.repos.projects.documents.RefreshRootDocumentSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.GroupCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.GroupRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberAddedSocketResponse
@@ -346,6 +348,24 @@ class DashboardVM @Inject constructor(
                                 ).data
 
                             EventBus.getDefault().post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
+                        }
+                        SocketHandler.ProjectEvent.REFRESH_ROOT_DOCUMENTS.name -> {
+                            val refreshRootDoc =
+                                gson.fromJson<RefreshRootDocumentSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<RefreshRootDocumentSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
+                        }
+                        SocketHandler.ProjectEvent.REFRESH_FOLDER.name -> {
+                            val refreshFolder =
+                                gson.fromJson<RefreshFolderSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<RefreshFolderSocketResponse>() {}.type
+                                ).data
+
+                            EventBus.getDefault().post(LocalEvents.RefreshFolderEvent(refreshFolder.projectId, refreshFolder.folderId))
                         }
                     }
                 }

@@ -29,8 +29,9 @@ class ProfileFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.backBtn -> finish()
+            R.id.backBtn -> navigateBack()
             R.id.userProfileConnections -> navigateToConnections()
+            R.id.userProfileInvitations -> navigateToInvitations()
             106 -> navigateToEditProfile()
             107 -> shortToastNow("Admin")
             108 -> shortToastNow("Help")
@@ -69,16 +70,10 @@ class ProfileFragment :
         }
     }
     private fun navigateToConnections() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = false
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.connectionsFragment
-            )
-        }
+        navigate(R.id.connectionsFragment)
+    }
+    private fun navigateToInvitations() {
+        navigate(R.id.invitationsFragment)
     }
 
 
