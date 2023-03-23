@@ -119,7 +119,7 @@ class ProjectsVM @Inject constructor(
         }
         if (ownerId.isNotEmpty()) {
             ownerFilteredProject =
-                originalAlProjects.filter { it.id == ownerId }
+                originalAlProjects.filter { it.owner.any { owner -> owner.id == ownerId } }
         }
         allFilteredProject.addAll(statusFilteredProject)
         allFilteredProject.addAll(ownerFilteredProject)

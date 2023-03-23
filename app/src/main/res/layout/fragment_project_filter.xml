@@ -71,47 +71,32 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:fontFamily="@font/inter_medium"
-            android:text="@string/owner_heading"
-            android:textColor="#605C5C"
-            app:layout_constraintBottom_toBottomOf="@+id/ownerSpinner"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ownerSpinner" />
-
-        <View
-            android:id="@+id/dividerInner"
-            android:layout_width="1dp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:background="@color/appLightGrey"
-            app:layout_constraintBottom_toBottomOf="@+id/ownerSpinner"
-            app:layout_constraintStart_toEndOf="@+id/appCompatTextView"
-            app:layout_constraintTop_toTopOf="@+id/ownerSpinner" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/ownerSpinner"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ownerSpinnerLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:drawableEnd="@drawable/icon_navigate_down"
-            android:ellipsize="end"
-            android:hint="Select Owner"
-            android:inputType="text"
-            android:maxLines="2"
-            android:paddingStart="@dimen/_10sdp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
             android:textColorHint="@color/grey"
-            android:textSize="15sp"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dividerInner"
-            app:layout_constraintTop_toBottomOf="@+id/header" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header">
+
+            <AutoCompleteTextView
+                android:id="@+id/ownerSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:hint="@string/owner_heading"
+                android:inputType="text"
+                android:maxLines="2"
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <View
             android:id="@+id/divider1"
@@ -121,50 +106,34 @@
             android:background="@color/appLightGrey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ownerSpinner" />
+            app:layout_constraintTop_toBottomOf="@id/ownerSpinnerLayout" />
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:fontFamily="@font/inter_medium"
-            android:text="@string/status_heading"
-            android:textColor="#605C5C"
-            app:layout_constraintBottom_toBottomOf="@+id/statusSpinner"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/statusSpinner" />
-
-        <View
-            android:id="@+id/dividerInner1"
-            android:layout_width="1dp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:background="@color/appLightGrey"
-            app:layout_constraintBottom_toBottomOf="@+id/statusSpinner"
-            app:layout_constraintStart_toEndOf="@+id/appCompatTextView1"
-            app:layout_constraintTop_toTopOf="@+id/statusSpinner" />
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/statusSpinner"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/statusSpinnerLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:drawableEnd="@drawable/icon_navigate_down"
-            android:ellipsize="end"
-            android:hint="Select Status"
-            android:inputType="text"
-            android:maxLines="2"
-            android:paddingStart="@dimen/_10sdp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
             android:textColorHint="@color/grey"
-            android:textSize="15sp"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dividerInner1"
-            app:layout_constraintTop_toBottomOf="@+id/divider1" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider1">
+
+            <AutoCompleteTextView
+                android:id="@+id/statusSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:hint="@string/status_heading"
+                android:inputType="text"
+                android:maxLines="2"
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <View
             android:id="@+id/divider2"
@@ -174,7 +143,7 @@
             android:background="@color/appLightGrey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/statusSpinner" />
+            app:layout_constraintTop_toBottomOf="@id/statusSpinnerLayout" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/clearFilter"
