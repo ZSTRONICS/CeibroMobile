@@ -69,6 +69,11 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     }
 
     override fun getToolBarTitle(): String? = null
+    fun setToolBarTitle(title: String?) {
+        if (activity is ManageToolBarListener) {
+            (activity as ManageToolBarListener).toolBarTitle = title
+        }
+    }
     override fun toolBarVisibility(): Boolean? = true
     override fun setDisplayHomeAsUpEnabled(): Boolean? = true
     override fun setHomeAsUpIndicator() = R.drawable.icon_back

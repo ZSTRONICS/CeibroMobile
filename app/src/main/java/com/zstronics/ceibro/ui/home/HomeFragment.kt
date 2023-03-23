@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,9 +43,13 @@ class HomeFragment :
         viewModel.homeProjects.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
-        adapter.itemClickListener = { _: View, position: Int, data: AllProjectsResponse.Projects ->
-            //navigateToMsgView(data)
-        }
+        adapter.itemClickListener =
+            { _: View, position: Int, data: AllProjectsResponse.Projects ->
+                navigate(
+                    R.id.createProjectMainFragment,
+                    bundleOf(AllProjectsResponse.Projects::class.java.name to data)
+                )
+            }
         adapter.childItemClickListener = { view: View, position: Int, data: AllProjectsResponse.Projects ->
             //if (view.id == R.id.chatFavIcon)
             //viewModel.addChatToFav(data.id)

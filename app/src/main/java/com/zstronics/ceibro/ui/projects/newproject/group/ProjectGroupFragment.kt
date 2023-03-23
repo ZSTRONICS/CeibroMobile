@@ -81,7 +81,7 @@ class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsR
                         v = childView,
                         groupId = data.id,
                         groupName = data.name,
-                        projectId = data.project
+                        data = data
                     )
             }
     }
@@ -91,7 +91,7 @@ class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsR
         v: View,
         groupId: String,
         groupName: String,
-        projectId: String
+        data: ProjectGroup
     ): PopupWindow {
         val popupWindow = PopupWindow(v.context)
         val context: Context = v.context
@@ -129,13 +129,13 @@ class ProjectGroupFragment(private val projectLive: MutableLiveData<AllProjectsR
         edit.setOnClick {
             val sheet = AddNewGroupSheet(groupName)
             sheet.onGroupEdited = { groupText ->
-                viewModel.updateGroup(projectId, groupId, groupText)
+                viewModel.updateGroup(data.project, groupId, groupText)
             }
             sheet.show(childFragmentManager, "AddNewGroupSheet")
             popupWindow.dismiss()
         }
         remove.setOnClick {
-            viewModel.deleteGroup(projectId, position, groupId)
+            viewModel.deleteGroup(data, position, groupId)
             popupWindow.dismiss()
         }
 

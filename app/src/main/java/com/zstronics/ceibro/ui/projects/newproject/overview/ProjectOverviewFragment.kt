@@ -224,7 +224,24 @@ class ProjectOverviewFragment(
             viewState.description.postValue(it.description)
             viewModel.addAllStatus(it.extraStatus)
             viewModel.setSelectedOwners(it.owner)
-            viewState.projectPhoto.value = it.projectPhoto?.toUri()
+            viewState.projectPhoto.value =
+                if (it.projectPhoto?.contains("blob:") == true) {
+                    "".toUri()
+                } else {
+                    it.projectPhoto?.toUri()
+                }
+            setToolBarTitle(
+                if (it.title == "" || it.title.isEmpty()) {
+                    getString(R.string.new_projects_title)
+                } else {
+                    it.title
+                }
+            )
+        }
+        viewModel.updatedProject.observe(viewLifecycleOwner) {
+            projectLive.value = it
+            viewModel.project = it
+            viewModel.preSelectMemberChip()
         }
 
         assigneeChipsAdapter = MemberChipAdapter()

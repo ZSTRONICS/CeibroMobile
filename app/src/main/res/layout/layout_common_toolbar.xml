@@ -19,6 +19,7 @@
         android:id="@+id/toolbar"
         style="@style/Ceibro.App.Widget.ToolBar"
         android:paddingEnd="@dimen/_10sdp"
+        android:paddingStart="@dimen/_1sdp"
         android:visibility="@{toolsBarVisibility? View.VISIBLE : View.GONE }">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -26,6 +27,10 @@
             style="@style/Ceibro.App.Widget.TextView.ToolBar"
             android:layout_gravity="start"
             android:text="@{toolbarTitle}"
+            android:textSize="18.5sp"
+            android:fontFamily="@font/inter_medium"
+            android:maxLines="1"
+            android:ellipsize="end"
             tools:text="Toolbar Title" />
     </androidx.appcompat.widget.Toolbar>
 </layout>

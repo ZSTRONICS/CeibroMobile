@@ -106,21 +106,21 @@ class ProjectMembersVM @Inject constructor(
         projectStateHandler: ProjectStateHandler
     ) {
         if (!member.isOwner) {
-            val old = groupMembers.value
-            old?.removeAt(position)
-            old?.let {
-                _groupMembers.value = it
-            }
-            deleteMemberAPI(member.id, projectStateHandler)
+            deleteMemberAPI(position, member.id, projectStateHandler)
         } else {
             alert("Owner cannot be removed")
         }
     }
 
-    private fun deleteMemberAPI(id: String, projectStateHandler: ProjectStateHandler) {
+    private fun deleteMemberAPI(position: Int, id: String, projectStateHandler: ProjectStateHandler) {
         launch {
             when (val response = projectRepository.deleteMember(id)) {
                 is ApiResponse.Success -> {
+                    val old = groupMembers.value
+                    old?.removeAt(position)
+                    old?.let {
+                        _groupMembers.value = it
+                    }
                     alert(response.data.message)
                     projectStateHandler.onMemberDelete()
                 }
