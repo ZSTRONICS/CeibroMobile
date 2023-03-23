@@ -32,7 +32,7 @@ class ConnectionsFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> finish()
+            R.id.closeBtn -> navigateBack()
             R.id.inviteMainBtn -> navigateToInvitations()
         }
     }

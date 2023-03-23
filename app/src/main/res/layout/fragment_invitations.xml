@@ -39,7 +39,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
-                app:srcCompat="@drawable/icon_round_close"
+                app:srcCompat="@drawable/icon_back"
                 app:tint="@color/appYellow" />
 
             <TextView
