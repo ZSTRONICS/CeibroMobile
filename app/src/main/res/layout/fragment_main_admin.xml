@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.admin.MainAdminState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.admin.MainAdminVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/adminHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginBottom="@dimen/_13sdp"
+                android:elevation="0dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="@string/admin_heading"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/adminFilterBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/_13sdp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_filter" />
+
+            <SearchView
+                android:id="@+id/adminSearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/_47sdp"
+                android:closeIcon="@drawable/icon_round_close"
+                android:elevation="1dp"
+                android:gravity="center"
+                android:layoutDirection="rtl"
+                android:queryBackground="@drawable/input_field_rectangle"
+                android:queryHint="Search"
+                android:searchIcon="@drawable/icon_search"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintEnd_toStartOf="@+id/adminFilterBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/adminHeader">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/adminsHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLength="18"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingTop="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_3sdp"
+                android:text="@string/admins_heading"
+                android:textColor="@color/appYellow"
+                android:textSize="15.5sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view21"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:background="@color/grey"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/adminsHeading"
+                app:layout_constraintStart_toEndOf="@+id/adminsHeading"
+                app:layout_constraintTop_toTopOf="@+id/adminsHeading" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/usersHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingTop="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_3sdp"
+                android:text="@string/users_heading"
+                android:textColor="@color/grey"
+                android:textSize="15.5sp"
+                app:layout_constraintStart_toEndOf="@+id/view21"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view22"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/adminsHeading" />
+
+            <FrameLayout
+                android:id="@+id/admin_fragment_container"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:defaultNavHost="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view22" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

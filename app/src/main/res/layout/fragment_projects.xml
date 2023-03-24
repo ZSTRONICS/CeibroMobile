@@ -62,7 +62,7 @@
                 android:id="@+id/projectSearchBar"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginStart="@dimen/_50sdp"
+                android:layout_marginStart="@dimen/_47sdp"
                 android:closeIcon="@drawable/icon_round_close"
                 android:elevation="1dp"
                 android:gravity="center"
