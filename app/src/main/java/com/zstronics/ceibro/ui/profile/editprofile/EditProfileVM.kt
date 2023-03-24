@@ -113,13 +113,17 @@ class EditProfileVM @Inject constructor(
             when (val response = repository.uploadProfilePicture(fileUri)) {
                 is ApiResponse.Success -> {
                     val userObj = sessionManager.getUserObj()
-                    userObj?.profilePic = fileUri
+                    if (response.data.profilePic != "") {
+                        userObj?.profilePic = response.data.profilePic
+                    }
+                    else {
+                        userObj?.profilePic = fileUri
+                    }
                     userObj?.let { sessionManager.updateUser(userObj = it) }
                     viewState.userProfilePic.value = userObj?.profilePic
                     loading(false, "Profile pic updated")
                 }
                 is ApiResponse.Error -> {
-                    alert(response.error.message)
                     loading(false, response.error.message)
                 }
             }

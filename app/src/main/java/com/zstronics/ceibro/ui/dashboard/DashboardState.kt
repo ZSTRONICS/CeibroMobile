@@ -7,4 +7,5 @@ import javax.inject.Inject
 
 class DashboardState @Inject constructor() : BaseState(), IDashboard.State {
     override val selectedItem: MutableLiveData<Int> = MutableLiveData(R.id.nav_home)
+    override var connectionCount: MutableLiveData<Int> = MutableLiveData(0)
 }

@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequ
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
+import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -22,6 +23,12 @@ class DashboardRepository @Inject constructor(
         call =
         {
             service.getAllConnections()
+        }
+    )
+    override suspend fun getConnectionCount(): ApiResponse<CountResponse> = executeSafely(
+        call =
+        {
+            service.getConnectionCount()
         }
     )
 

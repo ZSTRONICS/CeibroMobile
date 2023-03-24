@@ -6,11 +6,13 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequ
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
+import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 
 interface IDashboardRepository {
     suspend fun getAllConnections(): ApiResponse<AllConnectionsResponse>
+    suspend fun getConnectionCount(): ApiResponse<CountResponse>
     suspend fun getAllInvites(): ApiResponse<MyInvitations>
     suspend fun sendInvite(sendInviteRequest: SendInviteRequest): ApiResponse<GenericResponse>
     suspend fun acceptOrRejectInvitation(accepted: Boolean, inviteId: String): ApiResponse<GenericResponse>

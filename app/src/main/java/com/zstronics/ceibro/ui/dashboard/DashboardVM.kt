@@ -45,10 +45,17 @@ class DashboardVM @Inject constructor(
     val dashboardRepository: IDashboardRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
+
+    override fun onResume() {
+        super.onResume()
+        getOverallConnectionCount()
+    }
+
     init {
         sessionManager.setUser()
         sessionManager.setProject()
         loadProjectsWithMembers()
+        getOverallConnectionCount()
         launch {
             repository.syncTasksAndSubTasks()
         }
@@ -404,7 +411,6 @@ class DashboardVM @Inject constructor(
     private fun loadProjectsWithMembers() {
         launch {
             when (val response = projectRepository.getProjectsWithMembers(true)) {
-
                 is ApiResponse.Success -> {
                     response.data.projectDetails.let { projects ->
                         if (projects.isNotEmpty()) {
@@ -418,4 +424,18 @@ class DashboardVM @Inject constructor(
             }
         }
     }
+
+    private fun getOverallConnectionCount() {
+        launch {
+            when (val response = dashboardRepository.getConnectionCount()) {
+                is ApiResponse.Success -> {
+                    viewState.connectionCount.value = response.data.count
+                }
+                is ApiResponse.Error -> {
+
+                }
+            }
+        }
+    }
+
 }
