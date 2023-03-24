@@ -59,10 +59,9 @@ class EditProfileFragment :
             R.id.downBtn -> {
                 if (mViewDataBinding.editProfileLayout.measuredHeight == mViewDataBinding.editProfileScrollView.scrollY +
                     mViewDataBinding.editProfileScrollView.height          //If scrollview is fully at bottom then this condition becomes true otherwise it is on top or in between
-                ){
+                ) {
                     mViewDataBinding.editProfileScrollView.fullScroll(View.FOCUS_UP)
-                }
-                else{
+                } else {
                     mViewDataBinding.editProfileScrollView.fullScroll(View.FOCUS_DOWN)
                 }
             }
@@ -74,8 +73,7 @@ class EditProfileFragment :
             mViewDataBinding.etUserPassword.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
             mViewDataBinding.profPasswordEye1.setImageResource(R.drawable.visibility_on)
-        }
-        else {
+        } else {
             mViewDataBinding.etUserPassword.transformationMethod =
                 PasswordTransformationMethod.getInstance()
             mViewDataBinding.profPasswordEye1.setImageResource(R.drawable.visibility_off)
@@ -88,8 +86,7 @@ class EditProfileFragment :
             mViewDataBinding.etUserConfirmPassword.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
             mViewDataBinding.profPasswordEye2.setImageResource(R.drawable.visibility_on)
-        }
-        else {
+        } else {
             mViewDataBinding.etUserConfirmPassword.transformationMethod =
                 PasswordTransformationMethod.getInstance()
             mViewDataBinding.profPasswordEye2.setImageResource(R.drawable.visibility_off)
@@ -112,6 +109,6 @@ class EditProfileFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel.validator?.validate()
+        mViewDataBinding.etUserEmail.setText(viewState.userEmail.value)
     }
 }

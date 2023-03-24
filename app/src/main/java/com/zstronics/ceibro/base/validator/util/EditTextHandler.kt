@@ -25,14 +25,14 @@ object EditTextHandler {
         if (textInputLayout != null) {
             textInputLayout.isErrorEnabled = !TextUtils.isEmpty(errorMessage)
             textInputLayout.error = errorMessage
-            textInputLayout.setBackgroundResource(R.drawable.input_field_error)
+//            textInputLayout.setBackgroundResource(R.drawable.input_field_error)
         } else {
             textView?.error = errorMessage
-            textView?.setBackgroundResource(R.drawable.input_field_error)
+//            textView?.setBackgroundResource(R.drawable.input_field_error)
         }
 
         if (errorMessage == null){
-            textView?.setBackgroundResource(R.drawable.input_field)
+//            textView?.setBackgroundResource(R.drawable.input_field)
         }
     }
 

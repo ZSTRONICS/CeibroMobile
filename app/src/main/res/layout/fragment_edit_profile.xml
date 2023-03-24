@@ -292,11 +292,7 @@
                             app:layout_constraintEnd_toEndOf="@+id/etUserEmail"
                             app:layout_constraintStart_toStartOf="@+id/etUserEmail"
                             app:layout_constraintTop_toBottomOf="@+id/contactNoHeading"
-                            tools:ignore="TouchTargetSizeCheck"
-                            app:validateEmpty="@{true}"
-                            errorEnabledEmpty="@{true}"
-                            app:validateType="@{`phone`}"
-                            errorEnabledType="@{true}"  />
+                            tools:ignore="TouchTargetSizeCheck"/>
 
                         <TextView
                             android:id="@+id/passwordHeading"
@@ -481,11 +477,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/companyHeading"
-                            tools:ignore="TouchTargetSizeCheck"
-                            app:validateEmpty="@{true}"
-                            errorEnabledEmpty="@{true}"
-                            app:validateMinLength="@{3}"
-                            errorEnabledMinLength="@{true}" />
+                            tools:ignore="TouchTargetSizeCheck" />
 
 
                         <TextView
@@ -519,11 +511,7 @@
                             app:layout_constraintEnd_toEndOf="@+id/etCompanyName"
                             app:layout_constraintStart_toStartOf="@+id/etCompanyName"
                             app:layout_constraintTop_toBottomOf="@+id/vatHeading"
-                            tools:ignore="TouchTargetSizeCheck"
-                            app:validateEmpty="@{true}"
-                            errorEnabledEmpty="@{true}"
-                            app:validateMinLength="@{3}"
-                            errorEnabledMinLength="@{true}" />
+                            tools:ignore="TouchTargetSizeCheck" />
 
                         <TextView
                             android:id="@+id/locationHeading"
@@ -556,11 +544,7 @@
                             app:layout_constraintEnd_toEndOf="@+id/etCompanyVat"
                             app:layout_constraintStart_toStartOf="@+id/etCompanyVat"
                             app:layout_constraintTop_toBottomOf="@+id/locationHeading"
-                            tools:ignore="TouchTargetSizeCheck"
-                            app:validateEmpty="@{true}"
-                            errorEnabledEmpty="@{true}"
-                            app:validateMinLength="@{3}"
-                            errorEnabledMinLength="@{true}" />
+                            tools:ignore="TouchTargetSizeCheck" />
 
                         <TextView
                             android:id="@+id/contactNoHeading1"
@@ -593,11 +577,7 @@
                             app:layout_constraintEnd_toEndOf="@+id/etCompanyLocation"
                             app:layout_constraintStart_toStartOf="@+id/etCompanyLocation"
                             app:layout_constraintTop_toBottomOf="@+id/contactNoHeading1"
-                            tools:ignore="TouchTargetSizeCheck"
-                            app:validateEmpty="@{true}"
-                            errorEnabledEmpty="@{true}"
-                            app:validateType="@{`phone`}"
-                            errorEnabledType="@{true}" />
+                            tools:ignore="TouchTargetSizeCheck" />
 
                         <TextView
                             android:id="@+id/workEmailHeading"
@@ -632,12 +612,7 @@
                             app:layout_constraintEnd_toEndOf="@+id/etCompanyContactNo"
                             app:layout_constraintStart_toStartOf="@+id/etCompanyContactNo"
                             app:layout_constraintTop_toBottomOf="@+id/workEmailHeading"
-                            tools:ignore="TouchTargetSizeCheck"
-                            app:validateEmpty="@{true}"
-                            errorEnabledEmpty="@{true}"
-                            app:validateType="@{`email`}"
-                            errorEnabledType="@{true}" />
-
+                            tools:ignore="TouchTargetSizeCheck" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
