@@ -37,8 +37,8 @@ class ProjectsFragment :
                 val sheet = FilterProjectsSheet(
                     statusesList = viewModel.statusesList, ownersList = viewModel.ownersList
                 )
-                sheet.onFilter = { ownerId: String, status: String ->
-                    viewModel.applyFilter(ownerId,status)
+                sheet.onFilter = { ownerId: String, status: String, dueDate: String ->
+                    viewModel.applyFilter(ownerId, status, dueDate)
                 }
                 sheet.onClearFilter = { ->
                     viewModel.clearFilter()
