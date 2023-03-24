@@ -17,8 +17,8 @@
 
             <ImageView
                 android:id="@+id/closeBtn"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
+                android:layout_width="@dimen/_26sdp"
+                android:layout_height="@dimen/_26sdp"
                 android:layout_marginStart="15dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="4dp"
@@ -33,8 +33,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
                 android:fontFamily="@font/inter_bold"
                 android:text="@string/filter_heading"
                 android:textColor="@color/black"
@@ -55,7 +55,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/filterButton"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="@dimen/_25sdp"
                 android:layout_marginEnd="13dp"
                 android:background="@drawable/signin_button_back"
                 android:fontFamily="@font/inter_semibold"
@@ -98,16 +98,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <View
-            android:id="@+id/divider1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@color/appLightGrey"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ownerSpinnerLayout" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/statusSpinnerLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -120,7 +110,7 @@
             app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider1">
+            app:layout_constraintTop_toBottomOf="@+id/ownerSpinnerLayout">
 
             <AutoCompleteTextView
                 android:id="@+id/statusSpinner"
@@ -135,20 +125,43 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@color/appLightGrey"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/projectFilterDueDateLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/due_date_heading"
+            android:layout_margin="@dimen/_10sdp"
+            android:textColorHint="@color/grey"
+            app:boxStrokeColor="@color/colorGrey"
+            app:boxStrokeWidth="1dp"
+            app:endIconDrawable="@drawable/ic_calendar"
+            app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/statusSpinnerLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/statusSpinnerLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/projectFilterDueDateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="false"
+                android:fontFamily="@font/inter_regular"
+                android:inputType="none"
+                android:maxLines="1"
+                android:paddingStart="18dp"
+                android:paddingEnd="28dp"
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/clearFilter"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="@dimen/_25sdp"
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
@@ -163,7 +176,7 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider2"
+            app:layout_constraintTop_toBottomOf="@+id/projectFilterDueDateLayout"
             app:layout_constraintVertical_bias="0.0"
             app:layout_goneMarginBottom="@dimen/_10sdp" />
 

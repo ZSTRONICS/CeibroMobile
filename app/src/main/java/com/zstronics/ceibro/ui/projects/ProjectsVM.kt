@@ -84,6 +84,7 @@ class ProjectsVM @Inject constructor(
         val reversedProjectList = sortedList.asReversed()
 
         _allProjects.postValue(reversedProjectList)
+        prepareFiltersData(reversedProjectList)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -109,21 +110,15 @@ class ProjectsVM @Inject constructor(
         _allProjects.postValue(originalAlProjects as MutableList<AllProjectsResponse.Projects>?)
     }
 
-    fun applyFilter(ownerId: String, status: String) {
-        val allFilteredProject = arrayListOf<AllProjectsResponse.Projects>()
-        var statusFilteredProject = listOf<AllProjectsResponse.Projects>()
-        var ownerFilteredProject = listOf<AllProjectsResponse.Projects>()
-        if (status.isNotEmpty()) {
-            statusFilteredProject =
-                originalAlProjects.filter { it.publishStatus.lowercase() == status.lowercase() }
-        }
-        if (ownerId.isNotEmpty()) {
-            ownerFilteredProject =
-                originalAlProjects.filter { it.owner.any { owner -> owner.id == ownerId } }
-        }
-        allFilteredProject.addAll(statusFilteredProject)
-        allFilteredProject.addAll(ownerFilteredProject)
-        _allProjects.postValue(allFilteredProject as MutableList<AllProjectsResponse.Projects>?)
+    fun applyFilter(ownerId: String, status: String, dueDate: String) {
+        val filtered =
+            originalAlProjects.filter {
+                (it.owner.any { owner -> owner.id == ownerId } || ownerId.isEmpty())
+                        && (it.publishStatus.lowercase() == status.lowercase() || status.isEmpty())
+                        && (it.dueDate == dueDate || dueDate.isEmpty())
+            }
+
+        _allProjects.postValue(filtered as MutableList<AllProjectsResponse.Projects>?)
     }
 
 }

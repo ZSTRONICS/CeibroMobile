@@ -111,7 +111,7 @@ class ProjectDocumentsVM @Inject constructor(
         }
         if (!isRootSelected) {
             if (files != null) {
-                patchFilesWithFolder(moduleId, files)
+                patchFilesWithFolderLocally(moduleId, files)
             }
         } else {
             if (files != null)
@@ -139,17 +139,19 @@ class ProjectDocumentsVM @Inject constructor(
         }
     }
 
-    private fun patchFilesWithFolder(folderId: String, result: List<FilesAttachments>) {
+    private fun patchFilesWithFolderLocally(folderId: String, result: List<FilesAttachments>) {
         val folders = folders.value
         val folder = folders?.find { it.id == folderId }
         if (folder !== null) {
             val index = folders.indexOf(folder)
             if (index > -1) {
                 folders.removeAt(index)
-                if (folder.files == null)
+                if (folder.files == null) {
                     folder.files = result as ArrayList<FilesAttachments>
-                else
+                }
+                else {
                     folder.files?.addAll(result)
+                }
                 folders.add(index, folder)
                 folders.let {
                     _folders.postValue(it)
@@ -158,6 +160,29 @@ class ProjectDocumentsVM @Inject constructor(
             }
         }
     }
+    private fun patchFilesWithFolder(folderId: String, result: List<FilesAttachments>) {
+        val folders = folders.value
+        val folder = folders?.find { it.id == folderId }
+        if (folder !== null) {
+            val index = folders.indexOf(folder)
+            if (index > -1) {
+                folders.removeAt(index)
+                if (folder.files == null) {
+                    folder.files = result as ArrayList<FilesAttachments>
+                }
+                else {
+                    folder.files = arrayListOf()
+                    folder.files?.addAll(result)
+                }
+                folders.add(index, folder)
+                folders.let {
+                    _folders.postValue(it)
+                }
+
+            }
+        }
+    }
+
 
     private fun patchFilesToRoot(result: List<FilesAttachments>) {
         var files = files.value
