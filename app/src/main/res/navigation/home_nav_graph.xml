@@ -103,9 +103,6 @@
         <action
             android:id="@+id/action_msgViewFragment_to_questionarie_nav_graph"
             app:destination="@id/questionarie_nav_graph" />
-        <action
-            android:id="@+id/action_msgViewFragment_to_photoEditorFragment"
-            app:destination="@id/photoEditorFragment" />
 
     </fragment>
     <fragment
@@ -246,11 +243,6 @@
         android:name="com.zstronics.ceibro.ui.attachment.addattachments.AddAttachmentFragment"
         android:label="AddAttachmentFragment"
         tools:layout="@layout/fragment_add_attachment" />
-    <fragment
-        android:id="@+id/photoEditorFragment"
-        android:name="com.zstronics.ceibro.ui.photoeditor.PhotoEditorFragment"
-        android:label="PhotoEditorFragment"
-        tools:layout="@layout/fragment_photo_editor" />
     <fragment
         android:id="@+id/editSubTaskDetailsFragment"
         android:name="com.zstronics.ceibro.ui.tasks.editsubtaskdetails.EditSubTaskDetailsFragment"

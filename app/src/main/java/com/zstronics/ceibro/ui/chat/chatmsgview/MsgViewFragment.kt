@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.chat.chatmsgview
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -13,23 +14,23 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toast
+import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
+import com.zstronics.ceibro.com.burhanrashid52.photoediting.EditImageActivity
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.databinding.FragmentMsgViewBinding
-import com.zstronics.ceibro.extensions.openCamera
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
 import com.zstronics.ceibro.ui.chat.adapter.swipe.MessageSwipeController
@@ -72,14 +73,8 @@ class MsgViewFragment :
                 viewModel.hideQuoted()
             }
             R.id.captureImage -> {
-                checkPermission(
-                    immutableListOf(
-                        Manifest.permission.CAMERA
-                    )
-                ) {
-//                    requireActivity().openCamera { resultCode, intent ->
-//                        val file = FileUtils.getFile(requireContext(), intent?.data)
-//                    }
+                captureImage { uri ->
+                    startPhotoEditor()
                 }
             }
             R.id.btPickFile -> checkPermission(
@@ -87,14 +82,14 @@ class MsgViewFragment :
                     Manifest.permission.CAMERA
                 )
             ) {
-//                chooseFile(
-//                    arrayOf(
-//                        "image/png",
-//                        "image/jpg",
-//                        "image/jpeg",
-//                        "image/*"
-//                    )
-//                )
+                chooseFile(
+                    arrayOf(
+                        "image/png",
+                        "image/jpg",
+                        "image/jpeg",
+                        "image/*"
+                    )
+                )
             }
 //            R.id.questionLL -> navigateToQuestionarieNavGraph()
         }
@@ -360,6 +355,13 @@ class MsgViewFragment :
                     )
                 viewModel.updateOtherLastMessageSeen(messageSeen)
             }
+        }
+    }
+    private fun startPhotoEditor() {
+        launchActivity<EditImageActivity>(
+            options = Bundle(),
+            clearPrevious = false
+        ) {
         }
     }
 }

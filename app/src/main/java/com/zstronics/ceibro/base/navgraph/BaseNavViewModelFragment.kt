@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -74,6 +75,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             (activity as ManageToolBarListener).toolBarTitle = title
         }
     }
+
     override fun toolBarVisibility(): Boolean? = true
     override fun setDisplayHomeAsUpEnabled(): Boolean? = true
     override fun setHomeAsUpIndicator() = R.drawable.icon_back
@@ -390,6 +392,43 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                     fileOutputStream.close()
                     val uri = Uri.fromFile(file)
                     addFileToUriList(uri)
+                } catch (e: Exception) {
+                    toast(e.message.toString())
+                }
+            }
+        }
+    }
+
+    inline fun captureImage(
+        noinline completionHandler: ((uri: Uri) -> Unit)? = null
+    ) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA
+            )
+        ) {
+            requireActivity().openCamera { resultCode, intent ->
+                try {
+                    val bitmap: Bitmap = intent?.extras?.get("data") as Bitmap
+                    // Create a File object to save the bitmap
+                    val timeStamp: String = java.lang.String.valueOf(
+                        TimeUnit.MILLISECONDS.toSeconds(
+                            System.currentTimeMillis()
+                        )
+                    )
+                    val file = File(context?.cacheDir, "IMG-$timeStamp.jpg")
+                    file.createNewFile()
+
+                    val byteArrayOutputStream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                    val byteArray = byteArrayOutputStream.toByteArray()
+
+                    val fileOutputStream = FileOutputStream(file)
+                    fileOutputStream.write(byteArray)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                    val uri = Uri.fromFile(file)
+                    completionHandler?.invoke(uri)
                 } catch (e: Exception) {
                     toast(e.message.toString())
                 }
