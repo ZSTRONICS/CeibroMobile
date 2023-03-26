@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting.filters
+package com.zstronics.photoediting.filters
 
 import ja.burhanrashid52.photoeditor.PhotoFilter
 

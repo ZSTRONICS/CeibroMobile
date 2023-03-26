@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting
+package com.zstronics.photoediting
 
 import android.content.Context
 import android.graphics.Color
@@ -18,7 +18,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.ColorPickerAdapter.OnColorPickerClickListener
+import com.zstronics.photoediting.ColorPickerAdapter.OnColorPickerClickListener
 
 /**
  * Created by Burhanuddin Rashid on 1/16/2018.

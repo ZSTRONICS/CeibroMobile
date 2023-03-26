@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting
+package com.zstronics.photoediting
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -28,14 +28,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.EmojiBSFragment.EmojiListener
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.StickerBSFragment.StickerListener
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.base.BaseActivity
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.filters.FilterListener
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.filters.FilterViewAdapter
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.tools.EditingToolsAdapter
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.tools.EditingToolsAdapter.OnItemSelected
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.tools.ToolType
+import com.zstronics.photoediting.EmojiBSFragment.EmojiListener
+import com.zstronics.photoediting.StickerBSFragment.StickerListener
+import com.zstronics.photoediting.base.BaseActivity
+import com.zstronics.photoediting.filters.FilterListener
+import com.zstronics.photoediting.filters.FilterViewAdapter
+import com.zstronics.photoediting.tools.EditingToolsAdapter
+import com.zstronics.photoediting.tools.EditingToolsAdapter.OnItemSelected
+import com.zstronics.photoediting.tools.ToolType
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener

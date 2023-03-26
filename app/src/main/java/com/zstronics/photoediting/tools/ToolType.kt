@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting.tools
+package com.zstronics.photoediting.tools
 
 /**
  * @author [Burhanuddin Rashid](https://github.com/burhanrashid52)

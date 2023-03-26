@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting
+package com.zstronics.photoediting
 
 import android.annotation.SuppressLint
 import android.app.Dialog

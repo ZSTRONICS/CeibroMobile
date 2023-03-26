@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting.filters
+package com.zstronics.photoediting.filters
 
 import android.content.Context
 import android.graphics.Bitmap

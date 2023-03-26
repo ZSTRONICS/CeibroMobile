@@ -25,7 +25,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
-import com.zstronics.ceibro.com.burhanrashid52.photoediting.EditImageActivity
+import com.zstronics.photoediting.EditImageActivity
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
 import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse

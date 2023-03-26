@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.com.burhanrashid52.photoediting.base
+package com.zstronics.photoediting.base
 
 import android.R
 import android.app.ProgressDialog
