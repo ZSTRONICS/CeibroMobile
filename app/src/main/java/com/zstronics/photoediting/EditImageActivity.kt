@@ -486,7 +486,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
 
         private const val TAG = "EditImageActivity"
 
-        const val FILE_PROVIDER_AUTHORITY = "com.burhanrashid52.photoediting.fileprovider"
+        const val FILE_PROVIDER_AUTHORITY = "com.zstronics.photoediting.fileprovider"
         private const val CAMERA_REQUEST = 52
         private const val PICK_REQUEST = 53
         const val ACTION_NEXTGEN_EDIT = "action_nextgen_edit"
