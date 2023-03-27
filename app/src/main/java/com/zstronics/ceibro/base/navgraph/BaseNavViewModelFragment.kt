@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -27,6 +28,7 @@ import androidx.navigation.navOptions
 import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
+import com.zstronics.ceibro.base.extensions.launchActivityForResult
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
@@ -36,6 +38,7 @@ import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.utils.FileUtils
+import com.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -74,6 +77,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             (activity as ManageToolBarListener).toolBarTitle = title
         }
     }
+
     override fun toolBarVisibility(): Boolean? = true
     override fun setDisplayHomeAsUpEnabled(): Boolean? = true
     override fun setHomeAsUpIndicator() = R.drawable.icon_back
@@ -397,6 +401,43 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    inline fun captureImage(
+        noinline completionHandler: ((uri: Uri) -> Unit)? = null
+    ) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA
+            )
+        ) {
+            requireActivity().openCamera { resultCode, intent ->
+                try {
+                    val bitmap: Bitmap = intent?.extras?.get("data") as Bitmap
+                    // Create a File object to save the bitmap
+                    val timeStamp: String = java.lang.String.valueOf(
+                        TimeUnit.MILLISECONDS.toSeconds(
+                            System.currentTimeMillis()
+                        )
+                    )
+                    val file = File(context?.cacheDir, "IMG-$timeStamp.jpg")
+                    file.createNewFile()
+
+                    val byteArrayOutputStream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                    val byteArray = byteArrayOutputStream.toByteArray()
+
+                    val fileOutputStream = FileOutputStream(file)
+                    fileOutputStream.write(byteArray)
+                    fileOutputStream.flush()
+                    fileOutputStream.close()
+                    val uri = Uri.fromFile(file)
+                    completionHandler?.invoke(uri)
+                } catch (e: Exception) {
+                    toast(e.message.toString())
+                }
+            }
+        }
+    }
+
     private fun addFileToUriList(fileUri: Uri?) {
         val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
         val fileName = FileUtils.getFileName(requireContext(), fileUri)
@@ -468,4 +509,12 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         inflater.inflate(R.menu.menu_add, menu)
     }
 
+    fun startEditor(imageUri: Uri, onPhotoEditedCallback: (updatedUri: Uri?) -> Unit) {
+        launchActivityForResult<EditImageActivity>(init = {
+            this.data = imageUri
+            action = Intent.ACTION_EDIT
+        }) { resultCode, data ->
+            onPhotoEditedCallback(data?.data)
+        }
+    }
 }

@@ -18,10 +18,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
@@ -29,7 +27,6 @@ import com.zstronics.ceibro.data.repos.chat.messages.SocketReceiveMessageRespons
 import com.zstronics.ceibro.data.repos.chat.messages.socket.MessageSeenSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.databinding.FragmentMsgViewBinding
-import com.zstronics.ceibro.extensions.openCamera
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.chat.adapter.MessagesAdapter
 import com.zstronics.ceibro.ui.chat.adapter.swipe.MessageSwipeController
@@ -71,17 +68,7 @@ class MsgViewFragment :
             R.id.cancelQuoted -> {
                 viewModel.hideQuoted()
             }
-            R.id.captureImage -> {
-                checkPermission(
-                    immutableListOf(
-                        Manifest.permission.CAMERA
-                    )
-                ) {
-//                    requireActivity().openCamera { resultCode, intent ->
-//                        val file = FileUtils.getFile(requireContext(), intent?.data)
-//                    }
-                }
-            }
+            R.id.captureImage -> {}
             R.id.btPickFile -> checkPermission(
                 immutableListOf(
                     Manifest.permission.CAMERA
