@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="@dimen/_60sdp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_5sdp">
+        android:layout_margin="@dimen/_5sdp"
+        android:animateLayoutChanges="true">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/attachmentImageView"
@@ -22,6 +23,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/editLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_20sdp"
+            android:background="#8DFFFFFF"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:text="Edit"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/attachmentTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@id/attachmentTitle"

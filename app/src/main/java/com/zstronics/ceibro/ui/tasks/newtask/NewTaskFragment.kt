@@ -152,6 +152,17 @@ class NewTaskFragment :
                 viewModel.removeFile(position)
             }
 
+        attachmentAdapter.onEditPhoto =
+            { _: View, position: Int, data: SubtaskAttachment? ->
+                data?.attachmentUri?.let { uri ->
+                    startEditor(uri) { updatedUri ->
+                        if (updatedUri != null) {
+                            viewModel.updateUri(position, updatedUri)
+                        }
+                    }
+                }
+            }
+
         viewModel.task.observe(viewLifecycleOwner) { item ->
             mViewDataBinding.newTaskProjectSpinner.setText(
                 mViewDataBinding.newTaskProjectSpinner.adapter.getItem(viewModel.projectIndex)

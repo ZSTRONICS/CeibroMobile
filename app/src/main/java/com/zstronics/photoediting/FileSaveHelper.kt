@@ -3,20 +3,15 @@ package com.zstronics.photoediting
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentValues
+import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import kotlin.Throws
+import androidx.lifecycle.*
+import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -92,6 +87,35 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                 val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 cursor.moveToFirst()
                 val filePath = cursor.getString(columnIndex)
+
+                // Post the file created result with the resolved image file path
+                updateResult(true, filePath, null, editedImageUri, newImageDetails)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                updateResult(false, null, ex.message, null, null)
+            } finally {
+                cursor?.close()
+            }
+        }
+    }
+
+    fun createFile(context: Context, fileNameToSave: String, listener: OnFileCreateResult?) {
+        resultListener = listener
+        executor!!.submit {
+            var cursor: Cursor? = null
+            try {
+                val directory = File(context.filesDir, "ceibroPhotoEditing")
+                if (!directory.exists()) {
+                    directory.mkdirs()
+                }
+                val file = File(directory, fileNameToSave)
+
+                // Build the edited image URI for the MediaStore
+                val newImageDetails = ContentValues()
+                val imageCollection = buildUriCollection(newImageDetails)
+                val editedImageUri =
+                    getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
+                val filePath = file.absolutePath
 
                 // Post the file created result with the resolved image file path
                 updateResult(true, filePath, null, editedImageUri, newImageDetails)
