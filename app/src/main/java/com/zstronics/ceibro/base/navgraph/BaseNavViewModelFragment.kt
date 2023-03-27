@@ -28,6 +28,7 @@ import androidx.navigation.navOptions
 import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
+import com.zstronics.ceibro.base.extensions.launchActivityForResult
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
@@ -37,6 +38,7 @@ import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.utils.FileUtils
+import com.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -507,4 +509,12 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         inflater.inflate(R.menu.menu_add, menu)
     }
 
+    fun startEditor(imageUri: Uri, onPhotoEditedCallback: (updatedUri: Uri?) -> Unit) {
+        launchActivityForResult<EditImageActivity>(init = {
+            this.data = imageUri
+            action = Intent.ACTION_EDIT
+        }) { resultCode, data ->
+            onPhotoEditedCallback(data?.data)
+        }
+    }
 }
