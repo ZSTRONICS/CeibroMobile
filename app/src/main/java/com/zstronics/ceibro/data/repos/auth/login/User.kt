@@ -40,7 +40,7 @@ data class User(
     @SerializedName("profilePic")
     var profilePic: String,
     @SerializedName("role")
-    val role: String,
+    val role: String?,
     @SerializedName("socketId")
     val socketId: String,
     @SerializedName("surName")

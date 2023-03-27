@@ -24,9 +24,10 @@ class ProfileVM @Inject constructor(
     val sessionManager: SessionManager,
     private val taskRepository: TaskRepository
 ) : HiltBaseViewModel<IProfile.State>(), IProfile.ViewModel {
-
+    var user = sessionManager.getUser().value
     init {
         sessionManager.setUser()
+        user = sessionManager.getUser().value
     }
 
     override fun showMenuPopup(v: View) {
@@ -44,6 +45,13 @@ class ProfileVM @Inject constructor(
         val menuAdmin = view.findViewById<View>(R.id.menuAdmin)
         val menuHelp = view.findViewById<View>(R.id.menuHelp)
         val menuLogout = view.findViewById<View>(R.id.menuLogout)
+
+        if (user?.role.equals("admin", true)) {
+            menuAdmin.visibility = View.VISIBLE
+        }
+        else {
+            menuAdmin.visibility = View.VISIBLE
+        }
 
         menuEdit.setOnClickListener {
             clickEvent?.postValue(106)
