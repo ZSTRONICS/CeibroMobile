@@ -26,7 +26,7 @@ data class CeibroTask(
     @SerializedName("description") val description: String?,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("isMultiTask") val isMultiTask: Boolean,
-    @SerializedName("project") val project: TaskProject,
+    @SerializedName("project") val project: TaskProject?,
     @SerializedName("state") val state: String,
     @SerializedName("subTaskStatusCount") val subTaskStatusCount: SubTaskStatusCount?,
     @SerializedName("title") val title: String,

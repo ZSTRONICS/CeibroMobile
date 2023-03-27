@@ -7,8 +7,7 @@ import com.zstronics.ceibro.data.base.BaseResponse
 import kotlinx.parcelize.Parcelize
 
 @Keep
-@Parcelize
 data class AdminUsersResponse(
     @SerializedName("result")
     val result: List<AdminUserObj>
-) : BaseResponse(), Parcelable
+) : BaseResponse()

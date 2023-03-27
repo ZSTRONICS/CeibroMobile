@@ -61,7 +61,7 @@ class TasksVM @Inject constructor(
         val filtered =
             originalTasks.filter {
                 /// check the project filter and assigneeToMembers 2 filters
-                (it.project.id == filter.projectId || filter.projectId.isEmpty()) && haveMembers(
+                (it.project?.id == filter.projectId || filter.projectId.isEmpty()) && haveMembers(
                     it.assignedTo,
                     filter.assigneeToMembers
                 ) && (it.state.equals(filter.selectedStatus, true) || filter.selectedStatus.equals("All", true))

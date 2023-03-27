@@ -149,7 +149,12 @@ class NewTaskFragment :
         }
         attachmentAdapter.itemClickListener =
             { _: View, position: Int, data: SubtaskAttachment? ->
-                viewModel.removeFile(position)
+                //viewModel.removeFile(position)
+                data?.attachmentUri?.let {
+                    startEditor(it) { updatedUri ->
+
+                    }
+                }
             }
 
         attachmentAdapter.onEditPhoto =

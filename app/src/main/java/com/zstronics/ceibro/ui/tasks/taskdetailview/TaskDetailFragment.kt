@@ -317,7 +317,12 @@ class TaskDetailFragment :
 
                     taskTitle.text = item.title
 
-                    taskDetailProjectName.text = item.project.title
+                    taskDetailProjectName.text =
+                        if (item.project != null)
+                            item.project.title
+                        else
+                            "Unknown"
+
                     taskDetailSubTaskCount.text =
                         "${item.totalSubTaskCount}/${item.totalSubTaskCount}"
                 }

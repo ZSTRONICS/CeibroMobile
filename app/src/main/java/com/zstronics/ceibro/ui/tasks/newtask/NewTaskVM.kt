@@ -129,7 +129,7 @@ class NewTaskVM @Inject constructor(
 
             if (projectName != null) {
                 for (projectN in projectName) {
-                    if (taskParcel.project.title == projectN) {
+                    if (taskParcel.project?.title == projectN) {
                         selectedProjectName = taskParcel.project.title
                         break
                     }
@@ -137,7 +137,7 @@ class NewTaskVM @Inject constructor(
                 }
             }
             projectIndex = index
-            projectId = taskParcel.project.id
+            projectId = taskParcel.project?.id ?: ""
             taskId = taskParcel._id
             _task.value = taskParcel
 
