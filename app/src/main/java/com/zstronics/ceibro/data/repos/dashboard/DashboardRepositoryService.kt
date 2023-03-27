@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.dashboard
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
+import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
@@ -48,4 +49,9 @@ interface DashboardRepositoryService {
         @Path("module") module: String,
         @Path("moduleId") moduleId: String
     ): Response<GetAllFilesResponse>
+
+    @GET("users")
+    suspend fun getAdminsOrUsersList(
+        @Query("role") role: String
+    ): Response<AdminUsersResponse>
 }

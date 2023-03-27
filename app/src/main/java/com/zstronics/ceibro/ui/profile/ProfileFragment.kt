@@ -33,7 +33,7 @@ class ProfileFragment :
             R.id.userProfileConnections -> navigateToConnections()
             R.id.userProfileInvitations -> navigateToInvitations()
             106 -> navigateToEditProfile()
-            107 -> shortToastNow("Admin")
+            107 -> navigateToAdminsPanel()
             108 -> shortToastNow("Help")
             110 -> {    //Logout Btn Click Event
                 viewModel.endUserSession()
@@ -74,6 +74,9 @@ class ProfileFragment :
     }
     private fun navigateToInvitations() {
         navigate(R.id.invitationsFragment)
+    }
+    private fun navigateToAdminsPanel() {
+        navigate(R.id.mainAdminFragment)
     }
 
 

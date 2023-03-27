@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.dashboard
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
+import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
@@ -91,4 +92,10 @@ class DashboardRepository @Inject constructor(
         })
 
 
+    override suspend fun getAdminsOrUsersList(role: String): ApiResponse<AdminUsersResponse> = executeSafely(
+        call =
+        {
+            service.getAdminsOrUsersList(role)
+        }
+    )
 }

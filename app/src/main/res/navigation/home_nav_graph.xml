@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_mainTasksFragment"
             app:destination="@id/mainTasksFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_mainAdminFragment"
+            app:destination="@id/mainAdminFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -258,4 +261,26 @@
         android:name="com.zstronics.ceibro.ui.projects.newproject.CreateProjectMainFragment"
         android:label="CreateProjectMainFragment"
         tools:layout="@layout/fragment_create_project_main" />
+    <fragment
+        android:id="@+id/mainAdminFragment"
+        android:name="com.zstronics.ceibro.ui.admin.MainAdminFragment"
+        android:label="MainAdminFragment"
+        tools:layout="@layout/fragment_main_admin" >
+        <action
+            android:id="@+id/action_mainAdminFragment_to_adminsFragment"
+            app:destination="@id/adminsFragment" />
+        <action
+            android:id="@+id/action_mainAdminFragment_to_allUsersFragment"
+            app:destination="@id/allUsersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminsFragment"
+        android:name="com.zstronics.ceibro.ui.admin.admins.AdminsFragment"
+        android:label="AdminsFragment"
+        tools:layout="@layout/fragment_admins" />
+    <fragment
+        android:id="@+id/allUsersFragment"
+        android:name="com.zstronics.ceibro.ui.admin.users.AllUsersFragment"
+        android:label="AllUsersFragment"
+        tools:layout="@layout/fragment_all_users" />
 </navigation>
