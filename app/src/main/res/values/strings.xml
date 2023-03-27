@@ -309,4 +309,7 @@
     <string name="select_members_heading">Select members</string>
     <string name="creation_date_heading">Creation Date</string>
     <string name="filter_heading">Filter</string>
+    <string name="users_heading">Users</string>
+    <string name="avatar_heading">Avatar</string>
+    <string name="id_heading">ID</string>
 </resources>

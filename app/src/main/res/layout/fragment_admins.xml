@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.admin.admins.AdminsState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.admin.admins.AdminsVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/avatarHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:text="@string/avatar_heading"
+            android:textColor="@color/appTextGrey"
+            android:textSize="13.5sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/nameHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:text="@string/name_heading"
+            android:textColor="@color/appTextGrey"
+            android:textSize="13.5sp"
+            app:layout_constraintBottom_toBottomOf="@+id/avatarHeading"
+            app:layout_constraintEnd_toStartOf="@+id/idHeading"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/avatarHeading"
+            app:layout_constraintTop_toTopOf="@+id/avatarHeading" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/idHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_75sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:text="@string/id_heading"
+            android:textColor="@color/appTextGrey"
+            android:textSize="13.5sp"
+            app:layout_constraintBottom_toBottomOf="@+id/avatarHeading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/avatarHeading" />
+
+        <View
+            android:id="@+id/view23"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@color/appLightGrey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/avatarHeading" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view23">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/adminsRV"
+                    tools:itemCount="15"
+                    tools:listitem="@layout/layout_admin_user_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingBottom="1dp"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
