@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.repos.chat.messages.MessagesResponse
@@ -36,6 +37,7 @@ import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.enums.MessageActions.*
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.FileUtils
+import com.zstronics.photoediting.EditImageActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.socket.emitter.Emitter
 import okhttp3.internal.immutableListOf
@@ -347,6 +349,13 @@ class MsgViewFragment :
                     )
                 viewModel.updateOtherLastMessageSeen(messageSeen)
             }
+        }
+    }
+    private fun startPhotoEditor() {
+        launchActivity<EditImageActivity>(
+            options = Bundle(),
+            clearPrevious = false
+        ) {
         }
     }
 }
