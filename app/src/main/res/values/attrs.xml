@@ -40,5 +40,7 @@
             <flag name="to_left" value="2" />
         </attr>
     </declare-styleable>
-
+    <declare-styleable name="PhotoEditorView">
+        <attr name="photo_src" format="integer" />
+    </declare-styleable>
 </resources>

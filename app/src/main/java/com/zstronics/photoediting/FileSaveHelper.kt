@@ -99,35 +99,6 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
         }
     }
 
-    fun createFile(context: Context, fileNameToSave: String, listener: OnFileCreateResult?) {
-        resultListener = listener
-        executor!!.submit {
-            var cursor: Cursor? = null
-            try {
-                val directory = File(context.filesDir, "ceibroPhotoEditing")
-                if (!directory.exists()) {
-                    directory.mkdirs()
-                }
-                val file = File(directory, fileNameToSave)
-
-                // Build the edited image URI for the MediaStore
-                val newImageDetails = ContentValues()
-                val imageCollection = buildUriCollection(newImageDetails)
-                val editedImageUri =
-                    getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
-                val filePath = file.absolutePath
-
-                // Post the file created result with the resolved image file path
-                updateResult(true, filePath, null, editedImageUri, newImageDetails)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                updateResult(false, null, ex.message, null, null)
-            } finally {
-                cursor?.close()
-            }
-        }
-    }
-
     @Throws(IOException::class)
     private fun getEditedImageUri(
         fileNameToSave: String,

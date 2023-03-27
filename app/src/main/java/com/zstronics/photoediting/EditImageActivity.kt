@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.utils.FileUtils
 import com.zstronics.photoediting.EmojiBSFragment.EmojiListener
@@ -297,36 +298,35 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         ) == PackageManager.PERMISSION_GRANTED
         if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
             mSaveFileHelper.createFile(
-                applicationContext,
                 fileName,
                 object : FileSaveHelper.OnFileCreateResult {
 
-                @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
-                override fun onFileCreateResult(
-                    created: Boolean,
-                    filePath: String?,
-                    error: String?,
-                    uri: Uri?
-                ) {
-                    lifecycleScope.launch {
-                        if (created && filePath != null) {
-                            val saveSettings = SaveSettings.Builder()
-                                .setClearViewsEnabled(true)
-                                .setTransparencyEnabled(true)
-                                .build()
-                            mPhotoEditor.saveAsFile(
-                                filePath,
-                                saveSettings,
-                                this@EditImageActivity
-                            )
+                    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+                    override fun onFileCreateResult(
+                        created: Boolean,
+                        filePath: String?,
+                        error: String?,
+                        uri: Uri?
+                    ) {
+                        lifecycleScope.launch {
+                            if (created && filePath != null) {
+                                val saveSettings = SaveSettings.Builder()
+                                    .setClearViewsEnabled(true)
+                                    .setTransparencyEnabled(true)
+                                    .build()
+                                mPhotoEditor.saveAsFile(
+                                    filePath,
+                                    saveSettings,
+                                    this@EditImageActivity
+                                )
 
-                        } else {
-                            hideLoading()
-                            error?.let { showSnackbar(error) }
+                            } else {
+                                hideLoading()
+                                error?.let { showSnackbar(error) }
+                            }
                         }
                     }
-                }
-            })
+                })
         } else {
             requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
@@ -511,9 +511,22 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         mSaveFileHelper.notifyThatFileIsNowPubliclyAvailable(contentResolver)
         hideLoading()
         showSnackbar("Image Saved Successfully")
-        mSaveImageUri = Uri.parse(imagePath)
-        mPhotoEditorView.source.setImageURI(mSaveImageUri)
-        setResult(RESULT_OK, Intent().setData(mSaveImageUri))
-        finish()
+        try {
+            val externalFile = File(imagePath)
+            val internalDir = applicationContext.filesDir // or any other internal storage directory
+            val internalFile = File(internalDir, externalFile.name)
+            externalFile.copyTo(internalFile, overwrite = true)
+            val internalUri: Uri? = FileProvider.getUriForFile(
+                applicationContext,
+                "${BuildConfig.APPLICATION_ID}.fileprovider",
+                internalFile
+            )
+            internalUri?.let { mSaveImageUri = internalUri }
+            mPhotoEditorView.source.setImageURI(mSaveImageUri)
+            setResult(RESULT_OK, Intent().setData(mSaveImageUri))
+            finish()
+        } catch (e: Exception) {
+
+        }
     }
 }
