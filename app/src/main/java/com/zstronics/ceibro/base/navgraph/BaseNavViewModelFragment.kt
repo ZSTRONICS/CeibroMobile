@@ -5,17 +5,23 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.transition.ChangeBounds
 import android.transition.Fade
 import android.transition.Slide
 import android.view.Menu
 import android.view.MenuInflater
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -56,6 +62,7 @@ const val NAVIGATION_RESULT_OK = -1
 
 abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, VM : HiltBaseViewModel<VS>> :
     BaseBindingViewModelFragment<VB, VS, VM>() {
+    private val PERMISSION_REQUEST_EXTERNAL_STORAGE = 1
     protected open val hasUpNavigation: Boolean = true
     private val requestCode: Int
         get() = arguments?.getInt(ARGUMENT_NAVIGATION_REQUEST_CODE, REQUEST_CODE_NOT_SET)
@@ -328,40 +335,60 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     }
 
     fun pickAttachment(allowMultiple: Boolean = false) {
-        checkPermission(
-            immutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            )
-        ) {
-            requireActivity().openFilePicker(
-                allowMultiple = allowMultiple,
-                mimeTypes = arrayOf(
-                    "image/png",
-                    "image/jpg",
-                    "image/jpeg",
-                    "image/*",
-                    "video/mp4",
-                    "video/3gpp",
-                    "video/*",
-                    "application/pdf",
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                requestManageAllFilesAccessPermission()
+                return
+            } else {
+                pickFiles()
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                pickFiles()
+                return
+            } else {
+                requestPermissions(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_EXTERNAL_STORAGE
                 )
-            ) { resultCode, data ->
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    val clipData = data.clipData
-                    if (clipData != null) {
-                        for (i in 0 until clipData.itemCount) {
-                            val fileUri = clipData.getItemAt(i).uri
-                            // Add the URI to the list
-                            addFileToUriList(fileUri)
-                        }
-                    } else {
-                        val fileUri = data.data
+                return
+            }
+        }
+    }
+
+
+    private fun pickFiles() {
+        requireActivity().openFilePicker(
+            allowMultiple = true,
+            mimeTypes = arrayOf(
+                "image/png",
+                "image/jpg",
+                "image/jpeg",
+                "image/*",
+                "video/mp4",
+                "video/3gpp",
+                "video/*",
+                "application/pdf",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+            )
+        ) { resultCode, data ->
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val clipData = data.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val fileUri = clipData.getItemAt(i).uri
                         // Add the URI to the list
                         addFileToUriList(fileUri)
                     }
+                } else {
+                    val fileUri = data.data
+                    // Add the URI to the list
+                    addFileToUriList(fileUri)
                 }
             }
         }
@@ -516,6 +543,43 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             action = Intent.ACTION_EDIT
         }) { resultCode, data ->
             onPhotoEditedCallback(data?.data)
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val permission = Environment.isExternalStorageManager()
+                    if (permission) {
+                        pickFiles()
+                    } else {
+                        toast(getString(R.string.common_text_permissions_denied))
+                    }
+                }
+            } else {
+                toast(getString(R.string.common_text_permissions_denied))
+            }
+        }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun requestManageAllFilesAccessPermission() {
+        val intent = Intent(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+        intent.data = Uri.parse("package:" + requireActivity().packageName)
+        requestPermissionLauncher.launch(intent)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == PERMISSION_REQUEST_EXTERNAL_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pickFiles()
+            } else {
+                toast(getString(R.string.common_text_permissions_denied))
+            }
         }
     }
 }

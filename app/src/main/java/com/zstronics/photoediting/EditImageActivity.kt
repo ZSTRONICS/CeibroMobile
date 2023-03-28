@@ -72,6 +72,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
 
     @VisibleForTesting
     var mSaveImageUri: Uri? = null
+    var newUri: Uri? = null
 
     private lateinit var mSaveFileHelper: FileSaveHelper
 
@@ -314,6 +315,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                                     .setClearViewsEnabled(true)
                                     .setTransparencyEnabled(true)
                                     .build()
+                                newUri = uri
                                 mPhotoEditor.saveAsFile(
                                     filePath,
                                     saveSettings,
@@ -511,22 +513,9 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         mSaveFileHelper.notifyThatFileIsNowPubliclyAvailable(contentResolver)
         hideLoading()
         showSnackbar("Image Saved Successfully")
-        try {
-            val externalFile = File(imagePath)
-            val internalDir = applicationContext.filesDir // or any other internal storage directory
-            val internalFile = File(internalDir, externalFile.name)
-            externalFile.copyTo(internalFile, overwrite = true)
-            val internalUri: Uri? = FileProvider.getUriForFile(
-                applicationContext,
-                "${BuildConfig.APPLICATION_ID}.fileprovider",
-                internalFile
-            )
-            internalUri?.let { mSaveImageUri = internalUri }
-            mPhotoEditorView.source.setImageURI(mSaveImageUri)
-            setResult(RESULT_OK, Intent().setData(mSaveImageUri))
-            finish()
-        } catch (e: Exception) {
-
-        }
+        mSaveImageUri = Uri.parse(imagePath)
+        mPhotoEditorView.source.setImageURI(newUri)
+        setResult(RESULT_OK, Intent().setData(newUri))
+        finish()
     }
 }
