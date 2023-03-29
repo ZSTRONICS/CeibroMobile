@@ -21,7 +21,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -335,35 +334,41 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     }
 
     fun pickAttachment(allowMultiple: Boolean = false) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                requestManageAllFilesAccessPermission()
-                return
-            } else {
-                pickFiles()
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                pickFiles()
-                return
-            } else {
-                requestPermissions(
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    PERMISSION_REQUEST_EXTERNAL_STORAGE
-                )
-                return
-            }
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA,
+            )
+        ) {
+            pickFiles(allowMultiple)
         }
     }
 
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//        if (!Environment.isExternalStorageManager()) {
+//            requestManageAllFilesAccessPermission()
+//            return
+//        } else {
+//            pickFiles()
+//        }
+//    } else {
+//        if (ContextCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.READ_EXTERNAL_STORAGE
+//            ) == PackageManager.PERMISSION_GRANTED
+//        ) {
+//            pickFiles()
+//            return
+//        } else {
+//            requestPermissions(
+//                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+//                PERMISSION_REQUEST_EXTERNAL_STORAGE
+//            )
+//            return
+//        }
 
-    private fun pickFiles() {
+    private fun pickFiles(allowMultiple: Boolean = true) {
         requireActivity().openFilePicker(
-            allowMultiple = true,
+            allowMultiple = allowMultiple,
             mimeTypes = arrayOf(
                 "image/png",
                 "image/jpg",
