@@ -7,7 +7,7 @@
 
         <variable
             name="allUsers"
-            type="com.zstronics.ceibro.data.repos.dashboard.admins.AdminUserObj" />
+            type="com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse.AdminUserData" />
 
         <import type="android.view.View" />
     </data>
@@ -57,34 +57,33 @@
             android:id="@+id/adminUserName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_19sdp"
-            android:paddingStart="0dp"
-            android:paddingEnd="@dimen/_7sdp"
+            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginEnd="@dimen/_7sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
             android:gravity="start"
             android:maxLines="1"
-            android:text="@{allUsers.firstName + ` ` + allUsers.surName}"
+            android:text="Kristo Vunukainen"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="@+id/adminImgCard"
             app:layout_constraintEnd_toStartOf="@+id/adminUserID"
             app:layout_constraintStart_toEndOf="@+id/adminImgCard"
-            app:layout_constraintTop_toTopOf="@+id/adminImgCard" />
+            app:layout_constraintTop_toTopOf="@+id/adminImgCard"/>
 
         <TextView
             android:id="@+id/adminUserID"
             android:layout_width="wrap_content"
-            android:minWidth="@dimen/_65sdp"
+            android:minWidth="@dimen/_64sdp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
             android:gravity="start"
             android:maxLines="1"
-            android:paddingEnd="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_3sdp"
             android:paddingStart="0dp"
-            android:text="30000022"
-            android:maxLength="7"
+            android:text="300002"
+            android:maxLength="8"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="@+id/adminUserName"

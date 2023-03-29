@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.admin.personaldetail.PersonalDetailState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.admin.personaldetail.PersonalDetailVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:theme="@style/Theme.Ceibro">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/personalDetailHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appYellow" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_23sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/personal_details"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/personalDetailScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="1dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@+id/updateBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/personalDetailHeader">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/personalDetailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/ImgCard"
+                    android:layout_width="@dimen/_77sdp"
+                    android:layout_height="0dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:shape="rectangle"
+                    app:cardBackgroundColor="@color/black"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="4dp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    app:layout_constraintBottom_toBottomOf="@+id/surNameField"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/firstNameField">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/userProfileImg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:padding="0dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/profile_img"
+                        app:loadImageFromUrl="@{viewState.userProfilePic}" />
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/firstNameField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/name_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/ImgCard"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/firstNameText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userFirstName}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/surNameField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:hint="@string/surname_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="@+id/firstNameField"
+                    app:layout_constraintStart_toStartOf="@+id/firstNameField"
+                    app:layout_constraintTop_toBottomOf="@+id/firstNameField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/surNameText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userSurname}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/emailField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/email_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/surNameField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/emailText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userEmail}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/phoneNoField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/phone_number_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/emailField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/phoneNoText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userContactNumber}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/companyField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/company_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/phoneNoField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/companyText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userCompanyName}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/workEmailField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/work_email_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/companyField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/workEmailText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userWorkEmail}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/workPhoneField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/work_phone_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/workEmailField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/workPhoneText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userWorkContactNo}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/regDateField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:hint="@string/reg_date_heading"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/workPhoneField">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/regDateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:textColorHint="@color/grey"
+                        android:textSize="15sp"
+                        android:text="@={viewState.userRegisterDate}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/updateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="23dp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/update_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/signin_button_back"
+            android:backgroundTint="@color/appLightGrey"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/cancel_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/updateBtn"
+            app:layout_constraintEnd_toStartOf="@+id/updateBtn"
+            app:layout_constraintTop_toTopOf="@+id/updateBtn"
+            tools:ignore="TouchTargetSizeCheck" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

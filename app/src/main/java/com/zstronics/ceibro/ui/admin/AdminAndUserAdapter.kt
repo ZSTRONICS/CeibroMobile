@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.admin
 
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUserObj
+import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutAdminUserBoxBinding
 import javax.inject.Inject
@@ -16,13 +17,13 @@ import javax.inject.Inject
 class AdminAndUserAdapter @Inject constructor(val sessionManager: SessionManager) :
     RecyclerView.Adapter<AdminAndUserAdapter.AllAdminAndUserViewHolder>() {
     val user = sessionManager.getUser().value
-    var itemClickListener: ((view: View, position: Int, data: AdminUserObj) -> Unit)? = null
-    var itemLongClickListener: ((view: View, position: Int, data: AdminUserObj) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: AdminUsersResponse.AdminUserData) -> Unit)? = null
+    var itemLongClickListener: ((view: View, position: Int, data: AdminUsersResponse.AdminUserData) -> Unit)? =
         null
-    var childItemClickListener: ((view: View, position: Int, data: AdminUserObj) -> Unit)? = null
-    var optionMenuItemClickListener: ((view: View, position: Int, data: AdminUserObj) -> Unit)? = null
+    var childItemClickListener: ((view: View, position: Int, data: AdminUsersResponse.AdminUserData) -> Unit)? = null
+    var optionMenuItemClickListener: ((view: View, position: Int, data: AdminUsersResponse.AdminUserData) -> Unit)? = null
 
-    private var list: MutableList<AdminUserObj> = mutableListOf()
+    private var list: MutableList<AdminUsersResponse.AdminUserData> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllAdminAndUserViewHolder {
         return AllAdminAndUserViewHolder(
@@ -42,7 +43,7 @@ class AdminAndUserAdapter @Inject constructor(val sessionManager: SessionManager
         return list.size
     }
 
-    fun setList(list: List<AdminUserObj>) {
+    fun setList(list: List<AdminUsersResponse.AdminUserData>) {
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
@@ -51,9 +52,11 @@ class AdminAndUserAdapter @Inject constructor(val sessionManager: SessionManager
     inner class AllAdminAndUserViewHolder(private val binding: LayoutAdminUserBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: AdminUserObj) {
+        fun bind(item: AdminUsersResponse.AdminUserData) {
             val context = binding.root.context
             binding.allUsers = item
+
+            binding.adminUserName.text = "${item.firstName} ${item.surName}"
 
             if (item.profilePic == "" || item.profilePic.isNullOrEmpty()) {
                 binding.adminUserImgText.text =
@@ -73,13 +76,23 @@ class AdminAndUserAdapter @Inject constructor(val sessionManager: SessionManager
             }
 
             val stringID = item.id
-            println("stringID: $stringID")
             binding.adminUserID.text = ""
             if (stringID.length > 2) {
                 val firstTwoChar: String = stringID.substring(0, 2)
-                val lastTwoChar: String = stringID.substring(Math.max(stringID.length - 2, 0))
+                val lastTwoChar: String = stringID.substring(Math.max(stringID.length - 3, 0))
 
-                binding.adminUserID.text = "$firstTwoChar..$lastTwoChar"
+                binding.adminUserID.text = "$firstTwoChar...$lastTwoChar"
+            }
+
+            binding.adminUserID.setOnClickListener {
+                binding.adminUserID.tooltipText = item.id
+                binding.adminUserID.performLongClick()
+
+                val handler = Handler()
+                handler.postDelayed(Runnable {
+                    binding.adminUserID.tooltipText = null
+
+                }, 1900)
             }
 
             binding.optionMenu.setOnClickListener {

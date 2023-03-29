@@ -8,21 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.PopupWindow
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
-import com.zstronics.ceibro.base.extensions.gone
-import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUserObj
-import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
+import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.databinding.FragmentAdminsBinding
 import com.zstronics.ceibro.ui.admin.AdminAndUserAdapter
-import com.zstronics.ceibro.ui.projects.newproject.documents.ProjectDocumentsVM
-import com.zstronics.ceibro.ui.projects.newproject.documents.manageaccess.FragmentManageDocumentAccessSheet
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -39,7 +33,6 @@ class AdminsFragment :
     }
 
 
-
     @Inject
     lateinit var adapter: AdminAndUserAdapter
 
@@ -51,10 +44,10 @@ class AdminsFragment :
         viewModel.allAdmins.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
-        adapter.itemClickListener = { _: View, position: Int, data: AdminUserObj ->
+        adapter.itemClickListener = { _: View, position: Int, data: AdminUsersResponse.AdminUserData ->
             //navigateToMsgView(data)
         }
-        adapter.optionMenuItemClickListener = { childView: View, position: Int, data: AdminUserObj ->
+        adapter.optionMenuItemClickListener = { childView: View, position: Int, data: AdminUsersResponse.AdminUserData ->
             adminPopupMenu(
                 position = position,
                 v = childView,
@@ -63,11 +56,16 @@ class AdminsFragment :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadAdmins(mViewDataBinding.adminsRV)
+    }
+
 
     private fun adminPopupMenu(
         position: Int,
         v: View,
-        data: AdminUserObj
+        data: AdminUsersResponse.AdminUserData
     ): PopupWindow {
         val popupWindow = PopupWindow(v.context)
         val context: Context = v.context
@@ -101,10 +99,17 @@ class AdminsFragment :
         val viewBtn = view.findViewById<LinearLayoutCompat>(R.id.viewBtn)
 
         viewBtn.setOnClick {
-
+            navigateToPersonalDetails(data)
+            popupWindow.dismiss()
         }
 
         return popupWindow
+    }
+
+    private fun navigateToPersonalDetails(data: AdminUsersResponse.AdminUserData) {
+        val bundle = Bundle()
+        bundle.putParcelable("adminUserData", data)
+        navigate(R.id.personalDetailFragment, bundle)
     }
 
 }
