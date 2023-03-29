@@ -2,6 +2,7 @@ package com.zstronics.ceibro.base.viewmodel
 
 
 import android.content.Context
+import android.net.Uri
 import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -112,6 +113,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     fun addUriToList(data: SubtaskAttachment) {
         val files = fileUriList.value
         files?.add(data)
+        _fileUriList.postValue(files)
+    }
+
+    fun updateUri(position: Int, updatedUri: Uri) {
+        val files = fileUriList.value
+        val file = files?.get(position)
+        file?.attachmentUri = updatedUri
+        files?.removeAt(position)
+        files?.add(position, file)
         _fileUriList.postValue(files)
     }
 

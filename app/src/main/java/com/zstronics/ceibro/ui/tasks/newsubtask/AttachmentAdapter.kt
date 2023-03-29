@@ -2,7 +2,6 @@ package com.zstronics.ceibro.ui.tasks.newsubtask
 
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,8 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.gone
+import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.databinding.LayoutAttachmentBinding
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
@@ -19,6 +20,8 @@ import javax.inject.Inject
 class AttachmentAdapter @Inject constructor() :
     RecyclerView.Adapter<AttachmentAdapter.AttachmentViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: SubtaskAttachment?) -> Unit)? =
+        null
+    var onEditPhoto: ((view: View, position: Int, data: SubtaskAttachment?) -> Unit)? =
         null
 
     private var list: MutableList<SubtaskAttachment?> = mutableListOf()
@@ -51,6 +54,19 @@ class AttachmentAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
         @RequiresApi(Build.VERSION_CODES.O_MR1)
         fun bind(item: SubtaskAttachment?) {
+            if (item?.attachmentType == AttachmentTypes.Image) {
+                binding.editLayout.setOnClickListener {
+                    onEditPhoto?.invoke(it, absoluteAdapterPosition, item)
+                }
+
+                binding.root.setOnClickListener {
+                    if (binding.editLayout.visibility == View.GONE) {
+                        binding.editLayout.visible()
+                    } else {
+                        binding.editLayout.gone()
+                    }
+                }
+            }
             binding.crossView.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

@@ -105,7 +105,16 @@ class SubTaskDetailFragment :
             { _: View, position: Int, data: SubtaskAttachment? ->
                 viewModel.removeFile(position)
             }
-
+        attachmentAdapter.onEditPhoto =
+            { _: View, position: Int, data: SubtaskAttachment? ->
+                data?.attachmentUri?.let { uri ->
+                    startEditor(uri) { updatedUri ->
+                        if (updatedUri != null) {
+                            viewModel.updateUri(position, updatedUri)
+                        }
+                    }
+                }
+            }
         commentsAdapter.itemClickListener =
             { _: View, position: Int, data: SubTaskComments ->
                 arguments?.putString("moduleType", AttachmentModules.SubTaskComments.name)
