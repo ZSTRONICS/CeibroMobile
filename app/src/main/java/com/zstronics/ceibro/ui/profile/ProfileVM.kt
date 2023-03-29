@@ -50,7 +50,7 @@ class ProfileVM @Inject constructor(
             menuAdmin.visibility = View.VISIBLE
         }
         else {
-            menuAdmin.visibility = View.VISIBLE
+            menuAdmin.visibility = View.GONE
         }
 
         menuEdit.setOnClickListener {

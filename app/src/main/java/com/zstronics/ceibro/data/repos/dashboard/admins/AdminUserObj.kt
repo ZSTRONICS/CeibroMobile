@@ -7,7 +7,6 @@ import com.zstronics.ceibro.data.base.BaseResponse
 import kotlinx.parcelize.Parcelize
 
 @Keep
-@Parcelize
 data class AdminUserObj(
     @SerializedName("_id")
     val id: String,
@@ -29,4 +28,4 @@ data class AdminUserObj(
     val surName: String,
     @SerializedName("_id")
     val workEmail: String? = ""
-) : BaseResponse(), Parcelable
+) : BaseResponse()

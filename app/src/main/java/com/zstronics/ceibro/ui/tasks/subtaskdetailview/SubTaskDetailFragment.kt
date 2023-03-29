@@ -172,7 +172,12 @@ class SubTaskDetailFragment :
                     )
 
                     subTaskTitleName.text = item.title
-                    subTaskProjectName.text = item.taskData?.project?.title
+                    subTaskProjectName.text =
+                        if (item.taskData?.project != null)
+                            item.taskData.project.title
+                        else
+                            "Unknown"
+
                     subTaskCreatorName.text = item.creator.firstName + " " + item.creator.surName
 
 
