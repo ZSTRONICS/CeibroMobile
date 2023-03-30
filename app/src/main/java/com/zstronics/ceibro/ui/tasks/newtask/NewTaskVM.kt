@@ -137,6 +137,9 @@ class NewTaskVM @Inject constructor(
                 }
             }
             projectIndex = index
+            if (index >= projectNames.value?.size!!) {
+                projectIndex = -1
+            }
             projectId = taskParcel.project?.id ?: ""
             taskId = taskParcel._id
             _task.value = taskParcel
@@ -167,40 +170,42 @@ class NewTaskVM @Inject constructor(
     }
 
     fun onProjectSelect(position: Int) {
-        val selectedProject = _allProjects[position]
-        if (selectedProject.id != projectId) {
-            val tempAdmins = _taskAdmins.value
-            tempAdmins?.removeAll(tempAdmins)
-            _taskAdmins.value = tempAdmins
+        if (position > -1) {
+            val selectedProject = _allProjects[position]
+            if (selectedProject.id != projectId) {
+                val tempAdmins = _taskAdmins.value
+                tempAdmins?.removeAll(tempAdmins)
+                _taskAdmins.value = tempAdmins
 
-            val tempAssignee = _taskAssignee.value
-            tempAssignee?.removeAll(tempAssignee)
-            _taskAssignee.value = tempAssignee
+                val tempAssignee = _taskAssignee.value
+                tempAssignee?.removeAll(tempAssignee)
+                _taskAssignee.value = tempAssignee
+            }
+            projectId = selectedProject.id
+
+            val member = Member(
+                firstName = user?.firstName ?: "",
+                surName = user?.surName ?: "",
+                id = user?.id ?: "",
+                profilePic = user?.profilePic ?: "",
+                companyName = user?.companyName ?: ""
+            )
+            val projectMemb = selectedProject.projectMembers as MutableList
+            val currentUser = projectMemb.find { it.id == member.id }
+            if (currentUser == null) {
+                projectMemb.add(member)
+            }
+            _projectMembers.value = projectMemb
+            _projectMemberNames.value = projectMemb.map { it.firstName + " " + it.surName }
+
+
+            val admins = _taskAdmins.value
+            val selectedMember = admins?.find { it.id == member.id }
+            if (selectedMember == null) {
+                admins?.add(member)
+            }
+            _taskAdmins.value = admins
         }
-        projectId = selectedProject.id
-
-        val member = Member(
-            firstName = user?.firstName ?: "",
-            surName = user?.surName ?: "",
-            id = user?.id ?: "",
-            profilePic = user?.profilePic ?: "",
-            companyName = user?.companyName ?: ""
-        )
-        val projectMemb = selectedProject.projectMembers as MutableList
-        val currentUser = projectMemb.find { it.id == member.id }
-        if (currentUser == null) {
-            projectMemb.add(member)
-        }
-        _projectMembers.value = projectMemb
-        _projectMemberNames.value = projectMemb.map { it.firstName + " " + it.surName }
-
-
-        val admins = _taskAdmins.value
-        val selectedMember = admins?.find { it.id == member.id }
-        if (selectedMember == null) {
-            admins?.add(member)
-        }
-        _taskAdmins.value = admins
     }
 
     fun onAdminSelect(position: Int) {
@@ -210,10 +215,19 @@ class NewTaskVM @Inject constructor(
         val selectedMember = admins?.find { it.id == member?.id }
 
         if (selectedMember != null) {
-            if ((member?.id ?: "") == user?.id) {
-                alert("Creator cannot be removed")
-            } else {
-                admins.remove(selectedMember)
+            if (isNewTask) {
+                if ((member?.id ?: "") == user?.id) {
+                    alert("Creator cannot be removed")
+                } else {
+                    admins.remove(selectedMember)
+                }
+            }
+            else {
+                if (task.value?.creator?.id == member?.id) {
+                    alert("Creator cannot be removed")
+                } else {
+                    admins.remove(selectedMember)
+                }
             }
         } else {
             if (member != null) {
@@ -242,11 +256,21 @@ class NewTaskVM @Inject constructor(
     fun removeAdmin(data: Member) {
         val admins = _taskAdmins.value
 
-        if (data.id == user?.id) {
-            alert("Creator cannot be removed")
-        } else {
-            admins?.remove(data)
+        if (isNewTask) {
+            if (data.id == user?.id) {
+                alert("Creator cannot be removed")
+            } else {
+                admins?.remove(data)
+            }
         }
+        else {
+            if (task.value?.creator?.id == data.id) {
+                alert("Creator cannot be removed")
+            } else {
+                admins?.remove(data)
+            }
+        }
+
         _taskAdmins.value = admins
     }
 

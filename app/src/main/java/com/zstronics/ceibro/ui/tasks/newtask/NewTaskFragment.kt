@@ -169,10 +169,12 @@ class NewTaskFragment :
             }
 
         viewModel.task.observe(viewLifecycleOwner) { item ->
-            mViewDataBinding.newTaskProjectSpinner.setText(
-                mViewDataBinding.newTaskProjectSpinner.adapter.getItem(viewModel.projectIndex)
-                    .toString(), false
-            )
+            if (viewModel.projectIndex > -1) {
+                mViewDataBinding.newTaskProjectSpinner.setText(
+                    mViewDataBinding.newTaskProjectSpinner.adapter.getItem(viewModel.projectIndex)
+                        .toString(), false
+                )
+            }
             viewModel.onProjectSelect(viewModel.projectIndex)
 
             if (!viewModel.isNewTask) {        // If not a new task, then its in edit mode
