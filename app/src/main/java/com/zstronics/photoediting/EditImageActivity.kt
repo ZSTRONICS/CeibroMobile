@@ -30,7 +30,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.utils.FileUtils
 import com.zstronics.photoediting.EmojiBSFragment.EmojiListener
@@ -514,6 +513,8 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         hideLoading()
         showSnackbar("Image Saved Successfully")
         mSaveImageUri = Uri.parse(imagePath)
-        mPhotoEditorView.source.setImageURI(mSaveImageUri)
+        mPhotoEditorView.source.setImageURI(newUri)
+        setResult(RESULT_OK, Intent().setData(newUri))
+        finish()
     }
 }
