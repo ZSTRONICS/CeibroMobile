@@ -428,7 +428,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                     val uri = Uri.fromFile(file)
                     addFileToUriList(uri)
                 } catch (e: Exception) {
-                    toast(e.message.toString())
+                    //toast(e.message.toString())
                 }
             }
         }

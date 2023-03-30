@@ -8,5 +8,6 @@ interface IHome {
 
     interface ViewModel : IBase.ViewModel<State> {
         fun loadProjects(publishStatus: String)
+        fun getTasks()
     }
 }
