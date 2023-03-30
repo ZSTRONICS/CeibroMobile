@@ -107,7 +107,7 @@
                 android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/adminsRV"
+                    android:id="@+id/usersRV"
                     tools:itemCount="15"
                     tools:listitem="@layout/layout_admin_user_box"
                     android:layout_width="match_parent"

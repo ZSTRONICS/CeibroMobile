@@ -79,4 +79,5 @@ dependencies {
     implementation("com.github.clans:fab:1.6.4")
     implementation("org.greenrobot:eventbus:3.3.1")
     implementation("com.ericktijerou.koleton:koleton:1.0.0-beta01")
+    implementation("com.github.tntkhang:full-screen-image-view-library:1.1.0")
 }

@@ -46,6 +46,7 @@ class MainAdminFragment :
                     mViewDataBinding.usersHeading.setTextColor(resources.getColor(R.color.appYellow))
                 }
             }
+            R.id.backBtn -> navigateBack()
         }
     }
 

@@ -23,24 +23,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:padding="3dp"
+                android:layout_marginStart="@dimen/_13sdp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appYellow" />
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginTop="@dimen/_13sdp"
-                android:layout_marginBottom="@dimen/_13sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
                 android:elevation="0dp"
                 android:fontFamily="@font/inter_semibold"
                 android:text="@string/admin_heading"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
@@ -50,16 +65,17 @@
                 android:layout_marginEnd="@dimen/_13sdp"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintBottom_toBottomOf="@id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:layout_constraintTop_toTopOf="@id/textView6"
                 app:srcCompat="@drawable/icon_filter" />
 
             <SearchView
                 android:id="@+id/adminSearchBar"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="@dimen/_47sdp"
+                android:layout_height="39dp"
+                android:layout_marginStart="@dimen/_45sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
                 android:closeIcon="@drawable/icon_round_close"
                 android:elevation="1dp"
                 android:gravity="center"
@@ -68,18 +84,11 @@
                 android:queryHint="Search"
                 android:searchIcon="@drawable/icon_search"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                app:layout_constraintEnd_toStartOf="@+id/adminFilterBtn"
+                app:layout_constraintBottom_toBottomOf="@id/textView6"
+                app:layout_constraintEnd_toStartOf="@id/adminFilterBtn"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView6" />
+                app:layout_constraintTop_toTopOf="@id/textView6" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/appLightGrey"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -89,7 +98,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/adminHeader">
+            app:layout_constraintTop_toBottomOf="@id/adminHeader">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/adminsHeading"
@@ -121,9 +130,9 @@
                 android:layout_marginStart="@dimen/_6sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
-                app:layout_constraintBottom_toBottomOf="@+id/adminsHeading"
-                app:layout_constraintStart_toEndOf="@+id/adminsHeading"
-                app:layout_constraintTop_toTopOf="@+id/adminsHeading" />
+                app:layout_constraintBottom_toBottomOf="@id/adminsHeading"
+                app:layout_constraintStart_toEndOf="@id/adminsHeading"
+                app:layout_constraintTop_toTopOf="@id/adminsHeading" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/usersHeading"
@@ -144,7 +153,7 @@
                 android:text="@string/users_heading"
                 android:textColor="@color/grey"
                 android:textSize="15.5sp"
-                app:layout_constraintStart_toEndOf="@+id/view21"
+                app:layout_constraintStart_toEndOf="@id/view21"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <View
@@ -155,7 +164,7 @@
                 android:background="@color/appLightGrey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/adminsHeading" />
+                app:layout_constraintTop_toBottomOf="@id/adminsHeading" />
 
             <FrameLayout
                 android:id="@+id/admin_fragment_container"
@@ -165,7 +174,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view22" />
+                app:layout_constraintTop_toBottomOf="@id/view22" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

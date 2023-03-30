@@ -269,10 +269,23 @@
         android:id="@+id/adminsFragment"
         android:name="com.zstronics.ceibro.ui.admin.admins.AdminsFragment"
         android:label="AdminsFragment"
-        tools:layout="@layout/fragment_admins" />
+        tools:layout="@layout/fragment_admins" >
+        <action
+            android:id="@+id/action_adminsFragment_to_personalDetailFragment"
+            app:destination="@id/personalDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/allUsersFragment"
         android:name="com.zstronics.ceibro.ui.admin.users.AllUsersFragment"
         android:label="AllUsersFragment"
-        tools:layout="@layout/fragment_all_users" />
+        tools:layout="@layout/fragment_all_users" >
+        <action
+            android:id="@+id/action_allUsersFragment_to_personalDetailFragment"
+            app:destination="@id/personalDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/personalDetailFragment"
+        android:name="com.zstronics.ceibro.ui.admin.personaldetail.PersonalDetailFragment"
+        android:label="PersonalDetailFragment"
+        tools:layout="@layout/fragment_personal_detail" />
 </navigation>

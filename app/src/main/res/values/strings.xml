@@ -81,6 +81,7 @@
     <string name="personal_details_heading">Personal Details</string>
     <string name="name_heading">Name</string>
     <string name="sur_name_heading">Sur name</string>
+    <string name="surname_heading">Surname</string>
     <string name="email_heading">Email</string>
     <string name="contact_number_heading">Contact number</string>
     <string name="password_heading">Password</string>
@@ -89,7 +90,7 @@
     <string name="company_heading">Company</string>
     <string name="vat_heading">VAT</string>
     <string name="location_heading">Location</string>
-    <string name="work_email_heading">Work Email</string>
+    <string name="work_email_heading">Work email</string>
     <string name="update_btn_text">Update</string>
     <string name="cancel_btn_text">Cancel</string>
     <string name="edit_heading">Edit</string>
@@ -739,4 +740,7 @@
     <string name="users_heading">Users</string>
     <string name="avatar_heading">Avatar</string>
     <string name="id_heading">ID</string>
+    <string name="phone_number_heading">Phone number</string>
+    <string name="work_phone_heading">Work phone</string>
+    <string name="reg_date_heading">Reg. date</string>
 </resources>

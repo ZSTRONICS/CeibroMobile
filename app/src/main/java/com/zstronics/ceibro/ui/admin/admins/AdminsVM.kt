@@ -2,12 +2,15 @@ package com.zstronics.ceibro.ui.admin.admins
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
-import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUserObj
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
+import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import koleton.api.hideSkeleton
+import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,27 +19,25 @@ class AdminsVM @Inject constructor(
     private val dashboardRepository: DashboardRepository
 ) : HiltBaseViewModel<IAdmins.State>(), IAdmins.ViewModel {
 
-    private val _allAdmins: MutableLiveData<MutableList<AdminUserObj>> = MutableLiveData()
-    val allAdmins: LiveData<MutableList<AdminUserObj>> = _allAdmins
+    private val _allAdmins: MutableLiveData<MutableList<AdminUsersResponse.AdminUserData>> = MutableLiveData()
+    val allAdmins: LiveData<MutableList<AdminUsersResponse.AdminUserData>> = _allAdmins
 
 
-    override fun onResume() {
-        super.onResume()
-        loadAdmins()
-    }
-
-    private fun loadAdmins() {
+    fun loadAdmins(adminsRVLayout: RecyclerView) {
         launch {
-            loading(true)
+            adminsRVLayout.loadSkeleton(R.layout.layout_admin_user_box) {
+                itemCount(11)
+                color(R.color.appLightGrey)
+            }
             when (val response = dashboardRepository.getAdminsOrUsersList(role = "admin")) {
                 is ApiResponse.Success -> {
-                    loading(false)
+                    adminsRVLayout.hideSkeleton()
                     val data = response.data
-                    _allAdmins.postValue(data.result as MutableList<AdminUserObj>)
+                    _allAdmins.postValue(data.result as MutableList<AdminUsersResponse.AdminUserData>)
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false)
+                    adminsRVLayout.hideSkeleton()
                 }
             }
         }
