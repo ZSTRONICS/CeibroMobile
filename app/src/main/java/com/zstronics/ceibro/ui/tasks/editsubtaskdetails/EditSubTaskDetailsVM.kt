@@ -85,10 +85,13 @@ class EditSubTaskDetailsVM @Inject constructor(
                 }
             }
 
-            when (val response = projectRepository.getMemberByProjectId(projectId)) {
+            when (val response = projectRepository.getProjectMembers(projectId)) {
                 is ApiResponse.Success -> {
-                    val responseMembers = response.data.members as ArrayList<Member>
-                    val checkMembers = response.data.members as ArrayList<Member>
+                    val onlyMembers: List<Member> = response.data.members.filter { it.user != null }.map {
+                        it.user!!
+                    }
+                    val responseMembers = onlyMembers as ArrayList<Member>
+                    val checkMembers = onlyMembers as ArrayList<Member>
 
                     // Sorting those members which are already part of subtask, those will be removed from add dropdown
                     for (stMember in subTaskMemList) {

@@ -744,4 +744,6 @@
     <string name="phone_number_heading">Phone number</string>
     <string name="work_phone_heading">Work phone</string>
     <string name="reg_date_heading">Reg. date</string>
+    <string name="my_projects_heading">My projects</string>
+    <string name="my_tasks_heading">My tasks</string>
 </resources>

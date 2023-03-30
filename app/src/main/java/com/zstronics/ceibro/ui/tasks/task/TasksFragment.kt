@@ -40,8 +40,6 @@ class TasksFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.createTaskBtn -> navigateToNewTaskCreation()
-            119 -> shortToastNow("Edit Task")
-            120 -> shortToastNow("Delete Task")
             R.id.allTaskFilter -> viewModel.applyStatusFilter(TaskStatus.ALL.name)
             R.id.newTaskFilter -> viewModel.applyStatusFilter(TaskStatus.NEW.name)
             R.id.activeTaskFilter -> viewModel.applyStatusFilter(TaskStatus.ACTIVE.name)
