@@ -6,11 +6,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.transition.ChangeBounds
 import android.transition.Fade
@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -38,17 +39,16 @@ import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.extensions.openCamera
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.utils.FileUtils
 import com.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.util.concurrent.TimeUnit
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.properties.Delegates
 
 private const val ARGUMENT_NAVIGATION_REQUEST_CODE = "NAVIGATION_REQUEST_CODE"
@@ -61,6 +61,8 @@ const val NAVIGATION_RESULT_OK = -1
 
 abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, VM : HiltBaseViewModel<VS>> :
     BaseBindingViewModelFragment<VB, VS, VM>() {
+    private val REQUEST_IMAGE_CAPTURE: Int = 1122
+    private var currentPhotoPath: String = ""
     private val PERMISSION_REQUEST_EXTERNAL_STORAGE = 1
     protected open val hasUpNavigation: Boolean = true
     private val requestCode: Int
@@ -405,69 +407,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 Manifest.permission.CAMERA
             )
         ) {
-            requireActivity().openCamera { resultCode, intent ->
-                try {
-                    val bitmap: Bitmap = intent?.extras?.get("data") as Bitmap
-                    // Create a File object to save the bitmap
-                    val timeStamp: String = java.lang.String.valueOf(
-                        TimeUnit.MILLISECONDS.toSeconds(
-                            System.currentTimeMillis()
-                        )
-                    )
-                    val file = File(context?.cacheDir, "IMG-$timeStamp.jpg")
-                    file.createNewFile()
-
-                    val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-                    val byteArray = byteArrayOutputStream.toByteArray()
-
-                    val fileOutputStream = FileOutputStream(file)
-                    fileOutputStream.write(byteArray)
-                    fileOutputStream.flush()
-                    fileOutputStream.close()
-                    val uri = Uri.fromFile(file)
-                    addFileToUriList(uri)
-                } catch (e: Exception) {
-                    toast(e.message.toString())
-                }
-            }
-        }
-    }
-
-    inline fun captureImage(
-        noinline completionHandler: ((uri: Uri) -> Unit)? = null
-    ) {
-        checkPermission(
-            immutableListOf(
-                Manifest.permission.CAMERA
-            )
-        ) {
-            requireActivity().openCamera { resultCode, intent ->
-                try {
-                    val bitmap: Bitmap = intent?.extras?.get("data") as Bitmap
-                    // Create a File object to save the bitmap
-                    val timeStamp: String = java.lang.String.valueOf(
-                        TimeUnit.MILLISECONDS.toSeconds(
-                            System.currentTimeMillis()
-                        )
-                    )
-                    val file = File(context?.cacheDir, "IMG-$timeStamp.jpg")
-                    file.createNewFile()
-
-                    val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-                    val byteArray = byteArrayOutputStream.toByteArray()
-
-                    val fileOutputStream = FileOutputStream(file)
-                    fileOutputStream.write(byteArray)
-                    fileOutputStream.flush()
-                    fileOutputStream.close()
-                    val uri = Uri.fromFile(file)
-                    completionHandler?.invoke(uri)
-                } catch (e: Exception) {
-                    toast(e.message.toString())
-                }
-            }
+            takePhoto()
         }
     }
 
@@ -587,4 +527,56 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             }
         }
     }
+
+    fun takePhoto() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(requireActivity().packageManager) != null) {
+            // Create the file where the photo should go
+            val photoFile: File? = try {
+                createImageFile()
+            } catch (ex: IOException) {
+                // Error occurred while creating the File
+                null
+            }
+
+            // Continue only if the file was successfully created
+            photoFile?.also {
+                val photoURI: Uri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.zstronics.ceibro.fileprovider",
+                    it
+                )
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
+        }
+    }
+
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "JPEG_${timeStamp}_"
+        val storageDir: File? = context?.cacheDir
+        return File.createTempFile(
+            imageFileName, /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            // Image captured and saved to fileUri specified in the Intent
+            // Do something with the saved image file
+            val photoFile = File(currentPhotoPath)
+            val savedUri = Uri.fromFile(photoFile)
+            addFileToUriList(savedUri)
+        }
+    }
+
 }

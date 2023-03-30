@@ -131,8 +131,8 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             Intent.ACTION_EDIT, ACTION_NEXTGEN_EDIT -> {
                 try {
                     val uri = intent.data
-                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-                    source.setImageBitmap(bitmap)
+//                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    source.setImageURI(uri)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
