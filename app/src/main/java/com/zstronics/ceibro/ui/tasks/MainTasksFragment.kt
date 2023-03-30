@@ -97,7 +97,6 @@ class MainTasksFragment :
                 }
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (selectedFragment == "TasksFragment") {
                     EventBus.getDefault().post(LocalEvents.ApplySearchOnTask(newText))
@@ -107,7 +106,6 @@ class MainTasksFragment :
                 }
                 return true
             }
-
         })
     }
 

@@ -30,8 +30,6 @@ interface ProjectRepositoryService {
     @POST("project/getProjectsWithMembers")
     suspend fun getProjectsWithMembers(@Query("includeMe") includeMe: Boolean = false): Response<ProjectsWithMembersResponse>
 
-    @GET("project/member/{id}")
-    suspend fun getMemberByProjectId(@Path("id") projectId: String): Response<ProjectMembersResponse>
 
     @Multipart
     @POST("project")

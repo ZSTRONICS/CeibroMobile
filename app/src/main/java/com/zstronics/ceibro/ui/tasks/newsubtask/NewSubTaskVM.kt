@@ -91,9 +91,12 @@ class NewSubTaskVM @Inject constructor(
     private fun loadMemberByProjectId(projectId: String) {
         launch {
             loading(true)
-            when (val response = projectRepository.getMemberByProjectId(projectId)) {
+            when (val response = projectRepository.getProjectMembers(projectId)) {
                 is ApiResponse.Success -> {
-                    response.data.members.let { members ->
+                    val onlyMembers: List<Member> = response.data.members.filter { it.user != null }.map {
+                        it.user!!
+                    }
+                    onlyMembers.let { members ->
                         _projectMembers.postValue(members)
                         _projectMemberNames.postValue(members.map { it.firstName + " " + it.surName })
                     }
@@ -110,9 +113,12 @@ class NewSubTaskVM @Inject constructor(
     private fun loadMemberByProjectIdBySubTask(projectId: String, subtaskParcel: AllSubtask) {
         launch {
             loading(true)
-            when (val response = projectRepository.getMemberByProjectId(projectId)) {
+            when (val response = projectRepository.getProjectMembers(projectId)) {
                 is ApiResponse.Success -> {
-                    response.data.members.let { members ->
+                    val onlyMembers: List<Member> = response.data.members.filter { it.user != null }.map {
+                        it.user!!
+                    }
+                    onlyMembers.let { members ->
                         _projectMembers.postValue(members)
                         _projectMemberNames.postValue(members.map { it.firstName + " " + it.surName })
                     }

@@ -23,7 +23,6 @@ import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 interface IProjectRepository {
     suspend fun getProjects(): ApiResponse<AllProjectsResponse>
     suspend fun getProjectsWithMembers(includeMe: Boolean): ApiResponse<ProjectsWithMembersResponse>
-    suspend fun getMemberByProjectId(projectId: String): ApiResponse<ProjectMembersResponse>
     suspend fun createProject(createProjectRequest: CreateProjectRequest): ApiResponse<CreateNewProjectResponse>
     suspend fun updateProject(
         createProjectRequest: CreateProjectRequest,

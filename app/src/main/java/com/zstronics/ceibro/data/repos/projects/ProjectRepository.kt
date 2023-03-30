@@ -46,10 +46,6 @@ class ProjectRepository @Inject constructor(
             }
         )
 
-    override suspend fun getMemberByProjectId(projectId: String): ApiResponse<ProjectMembersResponse> =
-        executeSafely(
-            call = { service.getMemberByProjectId(projectId) }
-        )
 
     override suspend fun createProject(createProjectRequest: CreateProjectRequest): ApiResponse<CreateNewProjectResponse> {
         val title = getRequestBody(createProjectRequest.title)
