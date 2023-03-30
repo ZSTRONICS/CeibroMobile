@@ -8,9 +8,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentAddAttachmentBinding
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
-import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -64,6 +62,17 @@ class AddAttachmentFragment :
         addAttachmentsAdapter.itemClickListener =
             { _: View, position: Int, data: SubtaskAttachment? ->
                 viewModel.removeFile(position)
+            }
+
+        addAttachmentsAdapter.onEditPhoto =
+            { _: View, position: Int, data: SubtaskAttachment? ->
+                data?.attachmentUri?.let { uri ->
+                    startEditor(uri) { updatedUri ->
+                        if (updatedUri != null) {
+                            viewModel.updateUri(position, updatedUri)
+                        }
+                    }
+                }
             }
     }
 }

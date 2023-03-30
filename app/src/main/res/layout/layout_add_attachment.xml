@@ -33,7 +33,7 @@
             android:gravity="start"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/uploadImg"
-            app:layout_constraintEnd_toStartOf="@+id/crossView"
+            app:layout_constraintEnd_toStartOf="@+id/editLayout"
             app:layout_constraintStart_toEndOf="@+id/uploadImg"
             app:layout_constraintTop_toTopOf="@+id/uploadImg">
 
@@ -53,16 +53,30 @@
                 android:id="@+id/attachmentSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center"
                 android:maxLines="1"
-                android:layout_marginTop="3dp"
                 android:text="100kb"
                 android:textColor="@color/appTextGrey"
                 android:textSize="11.5sp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/editLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:text="@string/edit_photo"
+            android:textColor="@color/black"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/crossView"
+            app:layout_constraintEnd_toStartOf="@+id/crossView"
+            app:layout_constraintTop_toTopOf="@+id/crossView" />
 
         <ImageView
             android:id="@+id/crossView"
