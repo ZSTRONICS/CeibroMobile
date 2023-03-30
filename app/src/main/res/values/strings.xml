@@ -740,6 +740,7 @@
     <string name="users_heading">Users</string>
     <string name="avatar_heading">Avatar</string>
     <string name="id_heading">ID</string>
+    <string name="edit_photo">Edit photo</string>
     <string name="phone_number_heading">Phone number</string>
     <string name="work_phone_heading">Work phone</string>
     <string name="reg_date_heading">Reg. date</string>
