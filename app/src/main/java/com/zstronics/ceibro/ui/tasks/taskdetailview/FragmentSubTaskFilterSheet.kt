@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.repos.chat.room.Member
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.databinding.FragmentSubTaskFilterSheetBinding
@@ -175,11 +176,15 @@ class FragmentSubTaskFilterSheet constructor(
     }
 
     private fun onProjectSelect(selectedProject: ProjectsWithMembersResponse.ProjectDetail?) {
-        val projectMemb = selectedProject?.projectMembers as MutableList
+        if (selectedProject != null) {
+            val projectMemb = selectedProject.projectMembers as MutableList
 
-        _projectMembers.value = projectMemb
-        _projectMemberNames.value = projectMemb.map { it.firstName + " " + it.surName }
-
+            _projectMembers.value = projectMemb
+            _projectMemberNames.value = projectMemb.map { it.firstName + " " + it.surName }
+        }
+        else {
+            shortToastNow("Unable to get project members or project might be deleted")
+        }
     }
 
     private fun onAssigneeSelect(position: Int) {

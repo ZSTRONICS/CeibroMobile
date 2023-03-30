@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks
 
 import android.os.Bundle
 import android.view.View
+import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -84,6 +85,30 @@ class MainTasksFragment :
             .commit()
         selectedFragment = "TasksFragment"
         mViewDataBinding.taskHeading.setBackgroundResource(R.drawable.taskselectedback)
+
+        mViewDataBinding.mainTaskSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (selectedFragment == "TasksFragment") {
+                    EventBus.getDefault().post(LocalEvents.ApplySearchOnTask(query))
+                }
+                else {
+                    EventBus.getDefault().post(LocalEvents.ApplySearchOnSubTask(query))
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (selectedFragment == "TasksFragment") {
+                    EventBus.getDefault().post(LocalEvents.ApplySearchOnTask(newText))
+                }
+                else {
+                    EventBus.getDefault().post(LocalEvents.ApplySearchOnSubTask(newText))
+                }
+                return true
+            }
+
+        })
     }
 
     private fun showTaskFilterSheet(

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -70,6 +71,25 @@ class TasksVM @Inject constructor(
             }
         _tasks.postValue(filtered)
         _tasksForStatus.postValue(filtered)
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onApplySearch(filter: LocalEvents.ApplySearchOnTask) {
+        if (filter.query?.isEmpty() == true) {
+            _tasks.postValue(originalTasks)
+            _tasksForStatus.postValue(originalTasks)
+            return
+        }
+        if (filter.query != null) {
+            val filtered =
+                originalTasks.filter {
+                    it.title.contains(filter.query, true)
+                }
+            _tasks.postValue(filtered)
+//            _tasksForStatus.postValue(filtered)
+        }
+        else {
+            alert("Unable to search")
+        }
     }
 
     fun applyStatusFilter(selectedStatus: String) {

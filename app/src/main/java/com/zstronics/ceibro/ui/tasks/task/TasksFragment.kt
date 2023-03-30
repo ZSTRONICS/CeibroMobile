@@ -122,7 +122,6 @@ class TasksFragment :
 
     private fun showTaskCardMenuPopup(v: View, taskData: CeibroTask) {
         val popUpWindowObj = popUpMenu(v, taskData)
-        popUpWindowObj.showAsDropDown(v.findViewById(R.id.taskMoreMenuBtn), 0, 10)
     }
 
     private fun popUpMenu(v: View, taskData: CeibroTask): PopupWindow {
@@ -130,6 +129,27 @@ class TasksFragment :
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_task_card_menu, null)
+
+        //following code is to make popup at top if the view is at bottom
+        popupWindow.isFocusable = true
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
+        popupWindow.contentView = view
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        //ShowAsDropDown statement at bottom, according to the view visibilities
+        //////////////////////
+
 
         val editTask = view.findViewById<View>(R.id.editTask)
         val deleteTask = view.findViewById<View>(R.id.deleteTask)
@@ -160,12 +180,16 @@ class TasksFragment :
             popupWindow.dismiss()
         }
 
-        popupWindow.isFocusable = true
-        popupWindow.width = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.height = WindowManager.LayoutParams.WRAP_CONTENT
-        popupWindow.contentView = view
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popupWindow.elevation = 13f
+        if (positionOfIcon > height) {
+            if (deleteTask.visibility == View.GONE) {
+                popupWindow.showAsDropDown(v, 0, -245)
+            }
+            else {
+                popupWindow.showAsDropDown(v, 0, -405)
+            }
+        } else {
+            popupWindow.showAsDropDown(v, 0, 5)
+        }
         return popupWindow
     }
 

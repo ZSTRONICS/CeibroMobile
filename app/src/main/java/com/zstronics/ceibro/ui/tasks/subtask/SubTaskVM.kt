@@ -114,6 +114,26 @@ class SubTaskVM @Inject constructor(
         _subTasks.postValue(filtered)
         _subTasksForStatus.postValue(filtered)
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onApplySearch(filter: LocalEvents.ApplySearchOnSubTask) {
+        if (filter.query?.isEmpty() == true) {
+            _subTasks.postValue(originalSubTasks)
+            _subTasksForStatus.postValue(originalSubTasks)
+            return
+        }
+        if (filter.query != null) {
+            val filtered =
+                originalSubTasks.filter {
+                    it.title.contains(filter.query, true)
+                }
+            _subTasks.postValue(filtered)
+//            _subTasksForStatus.postValue(filtered)
+        }
+        else {
+            alert("Unable to search")
+        }
+    }
+
 
     fun applyStatusFilter(selectedStatus: String) {
         val filtered =

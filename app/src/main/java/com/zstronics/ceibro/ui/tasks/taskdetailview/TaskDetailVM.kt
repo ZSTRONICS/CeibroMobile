@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.subtask.SubTaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -134,6 +135,21 @@ class TaskDetailVM @Inject constructor(
             } else {
                 callBack.invoke(result)
             }
+        }
+    }
+
+    fun onApplySearch(query: String?) {
+        if (query?.isEmpty() == true) {
+            _subTasks.postValue(originalSubTasks)
+            _subTasksForStatus.postValue(originalSubTasks)
+            return
+        }
+        if (query != null) {
+            val filtered = originalSubTasks.filter { it.title.contains(query, true) }
+            _subTasks.postValue(filtered)
+        }
+        else {
+            alert("Unable to search")
         }
     }
 

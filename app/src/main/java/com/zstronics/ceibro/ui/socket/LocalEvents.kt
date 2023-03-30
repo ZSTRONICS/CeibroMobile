@@ -47,6 +47,15 @@ object LocalEvents {
     object ClearSubtaskFilters
 
 
+    data class ApplySearchOnTask(
+        val query: String?
+    )
+    data class ApplySearchOnSubTask(
+        val query: String?
+    )
+
+
+
     data class ProjectCreatedEvent(val newProject: AllProjectsResponse.Projects)
     class ProjectRefreshEvent
 
