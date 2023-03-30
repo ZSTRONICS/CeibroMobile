@@ -53,6 +53,7 @@ object LocalEvents {
     data class ApplySearchOnSubTask(
         val query: String?
     )
+
     data class ApplySearchOnAdmins(
         val query: String?
     )
