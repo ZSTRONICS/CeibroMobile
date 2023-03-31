@@ -60,13 +60,6 @@ object LocalEvents {
         val query: String?
     )
 
-    data class ApplySearchOnAdmins(
-        val query: String?
-    )
-    data class ApplySearchOnAllUsers(
-        val query: String?
-    )
-
 
 
     data class ProjectCreatedEvent(val newProject: AllProjectsResponse.Projects)
