@@ -1,8 +1,10 @@
 package com.zstronics.ceibro.ui.attachment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -65,8 +67,31 @@ class AttachmentsViewFragment :
         }
         attachmentAdapter.itemClickListener =
             { _: View, position: Int, data: FilesAttachments? ->
-                viewModel.removeFile(position)
+                openFileViewer(data?.fileUrl, position)
             }
+    }
+
+    private fun openFileViewer(fileUrl: String?, position: Int) {
+        if (fileUrl != null) {
+            val fileExtension = fileUrl.substringAfterLast(".")
+            if (imageExtensions.contains(".$fileExtension")) {
+                val fullImageIntent = Intent(
+                    requireContext(),
+                    FullScreenImageViewActivity::class.java
+                )
+
+                val uriString: ArrayList<String> = arrayListOf()
+                uriString.add(fileUrl)
+                fullImageIntent.putExtra(FullScreenImageViewActivity.URI_LIST_DATA, uriString)
+
+                fullImageIntent.putExtra(
+                    FullScreenImageViewActivity.IMAGE_FULL_SCREEN_CURRENT_POS, position
+                )
+                startActivity(fullImageIntent)
+            } else {
+                // Handle other file types
+            }
+        }
     }
 
     override fun onResume() {

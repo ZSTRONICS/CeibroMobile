@@ -27,7 +27,7 @@
             style="@style/Ceibro.App.Widget.TextView.ToolBar"
             android:layout_gravity="start"
             android:text="@{toolbarTitle}"
-            android:textSize="18.5sp"
+            android:textSize="@dimen/_14sdp"
             android:fontFamily="@font/inter_medium"
             android:maxLines="1"
             android:ellipsize="end"

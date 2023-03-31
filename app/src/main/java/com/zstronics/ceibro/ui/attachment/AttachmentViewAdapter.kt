@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.databinding.LayoutAttachmentBinding
 import javax.inject.Inject
@@ -49,6 +50,9 @@ class AttachmentViewAdapter @Inject constructor() :
         fun bind(item: FilesAttachments?) {
             binding.crossView.visibility = View.GONE
             binding.attachmentTitle.text = item?.fileName
+            binding.root.setOnClick {
+                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
             // Load the thumbnail into the ImageView using Glide
             when {
                 imageExtensions.contains(item?.fileType) -> {
