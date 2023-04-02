@@ -6,7 +6,6 @@ import com.zstronics.ceibro.base.*
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 
 class SessionManager constructor(
@@ -39,13 +38,15 @@ class SessionManager constructor(
     companion object {
         private var _user: MutableLiveData<User?> = MutableLiveData()
         var user: LiveData<User?> = _user
-        private var _projects: MutableLiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> = MutableLiveData()
+        private var _projects: MutableLiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> =
+            MutableLiveData()
         var projects: LiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> = _projects
     }
 
     fun getUser(): LiveData<User?> {
         return user
     }
+
     fun getProjects(): LiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> {
         return projects
     }
@@ -60,11 +61,13 @@ class SessionManager constructor(
         _user.postValue(userPref)
         user = _user
     }
+
     fun setProject() {
         val projectList = sharedPreferenceManager.getCompleteProjectObj(KEY_PROJECT)
         _projects.postValue(projectList)
         projects = _projects
     }
+
     fun setNewProjectList(projectList: MutableList<ProjectsWithMembersResponse.ProjectDetail>?) {
         sharedPreferenceManager.saveCompleteProjectObj(KEY_PROJECT, projectList)
         _projects.postValue(projectList)
@@ -95,5 +98,15 @@ class SessionManager constructor(
                 true
             } else false
         return isLoggedIn
+    }
+
+    fun refreshToken(tokens: Tokens) {
+        sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
+        CookiesManager.jwtToken = tokens.access.token
+    }
+
+    fun getRefreshToken(): String? {
+        val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
+        return tokenPref?.refresh?.token
     }
 }

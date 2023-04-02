@@ -34,9 +34,6 @@ class LoginVM @Inject constructor(
             when (val response = repository.login(request)) {
 
                 is ApiResponse.Success -> {
-                    CookiesManager.jwtToken = response.data.tokens.access.token
-                    CookiesManager.isLoggedIn = true
-
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,

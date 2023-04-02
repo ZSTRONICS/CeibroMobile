@@ -2,12 +2,14 @@ package com.zstronics.ceibro.data.repos.auth
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
-import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
+import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
+import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -21,12 +23,22 @@ class AuthRepository @Inject constructor(
 ) : IAuthRepository, BaseNetworkRepository() {
 
     override suspend fun login(loginRequest: LoginRequest): ApiResponse<LoginResponse> {
-        return executeSafely(
+        val response = executeSafely(
             call =
             {
                 service.login(loginRequest)
             }
         )
+        when (response) {
+            is ApiResponse.Success -> {
+                CookiesManager.jwtToken = response.data.tokens.access.token
+                CookiesManager.isLoggedIn = true
+            }
+            is ApiResponse.Error -> {
+
+            }
+        }
+        return response
     }
 
     override suspend fun updateProfileCall(editProfileRequest: EditProfileRequest): ApiResponse<EditProfileResponse> {
@@ -55,6 +67,7 @@ class AuthRepository @Inject constructor(
             }
         )
     }
+
     override suspend fun uploadProfilePicture(fileUri: String): ApiResponse<UserProfilePicUpdateResponse> {
         val file = File(fileUri)
         val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
@@ -65,4 +78,23 @@ class AuthRepository @Inject constructor(
         })
     }
 
+    override suspend fun refreshJWTToken(body: RefreshTokenRequest): ApiResponse<Tokens> {
+        val response = executeSafely(
+            call =
+            {
+                service.refreshJWTToken(body)
+            }
+        )
+        when (response) {
+            is ApiResponse.Success -> {
+                CookiesManager.isLoggedIn = true
+                CookiesManager.jwtToken = response.data.access.token
+                CookiesManager.tokens = response.data
+            }
+            is ApiResponse.Error -> {
+
+            }
+        }
+        return response
+    }
 }
