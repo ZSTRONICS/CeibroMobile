@@ -40,6 +40,11 @@ open class SessionValidator :
                         val builder = originalRequest.newBuilder()
                             .header(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
                             .method(originalRequest.method, originalRequest.body)
+                        try {
+                            response.close() // Close the previous response
+                        } catch (e: Exception) {
+
+                        }
                         response = chain.proceed(builder.build())
                     }
                     is ApiResponse.Error -> {
