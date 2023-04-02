@@ -79,10 +79,20 @@ class SessionManager constructor(
         user = _user
     }
 
+    fun updateTokens(tokens: Tokens) {
+        sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
+        CookiesManager.isLoggedIn = true
+        CookiesManager.jwtToken = tokens.access.token
+    }
+
     private fun setToken() {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokenPref?.access?.token
+    }
+    private fun getTokens(): Tokens? {
+        val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
+        return tokenPref
     }
 
 
