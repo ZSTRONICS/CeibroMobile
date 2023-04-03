@@ -1,11 +1,9 @@
 package com.zstronics.ceibro.data.repos.auth
 
-import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
-import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
-import com.zstronics.ceibro.data.repos.auth.login.User
-import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
+import com.zstronics.ceibro.data.repos.auth.login.*
+import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
+import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import okhttp3.MultipartBody
@@ -29,4 +27,6 @@ interface AuthRepositoryService {
     @PATCH("users/profile/pic")
     suspend fun updateUserProfilePicture(@Part profilePicture: MultipartBody.Part): Response<UserProfilePicUpdateResponse>
 
+    @POST("auth/refresh-tokens")
+    suspend fun refreshJWTToken(@Body body: RefreshTokenRequest): Response<Tokens>
 }
