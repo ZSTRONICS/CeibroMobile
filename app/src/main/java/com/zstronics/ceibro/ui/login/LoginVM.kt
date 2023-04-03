@@ -41,6 +41,7 @@ class LoginVM @Inject constructor(
                         viewState.password.value.toString()
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
+                    OneSignal.setEmail(response.data.user.email)
                     loading(false, "Login successful")
                     clickEvent?.postValue(100)
                 }

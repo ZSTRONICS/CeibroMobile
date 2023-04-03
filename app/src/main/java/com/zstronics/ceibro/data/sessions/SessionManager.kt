@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.sessions
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.*
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
@@ -33,6 +34,7 @@ class SessionManager constructor(
 
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
+        OneSignal.removeExternalUserId()
     }
 
     companion object {
@@ -90,6 +92,7 @@ class SessionManager constructor(
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokenPref?.access?.token
     }
+
     private fun getTokens(): Tokens? {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         return tokenPref
