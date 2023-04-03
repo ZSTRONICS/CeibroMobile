@@ -117,6 +117,14 @@ android {
                             decodeBase64(properties["SOCKET_URL_DEV"].toString())
                         )
                     }
+
+                    if (properties.containsKey("ONE_SIGNAL_DEV")) {
+                        dimension = FlavorDimensions.DEFAULT
+                        buildConfigString(
+                            "ONE_SIGNAL_ID",
+                            decodeBase64(properties["ONE_SIGNAL_DEV"].toString())
+                        )
+                    }
                 }
 
                 create(ProductFlavors.LIVE) {
@@ -137,6 +145,13 @@ android {
                         buildConfigString(
                             "SOCKET_URL",
                             decodeBase64(properties["SOCKET_URL_LIVE"].toString())
+                        )
+                    }
+                    if (properties.containsKey("ONE_SIGNAL_LIVE")) {
+                        dimension = FlavorDimensions.DEFAULT
+                        buildConfigString(
+                            "ONE_SIGNAL_ID",
+                            decodeBase64(properties["ONE_SIGNAL_LIVE"].toString())
                         )
                     }
                 }

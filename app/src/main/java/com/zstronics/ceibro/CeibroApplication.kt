@@ -30,14 +30,12 @@ open class CeibroApplication : Application() {
 
         // OneSignal Initialization
         OneSignal.initWithContext(this)
-        OneSignal.setAppId(ONESIGNAL_APP_ID)
+        OneSignal.setAppId(BuildConfig.ONE_SIGNAL_ID)
+        OneSignal.promptForPushNotifications()
     }
 
     companion object {
         var ceibroApplication: CeibroApplication? = null
             private set
-
-        const val ONESIGNAL_APP_ID = "f9cac0cf-3e04-486c-b87f-f84dc2c8e517"
-//        const val ONESIGNAL_APP_ID = "7ac7a441-9500-4f47-b370-c523db13de03"
     }
 }
