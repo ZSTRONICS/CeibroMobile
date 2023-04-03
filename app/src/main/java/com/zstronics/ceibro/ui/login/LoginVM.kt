@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.login
 
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -39,10 +40,11 @@ class LoginVM @Inject constructor(
                         response.data.tokens,
                         viewState.password.value.toString()
                     )
+                    OneSignal.setExternalUserId(response.data.user.id)
+                    OneSignal.setEmail(response.data.user.email)
                     loading(false, "Login successful")
                     clickEvent?.postValue(100)
                 }
-
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                 }
