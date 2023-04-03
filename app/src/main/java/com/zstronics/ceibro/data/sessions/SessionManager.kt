@@ -35,6 +35,8 @@ class SessionManager constructor(
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
         OneSignal.removeExternalUserId()
+        OneSignal.disablePush(true)
+        OneSignal.pauseInAppMessages(true)
     }
 
     companion object {

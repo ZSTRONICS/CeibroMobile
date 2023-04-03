@@ -41,7 +41,8 @@ class LoginVM @Inject constructor(
                         viewState.password.value.toString()
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
-                    OneSignal.setEmail(response.data.user.email)
+                    OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
+                    OneSignal.pauseInAppMessages(false)
                     loading(false, "Login successful")
                     clickEvent?.postValue(100)
                 }
