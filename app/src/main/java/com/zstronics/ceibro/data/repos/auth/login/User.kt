@@ -42,7 +42,7 @@ data class User(
     @SerializedName("role")
     val role: String?,
     @SerializedName("socketId")
-    val socketId: String,
+    val socketId: String?,
     @SerializedName("surName")
     val surName: String,
     @SerializedName("username")

@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.profile
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Handler
 import android.view.*
 import android.widget.PopupWindow
 import androidx.appcompat.widget.AppCompatImageView
@@ -14,7 +15,11 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 
@@ -26,6 +31,7 @@ class ProfileVM @Inject constructor(
 ) : HiltBaseViewModel<IProfile.State>(), IProfile.ViewModel {
     var user = sessionManager.getUser().value
     init {
+        EventBus.getDefault().register(this)
         sessionManager.setUser()
         user = sessionManager.getUser().value
     }
@@ -86,5 +92,20 @@ class ProfileVM @Inject constructor(
             taskRepository.eraseSubTaskTable()
         }
         sessionManager.endUserSession()
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUserDataUpdated(event: LocalEvents.UserDataUpdated?) {
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            sessionManager.setUser()
+            user = sessionManager.getUser().value
+        }, 100)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 }

@@ -19,7 +19,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -118,9 +117,9 @@
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/newInvitePersonCompany"
                 app:layout_constraintEnd_toStartOf="@+id/rejectInviteBtn"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/newInvitePersonName"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <ImageView
@@ -128,12 +127,12 @@
                 android:layout_width="31dp"
                 android:layout_height="31dp"
                 android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="1dp"
                 android:src="@drawable/icon_close_round"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/acceptInviteBtn"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/acceptInviteBtn"
                 tools:ignore="TouchTargetSizeCheck" />
 
 

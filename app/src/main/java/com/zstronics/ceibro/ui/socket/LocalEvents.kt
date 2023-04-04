@@ -82,4 +82,8 @@ object LocalEvents {
     data class RefreshRootDocumentEvent(val projectId: String)
     data class RefreshFolderEvent(val projectId: String, val folderId: String)
 
+
+    class UserDataUpdated
+    class ConnectionRefreshEvent
+    class InvitationRefreshEvent
 }
