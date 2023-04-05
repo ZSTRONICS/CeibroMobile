@@ -9,6 +9,8 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
+import com.zstronics.ceibro.data.repos.auth.IAuthRepository
+import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
@@ -43,6 +45,7 @@ class DashboardVM @Inject constructor(
     private val repository: ITaskRepository,
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
+    private val authRepository: IAuthRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
 
@@ -375,6 +378,29 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault().post(LocalEvents.RefreshFolderEvent(refreshFolder.projectId, refreshFolder.folderId))
                         }
                     }
+                } else if (socketData.module == "user") {
+                    when (socketData.eventType) {
+                        SocketHandler.UserEvent.USER_INFO_UPDATED.name -> {
+                            val updatedUser =
+                                gson.fromJson<UserUpdatedSocketResponse>(
+                                    arguments,
+                                    object : TypeToken<UserUpdatedSocketResponse>() {}.type
+                                ).data
+
+                            sessionManager.updateUser(updatedUser)
+                            EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                        }
+                        SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {
+                            getProfile()
+                        }
+                        SocketHandler.UserEvent.REFRESH_CONNECTIONS.name -> {
+                            getOverallConnectionCount()
+                            EventBus.getDefault().post(LocalEvents.ConnectionRefreshEvent())
+                        }
+                        SocketHandler.UserEvent.REFRESH_INVITATIONS.name -> {
+                            EventBus.getDefault().post(LocalEvents.InvitationRefreshEvent())
+                        }
+                    }
                 }
             }
         }
@@ -433,6 +459,20 @@ class DashboardVM @Inject constructor(
                 }
                 is ApiResponse.Error -> {
 
+                }
+            }
+        }
+    }
+
+    private fun getProfile() {
+        launch {
+            when (val response = authRepository.getUserProfile()) {
+
+                is ApiResponse.Success -> {
+                    sessionManager.updateUser(response.data.user)
+                }
+
+                is ApiResponse.Error -> {
                 }
             }
         }

@@ -11,7 +11,11 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitationsItem
 import com.zstronics.ceibro.databinding.FragmentInvitationsBinding
 import com.zstronics.ceibro.ui.invitations.adapter.AllInvitationsAdapter
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,6 +51,12 @@ class InvitationsFragment :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadInvitations(mViewDataBinding.invitationsRV)
+    }
+
+
     @Inject
     lateinit var adapter: AllInvitationsAdapter
 
@@ -65,6 +75,14 @@ class InvitationsFragment :
                 mViewDataBinding.acceptAllBtn.setTextColor(resources.getColor(R.color.appTextGrey))
                 mViewDataBinding.declineAllBtn.isEnabled = false
                 mViewDataBinding.declineAllBtn.setTextColor(resources.getColor(R.color.appTextGrey))
+                mViewDataBinding.noInviteStatement.visibility = View.VISIBLE
+            }
+            else {
+                mViewDataBinding.acceptAllBtn.isEnabled = true
+                mViewDataBinding.acceptAllBtn.setTextColor(resources.getColor(R.color.appYellow))
+                mViewDataBinding.declineAllBtn.isEnabled = true
+                mViewDataBinding.declineAllBtn.setTextColor(resources.getColor(R.color.appRed))
+                mViewDataBinding.noInviteStatement.visibility = View.GONE
             }
         }
 
@@ -87,19 +105,26 @@ class InvitationsFragment :
                 )
             }
         }
-
-
-
-
     }
 
     private fun initRecyclerView(adapter: AllInvitationsAdapter) {
         mViewDataBinding.invitationsRV.adapter = adapter
 
-        adapter.itemLongClickListener =
-            { _: View, position: Int, data: MyInvitationsItem ->
-//                showChatActionSheet(data,position)
-            }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onInvitationRefreshEvent(event: LocalEvents.InvitationRefreshEvent?) {
+        viewModel.loadInvitations(mViewDataBinding.invitationsRV)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 }

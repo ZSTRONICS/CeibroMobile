@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.connections
 
+import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.base.interfaces.IBase
 
 interface IConnections {
@@ -7,6 +8,6 @@ interface IConnections {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun loadConnections()
+        fun loadConnections(connectionRV: RecyclerView)
     }
 }
