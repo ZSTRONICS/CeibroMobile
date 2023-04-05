@@ -100,7 +100,7 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
                     .into(binding.projectImg)
             }
             if (item.publishStatus.isNullOrEmpty()) {
-                binding.projectStatusName.text = context.getString(R.string.default_status_text)
+                binding.projectStatusName.text = context.getString(R.string.general_text_nna)
             } else {
                 binding.projectStatusName.text = item.publishStatus.toCamelCase()
             }
