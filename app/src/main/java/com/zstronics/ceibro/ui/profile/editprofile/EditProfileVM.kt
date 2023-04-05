@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.profile.editprofile
 
 import android.content.Context
+import android.os.Handler
 import androidx.core.net.toUri
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
@@ -9,8 +10,12 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +27,7 @@ class EditProfileVM @Inject constructor(
 ) : HiltBaseViewModel<IEditProfile.State>(), IEditProfile.ViewModel, IValidator {
 
     init {
+        EventBus.getDefault().register(this)
         sessionManager.setUser()
         with(viewState) {
             userFirstName.value = sessionManager.getUser().value?.firstName
@@ -128,6 +134,36 @@ class EditProfileVM @Inject constructor(
                 }
             }
         }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUserDataUpdated(event: LocalEvents.UserDataUpdated?) {
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            sessionManager.setUser()
+            val userObj = sessionManager.getUser().value
+            with(viewState) {
+                userFirstName.value = userObj?.firstName
+                userSurname.value = userObj?.surName
+                userEmail.value = userObj?.email
+                userContactNumber.value = userObj?.phone
+                userPassword.value = sessionManager.getPass()
+                userConfirmPassword.value = sessionManager.getPass()
+                userCompanyName.value = userObj?.companyName
+                userCompanyVAT.value = userObj?.companyVat
+                userCompanyLocation.value = userObj?.companyLocation
+                userCompanyContactNo.value = userObj?.companyPhone
+                userCompanyWorkEmail.value = userObj?.workEmail
+                currentlyRepresenting.value = userObj?.currentlyRepresenting
+                userProfilePic.value = userObj?.profilePic
+            }
+        }, 100)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
     }
 
 }

@@ -2,18 +2,18 @@ package com.zstronics.ceibro.ui.invitations
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
-import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
-import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitationsItem
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import koleton.api.hideSkeleton
+import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,10 +26,6 @@ class InvitationsVM @Inject constructor(
     private val _allInvites: MutableLiveData<MutableList<MyInvitationsItem>?> = MutableLiveData()
     val allInvites: LiveData<MutableList<MyInvitationsItem>?> = _allInvites
 
-    override fun onResume() {
-        super.onResume()
-        loadInvitations()
-    }
 
     override fun onInvite() {
         sendInvite(viewState.inviteEmail.value.toString())
@@ -55,19 +51,22 @@ class InvitationsVM @Inject constructor(
         }
     }
 
-    override fun loadInvitations() {
+    override fun loadInvitations(invitationsRV: RecyclerView) {
         launch {
-            loading(true)
+            invitationsRV.loadSkeleton(R.layout.layout_invitations_box) {
+                itemCount(10)
+                color(R.color.appLightGrey)
+            }
             when (val response = dashboardRepository.getAllInvites()) {
 
                 is ApiResponse.Success -> {
-                    loading(false)
+                    invitationsRV.hideSkeleton()
                     val data = response.data
                     _allInvites.postValue(data.invites as MutableList<MyInvitationsItem>?)
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false)
+                    invitationsRV.hideSkeleton()
                 }
             }
         }
