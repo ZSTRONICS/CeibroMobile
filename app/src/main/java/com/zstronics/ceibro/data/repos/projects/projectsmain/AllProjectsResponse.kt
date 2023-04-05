@@ -44,7 +44,7 @@ data class AllProjectsResponse(
         @SerializedName("projectPhoto")
         val projectPhoto: String?,
         @SerializedName("publishStatus")
-        val publishStatus: String,
+        val publishStatus: String? = "default",
         @SerializedName("tasksCount")
         val tasksCount: Int,
         @SerializedName("title")
