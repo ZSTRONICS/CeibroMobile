@@ -7,9 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.gone
 import com.zstronics.ceibro.base.extensions.toCamelCase
-import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutProjectBoxBinding
@@ -19,10 +17,12 @@ import javax.inject.Inject
 class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager) :
     RecyclerView.Adapter<AllProjectsAdapter.AllProjectsViewHolder>() {
     val user = sessionManager.getUser().value
-    var itemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? = null
+    var itemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? =
+        null
     var itemLongClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? =
         null
-    var childItemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? = null
+    var childItemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? =
+        null
 
     private var list: MutableList<AllProjectsResponse.Projects> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllProjectsViewHolder {
@@ -79,7 +79,8 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR
                 )                                                         // Checking if date format was not yyyy-MM-dd then it will be empty
                 if (binding.projectDueDateText.text == "") {
-                    binding.projectDueDateText.text = context.getString(R.string.invalid_due_date_text)
+                    binding.projectDueDateText.text =
+                        context.getString(R.string.general_text_nna)
                 }
             }
 
@@ -98,29 +99,32 @@ class AllProjectsAdapter @Inject constructor(val sessionManager: SessionManager)
                     .placeholder(R.drawable.splash_background)
                     .into(binding.projectImg)
             }
-
-            binding.projectStatusName.text = item.publishStatus.toCamelCase()
-            if (item.publishStatus.toLowerCase() == "done" || item.publishStatus.toLowerCase() == "complete" || item.publishStatus.toLowerCase() == "completed"
-                || item.publishStatus.toLowerCase() == "finish" || item.publishStatus.toLowerCase() == "finished") {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_done_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_done_filled)
+            if (item.publishStatus.isNullOrEmpty()) {
+                binding.projectStatusName.text = context.getString(R.string.default_status_text)
+            } else {
+                binding.projectStatusName.text = item.publishStatus.toCamelCase()
             }
-            else {
-                binding.projectCardLayout.setBackgroundResource(R.drawable.status_draft_outline)
-                binding.projectStatusName.background = context.getDrawable(R.drawable.status_draft_filled)
+            when {
+                item.publishStatus?.lowercase() == "done" ||
+                        item.publishStatus?.lowercase() == "complete" ||
+                        item.publishStatus?.lowercase() == "completed" ||
+                        item.publishStatus?.lowercase() == "finish" ||
+                        item.publishStatus?.lowercase() == "testing" ||
+                        item.publishStatus?.lowercase() == "finished" -> {
+                    binding.projectCardLayout.setBackgroundResource(R.drawable.status_done_outline)
+                    binding.projectStatusName.background =
+                        context.getDrawable(R.drawable.status_done_filled)
+                }
+                else -> {
+                    binding.projectCardLayout.setBackgroundResource(R.drawable.status_draft_outline)
+                    binding.projectStatusName.background =
+                        context.getDrawable(R.drawable.status_draft_filled)
+                }
             }
-
 
             itemView.setOnClickListener {
                 itemClickListener?.invoke(it, adapterPosition, item)
             }
-//
-//            itemView.setOnLongClickListener {
-//                itemLongClickListener?.invoke(it, adapterPosition, item)
-//                true
-//            }
-
-
         }
     }
 }

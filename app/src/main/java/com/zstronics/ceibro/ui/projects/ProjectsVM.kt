@@ -58,7 +58,7 @@ class ProjectsVM @Inject constructor(
     }
 
     private fun prepareFiltersData(originalAlProjects: MutableList<AllProjectsResponse.Projects>) {
-        statusesList = originalAlProjects.map { it.publishStatus }.distinct()
+        statusesList = originalAlProjects.map { it.publishStatus ?: "Default" }.distinct()
         ownersList =
             originalAlProjects.flatMap { it.owner }.distinctBy { it.id }
     }
@@ -114,7 +114,7 @@ class ProjectsVM @Inject constructor(
         val filtered =
             originalAlProjects.filter {
                 (it.owner.any { owner -> owner.id == ownerId } || ownerId.isEmpty())
-                        && (it.publishStatus.lowercase() == status.lowercase() || status.isEmpty())
+                        && (it.publishStatus?.lowercase() == status.lowercase() || status.isEmpty())
                         && (it.dueDate == dueDate || dueDate.isEmpty())
             }
 

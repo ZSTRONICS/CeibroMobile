@@ -249,6 +249,7 @@
     <string name="no_user_assigned_text">No user assigned</string>
     <string name="no_description_added_by_creator_text">No description added by creator</string>
     <string name="invalid_due_date_text">Invalid due date</string>
+    <string name="general_text_nna">N/A</string>
     <string name="edit_details_heading">Edit Details</string>
     <string name="close_subtask_heading">Close Subtask</string>
     <string name="add_attachment_heading">Add Attachment</string>
@@ -746,4 +747,5 @@
     <string name="reg_date_heading">Reg. date</string>
     <string name="my_projects_heading">My projects</string>
     <string name="my_tasks_heading">My tasks</string>
+    <string name="default_status_text">Default</string>
 </resources>
