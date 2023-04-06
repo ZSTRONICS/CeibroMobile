@@ -72,6 +72,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
     @VisibleForTesting
     var mSaveImageUri: Uri? = null
     var newUri: Uri? = null
+    var oldUri: Uri? = null
 
     private lateinit var mSaveFileHelper: FileSaveHelper
 
@@ -132,6 +133,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                     val uri = intent.data
 //                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
                     source.setImageURI(uri)
+                    oldUri = uri
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -142,6 +144,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                     val imageUri = intent.data
                     if (imageUri != null) {
                         source.setImageURI(imageUri)
+                        oldUri = imageUri
                     }
                 }
             }
