@@ -11,12 +11,18 @@ class BaseMessagingService : FirebaseMessagingService()  {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         // Handle incoming message from OneSignal
-        val keys = remoteMessage.data.keys
-        val customData = remoteMessage.data["custom"]
-        val customJsonObj = customData?.let { JSONObject(it) }
-        val dataObj: JSONObject? = customJsonObj?.get("a") as JSONObject?
-        val data = dataObj?.get("data")
+        try {
+            val keys = remoteMessage.data.keys
+            val customData = remoteMessage.data["custom"]
+            val customJsonObj = customData?.let { JSONObject(it) }
+            val dataObj: JSONObject? = customJsonObj?.get("a") as JSONObject?
+            val data = dataObj?.get("data")
 
-        println("NotificationContent: ${remoteMessage.data}")
+            println("NotificationContent: ${remoteMessage.data}")
+        }
+        catch (_: Exception) {
+
+        }
+
     }
 }
