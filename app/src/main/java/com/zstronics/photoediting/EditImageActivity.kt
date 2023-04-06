@@ -167,7 +167,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         val imgGallery: ImageView = findViewById(R.id.imgGallery)
         imgGallery.setOnClickListener(this)
 
-        val imgSave: ImageView = findViewById(R.id.imgSave)
+        val imgSave: TextView = findViewById(R.id.imgSave)
         imgSave.setOnClickListener(this)
 
         val imgClose: ImageView = findViewById(R.id.imgClose)
