@@ -86,4 +86,6 @@ object LocalEvents {
     class UserDataUpdated
     class ConnectionRefreshEvent
     class InvitationRefreshEvent
+
+    class LogoutUserEvent
 }

@@ -24,6 +24,7 @@ open class SessionValidator :
     override var tokenRefreshInProgress: Boolean = false
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
+        val refreshToken = sessionManager.getRefreshToken() ?: ""
         var response = chain.proceed(originalRequest)
         if (CookiesManager.isLoggedIn && response.code == 401) {
             if ((!tokenRefreshInProgress)) {
@@ -31,7 +32,7 @@ open class SessionValidator :
                 when (runBlocking {
                     authRepository.refreshJWTToken(
                         RefreshTokenRequest(
-                            sessionManager.getRefreshToken().toString()
+                            refreshToken
                         )
                     )
                 }) {
