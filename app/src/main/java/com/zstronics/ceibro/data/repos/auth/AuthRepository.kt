@@ -12,14 +12,18 @@ import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
+import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.greenrobot.eventbus.EventBus
 import java.io.File
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
-    private val service: AuthRepositoryService
+    private val service: AuthRepositoryService,
+    val sessionManager: SessionManager
 ) : IAuthRepository, BaseNetworkRepository() {
 
     override suspend fun login(loginRequest: LoginRequest): ApiResponse<LoginResponse> {
@@ -88,11 +92,14 @@ class AuthRepository @Inject constructor(
         when (response) {
             is ApiResponse.Success -> {
                 CookiesManager.isLoggedIn = true
-                CookiesManager.jwtToken = response.data.access.token
                 CookiesManager.tokens = response.data
+                CookiesManager.jwtToken = response.data.access.token
+                sessionManager.refreshToken(response.data)
             }
             is ApiResponse.Error -> {
-
+                if (response.error.statusCode == 406) {
+                    EventBus.getDefault().post(LocalEvents.LogoutUserEvent())
+                }
             }
         }
         return response

@@ -26,6 +26,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -43,6 +44,7 @@ class DashboardVM @Inject constructor(
     private val localTask: TaskLocalDataSource,
     val localSubTask: SubTaskLocalDataSource,
     private val repository: ITaskRepository,
+    private val taskRepository: TaskRepository,
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
     private val authRepository: IAuthRepository,
@@ -478,4 +480,11 @@ class DashboardVM @Inject constructor(
         }
     }
 
+    fun endUserSession() {
+        launch {
+            taskRepository.eraseTaskTable()
+            taskRepository.eraseSubTaskTable()
+        }
+        sessionManager.endUserSession()
+    }
 }

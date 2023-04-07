@@ -4,8 +4,10 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +24,8 @@ import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -35,6 +39,7 @@ import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
 import com.zstronics.ceibro.base.extensions.launchActivityForResult
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
@@ -488,6 +493,34 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             action = Intent.ACTION_EDIT
         }) { resultCode, data ->
             onPhotoEditedCallback(data?.data)
+
+            if (imageUri.toString().contains("content://media/")) {
+                try {
+                    val contentResolver = requireContext().contentResolver
+                    val projection = arrayOf(MediaStore.Images.Media.DATA)
+                    val cursor = contentResolver.query(imageUri, projection, null, null, null)
+                    val filePath: String? = cursor?.use { cursor ->
+                        if (cursor.moveToFirst()) {
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                        } else {
+                            null
+                        }
+                    }
+                    val fileToDelete = filePath?.let { File(it) }
+                    if (fileToDelete?.exists() == true) {
+                        val deleted = fileToDelete.delete()
+                    }
+                } catch (_: Exception) {}
+            }
+            else {
+                try {
+                    val oldFile = imageUri.toFile()
+                    if (oldFile.exists()) {
+                        val deleted = oldFile.delete()
+                    }
+                }
+                catch (_: Exception) {}
+            }
         }
     }
 
@@ -575,7 +608,12 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             // Do something with the saved image file
             val photoFile = File(currentPhotoPath)
             val savedUri = Uri.fromFile(photoFile)
-            addFileToUriList(savedUri)
+//            addFileToUriList(savedUri)
+            startEditor(savedUri) { updatedUri ->
+                if (updatedUri != null) {
+                    addFileToUriList(updatedUri)
+                }
+            }
         }
     }
 

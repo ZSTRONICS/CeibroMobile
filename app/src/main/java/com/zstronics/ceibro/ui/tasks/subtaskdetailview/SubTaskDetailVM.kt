@@ -75,6 +75,7 @@ class SubTaskDetailVM @Inject constructor(
     }
 
     private fun composeCommentsList(recentComments: ArrayList<SubTaskComments>) {
+        recentComments.sortByDescending { it.createdAt }
         _recentComments.value = recentComments
     }
 
@@ -102,6 +103,16 @@ class SubTaskDetailVM @Inject constructor(
                 if (isSuccess) {
                     alert("Comment sent")
                     success(commentData)
+                    val allComments = _recentComments.value ?: arrayListOf()
+                    if (commentData != null) {
+                        val previousComment =
+                            allComments.find { it.message.equals(commentData.message, true) && it.id == "121BJO" }
+                        if (previousComment != null) {
+                            val desireCommentIndex = allComments.indexOf(previousComment)
+                            allComments.set(desireCommentIndex, commentData)
+                        }
+                    }
+                    allComments.sortByDescending { it.createdAt }
                     if (fileUriList.value?.isNotEmpty() == true) {
                         commentData?.id?.let {
                             uploadFiles(
@@ -170,7 +181,7 @@ class SubTaskDetailVM @Inject constructor(
             userState = request.userState.toString(),
             files = files
         )
-        comments.add(comment)
+        comments.add(0, comment)
         _recentComments.postValue(comments)
     }
 
@@ -185,9 +196,17 @@ class SubTaskDetailVM @Inject constructor(
             comments.removeAt(desireCommentIndex)
             comments.add(desireComment)
         } else {
-            event?.newComment?.let { comments.add(it) }
+            val previousComment =
+                comments.find { it.message.equals(event?.newComment?.message, true) && it.id == "121BJO" }
+            if (previousComment != null) {
+                val desireCommentIndex = comments.indexOf(previousComment)
+                event?.newComment?.let { comments.set(desireCommentIndex, it) }
+            }
+            else {
+                event?.newComment?.let { comments.add(it) }
+            }
         }
-
+        comments.sortByDescending { it.createdAt }
         _recentComments.postValue(comments)
     }
 

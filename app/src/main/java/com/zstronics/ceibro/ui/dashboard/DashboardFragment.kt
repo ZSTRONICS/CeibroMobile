@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
@@ -239,6 +242,23 @@ class DashboardFragment :
             indeterminate = event.indeterminate,
             notificationIcon = event.notificationIcon
         )
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLogoutUserEvent(event: LocalEvents.LogoutUserEvent) {
+        viewModel.endUserSession()
+        shortToastNow("Session expired, please login")
+        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+            options = Bundle(),
+            clearPrevious = true
+        ) {
+            putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+            putExtra(
+                NAVIGATION_Graph_START_DESTINATION_ID,
+                R.id.loginFragment
+            )
+        }
+        Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
     }
 
     override fun onStart() {
