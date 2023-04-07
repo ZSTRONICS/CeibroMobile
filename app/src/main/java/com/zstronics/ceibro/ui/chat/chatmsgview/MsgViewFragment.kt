@@ -172,7 +172,7 @@ class MsgViewFragment :
             itemTouchHelper.attachToRecyclerView(mViewDataBinding.messagesRV)
             setupMessageInput()
             SocketHandler.getSocket()
-                .on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
+                ?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
         }
     }
 
@@ -180,7 +180,7 @@ class MsgViewFragment :
         super.onDestroyView()
         viewModel.chatRoom = null
         SocketHandler.getSocket()
-            .off(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
+            ?.off(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET, this@MsgViewFragment)
     }
 
     private fun setupMessageInput() {

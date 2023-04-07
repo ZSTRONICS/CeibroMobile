@@ -75,7 +75,7 @@ class DashboardFragment :
         }
 
 
-        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+        SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
             val navHostFragment =
                 activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
             val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
@@ -95,7 +95,7 @@ class DashboardFragment :
 
     private fun handleFileUploaderSocketEvents() {
 
-        SocketHandler.getSocket().on(SocketHandler.CEIBRO_LIVE_EVENT_BY_SERVER) { args ->
+        SocketHandler.getSocket()?.on(SocketHandler.CEIBRO_LIVE_EVENT_BY_SERVER) { args ->
             val gson = Gson()
             val arguments = args[0].toString()
             val socketData: SocketEventTypeResponse = gson.fromJson(

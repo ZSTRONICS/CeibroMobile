@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -95,6 +96,7 @@ class AuthRepository @Inject constructor(
                 CookiesManager.tokens = response.data
                 CookiesManager.jwtToken = response.data.access.token
                 sessionManager.refreshToken(response.data)
+                SocketHandler.reconnectSocket()
             }
             is ApiResponse.Error -> {
                 if (response.error.statusCode == 406) {

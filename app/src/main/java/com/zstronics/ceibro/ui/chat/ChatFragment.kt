@@ -75,7 +75,7 @@ class ChatFragment :
             if (view.id == R.id.chatFavIcon)
                 viewModel.addChatToFav(data.id)
         }
-        SocketHandler.getSocket().on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+        SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
             val gson = Gson()
             val arguments = args[0].toString()
             when {
