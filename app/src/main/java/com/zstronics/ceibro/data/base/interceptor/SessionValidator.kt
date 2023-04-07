@@ -37,7 +37,6 @@ open class SessionValidator :
                     )
                 }) {
                     is ApiResponse.Success -> {
-                        CookiesManager.tokens?.let { sessionManager.refreshToken(it) }
                         val builder = originalRequest.newBuilder()
                             .header(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
                             .method(originalRequest.method, originalRequest.body)
