@@ -274,6 +274,7 @@
     <string name="filters_heading">Filters</string>
     <string name="status_heading">Status</string>
     <string name="clear_all_text">Clear all</string>
+    <string name="project_title_required">Project title required</string>
 
     <string name="new_projects_title">Create Project</string>
     <string name="create_heading">Create</string>

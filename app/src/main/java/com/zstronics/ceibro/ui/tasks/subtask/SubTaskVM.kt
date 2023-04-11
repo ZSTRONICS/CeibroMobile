@@ -30,7 +30,7 @@ class SubTaskVM @Inject constructor(
 
     private val _subTasks: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasks: LiveData<List<AllSubtask>> = _subTasks
-    var originalSubTasks: List<AllSubtask> = listOf()
+    var originalSubTasks: MutableList<AllSubtask> = mutableListOf()
 
     init {
         getSubTasks()
@@ -39,7 +39,8 @@ class SubTaskVM @Inject constructor(
 
     override fun getSubTasks() {
         launch {
-            originalSubTasks = taskRepository.getAllSubtasks()
+            originalSubTasks = taskRepository.getAllSubtasks() as MutableList<AllSubtask>
+            originalSubTasks.sortByDescending { it.updatedAt }
             _subTasks.postValue(originalSubTasks)
             _subTasksForStatus.postValue(originalSubTasks)
         }
