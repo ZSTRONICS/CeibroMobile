@@ -270,8 +270,14 @@ class MsgViewFragment :
                 if (message.sender.id != viewModel.userId) {
                     sheet.binding.chatMsgMessageInfo.visibility = View.GONE
                 }
+                if (viewModel.chatRoom?.isGroupChat != true) {
+                    sheet.binding.chatMsgAddTemporaryMember.visibility = View.GONE
+                }
+                sheet.binding.chatMsgMakeTask.visibility = View.GONE
+                sheet.binding.chatMsgAddSubtask.visibility = View.GONE
+                sheet.binding.view8.visibility = View.GONE
             }
-        }, 90)
+        }, 80)
     }
 
     private fun navToMessageInfo(message: MessagesResponse.ChatMessage, position: Int) {

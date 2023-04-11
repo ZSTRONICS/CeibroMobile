@@ -64,49 +64,47 @@ class ProjectOverviewFragment(
                     viewModel.updateProject(requireContext(), projectStateHandler)
                     return
                 }
-//                val projectData = viewModel.getMockedProject()
-//                projectStateHandler.onProjectCreated(projectData?.createProject)
-//                viewState.project.postValue(projectData?.createProject)
+
                 with(viewState) {
                     var checkPass = 0
-                    if (projectPhoto.value != null) {
-                        checkPass++
-                    }
+//                    if (projectPhoto.value != null) {
+//                        checkPass++
+//                    }
 
                     if (!projectTitle.value.isNullOrEmpty()) {
                         checkPass++
                     }
 
-                    if (!location.value.isNullOrEmpty()) {
-                        checkPass++
-                    }
-
-                    if (!description.value.isNullOrEmpty()) {
-                        checkPass++
-                    }
-                    if (!dueDate.value.isNullOrEmpty()) {
-                        checkPass++
-                    }
-
-                    if (!status.value.isNullOrEmpty()) {
-                        checkPass++
-                    }
-                    if (checkPass == 6) {
+//                    if (!location.value.isNullOrEmpty()) {
+//                        checkPass++
+//                    }
+//                    if (!description.value.isNullOrEmpty()) {
+//                        checkPass++
+//                    }
+//                    if (!dueDate.value.isNullOrEmpty()) {
+//                        checkPass++
+//                    }
+//                    if (!status.value.isNullOrEmpty()) {
+//                        checkPass++
+//                    }
+                    if (checkPass == 1) {
                         viewModel.createProject(requireContext(), projectStateHandler)
                     } else {
-                        if (projectPhoto.value == null) {
-                            showToast("Attach photo")
-                        } else if (projectTitle.value.isNullOrEmpty()) {
-                            showToast("Project title required")
-                        } else if (location.value.isNullOrEmpty()) {
-                            showToast("Project location required")
-                        } else if (description.value.isNullOrEmpty()) {
-                            showToast("Project description required")
-                        } else if (dueDate.value.isNullOrEmpty()) {
-                            showToast("Project dueDate required")
-                        } else if (status.value.isNullOrEmpty()) {
-                            showToast("Project status required")
+//                        if (projectPhoto.value == null) {
+//                            showToast("Attach photo")
+//                        }
+                        if (projectTitle.value.isNullOrEmpty()) {
+                            showToast(getString(R.string.project_title_required),)
                         }
+//                        else if (location.value.isNullOrEmpty()) {
+//                            showToast("Project location required")
+//                        } else if (description.value.isNullOrEmpty()) {
+//                            showToast("Project description required")
+//                        } else if (dueDate.value.isNullOrEmpty()) {
+//                            showToast("Project dueDate required")
+//                        } else if (status.value.isNullOrEmpty()) {
+//                            showToast("Project status required")
+//                        }
                     }
                 }
             }

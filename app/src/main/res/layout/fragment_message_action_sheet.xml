@@ -19,10 +19,11 @@
             android:id="@+id/chatMsgReplyBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginTop="5dp"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,13 +51,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgReplyBtn"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatMsgReplyBtn">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -82,9 +83,9 @@
             android:layout_marginTop="15dp"
             android:background="@color/appLightGrey"
             android:clickable="false"
-            app:layout_constraintEnd_toEndOf="@+id/chatMsgAddSubtask"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgAddSubtask"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatMsgForwardBtn" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -92,13 +93,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgForwardBtn"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view9">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -123,14 +124,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgForwardBtn"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatMsgMakeTask">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -166,15 +166,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-
-            android:layout_marginBottom="20dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgMakeTask"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view8">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -199,14 +197,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgMakeTask"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatMsgAddTemporaryMember">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -231,14 +228,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgMakeTask"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatMsgChatMembers">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -263,16 +259,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-
-            android:layout_marginBottom="20dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginBottom="10dp"
+            android:background="?attr/selectableItemBackground"
             android:gravity="start|center"
             android:orientation="horizontal"
-            android:padding="2dp"
+            android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/chatMsgMakeTask"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatMsgMessageInfo">
 
             <androidx.appcompat.widget.AppCompatImageView

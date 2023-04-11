@@ -55,8 +55,8 @@ class ProjectOverviewVM @Inject constructor(
                 id = it,
                 firstName = user.firstName,
                 surName = user.surName,
-                companyName = "",
-                profilePic = ""
+                companyName = user.companyName,
+                profilePic = user.profilePic
             )
             addOrRemoveOwner(member)
         }
@@ -157,17 +157,17 @@ class ProjectOverviewVM @Inject constructor(
             val request = projectStatuses.value?.map { it.status }?.let { statusList ->
                 owners.value?.let { owners ->
                     CreateProjectRequest(
-                        projectPhoto = FileUtils.getFile(
+                        projectPhoto = if (viewState.photoAttached) FileUtils.getFile(
                             context,
                             viewState.projectPhoto.value
-                        ),
-                        title = viewState.projectTitle.value.toString(),
-                        location = viewState.location.value.toString(),
-                        description = viewState.description.value.toString(),
-                        dueDate = viewState.dueDate.value.toString(),
-                        publishStatus = viewState.status.value.toString(),
-                        extraStatus = Gson().toJson(statusList),
-                        owner = Gson().toJson(owners)
+                        ) else null,
+                        title = viewState.projectTitle.value ?: "",
+                        location = viewState.location.value ?: "",
+                        description = viewState.description.value ?: "",
+                        dueDate = viewState.dueDate.value ?: "",
+                        publishStatus = viewState.status.value ?: "",
+                        extraStatus = if (statusList.isNotEmpty()) Gson().toJson(statusList) else "",
+                        owner = if (owners.isNotEmpty()) Gson().toJson(owners) else ""
                     )
                 }
             }
@@ -205,7 +205,7 @@ class ProjectOverviewVM @Inject constructor(
                         dueDate = viewState.dueDate.value ?: "",
                         publishStatus = viewState.status.value ?: "",
                         extraStatus = if (statusList.isNotEmpty()) Gson().toJson(statusList) else "",
-                        owner = if (statusList.isNotEmpty()) Gson().toJson(owners) else ""
+                        owner = if (owners.isNotEmpty()) Gson().toJson(owners) else ""
                     )
                 }
             }
