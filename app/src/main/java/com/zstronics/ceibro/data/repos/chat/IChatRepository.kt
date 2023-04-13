@@ -12,7 +12,7 @@ interface IChatRepository {
     suspend fun replyOrSendMessage(message: NewMessageRequest): ApiResponse<NewMessageResponse>
     suspend fun addChatRoomToFav(roomId: String): ApiResponse<ChatRoomAddToFavResponse>
     suspend fun postQuestion(questionRequest: QuestionRequest): ApiResponse<NewMessageResponse>
-    suspend fun createIndividualChat(userId: String): ApiResponse<IndividualChatResponse>
+    suspend fun createIndividualChat(userId: String): ApiResponse<GroupChatResponse>
     suspend fun deleteConversation(roomId: String): ApiResponse<ChatRoomAddToFavResponse>
     suspend fun createGroupChat(request: NewGroupChatRequest): ApiResponse<GroupChatResponse>
     suspend fun fetchMoreMessages(

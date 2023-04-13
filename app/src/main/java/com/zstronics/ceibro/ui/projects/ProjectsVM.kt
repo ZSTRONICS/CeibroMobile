@@ -43,11 +43,14 @@ class ProjectsVM @Inject constructor(
 
                 is ApiResponse.Success -> {
                     loading(false)
-                    val data = response.data
-                    originalAlProjects = data.projects as MutableList<AllProjectsResponse.Projects>
-                    prepareFiltersData(originalAlProjects)
-                    _allProjects.postValue(originalAlProjects)
+                    val data = response.data.projects
+                    if (data != null) {
+                        originalAlProjects =
+                            (data as MutableList<AllProjectsResponse.Projects>).toMutableList()
+                        prepareFiltersData(originalAlProjects)
+                        _allProjects.postValue(originalAlProjects)
 //                    _allProjects.postValue(data.result.projects.toMutableList())
+                    }
                 }
 
                 is ApiResponse.Error -> {

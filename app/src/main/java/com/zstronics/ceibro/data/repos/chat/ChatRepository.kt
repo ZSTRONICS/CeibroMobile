@@ -70,7 +70,7 @@ class ChatRepository @Inject constructor(
             }
         )
 
-    override suspend fun createIndividualChat(userId: String): ApiResponse<IndividualChatResponse> =
+    override suspend fun createIndividualChat(userId: String): ApiResponse<GroupChatResponse> =
         executeSafely(
             call =
             {
