@@ -70,7 +70,13 @@ class ChatRoomAdapter @Inject constructor(val sessionManager: SessionManager) :
                 }
                 binding.chatTypeIcon.setImageResource(R.drawable.icon_group_chat)
             } else {        //else will show individual chat
-                val otherUser: Member? = item.members.find { member -> member.id != user?.id }
+                val otherUser: Member? =
+                    if (item.members.size < 2) {
+                        item.removedAccess.find { member -> member.id != user?.id }
+                    }
+                    else {
+                        item.members.find { member -> member.id != user?.id }
+                    }
 
                 binding.chatPersonName.text = "${otherUser?.firstName} ${otherUser?.surName}"
                 binding.chatTypeIcon.setImageResource(R.drawable.icon_individual_chat)
@@ -99,10 +105,10 @@ class ChatRoomAdapter @Inject constructor(val sessionManager: SessionManager) :
                 binding.unreadMsgCount.visibility = View.GONE
             }
 
-            if (item.lastMessage?.message == null || item.lastMessage.message == "") {
+            if (item.lastMessage?.message == null || item.lastMessage?.message == "") {
                 binding.chatText.text = context.resources.getString(R.string.no_conversation)
             } else {
-                binding.chatText.text = item.lastMessage.message
+                binding.chatText.text = item.lastMessage?.message
             }
 
 

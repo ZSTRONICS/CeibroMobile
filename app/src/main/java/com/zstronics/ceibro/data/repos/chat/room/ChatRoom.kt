@@ -10,22 +10,22 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class ChatRoom(
-    @SerializedName("admins")
-    val admins: List<String>,
+//    @SerializedName("admins")
+//    val admins: List<String>,         //admins are not populated, they are list of string when get chat, but on new chat creation it's populated
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("groups")
     val groups: List<String>,
     @SerializedName("_id")
     val id: String,
-    @SerializedName("initiator")
-    val initiator: Initiator,
+//    @SerializedName("initiator")
+//    val initiator: Initiator,         //initiator is populated when get chat, but on new chat creation it's not populated
     @SerializedName("isGroupChat")
     val isGroupChat: Boolean,
     @SerializedName("isProjectAttached")
     val isProjectAttached: Boolean,
     @SerializedName("lastMessage")
-    var lastMessage: LastMessage,
+    var lastMessage: LastMessage?,
     @SerializedName("lastMessageTime")
     val lastMessageTime: String,
     @SerializedName("members")
@@ -41,7 +41,7 @@ data class ChatRoom(
     @SerializedName("project")
     val project: Project,
     @SerializedName("removedAccess")
-    val removedAccess: ArrayList<RemovedAcces>,
+    val removedAccess: ArrayList<Member>,
     @SerializedName("removedMembers")
     val removedMembers: ArrayList<Member>,
     @SerializedName("unreadCount")

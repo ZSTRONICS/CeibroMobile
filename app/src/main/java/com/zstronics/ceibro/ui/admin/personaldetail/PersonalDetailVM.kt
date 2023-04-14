@@ -25,12 +25,12 @@ class PersonalDetailVM @Inject constructor(
             if (userData != null) {
                 userFirstName.value = userData.firstName
                 userSurname.value = userData.surName
-                userEmail.value = userData.email
-                userContactNumber.value = userData.phone
-                userCompanyName.value = userData.companyName
-                userWorkEmail.value = userData.workEmail
-                userWorkContactNo.value = userData.companyPhone
-                userProfilePic.value = userData.profilePic
+                userEmail.value = userData.email ?: ""
+                userContactNumber.value = userData.phone ?: ""
+                userCompanyName.value = userData.companyName ?: ""
+                userWorkEmail.value = userData.workEmail ?: ""
+                userWorkContactNo.value = userData.companyPhone ?: ""
+                userProfilePic.value = userData.profilePic ?: ""
                 userRegisterDate.value = DateUtils.reformatStringDate(
                     date = userData.createdAt,
                     DateUtils.SERVER_DATE_FULL_FORMAT,

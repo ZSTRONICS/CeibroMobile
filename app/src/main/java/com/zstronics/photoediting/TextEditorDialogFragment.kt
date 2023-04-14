@@ -54,6 +54,7 @@ class TextEditorDialogFragment : DialogFragment() {
         return inflater.inflate(R.layout.add_text_dialog, container, false)
     }
 
+    @SuppressWarnings("InvalidSetHasFixedSize")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

@@ -10,5 +10,5 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class GroupChatResponse(
-    @SerializedName("newChat") val newChat: GroupChatRoom
+    @SerializedName("newChat") val newChat: ChatRoom
 ) : BaseResponse(), Parcelable
