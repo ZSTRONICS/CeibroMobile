@@ -16,28 +16,49 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/signin_background">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="0dp"
-            android:layout_height="125dp"
-            android:layout_marginTop="60dp"
-            app:layout_constraintBottom_toTopOf="@+id/materialCardView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_47sdp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ceibro_logo_shadow" />
+            app:srcCompat="@drawable/ceibro_inline_logo_black" />
+
+        <View
+            android:id="@+id/view24"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.74" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/new_background"
+            app:layout_constraintBottom_toTopOf="@+id/view24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             style="@style/CustomCardViewStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
             app:cardBackgroundColor="@color/white"
-            app:cardElevation="20dp"
+            app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -76,12 +97,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:background="?attr/selectableItemBackgroundBorderless"
                             android:padding="3dp"
                             android:text="@string/sign_up"
-                            android:textColor="@color/appYellow"
+                            android:textColor="@color/appBlue"
                             android:textSize="15sp" />
                     </LinearLayout>
 
@@ -106,15 +127,12 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextPassword"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_marginBottom="35dp"
-                        android:background="@drawable/input_field"
-                        android:drawableStart="@drawable/icon_lock"
-                        android:drawablePadding="13dp"
+                        android:background="@drawable/input_field_rectangle"
                         android:ems="10"
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/password_hint"
@@ -122,23 +140,24 @@
                         android:paddingStart="18dp"
                         android:paddingEnd="40dp"
                         android:text="@={viewState.password}"
+                        android:textColor="@color/black"
                         android:textColorHint="@color/appGrey"
                         android:textSize="15sp"
-                        android:textColor="@color/black"
                         app:layout_constraintBottom_toTopOf="@+id/loginBtn"
                         app:layout_constraintEnd_toEndOf="@+id/loginBtn"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/loginBtn"
                         app:validateMaxLength="@{30}"
-                        app:validateMinLength="@{8}" />
+                        app:validateMinLength="@{8}"
+                        android:visibility="visible" />
 
                     <ImageView
                         android:id="@+id/loginPasswordEye"
                         android:layout_width="32dp"
                         android:layout_height="35dp"
                         android:layout_marginEnd="6dp"
-                        android:padding="6dp"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="6dp"
                         app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
                         app:layout_constraintEnd_toEndOf="@+id/editTextPassword"
                         app:layout_constraintTop_toTopOf="@+id/editTextPassword"
@@ -149,8 +168,9 @@
                         android:id="@+id/editTextEmail"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
+                        android:layout_marginTop="18dp"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/input_field"
+                        android:background="@drawable/input_field_rectangle"
                         android:drawableStart="@drawable/email_icon_solid"
                         android:drawablePadding="13dp"
                         android:ems="10"
@@ -160,55 +180,78 @@
                         android:paddingStart="18dp"
                         android:paddingEnd="18dp"
                         android:text="@={viewState.email}"
+                        android:textColor="@color/black"
                         android:textColorHint="@color/appGrey"
                         android:textSize="15sp"
-                        android:textColor="@color/black"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toTopOf="@+id/editTextPassword"
                         app:layout_constraintEnd_toEndOf="@+id/editTextPassword"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/editTextPassword"
+                        app:layout_constraintTop_toTopOf="parent"
                         app:validateType="@{`email`}" />
 
-
-                    <TextView
-                        android:id="@+id/textView"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/editTextEmailField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="28dp"
-                        android:layout_marginEnd="28dp"
-                        android:layout_marginBottom="55dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="center"
-                        android:text="@string/sign_in_to_manage_your_projects_with_ceibro"
-                        android:textColor="@color/appTextGrey"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toTopOf="@+id/editTextEmail"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:layout_marginTop="10dp"
+                        android:hint="@string/subtask_title_heading"
+                        android:textColorHint="@color/grey"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/editTextPasswordField"
+                        app:layout_constraintEnd_toEndOf="@+id/editTextPasswordField"
+                        app:layout_constraintStart_toStartOf="@+id/editTextPasswordField">
 
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextEmail1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:scrollHorizontally="true"
+                            android:text="@={viewState.email}"
+                            android:textColorHint="@color/grey"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/editTextPasswordField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginBottom="17dp"
-                        android:fontFamily="@font/inter_bold"
-                        android:text="@string/sign_in_heading"
-                        android:textColor="@color/black"
-                        android:textSize="24.5sp"
-                        app:layout_constraintBottom_toTopOf="@+id/textView"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="18dp"
+                        android:layout_marginBottom="35dp"
+                        android:hint="@string/password_hint"
+                        android:textColorHint="@color/grey"
+                        app:boxStrokeColor="@color/colorGrey"
+                        app:boxStrokeWidth="1dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:passwordToggleEnabled="true">
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1.5dp"
-                        android:layout_marginTop="2dp"
-                        android:background="@color/black"
-                        app:layout_constraintEnd_toEndOf="@+id/textView2"
-                        app:layout_constraintStart_toStartOf="@+id/textView2"
-                        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextPassword1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:maxLines="1"
+                            android:inputType="textPassword"
+                            android:scrollHorizontally="true"
+                            android:text="@={viewState.password}"
+                            android:textColorHint="@color/grey"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>

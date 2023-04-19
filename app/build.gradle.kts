@@ -81,4 +81,5 @@ dependencies {
     implementation("com.ericktijerou.koleton:koleton:1.0.0-beta01")
     implementation("com.github.tntkhang:full-screen-image-view-library:1.1.0")
     implementation("com.onesignal:OneSignal:[4.0.0, 4.99.99]")
+    implementation("com.googlecode.libphonenumber:libphonenumber:8.12.30")
 }
