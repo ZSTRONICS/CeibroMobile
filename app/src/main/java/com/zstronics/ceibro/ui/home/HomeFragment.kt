@@ -61,7 +61,9 @@ class HomeFragment :
         initRecyclerView(projectAdapter, taskAdapter)
 
         viewModel.homeProjects.observe(viewLifecycleOwner) {
-            projectAdapter.setList(it)
+            if (it != null) {
+                projectAdapter.setList(it)
+            }
         }
         projectAdapter.itemClickListener =
             { _: View, position: Int, data: AllProjectsResponse.Projects ->

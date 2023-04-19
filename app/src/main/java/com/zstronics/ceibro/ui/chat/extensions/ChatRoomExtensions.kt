@@ -5,7 +5,10 @@ import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.chat.room.Member
 
 fun ChatRoom.getChatTitle(user: User?): String {
-    val otherUser: Member? = this.members.find { member -> member.id != user?.id }
+    var otherUser: Member? = this.members.find { member -> member.id != user?.id }
+    if (otherUser == null) {
+        otherUser = this.removedAccess.find { member -> member.id != user?.id }
+    }
     return if (this.isGroupChat)
         this.name
     else

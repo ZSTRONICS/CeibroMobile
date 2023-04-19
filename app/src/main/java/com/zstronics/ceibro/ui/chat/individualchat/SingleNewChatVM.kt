@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.chat.individualchat
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -59,12 +60,18 @@ class SingleNewChatVM @Inject constructor(
             when (val response =
                 chatRepository.createIndividualChat(selectedMember.value.toString())) {
                 is ApiResponse.Success -> {
+                    val data = response.data.newChat
+//                    println("newChatGroup: ${response.data.newChat}")
                     loading(false)
-                    handlePressOnView(200)
+                    val handler = Handler()
+                    handler.postDelayed(Runnable {
+                        clickEvent?.postValue(111)
+                    }, 60)
+
                 }
 
                 is ApiResponse.Error -> {
-                    loading(false,response.error.message)
+                    loading(false, response.error.message)
                 }
             }
         }

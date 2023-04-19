@@ -42,7 +42,7 @@ interface ChatRepositoryService {
     suspend fun postQuestion(@Body requestBody: RequestBody): Response<NewMessageResponse>
 
     @POST("chat/room/single/{userId}")
-    suspend fun createIndividualChat(@Path("userId") userId: String): Response<IndividualChatResponse>
+    suspend fun createIndividualChat(@Path("userId") userId: String): Response<GroupChatResponse>
 
     @DELETE("chat/room/{roomId}")
     suspend fun deleteConversation(

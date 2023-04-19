@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -25,12 +26,13 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/chatProfileImgCard"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="13dp"
                 android:elevation="0dp"
                 android:outlineSpotShadowColor="@color/white"
-                app:cardCornerRadius="4dp"
+                app:cardBackgroundColor="@color/appLightGrey"
+                app:cardCornerRadius="5dp"
                 app:layout_constraintBottom_toBottomOf="@+id/chatText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/chatPersonName">
@@ -49,6 +51,14 @@
                     android:text="KD"
                     android:textColor="@color/black"
                     android:textSize="17sp" />
+
+                <ImageView
+                    android:id="@+id/chatProfileImg"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_img"
+                    android:visibility="invisible" />
 
             </androidx.cardview.widget.CardView>
 
@@ -129,7 +139,7 @@
                     android:text="@{String.valueOf(chatRoom.unreadCount)}"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:visibility="@{chatRoom.unreadCount>0?View.VISIBLE:View.GONE}" />
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/msgTimeText"

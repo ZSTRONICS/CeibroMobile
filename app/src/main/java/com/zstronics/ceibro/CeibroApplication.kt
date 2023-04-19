@@ -5,6 +5,7 @@ import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -37,5 +38,10 @@ open class CeibroApplication : Application() {
     companion object {
         var ceibroApplication: CeibroApplication? = null
             private set
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        SocketHandler.closeConnectionAndRemoveObservers()
     }
 }

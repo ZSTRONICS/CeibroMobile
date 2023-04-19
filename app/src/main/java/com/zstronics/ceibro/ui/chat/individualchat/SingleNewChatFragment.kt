@@ -23,9 +23,8 @@ class SingleNewChatFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> navigateBack()
+            111, R.id.closeBtn -> navigateBack()
             R.id.startChatBtn -> viewModel.createIndividualChat()
-            200 -> navigateBack()
         }
     }
 

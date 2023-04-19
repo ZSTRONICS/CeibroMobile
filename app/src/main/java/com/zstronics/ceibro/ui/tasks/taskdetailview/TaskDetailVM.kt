@@ -39,7 +39,7 @@ class TaskDetailVM @Inject constructor(
 
     private val _subTasks: MutableLiveData<List<AllSubtask>> = MutableLiveData()
     val subTasks: LiveData<List<AllSubtask>> = _subTasks
-    var originalSubTasks: List<AllSubtask> = listOf()
+    var originalSubTasks: MutableList<AllSubtask> = mutableListOf()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -62,7 +62,8 @@ class TaskDetailVM @Inject constructor(
 
     override fun getSubTasks(taskId: String) {
         launch {
-           originalSubTasks = taskRepository.getSubTaskByTaskId(taskId)
+            originalSubTasks = taskRepository.getSubTaskByTaskId(taskId) as MutableList<AllSubtask>
+            originalSubTasks.sortByDescending { it.updatedAt }
             _subTasks.postValue(originalSubTasks)
             _subTasksForStatus.postValue(originalSubTasks)
         }

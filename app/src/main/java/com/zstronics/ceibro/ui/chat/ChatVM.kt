@@ -39,7 +39,7 @@ class ChatVM @Inject constructor(
                     loading(false)
                     val data = response.data
                     val chatRooms = data.chatRooms as MutableList<ChatRoom>?
-                    chatRooms?.sortByDescending { it.unreadCount }
+//                    chatRooms?.sortByDescending { it.unreadCount }
                     _chatRooms.postValue(chatRooms)
                 }
 

@@ -1,9 +1,12 @@
 package com.zstronics.ceibro.ui.chat.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
 import com.zstronics.ceibro.data.repos.chat.room.Member
@@ -48,9 +51,10 @@ class ChatRoomAdapter @Inject constructor(val sessionManager: SessionManager) :
     inner class ChatRoomViewHolder(private val binding: LayoutChatBoxBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n")
         fun bind(item: ChatRoom) {
             val context = binding.root.context
-            val otherUser: Member? = item.members.find { member -> member.id != user?.id }
+
             binding.chatRoom = item
 
             binding.chatProfileIconText.text = ""
@@ -58,18 +62,47 @@ class ChatRoomAdapter @Inject constructor(val sessionManager: SessionManager) :
             if (item.isGroupChat) {
                 binding.chatProjectName.text = item.project?.title
                 binding.chatPersonName.text = item.name
-                val groupName = item.name.split("\\s".toRegex()).toTypedArray()
+                val groupName = item.name.trim().split("\\s".toRegex()).toTypedArray()
                 for (element in groupName) {
-                    binding.chatProfileIconText.append("${element[0]?.uppercaseChar()}")
+                    if (element != "") {
+                        binding.chatProfileIconText.append("${element[0].uppercaseChar()}")
+                    }
                 }
                 binding.chatTypeIcon.setImageResource(R.drawable.icon_group_chat)
-            } else {
+            } else {        //else will show individual chat
+                val otherUser: Member? =
+                    if (item.members.size < 2) {
+                        item.removedAccess.find { member -> member.id != user?.id }
+                    }
+                    else {
+                        item.members.find { member -> member.id != user?.id }
+                    }
+
                 binding.chatPersonName.text = "${otherUser?.firstName} ${otherUser?.surName}"
-                binding.chatProfileIconText.text =
-                    "${otherUser?.firstName?.get(0)?.uppercaseChar()}${
-                        otherUser?.surName?.get(0)?.uppercaseChar()
-                    }"
                 binding.chatTypeIcon.setImageResource(R.drawable.icon_individual_chat)
+
+                if (otherUser?.profilePic == "" || otherUser?.profilePic.isNullOrEmpty()) {
+                    binding.chatProfileIconText.text = "${
+                        otherUser?.firstName?.get(0)?.uppercaseChar()
+                    }${otherUser?.surName?.get(0)?.uppercaseChar()}"
+                    binding.chatProfileIconText.visibility = View.VISIBLE
+                    binding.chatProfileImg.visibility = View.GONE
+                } else {
+                    Glide.with(binding.chatProfileImg.context)
+                        .load(otherUser?.profilePic)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .placeholder(R.drawable.profile_img)
+                        .into(binding.chatProfileImg)
+                    binding.chatProfileImg.visibility = View.VISIBLE
+                    binding.chatProfileIconText.text = ""
+                    binding.chatProfileIconText.visibility = View.VISIBLE
+                }
+            }
+
+            if (item.unreadCount > 0) {
+                binding.unreadMsgCount.visibility = View.VISIBLE
+            } else {
+                binding.unreadMsgCount.visibility = View.GONE
             }
 
             if (item.lastMessage?.message == null || item.lastMessage?.message == "") {

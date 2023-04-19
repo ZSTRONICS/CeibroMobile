@@ -72,7 +72,7 @@ class DashboardVM @Inject constructor(
 
     override fun handleSocketEvents() {
 
-        SocketHandler.getSocket().on(SocketHandler.CEIBRO_LIVE_EVENT_BY_SERVER) { args ->
+        SocketHandler.getSocket()?.on(SocketHandler.CEIBRO_LIVE_EVENT_BY_SERVER) { args ->
             val gson = Gson()
             val arguments = args[0].toString()
             val socketData: SocketEventTypeResponse = gson.fromJson(
