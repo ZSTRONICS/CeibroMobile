@@ -749,4 +749,14 @@
     <string name="my_projects_heading">My projects</string>
     <string name="my_tasks_heading">My tasks</string>
     <string name="default_status_text">Default</string>
+    <string name="remember_me_text">Remember me</string>
+    <string name="forgot_password_heading">Forgot password?</string>
+    <string name="no_worries_we_ll_send_you_reset_instruction">No worries, we’ll send you reset instruction</string>
+    <string name="reset_password_heading">Reset password</string>
+    <string name="back_to">Back to</string>
+    <string name="phone_number_confirmation_heading">Phone number confirmation</string>
+    <string name="verification_code_text">Verification code</string>
+    <string name="confirmation_code_was_sent">Confirmation code was sent</string>
+    <string name="didn_t_receive_code">Didn\'t receive code?</string>
+    <string name="send_again_text">Send again</string>
 </resources>

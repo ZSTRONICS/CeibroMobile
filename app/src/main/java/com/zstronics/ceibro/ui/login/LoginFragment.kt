@@ -3,16 +3,22 @@ package com.zstronics.ceibro.ui.login
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.view.View
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
+import com.google.i18n.phonenumbers.NumberParseException
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class LoginFragment :
@@ -24,13 +30,37 @@ class LoginFragment :
     override val layoutResId: Int = R.layout.fragment_login
     override fun toolBarVisibility(): Boolean = false
     private var isPassShown = false
+    var selectedCountryCode = ""
+    private lateinit var countryCodes: Map<String, String>
     override fun onClick(id: Int) {
         when (id) {
             100 -> navigateToDashboard()
             R.id.signUpTextBtn -> navigate(R.id.signUpFragment)
+            R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {
                 isPassShown = !isPassShown
                 showOrHidePassword(isPassShown)
+            }
+            R.id.loginBtn -> {
+                val phoneNumber = mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
+                val phoneCode = mViewDataBinding.ccp.selectedCountryCodeWithPlus        // +1, +92
+                val nameCode = mViewDataBinding.ccp.selectedCountryNameCode             // US, PK
+                try {
+                    // Parsing the phone number with the selected country code
+                    val phoneNumberUtil = PhoneNumberUtil.getInstance()
+                    val parsedNumber = phoneNumberUtil.parse(phoneNumber, nameCode)
+
+                    if (phoneNumberUtil.isValidNumber(parsedNumber)) {
+
+                        val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
+                        shortToastNow("Logged in with phone number: $formattedNumber")
+
+                    } else {
+                        shortToastNow("Invalid phone number")
+                    }
+                } catch (e: NumberParseException) {
+                    shortToastNow("Error parsing phone number")
+                }
             }
         }
     }
@@ -60,5 +90,12 @@ class LoginFragment :
                 R.id.homeFragment
             )
         }
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.editTextPhone)
     }
 }
