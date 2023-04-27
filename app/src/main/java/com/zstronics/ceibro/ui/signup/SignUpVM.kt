@@ -20,14 +20,24 @@ class SignUpVM @Inject constructor(
 ) : HiltBaseViewModel<ISignUp.State>(), ISignUp.ViewModel, IValidator {
 
     override fun onSignUp() {
-        doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
-            viewState.password.value.toString(), viewState.confirmPassword.value.toString())
+        if (viewState.firstName.value.toString().length < 3) {
+            alert("Enter valid first name")
+        } else if (viewState.surname.value.toString().length < 2) {
+            alert("Enter valid surname")
+        } else {
+            clickEvent?.postValue(113)
+        }
+//        doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
+//            viewState.password.value.toString(), viewState.confirmPassword.value.toString())
     }
 
     override fun doSignUp(
         firstName: String,
         surname: String,
         email: String,
+        companyName: String,
+        jobTitle: String,
+        phoneNumber: String,
         password: String,
         confirmPassword: String
     ) {

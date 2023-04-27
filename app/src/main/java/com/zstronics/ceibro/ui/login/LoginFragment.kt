@@ -35,7 +35,7 @@ class LoginFragment :
     override fun onClick(id: Int) {
         when (id) {
             100 -> navigateToDashboard()
-            R.id.signUpTextBtn -> navigate(R.id.signUpFragment)
+            R.id.signUpTextBtn -> navigate(R.id.registerFragment)
             R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {
                 isPassShown = !isPassShown

@@ -17,6 +17,7 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentForgotPasswordBinding
 import com.zstronics.ceibro.databinding.FragmentVerifyNumberBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.EditProjectMemberSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,7 +47,11 @@ class VerifyNumberFragment :
                 mViewDataBinding.codeSentLayout.visibility = View.GONE
             }
             R.id.confirmBtn -> {
-
+                if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
+                    navigate(R.id.termsFragment)
+                } else if (viewState.previousFragment.value.equals("ForgotPasswordFragment", true)) {
+                    showPasswordBottomSheet()
+                }
             }
             R.id.sendCodeAgainBtn -> {
                 if (timeLeftInMillis <= 0) {
@@ -60,6 +65,7 @@ class VerifyNumberFragment :
 
     private lateinit var countDownTimer: CountDownTimer
     private var timeLeftInMillis: Long = 0
+    private var timerInProgress: Boolean = false
     private val COUNTDOWN_INTERVAL: Long = 1000 // 1 second
     private val TOTAL_TIME_IN_MILLIS: Long = 60000 // 60 seconds
 
@@ -67,11 +73,38 @@ class VerifyNumberFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        startTimer()
-//        mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.editTextPhone)
+        if (!timerInProgress) {
+            startTimer()
+        }
+        else {
+            mViewDataBinding.sendCodeAgainBtn.isEnabled = false
+            mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
+            mViewDataBinding.sendCodeAgainBtn.text = "${timeLeftInMillis / 1000}s"
+        }
+
     }
 
+
+    fun showPasswordBottomSheet() {
+        val sheet = CreateNewPasswordSheet()
+
+        sheet.onNewPasswordCreation = { password ->
+//            viewModel.editMember(projectLive.value?.id ?: "", member.id, body) {
+//                projectStateHandler.onMemberAdd()
+//                sheet.dismiss()
+//            }
+            shortToastNow(password)
+        }
+        sheet.onNewPasswordCreationDismiss = {
+            navigateBack()
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "CreateNewPasswordSheet")
+    }
+
+
     private fun startTimer() {
+        timerInProgress = true
         mViewDataBinding.sendCodeAgainBtn.text = ""
         mViewDataBinding.sendCodeAgainBtn.isEnabled = false
         mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
@@ -86,6 +119,7 @@ class VerifyNumberFragment :
             }
             override fun onFinish() {
                 timeLeftInMillis = 0
+                timerInProgress = false
                 updateTimerText()
             }
         }
@@ -98,6 +132,7 @@ class VerifyNumberFragment :
 
         // If timer is finished, update the text on the "Resend OTP" button
         if (timeLeftInMillis <= 0) {
+            timerInProgress = false
             mViewDataBinding.sendCodeAgainBtn.text = resources.getString(R.string.send_again_text)
             mViewDataBinding.sendCodeAgainBtn.isEnabled = true
             mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appBlue))
