@@ -18,9 +18,12 @@
     <color name="appDimYellow">#0AF1B740</color>
     <color name="appRed">#FA0808</color>
     <color name="appDisableButton">#BFBFBF</color>
-    <color name="appGreen">#55BCB3</color>
-    <color name="appPurple">#B555BC</color>
+    <color name="appGreen">#1A8718</color>
+    <color name="appPaleGreen">#E6FFF4</color>
+    <color name="appPaleBlue">#E6F5FF</color>
+    <color name="appMidBlue">#CFECFF</color>
     <color name="appBlue">#0076C8</color>
+    <color name="appPurple">#B555BC</color>
     <color name="appShadedBlue">#800076C8</color>
     <color name="appDimBlue">#F8FCFF</color>
     <color name="appGrey">#C0C0C0</color>
