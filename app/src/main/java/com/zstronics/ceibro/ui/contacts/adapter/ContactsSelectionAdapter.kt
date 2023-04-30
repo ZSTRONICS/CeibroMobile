@@ -81,13 +81,6 @@ class ContactsSelectionAdapter @Inject constructor() :
                     .placeholder(R.drawable.profile_img)
                     .into(binding.contactImage)
             }
-            binding.mainLayout.setOnClickListener {
-                itemClickListener?.invoke(
-                    it, absoluteAdapterPosition,
-                    item
-                )
-                notifyDataSetChanged()
-            }
         }
     }
 }
