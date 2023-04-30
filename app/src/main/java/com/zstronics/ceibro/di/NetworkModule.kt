@@ -16,6 +16,8 @@ import com.zstronics.ceibro.data.repos.dashboard.DashboardRepositoryService
 import com.zstronics.ceibro.data.repos.projects.ProjectRepositoryService
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
+import com.zstronics.ceibro.ui.contacts.worker.AppWorkerFactory
+import com.zstronics.ceibro.ui.contacts.worker.ContactSyncWorkerFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -166,6 +168,12 @@ class NetworkModule {
         okHttpBuilder.readTimeout(timeoutRead.toLong(), TimeUnit.SECONDS)
         return okHttpBuilder.build()
     }
+
+    @Provides
+    @Singleton
+    fun provideAppWorkerFactory(
+        contactSyncWorkerFactory: ContactSyncWorkerFactory,
+    ): AppWorkerFactory = AppWorkerFactory(contactSyncWorkerFactory)
 
 }
 

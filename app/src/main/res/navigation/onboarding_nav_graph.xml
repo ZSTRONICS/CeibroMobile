@@ -37,6 +37,12 @@
         android:id="@+id/verifyNumberFragment"
         android:name="com.zstronics.ceibro.ui.verifynumber.VerifyNumberFragment"
         android:label="VerifyNumberFragment"
-        tools:layout="@layout/fragment_verify_number"/>
+        tools:layout="@layout/fragment_verify_number" />
+
+    <fragment
+        android:id="@+id/contactsSelectionFragment"
+        android:name="com.zstronics.ceibro.ui.contacts.ContactsSelectionFragment"
+        android:label="ContactsSelectionFragment"
+        tools:layout="@layout/fragment_contacts_selection" />
 
 </navigation>

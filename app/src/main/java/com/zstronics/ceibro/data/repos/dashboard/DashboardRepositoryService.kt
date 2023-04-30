@@ -6,6 +6,8 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
+import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 import okhttp3.MultipartBody
@@ -16,6 +18,7 @@ import retrofit2.http.*
 interface DashboardRepositoryService {
     @GET("users/connections")
     suspend fun getAllConnections(): Response<AllConnectionsResponse>
+
     @GET("users/connections/count")
     suspend fun getConnectionCount(): Response<CountResponse>
 
@@ -54,4 +57,10 @@ interface DashboardRepositoryService {
     suspend fun getAdminsOrUsersList(
         @Query("role") role: String
     ): Response<AdminUsersResponse>
+
+    @POST("/v2/users/contacts/{userId}/sync")
+    suspend fun syncContacts(
+        @Path("userId") userId: String,
+        @Body syncContactsRequest: SyncContactsRequest
+    ): Response<GetContactsResponse>
 }
