@@ -75,7 +75,7 @@ class SplashActivity :
             putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
             putExtra(
                 NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.loginFragment
+                R.id.photoFragment
             )
         }
     }
