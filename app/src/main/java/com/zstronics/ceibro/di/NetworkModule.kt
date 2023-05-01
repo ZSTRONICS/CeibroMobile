@@ -167,12 +167,6 @@ class NetworkModule {
         okHttpBuilder.readTimeout(timeoutRead.toLong(), TimeUnit.SECONDS)
         return okHttpBuilder.build()
     }
-
-    @Singleton
-    @Provides
-    fun provideWorkerDependency(service: DashboardRepositoryService): DashboardRepository {
-        return DashboardRepository(service)
-    }
 }
 
 private const val timeoutRead = 30   //In seconds
