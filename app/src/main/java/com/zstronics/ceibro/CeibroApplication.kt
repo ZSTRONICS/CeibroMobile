@@ -1,6 +1,8 @@
 package com.zstronics.ceibro
 
 import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
@@ -10,7 +12,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-open class CeibroApplication : Application() {
+open class CeibroApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var sessionValidator: SessionValidator
 
@@ -19,6 +21,9 @@ open class CeibroApplication : Application() {
 
     @Inject
     lateinit var authApi: IAuthRepository
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
@@ -43,5 +48,12 @@ open class CeibroApplication : Application() {
     override fun onTerminate() {
         super.onTerminate()
         SocketHandler.closeConnectionAndRemoveObservers()
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .build()
     }
 }
