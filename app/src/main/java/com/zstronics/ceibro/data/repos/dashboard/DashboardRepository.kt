@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
+import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
@@ -113,4 +114,13 @@ class DashboardRepository @Inject constructor(
         }
     )
 
+    override suspend fun syncContactsEnabled(
+        phoneNumber: String,
+        enabled: Boolean
+    ): ApiResponse<ContactSyncEnableResponse> = executeSafely(
+        call =
+        {
+            service.syncContactsEnabled(phoneNumber, enabled)
+        }
+    )
 }

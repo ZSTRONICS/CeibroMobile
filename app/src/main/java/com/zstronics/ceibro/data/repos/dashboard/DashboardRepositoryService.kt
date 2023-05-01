@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
+import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
@@ -63,4 +64,10 @@ interface DashboardRepositoryService {
         @Path("userId") userId: String,
         @Body syncContactsRequest: SyncContactsRequest
     ): Response<GetContactsResponse>
+
+    @POST("/v2/users/{phoneNumber}/contacts/sync/{enabled}")
+    suspend fun syncContactsEnabled(
+        @Path("phoneNumber") phoneNumber: String,
+        @Path("enabled") enabled: Boolean
+    ): Response<ContactSyncEnableResponse>
 }

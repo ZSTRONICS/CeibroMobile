@@ -12,12 +12,11 @@ import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.remote.TaskRetroService
 import com.zstronics.ceibro.data.repos.auth.AuthRepositoryService
 import com.zstronics.ceibro.data.repos.chat.ChatRepositoryService
+import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepositoryService
 import com.zstronics.ceibro.data.repos.projects.ProjectRepositoryService
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
-import com.zstronics.ceibro.ui.contacts.worker.AppWorkerFactory
-import com.zstronics.ceibro.ui.contacts.worker.ContactSyncWorkerFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -169,12 +168,11 @@ class NetworkModule {
         return okHttpBuilder.build()
     }
 
-    @Provides
     @Singleton
-    fun provideAppWorkerFactory(
-        contactSyncWorkerFactory: ContactSyncWorkerFactory,
-    ): AppWorkerFactory = AppWorkerFactory(contactSyncWorkerFactory)
-
+    @Provides
+    fun provideWorkerDependency(service: DashboardRepositoryService): DashboardRepository {
+        return DashboardRepository(service)
+    }
 }
 
 private const val timeoutRead = 30   //In seconds

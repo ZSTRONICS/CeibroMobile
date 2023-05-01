@@ -2,13 +2,8 @@ package com.zstronics.ceibro.ui.contacts
 
 import android.Manifest
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -17,7 +12,6 @@ import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.databinding.FragmentContactsSelectionBinding
 import com.zstronics.ceibro.ui.contacts.adapter.ContactsSelectionAdapter
-import com.zstronics.ceibro.ui.contacts.worker.ContactsSyncWorker
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import javax.inject.Inject
@@ -35,8 +29,10 @@ class ContactsSelectionFragment :
         when (id) {
             R.id.confirmBtn -> {
                 val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
-                viewModel.syncContacts(selectedContacts)
-                startSyncing()
+                viewModel.syncContacts(selectedContacts) {
+                    navigateBack()
+                    TODO("move to next screen")
+                }
             }
         }
     }
@@ -51,6 +47,8 @@ class ContactsSelectionFragment :
         }
         adapter.itemClickListener =
             { childView: View, position: Int, contacts: SyncContactsRequest.CeibroContactLight ->
+                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
+                mViewDataBinding.confirmBtn.isEnabled = selectedContacts.isNotEmpty()
             }
         mViewDataBinding.recyclerView.adapter = adapter
 
@@ -65,33 +63,20 @@ class ContactsSelectionFragment :
             builder.setPositiveButton("Allow") { dialog, which ->
                 // User clicked Allow button
                 // Add your logic here
-                startSyncing()
+                viewModel.syncContactsEnabled(true) {
+                    navigateBack()
+                    TODO("move to next screen")
+                }
             }
             builder.setNegativeButton("Deny") { dialog, which ->
-                // User clicked Deny button
-                // Add your logic here
+                viewModel.syncContactsEnabled(false) {
+
+                }
             }
             builder.show()
             viewModel.loadContacts()
         }
         CookiesManager.jwtToken =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDRlNTQ0ZGU4NWFmYzhjNzI1YjZhZDAiLCJpYXQiOjE2ODI4NTg4MzksImV4cCI6MTY4NTYyMzYzOSwidHlwZSI6ImFjY2VzcyJ9.MNdJZuwM1hJ_w5JUALWlYJYa8a21prdS3h-D-xYDdKk"
-    }
-
-    private fun startSyncing() {
-        Log.d("ContactsSyncWorker", "Worker initiated")
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val request = OneTimeWorkRequestBuilder<ContactsSyncWorker>()
-            .setConstraints(constraints)
-            .addTag(ContactsSyncWorker.WORK_TAG)
-            .build()
-
-        val workManager = WorkManager.getInstance(requireContext())
-        workManager.enqueue(
-            request
-        )
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDRlNTI4MWU4NWFmYzhjNzI1YjZhYmMiLCJpYXQiOjE2ODI5NDIzMTQsImV4cCI6MTY4NTcwNzExNCwidHlwZSI6ImFjY2VzcyJ9.4f046DCoPE8buN5tpno8mnAnrwk27dIYo3n0Xe8aYLA"
     }
 }

@@ -6,6 +6,8 @@ import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
@@ -19,6 +21,7 @@ class ContactsSelectionVM @Inject constructor(
     override var validator: Validator?,
     private val sessionManager: SessionManager,
     private val resProvider: IResourceProvider,
+    private val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<IContactsSelection.State>(), IContactsSelection.ViewModel, IValidator {
     private val _contacts: MutableLiveData<List<SyncContactsRequest.CeibroContactLight>> =
         MutableLiveData()
@@ -31,7 +34,49 @@ class ContactsSelectionVM @Inject constructor(
         }
     }
 
-    fun syncContacts(selectedContacts: List<SyncContactsRequest.CeibroContactLight>) {
+    override fun syncContacts(
+        selectedContacts: List<SyncContactsRequest.CeibroContactLight>,
+        onSuccess: () -> Unit
+    ) {
+        val userId = sessionManager.getUser().value?.id
+//        val userId = "644e5281e85afc8c725b6abc"
+        launch {
+            val request = SyncContactsRequest(contacts = selectedContacts)
+            // Handle the API response
+            loading(true)
+            when (val response =
+                dashboardRepository.syncContacts(userId ?: "", request)) {
+                is ApiResponse.Success -> {
+                    loading(false)
+                    onSuccess.invoke()
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
 
+    fun syncContactsEnabled(
+        enabled: Boolean,
+        onSuccess: () -> Unit
+    ) {
+        val phone = sessionManager.getUser().value?.phone
+//        val phone = "+923120619435"
+        launch {
+            // Handle the API response
+            when (val response =
+                dashboardRepository.syncContactsEnabled(phone ?: "", enabled = enabled)) {
+                is ApiResponse.Success -> {
+                    if (enabled) {
+                        val contacts = getLocalContacts(resProvider.context)
+                        syncContacts(contacts, onSuccess)
+                    }
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
     }
 }
