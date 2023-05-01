@@ -78,4 +78,5 @@ dependencies {
     implementation("com.onesignal:OneSignal:[4.0.0, 4.99.99]")
     implementation("com.googlecode.libphonenumber:libphonenumber:8.12.30")
     implementation("com.hbb20:ccp:2.6.1")
+    implementation("io.ak1.pix:piximagepicker:1.6.3")
 }
