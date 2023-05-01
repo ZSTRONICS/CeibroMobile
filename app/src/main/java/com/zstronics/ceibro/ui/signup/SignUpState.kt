@@ -8,6 +8,8 @@ class SignUpState @Inject constructor() : BaseState(), ISignUp.State {
     override var firstName: MutableLiveData<String> = MutableLiveData("")
     override var surname: MutableLiveData<String> = MutableLiveData("")
     override var email: MutableLiveData<String> = MutableLiveData("")
+    override var companyName: MutableLiveData<String> = MutableLiveData("")
+    override var jobTitle: MutableLiveData<String> = MutableLiveData("")
     override var password: MutableLiveData<String> = MutableLiveData("")
     override var confirmPassword: MutableLiveData<String> = MutableLiveData("")
 }

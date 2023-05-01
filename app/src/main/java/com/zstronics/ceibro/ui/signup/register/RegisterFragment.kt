@@ -1,8 +1,13 @@
-package com.zstronics.ceibro.ui.forgotpassword
+package com.zstronics.ceibro.ui.signup.register
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
+import android.widget.EditText
 import androidx.fragment.app.viewModels
+import com.google.android.material.textfield.TextInputEditText
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
@@ -10,23 +15,24 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.setupClearButtonWithAction
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.databinding.FragmentForgotPasswordBinding
+import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
+import com.zstronics.ceibro.databinding.FragmentRegisterBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ForgotPasswordFragment :
-    BaseNavViewModelFragment<FragmentForgotPasswordBinding, IForgotPassword.State, ForgotPasswordVM>() {
+class RegisterFragment :
+    BaseNavViewModelFragment<FragmentRegisterBinding, IRegister.State, RegisterVM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: ForgotPasswordVM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_forgot_password
+    override val viewModel: RegisterVM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_register
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.loginTextBtn -> navigateBack()
-            R.id.resetPasswordBtn -> {
+            R.id.registerContinueBtn -> {
 //                val phoneNumber = mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
 //                val phoneCode = mViewDataBinding.ccp.selectedCountryCodeWithPlus        // +1, +92
 //                val nameCode = mViewDataBinding.ccp.selectedCountryNameCode             // US, PK
@@ -38,7 +44,7 @@ class ForgotPasswordFragment :
 //                    if (phoneNumberUtil.isValidNumber(parsedNumber)) {
 //
 //                        val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
-//                        shortToastNow("Reset Password phone number: $formattedNumber")
+//                        shortToastNow("Registered phone number: $formattedNumber")
 //
 //                    } else {
 //                        shortToastNow("Invalid phone number")
@@ -46,10 +52,11 @@ class ForgotPasswordFragment :
 //                } catch (e: NumberParseException) {
 //                    shortToastNow("Error parsing phone number")
 //                }
-                navigateToVerifyNumber("ForgotPasswordFragment")
+                navigateToVerifyNumber("RegisterFragment")
             }
         }
     }
+
 
     private fun navigateToVerifyNumber(currentFragment: String) {
         val bundle = Bundle()

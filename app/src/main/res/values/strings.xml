@@ -12,11 +12,13 @@
     <string name="error_message_cpf_validation">Invalid CPF format</string>
     <string name="error_message_url_validation">Invalid url format</string>
     <string name="error_message_phone_validation">Invalid phone format</string>
-    <string name="error_message_password_regex_validation">Minimum eight characters, at least one uppercase letter, one lowercase letter,
-        one number and one special character</string>
+    <string name="error_message_password_regex_validation">Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character</string>
+    <string name="error_message_note_password_regex_validation">Note: Minimum eight characters with at least one uppercase letter, one lowercase letter, one number and one special character</string>
     <string name="error_message_credit_card_validation">Invalid Credit Card format</string>
     <string name="error_message_empty_validation">This field can\'t be empty</string>
     <string name="error_message_not_equal_password">Passwords are not the same</string>
+    <string name="error_message_invalid_password">Invalid password</string>
+    <string name="error_message_invalid_confirm_password">Invalid confirm password</string>
     <string name="error_message_not_equal_phone">Mobile No are not the same</string>
     <string name="default_required_validation_message">This field is required.</string>
     <string name="error_message_postal_address">Postal Address is not valid</string>
@@ -73,7 +75,7 @@
     <string name="profile_heading">Profile</string>
     <string name="username_hint">UserName</string>
     <string name="user_email_company_com">user.email@company.com</string>
-    <string name="company_name_text">Company Name</string>
+    <string name="company_name_text">Company name</string>
     <string name="phone_number_hint">+372 5679 7470</string>
     <string name="my_connections_text">My connections</string>
     <string name="invitations_text">Invitations</string>
@@ -759,6 +761,21 @@
     <string name="confirmation_code_was_sent">Confirmation code was sent</string>
     <string name="didn_t_receive_code">Didn\'t receive code?</string>
     <string name="send_again_text">Send again</string>
+    <string name="get_started_heading">Get started</string>
+    <string name="continue_heading">Continue</string>
+    <string name="by_entering_your_phone_number">by entering your phone number</string>
+    <string name="terms_and_conditions_heading"><![CDATA[Terms & Conditions]]></string>
+    <string name="terms_and_conditions_description">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?\n\nBut I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?\n\nBut I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?</string>
+    <string name="terms_and_conditions_agree_statement">Yes, I understand and agree to the <font color="#0076C8"><u>Terms &amp; Conditions of Ceibro.</u></font></string>
+    <string name="profile_setup_heading">Profile setup</string>
+    <string name="first_name">First name</string>
+    <string name="job_title_optional">Job title (optional)</string>
+    <string name="company_name_optional">Company name (optional)</string>
+    <string name="add_new_password">Add new password</string>
+    <string name="add_photo">Add photo</string>
+    <string name="choose_a_photo">Choose a photo</string>
+    <string name="skip">Skip</string>
+    <string name="add_a_profile_photo_for_more_credibility_and_recognition">Add a profile photo for more credibility and recognition</string>
     <string name="skip">Skip</string>
     <string name="contact_list">Contact list</string>
     <string name="contact_list_permission_text">Do you want to add only a few contacts to your Ceibro contact list?</string>
