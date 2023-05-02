@@ -19,6 +19,7 @@ interface IAuthRepository {
     suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse>
     suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse>
     suspend fun forgetPassVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse>
+    suspend fun resendOtp(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse>
     suspend fun uploadProfilePicture(fileUri: String): ApiResponse<UserProfilePicUpdateResponse>
     suspend fun refreshJWTToken(body: RefreshTokenRequest): ApiResponse<Tokens>
 

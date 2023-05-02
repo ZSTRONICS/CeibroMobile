@@ -35,6 +35,9 @@ interface AuthRepositoryService {
     @POST("v2/auth/otp/verify-nodel")
     suspend fun forgetPassVerifyOtp(@Body registerVerifyOtpRequest: RegisterVerifyOtpRequest): Response<GenericResponse>
 
+    @POST("v2/auth/otp/resend")
+    suspend fun resendOtp(@Body forgetPasswordRequest: ForgetPasswordRequest): Response<GenericResponse>
+
     @Multipart
     @PATCH("v1/users/profile/pic")
     suspend fun updateUserProfilePicture(@Part profilePicture: MultipartBody.Part): Response<UserProfilePicUpdateResponse>

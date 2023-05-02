@@ -70,11 +70,12 @@ class VerifyNumberFragment :
                 }
             }
             R.id.sendCodeAgainBtn -> {
-                if (timeLeftInMillis <= 0) {
-                    startTimer()
+                viewModel.resendOtp(viewState.phoneNumber.value.toString()) {
+                    if (timeLeftInMillis <= 0) {
+                        startTimer()
+                    }
+                    mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
                 }
-                mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
-                //now resend verification code again, hit API
             }
         }
     }
