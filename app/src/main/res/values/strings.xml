@@ -11,7 +11,9 @@
     <string name="error_message_sur_name_validation">Invalid surname format</string>
     <string name="error_message_cpf_validation">Invalid CPF format</string>
     <string name="error_message_url_validation">Invalid url format</string>
-    <string name="error_message_phone_validation">Invalid phone format</string>
+    <string name="error_message_phone_validation">Invalid phone number</string>
+    <string name="error_message_otp_length">Invalid OTP length</string>
+    <string name="error_message_password_length">Invalid password length</string>
     <string name="error_message_password_regex_validation">Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character</string>
     <string name="error_message_note_password_regex_validation">Note: Minimum eight characters with at least one uppercase letter, one lowercase letter, one number and one special character</string>
     <string name="error_message_credit_card_validation">Invalid Credit Card format</string>

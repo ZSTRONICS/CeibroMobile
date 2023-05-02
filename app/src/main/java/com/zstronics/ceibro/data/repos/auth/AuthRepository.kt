@@ -8,8 +8,7 @@ import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
 import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
-import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
+import com.zstronics.ceibro.data.repos.auth.signup.*
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -64,11 +63,48 @@ class AuthRepository @Inject constructor(
         )
     }
 
+    override suspend fun register(registerRequest: RegisterRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.register(registerRequest)
+            }
+        )
+    }
+
+    override suspend fun registerVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.registerVerifyOtp(registerVerifyOtpRequest)
+            }
+        )
+    }
+
     override suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {
                 service.signup(signUpRequest)
+            }
+        )
+    }
+
+
+    override suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.forgetPassword(forgetPasswordRequest)
+            }
+        )
+    }
+
+    override suspend fun forgetPassVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.forgetPassVerifyOtp(registerVerifyOtpRequest)
             }
         )
     }

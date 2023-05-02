@@ -11,6 +11,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
+import com.zstronics.ceibro.base.extensions.longToastNow
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
@@ -30,11 +31,9 @@ class LoginFragment :
     override val layoutResId: Int = R.layout.fragment_login
     override fun toolBarVisibility(): Boolean = false
     private var isPassShown = false
-    var selectedCountryCode = ""
-    private lateinit var countryCodes: Map<String, String>
     override fun onClick(id: Int) {
         when (id) {
-            100 -> navigateToDashboard()
+            101 -> navigateToDashboard()
             R.id.signUpTextBtn -> navigate(R.id.registerFragment)
             R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {
@@ -45,24 +44,33 @@ class LoginFragment :
                 val phoneNumber = mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
                 val phoneCode = mViewDataBinding.ccp.selectedCountryCodeWithPlus        // +1, +92
                 val nameCode = mViewDataBinding.ccp.selectedCountryNameCode             // US, PK
+                val password = viewState.password.value.toString()
+                val rememberMe = viewState.rememberMe.value
+
                 try {
                     // Parsing the phone number with the selected country code
                     val phoneNumberUtil = PhoneNumberUtil.getInstance()
                     val parsedNumber = phoneNumberUtil.parse(phoneNumber, nameCode)
 
-                    if (phoneNumberUtil.isValidNumber(parsedNumber)) {
-
+                    if (!phoneNumberUtil.isValidNumber(parsedNumber)) {
+                        shortToastNow(resources.getString(R.string.error_message_phone_validation))
+                    } else if (!validatePassword(password)) {
+                        shortToastNow(resources.getString(R.string.error_message_password_length))
+                    }
+                    else {
                         val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
-                        shortToastNow("Logged in with phone number: $formattedNumber")
-
-                    } else {
-                        shortToastNow("Invalid phone number")
+                        viewModel.doLogin(formattedNumber, password, rememberMe ?: false)
                     }
                 } catch (e: NumberParseException) {
                     shortToastNow("Error parsing phone number")
                 }
             }
         }
+    }
+
+    private fun validatePassword(password: String): Boolean {
+        val regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$"
+        return password.length in 8..35
     }
 
     private fun showOrHidePassword(passShown: Boolean) {

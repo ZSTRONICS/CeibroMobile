@@ -31,6 +31,13 @@ class VerifyNumberFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
+            103 -> {
+                if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
+                    navigate(R.id.termsFragment)
+                } else if (viewState.previousFragment.value.equals("ForgotPasswordFragment", true)) {
+                    showPasswordBottomSheet()
+                }
+            }
             R.id.loginTextBtn -> {
                 launchActivity<NavHostPresenterActivity>(
                     options = Bundle(),
@@ -47,10 +54,17 @@ class VerifyNumberFragment :
                 mViewDataBinding.codeSentLayout.visibility = View.GONE
             }
             R.id.confirmBtn -> {
-                if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
-                    navigate(R.id.termsFragment)
-                } else if (viewState.previousFragment.value.equals("ForgotPasswordFragment", true)) {
-                    showPasswordBottomSheet()
+                val phoneNumber = viewState.phoneNumber.value.toString()
+                val otp = viewState.otp.value.toString()
+                if (otp.length == 6) {
+                    if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
+                        viewModel.registerOtpVerification(phoneNumber, otp)
+                    } else if (viewState.previousFragment.value.equals("ForgotPasswordFragment", true)) {
+                        viewModel.forgetPasswordOtpVerification(phoneNumber, otp)
+                    }
+                }
+                else {
+                    shortToastNow(resources.getString(R.string.error_message_otp_length))
                 }
             }
             R.id.sendCodeAgainBtn -> {
