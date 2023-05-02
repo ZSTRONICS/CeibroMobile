@@ -13,5 +13,6 @@ interface IVerifyNumber {
     interface ViewModel : IBase.ViewModel<State> {
         fun registerOtpVerification(phoneNumber: String, otp: String)
         fun forgetPasswordOtpVerification(phoneNumber: String, otp: String)
+        fun resendOtp(phoneNumber: String, onOtpResend: () -> Unit)
     }
 }
