@@ -149,6 +149,7 @@
                         android:text="@string/remember_me_text"
                         android:textColor="@color/black"
                         android:textSize="13.5sp"
+                        android:checked="@={viewState.rememberMe}"
                         android:fontFamily="@font/inter_regular"
                         app:layout_constraintBottom_toTopOf="@+id/loginBtn"
                         app:layout_constraintStart_toStartOf="@+id/loginBtn" />

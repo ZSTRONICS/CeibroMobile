@@ -33,7 +33,7 @@ class EditProfileVM @Inject constructor(
             userFirstName.value = sessionManager.getUser().value?.firstName
             userSurname.value = sessionManager.getUser().value?.surName
             userEmail.value = sessionManager.getUser().value?.email
-            userContactNumber.value = sessionManager.getUser().value?.phone
+            userContactNumber.value = sessionManager.getUser().value?.phoneNumber
             userPassword.value = sessionManager.getPass()
             userConfirmPassword.value = sessionManager.getPass()
             userCompanyName.value = sessionManager.getUser().value?.companyName
@@ -147,7 +147,7 @@ class EditProfileVM @Inject constructor(
                 userFirstName.value = userObj?.firstName
                 userSurname.value = userObj?.surName
                 userEmail.value = userObj?.email
-                userContactNumber.value = userObj?.phone
+                userContactNumber.value = userObj?.phoneNumber
                 userPassword.value = sessionManager.getPass()
                 userConfirmPassword.value = sessionManager.getPass()
                 userCompanyName.value = userObj?.companyName

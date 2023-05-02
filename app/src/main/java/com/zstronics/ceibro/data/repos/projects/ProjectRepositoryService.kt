@@ -24,15 +24,15 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ProjectRepositoryService {
-    @GET("project")
+    @GET("v1/project")
     suspend fun getProjects(): Response<AllProjectsResponse>
 
-    @POST("project/getProjectsWithMembers")
+    @POST("v1/project/getProjectsWithMembers")
     suspend fun getProjectsWithMembers(@Query("includeMe") includeMe: Boolean = false): Response<ProjectsWithMembersResponse>
 
 
     @Multipart
-    @POST("project")
+    @POST("v1/project")
     suspend fun createProject(
         @Part projectPhoto: MultipartBody.Part?,
         @Part("title") title: RequestBody,
@@ -45,7 +45,7 @@ interface ProjectRepositoryService {
     ): Response<CreateNewProjectResponse>
 
     @Multipart
-    @PATCH("project/{projectId}")
+    @PATCH("v1/project/{projectId}")
     suspend fun updateProject(
         @Path("projectId") projectId: String,
         @Part projectPhoto: MultipartBody.Part?,
@@ -59,7 +59,7 @@ interface ProjectRepositoryService {
     ): Response<UpdateProjectResponse>
 
     @Multipart
-    @PATCH("project/{projectId}")
+    @PATCH("v1/project/{projectId}")
     suspend fun updateProject(
         @Path("projectId") projectId: String,
         @Part("title") title: RequestBody?,
@@ -71,86 +71,86 @@ interface ProjectRepositoryService {
         @Part("owner") owner: RequestBody?
     ): Response<UpdateProjectResponse>
 
-    @POST("project/group/{id}")
+    @POST("v1/project/group/{id}")
     suspend fun createGroup(
         @Path("id") projectId: String,
         @Body body: CreateGroupRequest
     ): Response<CreateProjectGroupResponse>
 
-    @PATCH("project/group/{id}")
+    @PATCH("v1/project/group/{id}")
     suspend fun updateGroup(
         @Path("id") groupId: String,
         @Body body: CreateGroupRequest
     ): Response<CreateProjectGroupResponse>
 
-    @DELETE("project/group/{id}")
+    @DELETE("v1/project/group/{id}")
     suspend fun deleteGroup(@Path("id") id: String): Response<BaseResponse>
 
-    @GET("project/group/{id}")
+    @GET("v1/project/group/{id}")
     suspend fun getGroups(@Path("id") projectId: String): Response<GetProjectGroupsResponse>
 
-    @GET("project/role/{id}")
+    @GET("v1/project/role/{id}")
     suspend fun getRoles(@Path("id") projectId: String): Response<ProjectRolesResponse>
 
-    @POST("project/role/{id}")
+    @POST("v1/project/role/{id}")
     suspend fun createRoles(
         @Path("id") projectId: String,
         @Body body: CreateRoleRequest
     ): Response<CreateRoleResponse>
 
-    @PATCH("project/role/{id}")
+    @PATCH("v1/project/role/{id}")
     suspend fun updateRoles(
         @Path("id") projectId: String,
         @Body body: CreateRoleRequest
     ): Response<CreateRoleResponse>
 
-    @DELETE("project/role/{id}")
+    @DELETE("v1/project/role/{id}")
     suspend fun deleteRole(@Path("id") roleId: String): Response<BaseResponse>
 
-    @POST("project/member/{id}")
+    @POST("v1/project/member/{id}")
     suspend fun createProjectMember(
         @Path("id") projectId: String,
         @Body body: CreateProjectMemberRequest
     ): Response<CreateProjectMemberResponse>
 
-    @DELETE("project/member/remove/{id}")
+    @DELETE("v1/project/member/remove/{id}")
     suspend fun deleteProjectMember(
         @Path("id") memberId: String
     ): Response<CreateProjectMemberResponse>
 
-    @GET("project/member/{id}")
+    @GET("v1/project/member/{id}")
     suspend fun getProjectMembers(
         @Path("id") projectId: String
     ): Response<GetProjectMemberResponse>
 
-    @GET("project/members/available/{id}")
+    @GET("v1/project/members/available/{id}")
     suspend fun getAvailableMembers(
         @Path("id") projectId: String
     ): Response<GetAvailableMemberResponse>
 
-    @DELETE("project/member/remove/{id}")
+    @DELETE("v1/project/member/remove/{id}")
     suspend fun deleteMember(
         @Path("id") id: String
     ): Response<DeleteMemberResponse>
 
-    @PATCH("project/member/update/{memberId}")
+    @PATCH("v1/project/member/update/{memberId}")
     suspend fun updateProjectMember(
         @Path("memberId") memberId: String,
         @Body body: EditProjectMemberRequest
     ): Response<EditProjectMemberResponse>
 
-    @POST("project/folder/{id}")
+    @POST("v1/project/folder/{id}")
     suspend fun createProjectFolder(
         @Path("id") projectId: String,
         @Body body: CreateProjectFolderRequest
     ): Response<CreateProjectFolderResponse>
 
-    @GET("project/documents/{id}")
+    @GET("v1/project/documents/{id}")
     suspend fun getProjectDocuments(
         @Path("id") projectId: String
     ): Response<ProjectDocumentsResponse>
 
-    @PATCH("project/documents/updateAccess/{id}")
+    @PATCH("v1/project/documents/updateAccess/{id}")
     suspend fun updateDocumentAccess(
         @Path("id") fileOrFolderId: String,
         @Body body: ManageProjectDocumentAccessRequest

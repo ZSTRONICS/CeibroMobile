@@ -38,7 +38,7 @@ fun Context?.longToastNow(msg: String) =
         msg,
         Toast.LENGTH_LONG
     )
-//fun Fragment?.longToastNow(msg: String) = cancelAndMakeToast(this?.context, msg, Toast.LENGTH_LONG)
+fun Fragment?.longToastNow(msg: String) = cancelAndMakeToast(this?.context, msg, Toast.LENGTH_LONG)
 
 
 fun cancelAllToasts() =

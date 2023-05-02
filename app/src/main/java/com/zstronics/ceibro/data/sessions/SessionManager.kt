@@ -12,15 +12,22 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 class SessionManager constructor(
     private val sharedPreferenceManager: SharedPreferenceManager
 ) {
-    fun startUserSession(user: User, tokens: Tokens, pass: String) {
-        sharedPreferenceManager.saveBoolean(
-            KEY_IS_USER_LOGGED_IN,
-            true
-        )
+    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean) {
+        if (rememberMe) {
+            sharedPreferenceManager.saveBoolean(
+                KEY_IS_USER_LOGGED_IN,
+                true
+            )
+        } else {
+            sharedPreferenceManager.saveBoolean(
+                KEY_IS_USER_LOGGED_IN,
+                false
+            )
+        }
+
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)
-
 
         _user.postValue(user)
     }

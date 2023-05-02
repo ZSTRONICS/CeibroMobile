@@ -23,13 +23,10 @@ class LoginVM @Inject constructor(
 //    val service = RetroNetwork().createService(AuthRepositoryService::class.java)
 //    val authRepo = AuthRepository(service)
 
-    override fun onLogin() {
-        doLogin(viewState.email.value.toString(), viewState.password.value.toString())
-    }
 
-    override fun doLogin(email: String, password: String) {
+    override fun doLogin(phoneNumber: String, password: String, rememberMe: Boolean) {
 
-        val request = LoginRequest(email = email, password = password)
+        val request = LoginRequest(phoneNumber = phoneNumber, password = password)
         launch {
             loading(true)
             when (val response = repository.login(request)) {
@@ -38,13 +35,14 @@ class LoginVM @Inject constructor(
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,
-                        viewState.password.value.toString()
+                        "",
+                        rememberMe
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
                     OneSignal.pauseInAppMessages(false)
+                    clickEvent?.postValue(101)
                     loading(false, "Login successful")
-                    clickEvent?.postValue(100)
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)

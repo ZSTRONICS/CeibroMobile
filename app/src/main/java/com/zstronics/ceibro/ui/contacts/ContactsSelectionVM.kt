@@ -61,7 +61,7 @@ class ContactsSelectionVM @Inject constructor(
         enabled: Boolean,
         onSuccess: () -> Unit
     ) {
-        val phone = sessionManager.getUser().value?.phone
+        val phone = sessionManager.getUser().value?.phoneNumber
 //        val phone = "+923120619435"
         launch {
             // Handle the API response
