@@ -39,6 +39,10 @@ interface AuthRepositoryService {
     @PATCH("v1/users/profile/pic")
     suspend fun updateUserProfilePicture(@Part profilePicture: MultipartBody.Part): Response<UserProfilePicUpdateResponse>
 
+    @Multipart
+    @PATCH("v2/users/profile/pic")
+    suspend fun uploadProfilePictureV2(@Part profilePicture: MultipartBody.Part): Response<UserProfilePicUpdateResponse>
+
     @POST("v1/auth/refresh-tokens")
     suspend fun refreshJWTToken(@Body body: RefreshTokenRequest): Response<Tokens>
 }
