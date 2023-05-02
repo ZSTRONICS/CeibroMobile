@@ -9,6 +9,6 @@ interface IForgotPassword {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun forgetPasswordVerifyNumber(phoneNumber: String)
+        fun forgetPasswordVerifyNumber(phoneNumber: String, onMoveToNextScreen: () -> Unit)
     }
 }
