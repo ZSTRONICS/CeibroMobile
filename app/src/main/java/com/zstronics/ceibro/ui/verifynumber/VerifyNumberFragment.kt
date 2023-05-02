@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import androidx.fragment.app.viewModels
-import com.google.i18n.phonenumbers.NumberParseException
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -14,10 +12,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.databinding.FragmentForgotPasswordBinding
 import com.zstronics.ceibro.databinding.FragmentVerifyNumberBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
-import com.zstronics.ceibro.ui.projects.newproject.members.memberprofile.EditProjectMemberSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +29,11 @@ class VerifyNumberFragment :
             103 -> {
                 if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
                     navigate(R.id.termsFragment)
-                } else if (viewState.previousFragment.value.equals("ForgotPasswordFragment", true)) {
+                } else if (viewState.previousFragment.value.equals(
+                        "ForgotPasswordFragment",
+                        true
+                    )
+                ) {
                     showPasswordBottomSheet()
                 }
             }
@@ -59,20 +58,24 @@ class VerifyNumberFragment :
                 if (otp.length == 6) {
                     if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
                         viewModel.registerOtpVerification(phoneNumber, otp)
-                    } else if (viewState.previousFragment.value.equals("ForgotPasswordFragment", true)) {
+                    } else if (viewState.previousFragment.value.equals(
+                            "ForgotPasswordFragment",
+                            true
+                        )
+                    ) {
                         viewModel.forgetPasswordOtpVerification(phoneNumber, otp)
                     }
-                }
-                else {
+                } else {
                     shortToastNow(resources.getString(R.string.error_message_otp_length))
                 }
             }
             R.id.sendCodeAgainBtn -> {
-                if (timeLeftInMillis <= 0) {
-                    startTimer()
+                viewModel.resendOtp(viewState.phoneNumber.value.toString()) {
+                    if (timeLeftInMillis <= 0) {
+                        startTimer()
+                    }
+                    mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
                 }
-                mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
-                //now resend verification code again, hit API
             }
         }
     }
@@ -95,7 +98,7 @@ class VerifyNumberFragment :
             mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
             mViewDataBinding.sendCodeAgainBtn.text = "${timeLeftInMillis / 1000}s"
         }
-
+        setBackButtonDispatcher()
     }
 
 
@@ -131,6 +134,7 @@ class VerifyNumberFragment :
                 timeLeftInMillis = millisUntilFinished
                 updateTimerText()
             }
+
             override fun onFinish() {
                 timeLeftInMillis = 0
                 timerInProgress = false

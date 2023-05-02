@@ -109,6 +109,15 @@ class AuthRepository @Inject constructor(
         )
     }
 
+    override suspend fun resendOtp(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.resendOtp(forgetPasswordRequest)
+            }
+        )
+    }
+
     override suspend fun uploadProfilePicture(fileUri: String): ApiResponse<UserProfilePicUpdateResponse> {
         val file = File(fileUri)
         val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
