@@ -9,7 +9,6 @@ import com.zstronics.ceibro.databinding.FragmentPixiImagePickerBinding
 import io.ak1.pix.helpers.PixBus
 import io.ak1.pix.helpers.PixEventCallback
 import io.ak1.pix.helpers.setupScreen
-import io.ak1.pix.helpers.showStatusBar
 
 class NavControllerSample : AppCompatActivity() {
     private lateinit var navController: NavController
@@ -26,8 +25,7 @@ class NavControllerSample : AppCompatActivity() {
         navController = navHostFragment.navController
         PixBus.results {
             if (it.status == PixEventCallback.Status.SUCCESS) {
-                showStatusBar()
-                navController.navigateUp()
+                onBackPressed()
             }
         }
     }

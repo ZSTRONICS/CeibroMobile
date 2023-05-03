@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.signup.photo
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.BR
@@ -15,6 +16,8 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentPhotoBinding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
+import io.ak1.pix.helpers.PixBus
+import io.ak1.pix.helpers.PixEventCallback
 
 @AndroidEntryPoint
 class PhotoFragment :
@@ -74,6 +77,25 @@ class PhotoFragment :
                 NAVIGATION_Graph_START_DESTINATION_ID,
                 R.id.homeFragment
             )
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        PixBus.results {
+            when (it.status) {
+                PixEventCallback.Status.SUCCESS -> {
+                    try {
+                        viewModel.selectedUri = it.data[0]
+                        viewState.isPhotoPicked.postValue(true)
+                    } catch (e: Exception) {
+                        
+                    }
+                }
+                PixEventCallback.Status.BACK_PRESSED -> {
+
+                }
+            }
         }
     }
 }
