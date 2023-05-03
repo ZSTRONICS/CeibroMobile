@@ -5,10 +5,10 @@ import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.resourses.IResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,7 +17,8 @@ class LoginVM @Inject constructor(
     override val viewState: LoginState,
     override var validator: Validator?,
     private val repository: IAuthRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val resourceProvider: IResourceProvider
 ) : HiltBaseViewModel<ILogin.State>(), ILogin.ViewModel, IValidator {
 
 //    val service = RetroNetwork().createService(AuthRepositoryService::class.java)
@@ -43,6 +44,9 @@ class LoginVM @Inject constructor(
                     OneSignal.pauseInAppMessages(false)
                     clickEvent?.postValue(101)
                     loading(false, "Login successful")
+                    if (response.data.user.autoContactSync) {
+                        startContactSyncWorker(resourceProvider.context)
+                    }
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
