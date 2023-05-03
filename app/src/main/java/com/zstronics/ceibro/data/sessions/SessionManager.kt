@@ -154,4 +154,12 @@ class SessionManager constructor(
     fun getSyncedContacts(): List<SyncContactsRequest.CeibroContactLight> {
         return sharedPreferenceManager.getSyncedContacts(KEY_SYNCED_CONTACTS)
     }
+
+    fun updateAutoSync(enabled: Boolean) {
+        val oldUser = getUserObj()
+        oldUser?.autoContactSync = enabled
+        oldUser?.let { user ->
+            updateUser(user)
+        }
+    }
 }

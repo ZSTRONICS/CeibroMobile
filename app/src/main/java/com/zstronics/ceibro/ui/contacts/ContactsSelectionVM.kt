@@ -68,6 +68,7 @@ class ContactsSelectionVM @Inject constructor(
             when (val response =
                 dashboardRepository.syncContactsEnabled(phone ?: "", enabled = enabled)) {
                 is ApiResponse.Success -> {
+                    sessionManager.updateAutoSync(enabled)
                     if (enabled) {
                         val contacts = getLocalContacts(resProvider.context)
                         syncContacts(contacts, onSuccess)

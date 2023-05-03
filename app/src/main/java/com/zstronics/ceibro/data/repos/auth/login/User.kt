@@ -42,5 +42,5 @@ data class User(
     @SerializedName("workEmail")
     val workEmail: String?,
     @SerializedName("autoContactSync")
-    val autoContactSync: Boolean,
+    var autoContactSync: Boolean,
 ) : BaseResponse()

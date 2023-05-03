@@ -46,6 +46,9 @@ class MyConnectionV2Fragment :
                         // Add your logic here
                         viewModel.syncContactsEnabled {
                             toast("Your all contacts synced with server")
+                            loadConnections()
+                            viewModel.sessionManager.updateAutoSync(true)
+                            viewState.isAutoSyncEnabled.postValue(true)
                         }
                     }
                     builder.setNegativeButton("Deny") { dialog, which ->
@@ -88,6 +91,10 @@ class MyConnectionV2Fragment :
 
     override fun onResume() {
         super.onResume()
+        loadConnections()
+    }
+
+    private fun loadConnections() {
         mViewDataBinding.connectionRV.loadSkeleton(R.layout.layout_item_connection) {
             itemCount(10)
             color(R.color.appLightGrey)
