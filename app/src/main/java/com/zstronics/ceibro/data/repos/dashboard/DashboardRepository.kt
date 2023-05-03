@@ -9,6 +9,8 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
@@ -123,4 +125,28 @@ class DashboardRepository @Inject constructor(
             service.syncContactsEnabled(phoneNumber, enabled)
         }
     )
+
+    override suspend fun getAllConnectionsV2(userId: String): ApiResponse<AllCeibroConnections> =
+        executeSafely(
+            call =
+            {
+                service.getAllConnectionsV2(userId)
+            }
+        )
+
+    override suspend fun blockUser(contactId: String): ApiResponse<BlockUserResponse> =
+        executeSafely(
+            call =
+            {
+                service.blockUser(contactId)
+            }
+        )
+
+    override suspend fun unblockUser(contactId: String): ApiResponse<BlockUserResponse> =
+        executeSafely(
+            call =
+            {
+                service.unblockUser(contactId)
+            }
+        )
 }

@@ -12,7 +12,6 @@ import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.remote.TaskRetroService
 import com.zstronics.ceibro.data.repos.auth.AuthRepositoryService
 import com.zstronics.ceibro.data.repos.chat.ChatRepositoryService
-import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepositoryService
 import com.zstronics.ceibro.data.repos.projects.ProjectRepositoryService
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -169,7 +168,7 @@ class NetworkModule {
     }
 }
 
-private const val timeoutRead = 30   //In seconds
-private const val contentType = "Content-Type"
-private const val contentTypeValue = "application/json"
-private const val timeoutConnect = 30   //In seconds
+const val timeoutRead = 30   //In seconds
+const val contentType = "Content-Type"
+const val contentTypeValue = "application/json"
+const val timeoutConnect = 30   //In seconds

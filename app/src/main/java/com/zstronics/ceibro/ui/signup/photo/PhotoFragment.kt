@@ -17,6 +17,8 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentPhotoBinding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
+import io.ak1.pix.helpers.PixBus
+import io.ak1.pix.helpers.PixEventCallback
 
 @AndroidEntryPoint
 class PhotoFragment :
@@ -82,5 +84,20 @@ class PhotoFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBackButtonDispatcher()
+        PixBus.results {
+            when (it.status) {
+                PixEventCallback.Status.SUCCESS -> {
+                    try {
+                        viewModel.selectedUri = it.data[0]
+                        viewState.isPhotoPicked.postValue(true)
+                    } catch (e: Exception) {
+
+                    }
+                }
+                PixEventCallback.Status.BACK_PRESSED -> {
+
+                }
+            }
+        }
     }
 }
