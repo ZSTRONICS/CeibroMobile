@@ -8,7 +8,6 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
-import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -41,17 +40,25 @@ class SignUpVM @Inject constructor(
         password: String,
         onSignedUp: () -> Unit
     ) {
-        val request = SignUpRequest(firstName = firstName, surName = surname, email = email, companyName = companyName, jobTitle = jobTitle, password = password)
+        val request = SignUpRequest(
+            firstName = firstName,
+            surName = surname,
+            email = email,
+            companyName = companyName,
+            jobTitle = jobTitle,
+            password = password
+        )
         launch {
             loading(true)
-            when (val response = repository.signup(viewState.phoneNumber.value.toString(), request)) {
+            when (val response =
+                repository.signup(viewState.phoneNumber.value.toString(), request)) {
 
                 is ApiResponse.Success -> {
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,
                         "",
-                        false
+                        true
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)

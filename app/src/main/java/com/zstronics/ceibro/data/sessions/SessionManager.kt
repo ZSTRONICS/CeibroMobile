@@ -14,17 +14,10 @@ class SessionManager constructor(
     val sharedPreferenceManager: SharedPreferenceManager
 ) {
     fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean) {
-        if (rememberMe) {
-            sharedPreferenceManager.saveBoolean(
-                KEY_IS_USER_LOGGED_IN,
-                true
-            )
-        } else {
-            sharedPreferenceManager.saveBoolean(
-                KEY_IS_USER_LOGGED_IN,
-                false
-            )
-        }
+        sharedPreferenceManager.saveBoolean(
+            KEY_IS_USER_LOGGED_IN,
+            rememberMe
+        )
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokens.access.token
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
