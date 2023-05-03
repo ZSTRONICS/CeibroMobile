@@ -19,7 +19,7 @@ import javax.inject.Inject
 class ContactsSelectionVM @Inject constructor(
     override val viewState: ContactsSelectionState,
     override var validator: Validator?,
-    private val sessionManager: SessionManager,
+    val sessionManager: SessionManager,
     private val resProvider: IResourceProvider,
     private val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<IContactsSelection.State>(), IContactsSelection.ViewModel, IValidator {

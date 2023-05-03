@@ -25,7 +25,12 @@ class LoginVM @Inject constructor(
 //    val authRepo = AuthRepository(service)
 
 
-    override fun doLogin(phoneNumber: String, password: String, rememberMe: Boolean, onLoggedIn: () -> Unit) {
+    override fun doLogin(
+        phoneNumber: String,
+        password: String,
+        rememberMe: Boolean,
+        onLoggedIn: () -> Unit
+    ) {
 
         val request = LoginRequest(phoneNumber = phoneNumber, password = password)
         launch {
@@ -43,10 +48,8 @@ class LoginVM @Inject constructor(
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
                     OneSignal.pauseInAppMessages(false)
                     loading(false, "Login successful")
+                    startPeriodicContactSyncWorker(resourceProvider.context)
                     onLoggedIn.invoke()
-                    if (response.data.user.autoContactSync) {
-                        startPeriodicContactSyncWorker(resourceProvider.context)
-                    }
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)

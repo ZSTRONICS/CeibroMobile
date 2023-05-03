@@ -71,9 +71,7 @@ class DashboardVM @Inject constructor(
             repository.syncTasksAndSubTasks()
         }
         val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
-        if (user?.autoContactSync == true) {
-            startPeriodicContactSyncWorker(iResourceProvider.context)
-        }
+        startPeriodicContactSyncWorker(iResourceProvider.context)
     }
 
     init {

@@ -11,10 +11,9 @@ import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.base.KEY_USERNAME
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -94,7 +93,10 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         editor.apply()
     }
 
-    fun saveCompleteProjectObj(KEY_NAME: String, projectList: MutableList<ProjectsWithMembersResponse.ProjectDetail>?) {
+    fun saveCompleteProjectObj(
+        KEY_NAME: String,
+        projectList: MutableList<ProjectsWithMembersResponse.ProjectDetail>?
+    ) {
         //For storing complete data object in shared preferences
         val gson = Gson()
         val json = gson.toJson(projectList)
@@ -103,20 +105,20 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         editor.commit()
         editor.apply()
     }
+
     fun saveInt(KEY_NAME: String, value: Int) {
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putInt(KEY_NAME, value)
         editor.commit()
         editor.apply()
     }
+
     fun saveBoolean(KEY_NAME: String, status: Boolean) {
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putBoolean(KEY_NAME, status)
         editor.commit()
         editor.apply()
     }
-
-
 
 
     fun getValueString(KEY_NAME: String): String? {
@@ -128,16 +130,20 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         val json = sharedPref.getString(KEY_NAME, "")
         return gson.fromJson(json, User::class.java)
     }
+
     fun getCompleteTokenObj(KEY_NAME: String): Tokens? {
         val gson = Gson()
         val json = sharedPref.getString(KEY_NAME, "")
         return gson.fromJson(json, Tokens::class.java)
     }
+
     fun getCompleteProjectObj(KEY_NAME: String): MutableList<ProjectsWithMembersResponse.ProjectDetail>? {
         val gson = Gson()
         val json = sharedPref.getString(KEY_NAME, "")
-        val type = object : TypeToken<MutableList<ProjectsWithMembersResponse.ProjectDetail>?>() {}.type
-        val projectsList: MutableList<ProjectsWithMembersResponse.ProjectDetail>? = gson.fromJson(json, type)
+        val type =
+            object : TypeToken<MutableList<ProjectsWithMembersResponse.ProjectDetail>?>() {}.type
+        val projectsList: MutableList<ProjectsWithMembersResponse.ProjectDetail>? =
+            gson.fromJson(json, type)
         return projectsList
     }
 
@@ -180,5 +186,21 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         return getValueString(KEY_USERNAME)
     }
 
-
+    fun saveSyncedContacts(
+        KEY_NAME: String,
+        selectedContacts: List<SyncContactsRequest.CeibroContactLight>
+    ) {
+        val gson = Gson()
+        val json = gson.toJson(selectedContacts)
+        val editor: SharedPreferences.Editor = sharedPref.edit()
+        editor.putString(KEY_NAME, json)
+        editor.commit()
+        editor.apply()
+    }
+    fun getSyncedContacts(KEY_NAME: String): List<SyncContactsRequest.CeibroContactLight> {
+        val gson = Gson()
+        val listType = object : TypeToken<List<SyncContactsRequest.CeibroContactLight>>() {}.type
+        val json = sharedPref.getString(KEY_NAME, "")
+        return gson.fromJson(json, listType)
+    }
 }

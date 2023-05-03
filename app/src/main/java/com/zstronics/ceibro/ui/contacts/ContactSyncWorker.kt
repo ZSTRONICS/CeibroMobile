@@ -39,9 +39,12 @@ class ContactSyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = coroutineScope {
         val dashboardRepository = DashboardRepository(providesDashboardRepoService())
-        val contacts = getLocalContacts(context)
 
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
+        val user = sessionManager.getUser().value
+
+        val contacts =
+            if (user?.autoContactSync == true) getLocalContacts(context) else sessionManager.getSyncedContacts()
         if (sessionManager.isLoggedIn()) {
             val request = SyncContactsRequest(contacts = contacts)
             when (val response =
@@ -124,6 +127,6 @@ class ContactSyncWorker @AssistedInject constructor(
     ) = SessionManager(sharedPreferenceManager)
 
     companion object {
-        const val CONTACT_SYNC_WORKER_TAG:String = "ContactSyncWorker"
+        const val CONTACT_SYNC_WORKER_TAG: String = "ContactSyncWorker"
     }
 }

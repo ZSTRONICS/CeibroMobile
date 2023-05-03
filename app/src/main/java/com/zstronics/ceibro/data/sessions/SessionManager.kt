@@ -7,6 +7,7 @@ import com.zstronics.ceibro.base.*
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 
 class SessionManager constructor(
@@ -144,5 +145,13 @@ class SessionManager constructor(
     fun getToken(): String? {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         return tokenPref?.access?.token
+    }
+
+    fun saveSyncedContacts(selectedContacts: List<SyncContactsRequest.CeibroContactLight>) {
+        sharedPreferenceManager.saveSyncedContacts(KEY_SYNCED_CONTACTS, selectedContacts)
+    }
+
+    fun getSyncedContacts(): List<SyncContactsRequest.CeibroContactLight> {
+        return sharedPreferenceManager.getSyncedContacts(KEY_SYNCED_CONTACTS)
     }
 }
