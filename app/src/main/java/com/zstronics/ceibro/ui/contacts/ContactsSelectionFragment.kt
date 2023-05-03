@@ -76,7 +76,5 @@ class ContactsSelectionFragment :
             builder.show()
             viewModel.loadContacts()
         }
-        CookiesManager.jwtToken =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDRlNTI4MWU4NWFmYzhjNzI1YjZhYmMiLCJpYXQiOjE2ODI5NDIzMTQsImV4cCI6MTY4NTcwNzExNCwidHlwZSI6ImFjY2VzcyJ9.4f046DCoPE8buN5tpno8mnAnrwk27dIYo3n0Xe8aYLA"
     }
 }

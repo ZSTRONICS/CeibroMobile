@@ -4,10 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,7 +23,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -39,7 +36,6 @@ import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
 import com.zstronics.ceibro.base.extensions.launchActivityForResult
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
@@ -350,6 +346,28 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    fun chooseImage(onPhotoPick: (fileUri: Uri?) -> Unit) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA,
+            )
+        ) {
+            requireActivity().openFilePicker(
+                allowMultiple = false,
+                mimeTypes = arrayOf(
+                    "image/png",
+                    "image/jpg",
+                    "image/jpeg",
+                    "image/*"
+                )
+            ) { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    onPhotoPick(data.data)
+                }
+            }
+        }
+    }
+
 //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //        if (!Environment.isExternalStorageManager()) {
 //            requestManageAllFilesAccessPermission()
@@ -510,16 +528,16 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                     if (fileToDelete?.exists() == true) {
                         val deleted = fileToDelete.delete()
                     }
-                } catch (_: Exception) {}
-            }
-            else {
+                } catch (_: Exception) {
+                }
+            } else {
                 try {
                     val oldFile = imageUri.toFile()
                     if (oldFile.exists()) {
                         val deleted = oldFile.delete()
                     }
+                } catch (_: Exception) {
                 }
-                catch (_: Exception) {}
             }
         }
     }
@@ -561,7 +579,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
-    fun takePhoto() {
+    private fun takePhoto() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
         // Ensure that there's a camera activity to handle the intent
