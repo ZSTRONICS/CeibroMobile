@@ -11,6 +11,6 @@ interface ILogin {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun doLogin(phoneNumber: String, password: String, rememberMe: Boolean)
+        fun doLogin(phoneNumber: String, password: String, rememberMe: Boolean, onLoggedIn: () -> Unit)
     }
 }

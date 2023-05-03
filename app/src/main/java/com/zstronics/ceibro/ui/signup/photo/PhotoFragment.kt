@@ -3,8 +3,10 @@ package com.zstronics.ceibro.ui.signup.photo
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -75,5 +77,10 @@ class PhotoFragment :
                 R.id.homeFragment
             )
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setBackButtonDispatcher()
     }
 }

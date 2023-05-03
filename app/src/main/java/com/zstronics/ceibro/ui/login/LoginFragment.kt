@@ -33,7 +33,6 @@ class LoginFragment :
     private var isPassShown = false
     override fun onClick(id: Int) {
         when (id) {
-            101 -> navigateToDashboard()
             R.id.signUpTextBtn -> navigate(R.id.registerFragment)
             R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {
@@ -59,7 +58,9 @@ class LoginFragment :
                     }
                     else {
                         val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
-                        viewModel.doLogin(formattedNumber, password, rememberMe ?: false)
+                        viewModel.doLogin(formattedNumber, password, rememberMe ?: false) {
+                            navigateToDashboard()
+                        }
                     }
                 } catch (e: NumberParseException) {
                     shortToastNow("Error parsing phone number")

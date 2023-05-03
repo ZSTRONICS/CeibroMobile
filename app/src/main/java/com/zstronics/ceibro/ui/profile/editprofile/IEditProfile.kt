@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.profile.editprofile
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
 
@@ -8,21 +9,20 @@ interface IEditProfile {
         var userFirstName: MutableLiveData<String>
         var userSurname: MutableLiveData<String>
         var userEmail: MutableLiveData<String>
-        var userContactNumber: MutableLiveData<String>
-        var userPassword: MutableLiveData<String>
-        var userConfirmPassword: MutableLiveData<String>
+        var userPhoneNumber: MutableLiveData<String>
         var userCompanyName: MutableLiveData<String?>
-        var userCompanyVAT: MutableLiveData<String>
-        var userCompanyLocation: MutableLiveData<String>
-        var userCompanyContactNo: MutableLiveData<String>
-        var userCompanyWorkEmail: MutableLiveData<String>
-        var currentlyRepresenting: MutableLiveData<Boolean>
+        var userJobTitle: MutableLiveData<String?>
         var userProfilePic: MutableLiveData<String>
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun onUpdate()
-        fun updateProfile(firstName: String, surname: String, email: String, contactNo: String, password: String, confirmPassword: String, companyName: String
-                          , companyVAT: String, companyLocation: String, companyContactNo: String, companyWorkEmail: String, currentlyRepresenting: Boolean?)
+        fun updateProfile(firstName: String, surname: String, email: String, phoneNumber: String, companyName: String,
+                          jobTitle: String, onProfileUpdated: () -> Unit)
+        fun updateProfilePhoto(file: String, context: Context)
+        fun changePassword(oldPassword: String, newPassword: String, onPasswordChanged: () -> Unit)
+        fun changePhoneNumber(newNumber: String, countryCode: String, password: String, onNumberChanged: () -> Unit)
+        fun changePhoneNumberVerifyOtp(newNumber: String, otp: String, onNumberVerified: () -> Unit)
+        fun resendOtp(phoneNumber: String, onOtpResend: () -> Unit)
+        fun endUserSession()
     }
 }

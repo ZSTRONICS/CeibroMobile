@@ -37,8 +37,8 @@ class ProfileVM @Inject constructor(
     }
 
     override fun showMenuPopup(v: View) {
-        val popUpWindowObj = popUpMenu(v)
-        popUpWindowObj.showAsDropDown(v.findViewById(R.id.profileMenuBtn), 0, 35)
+//        val popUpWindowObj = popUpMenu(v)
+//        popUpWindowObj.showAsDropDown(v.findViewById(R.id.profileMenuBtn), 0, 35)
     }
 
     override fun popUpMenu(v: View): PopupWindow {
