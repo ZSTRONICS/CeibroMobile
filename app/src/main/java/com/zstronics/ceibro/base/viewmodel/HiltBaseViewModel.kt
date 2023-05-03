@@ -8,9 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
+import androidx.work.*
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
@@ -159,16 +157,34 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         removeAllFiles()
     }
 
-    fun startContactSyncWorker(context: Context) {
+    fun startPeriodicContactSyncWorker(context: Context) {
+        // Build the constraints
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
         val periodicWorkRequest = PeriodicWorkRequest.Builder(
             ContactSyncWorker::class.java, 15, TimeUnit.MINUTES
-        )
+        ).setConstraints(constraints)
             .build()
+
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             ContactSyncWorker.CONTACT_SYNC_WORKER_TAG,
             ExistingPeriodicWorkPolicy.KEEP,
             periodicWorkRequest
         )
+    }
+
+    fun syncOneTimeContacts(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ContactSyncWorker::class.java)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
     }
 }
 

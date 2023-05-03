@@ -45,7 +45,7 @@ class LoginVM @Inject constructor(
                     loading(false, "Login successful")
                     onLoggedIn.invoke()
                     if (response.data.user.autoContactSync) {
-                        startContactSyncWorker(resourceProvider.context)
+                        startPeriodicContactSyncWorker(resourceProvider.context)
                     }
                 }
                 is ApiResponse.Error -> {

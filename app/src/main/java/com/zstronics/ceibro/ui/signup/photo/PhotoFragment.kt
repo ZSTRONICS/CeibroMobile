@@ -6,14 +6,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentPhotoBinding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +39,7 @@ class PhotoFragment :
                     }
                 } else {
                     viewModel.updatePhoto(requireContext()) {
-                        navigateToDashboard()
+                        navigate(R.id.contactsSelectionFragment)
                     }
                 }
             }
@@ -52,7 +47,7 @@ class PhotoFragment :
                 pickPhoto()
             }
             R.id.skipBtn -> {
-                navigateToDashboard()
+                navigate(R.id.contactsSelectionFragment)
             }
         }
     }
@@ -65,19 +60,6 @@ class PhotoFragment :
                 .load(pickedImage)
                 .centerCrop()
                 .into(mViewDataBinding.userPhoto)
-        }
-    }
-
-    private fun navigateToDashboard() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.homeFragment
-            )
         }
     }
 

@@ -72,7 +72,7 @@ class DashboardVM @Inject constructor(
         }
         val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
         if (user?.autoContactSync == true) {
-            startContactSyncWorker(iResourceProvider.context)
+            startPeriodicContactSyncWorker(iResourceProvider.context)
         }
     }
 

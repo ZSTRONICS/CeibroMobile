@@ -7,8 +7,11 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.databinding.FragmentContactsSelectionBinding
 import com.zstronics.ceibro.ui.contacts.adapter.ContactsSelectionAdapter
@@ -30,8 +33,12 @@ class ContactsSelectionFragment :
             R.id.confirmBtn -> {
                 val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
                 viewModel.syncContacts(selectedContacts) {
-                    navigateBack()
-                    TODO("move to next screen")
+                    navigateToDashboard()
+                }
+            }
+            R.id.skipBtn -> {
+                viewModel.syncContactsEnabled(false) {
+                    navigateToDashboard()
                 }
             }
         }
@@ -64,8 +71,7 @@ class ContactsSelectionFragment :
                 // User clicked Allow button
                 // Add your logic here
                 viewModel.syncContactsEnabled(true) {
-                    navigateBack()
-                    TODO("move to next screen")
+                    navigateToDashboard()
                 }
             }
             builder.setNegativeButton("Deny") { dialog, which ->
@@ -75,6 +81,19 @@ class ContactsSelectionFragment :
             }
             builder.show()
             viewModel.loadContacts()
+        }
+    }
+
+    private fun navigateToDashboard() {
+        launchActivity<NavHostPresenterActivity>(
+            options = Bundle(),
+            clearPrevious = true
+        ) {
+            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+            putExtra(
+                NAVIGATION_Graph_START_DESTINATION_ID,
+                R.id.homeFragment
+            )
         }
     }
 }
