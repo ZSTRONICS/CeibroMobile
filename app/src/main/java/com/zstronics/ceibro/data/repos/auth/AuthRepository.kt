@@ -151,4 +151,14 @@ class AuthRepository @Inject constructor(
         }
         return response
     }
+
+    override suspend fun uploadProfilePictureV2(fileUri: String): ApiResponse<UserProfilePicUpdateResponse> {
+        val file = File(fileUri)
+        val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+        val multiPartImageFile: MultipartBody.Part =
+            MultipartBody.Part.createFormData("profilePic", file.name, reqFile)
+        return executeSafely(call = {
+            service.uploadProfilePictureV2(multiPartImageFile)
+        })
+    }
 }

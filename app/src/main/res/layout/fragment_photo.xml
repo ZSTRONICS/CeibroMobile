@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewState"
             type="com.zstronics.ceibro.ui.signup.photo.PhotoState" />
@@ -10,6 +11,8 @@
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.signup.photo.PhotoVM" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,9 +34,9 @@
                 android:id="@+id/signupHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_11sdp"
                 android:layout_marginEnd="@dimen/_15sdp"
-                android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_11sdp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
@@ -68,6 +71,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:id="@+id/userPhoto"
                     android:layout_width="match_parent"
@@ -80,14 +84,33 @@
                 android:id="@+id/photoDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
                 android:layout_marginStart="@dimen/_26sdp"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:layout_marginEnd="@dimen/_26sdp"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center"
                 android:text="@string/add_a_profile_photo_for_more_credibility_and_recognition"
                 android:textColor="@color/appTextGrey"
                 android:textSize="14sp"
+                android:visibility="@{viewState.isPhotoPicked ? View.GONE : View.VISIBLE, default = visible}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/materialCardView2" />
+
+            <TextView
+                android:id="@+id/changePhotoTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_26sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_26sdp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:text="@string/change_photo"
+                android:textColor="@color/appBlue"
+                android:textSize="14sp"
+                android:visibility="@{viewState.isPhotoPicked ? View.VISIBLE : View.GONE, default = gone}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/materialCardView2" />
@@ -101,13 +124,14 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/signupContinueBtn"
+                android:id="@+id/skipBtn"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="@dimen/_13sdp"
                 android:layout_marginEnd="@dimen/_7sdp"
                 android:background="@drawable/skip_button"
                 android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:text="@string/skip"
@@ -123,18 +147,18 @@
                 android:id="@+id/chooseOrContinueBtn"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="@dimen/_13sdp"
                 android:layout_marginStart="@dimen/_7sdp"
+                android:layout_marginEnd="@dimen/_13sdp"
                 android:layout_marginBottom="@dimen/_23sdp"
                 android:background="@drawable/signin_button_back"
                 android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:text="@string/choose_a_photo"
+                android:text="@{viewState.isPhotoPicked ? @string/continue_heading: @string/choose_a_photo, default = @string/choose_a_photo}"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/view26" />
