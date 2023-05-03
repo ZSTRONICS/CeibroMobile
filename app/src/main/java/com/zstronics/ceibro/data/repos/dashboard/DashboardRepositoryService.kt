@@ -6,6 +6,8 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
@@ -70,4 +72,20 @@ interface DashboardRepositoryService {
         @Path("phoneNumber") phoneNumber: String,
         @Path("enabled") enabled: Boolean
     ): Response<ContactSyncEnableResponse>
+
+    @GET("v2/users/contacts/{userId}")
+    suspend fun getAllConnectionsV2(
+        @Path("userId") userId: String,
+    ): Response<AllCeibroConnections>
+
+    @POST("v2/users/contacts/block/{contactId}")
+    suspend fun blockUser(
+        @Path("contactId") contactId: String,
+    ): Response<BlockUserResponse>
+
+    @POST("v2/users/contacts/un-block/{contactId}")
+    suspend fun unblockUser(
+        @Path("contactId") contactId: String,
+    ): Response<BlockUserResponse>
+
 }

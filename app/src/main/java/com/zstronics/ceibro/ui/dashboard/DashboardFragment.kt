@@ -18,6 +18,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.task.models.AllFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
@@ -225,7 +226,7 @@ class DashboardFragment :
     }
 
     private fun navigateToConnections() {
-        navigate(R.id.connectionsFragment)
+        navigate(R.id.MyConnectionV2Fragment)
     }
 
     companion object {

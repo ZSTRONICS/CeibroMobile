@@ -782,4 +782,6 @@
     <string name="contact_list_permission_text">Do you want to add only a few contacts to your Ceibro contact list?</string>
     <string name="enter_contact_name">Enter contact name</string>
     <string name="change_photo">Change Photo</string>
+    <string name="block_user">Block User</string>
+    <string name="unblock_user">Unblock User</string>
 </resources>
