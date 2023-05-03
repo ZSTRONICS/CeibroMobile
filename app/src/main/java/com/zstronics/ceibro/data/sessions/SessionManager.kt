@@ -24,7 +24,8 @@ class SessionManager constructor(
                 false
             )
         }
-
+        CookiesManager.isLoggedIn = true
+        CookiesManager.jwtToken = tokens.access.token
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)

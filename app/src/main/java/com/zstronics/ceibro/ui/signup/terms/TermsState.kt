@@ -6,4 +6,6 @@ import javax.inject.Inject
 
 class TermsState @Inject constructor() : BaseState(), ITerms.State {
     override val isAgreedWithTerms: MutableLiveData<Boolean> = MutableLiveData(false)
+    override var phoneNumber: MutableLiveData<String> = MutableLiveData("")
+    override var phoneCode: MutableLiveData<String> = MutableLiveData("")
 }

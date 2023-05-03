@@ -12,11 +12,12 @@ interface ISignUp {
         var jobTitle: MutableLiveData<String>
         var password: MutableLiveData<String>
         var confirmPassword: MutableLiveData<String>
+        var phoneNumber: MutableLiveData<String>
+        var phoneCode: MutableLiveData<String>
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun onSignUp()
         fun doSignUp(firstName: String, surname: String, email: String, companyName: String, jobTitle: String,
-                     phoneNumber: String, password: String, confirmPassword: String)
+                     password: String, onSignedUp: () -> Unit)
     }
 }

@@ -6,9 +6,9 @@
     <string name="error_message_regex_validation">Invalid format</string>
     <string name="error_message_email_validation">Invalid Email format</string>
     <string name="error_message_phone_email_validation">Invalid Email or Phone format</string>
-    <string name="error_message_first_name_validation">Invalid first name format</string>
+    <string name="error_message_first_name_validation">Enter valid first name</string>
     <string name="error_message_last_name_validation">Invalid last name format</string>
-    <string name="error_message_sur_name_validation">Invalid surname format</string>
+    <string name="error_message_sur_name_validation">Enter valid  surname</string>
     <string name="error_message_cpf_validation">Invalid CPF format</string>
     <string name="error_message_url_validation">Invalid url format</string>
     <string name="error_message_phone_validation">Invalid phone number</string>
@@ -19,11 +19,15 @@
     <string name="error_message_credit_card_validation">Invalid Credit Card format</string>
     <string name="error_message_empty_validation">This field can\'t be empty</string>
     <string name="error_message_not_equal_password">Passwords are not the same</string>
+    <string name="error_message_not_equal_new_password">New passwords are not same</string>
     <string name="error_message_invalid_password">Invalid password</string>
+    <string name="error_message_invalid_new_password">Invalid new password</string>
+    <string name="error_message_invalid_old_password">Invalid old password</string>
     <string name="error_message_invalid_confirm_password">Invalid confirm password</string>
     <string name="error_message_not_equal_phone">Mobile No are not the same</string>
     <string name="default_required_validation_message">This field is required.</string>
     <string name="error_message_postal_address">Postal Address is not valid</string>
+    <string name="success_message_to_re_login">Password updated successfully, please re-login</string>
     <string name="default_required_length_message_min_max">The input must have length between %1$d
         and %2$d.
     </string>
@@ -48,7 +52,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm">Confirm</string>
-    <string name="new_password">New Password</string>
+    <string name="new_password">New password</string>
     <string name="reset_password">Reset Password</string>
     <string name="forgot_password_desc">Forgot your password ? Please enter your username or email address. You will receive a link by email to create a new password.</string>
     <string name="identification_email">Identification email</string>
@@ -782,6 +786,12 @@
     <string name="contact_list_permission_text">Do you want to add only a few contacts to your Ceibro contact list?</string>
     <string name="enter_contact_name">Enter contact name</string>
     <string name="change_photo">Change Photo</string>
+    <string name="change_password">Change password</string>
+    <string name="change_phone_number">Change phone number</string>
+    <string name="old_password">Old password</string>
+    <string name="enter_your_new_phone_number">Enter your new phone number</string>
+    <string name="phone_confirmation">Phone confirmation</string>
+    <string name="confirmation_code_sent_to_your_phone">Confirmation code sent to your phone</string>
     <string name="block_user">Block User</string>
     <string name="unblock_user">Unblock User</string>
 </resources>

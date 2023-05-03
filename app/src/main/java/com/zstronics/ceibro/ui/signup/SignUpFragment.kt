@@ -5,9 +5,11 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.fragment.app.viewModels
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.setupClearButtonWithAction
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentSignUpBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,9 +25,18 @@ class SignUpFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            112 -> navigateBack()
-            113 -> navigate(R.id.photoFragment)
-
+            R.id.signupContinueBtn -> {
+                if (viewState.firstName.value.toString().length < 3) {
+                    shortToastNow(resources.getString(R.string.error_message_first_name_validation))
+                } else if (viewState.surname.value.toString().length < 2) {
+                    shortToastNow(resources.getString(R.string.error_message_sur_name_validation))
+                } else {
+                    viewModel.doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
+                        viewState.companyName.value.toString(), viewState.jobTitle.value.toString(), viewState.password.value.toString()) {
+                        navigate(R.id.photoFragment)
+                    }
+                }
+            }
         }
     }
 
@@ -33,9 +44,16 @@ class SignUpFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setBackButtonDispatcher()
         mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.etPhone)
-        mViewDataBinding.ccp.setCountryForPhoneCode(+1)
-        mViewDataBinding.etPhone.setText("53441413")
+
+        val phoneNumberUtil = PhoneNumberUtil.getInstance()
+        val parsedNumber = phoneNumberUtil.parse(viewState.phoneNumber.value.toString(), viewState.phoneCode.value.toString())
+
+        val countryCode = parsedNumber.countryCode
+        val nationalSignificantNumber = parsedNumber.nationalNumber
+
+        mViewDataBinding.ccp.setCountryForPhoneCode(countryCode)
+        mViewDataBinding.etPhone.setText(nationalSignificantNumber.toString())
     }
 }

@@ -32,10 +32,9 @@ class ProfileFragment :
             R.id.backBtn -> navigateBack()
             R.id.userProfileConnections -> navigateToConnections()
             R.id.userProfileInvitations -> navigateToInvitations()
-            106 -> navigateToEditProfile()
+            R.id.editProfileBtn -> navigateToEditProfile()
             107 -> navigateToAdminsPanel()
-            108 -> shortToastNow("Help")
-            110 -> {    //Logout Btn Click Event
+            R.id.logoutBtn -> {
                 viewModel.endUserSession()
                 launchActivityWithFinishAffinity<NavHostPresenterActivity>(
                     options = Bundle(),

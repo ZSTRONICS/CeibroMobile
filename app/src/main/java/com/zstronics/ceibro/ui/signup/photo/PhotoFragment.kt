@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -82,6 +83,7 @@ class PhotoFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setBackButtonDispatcher()
         PixBus.results {
             when (it.status) {
                 PixEventCallback.Status.SUCCESS -> {
@@ -89,7 +91,7 @@ class PhotoFragment :
                         viewModel.selectedUri = it.data[0]
                         viewState.isPhotoPicked.postValue(true)
                     } catch (e: Exception) {
-                        
+
                     }
                 }
                 PixEventCallback.Status.BACK_PRESSED -> {

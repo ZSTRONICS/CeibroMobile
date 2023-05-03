@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.signup.ForgetPasswordRequest
 import com.zstronics.ceibro.data.repos.auth.signup.RegisterRequest
 import com.zstronics.ceibro.data.repos.auth.signup.RegisterVerifyOtpRequest
+import com.zstronics.ceibro.data.repos.auth.signup.ResetPasswordRequest
 import com.zstronics.ceibro.ui.chat.extensions.getChatTitle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -25,23 +26,21 @@ class VerifyNumberVM @Inject constructor(
         with(viewState) {
             previousFragment.value = bundle?.getString("fromFragment")
             phoneNumber.value = bundle?.getString("phoneNumber")
+            phoneCode.value = bundle?.getString("phoneCode")
         }
     }
 
 
 
-    override fun registerOtpVerification(phoneNumber: String, otp: String) {
+    override fun registerOtpVerification(phoneNumber: String, otp: String, onOtpVerified: () -> Unit) {
         val request = RegisterVerifyOtpRequest(phoneNumber = phoneNumber, otp = otp)
         launch {
             loading(true)
             when (val response = repository.registerVerifyOtp(request)) {
 
                 is ApiResponse.Success -> {
-                    val handler = Handler()
-                    handler.postDelayed(Runnable {
-                        clickEvent?.postValue(103)
-                    }, 30)
                     loading(false, response.data.message)
+                    onOtpVerified.invoke()
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
@@ -51,18 +50,15 @@ class VerifyNumberVM @Inject constructor(
     }
 
 
-    override fun forgetPasswordOtpVerification(phoneNumber: String, otp: String) {
+    override fun forgetPasswordOtpVerification(phoneNumber: String, otp: String, onOtpVerified: () -> Unit) {
         val request = RegisterVerifyOtpRequest(phoneNumber = phoneNumber, otp = otp)
         launch {
             loading(true)
             when (val response = repository.forgetPassVerifyOtp(request)) {
 
                 is ApiResponse.Success -> {
-                    val handler = Handler()
-                    handler.postDelayed(Runnable {
-                        clickEvent?.postValue(103)
-                    }, 30)
                     loading(false, response.data.message)
+                    onOtpVerified.invoke()
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
@@ -78,8 +74,25 @@ class VerifyNumberVM @Inject constructor(
             when (val response = repository.resendOtp(request)) {
 
                 is ApiResponse.Success -> {
-                    onOtpResend.invoke()
                     loading(false, response.data.message)
+                    onOtpResend.invoke()
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun resetPassword(phoneNumber: String, password: String, otp: String, onPasswordReset: () -> Unit) {
+        val request = ResetPasswordRequest(phoneNumber = phoneNumber, password = password, otp = otp)
+        launch {
+            loading(true)
+            when (val response = repository.resetPassword(request)) {
+
+                is ApiResponse.Success -> {
+                    loading(false, response.data.message)
+                    onPasswordReset.invoke()
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
