@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.signup.terms
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -19,7 +21,18 @@ class TermsFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.termsConfirmBtn -> navigate(R.id.signUpFragment)
+            R.id.termsConfirmBtn ->  {
+                val bundle = Bundle()
+                bundle.putString("phoneNumber", viewState.phoneNumber.value.toString())
+                bundle.putString("phoneCode", viewState.phoneCode.value.toString())
+                navigate(R.id.signUpFragment, bundle)
+            }
         }
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setBackButtonDispatcher()
     }
 }

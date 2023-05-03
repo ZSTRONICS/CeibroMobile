@@ -6,4 +6,5 @@ import javax.inject.Inject
 
 class RegisterState @Inject constructor() : BaseState(), IRegister.State {
     override var phoneNumber: MutableLiveData<String> = MutableLiveData("")
+    override var phoneCode: MutableLiveData<String> = MutableLiveData("")
 }

@@ -21,8 +21,8 @@ class ForgotPasswordVM @Inject constructor(
             when (val response = repository.forgetPassword(request)) {
 
                 is ApiResponse.Success -> {
-                    onMoveToNextScreen.invoke()
                     loading(false, response.data.message)
+                    onMoveToNextScreen.invoke()
                 }
 
                 is ApiResponse.Error -> {

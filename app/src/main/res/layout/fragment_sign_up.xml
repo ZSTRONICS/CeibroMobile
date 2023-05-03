@@ -335,7 +335,7 @@
                     android:background="@drawable/signin_button_back"
                     android:enabled="@{viewModel.validator.isValidate , default = false}"
                     android:fontFamily="@font/inter_medium"
-                    android:onClick="@{() -> viewModel.onSignUp()}"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="40dp"
                     android:paddingEnd="40dp"
                     android:text="@string/continue_heading"

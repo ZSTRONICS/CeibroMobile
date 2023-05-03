@@ -9,8 +9,7 @@ import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
 import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
 import com.zstronics.ceibro.data.repos.auth.signup.*
-import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
-import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
+import com.zstronics.ceibro.data.repos.editprofile.*
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -18,6 +17,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.greenrobot.eventbus.EventBus
+import retrofit2.http.Body
 import java.io.File
 import javax.inject.Inject
 
@@ -54,6 +54,33 @@ class AuthRepository @Inject constructor(
         )
     }
 
+    override suspend fun changePassword(changePasswordRequest: ChangePasswordRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.changePassword(changePasswordRequest)
+            }
+        )
+    }
+
+    override suspend fun changePhoneNumber(changeNumberRequest: ChangeNumberRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.changePhoneNumber(changeNumberRequest)
+            }
+        )
+    }
+
+    override suspend fun changePhoneNumberVerifyOtp(changeNumberVerifyOtpRequest: ChangeNumberVerifyOtpRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.changePhoneNumberVerifyOtp(changeNumberVerifyOtpRequest)
+            }
+        )
+    }
+
     override suspend fun getUserProfile(): ApiResponse<LoginResponse> {
         return executeSafely(
             call =
@@ -81,11 +108,11 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse> {
+    override suspend fun signup(phoneNumber: String, signUpRequest: SignUpRequest): ApiResponse<LoginResponse> {
         return executeSafely(
             call =
             {
-                service.signup(signUpRequest)
+                service.signup(phoneNumber, signUpRequest)
             }
         )
     }
@@ -114,6 +141,15 @@ class AuthRepository @Inject constructor(
             call =
             {
                 service.resendOtp(forgetPasswordRequest)
+            }
+        )
+    }
+
+    override suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.resetPassword(resetPasswordRequest)
             }
         )
     }

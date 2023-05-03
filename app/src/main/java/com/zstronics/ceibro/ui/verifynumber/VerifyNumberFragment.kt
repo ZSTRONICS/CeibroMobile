@@ -26,28 +26,8 @@ class VerifyNumberFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            103 -> {
-                if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
-                    navigate(R.id.termsFragment)
-                } else if (viewState.previousFragment.value.equals(
-                        "ForgotPasswordFragment",
-                        true
-                    )
-                ) {
-                    showPasswordBottomSheet()
-                }
-            }
             R.id.loginTextBtn -> {
-                launchActivity<NavHostPresenterActivity>(
-                    options = Bundle(),
-                    clearPrevious = true
-                ) {
-                    putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
-                    putExtra(
-                        NAVIGATION_Graph_START_DESTINATION_ID,
-                        R.id.loginFragment
-                    )
-                }
+                navigateToLogin()
             }
             R.id.closeBtn -> {
                 mViewDataBinding.codeSentLayout.visibility = View.GONE
@@ -57,13 +37,17 @@ class VerifyNumberFragment :
                 val otp = viewState.otp.value.toString()
                 if (otp.length == 6) {
                     if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
-                        viewModel.registerOtpVerification(phoneNumber, otp)
+                        viewModel.registerOtpVerification(phoneNumber, otp) {
+                            navigateToTermsAndConditions()
+                        }
                     } else if (viewState.previousFragment.value.equals(
                             "ForgotPasswordFragment",
                             true
                         )
                     ) {
-                        viewModel.forgetPasswordOtpVerification(phoneNumber, otp)
+                        viewModel.forgetPasswordOtpVerification(phoneNumber, otp) {
+                            showPasswordBottomSheet()
+                        }
                     }
                 } else {
                     shortToastNow(resources.getString(R.string.error_message_otp_length))
@@ -92,8 +76,7 @@ class VerifyNumberFragment :
 
         if (!timerInProgress) {
             startTimer()
-        }
-        else {
+        } else {
             mViewDataBinding.sendCodeAgainBtn.isEnabled = false
             mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
             mViewDataBinding.sendCodeAgainBtn.text = "${timeLeftInMillis / 1000}s"
@@ -102,15 +85,13 @@ class VerifyNumberFragment :
     }
 
 
-    fun showPasswordBottomSheet() {
+    private fun showPasswordBottomSheet() {
         val sheet = CreateNewPasswordSheet()
 
         sheet.onNewPasswordCreation = { password ->
-//            viewModel.editMember(projectLive.value?.id ?: "", member.id, body) {
-//                projectStateHandler.onMemberAdd()
-//                sheet.dismiss()
-//            }
-            shortToastNow(password)
+            viewModel.resetPassword(viewState.phoneNumber.value.toString(), password, viewState.otp.value.toString()) {
+                navigateToLogin()
+            }
         }
         sheet.onNewPasswordCreationDismiss = {
             navigateBack()
@@ -119,6 +100,26 @@ class VerifyNumberFragment :
         sheet.show(childFragmentManager, "CreateNewPasswordSheet")
     }
 
+
+    private fun navigateToLogin() {
+        launchActivity<NavHostPresenterActivity>(
+            options = Bundle(),
+            clearPrevious = true
+        ) {
+            putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+            putExtra(
+                NAVIGATION_Graph_START_DESTINATION_ID,
+                R.id.loginFragment
+            )
+        }
+    }
+
+    private fun navigateToTermsAndConditions() {
+        val bundle = Bundle()
+        bundle.putString("phoneNumber", viewState.phoneNumber.value.toString())
+        bundle.putString("phoneCode", viewState.phoneCode.value.toString())
+        navigate(R.id.termsFragment, bundle)
+    }
 
     private fun startTimer() {
         timerInProgress = true

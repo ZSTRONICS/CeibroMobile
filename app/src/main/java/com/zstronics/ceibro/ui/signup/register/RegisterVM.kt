@@ -19,7 +19,7 @@ class RegisterVM @Inject constructor(
 ) : HiltBaseViewModel<IRegister.State>(), IRegister.ViewModel {
 
 
-    override fun registerNumber(phoneNumber: String) {
+    override fun registerNumber(phoneNumber: String, onNumberRegistered: () -> Unit) {
 
         val request = RegisterRequest(phoneNumber = phoneNumber)
         launch {
@@ -27,11 +27,8 @@ class RegisterVM @Inject constructor(
             when (val response = repository.register(request)) {
 
                 is ApiResponse.Success -> {
-                    val handler = Handler()
-                    handler.postDelayed(Runnable {
-                        clickEvent?.postValue(102)
-                    }, 30)
                     loading(false, response.data.message)
+                    onNumberRegistered.invoke()
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)

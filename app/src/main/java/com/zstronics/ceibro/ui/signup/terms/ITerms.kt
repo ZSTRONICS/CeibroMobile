@@ -6,6 +6,8 @@ import com.zstronics.ceibro.base.interfaces.IBase
 interface ITerms {
     interface State : IBase.State {
         val isAgreedWithTerms: MutableLiveData<Boolean>
+        var phoneNumber: MutableLiveData<String>
+        var phoneCode: MutableLiveData<String>
     }
 
     interface ViewModel : IBase.ViewModel<State> {

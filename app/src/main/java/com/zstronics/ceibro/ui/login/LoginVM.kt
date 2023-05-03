@@ -24,7 +24,7 @@ class LoginVM @Inject constructor(
 //    val authRepo = AuthRepository(service)
 
 
-    override fun doLogin(phoneNumber: String, password: String, rememberMe: Boolean) {
+    override fun doLogin(phoneNumber: String, password: String, rememberMe: Boolean, onLoggedIn: () -> Unit) {
 
         val request = LoginRequest(phoneNumber = phoneNumber, password = password)
         launch {
@@ -41,8 +41,8 @@ class LoginVM @Inject constructor(
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
                     OneSignal.pauseInAppMessages(false)
-                    clickEvent?.postValue(101)
                     loading(false, "Login successful")
+                    onLoggedIn.invoke()
                 }
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)

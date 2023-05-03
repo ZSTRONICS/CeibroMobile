@@ -9,5 +9,5 @@ import com.zstronics.ceibro.data.repos.auth.login.User
 @Keep
 data class EditProfileResponse(
     @SerializedName("user")
-    val userObj: User
+    val user: User
 ): BaseResponse()

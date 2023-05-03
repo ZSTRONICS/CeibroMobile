@@ -12,4 +12,6 @@ class SignUpState @Inject constructor() : BaseState(), ISignUp.State {
     override var jobTitle: MutableLiveData<String> = MutableLiveData("")
     override var password: MutableLiveData<String> = MutableLiveData("")
     override var confirmPassword: MutableLiveData<String> = MutableLiveData("")
+    override var phoneNumber: MutableLiveData<String> = MutableLiveData("")
+    override var phoneCode: MutableLiveData<String> = MutableLiveData("")
 }

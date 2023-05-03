@@ -31,7 +31,6 @@ class RegisterFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            102 -> navigateToVerifyNumber("RegisterFragment")
             R.id.loginTextBtn -> navigateBack()
             R.id.registerContinueBtn -> {
                 val phoneNumber = mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
@@ -48,7 +47,10 @@ class RegisterFragment :
                     } else {
                         val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
                         viewState.phoneNumber.value = formattedNumber
-                        viewModel.registerNumber(formattedNumber)
+                        viewState.phoneCode.value = phoneCode
+                        viewModel.registerNumber(formattedNumber) {
+                            navigateToVerifyNumber("RegisterFragment")
+                        }
                     }
                 } catch (e: NumberParseException) {
                     shortToastNow("Error parsing phone number")
@@ -62,6 +64,7 @@ class RegisterFragment :
         val bundle = Bundle()
         bundle.putString("fromFragment", currentFragment)
         bundle.putString("phoneNumber", viewState.phoneNumber.value.toString())
+        bundle.putString("phoneCode", viewState.phoneCode.value.toString())
         navigate(R.id.verifyNumberFragment, bundle)
     }
 
