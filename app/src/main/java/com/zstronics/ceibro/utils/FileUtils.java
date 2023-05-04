@@ -377,7 +377,7 @@ public class FileUtils {
         return null;
     }
 
-    private static String copyFileToInternalStorage(Context context, Uri uri, String directoryName) {
+    public static String copyFileToInternalStorage(Context context, Uri uri, String directoryName) {
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
             File directory = new File(context.getFilesDir(), directoryName);

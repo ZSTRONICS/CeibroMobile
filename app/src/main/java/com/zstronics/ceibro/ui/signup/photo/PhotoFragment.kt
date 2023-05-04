@@ -12,8 +12,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentPhotoBinding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
-import io.ak1.pix.helpers.PixBus
-import io.ak1.pix.helpers.PixEventCallback
 
 @AndroidEntryPoint
 class PhotoFragment :
@@ -28,15 +26,7 @@ class PhotoFragment :
         when (id) {
             R.id.chooseOrContinueBtn -> {
                 if (viewState.isPhotoPicked.value == false) {
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                        val intent = Intent(
-                            requireContext(),
-                            NavControllerSample::class.java
-                        )
-                        startActivity(intent)
-                    } else {
-                        pickPhoto()
-                    }
+                    choosePhoto()
                 } else {
                     viewModel.updatePhoto(requireContext()) {
                         navigate(R.id.contactsSelectionFragment)
@@ -44,7 +34,7 @@ class PhotoFragment :
                 }
             }
             R.id.changePhotoTV -> {
-                pickPhoto()
+                choosePhoto()
             }
             R.id.skipBtn -> {
                 navigate(R.id.contactsSelectionFragment)
@@ -66,20 +56,30 @@ class PhotoFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBackButtonDispatcher()
-        PixBus.results {
-            when (it.status) {
-                PixEventCallback.Status.SUCCESS -> {
-                    try {
-                        viewModel.selectedUri = it.data[0]
-                        viewState.isPhotoPicked.postValue(true)
-                    } catch (e: Exception) {
+    }
 
-                    }
-                }
-                PixEventCallback.Status.BACK_PRESSED -> {
+    fun choosePhoto() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            val intent = Intent(
+                requireContext(),
+                NavControllerSample::class.java
+            )
+            startActivityForResult(intent, NavControllerSample.PHOTO_PICK_RESULT_CODE)
+        } else {
+            pickPhoto()
+        }
+    }
 
-                }
-            }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == NavControllerSample.PHOTO_PICK_RESULT_CODE) {
+            val pickedImage = data?.data
+            viewModel.selectedUri = pickedImage
+            viewState.isPhotoPicked.postValue(true)
+            Glide.with(requireContext())
+                .load(pickedImage)
+                .centerCrop()
+                .into(mViewDataBinding.userPhoto)
         }
     }
 }

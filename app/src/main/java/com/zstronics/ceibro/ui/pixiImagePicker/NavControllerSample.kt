@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.pixiImagePicker
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -25,16 +26,15 @@ class NavControllerSample : AppCompatActivity() {
         navController = navHostFragment.navController
         PixBus.results {
             if (it.status == PixEventCallback.Status.SUCCESS) {
-                onBackPressed()
+                val intent = Intent()
+                intent.data = it.data[0]
+                setResult(PHOTO_PICK_RESULT_CODE, intent)
+                finish()
             }
         }
     }
 
-    override fun onBackPressed() {
-        if (navController.currentDestination == navController.graph.findNode(R.id.CameraFragment)) {
-            PixBus.onBackPressedEvent()
-        } else {
-            super.onBackPressed()
-        }
+    companion object {
+        const val PHOTO_PICK_RESULT_CODE = 9876
     }
 }
