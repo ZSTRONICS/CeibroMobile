@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -149,7 +148,7 @@
                     android:ems="10"
                     android:fontFamily="@font/inter_regular"
                     android:hint="@string/verification_code_text"
-                    android:inputType="textVisiblePassword"
+                    android:inputType="number"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:text="@={viewState.otp}"
