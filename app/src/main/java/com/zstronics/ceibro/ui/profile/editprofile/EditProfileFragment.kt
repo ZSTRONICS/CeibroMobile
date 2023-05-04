@@ -2,26 +2,22 @@ package com.zstronics.ceibro.ui.profile.editprofile
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
-import com.ceibro.permissionx.PermissionX
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentEditProfileBinding
-import com.zstronics.ceibro.extensions.openFilePicker
-import com.zstronics.ceibro.ui.verifynumber.CreateNewPasswordSheet
+import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 
@@ -42,14 +38,7 @@ class EditProfileFragment :
                     Manifest.permission.CAMERA,
                 )
             ) {
-                chooseFile(
-                    arrayOf(
-                        "image/png",
-                        "image/jpg",
-                        "image/jpeg",
-                        "image/*"
-                    )
-                )
+                choosePhoto()
             }
             R.id.saveProfileBtn -> {
                 viewModel.updateProfile(
@@ -72,17 +61,21 @@ class EditProfileFragment :
         }
     }
 
-
-    private fun chooseFile(mimeTypes: Array<String>) {
-        requireActivity().openFilePicker(
-            getString(R.string.screen_edit_profile_text_choose_file), mimeTypes,
-            completionHandler = fileCompletionHandler
-        )
+    private fun choosePhoto() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            val intent = Intent(
+                requireContext(),
+                NavControllerSample::class.java
+            )
+            startActivityForResult(intent, NavControllerSample.PHOTO_PICK_RESULT_CODE)
+        } else {
+            pickPhoto()
+        }
     }
 
-    var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
-        intent?.let { intentData ->
-            intentData.dataString?.let { viewModel.updateProfilePhoto(it, requireContext()) }
+    private fun pickPhoto() {
+        chooseImage { pickedImage ->
+            viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
         }
     }
 
@@ -111,7 +104,7 @@ class EditProfileFragment :
             }
         }
         sheet.onChangePasswordDismiss = {
-            //TODO
+
         }
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "ChangePasswordSheet")
@@ -127,7 +120,6 @@ class EditProfileFragment :
             }
         }
         sheet.onChangeNumberDismiss = {
-            //TODO
         }
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "ChangePhoneNumberSheet")
@@ -165,5 +157,13 @@ class EditProfileFragment :
             )
         }
         Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == NavControllerSample.PHOTO_PICK_RESULT_CODE) {
+            val pickedImage = data?.data
+            viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
+        }
     }
 }

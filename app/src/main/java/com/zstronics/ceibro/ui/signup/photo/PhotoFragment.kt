@@ -58,7 +58,7 @@ class PhotoFragment :
         setBackButtonDispatcher()
     }
 
-    fun choosePhoto() {
+    private fun choosePhoto() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
             val intent = Intent(
                 requireContext(),
