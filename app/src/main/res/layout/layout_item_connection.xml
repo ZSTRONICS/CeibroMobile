@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:layout_margin="@dimen/_5sdp"
+        android:layout_margin="@dimen/_2sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -158,7 +158,7 @@
             android:layout_marginBottom="2dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/contactName"
+            app:layout_constraintEnd_toEndOf="@+id/ceibroLogo"
             app:layout_constraintStart_toStartOf="@+id/connectionImgCard"
             app:layout_constraintTop_toBottomOf="@+id/phoneNumber"
             app:layout_constraintVertical_bias="0.0" />

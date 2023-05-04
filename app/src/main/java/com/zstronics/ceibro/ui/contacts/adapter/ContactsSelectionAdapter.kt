@@ -55,7 +55,7 @@ class ContactsSelectionAdapter @Inject constructor() :
             }
 
             val phoneNumberUtil = PhoneNumberUtil.getInstance()
-            val parsedNumber = phoneNumberUtil.parse(item.countryCode + item.phoneNumber, null)
+            val parsedNumber = phoneNumberUtil.parse(item.phoneNumber, null)
             val formattedNumber =
                 phoneNumberUtil.format(
                     parsedNumber,

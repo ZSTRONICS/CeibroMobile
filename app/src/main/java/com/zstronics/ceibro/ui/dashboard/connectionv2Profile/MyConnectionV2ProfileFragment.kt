@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2ProfileBinding
@@ -28,7 +29,10 @@ class MyConnectionV2ProfileFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.newTaskButton -> navigate(R.id.newTaskFragment)
+            R.id.newTaskButton ->  {
+//                navigate(R.id.newTaskFragment)
+                shortToastNow(resources.getString(R.string.not_available))
+            }
             R.id.closeBtn -> navigateBack()
         }
     }
