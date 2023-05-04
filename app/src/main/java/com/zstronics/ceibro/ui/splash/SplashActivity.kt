@@ -37,7 +37,7 @@ class SplashActivity :
         handler = Handler()
         runnable = object : Runnable {
             override fun run() {
-                if (count == 3) {
+                if (count == 1) {
                     handler.removeCallbacks(this)
 
                     if (viewModel.sessionManager.isUserLoggedIn())

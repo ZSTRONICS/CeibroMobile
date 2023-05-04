@@ -122,14 +122,16 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/connectionRV"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="@dimen/_10sdp"
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
+            android:paddingBottom="2dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/searchBar"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:itemCount="10"
             tools:listitem="@layout/layout_item_connection" />
 

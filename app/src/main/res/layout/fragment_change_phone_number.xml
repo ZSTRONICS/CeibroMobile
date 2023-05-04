@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 app:ccp_countryPreference="pk,ee"
                 app:ccp_excludedCountries=""
-                app:ccp_defaultNameCode="pk"
+                app:ccp_defaultNameCode="ee"
                 app:ccp_textSize="16sp"
                 app:ccp_arrowSize="16dp"
                 app:ccp_showFullName="false"

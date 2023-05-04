@@ -5,7 +5,7 @@ import com.zstronics.ceibro.base.interfaces.IBase
 
 interface IMyConnectionV2 {
     interface State : IBase.State {
-        val isAutoSyncEnabled: MutableLiveData<Boolean>
+        var isAutoSyncEnabled: MutableLiveData<Boolean>
         var searchName: MutableLiveData<String>
     }
 

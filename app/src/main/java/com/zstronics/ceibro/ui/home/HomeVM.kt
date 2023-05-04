@@ -35,8 +35,8 @@ class HomeVM @Inject constructor(
 
     override fun onResume() {
         super.onResume()
-        loadProjects("all")
-        getTasks()
+//        loadProjects("all")
+//        getTasks()
     }
 
     init {

@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:layout_margin="@dimen/_2sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,7 +25,7 @@
             android:id="@+id/connectionImgCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="13dp"
+            android:layout_marginStart="@dimen/_10sdp"
             android:elevation="0dp"
             android:outlineSpotShadowColor="@color/white"
             app:cardBackgroundColor="@color/appLightGrey"
@@ -64,6 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
             android:gravity="start"
@@ -86,10 +86,9 @@
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
             android:maxLines="1"
-            android:text="+372 564 9382"
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
-            android:visibility="@{ceibroConnection.isCeiborUser ? View.INVISIBLE : View.VISIBLE, default = invisible}"
+            android:visibility="@{ceibroConnection.isCeiborUser ? View.INVISIBLE : View.VISIBLE, default = visible}"
             app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
             app:layout_constraintStart_toStartOf="@+id/contactName"
             app:layout_constraintTop_toBottomOf="@+id/contactName" />
@@ -99,17 +98,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="10dp"
             android:layout_marginBottom="16dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
             android:maxLines="1"
-            android:text="@{ceibroConnection.userCeibroData.companyName}"
-            tools:text="@string/company_heading"
+            android:maxLength="24"
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
-            android:visibility="@{ceibroConnection.isCeiborUser ? View.VISIBLE : View.INVISIBLE, default = visible}"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/contactName"
             app:layout_constraintTop_toBottomOf="@+id/contactName" />
 
@@ -127,40 +124,40 @@
             android:text="·"
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
-            android:visibility="@{ceibroConnection.isCeiborUser ? View.VISIBLE : View.INVISIBLE, default = visible}"
+            android:visibility="@{ceibroConnection.isCeiborUser ? View.VISIBLE : View.INVISIBLE, default = gone}"
             app:layout_constraintStart_toEndOf="@+id/companyName"
             app:layout_constraintTop_toBottomOf="@+id/contactName" />
 
 
         <TextView
             android:id="@+id/jobTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
             android:maxLines="1"
-            android:text="@{ceibroConnection.userCeibroData.jobTitle}"
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
-            android:visibility="@{ceibroConnection.isCeiborUser ? View.VISIBLE : View.INVISIBLE, default = visible}"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
             app:layout_constraintStart_toEndOf="@+id/dot"
-            app:layout_constraintTop_toBottomOf="@+id/contactName"
-            tools:text="Job Title" />
+            app:layout_constraintTop_toBottomOf="@+id/contactName" />
 
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginBottom="1dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="2dp"
             android:background="@color/appLightGrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/ceibroLogo"
             app:layout_constraintStart_toStartOf="@+id/connectionImgCard"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNumber"
+            app:layout_constraintTop_toBottomOf="@+id/connectionImgCard"
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.appcompat.widget.AppCompatImageView

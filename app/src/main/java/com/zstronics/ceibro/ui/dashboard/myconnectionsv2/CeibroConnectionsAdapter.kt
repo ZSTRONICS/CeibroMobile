@@ -51,7 +51,7 @@ class CeibroConnectionsAdapter @Inject constructor() :
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
             val context = binding.ceibroLogo.context
-            binding.phoneNumber.text = item.phoneNumber
+
             binding.ceibroConnection = item
             when {
                 item.isCeiborUser && !item.isBlocked -> {
@@ -78,10 +78,16 @@ class CeibroConnectionsAdapter @Inject constructor() :
             if (item.userCeibroData?.profilePic.isNullOrEmpty()) {
                 binding.contactInitials.visibility = View.VISIBLE
                 binding.contactImage.visibility = View.GONE
-                binding.contactInitials.text =
-                    "${item.contactFirstName?.get(0)?.uppercaseChar()}${
-                        item.contactSurName?.get(0)?.uppercaseChar()
-                    }"
+                var initials = ""
+                if (item.contactFirstName?.isNotEmpty() == true) {
+                    initials += item.contactFirstName[0].uppercaseChar()
+
+                }
+                if (item.contactSurName?.isNotEmpty() == true) {
+                    initials += item.contactSurName[0].uppercaseChar()
+                }
+
+                binding.contactInitials.text = initials
             } else {
                 binding.contactInitials.visibility = View.GONE
                 binding.contactImage.visibility = View.VISIBLE
@@ -91,6 +97,33 @@ class CeibroConnectionsAdapter @Inject constructor() :
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.profile_img)
                     .into(binding.contactImage)
+            }
+
+            if (item.isCeiborUser) {
+                binding.phoneNumber.text = ""
+                binding.companyName.text =
+                    if (item.userCeibroData?.companyName.equals("")) {
+                        "N/A"
+                    }
+                    else {
+                        item.userCeibroData?.companyName
+                    }
+                binding.jobTitle.text =
+                    if (item.userCeibroData?.jobTitle.equals("")) {
+                        "N/A"
+                    }
+                    else {
+                        item.userCeibroData?.jobTitle
+                    }
+                binding.companyName.visibility = View.VISIBLE
+                binding.dot.visibility = View.VISIBLE
+                binding.jobTitle.visibility = View.VISIBLE
+            }
+            else {
+                binding.phoneNumber.text = item.phoneNumber
+                binding.companyName.visibility = View.GONE
+                binding.dot.visibility = View.GONE
+                binding.jobTitle.visibility = View.GONE
             }
         }
     }

@@ -216,7 +216,7 @@
                         app:ccpDialog_showTitle="true"
                         app:ccp_arrowSize="16dp"
                         app:ccp_countryPreference="pk,ee"
-                        app:ccp_defaultNameCode="pk"
+                        app:ccp_defaultNameCode="ee"
                         app:ccp_excludedCountries=""
                         app:ccp_flagBorderColor="@color/appLightGrey"
                         app:ccp_showFlag="true"

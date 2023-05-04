@@ -52,7 +52,7 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                     contact = SyncContactsRequest.CeibroContactLight()
                     val displayName = cursor.getString(displayNamePrimaryColumnIndex)
                     if (displayName != null && displayName.isNotEmpty()) {
-                        val names = displayName.removeSpecialChar().split(" ")
+                        val names = displayName.split(" ", limit = 2)
                         if (names.size > 1) {
                             contact.contactFirstName = names[0]
                             contact.contactSurName = names[1]
@@ -61,6 +61,7 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                             contact.contactSurName = ""
                         } else {
                             contact.contactFirstName = "No Name"
+                            contact.contactSurName = ""
                         }
                     }
                     mapThumbnail(cursor, contact, thumbnailColumnIndex)

@@ -89,6 +89,9 @@ class MyConnectionV2VM @Inject constructor(
                 dashboardRepository.syncContactsEnabled(phone ?: "", enabled = true)) {
                 is ApiResponse.Success -> {
                     val contacts = getLocalContacts(resProvider.context)
+                    val userObj = sessionManager.getUserObj()
+                    userObj?.autoContactSync = true
+                    userObj?.let { sessionManager.updateUser(userObj = it) }
                     syncContacts(contacts, onSuccess)
                 }
                 is ApiResponse.Error -> {

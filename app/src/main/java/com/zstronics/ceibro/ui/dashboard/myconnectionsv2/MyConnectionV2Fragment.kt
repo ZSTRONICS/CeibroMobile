@@ -50,9 +50,9 @@ class MyConnectionV2Fragment :
                         // Add your logic here
                         viewModel.syncContactsEnabled {
                             toast("Your all contacts synced with server")
-                            loadConnections()
+                            loadConnections(false)
                             viewModel.sessionManager.updateAutoSync(true)
-                            viewState.isAutoSyncEnabled.postValue(true)
+                            viewState.isAutoSyncEnabled.value = true
                         }
                     }
                     builder.setNegativeButton("Deny") { dialog, which ->
@@ -97,18 +97,23 @@ class MyConnectionV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        loadConnections()
+        loadConnections(true)
         startOneTimeContactSyncWorker(requireContext())
     }
 
-    private fun loadConnections() {
-        mViewDataBinding.connectionRV.loadSkeleton(R.layout.layout_item_connection) {
-            itemCount(10)
-            color(R.color.appLightGrey)
-        }
+    private fun loadConnections(skeletonVisible: Boolean) {
+        if (skeletonVisible) {
+            mViewDataBinding.connectionRV.loadSkeleton(R.layout.layout_item_connection) {
+                itemCount(10)
+                color(R.color.appLightGrey)
+            }
 
-        viewModel.getAllConnectionsV2 {
-            mViewDataBinding.connectionRV.hideSkeleton()
+            viewModel.getAllConnectionsV2 {
+                mViewDataBinding.connectionRV.hideSkeleton()
+            }
+        }
+        else {
+            viewModel.getAllConnectionsV2 { }
         }
     }
 
@@ -124,7 +129,7 @@ class MyConnectionV2Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onContactsSynced(event: LocalEvents.ContactsSynced) {
-        loadConnections()
+        loadConnections(false)
     }
 
     companion object {
