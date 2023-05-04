@@ -14,10 +14,14 @@ import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2Binding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
 import okhttp3.internal.immutableListOf
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 
@@ -94,6 +98,7 @@ class MyConnectionV2Fragment :
     override fun onResume() {
         super.onResume()
         loadConnections()
+        startOneTimeContactSyncWorker(requireContext())
     }
 
     private fun loadConnections() {
@@ -105,6 +110,21 @@ class MyConnectionV2Fragment :
         viewModel.getAllConnectionsV2 {
             mViewDataBinding.connectionRV.hideSkeleton()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onContactsSynced(event: LocalEvents.ContactsSynced) {
+        loadConnections()
     }
 
     companion object {

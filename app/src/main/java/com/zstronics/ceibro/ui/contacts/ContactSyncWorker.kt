@@ -18,6 +18,7 @@ import com.zstronics.ceibro.di.contentTypeValue
 import com.zstronics.ceibro.di.timeoutConnect
 import com.zstronics.ceibro.di.timeoutRead
 import com.zstronics.ceibro.extensions.getLocalContacts
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -25,6 +26,7 @@ import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -50,6 +52,7 @@ class ContactSyncWorker @AssistedInject constructor(
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
                 is ApiResponse.Success -> {
+                    EventBus.getDefault().post(LocalEvents.ContactsSynced)
                     Result.success()
                 }
                 is ApiResponse.Error -> {
@@ -57,7 +60,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
         } else {
-            Result.success()
+            Result.failure()
         }
     }
 

@@ -90,6 +90,8 @@ class DashboardFragment :
 //                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
             }
         }
+
+        startPeriodicContactSyncWorker(requireContext())
     }
 
     private fun handleFileUploaderSocketEvents() {

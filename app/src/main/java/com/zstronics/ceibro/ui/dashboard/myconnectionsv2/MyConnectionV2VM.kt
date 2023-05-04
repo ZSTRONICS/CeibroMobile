@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
 import android.os.Bundle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -11,7 +10,10 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.resourses.IResourceProvider
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel

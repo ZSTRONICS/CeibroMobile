@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -32,6 +33,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import androidx.work.*
 import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
@@ -43,6 +45,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.utils.FileUtils
 import com.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
@@ -50,6 +53,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 private const val ARGUMENT_NAVIGATION_REQUEST_CODE = "NAVIGATION_REQUEST_CODE"
@@ -635,4 +639,45 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    fun startPeriodicContactSyncWorker(context: Context) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.READ_CONTACTS,
+            )
+        ) {
+            // Build the constraints
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val periodicWorkRequest = PeriodicWorkRequest.Builder(
+                ContactSyncWorker::class.java, 15, TimeUnit.MINUTES
+            ).setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                ContactSyncWorker.CONTACT_SYNC_WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                periodicWorkRequest
+            )
+        }
+    }
+
+    fun startOneTimeContactSyncWorker(context: Context) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.READ_CONTACTS,
+            )
+        ) {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ContactSyncWorker::class.java)
+                .setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
+        }
+    }
 }

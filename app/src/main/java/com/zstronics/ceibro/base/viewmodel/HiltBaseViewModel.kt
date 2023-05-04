@@ -156,36 +156,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             .post(fileUriList?.let { LocalEvents.UploadFilesToServer(request, it) })
         removeAllFiles()
     }
-
-    fun startPeriodicContactSyncWorker(context: Context) {
-        // Build the constraints
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val periodicWorkRequest = PeriodicWorkRequest.Builder(
-            ContactSyncWorker::class.java, 15, TimeUnit.MINUTES
-        ).setConstraints(constraints)
-            .build()
-
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            ContactSyncWorker.CONTACT_SYNC_WORKER_TAG,
-            ExistingPeriodicWorkPolicy.KEEP,
-            periodicWorkRequest
-        )
-    }
-
-    fun syncOneTimeContacts(context: Context) {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ContactSyncWorker::class.java)
-            .setConstraints(constraints)
-            .build()
-
-        WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
-    }
 }
 
 

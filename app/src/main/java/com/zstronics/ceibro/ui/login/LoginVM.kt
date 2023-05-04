@@ -5,7 +5,6 @@ import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -53,7 +52,6 @@ class LoginVM @Inject constructor(
                     OneSignal.pauseInAppMessages(false)
                     loading(false, "Login successful")
                     if (response.data.user.autoContactSync) {
-                        startPeriodicContactSyncWorker(resourceProvider.context)
                         onLoggedIn.invoke()
                     } else {
                         getSavedContactsToStoreInSharePreference(onLoggedIn)

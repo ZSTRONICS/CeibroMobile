@@ -88,4 +88,5 @@ object LocalEvents {
     class InvitationRefreshEvent
 
     class LogoutUserEvent
+    object ContactsSynced
 }
