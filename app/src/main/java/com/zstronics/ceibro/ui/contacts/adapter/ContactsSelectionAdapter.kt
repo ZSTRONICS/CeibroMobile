@@ -67,6 +67,7 @@ class ContactsSelectionAdapter @Inject constructor() :
             if (item.beneficiaryPictureUrl.isEmpty()) {
                 binding.contactInitials.visibility = View.VISIBLE
                 binding.contactImage.visibility = View.GONE
+
                 binding.contactInitials.text =
                     "${item.contactFirstName[0]?.uppercaseChar()}${
                         item.contactSurName[0]?.uppercaseChar()

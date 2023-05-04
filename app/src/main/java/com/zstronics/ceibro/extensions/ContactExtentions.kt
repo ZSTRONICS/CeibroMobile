@@ -56,9 +56,12 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                         if (names.size > 1) {
                             contact.contactFirstName = names[0]
                             contact.contactSurName = names[1]
-                        } else {
+                        } else if (names.isNotEmpty()) {
                             contact.contactFirstName = names[0]
                             contact.contactSurName = names[0]
+                        } else {
+                            contact.contactFirstName = "No Name"
+                            contact.contactSurName = "No Name"
                         }
                     }
                     mapThumbnail(cursor, contact, thumbnailColumnIndex)
