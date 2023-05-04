@@ -52,7 +52,7 @@ class MyConnectionV2ProfileVM @Inject constructor(
     fun unblockUser(contactId: String, callBack: () -> Unit) {
         loading(true)
         launch {
-            when (val response = dashboardRepository.blockUser(contactId)) {
+            when (val response = dashboardRepository.unblockUser(contactId)) {
                 is ApiResponse.Success -> {
                     callBack.invoke()
                     loading(false)

@@ -794,4 +794,5 @@
     <string name="confirmation_code_sent_to_your_phone">Confirmation code sent to your phone</string>
     <string name="block_user">Block User</string>
     <string name="unblock_user">Unblock User</string>
+    <string name="not_available">Not available</string>
 </resources>

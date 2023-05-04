@@ -82,7 +82,7 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                                 val pn =
                                     PhoneNumberUtil.getInstance()
                                         .parse(phoneNumber, getDefaultCountryCode(context))
-                                contact.phoneNumber = pn.nationalNumber.toString()
+                                contact.phoneNumber = "+${pn.countryCode}${pn.nationalNumber.toString()}"
                                 contact.countryCode = "+${pn.countryCode}"
                             } catch (e: Exception) {
                             }
