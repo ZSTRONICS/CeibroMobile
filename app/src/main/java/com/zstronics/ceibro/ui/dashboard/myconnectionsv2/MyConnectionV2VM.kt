@@ -22,9 +22,9 @@ class MyConnectionV2VM @Inject constructor(
     private val resProvider: IResourceProvider
 ) : HiltBaseViewModel<IMyConnectionV2.State>(), IMyConnectionV2.ViewModel {
     val user = sessionManager.getUser().value
-    private val _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
         MutableLiveData()
-    val allConnections: LiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+    val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
         _allConnections
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -41,7 +41,9 @@ class MyConnectionV2VM @Inject constructor(
                     callBack.invoke()
                     val contacts = response.data.contacts.sortedByDescending { it.isCeiborUser }
                     originalConnections = contacts
-                    _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+                    if (contacts.isNotEmpty()) {
+                        _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+                    }
                 }
 
                 is ApiResponse.Error -> {
@@ -96,7 +98,10 @@ class MyConnectionV2VM @Inject constructor(
 
     fun filterContacts(search: String) {
         if (search.isEmpty()) {
-            _allConnections.postValue(originalConnections as MutableList<AllCeibroConnections.CeibroConnection>?)
+            if (originalConnections.isNotEmpty()) {
+                _allConnections.postValue(originalConnections as MutableList<AllCeibroConnections.CeibroConnection>?)
+            }
+
             return
         }
         val filtered = originalConnections.filter {

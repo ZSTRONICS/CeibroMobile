@@ -8,6 +8,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
+import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -28,8 +29,9 @@ class SignUpVM @Inject constructor(
             phoneNumber.value = bundle?.getString("phoneNumber")
             phoneCode.value = bundle?.getString("phoneCode")
         }
+//        doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
+//            viewState.password.value.toString(), viewState.confirmPassword.value.toString())
     }
-
 
     override fun doSignUp(
         firstName: String,
