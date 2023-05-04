@@ -76,7 +76,9 @@ class MyConnectionV2Fragment :
 
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
-            adapter.setList(it)
+            if (it != null) {
+                adapter.setList(it)
+            }
         }
         adapter.itemClickListener =
             { _: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
