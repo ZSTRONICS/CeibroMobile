@@ -26,10 +26,12 @@ class ContactsSelectionVM @Inject constructor(
     private val _contacts: MutableLiveData<List<SyncContactsRequest.CeibroContactLight>> =
         MutableLiveData()
     val contacts: LiveData<List<SyncContactsRequest.CeibroContactLight>> = _contacts
+    var originalContacts = listOf<SyncContactsRequest.CeibroContactLight>()
 
     fun loadContacts() {
         launch(Dispatcher.LongOperation) {
             val contacts = getLocalContacts(resProvider.context)
+            originalContacts = contacts
             _contacts.postValue(contacts)
         }
     }
@@ -78,5 +80,23 @@ class ContactsSelectionVM @Inject constructor(
                 }
             }
         }
+    }
+
+    fun filterContacts(search: String) {
+        if (search.isEmpty()) {
+            if (originalContacts.isNotEmpty()) {
+                _contacts.postValue(originalContacts as MutableList<SyncContactsRequest.CeibroContactLight>?)
+            }
+
+            return
+        }
+        val filtered = originalContacts.filter {
+            it.contactFirstName.lowercase().contains(search) || it.contactSurName.lowercase()
+                .contains(search) || it.phoneNumber.contains(search)
+        }
+        if (filtered.isNotEmpty())
+            _contacts.postValue(filtered as MutableList<SyncContactsRequest.CeibroContactLight>?)
+        else
+            _contacts.postValue(mutableListOf())
     }
 }

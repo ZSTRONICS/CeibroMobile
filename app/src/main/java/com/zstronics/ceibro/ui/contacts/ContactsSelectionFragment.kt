@@ -83,6 +83,10 @@ class ContactsSelectionFragment :
             builder.show()
             viewModel.loadContacts()
         }
+
+        viewState.searchName.observe(viewLifecycleOwner) { search ->
+            viewModel.filterContacts(search.lowercase())
+        }
     }
 
     private fun navigateToDashboard() {
