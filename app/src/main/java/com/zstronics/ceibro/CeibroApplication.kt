@@ -37,7 +37,6 @@ open class CeibroApplication : Application(), Configuration.Provider {
         // OneSignal Initialization
         OneSignal.initWithContext(this)
         OneSignal.setAppId(BuildConfig.ONE_SIGNAL_ID)
-        OneSignal.promptForPushNotifications()
     }
 
     companion object {

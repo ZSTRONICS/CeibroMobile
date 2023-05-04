@@ -29,7 +29,7 @@ class MyConnectionV2ProfileFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.newTaskButton ->  {
+            R.id.newTaskButton -> {
 //                navigate(R.id.newTaskFragment)
                 shortToastNow(resources.getString(R.string.not_available))
             }
@@ -74,15 +74,25 @@ class MyConnectionV2ProfileFragment :
                 binding.companyTV.visibility = View.VISIBLE
                 binding.emailTV.text = item.userCeibroData.email
                 binding.companyTV.text = item.userCeibroData.jobTitle
+                binding.companyTV.text =
+                    if (item.userCeibroData.companyName.equals("")) {
+                        "N/A"
+                    } else {
+                        item.userCeibroData.companyName
+                    }
             }
 
             if (item.userCeibroData?.profilePic.isNullOrEmpty()) {
                 binding.contactInitials.visibility = View.VISIBLE
                 binding.contactImage.visibility = View.GONE
-                binding.contactInitials.text =
-                    "${item.contactFirstName?.get(0)?.uppercaseChar()}${
-                        item.contactSurName?.get(0)?.uppercaseChar()
-                    }"
+                var initials = ""
+                if (item.contactFirstName?.isNotEmpty() == true) {
+                    initials += item.contactFirstName[0].uppercaseChar()
+                }
+                if (item.contactSurName?.isNotEmpty() == true) {
+                    initials += item.contactSurName[0].uppercaseChar()
+                }
+                binding.contactInitials.text = initials
             } else {
                 binding.contactInitials.visibility = View.GONE
                 binding.contactImage.visibility = View.VISIBLE

@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
-import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
-import com.zstronics.ceibro.base.extensions.longToastNow
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
@@ -19,7 +18,6 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 
 @AndroidEntryPoint
 class LoginFragment :
@@ -104,7 +102,7 @@ class LoginFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.editTextPhone)
+        OneSignal.promptForPushNotifications()
     }
 }
