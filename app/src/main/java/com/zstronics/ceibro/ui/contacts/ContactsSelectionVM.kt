@@ -38,14 +38,13 @@ class ContactsSelectionVM @Inject constructor(
         selectedContacts: List<SyncContactsRequest.CeibroContactLight>,
         onSuccess: () -> Unit
     ) {
-        val userId = sessionManager.getUser().value?.id
-//        val userId = "644e5281e85afc8c725b6abc"
+        val userId = sessionManager.getUserId()
         launch {
             val request = SyncContactsRequest(contacts = selectedContacts)
             // Handle the API response
             loading(true)
             when (val response =
-                dashboardRepository.syncContacts(userId ?: "", request)) {
+                dashboardRepository.syncContacts(userId, request)) {
                 is ApiResponse.Success -> {
                     loading(false)
                     onSuccess.invoke()
