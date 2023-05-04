@@ -6,10 +6,8 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
@@ -35,7 +33,7 @@ class ProfileFragment :
             R.id.editProfileBtn -> navigateToEditProfile()
             107 -> navigateToAdminsPanel()
             R.id.logoutBtn -> {
-                viewModel.endUserSession()
+                viewModel.endUserSession(requireContext())
                 launchActivityWithFinishAffinity<NavHostPresenterActivity>(
                     options = Bundle(),
                     clearPrevious = true
@@ -68,12 +66,15 @@ class ProfileFragment :
             )
         }
     }
+
     private fun navigateToConnections() {
         navigate(R.id.connectionsFragment)
     }
+
     private fun navigateToInvitations() {
         navigate(R.id.invitationsFragment)
     }
+
     private fun navigateToAdminsPanel() {
         navigate(R.id.mainAdminFragment)
     }

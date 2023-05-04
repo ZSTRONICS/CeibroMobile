@@ -29,8 +29,9 @@ class SignUpVM @Inject constructor(
             phoneNumber.value = bundle?.getString("phoneNumber")
             phoneCode.value = bundle?.getString("phoneCode")
         }
+//        doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
+//            viewState.password.value.toString(), viewState.confirmPassword.value.toString())
     }
-
 
     override fun doSignUp(
         firstName: String,
@@ -41,17 +42,25 @@ class SignUpVM @Inject constructor(
         password: String,
         onSignedUp: () -> Unit
     ) {
-        val request = SignUpRequest(firstName = firstName, surName = surname, email = email, companyName = companyName, jobTitle = jobTitle, password = password)
+        val request = SignUpRequest(
+            firstName = firstName,
+            surName = surname,
+            email = email,
+            companyName = companyName,
+            jobTitle = jobTitle,
+            password = password
+        )
         launch {
             loading(true)
-            when (val response = repository.signup(viewState.phoneNumber.value.toString(), request)) {
+            when (val response =
+                repository.signup(viewState.phoneNumber.value.toString(), request)) {
 
                 is ApiResponse.Success -> {
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,
                         "",
-                        false
+                        true
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)

@@ -4,17 +4,16 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Handler
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
 import android.widget.PopupWindow
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import androidx.work.WorkManager
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
@@ -30,6 +29,7 @@ class ProfileVM @Inject constructor(
     private val taskRepository: TaskRepository
 ) : HiltBaseViewModel<IProfile.State>(), IProfile.ViewModel {
     var user = sessionManager.getUser().value
+
     init {
         EventBus.getDefault().register(this)
         sessionManager.setUser()
@@ -54,8 +54,7 @@ class ProfileVM @Inject constructor(
 
         if (user?.role.equals("admin", true)) {
             menuAdmin.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             menuAdmin.visibility = View.GONE
         }
 
@@ -86,12 +85,15 @@ class ProfileVM @Inject constructor(
     }
 
 
-    override fun endUserSession() {
+    override fun endUserSession(context: Context) {
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
         }
         sessionManager.endUserSession()
+        // Cancel all periodic work with the tag "contactSync"
+        WorkManager.getInstance(context)
+            .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
     }
 
 

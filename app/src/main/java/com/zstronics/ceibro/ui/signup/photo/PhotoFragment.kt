@@ -9,14 +9,12 @@ import com.bumptech.glide.Glide
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentPhotoBinding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
+import io.ak1.pix.helpers.PixBus
+import io.ak1.pix.helpers.PixEventCallback
 
 @AndroidEntryPoint
 class PhotoFragment :
@@ -42,7 +40,7 @@ class PhotoFragment :
                     }
                 } else {
                     viewModel.updatePhoto(requireContext()) {
-                        navigateToDashboard()
+                        navigate(R.id.contactsSelectionFragment)
                     }
                 }
             }
@@ -50,7 +48,7 @@ class PhotoFragment :
                 pickPhoto()
             }
             R.id.skipBtn -> {
-                navigateToDashboard()
+                navigate(R.id.contactsSelectionFragment)
             }
         }
     }
@@ -66,16 +64,23 @@ class PhotoFragment :
         }
     }
 
-    private fun navigateToDashboard() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.homeFragment
-            )
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setBackButtonDispatcher()
+        PixBus.results {
+            when (it.status) {
+                PixEventCallback.Status.SUCCESS -> {
+                    try {
+                        viewModel.selectedUri = it.data[0]
+                        viewState.isPhotoPicked.postValue(true)
+                    } catch (e: Exception) {
+
+                    }
+                }
+                PixEventCallback.Status.BACK_PRESSED -> {
+
+                }
+            }
         }
     }
 

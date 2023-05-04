@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.dashboard
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.KEY_USER
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -27,8 +28,12 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
-import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.resourses.IResourceProvider
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,7 +53,8 @@ class DashboardVM @Inject constructor(
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
     private val authRepository: IAuthRepository,
-    val fileAttachmentsDataSource: FileAttachmentsDataSource
+    val fileAttachmentsDataSource: FileAttachmentsDataSource,
+    val iResourceProvider: IResourceProvider
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
 
     override fun onResume() {
@@ -64,6 +70,8 @@ class DashboardVM @Inject constructor(
         launch {
             repository.syncTasksAndSubTasks()
         }
+        val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
+        startPeriodicContactSyncWorker(iResourceProvider.context)
     }
 
     init {
@@ -203,9 +211,14 @@ class DashboardVM @Inject constructor(
                         val newComment =
                             gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
                                 arguments,
-                                object : TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
+                                object :
+                                    TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
                             ).data
-                        localSubTask.addFilesUnderComment(newComment.subTaskId, newComment, newComment.id)
+                        localSubTask.addFilesUnderComment(
+                            newComment.subTaskId,
+                            newComment,
+                            newComment.id
+                        )
                         EventBus.getDefault()
                             .post(LocalEvents.NewSubTaskComment(newComment, newComment.id))
 
@@ -220,7 +233,7 @@ class DashboardVM @Inject constructor(
                             )
                         )
                     }
-                }  else if (socketData.module == "project") {
+                } else if (socketData.module == "project") {
                     when (socketData.eventType) {
                         SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
                             val newProject =
@@ -249,7 +262,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<ProjectCreatedSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.ProjectCreatedEvent(updatedProject))
+                            EventBus.getDefault()
+                                .post(LocalEvents.ProjectCreatedEvent(updatedProject))
 
                             EventBus.getDefault().post(
                                 LocalEvents.CreateNotification(
@@ -285,9 +299,9 @@ class DashboardVM @Inject constructor(
                                         object : TypeToken<RoleCreatedSocketResponse>() {}.type
                                     ).data
 
-                                EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(updatedRole))
-                            }
-                            catch (e: Exception) {
+                                EventBus.getDefault()
+                                    .post(LocalEvents.RoleCreatedEvent(updatedRole))
+                            } catch (e: Exception) {
                                 print("Some data error")
                             }
                         }
@@ -298,7 +312,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<RoleRefreshSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
+                            EventBus.getDefault()
+                                .post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
                         }
 
                         SocketHandler.ProjectEvent.PROJECT_GROUP_CREATED.name -> {
@@ -318,9 +333,9 @@ class DashboardVM @Inject constructor(
                                         object : TypeToken<GroupCreatedSocketResponse>() {}.type
                                     ).data
 
-                                EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
-                            }
-                            catch (e: Exception) {
+                                EventBus.getDefault()
+                                    .post(LocalEvents.GroupCreatedEvent(updatedGroup))
+                            } catch (e: Exception) {
                                 print("Some data error")
                             }
                         }
@@ -331,7 +346,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<GroupRefreshSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.GroupRefreshEvent(refreshGroup.projectId))
+                            EventBus.getDefault()
+                                .post(LocalEvents.GroupRefreshEvent(refreshGroup.projectId))
                         }
 
                         SocketHandler.ProjectEvent.PROJECT_MEMBERS_ADDED.name -> {
@@ -341,7 +357,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<MemberAddedSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.ProjectMemberAddedEvent(newMember))
+                            EventBus.getDefault()
+                                .post(LocalEvents.ProjectMemberAddedEvent(newMember))
                         }
                         SocketHandler.ProjectEvent.PROJECT_MEMBERS_UPDATED.name -> {
                             val updatedMember =
@@ -350,7 +367,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<MemberUpdatedSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
+                            EventBus.getDefault()
+                                .post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
                         }
                         SocketHandler.ProjectEvent.REFRESH_PROJECT_MEMBERS.name -> {
                             val refreshMember =
@@ -359,7 +377,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<MemberRefreshSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
+                            EventBus.getDefault()
+                                .post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
                         }
                         SocketHandler.ProjectEvent.REFRESH_ROOT_DOCUMENTS.name -> {
                             val refreshRootDoc =
@@ -368,7 +387,8 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<RefreshRootDocumentSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
+                            EventBus.getDefault()
+                                .post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
                         }
                         SocketHandler.ProjectEvent.REFRESH_FOLDER.name -> {
                             val refreshFolder =
@@ -377,7 +397,12 @@ class DashboardVM @Inject constructor(
                                     object : TypeToken<RefreshFolderSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.RefreshFolderEvent(refreshFolder.projectId, refreshFolder.folderId))
+                            EventBus.getDefault().post(
+                                LocalEvents.RefreshFolderEvent(
+                                    refreshFolder.projectId,
+                                    refreshFolder.folderId
+                                )
+                            )
                         }
                     }
                 } else if (socketData.module == "user") {
