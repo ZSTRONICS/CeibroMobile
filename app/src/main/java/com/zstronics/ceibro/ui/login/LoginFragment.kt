@@ -7,7 +7,6 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -103,6 +102,6 @@ class LoginFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.editTextPhone)
-        OneSignal.promptForPushNotifications()
+//        OneSignal.promptForPushNotifications()
     }
 }

@@ -155,4 +155,12 @@ class SessionManager constructor(
             updateUser(user)
         }
     }
+
+    fun isFirstTimeLaunch():Boolean {
+        return sharedPreferenceManager.getValueBoolean(KEY_IS_FIRST_TIME_LAUNCH, true)
+    }
+
+    fun setNotFirstTimeLaunch() {
+        sharedPreferenceManager.saveBoolean(KEY_IS_FIRST_TIME_LAUNCH, false)
+    }
 }

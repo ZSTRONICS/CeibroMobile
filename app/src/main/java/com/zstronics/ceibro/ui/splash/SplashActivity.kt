@@ -1,9 +1,11 @@
 package com.zstronics.ceibro.ui.splash
 
+import android.Manifest
 import android.os.Bundle
 import android.os.Handler
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
+import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.activity.BaseBindingViewModelActivity
@@ -12,12 +14,15 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.ActivitySplashBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashActivity :
@@ -32,8 +37,28 @@ class SplashActivity :
     override val bindingViewStateVariableId = BR.viewState
     override val layoutResId: Int = R.layout.activity_splash
 
-    override fun postExecutePendingBindings(savedInstanceState: Bundle?) {
+    @Inject
+    lateinit var sessionManager: SessionManager
 
+    override fun postExecutePendingBindings(savedInstanceState: Bundle?) {
+        if (sessionManager.isFirstTimeLaunch()) {
+            checkPermission(
+                immutableListOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.READ_CONTACTS,
+                )
+            ) { deniedList ->
+                sessionManager.setNotFirstTimeLaunch()
+                startSplashAnimation()
+            }
+        } else {
+            startSplashAnimation()
+        }
+    }
+
+    private fun startSplashAnimation() {
         handler = Handler()
         runnable = object : Runnable {
             override fun run() {
@@ -120,5 +145,20 @@ class SplashActivity :
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    private fun checkPermission(
+        permissionsList: List<String>,
+        function: (deniedList: List<String>) -> Unit
+    ) {
+        PermissionX.init(this).permissions(
+            permissionsList
+        ).request { allGranted, grantedList, deniedList ->
+            if (allGranted) {
+                function.invoke(deniedList)
+            } else {
+                function.invoke(deniedList)
+            }
+        }
     }
 }
