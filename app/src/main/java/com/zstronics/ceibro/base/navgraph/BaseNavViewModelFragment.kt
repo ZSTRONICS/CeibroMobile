@@ -316,7 +316,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
         PermissionX.init(this).permissions(
             permissionsList
-        ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList, beforeRequest ->
+        ).onExplainRequestReason { scope, deniedList, beforeRequest ->
             if (beforeRequest)
                 scope.showRequestReasonDialog(
                     deniedList,

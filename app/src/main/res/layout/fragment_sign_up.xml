@@ -246,6 +246,7 @@
                         android:textSize="15.5sp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:enabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/ccp"
@@ -272,6 +273,7 @@
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:endIconMode="password_toggle"
+                    app:errorIconDrawable="@null"
                     android:layout_marginTop="@dimen/_12sdp"
                     app:layout_constraintEnd_toEndOf="@+id/etPhoneLayout"
                     app:layout_constraintStart_toStartOf="@+id/etPhoneLayout"
@@ -287,9 +289,7 @@
                         android:textSize="15sp"
                         errorEnabledMaxLength="@{true}"
                         errorEnabledPassRegex="@{true}"
-                        errorEnabledPassword="@{true}"
                         app:validateMaxLength="@{30}"
-                        app:validatePassword="@{etConfirmPasswordField}"
                         app:validatePasswordRegex="@{`^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$`}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -304,6 +304,7 @@
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:endIconMode="password_toggle"
+                    app:errorIconDrawable="@null"
                     android:layout_marginTop="@dimen/_10sdp"
                     app:layout_constraintEnd_toEndOf="@+id/etPassword"
                     app:layout_constraintStart_toStartOf="@+id/etPassword"
