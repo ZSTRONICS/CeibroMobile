@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.google.i18n.phonenumbers.PhoneNumberUtil
@@ -97,7 +98,10 @@ class EditProfileFragment :
 
     private fun showChangePasswordBottomSheet() {
         val sheet = ChangePasswordSheet()
-
+        sheet.dialog?.window?.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        );
         sheet.onChangePassword = { oldPassword, newPassword ->
             viewModel.changePassword(oldPassword, newPassword) {
                 logoutUser()

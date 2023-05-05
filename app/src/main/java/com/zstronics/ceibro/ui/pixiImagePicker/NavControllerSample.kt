@@ -34,6 +34,11 @@ class NavControllerSample : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
     companion object {
         const val PHOTO_PICK_RESULT_CODE = 9876
     }

@@ -312,6 +312,7 @@
                         android:background="@drawable/input_field_rectangle_half_corner"
                         android:clickable="false"
                         android:ems="10"
+                        android:enabled="false"
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/phone_number_heading"

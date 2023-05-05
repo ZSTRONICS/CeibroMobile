@@ -4,24 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
-import com.zstronics.ceibro.base.extensions.gone
-import com.zstronics.ceibro.base.extensions.visible
-import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
-import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberRequest
-import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
-import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.databinding.FragmentChangePasswordBinding
-import com.zstronics.ceibro.databinding.FragmentCreateNewPasswordBinding
-import com.zstronics.ceibro.databinding.FragmentEditProjectMemberBinding
 
 class ChangePasswordSheet constructor() : BottomSheetDialogFragment() {
     lateinit var binding: FragmentChangePasswordBinding
