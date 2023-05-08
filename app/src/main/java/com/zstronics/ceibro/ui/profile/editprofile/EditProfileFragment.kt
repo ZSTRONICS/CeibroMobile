@@ -122,18 +122,18 @@ class EditProfileFragment :
                         viewState.userPhoneNumber.value.toString() != viewModel.user?.phoneNumber ||
                         viewState.userCompanyName.value.toString() != viewModel.user?.companyName ||
                         viewState.userJobTitle.value.toString() != viewModel.user?.jobTitle) &&
-                        viewState.userFirstName.value.toString().length >= 2 &&
-                        viewState.userSurname.value.toString().length >= 2 &&
+                        viewState.userFirstName.value.toString().isNotEmpty() &&
+                        viewState.userSurname.value.toString().isNotEmpty() &&
                         viewState.userEmail.value.toString().isEmail()
 
             mViewDataBinding.etNameField.error =
-                if (viewState.userFirstName.value.toString().length < 2) {
+                if (viewState.userFirstName.value.toString().isEmpty()) {
                     resources.getString(R.string.error_message_name_validation)
                 } else {
                     null
                 }
             mViewDataBinding.etSurnameField.error =
-                if (viewState.userSurname.value.toString().length < 2) {
+                if (viewState.userSurname.value.toString().isEmpty()) {
                     resources.getString(R.string.error_message_name_validation)
                 } else {
                     null
@@ -219,9 +219,7 @@ class EditProfileFragment :
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == NavControllerSample.PHOTO_PICK_RESULT_CODE) {
             val pickedImage = data?.data
-            if (pickedImage == null || pickedImage.equals("")) {
-                //Do nothing
-            } else {
+            if (pickedImage != null && !pickedImage.equals("")) {
                 viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
             }
 

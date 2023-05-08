@@ -106,12 +106,12 @@ class HomeVM @Inject constructor(
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProjectRefreshEvent(event: LocalEvents.ProjectRefreshEvent?) {
-        loadProjects("all")
+//        loadProjects("all")
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
-        getTasks()
+//        getTasks()
     }
 
     override fun onCleared() {

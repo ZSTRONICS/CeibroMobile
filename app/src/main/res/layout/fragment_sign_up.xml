@@ -71,6 +71,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/first_name_required"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     android:layout_marginStart="@dimen/_15sdp"
@@ -87,7 +88,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.firstName}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,6 +100,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/surname_required"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     android:layout_marginTop="@dimen/_11sdp"
@@ -112,7 +115,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.surname}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -123,6 +127,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/email_required"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     android:layout_marginTop="@dimen/_10sdp"
@@ -136,10 +141,9 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="textEmailAddress"
-                        errorEnabledType="@{true}"
-                        app:validateType="@{`email`}"
                         android:text="@={viewState.email}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -150,6 +154,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/company_name_optional"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     android:layout_marginTop="@dimen/_10sdp"
@@ -164,7 +169,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.companyName}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -175,6 +181,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/job_title_optional"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     android:layout_marginTop="@dimen/_10sdp"
@@ -189,7 +196,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.jobTitle}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -223,7 +231,7 @@
                         app:ccp_showFullName="false"
                         app:ccp_showNameCode="false"
                         app:ccp_showPhoneCode="true"
-                        app:ccp_textSize="16sp"
+                        app:ccp_textSize="15.5sp"
                         app:ccp_clickable="false"
                         android:focusable="false"
                         app:layout_constraintBottom_toBottomOf="@+id/etPhone"
@@ -270,6 +278,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/password_required"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:endIconMode="password_toggle"
@@ -287,6 +296,7 @@
                         android:inputType="textPassword"
                         android:text="@={viewState.password}"
                         android:textSize="15sp"
+                        android:textColor="@color/black"
                         errorEnabledMaxLength="@{true}"
                         errorEnabledPassRegex="@{true}"
                         app:validateMaxLength="@{30}"
@@ -301,6 +311,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/confirm_password_required"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:endIconMode="password_toggle"
@@ -318,6 +329,7 @@
                         android:inputType="textPassword"
                         android:text="@={viewState.confirmPassword}"
                         android:textSize="15sp"
+                        android:textColor="@color/black"
                         errorEnabledMaxLength="@{true}"
                         errorEnabledPassword="@{true}"
                         app:validateMaxLength="@{30}"
@@ -332,7 +344,7 @@
                     android:layout_marginTop="@dimen/_24sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
                     android:background="@drawable/signin_button_back"
-                    android:enabled="@{viewModel.validator.isValidate , default = false}"
+                    android:enabled="false"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="40dp"

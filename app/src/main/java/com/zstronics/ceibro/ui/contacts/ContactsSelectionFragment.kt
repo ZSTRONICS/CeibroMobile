@@ -79,6 +79,7 @@ class ContactsSelectionFragment :
                 viewModel.syncContactsEnabled(false) {
 
                 }
+                mViewDataBinding.contactSelectionParentLayout.visibility = View.VISIBLE
             }
             builder.show()
             viewModel.loadContacts()
