@@ -4,6 +4,9 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.viewModels
@@ -12,7 +15,9 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
+import com.zstronics.ceibro.base.extensions.isEmail
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
@@ -80,6 +85,7 @@ class EditProfileFragment :
         }
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -93,6 +99,52 @@ class EditProfileFragment :
 
         mViewDataBinding.ccp.setCountryForPhoneCode(countryCode)
         mViewDataBinding.etPhone.setText(nationalSignificantNumber.toString())
+
+        mViewDataBinding.etNameField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etSurnameField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etEmailField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etCompanyField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etJobField.addTextChangedListener(textWatcher)
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            // This method is called to notify you that the text has been changed and processed
+        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // This method is called to notify you that the text is about to change
+        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            mViewDataBinding.saveProfileBtn.isEnabled =
+                (viewState.userFirstName.value.toString() != viewModel.user?.firstName ||
+                        viewState.userSurname.value.toString() != viewModel.user?.surName ||
+                        viewState.userEmail.value.toString() != viewModel.user?.email ||
+                        viewState.userPhoneNumber.value.toString() != viewModel.user?.phoneNumber ||
+                        viewState.userCompanyName.value.toString() != viewModel.user?.companyName ||
+                        viewState.userJobTitle.value.toString() != viewModel.user?.jobTitle) &&
+                        viewState.userFirstName.value.toString().isNotEmpty() &&
+                        viewState.userSurname.value.toString().isNotEmpty() &&
+                        viewState.userEmail.value.toString().isEmail()
+
+            mViewDataBinding.etNameField.error =
+                if (viewState.userFirstName.value.toString().isEmpty()) {
+                    resources.getString(R.string.error_message_name_validation)
+                } else {
+                    null
+                }
+            mViewDataBinding.etSurnameField.error =
+                if (viewState.userSurname.value.toString().isEmpty()) {
+                    resources.getString(R.string.error_message_name_validation)
+                } else {
+                    null
+                }
+            mViewDataBinding.etEmailField.error =
+                if (!viewState.userEmail.value.toString().isEmail()) {
+                    resources.getString(R.string.error_message_email_validation)
+                } else {
+                    null
+                }
+        }
     }
 
 
@@ -167,7 +219,10 @@ class EditProfileFragment :
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == NavControllerSample.PHOTO_PICK_RESULT_CODE) {
             val pickedImage = data?.data
-            viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
+            if (pickedImage != null && !pickedImage.equals("")) {
+                viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
+            }
+
         }
     }
 }

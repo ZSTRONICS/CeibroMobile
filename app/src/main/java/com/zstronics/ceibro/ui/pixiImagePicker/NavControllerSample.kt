@@ -25,11 +25,16 @@ class NavControllerSample : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         PixBus.results {
-            if (it.status == PixEventCallback.Status.SUCCESS) {
-                val intent = Intent()
-                intent.data = it.data[0]
-                setResult(PHOTO_PICK_RESULT_CODE, intent)
-                finish()
+            when (it.status) {
+                PixEventCallback.Status.SUCCESS -> {
+                    val intent = Intent()
+                    intent.data = it.data[0]
+                    setResult(PHOTO_PICK_RESULT_CODE, intent)
+                    finish()
+                }
+                PixEventCallback.Status.BACK_PRESSED -> {
+                    finish()
+                }
             }
         }
     }

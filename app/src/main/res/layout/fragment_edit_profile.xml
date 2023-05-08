@@ -77,6 +77,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="15sp"
+                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
@@ -151,6 +152,7 @@
                     android:layout_marginEnd="@dimen/_15sdp"
                     android:hint="@string/first_name"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -164,7 +166,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.userFirstName}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,6 +179,7 @@
                     android:layout_marginTop="@dimen/_11sdp"
                     android:hint="@string/surname_heading"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="@+id/etName"
@@ -189,7 +193,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.userSurname}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -201,6 +206,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/email"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="@+id/etSurname"
@@ -214,7 +220,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="textEmailAddress"
                         android:text="@={viewState.userEmail}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -226,6 +233,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/company_name_optional"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="@+id/etEmail"
@@ -239,7 +247,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.userCompanyName}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -251,6 +260,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/job_title_optional"
                     android:textColorHint="@color/grey"
+                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="@+id/etCompany"
@@ -264,7 +274,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.userJobTitle}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 

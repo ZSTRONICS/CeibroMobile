@@ -15,8 +15,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contactSelectionParentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:background="@color/white">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -49,7 +51,7 @@
             android:fontFamily="@font/inter_medium"
             android:text="@string/contact_list_permission_text"
             android:textColor="@color/black_01"
-            android:textSize="@dimen/_13sdp"
+            android:textSize="@dimen/_12sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />

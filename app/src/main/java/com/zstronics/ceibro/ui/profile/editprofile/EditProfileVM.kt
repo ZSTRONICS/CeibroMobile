@@ -31,6 +31,7 @@ class EditProfileVM @Inject constructor(
     private val taskRepository: TaskRepository,
     val sessionManager: SessionManager
 ) : HiltBaseViewModel<IEditProfile.State>(), IEditProfile.ViewModel, IValidator {
+    val user = sessionManager.getUser().value
 
     init {
         EventBus.getDefault().register(this)

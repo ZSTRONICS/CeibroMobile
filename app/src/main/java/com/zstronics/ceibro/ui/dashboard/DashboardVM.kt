@@ -59,17 +59,17 @@ class DashboardVM @Inject constructor(
 
     override fun onResume() {
         super.onResume()
-        getOverallConnectionCount()
+//        getOverallConnectionCount()
     }
 
     init {
         sessionManager.setUser()
-        sessionManager.setProject()
-        loadProjectsWithMembers()
-        getOverallConnectionCount()
-        launch {
-            repository.syncTasksAndSubTasks()
-        }
+//        sessionManager.setProject()
+//        loadProjectsWithMembers()
+//        getOverallConnectionCount()
+//        launch {
+//            repository.syncTasksAndSubTasks()
+//        }
         val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
     }
 

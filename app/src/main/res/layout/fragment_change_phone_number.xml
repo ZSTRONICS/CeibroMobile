@@ -5,7 +5,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
@@ -47,7 +48,8 @@
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@+id/headingText"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/headingText" />
+                app:layout_constraintTop_toTopOf="@+id/headingText"
+                tools:ignore="TouchTargetSizeCheck" />
 
             <View
                 android:layout_width="match_parent"
@@ -140,6 +142,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/password"
             android:textColorHint="@color/grey"
+            app:hintTextColor="@color/grey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:endIconMode="password_toggle"
@@ -154,7 +157,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_regular"
                 android:inputType="textPassword"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:textColor="@color/black"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
