@@ -319,11 +319,9 @@
                         android:text="@={viewState.confirmPassword}"
                         android:textSize="15sp"
                         errorEnabledMaxLength="@{true}"
-                        errorEnabledPassRegex="@{true}"
                         errorEnabledPassword="@{true}"
                         app:validateMaxLength="@{30}"
-                        app:validatePassword="@{etPasswordField}"
-                        app:validatePasswordRegex="@{`^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$`}" />
+                        app:validatePassword="@{etPasswordField}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -14,8 +14,8 @@
     <string name="error_message_phone_validation">Invalid phone number</string>
     <string name="error_message_otp_length">Invalid OTP length</string>
     <string name="error_message_password_length">Invalid password length</string>
-    <string name="error_message_password_regex_validation">Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character</string>
-    <string name="error_message_note_password_regex_validation">Note: Minimum eight characters with at least one uppercase letter, one lowercase letter, one number and one special character</string>
+    <string name="error_message_password_regex_validation">Password must be a minimum of 8 characters long and include a combination of uppercase and lowercase letters, numbers and special characters for increased security.</string>
+    <string name="error_message_note_password_regex_validation">Note: Password must be a minimum of 8 characters long and include a combination of uppercase and lowercase letters, numbers and special characters for increased security.</string>
     <string name="error_message_credit_card_validation">Invalid Credit Card format</string>
     <string name="error_message_empty_validation">This field can\'t be empty</string>
     <string name="error_message_not_equal_password">Passwords are not the same</string>
@@ -795,4 +795,5 @@
     <string name="block_user">Block User</string>
     <string name="unblock_user">Unblock User</string>
     <string name="not_available">Not available</string>
+    <string name="sync_contacts_statement">Select \'Allow\' to automatically sync all of your contacts with Ceibro.</string>
 </resources>

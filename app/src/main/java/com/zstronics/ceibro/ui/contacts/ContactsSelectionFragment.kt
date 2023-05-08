@@ -66,7 +66,7 @@ class ContactsSelectionFragment :
             )
         ) {
             val builder = MaterialAlertDialogBuilder(requireContext())
-            builder.setMessage("Ceibro asks your permission to add all your phone contacts to Ceibro's contact list.")
+            builder.setMessage(resources.getString(R.string.sync_contacts_statement))
             builder.setCancelable(false)
             builder.setPositiveButton("Allow") { dialog, which ->
                 // User clicked Allow button

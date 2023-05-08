@@ -32,7 +32,7 @@ class ChangePasswordSheet constructor() : BottomSheetDialogFragment() {
             false
         )
         //set to adjust screen height automatically, when soft keyboard appears on screen
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return binding.root
     }
 
@@ -79,5 +79,6 @@ class ChangePasswordSheet constructor() : BottomSheetDialogFragment() {
             dialog.behavior.state = STATE_EXPANDED
         }
         return dialog
+
     }
 }
