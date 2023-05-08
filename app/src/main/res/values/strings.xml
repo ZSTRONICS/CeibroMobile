@@ -4,11 +4,12 @@
     <string name="error_message_date_validation">Invalid data format</string>
     <string name="error_message_id_validation">The value should be between 13 and 15 characters.</string>
     <string name="error_message_regex_validation">Invalid format</string>
-    <string name="error_message_email_validation">Invalid Email format</string>
+    <string name="error_message_email_validation">Invalid email format</string>
     <string name="error_message_phone_email_validation">Invalid Email or Phone format</string>
     <string name="error_message_first_name_validation">Enter valid first name</string>
     <string name="error_message_last_name_validation">Invalid last name format</string>
     <string name="error_message_sur_name_validation">Enter valid  surname</string>
+    <string name="error_message_name_validation">Name cannot be of less than 2 characters or empty</string>
     <string name="error_message_cpf_validation">Invalid CPF format</string>
     <string name="error_message_url_validation">Invalid url format</string>
     <string name="error_message_phone_validation">Invalid phone number</string>
@@ -50,7 +51,9 @@
     <string name="don_t_have_account">Don\'t have account?</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
+    <string name="email_required">Email<font color="#D9000D">*</font></string>
     <string name="password">Password</string>
+    <string name="password_required">Password<font color="#D9000D">*</font></string>
     <string name="confirm">Confirm</string>
     <string name="new_password">New password</string>
     <string name="reset_password">Reset Password</string>
@@ -77,6 +80,7 @@
     <string name="enter_e_mail">Enter e-mail</string>
     <string name="enter_password">Enter password</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="confirm_password_required">Confirm password<font color="#D9000D">*</font></string>
     <string name="register">Register</string>
     <string name="profile_heading">Profile</string>
     <string name="username_hint">UserName</string>
@@ -90,6 +94,7 @@
     <string name="name_heading">Name</string>
     <string name="sur_name_heading">Sur name</string>
     <string name="surname_heading">Surname</string>
+    <string name="surname_required">Surname<font color="#D9000D">*</font></string>
     <string name="email_heading">Email</string>
     <string name="contact_number_heading">Contact number</string>
     <string name="password_heading">Password</string>
@@ -775,6 +780,7 @@
     <string name="terms_and_conditions_agree_statement">Yes, I understand and agree to the <font color="#0076C8"><u>Terms &amp; Conditions of Ceibro.</u></font></string>
     <string name="profile_setup_heading">Profile setup</string>
     <string name="first_name">First name</string>
+    <string name="first_name_required">First name<font color="#D9000D">*</font></string>
     <string name="job_title_optional">Job title (optional)</string>
     <string name="company_name_optional">Company name (optional)</string>
     <string name="add_new_password">Add new password</string>

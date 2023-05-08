@@ -74,12 +74,16 @@ class PhotoFragment :
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == NavControllerSample.PHOTO_PICK_RESULT_CODE) {
             val pickedImage = data?.data
-            viewModel.selectedUri = pickedImage
-            viewState.isPhotoPicked.postValue(true)
-            Glide.with(requireContext())
-                .load(pickedImage)
-                .centerCrop()
-                .into(mViewDataBinding.userPhoto)
+            if (pickedImage == null || pickedImage.equals("")) {
+                //Do nothing
+            } else {
+                viewModel.selectedUri = pickedImage
+                viewState.isPhotoPicked.postValue(true)
+                Glide.with(requireContext())
+                    .load(pickedImage)
+                    .centerCrop()
+                    .into(mViewDataBinding.userPhoto)
+            }
         }
     }
 }

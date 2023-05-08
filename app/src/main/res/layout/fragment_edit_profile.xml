@@ -77,6 +77,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="15sp"
+                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
