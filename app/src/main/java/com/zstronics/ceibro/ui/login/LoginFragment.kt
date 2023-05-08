@@ -31,11 +31,7 @@ class LoginFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.signUpTextBtn -> {
-//                navigate(R.id.registerFragment)
-                val bundle = Bundle()
-                bundle.putString("phoneNumber", "+923069261629")
-                bundle.putString("phoneCode", "+92")
-                navigate(R.id.signUpFragment, bundle)
+                navigate(R.id.registerFragment)
             }
             R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {

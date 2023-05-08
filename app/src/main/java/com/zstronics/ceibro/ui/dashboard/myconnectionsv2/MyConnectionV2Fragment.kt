@@ -76,6 +76,7 @@ class MyConnectionV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        startOneTimeContactSyncWorker(requireContext())
         mViewDataBinding.connectionRV.adapter = adapter
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
@@ -103,7 +104,7 @@ class MyConnectionV2Fragment :
     override fun onResume() {
         super.onResume()
         loadConnections(true)
-        startOneTimeContactSyncWorker(requireContext())
+
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {

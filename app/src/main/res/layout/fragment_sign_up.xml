@@ -296,11 +296,7 @@
                         android:inputType="textPassword"
                         android:text="@={viewState.password}"
                         android:textSize="15sp"
-                        android:textColor="@color/black"
-                        errorEnabledMaxLength="@{true}"
-                        errorEnabledPassRegex="@{true}"
-                        app:validateMaxLength="@{30}"
-                        app:validatePasswordRegex="@{`^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$`}" />
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -329,11 +325,7 @@
                         android:inputType="textPassword"
                         android:text="@={viewState.confirmPassword}"
                         android:textSize="15sp"
-                        android:textColor="@color/black"
-                        errorEnabledMaxLength="@{true}"
-                        errorEnabledPassword="@{true}"
-                        app:validateMaxLength="@{30}"
-                        app:validatePassword="@{etPasswordField}" />
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
@@ -70,28 +70,30 @@
             android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:text="Kristo Vunukainen"
             app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
             app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Kristo Vunukainen" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/phoneNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="3dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
             android:maxLines="1"
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
+            android:text="@string/phone_number_heading"
             android:visibility="@{ceibroConnection.isCeiborUser ? View.INVISIBLE : View.VISIBLE, default = visible}"
-            app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/contactName"
             app:layout_constraintStart_toStartOf="@+id/contactName"
-            app:layout_constraintTop_toBottomOf="@+id/contactName" />
+            app:layout_constraintTop_toBottomOf="@+id/contactName"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/companyName"
@@ -109,8 +111,7 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/contactName"
             app:layout_constraintTop_toBottomOf="@+id/contactName"
-            tools:text="Ceibro"
-            tools:visibility="visible" />
+            tools:text="Ceibro" />
 
         <TextView
             android:id="@+id/dot"
@@ -128,8 +129,7 @@
             android:textSize="12sp"
             android:visibility="@{ceibroConnection.isCeiborUser ? View.VISIBLE : View.INVISIBLE, default = gone}"
             app:layout_constraintStart_toEndOf="@+id/companyName"
-            app:layout_constraintTop_toBottomOf="@+id/contactName"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@+id/contactName" />
 
 
         <TextView
@@ -149,8 +149,7 @@
             app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
             app:layout_constraintStart_toEndOf="@+id/dot"
             app:layout_constraintTop_toBottomOf="@+id/contactName"
-            tools:text="Android Engineer"
-            tools:visibility="visible" />
+            tools:text="Android Engineer" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ceibroLogo"
@@ -158,9 +157,9 @@
             android:layout_height="@dimen/_25sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:src="@drawable/app_logo"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/contactName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

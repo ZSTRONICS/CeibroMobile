@@ -3,15 +3,12 @@ package com.zstronics.ceibro.ui.signup
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.isEmail
-import com.zstronics.ceibro.base.extensions.setupClearButtonWithAction
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentSignUpBinding
@@ -29,15 +26,9 @@ class SignUpFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.signupContinueBtn -> {
-                if (viewState.firstName.value.toString().length < 3) {
-                    shortToastNow(resources.getString(R.string.error_message_first_name_validation))
-                } else if (viewState.surname.value.toString().length < 2) {
-                    shortToastNow(resources.getString(R.string.error_message_sur_name_validation))
-                } else {
-                    viewModel.doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
-                        viewState.companyName.value.toString(), viewState.jobTitle.value.toString(), viewState.password.value.toString()) {
-                        navigate(R.id.photoFragment)
-                    }
+                viewModel.doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
+                    viewState.companyName.value.toString(), viewState.jobTitle.value.toString(), viewState.password.value.toString()) {
+                    navigate(R.id.photoFragment)
                 }
             }
         }
@@ -84,25 +75,130 @@ class SignUpFragment :
                         validatePassword(viewState.confirmPassword.value.toString()) &&
                         viewState.password.value.toString() == viewState.confirmPassword.value.toString()
 
-            mViewDataBinding.etNameField.error =
-                if (viewState.firstName.value.toString().isEmpty()) {
-                    resources.getString(R.string.error_message_name_validation)
-                } else {
-                    null
+            if (mViewDataBinding.etNameField.isFocused) {
+                mViewDataBinding.etName.error =
+                    if (viewState.firstName.value.toString().isEmpty()) {
+                        resources.getString(R.string.error_message_name_validation)
+                    } else {
+                        null
+                    }
+                if (viewState.firstName.value.toString().isNotEmpty()) {
+                    mViewDataBinding.etName.isErrorEnabled = false
                 }
-            mViewDataBinding.etSurnameField.error =
-                if (viewState.surname.value.toString().isEmpty()) {
-                    resources.getString(R.string.error_message_name_validation)
-                } else {
-                    null
+
+            } else if (mViewDataBinding.etSurnameField.isFocused) {
+                mViewDataBinding.etSurname.error =
+                    if (viewState.surname.value.toString().isEmpty()) {
+                        resources.getString(R.string.error_message_name_validation)
+                    } else {
+                        null
+                    }
+                if (viewState.surname.value.toString().isNotEmpty()) {
+                    mViewDataBinding.etSurname.isErrorEnabled = false
                 }
-            mViewDataBinding.etEmailField.error =
-                if (!viewState.email.value.toString().isEmail()) {
-                    resources.getString(R.string.error_message_email_validation)
-                } else {
-                    null
+
+            } else if (mViewDataBinding.etEmailField.isFocused) {
+                mViewDataBinding.etEmail.error =
+                    if (!viewState.email.value.toString().isEmail()) {
+                        resources.getString(R.string.error_message_email_validation)
+                    } else {
+                        null
+                    }
+                if (viewState.email.value.toString().isEmail()) {
+                    mViewDataBinding.etEmail.isErrorEnabled = false
                 }
+
+            } else if (mViewDataBinding.etPasswordField.isFocused) {
+                mViewDataBinding.etPassword.error =
+                    if (!validatePassword(viewState.password.value.toString())) {
+                        resources.getString(R.string.error_message_password_regex_validation)
+                    } else {
+                        null
+                    }
+
+                if (validatePassword(viewState.password.value.toString())) {
+                    mViewDataBinding.etPassword.isErrorEnabled = false
+                }
+                if (viewState.password.value.toString() == viewState.confirmPassword.value.toString()) {
+                    mViewDataBinding.etConfirmPassword.error = null
+                    mViewDataBinding.etConfirmPassword.isErrorEnabled = false
+                }
+            } else if (mViewDataBinding.etConfirmPasswordField.isFocused) {
+                mViewDataBinding.etConfirmPassword.error =
+                    if (viewState.password.value.toString() != viewState.confirmPassword.value.toString()) {
+                        resources.getString(R.string.error_message_not_equal_password)
+                    } else {
+                        null
+                    }
+                if (viewState.password.value.toString() == viewState.confirmPassword.value.toString()) {
+                    mViewDataBinding.etConfirmPassword.isErrorEnabled = false
+                }
+            }
+
         }
+    }
+
+    private fun validateFields(fieldId: Int) {
+        when (fieldId) {
+            R.id.etNameField -> {
+                mViewDataBinding.etNameField.error =
+                    if (viewState.firstName.value.toString().isEmpty()) {
+                        resources.getString(R.string.error_message_name_validation)
+                    } else {
+                        null
+                    }
+            }
+            R.id.etSurnameField -> {
+                mViewDataBinding.etSurnameField.error =
+                    if (viewState.surname.value.toString().isEmpty()) {
+                        resources.getString(R.string.error_message_name_validation)
+                    } else {
+                        null
+                    }
+            }
+            R.id.etEmailField -> {
+                mViewDataBinding.etEmailField.error =
+                    if (!viewState.email.value.toString().isEmail()) {
+                        resources.getString(R.string.error_message_email_validation)
+                    } else {
+                        null
+                    }
+            }
+            R.id.etPasswordField -> {
+                mViewDataBinding.etPassword.error =
+                    if (!validatePassword(viewState.password.value.toString())) {
+                        resources.getString(R.string.error_message_password_regex_validation)
+                    } else {
+                        null
+                    }
+            }
+            R.id.etConfirmPasswordField -> {
+//                if (!validatePassword(viewState.confirmPassword.value.toString())) {
+//                    mViewDataBinding.etConfirmPassword.error =
+//                        if (!validatePassword(viewState.confirmPassword.value.toString())) {
+//                            resources.getString(R.string.error_message_invalid_confirm_password)
+//                        } else {
+//                            null
+//                        }
+//                }
+//                else {
+                mViewDataBinding.etConfirmPassword.error =
+                    if (viewState.password.value.toString() != viewState.confirmPassword.value.toString()) {
+                        resources.getString(R.string.error_message_not_equal_password)
+                    } else {
+                        null
+                    }
+//                }
+            }
+        }
+
+        mViewDataBinding.signupContinueBtn.isEnabled =
+            viewState.firstName.value.toString().isNotEmpty() &&
+                    viewState.surname.value.toString().isNotEmpty() &&
+                    viewState.email.value.toString().isEmail() &&
+                    validatePassword(viewState.password.value.toString()) &&
+                    validatePassword(viewState.confirmPassword.value.toString()) &&
+                    viewState.password.value.toString() == viewState.confirmPassword.value.toString()
     }
 
     private fun validatePassword(password: String): Boolean {
