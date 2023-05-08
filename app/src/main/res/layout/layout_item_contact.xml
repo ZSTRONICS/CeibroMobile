@@ -84,19 +84,6 @@
             app:layout_constraintTop_toBottomOf="@+id/contactName"
             app:layout_constraintVertical_bias="0.0" />
 
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="2dp"
-            android:background="@color/appLightGrey"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/contactName"
-            app:layout_constraintStart_toStartOf="@+id/connectionImgCard"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNumber"
-            app:layout_constraintVertical_bias="0.0" />
-
         <CheckBox
             android:id="@+id/contactCheckBox"
             android:layout_width="wrap_content"

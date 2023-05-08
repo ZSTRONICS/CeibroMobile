@@ -72,14 +72,19 @@ class MyConnectionV2Fragment :
     }
 
     @Inject
-    lateinit var adapter: CeibroConnectionsAdapter
+    lateinit var adapter: CeibroConnectionsHeaderAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.connectionRV.adapter = adapter
 
-
         viewModel.allConnections.observe(viewLifecycleOwner) {
+            if (it != null) {
+                viewModel.groupDataByFirstLetter(it)
+            }
+        }
+
+        viewModel.allGroupedConnections.observe(viewLifecycleOwner) {
             if (it != null) {
                 adapter.setList(it)
             }
@@ -111,8 +116,7 @@ class MyConnectionV2Fragment :
             viewModel.getAllConnectionsV2 {
                 mViewDataBinding.connectionRV.hideSkeleton()
             }
-        }
-        else {
+        } else {
             viewModel.getAllConnectionsV2 { }
         }
     }

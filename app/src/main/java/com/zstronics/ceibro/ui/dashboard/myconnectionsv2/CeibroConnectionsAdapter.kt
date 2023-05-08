@@ -74,7 +74,7 @@ class CeibroConnectionsAdapter @Inject constructor() :
                 }
             }
             binding.contactName.text =
-                "${item.contactFirstName?.toCamelCase()} ${item.contactSurName?.toCamelCase()}"
+                "${item.contactFirstName} ${item.contactSurName}"
             if (item.userCeibroData?.profilePic.isNullOrEmpty()) {
                 binding.contactInitials.visibility = View.VISIBLE
                 binding.contactImage.visibility = View.GONE

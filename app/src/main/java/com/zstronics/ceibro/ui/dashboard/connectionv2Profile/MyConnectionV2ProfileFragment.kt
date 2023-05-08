@@ -64,7 +64,7 @@ class MyConnectionV2ProfileFragment :
                 }
             }
             binding.contactName.text =
-                "${item.contactFirstName?.toCamelCase()} ${item.contactSurName?.toCamelCase()}"
+                "${item.contactFirstName} ${item.contactSurName}"
 
             if (item.userCeibroData == null) {
                 binding.emailTV.visibility = View.GONE

@@ -28,6 +28,12 @@ class ContactsSelectionVM @Inject constructor(
     val contacts: LiveData<List<SyncContactsRequest.CeibroContactLight>> = _contacts
     var originalContacts = listOf<SyncContactsRequest.CeibroContactLight>()
 
+    private var _contactsGroup: MutableLiveData<MutableList<ContactSelectionGroup>> =
+        MutableLiveData()
+    val contactsGroup: MutableLiveData<MutableList<ContactSelectionGroup>> =
+        _contactsGroup
+
+
     fun loadContacts() {
         launch(Dispatcher.LongOperation) {
             val contacts = getLocalContacts(resProvider.context)
@@ -99,4 +105,36 @@ class ContactsSelectionVM @Inject constructor(
         else
             _contacts.postValue(mutableListOf())
     }
+
+    fun groupDataByFirstLetter(data: List<SyncContactsRequest.CeibroContactLight>) {
+        val sections = mutableListOf<ContactSelectionGroup>()
+
+        val groupedData = data.groupBy {
+            if (it.contactFirstName.firstOrNull()?.isLetter() == true) {
+                it.contactFirstName.first().lowercase()
+            } else {
+                '#'.toString()
+            }
+        }.toSortedMap(
+            compareBy<String> { it != "#" }
+                .then(compareBy { it.lowercase() })
+                .then(compareByDescending { it == "#" })
+        )
+
+        for (mapKey in groupedData.keys) {
+            sections.add(
+                ContactSelectionGroup(
+                    mapKey.toString().uppercase()[0],
+                    groupedData[mapKey]?.sortedBy { it.contactFirstName.lowercase() }
+                        ?: emptyList()
+                )
+            )
+        }
+        _contactsGroup.value = sections
+    }
+
+    data class ContactSelectionGroup(
+        val sectionLetter: Char,
+        var items: List<SyncContactsRequest.CeibroContactLight>
+    )
 }

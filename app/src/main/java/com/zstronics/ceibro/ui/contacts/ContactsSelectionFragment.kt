@@ -14,7 +14,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.databinding.FragmentContactsSelectionBinding
-import com.zstronics.ceibro.ui.contacts.adapter.ContactsSelectionAdapter
+import com.zstronics.ceibro.ui.contacts.adapter.ContactSelectionHeaderAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import javax.inject.Inject
@@ -31,7 +31,13 @@ class ContactsSelectionFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.confirmBtn -> {
-                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
+                val selectedContacts: MutableList<SyncContactsRequest.CeibroContactLight> =
+                    mutableListOf()
+                for (item in adapter.listItems) {
+                    val selected = item.items.filter { it.isChecked }.map { it }
+                    selectedContacts.addAll(selected)
+                }
+//                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
                 viewModel.syncContacts(selectedContacts) {
                     viewModel.sessionManager.saveSyncedContacts(selectedContacts)
                     navigateToDashboard()
@@ -46,16 +52,24 @@ class ContactsSelectionFragment :
     }
 
     @Inject
-    lateinit var adapter: ContactsSelectionAdapter
+    lateinit var adapter: ContactSelectionHeaderAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.contacts.observe(viewLifecycleOwner) {
+            viewModel.groupDataByFirstLetter(it)
+        }
+        viewModel.contactsGroup.observe(viewLifecycleOwner) {
             adapter.setList(it)
         }
         adapter.itemClickListener =
             { childView: View, position: Int, contacts: SyncContactsRequest.CeibroContactLight ->
-                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
+                val selectedContacts: MutableList<SyncContactsRequest.CeibroContactLight> =
+                    mutableListOf()
+                for (item in adapter.listItems) {
+                    val selected = item.items.filter { it.isChecked }.map { it }
+                    selectedContacts.addAll(selected)
+                }
                 mViewDataBinding.confirmBtn.isEnabled = selectedContacts.isNotEmpty()
             }
         mViewDataBinding.recyclerView.adapter = adapter

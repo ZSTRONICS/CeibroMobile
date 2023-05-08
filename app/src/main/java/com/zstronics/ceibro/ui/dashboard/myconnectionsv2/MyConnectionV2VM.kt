@@ -10,10 +10,7 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.resourses.IResourceProvider
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +26,12 @@ class MyConnectionV2VM @Inject constructor(
     val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
         _allConnections
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
+
+    private var _allGroupedConnections: MutableLiveData<MutableList<CeibroConnectionGroup>> =
+        MutableLiveData()
+    val allGroupedConnections: MutableLiveData<MutableList<CeibroConnectionGroup>> =
+        _allGroupedConnections
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         viewState.isAutoSyncEnabled.postValue(user?.autoContactSync)
@@ -113,15 +116,13 @@ class MyConnectionV2VM @Inject constructor(
             it.contactFirstName?.lowercase()?.contains(search) == true ||
                     it.contactSurName?.lowercase()?.contains(search) == true ||
                     it.phoneNumber.contains(search) ||
-                    (it.userCeibroData != null && it.userCeibroData.companyName.lowercase()
+                    (it.userCeibroData?.companyName != null && it.userCeibroData.companyName.lowercase()
                         .contains(search)) ||
-                    (it.userCeibroData != null && it.userCeibroData.firstName.lowercase()
+                    (it.userCeibroData?.firstName != null && it.userCeibroData.firstName.lowercase()
                         .contains(search)) ||
-                    (it.userCeibroData != null && it.userCeibroData.surName.lowercase()
+                    (it.userCeibroData?.surName != null && it.userCeibroData.surName.lowercase()
                         .contains(search)) ||
-                    (it.userCeibroData != null && it.userCeibroData.email.lowercase()
-                        .contains(search)) ||
-                    (it.userCeibroData != null && it.userCeibroData.jobTitle.lowercase()
+                    (it.userCeibroData?.jobTitle != null && it.userCeibroData.jobTitle.lowercase()
                         .contains(search))
         }
         if (filtered.isNotEmpty())
@@ -129,4 +130,36 @@ class MyConnectionV2VM @Inject constructor(
         else
             _allConnections.postValue(mutableListOf())
     }
+
+    fun groupDataByFirstLetter(data: List<AllCeibroConnections.CeibroConnection>) {
+        val sections = mutableListOf<CeibroConnectionGroup>()
+
+        val groupedData = data.groupBy {
+            if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
+                it.contactFirstName.first().lowercase()
+            } else {
+                '#'.toString()
+            }
+        }.toSortedMap(
+            compareBy<String> { it != "#" }
+                .then(compareBy { it.lowercase() })
+                .then(compareByDescending { it == "#" })
+        )
+
+        for (mapKey in groupedData.keys) {
+            sections.add(
+                CeibroConnectionGroup(
+                    mapKey.toString().uppercase()[0],
+                    groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
+                        ?: emptyList()
+                )
+            )
+        }
+        _allGroupedConnections.value = sections
+    }
+
+    data class CeibroConnectionGroup(
+        val sectionLetter: Char,
+        val items: List<AllCeibroConnections.CeibroConnection>
+    )
 }
