@@ -96,7 +96,10 @@ class ContactsSelectionVM @Inject constructor(
             return
         }
         val filtered = originalContacts.filter {
-            "${it.contactFirstName.lowercase()} ${it.contactSurName.lowercase()}".contains(search, true) ||
+            "${it.contactFirstName.lowercase()} ${it.contactSurName.lowercase()}".contains(
+                search,
+                true
+            ) ||
                     it.phoneNumber.contains(search)
         }
         if (filtered.isNotEmpty())
