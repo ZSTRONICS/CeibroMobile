@@ -53,6 +53,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
                 is ApiResponse.Success -> {
                     EventBus.getDefault().post(LocalEvents.ContactsSynced)
+                    sessionManager.saveSyncedContacts(contacts)
                     Result.success()
                 }
                 is ApiResponse.Error -> {

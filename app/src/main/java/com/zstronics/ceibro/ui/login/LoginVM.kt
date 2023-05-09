@@ -76,7 +76,8 @@ class LoginVM @Inject constructor(
                             contactFirstName = it.contactFirstName ?: "",
                             contactSurName = it.contactSurName ?: "",
                             countryCode = it.countryCode,
-                            phoneNumber = it.phoneNumber
+                            phoneNumber = it.phoneNumber,
+                            contactFullName = it.contactFullName ?: ""
                         )
                     }
                     sessionManager.saveSyncedContacts(selectedContacts)

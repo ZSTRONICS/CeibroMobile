@@ -204,8 +204,8 @@
                         app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
                         app:layout_constraintEnd_toEndOf="@+id/editTextPassword"
                         app:layout_constraintTop_toTopOf="@+id/editTextPassword"
-                        app:srcCompat="@drawable/visibility_off"
-                        app:tint="@color/appTextGrey" />
+                        app:srcCompat="@drawable/icon_visibility_off"
+                        app:tint="@color/appGrey3" />
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout

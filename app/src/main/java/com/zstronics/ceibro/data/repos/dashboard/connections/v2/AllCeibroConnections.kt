@@ -13,6 +13,8 @@ data class AllCeibroConnections(
 ) : BaseResponse(), Parcelable {
     @Parcelize
     data class CeibroConnection(
+        @SerializedName("contactFullName")
+        val contactFullName: String?,
         @SerializedName("contactFirstName")
         val contactFirstName: String?,
         @SerializedName("contactSurName")

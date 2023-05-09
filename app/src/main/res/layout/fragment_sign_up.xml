@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewState"
             type="com.zstronics.ceibro.ui.signup.SignUpState" />
@@ -31,9 +32,9 @@
                 android:id="@+id/signupHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginTop="@dimen/_11sdp"
                 android:layout_marginEnd="@dimen/_15sdp"
-                android:layout_marginStart="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_11sdp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
@@ -52,9 +53,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_2sdp"
             android:fillViewport="true"
             android:scrollbars="none"
-            android:layout_marginTop="@dimen/_2sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,14 +70,14 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/first_name_required"
-                    android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
-                    app:boxStrokeColor="@color/colorGrey"
-                    app:boxStrokeWidth="1dp"
                     android:layout_marginStart="@dimen/_15sdp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_15sdp"
+                    android:hint="@string/first_name_required"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/colorGrey"
+                    app:boxStrokeWidth="1dp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -88,8 +89,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.firstName}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,12 +99,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_11sdp"
                     android:hint="@string/surname_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
-                    android:layout_marginTop="@dimen/_11sdp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etName"
                     app:layout_constraintStart_toStartOf="@+id/etName"
                     app:layout_constraintTop_toBottomOf="@+id/etName">
@@ -115,8 +116,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.surname}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,12 +126,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/email_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etSurname"
                     app:layout_constraintStart_toStartOf="@+id/etSurname"
                     app:layout_constraintTop_toBottomOf="@+id/etSurname">
@@ -142,8 +143,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="textEmailAddress"
                         android:text="@={viewState.email}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -152,12 +153,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/company_name_optional"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etEmail"
                     app:layout_constraintStart_toStartOf="@+id/etEmail"
                     app:layout_constraintTop_toBottomOf="@+id/etEmail">
@@ -169,8 +170,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.companyName}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -179,12 +180,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/job_title_optional"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etCompany"
                     app:layout_constraintStart_toStartOf="@+id/etCompany"
                     app:layout_constraintTop_toBottomOf="@+id/etCompany">
@@ -196,8 +197,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
                         android:text="@={viewState.jobTitle}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -206,9 +207,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:clickable="false"
                     android:alpha="0.55"
                     android:background="@drawable/input_field_rectangle"
+                    android:clickable="false"
                     app:layout_constraintEnd_toEndOf="@+id/etJob"
                     app:layout_constraintStart_toStartOf="@+id/etJob"
                     app:layout_constraintTop_toBottomOf="@+id/etJob">
@@ -217,12 +218,14 @@
                         android:id="@+id/ccp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:focusable="false"
                         app:ccpDialog_initialScrollToSelection="true"
                         app:ccpDialog_keyboardAutoPopup="false"
                         app:ccpDialog_showCloseIcon="true"
                         app:ccpDialog_showFlag="true"
                         app:ccpDialog_showTitle="true"
                         app:ccp_arrowSize="16dp"
+                        app:ccp_clickable="false"
                         app:ccp_countryPreference="pk,ee"
                         app:ccp_defaultNameCode="ee"
                         app:ccp_excludedCountries=""
@@ -232,8 +235,6 @@
                         app:ccp_showNameCode="false"
                         app:ccp_showPhoneCode="true"
                         app:ccp_textSize="15.5sp"
-                        app:ccp_clickable="false"
-                        android:focusable="false"
                         app:layout_constraintBottom_toBottomOf="@+id/etPhone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/etPhone" />
@@ -243,7 +244,10 @@
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:background="@drawable/input_field_rectangle_half_corner"
+                        android:clickable="false"
                         android:ems="10"
+                        android:enabled="false"
+                        android:focusable="false"
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/phone_number_heading"
                         android:inputType="phone"
@@ -252,9 +256,6 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/appGrey"
                         android:textSize="15.5sp"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:enabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/ccp"
@@ -276,17 +277,19 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:hint="@string/password_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
-                    app:endIconMode="password_toggle"
                     app:errorIconDrawable="@null"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etPhoneLayout"
                     app:layout_constraintStart_toStartOf="@+id/etPhoneLayout"
-                    app:layout_constraintTop_toBottomOf="@+id/view">
+                    app:layout_constraintTop_toBottomOf="@+id/view"
+                    app:passwordToggleDrawable="@drawable/show_password_selector"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/appGrey3">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPasswordField"
@@ -295,8 +298,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="textPassword"
                         android:text="@={viewState.password}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -305,17 +308,19 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:hint="@string/confirm_password_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
-                    app:endIconMode="password_toggle"
                     app:errorIconDrawable="@null"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etPassword"
                     app:layout_constraintStart_toStartOf="@+id/etPassword"
-                    app:layout_constraintTop_toBottomOf="@+id/etPassword">
+                    app:layout_constraintTop_toBottomOf="@+id/etPassword"
+                    app:passwordToggleDrawable="@drawable/show_password_selector"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/appGrey3">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etConfirmPasswordField"
@@ -324,8 +329,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="textPassword"
                         android:text="@={viewState.confirmPassword}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

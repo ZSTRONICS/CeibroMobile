@@ -790,7 +790,7 @@
     <string name="skip">Skip</string>
     <string name="contact_list">Contact list</string>
     <string name="contact_list_permission_text">Do you want to add only a few contacts to your Ceibro contact list?</string>
-    <string name="enter_contact_name">Enter contact name</string>
+    <string name="enter_contact_name">Search contact</string>
     <string name="change_photo">Change Photo</string>
     <string name="change_password">Change password</string>
     <string name="change_phone_number">Change phone number</string>
@@ -802,4 +802,5 @@
     <string name="unblock_user">Unblock User</string>
     <string name="not_available">Not available</string>
     <string name="sync_contacts_statement">Select \'Allow\' to automatically sync all of your contacts with Ceibro.</string>
+    <string name="add_contact">Add contact</string>
 </resources>

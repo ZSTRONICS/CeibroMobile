@@ -93,12 +93,11 @@ class ContactsSelectionVM @Inject constructor(
             if (originalContacts.isNotEmpty()) {
                 _contacts.postValue(originalContacts as MutableList<SyncContactsRequest.CeibroContactLight>?)
             }
-
             return
         }
         val filtered = originalContacts.filter {
-            it.contactFirstName.lowercase().contains(search) || it.contactSurName.lowercase()
-                .contains(search) || it.phoneNumber.contains(search)
+            "${it.contactFirstName.lowercase()} ${it.contactSurName.lowercase()}".contains(search, true) ||
+                    it.phoneNumber.contains(search)
         }
         if (filtered.isNotEmpty())
             _contacts.postValue(filtered as MutableList<SyncContactsRequest.CeibroContactLight>?)

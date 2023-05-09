@@ -9,6 +9,8 @@ data class BlockUserResponse(
     val contacts: Contacts
 ) : BaseResponse() {
     data class Contacts(
+        @SerializedName("contactFullName")
+        var contactFullName: String? = "",
         @SerializedName("contactFirstName")
         val contactFirstName: String,
         @SerializedName("contactSurName")

@@ -9,6 +9,8 @@ data class GetContactsResponse(
     val contacts: List<CeibroContact>
 ) : BaseResponse() {
     data class CeibroContact(
+        @SerializedName("contactFullName")
+        var contactFullName: String? = "",
         @SerializedName("contactFirstName")
         val contactFirstName: String,
         @SerializedName("contactSurName")

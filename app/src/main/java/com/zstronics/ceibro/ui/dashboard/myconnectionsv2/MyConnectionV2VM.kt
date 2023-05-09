@@ -43,8 +43,8 @@ class MyConnectionV2VM @Inject constructor(
             when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
 
                 is ApiResponse.Success -> {
-                    callBack.invoke()
                     val contacts = response.data.contacts.sortedByDescending { it.isCeiborUser }
+                    callBack.invoke()
                     originalConnections = contacts
                     if (contacts.isNotEmpty()) {
                         _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
@@ -113,17 +113,16 @@ class MyConnectionV2VM @Inject constructor(
             return
         }
         val filtered = originalConnections.filter {
-            it.contactFirstName?.lowercase()?.contains(search) == true ||
-                    it.contactSurName?.lowercase()?.contains(search) == true ||
+            "${it.contactFullName?.lowercase()}".contains(search, true) ||
                     it.phoneNumber.contains(search) ||
                     (it.userCeibroData?.companyName != null && it.userCeibroData.companyName.lowercase()
-                        .contains(search)) ||
+                        .contains(search, true)) ||
                     (it.userCeibroData?.firstName != null && it.userCeibroData.firstName.lowercase()
-                        .contains(search)) ||
+                        .contains(search, true)) ||
                     (it.userCeibroData?.surName != null && it.userCeibroData.surName.lowercase()
-                        .contains(search)) ||
+                        .contains(search, true)) ||
                     (it.userCeibroData?.jobTitle != null && it.userCeibroData.jobTitle.lowercase()
-                        .contains(search))
+                        .contains(search, true))
         }
         if (filtered.isNotEmpty())
             _allConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)

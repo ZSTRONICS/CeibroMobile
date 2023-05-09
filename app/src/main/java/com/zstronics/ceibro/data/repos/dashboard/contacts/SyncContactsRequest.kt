@@ -16,6 +16,8 @@ data class SyncContactsRequest(
         var countryCode: String = "",
         @SerializedName("phoneNumber")
         var phoneNumber: String = "",
+        @SerializedName("contactFullName")
+        var contactFullName: String? = "",
         var beneficiaryPictureUrl: String = "",
         var email: String = "",
         var isChecked: Boolean = false

@@ -77,12 +77,12 @@ class LoginFragment :
         if (passShown) {
             mViewDataBinding.editTextPassword.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
-            mViewDataBinding.loginPasswordEye.setImageResource(R.drawable.visibility_on)
+            mViewDataBinding.loginPasswordEye.setImageResource(R.drawable.icon_visibility_on)
         }
         else {
             mViewDataBinding.editTextPassword.transformationMethod =
                 PasswordTransformationMethod.getInstance()
-            mViewDataBinding.loginPasswordEye.setImageResource(R.drawable.visibility_off)
+            mViewDataBinding.loginPasswordEye.setImageResource(R.drawable.icon_visibility_off)
         }
         mViewDataBinding.editTextPassword.setSelection(mViewDataBinding.editTextPassword.text.toString().length)
     }

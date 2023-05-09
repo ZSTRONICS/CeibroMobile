@@ -4,7 +4,10 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -96,20 +99,36 @@ class MyConnectionV2Fragment :
                     navigate(R.id.myConnectionV2ProfileFragment, bundleOf(CONNECTION_KEY to data))
             }
 
-        viewState.searchName.observe(viewLifecycleOwner) { search ->
-            viewModel.filterContacts(search.lowercase())
-        }
+//        viewState.searchName.observe(viewLifecycleOwner) { search ->
+//            viewModel.filterContacts(search.lowercase())
+//        }
+        mViewDataBinding.searchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.filterContacts(query)
+                }
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.filterContacts(newText)
+                }
+                return true
+            }
+
+        })
     }
 
     override fun onResume() {
         super.onResume()
         loadConnections(true)
-
+        mViewDataBinding.searchBar.setQuery("", true)
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {
         if (skeletonVisible) {
-            mViewDataBinding.connectionRV.loadSkeleton(R.layout.layout_item_connection) {
+            mViewDataBinding.connectionRV.loadSkeleton(R.layout.layout_invitations_box) {
                 itemCount(10)
                 color(R.color.appLightGrey)
             }

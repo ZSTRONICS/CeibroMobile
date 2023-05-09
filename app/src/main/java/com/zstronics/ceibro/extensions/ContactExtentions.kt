@@ -54,12 +54,15 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                     if (displayName != null && displayName.isNotEmpty()) {
                         val names = displayName.split(" ", limit = 2)
                         if (names.size > 1) {
+                            contact.contactFullName = names[0] + " " + names[1]
                             contact.contactFirstName = names[0]
                             contact.contactSurName = names[1]
                         } else if (names.size == 1) {
+                            contact.contactFullName = names[0] + ""
                             contact.contactFirstName = names[0]
                             contact.contactSurName = ""
                         } else {
+                            contact.contactFullName = "No Name"
                             contact.contactFirstName = "No Name"
                             contact.contactSurName = ""
                         }
