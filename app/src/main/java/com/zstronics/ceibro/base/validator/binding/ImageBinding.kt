@@ -1,11 +1,11 @@
 package com.zstronics.ceibro.base.validator.binding
 
-import android.content.res.ColorStateList
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
@@ -68,13 +68,13 @@ object ImageBinding {
 
     @JvmStatic
     @BindingAdapter(
-        value = ["app:customDrawableTint"]
+        value = ["app:checked"],
+        requireAll = false
     )
-    fun setCustomDrawableTint(
+    fun setButtonChecked(
         button: AppCompatButton,
-        color: Int
+        isSelected: MutableLiveData<Boolean>
     ) {
-        button.backgroundTintList =
-            ColorStateList.valueOf(button.context.resources.getColor(color))
+        button.isSelected = isSelected.value ?: false
     }
 }
