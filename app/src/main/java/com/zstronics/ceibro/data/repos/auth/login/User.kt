@@ -8,15 +8,15 @@ import com.zstronics.ceibro.data.base.BaseResponse
 @Keep
 data class User(
     @SerializedName("companyLocation")
-    val companyLocation: String,
+    val companyLocation: String?,
     @SerializedName("companyName")
     val companyName: String?,
     @SerializedName("companyPhone")
-    val companyPhone: String,
+    val companyPhone: String?,
     @SerializedName("companyVat")
-    val companyVat: String,
+    val companyVat: String?,
     @SerializedName("currentlyRepresenting")
-    val currentlyRepresenting: Boolean,
+    val currentlyRepresenting: Boolean?,
     @SerializedName("email")
     val email: String,
     @SerializedName("firstName")
@@ -24,29 +24,23 @@ data class User(
     @SerializedName("_id")
     val id: String,
     @SerializedName("isEmailVerified")
-    val isEmailVerified: Boolean,
+    val isEmailVerified: Boolean?,
     @SerializedName("isOnline")
-    val isOnline: Boolean,
+    val isOnline: Boolean?,
     @SerializedName("lockedUntil")
-    val lockedUntil: String,
-    @SerializedName("mutedChat")
-    val mutedChat: List<String>,
-    @SerializedName("phone")
-    val phone: String,
-    @SerializedName("pinnedChat")
-    val pinnedChat: List<Any>,
-    @SerializedName("pinnedMessages")
-    val pinnedMessages: List<String>,
+    val lockedUntil: String?,
+    @SerializedName("phoneNumber")
+    val phoneNumber: String,
     @SerializedName("profilePic")
     var profilePic: String,
     @SerializedName("role")
     val role: String?,
-    @SerializedName("socketId")
-    val socketId: String?,
     @SerializedName("surName")
     val surName: String,
-    @SerializedName("username")
-    val username: String,
+    @SerializedName("jobTitle")
+    val jobTitle: String,
     @SerializedName("workEmail")
-    val workEmail: String
+    val workEmail: String?,
+    @SerializedName("autoContactSync")
+    var autoContactSync: Boolean,
 ) : BaseResponse()

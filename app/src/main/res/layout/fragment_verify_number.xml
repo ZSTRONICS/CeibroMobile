@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.verifynumber.VerifyNumberState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.verifynumber.VerifyNumberVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/view25"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ceibro_inline_logo_black" />
+
+        <View
+            android:id="@+id/view25"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.53" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/backImgLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="10dp"
+            app:cardBackgroundColor="@color/transparent"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/view25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/new_background" />
+        </androidx.cardview.widget.CardView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="1dp"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view25">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/verificationHeading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="@string/phone_number_confirmation_heading"
+                    android:textColor="@color/black"
+                    android:textSize="21sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/codeSentLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@color/appPaleGreen"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingTop="7dp"
+                    android:paddingEnd="11dp"
+                    android:paddingBottom="7dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/verificationHeading"
+                    app:layout_constraintStart_toStartOf="@+id/verificationHeading"
+                    app:layout_constraintTop_toBottomOf="@+id/verificationHeading">
+
+                    <TextView
+                        android:id="@+id/codeSentText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/confirmation_code_was_sent"
+                        android:textColor="@color/appGreen"
+                        android:textSize="13.5sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/closeBtn"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/closeBtn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="3dp"
+                        android:src="@drawable/icon_round_close"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/appGreen" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/otpField"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:background="@drawable/input_field_rectangle"
+                    android:ems="10"
+                    android:fontFamily="@font/inter_regular"
+                    android:hint="@string/verification_code_text"
+                    android:inputType="number"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="@={viewState.otp}"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/appGrey"
+                    android:textSize="15.5sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/codeSentLayout" />
+
+                <LinearLayout
+                    android:id="@+id/resendLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:orientation="horizontal"
+                    android:padding="1dp"
+                    app:layout_constraintEnd_toEndOf="@+id/otpField"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/otpField"
+                    app:layout_constraintTop_toBottomOf="@+id/otpField">
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/didn_t_receive_code"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/sendCodeAgainBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:fontFamily="@font/inter_medium"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="3.5dp"
+                        android:text="@string/send_again_text"
+                        android:textColor="@color/appBlue"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/confirmBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_31sdp"
+                    android:layout_marginBottom="@dimen/_26sdp"
+                    android:background="@drawable/signin_button_back"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/confirm"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                    app:layout_constraintEnd_toEndOf="@+id/otpField"
+                    app:layout_constraintStart_toStartOf="@+id/otpField"
+                    app:layout_constraintTop_toBottomOf="@+id/resendLayout"
+                    app:layout_constraintVertical_bias="0.55" />
+
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="@dimen/_17sdp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="@dimen/_18sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/back_to"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/loginTextBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:fontFamily="@font/inter_medium"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="3.5dp"
+                        android:text="@string/login"
+                        android:textColor="@color/appBlue"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

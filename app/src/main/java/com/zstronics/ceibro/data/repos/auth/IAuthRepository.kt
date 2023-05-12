@@ -6,17 +6,25 @@ import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
 import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
-import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
-import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
-import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
-import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
+import com.zstronics.ceibro.data.repos.auth.signup.*
+import com.zstronics.ceibro.data.repos.editprofile.*
 
 interface IAuthRepository {
     suspend fun login(loginRequest: LoginRequest): ApiResponse<LoginResponse>
     suspend fun updateProfileCall(editProfileRequest: EditProfileRequest): ApiResponse<EditProfileResponse>
+    suspend fun changePassword(changePasswordRequest: ChangePasswordRequest): ApiResponse<GenericResponse>
+    suspend fun changePhoneNumber(changeNumberRequest: ChangeNumberRequest): ApiResponse<GenericResponse>
+    suspend fun changePhoneNumberVerifyOtp(changeNumberVerifyOtpRequest: ChangeNumberVerifyOtpRequest): ApiResponse<GenericResponse>
     suspend fun getUserProfile(): ApiResponse<LoginResponse>
-    suspend fun signup(signUpRequest: SignUpRequest): ApiResponse<GenericResponse>
+    suspend fun register(registerRequest: RegisterRequest): ApiResponse<GenericResponse>
+    suspend fun registerVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse>
+    suspend fun signup(phoneNumber: String, signUpRequest: SignUpRequest): ApiResponse<LoginResponse>
+    suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse>
+    suspend fun forgetPassVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse>
+    suspend fun resendOtp(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse>
+    suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest): ApiResponse<GenericResponse>
     suspend fun uploadProfilePicture(fileUri: String): ApiResponse<UserProfilePicUpdateResponse>
     suspend fun refreshJWTToken(body: RefreshTokenRequest): ApiResponse<Tokens>
+    suspend fun uploadProfilePictureV2(fileUri: String): ApiResponse<UserProfilePicUpdateResponse>
 
 }

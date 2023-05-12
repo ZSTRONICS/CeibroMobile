@@ -10,6 +10,10 @@ data class SignUpRequest(
     val email: String,
     @SerializedName("firstName")
     val firstName: String,
+    @SerializedName("companyName")
+    val companyName: String,
+    @SerializedName("jobTitle")
+    val jobTitle: String,
     @SerializedName("password")
     val password: String,
     @SerializedName("surName")

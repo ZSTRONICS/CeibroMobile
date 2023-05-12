@@ -166,10 +166,9 @@ class NetworkModule {
         okHttpBuilder.readTimeout(timeoutRead.toLong(), TimeUnit.SECONDS)
         return okHttpBuilder.build()
     }
-
 }
 
-private const val timeoutRead = 30   //In seconds
-private const val contentType = "Content-Type"
-private const val contentTypeValue = "application/json"
-private const val timeoutConnect = 30   //In seconds
+const val timeoutRead = 30   //In seconds
+const val contentType = "Content-Type"
+const val contentTypeValue = "application/json"
+const val timeoutConnect = 30   //In seconds

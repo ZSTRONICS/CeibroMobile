@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">@color/appBlue</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
@@ -67,8 +67,8 @@
 
     <style name="card_custom_corners" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopRight">30dp</item>
-        <item name="cornerSizeTopLeft">30dp</item>
+        <item name="cornerSizeTopRight">14dp</item>
+        <item name="cornerSizeTopLeft">14dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>

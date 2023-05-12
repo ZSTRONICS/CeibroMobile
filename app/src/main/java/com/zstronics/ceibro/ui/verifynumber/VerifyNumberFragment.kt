@@ -1,0 +1,168 @@
+package com.zstronics.ceibro.ui.verifynumber
+
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.View
+import androidx.fragment.app.viewModels
+import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.launchActivity
+import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.databinding.FragmentVerifyNumberBinding
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class VerifyNumberFragment :
+    BaseNavViewModelFragment<FragmentVerifyNumberBinding, IVerifyNumber.State, VerifyNumberVM>() {
+
+    override val bindingVariableId = BR.viewModel
+    override val bindingViewStateVariableId = BR.viewState
+    override val viewModel: VerifyNumberVM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_verify_number
+    override fun toolBarVisibility(): Boolean = false
+    override fun onClick(id: Int) {
+        when (id) {
+            R.id.loginTextBtn -> {
+                navigateToLogin()
+            }
+            R.id.closeBtn -> {
+                mViewDataBinding.codeSentLayout.visibility = View.GONE
+            }
+            R.id.confirmBtn -> {
+                val phoneNumber = viewState.phoneNumber.value.toString()
+                val otp = viewState.otp.value.toString()
+                if (otp.length == 6) {
+                    if (viewState.previousFragment.value.equals("RegisterFragment", true)) {
+                        viewModel.registerOtpVerification(phoneNumber, otp) {
+                            navigateToTermsAndConditions()
+                        }
+                    } else if (viewState.previousFragment.value.equals(
+                            "ForgotPasswordFragment",
+                            true
+                        )
+                    ) {
+                        viewModel.forgetPasswordOtpVerification(phoneNumber, otp) {
+                            showPasswordBottomSheet()
+                        }
+                    }
+                } else {
+                    shortToastNow(resources.getString(R.string.error_message_otp_length))
+                }
+            }
+            R.id.sendCodeAgainBtn -> {
+                viewModel.resendOtp(viewState.phoneNumber.value.toString()) {
+                    if (timeLeftInMillis <= 0) {
+                        startTimer()
+                    }
+                    mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private lateinit var countDownTimer: CountDownTimer
+    private var timeLeftInMillis: Long = 0
+    private var timerInProgress: Boolean = false
+    private val COUNTDOWN_INTERVAL: Long = 1000 // 1 second
+    private val TOTAL_TIME_IN_MILLIS: Long = 60000 // 60 seconds
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (!timerInProgress) {
+            startTimer()
+        } else {
+            mViewDataBinding.sendCodeAgainBtn.isEnabled = false
+            mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
+            mViewDataBinding.sendCodeAgainBtn.text = "${timeLeftInMillis / 1000}s"
+        }
+        setBackButtonDispatcher()
+    }
+
+
+    private fun showPasswordBottomSheet() {
+        val sheet = CreateNewPasswordSheet()
+
+        sheet.onNewPasswordCreation = { password ->
+            viewModel.resetPassword(viewState.phoneNumber.value.toString(), password, viewState.otp.value.toString()) {
+                navigateToLogin()
+            }
+        }
+        sheet.onNewPasswordCreationDismiss = {
+            navigateBack()
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "CreateNewPasswordSheet")
+    }
+
+
+    private fun navigateToLogin() {
+        launchActivity<NavHostPresenterActivity>(
+            options = Bundle(),
+            clearPrevious = true
+        ) {
+            putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+            putExtra(
+                NAVIGATION_Graph_START_DESTINATION_ID,
+                R.id.loginFragment
+            )
+        }
+    }
+
+    private fun navigateToTermsAndConditions() {
+        val bundle = Bundle()
+        bundle.putString("phoneNumber", viewState.phoneNumber.value.toString())
+        bundle.putString("phoneCode", viewState.phoneCode.value.toString())
+        navigate(R.id.termsFragment, bundle)
+    }
+
+    private fun startTimer() {
+        timerInProgress = true
+        mViewDataBinding.sendCodeAgainBtn.text = ""
+        mViewDataBinding.sendCodeAgainBtn.isEnabled = false
+        mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
+
+        timeLeftInMillis = TOTAL_TIME_IN_MILLIS
+
+        // Create a countdown timer
+        countDownTimer = object : CountDownTimer(timeLeftInMillis, COUNTDOWN_INTERVAL) {
+            override fun onTick(millisUntilFinished: Long) {
+                timeLeftInMillis = millisUntilFinished
+                updateTimerText()
+            }
+
+            override fun onFinish() {
+                timeLeftInMillis = 0
+                timerInProgress = false
+                updateTimerText()
+            }
+        }
+        countDownTimer.start()
+    }
+
+    private fun updateTimerText() {
+        val seconds = timeLeftInMillis / 1000
+        mViewDataBinding.sendCodeAgainBtn.text = "${seconds}s"
+
+        // If timer is finished, update the text on the "Resend OTP" button
+        if (timeLeftInMillis <= 0) {
+            timerInProgress = false
+            mViewDataBinding.sendCodeAgainBtn.text = resources.getString(R.string.send_again_text)
+            mViewDataBinding.sendCodeAgainBtn.isEnabled = true
+            mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appBlue))
+        } else {
+            mViewDataBinding.sendCodeAgainBtn.isEnabled = false
+            mViewDataBinding.sendCodeAgainBtn.setTextColor(resources.getColor(R.color.appTextGrey))
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer.cancel()
+    }
+}

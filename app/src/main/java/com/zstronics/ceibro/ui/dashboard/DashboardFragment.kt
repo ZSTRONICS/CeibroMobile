@@ -11,7 +11,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -91,6 +90,8 @@ class DashboardFragment :
 //                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
             }
         }
+
+        startPeriodicContactSyncWorker(requireContext())
     }
 
     private fun handleFileUploaderSocketEvents() {
@@ -225,7 +226,7 @@ class DashboardFragment :
     }
 
     private fun navigateToConnections() {
-        navigate(R.id.connectionsFragment)
+        navigate(R.id.MyConnectionV2Fragment)
     }
 
     companion object {

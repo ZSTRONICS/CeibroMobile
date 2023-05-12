@@ -134,7 +134,7 @@
         android:id="@+id/projectsFragment"
         android:name="com.zstronics.ceibro.ui.projects.ProjectsFragment"
         android:label="ProjectsFragment"
-        tools:layout="@layout/fragment_projects" >
+        tools:layout="@layout/fragment_projects">
         <action
             android:id="@+id/action_projectsFragment_to_createProjectMainFragment"
             app:destination="@id/createProjectMainFragment" />
@@ -257,7 +257,7 @@
         android:id="@+id/mainAdminFragment"
         android:name="com.zstronics.ceibro.ui.admin.MainAdminFragment"
         android:label="MainAdminFragment"
-        tools:layout="@layout/fragment_main_admin" >
+        tools:layout="@layout/fragment_main_admin">
         <action
             android:id="@+id/action_mainAdminFragment_to_adminsFragment"
             app:destination="@id/adminsFragment" />
@@ -269,7 +269,7 @@
         android:id="@+id/adminsFragment"
         android:name="com.zstronics.ceibro.ui.admin.admins.AdminsFragment"
         android:label="AdminsFragment"
-        tools:layout="@layout/fragment_admins" >
+        tools:layout="@layout/fragment_admins">
         <action
             android:id="@+id/action_adminsFragment_to_personalDetailFragment"
             app:destination="@id/personalDetailFragment" />
@@ -278,7 +278,7 @@
         android:id="@+id/allUsersFragment"
         android:name="com.zstronics.ceibro.ui.admin.users.AllUsersFragment"
         android:label="AllUsersFragment"
-        tools:layout="@layout/fragment_all_users" >
+        tools:layout="@layout/fragment_all_users">
         <action
             android:id="@+id/action_allUsersFragment_to_personalDetailFragment"
             app:destination="@id/personalDetailFragment" />
@@ -288,4 +288,17 @@
         android:name="com.zstronics.ceibro.ui.admin.personaldetail.PersonalDetailFragment"
         android:label="PersonalDetailFragment"
         tools:layout="@layout/fragment_personal_detail" />
+
+    <fragment
+        android:id="@+id/MyConnectionV2Fragment"
+        android:name="com.zstronics.ceibro.ui.dashboard.myconnectionsv2.MyConnectionV2Fragment"
+        android:label="MyConnectionV2Fragment"
+        tools:layout="@layout/fragment_connections_v2">
+
+    </fragment>
+    <fragment
+        android:id="@+id/myConnectionV2ProfileFragment"
+        android:name="com.zstronics.ceibro.ui.dashboard.connectionv2Profile.MyConnectionV2ProfileFragment"
+        android:label="MyConnectionV2ProfileFragment"
+        tools:layout="@layout/fragment_connections_v2_profile"/>
 </navigation>

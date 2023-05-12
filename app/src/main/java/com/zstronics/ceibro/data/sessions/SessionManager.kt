@@ -7,20 +7,22 @@ import com.zstronics.ceibro.base.*
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 
 class SessionManager constructor(
-    private val sharedPreferenceManager: SharedPreferenceManager
+    val sharedPreferenceManager: SharedPreferenceManager
 ) {
-    fun startUserSession(user: User, tokens: Tokens, pass: String) {
+    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean) {
         sharedPreferenceManager.saveBoolean(
             KEY_IS_USER_LOGGED_IN,
-            true
+            rememberMe
         )
+        CookiesManager.isLoggedIn = true
+        CookiesManager.jwtToken = tokens.access.token
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)
-
 
         _user.postValue(user)
     }
@@ -123,5 +125,42 @@ class SessionManager constructor(
     fun getRefreshToken(): String? {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         return tokenPref?.refresh?.token
+    }
+
+    fun getUserId(): String {
+        return getUserObj()?.id ?: ""
+    }
+
+    fun isLoggedIn(): Boolean {
+        return sharedPreferenceManager.getValueBoolean(KEY_IS_USER_LOGGED_IN, false)
+    }
+
+    fun getToken(): String? {
+        val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
+        return tokenPref?.access?.token
+    }
+
+    fun saveSyncedContacts(selectedContacts: List<SyncContactsRequest.CeibroContactLight>) {
+        sharedPreferenceManager.saveSyncedContacts(KEY_SYNCED_CONTACTS, selectedContacts)
+    }
+
+    fun getSyncedContacts(): List<SyncContactsRequest.CeibroContactLight> {
+        return sharedPreferenceManager.getSyncedContacts(KEY_SYNCED_CONTACTS)
+    }
+
+    fun updateAutoSync(enabled: Boolean) {
+        val oldUser = getUserObj()
+        oldUser?.autoContactSync = enabled
+        oldUser?.let { user ->
+            updateUser(user)
+        }
+    }
+
+    fun isFirstTimeLaunch():Boolean {
+        return sharedPreferenceManager.getValueBoolean(KEY_IS_FIRST_TIME_LAUNCH, true)
+    }
+
+    fun setNotFirstTimeLaunch() {
+        sharedPreferenceManager.saveBoolean(KEY_IS_FIRST_TIME_LAUNCH, false)
     }
 }

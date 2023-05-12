@@ -8,7 +8,12 @@ import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
+import com.zstronics.ceibro.data.repos.auth.signup.ForgetPasswordRequest
+import com.zstronics.ceibro.data.repos.editprofile.ChangeNumberRequest
+import com.zstronics.ceibro.data.repos.editprofile.ChangeNumberVerifyOtpRequest
+import com.zstronics.ceibro.data.repos.editprofile.ChangePasswordRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.FileUtils
@@ -23,8 +28,10 @@ class EditProfileVM @Inject constructor(
     override val viewState: EditProfileState,
     override var validator: Validator?,
     private val repository: IAuthRepository,
+    private val taskRepository: TaskRepository,
     val sessionManager: SessionManager
 ) : HiltBaseViewModel<IEditProfile.State>(), IEditProfile.ViewModel, IValidator {
+    val user = sessionManager.getUser().value
 
     init {
         EventBus.getDefault().register(this)
@@ -33,72 +40,38 @@ class EditProfileVM @Inject constructor(
             userFirstName.value = sessionManager.getUser().value?.firstName
             userSurname.value = sessionManager.getUser().value?.surName
             userEmail.value = sessionManager.getUser().value?.email
-            userContactNumber.value = sessionManager.getUser().value?.phone
-            userPassword.value = sessionManager.getPass()
-            userConfirmPassword.value = sessionManager.getPass()
+            userPhoneNumber.value = sessionManager.getUser().value?.phoneNumber
             userCompanyName.value = sessionManager.getUser().value?.companyName
-            userCompanyVAT.value = sessionManager.getUser().value?.companyVat
-            userCompanyLocation.value = sessionManager.getUser().value?.companyLocation
-            userCompanyContactNo.value = sessionManager.getUser().value?.companyPhone
-            userCompanyWorkEmail.value = sessionManager.getUser().value?.workEmail
-            currentlyRepresenting.value = sessionManager.getUser().value?.currentlyRepresenting
+            userJobTitle.value = sessionManager.getUser().value?.jobTitle
             userProfilePic.value = sessionManager.getUser().value?.profilePic
         }
     }
 
-    override fun onUpdate() {
-        updateProfile(
-            viewState.userFirstName.value.toString(),
-            viewState.userSurname.value.toString(),
-            viewState.userEmail.value.toString(),
-            viewState.userContactNumber.value.toString(),
-            viewState.userPassword.value.toString(),
-            viewState.userConfirmPassword.value.toString(),
-            viewState.userCompanyName.value.toString(),
-            viewState.userCompanyVAT.value.toString(),
-            viewState.userCompanyLocation.value.toString(),
-            viewState.userCompanyContactNo.value.toString(),
-            viewState.userCompanyWorkEmail.value.toString(),
-            viewState.currentlyRepresenting.value
-        )
-    }
 
     override fun updateProfile(
         firstName: String,
         surname: String,
         email: String,
-        contactNo: String,
-        password: String,
-        confirmPassword: String,
+        phoneNumber: String,
         companyName: String,
-        companyVAT: String,
-        companyLocation: String,
-        companyContactNo: String,
-        companyWorkEmail: String,
-        currentlyRepresenting: Boolean?
+        jobTitle: String,
+        onProfileUpdated: () -> Unit
     ) {
-        val currentlyRepresenting1: Boolean = currentlyRepresenting ?: false
-
         val request = EditProfileRequest(
             firstName = firstName,
             surName = surname,
-            phone = contactNo,
-            password = confirmPassword,
+            email = email,
             companyName = companyName,
-            companyVat = companyVAT,
-            companyLocation = companyLocation,
-            companyPhone = companyContactNo,
-            workEmail = companyWorkEmail,
-            currentlyRepresenting = currentlyRepresenting1
+            jobTitle = jobTitle
         )
         launch {
             loading(true)
             when (val response = repository.updateProfileCall(request)) {
 
                 is ApiResponse.Success -> {
-                    sessionManager.updateUser(response.data.userObj)
+                    sessionManager.updateUser(response.data.user)
                     loading(false, "Profile Updated successfully")
-                    clickEvent?.postValue(111)
+                    onProfileUpdated.invoke()
                 }
 
                 is ApiResponse.Error -> {
@@ -106,17 +79,98 @@ class EditProfileVM @Inject constructor(
                 }
             }
         }
-
     }
 
-    fun updateProfilePhoto(file: String, context: Context) {
+    override fun changePassword(oldPassword: String, newPassword: String, onPasswordChanged: () -> Unit) {
+        val request = ChangePasswordRequest(
+            oldPassword = oldPassword,
+            newPassword = newPassword
+        )
+        launch {
+            loading(true)
+            when (val response = repository.changePassword(request)) {
+
+                is ApiResponse.Success -> {
+                    loading(false, "Password updated successfully, please re-login")
+                    onPasswordChanged.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun changePhoneNumber(newNumber: String, countryCode: String, password: String, onNumberChanged: () -> Unit) {
+        val request = ChangeNumberRequest(
+            newNumber = newNumber,
+            countryCode = countryCode,
+            password = password
+        )
+        launch {
+            loading(true)
+            when (val response = repository.changePhoneNumber(request)) {
+
+                is ApiResponse.Success -> {
+                    loading(false, response.data.message)
+                    onNumberChanged.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun changePhoneNumberVerifyOtp(newNumber: String, otp: String, onNumberVerified: () -> Unit) {
+        val request = ChangeNumberVerifyOtpRequest(
+            newNumber = newNumber,
+            otp = otp
+        )
+        launch {
+            loading(true)
+            when (val response = repository.changePhoneNumberVerifyOtp(request)) {
+
+                is ApiResponse.Success -> {
+                    loading(false, "Phone number changed, please re-login")
+                    onNumberVerified.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
+    override fun resendOtp(phoneNumber: String, onOtpResend: () -> Unit) {
+        val request = ForgetPasswordRequest(phoneNumber = phoneNumber)
+        launch {
+            loading(true)
+            when (val response = repository.resendOtp(request)) {
+
+                is ApiResponse.Success -> {
+                    loading(false, response.data.message)
+                    onOtpResend.invoke()
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun updateProfilePhoto(file: String, context: Context) {
         launch {
             loading(true)
             val fileUri = FileUtils.getFile(
                 context,
                 file.toUri()
             )?.absolutePath.toString()
-            when (val response = repository.uploadProfilePicture(fileUri)) {
+            when (val response = repository.uploadProfilePictureV2(fileUri)) {
                 is ApiResponse.Success -> {
                     val userObj = sessionManager.getUserObj()
                     if (response.data.profilePic != "") {
@@ -147,15 +201,9 @@ class EditProfileVM @Inject constructor(
                 userFirstName.value = userObj?.firstName
                 userSurname.value = userObj?.surName
                 userEmail.value = userObj?.email
-                userContactNumber.value = userObj?.phone
-                userPassword.value = sessionManager.getPass()
-                userConfirmPassword.value = sessionManager.getPass()
+                userPhoneNumber.value = userObj?.phoneNumber
                 userCompanyName.value = userObj?.companyName
-                userCompanyVAT.value = userObj?.companyVat
-                userCompanyLocation.value = userObj?.companyLocation
-                userCompanyContactNo.value = userObj?.companyPhone
-                userCompanyWorkEmail.value = userObj?.workEmail
-                currentlyRepresenting.value = userObj?.currentlyRepresenting
+                userJobTitle.value = userObj?.jobTitle
                 userProfilePic.value = userObj?.profilePic
             }
         }, 100)
@@ -166,4 +214,11 @@ class EditProfileVM @Inject constructor(
         EventBus.getDefault().unregister(this)
     }
 
+    override fun endUserSession() {
+        launch {
+            taskRepository.eraseTaskTable()
+            taskRepository.eraseSubTaskTable()
+        }
+        sessionManager.endUserSession()
+    }
 }

@@ -2,19 +2,28 @@ package com.zstronics.ceibro.ui.profile.editprofile
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
-import com.ceibro.permissionx.PermissionX
+import com.bumptech.glide.Glide
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
-import com.zstronics.ceibro.base.extensions.toast
+import com.zstronics.ceibro.base.extensions.isEmail
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentEditProfileBinding
-import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 
@@ -27,88 +36,193 @@ class EditProfileFragment :
     override val viewModel: EditProfileVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_edit_profile
     override fun toolBarVisibility(): Boolean = false
-    private var isPassShown1 = false
-    private var isPassShown2 = false
     override fun onClick(id: Int) {
         when (id) {
-            111 -> finish()     //when profile is updated
             R.id.backBtn -> finish()
-            R.id.cancelBtn -> finish()
             R.id.userEditProfileImg -> checkPermission(
                 immutableListOf(
                     Manifest.permission.CAMERA,
                 )
             ) {
-                chooseFile(
-                    arrayOf(
-                        "image/png",
-                        "image/jpg",
-                        "image/jpeg",
-                        "image/*"
-                    )
-                )
+                choosePhoto()
             }
-            R.id.profPasswordEye1 -> {
-                isPassShown1 = !isPassShown1
-                showOrHidePassword1(isPassShown1)
-            }
-            R.id.profPasswordEye2 -> {
-                isPassShown2 = !isPassShown2
-                showOrHidePassword2(isPassShown2)
-            }
-            R.id.downBtn -> {
-                if (mViewDataBinding.editProfileLayout.measuredHeight == mViewDataBinding.editProfileScrollView.scrollY +
-                    mViewDataBinding.editProfileScrollView.height          //If scrollview is fully at bottom then this condition becomes true otherwise it is on top or in between
+            R.id.saveProfileBtn -> {
+                viewModel.updateProfile(
+                    viewState.userFirstName.value.toString(),
+                    viewState.userSurname.value.toString(),
+                    viewState.userEmail.value.toString(),
+                    viewState.userPhoneNumber.value.toString(),
+                    viewState.userCompanyName.value.toString(),
+                    viewState.userJobTitle.value.toString()
                 ) {
-                    mViewDataBinding.editProfileScrollView.fullScroll(View.FOCUS_UP)
-                } else {
-                    mViewDataBinding.editProfileScrollView.fullScroll(View.FOCUS_DOWN)
+                    finish()
                 }
             }
+            R.id.changePasswordBtn -> {
+                showChangePasswordBottomSheet()
+            }
+            R.id.changePhoneNumberBtn -> {
+                showChangePhoneNumberBottomSheet()
+            }
         }
     }
 
-    private fun showOrHidePassword1(passShown: Boolean) {
-        if (passShown) {
-            mViewDataBinding.etUserPassword.transformationMethod =
-                HideReturnsTransformationMethod.getInstance()
-            mViewDataBinding.profPasswordEye1.setImageResource(R.drawable.visibility_on)
+    private fun choosePhoto() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            val intent = Intent(
+                requireContext(),
+                NavControllerSample::class.java
+            )
+            startActivityForResult(intent, NavControllerSample.PHOTO_PICK_RESULT_CODE)
         } else {
-            mViewDataBinding.etUserPassword.transformationMethod =
-                PasswordTransformationMethod.getInstance()
-            mViewDataBinding.profPasswordEye1.setImageResource(R.drawable.visibility_off)
-        }
-        mViewDataBinding.etUserPassword.setSelection(mViewDataBinding.etUserPassword.text.toString().length)
-    }
-
-    private fun showOrHidePassword2(passShown: Boolean) {
-        if (passShown) {
-            mViewDataBinding.etUserConfirmPassword.transformationMethod =
-                HideReturnsTransformationMethod.getInstance()
-            mViewDataBinding.profPasswordEye2.setImageResource(R.drawable.visibility_on)
-        } else {
-            mViewDataBinding.etUserConfirmPassword.transformationMethod =
-                PasswordTransformationMethod.getInstance()
-            mViewDataBinding.profPasswordEye2.setImageResource(R.drawable.visibility_off)
-        }
-        mViewDataBinding.etUserConfirmPassword.setSelection(mViewDataBinding.etUserConfirmPassword.text.toString().length)
-    }
-
-    private fun chooseFile(mimeTypes: Array<String>) {
-        requireActivity().openFilePicker(
-            getString(R.string.screen_edit_profile_text_choose_file), mimeTypes,
-            completionHandler = fileCompletionHandler
-        )
-    }
-
-    var fileCompletionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = { _, intent ->
-        intent?.let { intentData ->
-            intentData.dataString?.let { viewModel.updateProfilePhoto(it, requireContext()) }
+            pickPhoto()
         }
     }
+
+    private fun pickPhoto() {
+        chooseImage { pickedImage ->
+            viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewDataBinding.etUserEmail.setText(viewState.userEmail.value)
+
+        mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.etPhone)
+
+        val phoneNumberUtil = PhoneNumberUtil.getInstance()
+        val parsedNumber = phoneNumberUtil.parse(viewState.userPhoneNumber.value.toString(), null)
+
+        val countryCode = parsedNumber.countryCode
+        val nationalSignificantNumber = parsedNumber.nationalNumber
+
+        mViewDataBinding.ccp.setCountryForPhoneCode(countryCode)
+        mViewDataBinding.etPhone.setText(nationalSignificantNumber.toString())
+
+        mViewDataBinding.etNameField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etSurnameField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etEmailField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etCompanyField.addTextChangedListener(textWatcher)
+        mViewDataBinding.etJobField.addTextChangedListener(textWatcher)
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+            // This method is called to notify you that the text has been changed and processed
+        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            // This method is called to notify you that the text is about to change
+        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            mViewDataBinding.saveProfileBtn.isEnabled =
+                (viewState.userFirstName.value.toString() != viewModel.user?.firstName ||
+                        viewState.userSurname.value.toString() != viewModel.user?.surName ||
+                        viewState.userEmail.value.toString() != viewModel.user?.email ||
+                        viewState.userPhoneNumber.value.toString() != viewModel.user?.phoneNumber ||
+                        viewState.userCompanyName.value.toString() != viewModel.user?.companyName ||
+                        viewState.userJobTitle.value.toString() != viewModel.user?.jobTitle) &&
+                        viewState.userFirstName.value.toString().isNotEmpty() &&
+                        viewState.userSurname.value.toString().isNotEmpty() &&
+                        viewState.userEmail.value.toString().isEmail()
+
+            mViewDataBinding.etNameField.error =
+                if (viewState.userFirstName.value.toString().isEmpty()) {
+                    resources.getString(R.string.error_message_name_validation)
+                } else {
+                    null
+                }
+            mViewDataBinding.etSurnameField.error =
+                if (viewState.userSurname.value.toString().isEmpty()) {
+                    resources.getString(R.string.error_message_name_validation)
+                } else {
+                    null
+                }
+            mViewDataBinding.etEmailField.error =
+                if (!viewState.userEmail.value.toString().isEmail()) {
+                    resources.getString(R.string.error_message_email_validation)
+                } else {
+                    null
+                }
+        }
+    }
+
+
+    private fun showChangePasswordBottomSheet() {
+        val sheet = ChangePasswordSheet()
+        sheet.dialog?.window?.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        );
+        sheet.onChangePassword = { oldPassword, newPassword ->
+            viewModel.changePassword(oldPassword, newPassword) {
+                logoutUser()
+            }
+        }
+        sheet.onChangePasswordDismiss = {
+
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "ChangePasswordSheet")
+    }
+
+    private fun showChangePhoneNumberBottomSheet() {
+        val sheet = ChangePhoneNumberSheet()
+
+        sheet.onChangeNumber = { newNumber, phoneCode, password ->
+            viewModel.changePhoneNumber(newNumber, phoneCode, password) {
+                sheet.dismiss()
+                showChangePhoneNumberVerificationBottomSheet(newNumber)
+            }
+        }
+        sheet.onChangeNumberDismiss = {
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "ChangePhoneNumberSheet")
+    }
+
+    private fun showChangePhoneNumberVerificationBottomSheet(newNumber: String) {
+        val sheet = ChangePhoneNumberVerifyOtpSheet()
+
+        sheet.onVerificationDone = { otp ->
+            viewModel.changePhoneNumberVerifyOtp(newNumber, otp) {
+                logoutUser()
+            }
+        }
+        sheet.onVerificationResendCode = {
+            viewModel.resendOtp(newNumber) { }
+        }
+        sheet.onVerificationDismiss = {
+            //TODO
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "ChangePhoneNumberVerifyOtpSheet")
+    }
+
+
+    private fun logoutUser() {
+        viewModel.endUserSession()
+        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+            options = Bundle(),
+            clearPrevious = true
+        ) {
+            putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+            putExtra(
+                NAVIGATION_Graph_START_DESTINATION_ID,
+                R.id.loginFragment
+            )
+        }
+        Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == NavControllerSample.PHOTO_PICK_RESULT_CODE) {
+            val pickedImage = data?.data
+            if (pickedImage != null && !pickedImage.equals("")) {
+                viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
+            }
+
+        }
     }
 }

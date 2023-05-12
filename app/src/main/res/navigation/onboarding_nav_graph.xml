@@ -12,14 +12,70 @@
         tools:layout="@layout/fragment_login">
 
         <action
-            android:id="@+id/action_loginFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
         android:name="com.zstronics.ceibro.ui.signup.SignUpFragment"
         android:label="SignUpFragment"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_photoFragment"
+            app:destination="@id/photoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.zstronics.ceibro.ui.forgotpassword.ForgotPasswordFragment"
+        android:label="ForgotPasswordFragment"
+        tools:layout="@layout/fragment_forgot_password">
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_verifyNumberFragment"
+            app:destination="@id/verifyNumberFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyNumberFragment"
+        android:name="com.zstronics.ceibro.ui.verifynumber.VerifyNumberFragment"
+        android:label="VerifyNumberFragment"
+        tools:layout="@layout/fragment_verify_number">
+        <action
+            android:id="@+id/action_verifyNumberFragment_to_termsFragment"
+            app:destination="@id/termsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.zstronics.ceibro.ui.signup.register.RegisterFragment"
+        android:label="RegisterFragment"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_verifyNumberFragment"
+            app:destination="@id/verifyNumberFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/termsFragment"
+        android:name="com.zstronics.ceibro.ui.signup.terms.TermsFragment"
+        android:label="TermsFragment"
+        tools:layout="@layout/fragment_terms">
+        <action
+            android:id="@+id/action_termsFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoFragment"
+        android:name="com.zstronics.ceibro.ui.signup.photo.PhotoFragment"
+        android:label="PhotoFragment"
+        tools:layout="@layout/fragment_photo" >
+        <action
+            android:id="@+id/action_photoFragment_to_contactsSelectionFragment"
+            app:destination="@id/contactsSelectionFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/contactsSelectionFragment"
+        android:name="com.zstronics.ceibro.ui.contacts.ContactsSelectionFragment"
+        android:label="ContactsSelectionFragment"
+        tools:layout="@layout/fragment_contacts_selection" />
 </navigation>

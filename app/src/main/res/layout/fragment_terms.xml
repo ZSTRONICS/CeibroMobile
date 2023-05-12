@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.signup.terms.TermsState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.signup.terms.TermsVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/termsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/termsHeading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="1"
+                android:text="@string/terms_and_conditions_heading"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@+id/termsConfirmBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/termsHeader">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/registerDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_11sdp"
+                    android:layout_marginEnd="@dimen/_11sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/terms_and_conditions_description"
+                    android:textColor="@color/appTextGrey"
+                    android:textSize="14.5sp"
+                    android:lineSpacingExtra="1dp"
+                    android:justificationMode="inter_word"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/termsCheckBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_11sdp"
+                    android:layout_marginBottom="@dimen/_11sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:checked="@={viewState.isAgreedWithTerms}"
+                    android:text="@string/terms_and_conditions_agree_statement"
+                    android:textColor="@color/black"
+                    android:textSize="13.5sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/registerDescription"
+                    app:layout_constraintStart_toStartOf="@+id/registerDescription"
+                    app:layout_constraintTop_toBottomOf="@+id/registerDescription"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/termsConfirmBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_13sdp"
+            android:layout_marginStart="@dimen/_19sdp"
+            android:layout_marginEnd="@dimen/_19sdp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_medium"
+            android:enabled="@{viewState.isAgreedWithTerms}"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/continue_heading"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

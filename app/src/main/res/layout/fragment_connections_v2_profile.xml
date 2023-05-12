@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.dashboard.connectionv2Profile.MyConnectionV2ProfileState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.dashboard.connectionv2Profile.MyConnectionV2ProfileVM" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbarHeader"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/profile_heading"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/imageSection"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbarHeader">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/connectionImgCard"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="0dp"
+                android:outlineSpotShadowColor="@color/white"
+                app:cardBackgroundColor="@color/appLightGrey"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/contactImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_img"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/contactInitials"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:maxLength="3"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="KD"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_30sdp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/AppLogoCard"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:elevation="0dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ceibroLogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/_3sdp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/app_logo" />
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/contactName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_19sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageSection"
+            tools:text="Boris Antseferov" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/phoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="+372 564 9382"
+            android:textColor="@color/appTextGrey"
+            android:textSize="@dimen/_11sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/contactName" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emailTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="name.surname@ceibro.com"
+            android:textColor="@color/appBlue"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/phoneNumber" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/companyTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Company Ltd"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/emailTV" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/newTaskButton"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:background="@drawable/button_bg_filled"
+            android:drawableStart="@drawable/ic_add"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintEnd_toStartOf="@+id/optionMenu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/companyTV">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/newTaskHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_add"
+                android:drawablePadding="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/new_task_heading"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/optionMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="@dimen/_1sdp"
+            android:src="@drawable/ic_menu_dots"
+            android:tint="@color/appBlue"
+            app:layout_constraintBottom_toBottomOf="@+id/newTaskButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/newTaskButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

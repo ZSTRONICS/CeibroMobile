@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="ceibroConnection"
+            type="com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections.CeibroConnection" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/connectionImgCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:elevation="0dp"
+            android:outlineSpotShadowColor="@color/white"
+            app:cardBackgroundColor="@color/appLightGrey"
+            app:cardCornerRadius="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/contactName">
+
+            <ImageView
+                android:id="@+id/contactImage"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_img"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/contactInitials"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="center"
+                android:maxLength="3"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="KD"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </androidx.cardview.widget.CardView>
+
+
+        <TextView
+            android:id="@+id/contactName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="10dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:text="Kristo Vunukainen"
+            app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
+            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/phoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="3dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:textColor="@color/appTextGrey"
+            android:textSize="12sp"
+            android:text="@string/phone_number_heading"
+            android:visibility="@{ceibroConnection.isCeiborUser ? View.INVISIBLE : View.VISIBLE, default = visible}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/contactName"
+            app:layout_constraintStart_toStartOf="@+id/contactName"
+            app:layout_constraintTop_toBottomOf="@+id/contactName"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/companyName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLength="24"
+            android:maxLines="1"
+            android:textColor="@color/appTextGrey"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/contactName"
+            app:layout_constraintTop_toBottomOf="@+id/contactName"
+            tools:text="Ceibro" />
+
+        <TextView
+            android:id="@+id/dot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="·"
+            android:textColor="@color/appTextGrey"
+            android:textSize="12sp"
+            android:visibility="@{ceibroConnection.isCeiborUser ? View.VISIBLE : View.INVISIBLE, default = gone}"
+            app:layout_constraintStart_toEndOf="@+id/companyName"
+            app:layout_constraintTop_toBottomOf="@+id/contactName" />
+
+
+        <TextView
+            android:id="@+id/jobTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:textColor="@color/appTextGrey"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/ceibroLogo"
+            app:layout_constraintStart_toEndOf="@+id/dot"
+            app:layout_constraintTop_toBottomOf="@+id/contactName"
+            tools:text="Android Engineer" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ceibroLogo"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/app_logo"
+            app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/contactName" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

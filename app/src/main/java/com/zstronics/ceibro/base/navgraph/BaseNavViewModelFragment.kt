@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,7 +24,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
@@ -35,11 +33,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import androidx.work.*
 import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
 import com.zstronics.ceibro.base.extensions.launchActivityForResult
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
@@ -47,6 +45,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.utils.FileUtils
 import com.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
@@ -54,6 +53,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 private const val ARGUMENT_NAVIGATION_REQUEST_CODE = "NAVIGATION_REQUEST_CODE"
@@ -316,26 +316,27 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
     fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
         PermissionX.init(this).permissions(
             permissionsList
-        ).explainReasonBeforeRequest().onExplainRequestReason { scope, deniedList, beforeRequest ->
-            if (beforeRequest)
-                scope.showRequestReasonDialog(
-                    deniedList,
-                    "${getString(R.string.common_text_permission)}",
-                    getString(R.string.common_text_allow),
-                    getString(R.string.common_text_deny)
-                )
-        }.onForwardToSettings { scope, deniedList ->
-            scope.showForwardToSettingsDialog(
-                permissions = deniedList,
-                message = getString(R.string.message_camera_permission_denied),
-                positiveText = getString(R.string.open_setting), cancelAble = true
-            )
-        }
+        )
+//            .onExplainRequestReason { scope, deniedList, beforeRequest ->
+//            if (beforeRequest)
+//                scope.showRequestReasonDialog(
+//                    deniedList,
+//                    "${getString(R.string.common_text_permission)}",
+//                    getString(R.string.common_text_allow),
+//                    getString(R.string.common_text_deny)
+//                )
+//        }.onForwardToSettings { scope, deniedList ->
+//            scope.showForwardToSettingsDialog(
+//                permissions = deniedList,
+//                message = getString(R.string.message_camera_permission_denied),
+//                positiveText = getString(R.string.open_setting), cancelAble = true
+//            )
+//        }
             .request { allGranted, grantedList, deniedList ->
                 if (allGranted) {
                     function.invoke()
                 } else {
-                    toast(getString(R.string.common_text_permissions_denied))
+                    //toast(getString(R.string.common_text_permissions_denied))
                 }
             }
     }
@@ -347,6 +348,28 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             )
         ) {
             pickFiles(allowMultiple)
+        }
+    }
+
+    fun chooseImage(onPhotoPick: (fileUri: Uri?) -> Unit) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.CAMERA,
+            )
+        ) {
+            requireActivity().openFilePicker(
+                allowMultiple = false,
+                mimeTypes = arrayOf(
+                    "image/png",
+                    "image/jpg",
+                    "image/jpeg",
+                    "image/*"
+                )
+            ) { resultCode, data ->
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    onPhotoPick(data.data)
+                }
+            }
         }
     }
 
@@ -510,16 +533,16 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                     if (fileToDelete?.exists() == true) {
                         val deleted = fileToDelete.delete()
                     }
-                } catch (_: Exception) {}
-            }
-            else {
+                } catch (_: Exception) {
+                }
+            } else {
                 try {
                     val oldFile = imageUri.toFile()
                     if (oldFile.exists()) {
                         val deleted = oldFile.delete()
                     }
+                } catch (_: Exception) {
                 }
-                catch (_: Exception) {}
             }
         }
     }
@@ -561,7 +584,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
-    fun takePhoto() {
+    private fun takePhoto() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
         // Ensure that there's a camera activity to handle the intent
@@ -617,4 +640,45 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    fun startPeriodicContactSyncWorker(context: Context) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.READ_CONTACTS,
+            )
+        ) {
+            // Build the constraints
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val periodicWorkRequest = PeriodicWorkRequest.Builder(
+                ContactSyncWorker::class.java, 15, TimeUnit.MINUTES
+            ).setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                ContactSyncWorker.CONTACT_SYNC_WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                periodicWorkRequest
+            )
+        }
+    }
+
+    fun startOneTimeContactSyncWorker(context: Context) {
+        checkPermission(
+            immutableListOf(
+                Manifest.permission.READ_CONTACTS,
+            )
+        ) {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ContactSyncWorker::class.java)
+                .setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
+        }
+    }
 }

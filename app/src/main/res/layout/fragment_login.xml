@@ -16,28 +16,62 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/signin_background">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="0dp"
-            android:layout_height="125dp"
-            android:layout_marginTop="60dp"
-            app:layout_constraintBottom_toTopOf="@+id/materialCardView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_42sdp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/view24"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ceibro_logo_shadow" />
+            app:srcCompat="@drawable/ceibro_inline_logo_black" />
+
+        <View
+            android:id="@+id/view24"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.74" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/backImgLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="10dp"
+            app:cardBackgroundColor="@color/transparent"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/view24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/new_background"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
+
+
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             style="@style/CustomCardViewStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
             app:cardBackgroundColor="@color/white"
-            app:cardElevation="20dp"
+            app:cardElevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -56,6 +90,8 @@
                         android:id="@+id/linearLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="18dp"
                         android:layout_marginBottom="23dp"
                         android:orientation="horizontal"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -76,56 +112,82 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
+                            android:background="?attr/selectableItemBackground"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:padding="3dp"
+                            android:padding="3.5dp"
                             android:text="@string/sign_up"
-                            android:textColor="@color/appYellow"
-                            android:textSize="15sp" />
+                            android:textColor="@color/appBlue"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/loginBtn"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginStart="35dp"
-                        android:layout_marginEnd="35dp"
-                        android:layout_marginBottom="70dp"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_29sdp"
                         android:background="@drawable/signin_button_back"
-                        android:enabled="@{viewModel.validator.isValidate , default = false}"
                         android:fontFamily="@font/inter_medium"
-                        android:onClick="@{(v) -> viewModel.onLogin()}"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="40dp"
                         android:paddingEnd="40dp"
-                        android:text="@string/sign_in_btn_text"
+                        android:text="@string/login_btn_text"
                         android:textAllCaps="false"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textSize="17sp"
                         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/rememberMeCheckBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="32dp"
+                        android:text="@string/remember_me_text"
+                        android:textColor="@color/black"
+                        android:textSize="13.5sp"
+                        android:checked="@={viewState.rememberMe}"
+                        android:fontFamily="@font/inter_regular"
+                        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
+                        app:layout_constraintStart_toStartOf="@+id/loginBtn" />
+
+                    <TextView
+                        android:id="@+id/forgotPasswordBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:fontFamily="@font/inter_medium"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="4dp"
+                        android:text="@string/forgot_password_heading"
+                        android:textColor="@color/appBlue"
+                        android:textSize="13.5sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/rememberMeCheckBox"
+                        app:layout_constraintEnd_toEndOf="@+id/loginBtn"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toEndOf="@+id/rememberMeCheckBox"
+                        app:layout_constraintTop_toTopOf="@+id/rememberMeCheckBox" />
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextPassword"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_marginBottom="35dp"
-                        android:background="@drawable/input_field"
-                        android:drawableStart="@drawable/icon_lock"
-                        android:drawablePadding="13dp"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/input_field_rectangle"
                         android:ems="10"
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/password_hint"
                         android:inputType="textPassword"
-                        android:paddingStart="18dp"
-                        android:paddingEnd="40dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="42dp"
                         android:text="@={viewState.password}"
-                        android:textColorHint="@color/appGrey"
-                        android:textSize="15sp"
                         android:textColor="@color/black"
-                        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
+                        android:textColorHint="@color/appGrey"
+                        android:textSize="15.5sp"
+                        app:layout_constraintBottom_toTopOf="@+id/rememberMeCheckBox"
                         app:layout_constraintEnd_toEndOf="@+id/loginBtn"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/loginBtn"
@@ -136,79 +198,73 @@
                         android:id="@+id/loginPasswordEye"
                         android:layout_width="32dp"
                         android:layout_height="35dp"
-                        android:layout_marginEnd="6dp"
-                        android:padding="6dp"
+                        android:layout_marginEnd="4dp"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="6dp"
                         app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
                         app:layout_constraintEnd_toEndOf="@+id/editTextPassword"
                         app:layout_constraintTop_toTopOf="@+id/editTextPassword"
-                        app:srcCompat="@drawable/visibility_off"
-                        app:tint="@color/appTextGrey" />
+                        app:srcCompat="@drawable/icon_visibility_off"
+                        app:tint="@color/appGrey3" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editTextEmail"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
                         android:layout_marginBottom="12dp"
-                        android:background="@drawable/input_field"
-                        android:drawableStart="@drawable/email_icon_solid"
-                        android:drawablePadding="13dp"
-                        android:ems="10"
-                        android:fontFamily="@font/inter_regular"
-                        android:hint="@string/e_mail_hint"
-                        android:inputType="textEmailAddress"
-                        android:paddingStart="18dp"
-                        android:paddingEnd="18dp"
-                        android:text="@={viewState.email}"
-                        android:textColorHint="@color/appGrey"
-                        android:textSize="15sp"
-                        android:textColor="@color/black"
+                        android:background="@drawable/input_field_rectangle"
                         app:layout_constraintBottom_toTopOf="@+id/editTextPassword"
                         app:layout_constraintEnd_toEndOf="@+id/editTextPassword"
-                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/editTextPassword"
-                        app:validateType="@{`email`}" />
+                        app:layout_constraintTop_toTopOf="parent">
 
 
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="28dp"
-                        android:layout_marginEnd="28dp"
-                        android:layout_marginBottom="55dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="center"
-                        android:text="@string/sign_in_to_manage_your_projects_with_ceibro"
-                        android:textColor="@color/appTextGrey"
-                        android:textSize="13sp"
-                        app:layout_constraintBottom_toTopOf="@+id/editTextEmail"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        <com.hbb20.CountryCodePicker
+                            android:id="@+id/ccp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:ccp_countryPreference="pk,ee"
+                            app:ccp_excludedCountries=""
+                            app:ccp_defaultNameCode="ee"
+                            app:ccp_textSize="16sp"
+                            app:ccp_arrowSize="16dp"
+                            app:ccp_showFullName="false"
+                            app:ccp_showPhoneCode="true"
+                            app:ccp_showNameCode="false"
+                            app:ccp_showFlag="true"
+                            app:ccp_flagBorderColor="@color/appLightGrey"
+                            app:ccpDialog_keyboardAutoPopup="false"
+                            app:ccpDialog_showCloseIcon="true"
+                            app:ccpDialog_showFlag="true"
+                            app:ccpDialog_showTitle="true"
+                            app:ccpDialog_initialScrollToSelection="true"
+                            app:layout_constraintBottom_toBottomOf="@+id/editTextPhone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/editTextPhone"
+                            />
 
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginBottom="17dp"
-                        android:fontFamily="@font/inter_bold"
-                        android:text="@string/sign_in_heading"
-                        android:textColor="@color/black"
-                        android:textSize="24.5sp"
-                        app:layout_constraintBottom_toTopOf="@+id/textView"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextPhone"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/input_field_rectangle_half_corner"
+                            android:ems="10"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/phone_number_heading"
+                            android:inputType="phone"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:text="@={viewState.email}"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/appGrey"
+                            android:textSize="15.5sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/ccp"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1.5dp"
-                        android:layout_marginTop="2dp"
-                        android:background="@color/black"
-                        app:layout_constraintEnd_toEndOf="@+id/textView2"
-                        app:layout_constraintStart_toStartOf="@+id/textView2"
-                        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>
