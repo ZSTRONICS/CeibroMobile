@@ -187,7 +187,9 @@
             android:background="@drawable/shadowfile"
             android:gravity="center"
             android:orientation="horizontal"
+            android:paddingStart="@dimen/_1sdp"
             android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_1sdp"
             android:paddingBottom="@dimen/_2sdp"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -199,6 +201,7 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_task_to_me"
                 android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
@@ -206,7 +209,7 @@
                 android:text="@string/to_me_heading"
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="11sp"
+                android:textSize="@dimen/_8sdp"
                 app:checked="@{viewState.toMeSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -217,6 +220,7 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_task_from_me"
                 android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
@@ -224,7 +228,7 @@
                 android:text="@string/from_me_heading"
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="11sp"
+                android:textSize="@dimen/_8sdp"
                 app:checked="@{viewState.fromMeSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -235,6 +239,7 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_hidded"
                 android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
@@ -242,7 +247,7 @@
                 android:text="@string/hidded_heading"
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="11sp"
+                android:textSize="@dimen/_8sdp"
                 app:checked="@{viewState.hidedSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -253,6 +258,7 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_visibility_on"
                 android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
@@ -260,7 +266,7 @@
                 android:text="@string/viewer_heading"
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="11sp"
+                android:textSize="@dimen/_8sdp"
                 app:checked="@{viewState.viewerSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -271,6 +277,7 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_location"
                 android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
@@ -278,7 +285,7 @@
                 android:text="@string/location_heading"
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="11sp"
+                android:textSize="@dimen/_8sdp"
                 app:checked="@{viewState.locationSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -289,13 +296,15 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_folder"
                 android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
                 android:paddingEnd="@dimen/_3sdp"
                 android:text="@string/project_heading"
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="11sp"
+                android:textSize="@dimen/_8sdp"
                 app:checked="@{viewState.projectsSelected}" />
 
         </LinearLayout>

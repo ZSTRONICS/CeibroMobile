@@ -806,4 +806,5 @@
     <string name="hidded_heading">Hidded</string>
     <string name="from_me_heading">From me</string>
     <string name="to_me_heading">To me</string>
+    <string name="from_heading">From:</string>
 </resources>

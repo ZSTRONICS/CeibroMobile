@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/taskCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="9dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/taskCardLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/task_card_outline">
+
+                <LinearLayout
+                    android:id="@+id/taskFromLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:gravity="start"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toStartOf="@+id/bottomCenterPoint"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/taskFromHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/from_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/taskFromText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:maxLines="1"
+                        android:text="Kristo Vunukainen 1"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/taskProjectLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_9sdp"
+                    android:gravity="start"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/taskFromLayout"
+                    app:layout_constraintTop_toTopOf="@+id/taskFromLayout">
+
+                    <TextView
+                        android:id="@+id/taskProjectHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/project_text"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/taskProjectText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:gravity="start"
+                        android:maxLines="1"
+                        android:text="Kloostri eramu"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/taskTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="Elektrikaabli paigaldus"
+                    android:textColor="@color/black"
+                    android:textSize="16.5sp"
+                    app:layout_constraintEnd_toEndOf="@+id/taskProjectLayout"
+                    app:layout_constraintStart_toStartOf="@+id/taskFromLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/taskFromLayout" />
+
+                <TextView
+                    android:id="@+id/taskDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxLines="2"
+                    android:text="Maecenas sed diam eget risus varius t"
+                    android:textColor="@color/appTextGrey"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="@+id/taskProjectLayout"
+                    app:layout_constraintStart_toStartOf="@+id/taskFromLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:layout_margin="4dp"
+                    android:background="@color/appGrey1"
+                    android:padding="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/taskDescription">
+
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/taskCommentLayout"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        app:layout_constraintBottom_toBottomOf="@+id/taskSubTaskTotalCountLayout"-->
+<!--                        app:layout_constraintStart_toStartOf="@+id/taskTitle"-->
+<!--                        app:layout_constraintTop_toTopOf="@+id/taskSubTaskTotalCountLayout">-->
+
+<!--                        <ImageView-->
+<!--                            android:id="@+id/taskCommentCountImg"-->
+<!--                            android:layout_width="17dp"-->
+<!--                            android:layout_height="15dp"-->
+<!--                            android:fontFamily="@font/inter_regular"-->
+<!--                            android:src="@drawable/icon_chat"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="12sp"-->
+<!--                            app:tint="@color/appTextGrey" />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/taskCommentCountText"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="3dp"-->
+<!--                            android:fontFamily="@font/inter_regular"-->
+<!--                            android:padding="1dp"-->
+<!--                            android:text="0"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="12sp" />-->
+<!--                    </LinearLayout>-->
+
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/taskSubTaskTotalCountLayout"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="13dp"-->
+<!--                        android:layout_marginBottom="15dp"-->
+<!--                        android:gravity="center"-->
+<!--                        android:orientation="horizontal">-->
+
+<!--                        <ImageView-->
+<!--                            android:id="@+id/taskSubTaskTotalCountImg"-->
+<!--                            android:layout_width="17dp"-->
+<!--                            android:layout_height="16dp"-->
+<!--                            android:fontFamily="@font/inter_regular"-->
+<!--                            android:src="@drawable/icon_task"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="12sp"-->
+<!--                            app:tint="@color/appYellow" />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/taskSubTaskTotalCountText"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="3dp"-->
+<!--                            android:fontFamily="@font/inter_regular"-->
+<!--                            android:padding="1dp"-->
+<!--                            android:text="45 subtask(s)"-->
+<!--                            android:textColor="@color/black"-->
+<!--                            android:textSize="12sp" />-->
+<!--                    </LinearLayout>-->
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                <View
+                    android:id="@+id/bottomCenterPoint"
+                    android:layout_width="1dp"
+                    android:layout_height="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.51"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/taskDescription" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toTopOf="@+id/taskCard"
+            app:layout_constraintEnd_toEndOf="@+id/taskCard"
+            app:layout_constraintStart_toStartOf="@+id/taskCard"
+            app:layout_constraintTop_toTopOf="@+id/taskCard">
+
+            <TextView
+                android:id="@+id/taskId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/task_card_less_corner_outline"
+                android:fontFamily="@font/inter_regular"
+                android:maxLength="9"
+                android:paddingStart="7dp"
+                android:paddingTop="2.2dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2.2dp"
+                android:text="C001-0012"
+                android:textColor="@color/black"
+                android:textSize="11.5sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/taskCreationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:fontFamily="@font/inter_regular"
+                android:text="Mon, 29.05.2023"
+                android:maxLength="16"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/black"
+                android:textSize="11.5sp"
+                app:layout_constraintBottom_toBottomOf="@+id/taskId"
+                app:layout_constraintStart_toEndOf="@+id/taskId"
+                app:layout_constraintTop_toTopOf="@+id/taskId" />
+
+            <View
+                android:id="@+id/centerDateLine"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:background="@color/black"
+                android:layout_marginStart="@dimen/_3sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/taskCreationDate"
+                app:layout_constraintStart_toEndOf="@+id/taskCreationDate"
+                app:layout_constraintTop_toTopOf="@+id/taskCreationDate" />
+
+            <TextView
+                android:id="@+id/taskDueDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLength="16"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Wed, 15.06.2023"
+                android:textColor="@color/black"
+                android:textSize="11.5sp"
+                app:layout_constraintBottom_toBottomOf="@+id/taskCreationDate"
+                app:layout_constraintEnd_toStartOf="@+id/confirmNeededText"
+                app:layout_constraintStart_toEndOf="@+id/centerDateLine"
+                app:layout_constraintTop_toTopOf="@+id/taskCreationDate" />
+
+            <ImageView
+                android:id="@+id/taskTickMark"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:layout_gravity="end"
+                android:src="@drawable/icon_circle_tick"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/appGrey3" />
+
+            <TextView
+                android:id="@+id/confirmNeededText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:background="@drawable/background_chip"
+                android:backgroundTint="@color/appPaleBlue"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="7dp"
+                android:paddingTop="2.2dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2.2dp"
+                android:text="@string/confirm_needed_heading"
+                android:textColor="@color/appBlue"
+                android:textSize="11.5sp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/taskTickMark"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

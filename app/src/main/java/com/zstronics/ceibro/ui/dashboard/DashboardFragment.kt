@@ -51,6 +51,54 @@ class DashboardFragment :
 //            R.id.profileIcon -> navigate(R.id.profileFragment)
             R.id.profileImg -> navigateToProfile()
             R.id.friendsReqBtn -> navigateToConnections()
+            R.id.toMeBtn -> {
+                changeSelectedTab(R.id.toMeBtn)
+            }
+            R.id.fromMeBtn -> {
+                changeSelectedTab(R.id.fromMeBtn)
+            }
+            R.id.hidedBtn -> {
+                changeSelectedTab(R.id.hidedBtn)
+            }
+            R.id.viewerBtn -> {
+                changeSelectedTab(R.id.viewerBtn)
+            }
+            R.id.locationBtn -> {
+                changeSelectedTab(R.id.locationBtn)
+            }
+            R.id.projectsBtn -> {
+                changeSelectedTab(R.id.projectsBtn)
+            }
+        }
+    }
+
+    private fun changeSelectedTab(btnID: Int) {
+        viewState.toMeSelected.value = false
+        viewState.fromMeSelected.value = false
+        viewState.hidedSelected.value = false
+        viewState.viewerSelected.value = false
+        viewState.locationSelected.value = false
+        viewState.projectsSelected.value = false
+
+        when (btnID) {
+            R.id.toMeBtn -> {
+                viewState.toMeSelected.value = true
+            }
+            R.id.fromMeBtn -> {
+                viewState.fromMeSelected.value = true
+            }
+            R.id.hidedBtn -> {
+                viewState.hidedSelected.value = true
+            }
+            R.id.viewerBtn -> {
+                viewState.viewerSelected.value = true
+            }
+            R.id.locationBtn -> {
+                viewState.locationSelected.value = true
+            }
+            R.id.projectsBtn -> {
+                viewState.projectsSelected.value = true
+            }
         }
     }
 
