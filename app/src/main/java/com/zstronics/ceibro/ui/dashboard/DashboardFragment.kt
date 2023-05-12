@@ -64,13 +64,13 @@ class DashboardFragment :
         handleFileUploaderSocketEvents()
 //        setBadgeOnChat(R.id.nav_chat, 4)
 
-        mViewDataBinding.bottomNavigation.setOnNavigationItemSelectedListener(navListener)
+        mViewDataBinding.bottomNavigation1.setOnNavigationItemSelectedListener(navListener)
 //        mViewDataBinding.bottomNavigation.selectedItemId = R.id.nav_home
 //        childFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment())
 //            .commit()
 
         viewState.selectedItem.observe(viewLifecycleOwner) {
-            mViewDataBinding.bottomNavigation.selectedItemId = selectedItem
+            mViewDataBinding.bottomNavigation1.selectedItemId = selectedItem
         }
 
 
@@ -215,7 +215,7 @@ class DashboardFragment :
     }
 
     private fun setBadgeOnChat(menuItemId: Int, number: Int) {
-        val badge = mViewDataBinding.bottomNavigation.getOrCreateBadge(menuItemId)
+        val badge = mViewDataBinding.bottomNavigation1.getOrCreateBadge(menuItemId)
         badge.isVisible = true
         badge.number = number
         badge.backgroundColor = resources.getColor(R.color.appRed)

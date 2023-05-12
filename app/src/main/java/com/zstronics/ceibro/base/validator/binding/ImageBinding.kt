@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.base.validator.binding
 
+import android.content.res.ColorStateList
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -62,5 +64,17 @@ object ImageBinding {
         groupTitle: String?
     ) {
         textView.text = "${groupTitle?.get(0)?.uppercaseChar()}"
+    }
+
+    @JvmStatic
+    @BindingAdapter(
+        value = ["app:customDrawableTint"]
+    )
+    fun setCustomDrawableTint(
+        button: AppCompatButton,
+        color: Int
+    ) {
+        button.backgroundTintList =
+            ColorStateList.valueOf(button.context.resources.getColor(color))
     }
 }

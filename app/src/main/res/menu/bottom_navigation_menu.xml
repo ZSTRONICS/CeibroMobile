@@ -20,7 +20,7 @@
     <item
         android:id="@+id/nav_projects"
         android:enabled="true"
-        android:icon="@drawable/icon_projects"
+        android:icon="@drawable/icon_projects_old"
         android:title="Projects" />
 
     <item

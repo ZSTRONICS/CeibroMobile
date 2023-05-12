@@ -163,7 +163,7 @@
             app:layout_constraintTop_toBottomOf="@+id/homeHeader" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
+            android:id="@+id/bottom_navigation1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:itemIconTint="@drawable/bottom_nav_color"
@@ -178,6 +178,116 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_navigation_menu" />
+
+        <LinearLayout
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:background="@drawable/shadowfile"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/toMeBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_task_to_me"
+                app:customDrawableTint="@{viewState.toMeSelected ? @color/black : @color/appBlue, default = @color/black}"
+                android:textColor="@{viewState.toMeSelected ? @color/black : @color/appBlue, default = @color/black}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:maxLines="1"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:text="@string/to_me_heading" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/fromMeBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_task_from_me"
+                app:customDrawableTint="@{viewState.fromMeSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:textColor="@{viewState.fromMeSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:maxLines="1"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:text="@string/from_me_heading" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/hidedBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_hidded"
+                app:customDrawableTint="@{viewState.hidedSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:textColor="@{viewState.hidedSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:maxLines="1"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:text="@string/hidded_heading" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/viewerBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_visibility_on"
+                app:customDrawableTint="@{viewState.viewerSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:textColor="@{viewState.viewerSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:maxLines="1"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:text="@string/viewer_heading" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/locationBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_location"
+                app:customDrawableTint="@{viewState.locationSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:textColor="@{viewState.locationSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:maxLines="1"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:text="@string/location_heading"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/projectsBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_folder"
+                app:customDrawableTint="@{viewState.projectsSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:textColor="@{viewState.projectsSelected ? @color/black : @color/appBlue, default = @color/appBlue}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:maxLines="1"
+                android:textSize="11sp"
+                android:textAllCaps="false"
+                android:text="@string/project_heading" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

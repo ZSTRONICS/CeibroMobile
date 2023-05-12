@@ -803,4 +803,7 @@
     <string name="not_available">Not available</string>
     <string name="sync_contacts_statement">Select \'Allow\' to automatically sync all of your contacts with Ceibro.</string>
     <string name="add_contact">Add contact</string>
+    <string name="hidded_heading">Hidded</string>
+    <string name="from_me_heading">From me</string>
+    <string name="to_me_heading">To me</string>
 </resources>
