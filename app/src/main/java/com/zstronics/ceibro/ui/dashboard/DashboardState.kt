@@ -8,8 +8,7 @@ import javax.inject.Inject
 class DashboardState @Inject constructor() : BaseState(), IDashboard.State {
     override val toMeSelected: MutableLiveData<Boolean> = MutableLiveData(true)
     override val fromMeSelected: MutableLiveData<Boolean> = MutableLiveData(false)
-    override val hidedSelected: MutableLiveData<Boolean> = MutableLiveData(false)
-    override val viewerSelected: MutableLiveData<Boolean> = MutableLiveData(false)
+    override val canceledSelected: MutableLiveData<Boolean> = MutableLiveData(false)
     override val locationSelected: MutableLiveData<Boolean> = MutableLiveData(false)
     override val projectsSelected: MutableLiveData<Boolean> = MutableLiveData(false)
     override val selectedItem: MutableLiveData<Int> = MutableLiveData(R.id.nav_home)

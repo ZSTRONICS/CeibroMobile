@@ -57,11 +57,8 @@ class DashboardFragment :
             R.id.fromMeBtn -> {
                 changeSelectedTab(R.id.fromMeBtn)
             }
-            R.id.hidedBtn -> {
-                changeSelectedTab(R.id.hidedBtn)
-            }
-            R.id.viewerBtn -> {
-                changeSelectedTab(R.id.viewerBtn)
+            R.id.canceledBtn -> {
+                changeSelectedTab(R.id.canceledBtn)
             }
             R.id.locationBtn -> {
                 changeSelectedTab(R.id.locationBtn)
@@ -75,8 +72,7 @@ class DashboardFragment :
     private fun changeSelectedTab(btnID: Int) {
         viewState.toMeSelected.value = false
         viewState.fromMeSelected.value = false
-        viewState.hidedSelected.value = false
-        viewState.viewerSelected.value = false
+        viewState.canceledSelected.value = false
         viewState.locationSelected.value = false
         viewState.projectsSelected.value = false
 
@@ -87,11 +83,8 @@ class DashboardFragment :
             R.id.fromMeBtn -> {
                 viewState.fromMeSelected.value = true
             }
-            R.id.hidedBtn -> {
-                viewState.hidedSelected.value = true
-            }
-            R.id.viewerBtn -> {
-                viewState.viewerSelected.value = true
+            R.id.canceledBtn -> {
+                viewState.canceledSelected.value = true
             }
             R.id.locationBtn -> {
                 viewState.locationSelected.value = true

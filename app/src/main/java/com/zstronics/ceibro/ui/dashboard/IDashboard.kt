@@ -7,8 +7,7 @@ interface IDashboard {
     interface State : IBase.State {
         val toMeSelected: MutableLiveData<Boolean>
         val fromMeSelected: MutableLiveData<Boolean>
-        val hidedSelected: MutableLiveData<Boolean>
-        val viewerSelected: MutableLiveData<Boolean>
+        val canceledSelected: MutableLiveData<Boolean>
         val locationSelected: MutableLiveData<Boolean>
         val projectsSelected: MutableLiveData<Boolean>
         val selectedItem: MutableLiveData<Int>
