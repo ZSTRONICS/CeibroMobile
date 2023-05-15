@@ -807,4 +807,9 @@
     <string name="from_me_heading">From me</string>
     <string name="to_me_heading">To me</string>
     <string name="from_heading">From:</string>
+    <string name="comment_s">Comment(s)</string>
+    <string name="files_heading">Files</string>
+    <string name="photo_heading">Photo</string>
+    <string name="created_heading">Created</string>
+    <string name="canceled">Canceled</string>
 </resources>
