@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.dashboard
 import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,6 +25,7 @@ import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEv
 import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
+import com.zstronics.ceibro.ui.admin.admins.AdminsFragment
 import com.zstronics.ceibro.ui.chat.ChatFragment
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.home.HomeFragment
@@ -31,6 +33,7 @@ import com.zstronics.ceibro.ui.projects.ProjectsFragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.MainTasksFragment
+import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
@@ -86,6 +89,9 @@ class DashboardFragment :
                 )
                 startActivity(ceibroCamera)
                 viewState.toMeSelected.value = true
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, TaskToMeFragment())
+                    .commit()
             }
             R.id.fromMeBtn -> {
                 viewState.fromMeSelected.value = true
@@ -110,7 +116,14 @@ class DashboardFragment :
         SocketHandler.establishConnection()
         viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
-//        setBadgeOnChat(R.id.nav_chat, 4)
+
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, TaskToMeFragment())
+                .commit()
+        }, 20)
+
 
         mViewDataBinding.bottomNavigation1.setOnNavigationItemSelectedListener(navListener)
 //        mViewDataBinding.bottomNavigation.selectedItemId = R.id.nav_home
