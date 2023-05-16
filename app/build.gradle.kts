@@ -53,6 +53,7 @@ dependencies {
     implementation(DependenciesManager.networkImplementation)
     implementation(DependenciesManager.hiltImplementation)
     implementation(DependenciesManager.workerDependencies)
+    implementation(project(mapOf("path" to ":ceibrocamera")))
 
     kapt(DependenciesManager.hiltKapt)
     kapt(DependenciesManager.networkKapt)

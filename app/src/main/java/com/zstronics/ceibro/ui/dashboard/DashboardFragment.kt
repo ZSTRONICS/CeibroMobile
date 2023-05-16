@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.app.NotificationManager
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -32,6 +33,7 @@ import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.MainTasksFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.CeibroCameraActivity
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -78,6 +80,11 @@ class DashboardFragment :
 
         when (btnID) {
             R.id.toMeBtn -> {
+                val ceibroCamera = Intent(
+                    requireContext(),
+                    CeibroCameraActivity::class.java
+                )
+                startActivity(ceibroCamera)
                 viewState.toMeSelected.value = true
             }
             R.id.fromMeBtn -> {
