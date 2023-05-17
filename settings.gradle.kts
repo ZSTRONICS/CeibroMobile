@@ -13,3 +13,4 @@ rootDir
 include(
     "app"
 )
+include(":ceibrocamera")
