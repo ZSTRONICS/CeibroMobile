@@ -814,4 +814,8 @@
     <string name="canceled">Canceled</string>
     <string name="topic_required">Topic <font color="#D9000D">*</font></string>
     <string name="assign_to_required_heading">Assign to <font color="#D9000D">*</font></string>
+    <string name="attach_heading">Attach</string>
+    <string name="done_requirements_heading">Done requirements</string>
+    <string name="documents_heading">Documents</string>
+    <string name="library_heading">Library</string>
 </resources>

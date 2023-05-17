@@ -83,11 +83,6 @@ class DashboardFragment :
 
         when (btnID) {
             R.id.toMeBtn -> {
-                val ceibroCamera = Intent(
-                    requireContext(),
-                    CeibroCameraActivity::class.java
-                )
-                startActivity(ceibroCamera)
                 viewState.toMeSelected.value = true
                 childFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, TaskToMeFragment())

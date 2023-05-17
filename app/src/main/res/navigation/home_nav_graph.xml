@@ -31,6 +31,12 @@
         <action
             android:id="@+id/action_homeFragment_to_mainAdminFragment"
             app:destination="@id/mainAdminFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_MyConnectionV2Fragment"
+            app:destination="@id/MyConnectionV2Fragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_taskToMeFragment"
+            app:destination="@id/taskToMeFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -40,12 +46,6 @@
         <action
             android:id="@+id/action_profileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
-        <action
-            android:id="@+id/action_profileFragment_to_connectionsFragment"
-            app:destination="@id/connectionsFragment" />
-        <action
-            android:id="@+id/action_profileFragment_to_invitationsFragment"
-            app:destination="@id/invitationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -295,10 +295,27 @@
         android:label="MyConnectionV2Fragment"
         tools:layout="@layout/fragment_connections_v2">
 
+        <action
+            android:id="@+id/action_MyConnectionV2Fragment_to_myConnectionV2ProfileFragment"
+            app:destination="@id/myConnectionV2ProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/myConnectionV2ProfileFragment"
         android:name="com.zstronics.ceibro.ui.dashboard.connectionv2Profile.MyConnectionV2ProfileFragment"
         android:label="MyConnectionV2ProfileFragment"
         tools:layout="@layout/fragment_connections_v2_profile"/>
+    <fragment
+        android:id="@+id/taskToMeFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment"
+        android:label="TaskToMeFragment"
+        tools:layout="@layout/fragment_task_to_me" >
+        <action
+            android:id="@+id/action_taskToMeFragment_to_newTaskV2Fragment"
+            app:destination="@id/newTaskV2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newTaskV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2Fragment"
+        android:label="NewTaskV2Fragment"
+        tools:layout="@layout/fragment_new_task_v2"/>
 </navigation>

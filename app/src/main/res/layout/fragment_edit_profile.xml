@@ -137,7 +137,7 @@
                         android:id="@+id/editImgIcon"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="5dp"
+                        android:layout_margin="4dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/icon_add_photo" />
                 </com.google.android.material.card.MaterialCardView>

@@ -14,10 +14,10 @@
             <option value="$PROJECT_DIR$/CeibroMobile" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/ceibrocamera" />
             <option value="$PROJECT_DIR$/permissionx" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

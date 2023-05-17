@@ -6,6 +6,8 @@ import javax.inject.Inject
 
 class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
     override var dueDate: String = ""
+    override val isDoneReqAllowed: MutableLiveData<Boolean> = MutableLiveData(false)
+    override val isAttachLayoutOpen: MutableLiveData<Boolean> = MutableLiveData(false)
     override var taskTitle: MutableLiveData<String> = MutableLiveData("")
     override var description: MutableLiveData<String> = MutableLiveData("")
 }

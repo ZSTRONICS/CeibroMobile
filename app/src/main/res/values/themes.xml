@@ -107,4 +107,9 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="SwitchThemeOverlay" parent="">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/appGreen</item>
+    </style>
 </resources>

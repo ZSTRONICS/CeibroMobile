@@ -96,7 +96,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <SearchView
+        <android.widget.SearchView
             android:id="@+id/searchBar"
             android:layout_width="0dp"
             android:layout_height="48dp"

@@ -21,7 +21,8 @@ class TaskToMeFragment :
     var buttonOnSide = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.createTaskBtn -> {
+            R.id.createNewTaskBtn -> {
+                navigate(R.id.newTaskV2Fragment)
 //                if (!buttonOnSide) {
 //                    // If the sidebar is visible, hide it with animation
 //                    buttonOnSide = true

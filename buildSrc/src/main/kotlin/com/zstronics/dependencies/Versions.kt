@@ -7,7 +7,7 @@
         const val RECYCLERVIEW = "1.2.1"
         const val CARD_VIEW = "1.0.0"
         const val BIOMETRIC = "1.1.0"
-        const val MATERIAL = "1.3.0"
+        const val MATERIAL = "1.8.0"
         const val VIEWPAGER2 = "1.0.0"
         const val VECTOR_DRAWABLE = "1.1.0"
         const val PAGING = "3.0.0"
