@@ -1,21 +1,15 @@
 package ee.zstronics.ceibro.camera
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
-import android.hardware.display.DisplayManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.HandlerThread
 import android.util.Size
-import android.view.Surface
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.core.AspectRatio.RATIO_16_9
 import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -27,21 +21,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.absoluteValue
 
-class CeibroCameraActivity : AppCompatActivity() {
+class CeibroCameraActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroCameraBinding
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var camera: Camera? = null
     lateinit var imageCapture: ImageCapture
-
-    /** Declare worker thread at the class level so it can be reused after config changes */
-    private val analyzerThread = HandlerThread("LuminosityAnalysis").apply { start() }
-
-    /** Internal reference of the [DisplayManager] */
-    private val displayManager by lazy {
-        applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
-    }
 
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
@@ -85,6 +70,22 @@ class CeibroCameraActivity : AppCompatActivity() {
         binding.flashButton.setOnClickListener {
             toggleFlash()
         }
+        binding.imagesPicker.setOnClickListener {
+            checkPermission(
+                listOf(
+                    Manifest.permission.CAMERA,
+                )
+            ) {
+                pickFiles { listOfPickedImages ->
+                    val ceibroCamera =
+                        Intent(applicationContext, CeibroImageViewerActivity::class.java)
+                    val bundle = Bundle()
+                    bundle.putParcelableArrayList("images", listOfPickedImages)
+                    ceibroCamera.putExtras(bundle)
+                    startActivity(ceibroCamera)
+                }
+            }
+        }
         binding.close.setOnClickListener {
             finish()
         }
@@ -101,7 +102,8 @@ class CeibroCameraActivity : AppCompatActivity() {
             val cameraIds = cameraManager.cameraIdList
             val defaultCameraId = cameraIds.firstOrNull()
             val characteristics = cameraManager.getCameraCharacteristics(defaultCameraId!!)
-            val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+            val sensorSize =
+                characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
             val targetResolution = sensorSize?.let {
                 Size(it.width(), it.height())
             }

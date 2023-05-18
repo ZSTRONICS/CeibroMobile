@@ -12,6 +12,10 @@
         <activity
             android:name=".CeibroCameraActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".CeibroImageViewerActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
