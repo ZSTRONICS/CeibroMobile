@@ -16,9 +16,9 @@
             android:id="@+id/topLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@android:color/black"
+            android:background="@color/black"
             android:orientation="horizontal"
-            android:padding="@dimen/_10sdp"
+            android:padding="@dimen/_9sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -27,8 +27,8 @@
                 android:id="@+id/closeBtn"
                 android:layout_width="@dimen/_22sdp"
                 android:layout_height="@dimen/_22sdp"
-                android:padding="@dimen/_1sdp"
                 android:layout_gravity="center_vertical"
+                android:padding="@dimen/_1sdp"
                 android:src="@drawable/ic_cross"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,12 +39,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_25sdp"
                 android:background="@drawable/blue_button_back"
-                android:fontFamily="@font/inter_semibold"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_8sdp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
                 android:text="@string/done"
                 android:textAllCaps="false"
-                android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_11sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -55,15 +55,219 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/_22sdp"
                 android:layout_height="@dimen/_22sdp"
-                android:src="@drawable/ic_photo_picker"
-                android:padding="@dimen/_1sdp"
                 android:layout_marginEnd="@dimen/_18sdp"
+                android:padding="@dimen/_1sdp"
+                android:src="@drawable/ic_photo_picker"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/doneBtn"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--Comment or delete bottom ImageView to see recyclerView because its just sample-->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/new_background"
+            android:visibility="visible"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fullSizeImagesRV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout"
+            tools:itemCount="10" />
+
+
+        <LinearLayout
+            android:id="@+id/editInnerLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black_transparency"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/squareBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_square"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/arrowBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_top_arrow"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/editBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_edit_pencil"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/insertTextBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_insert_text"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/undoBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_undo"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/deleteBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:background="@color/appRed"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_delete_bin"
+                app:tint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/footerImagesLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black_transparency"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/footerImageLayoutMoveBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/moveBtn"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/smallFooterImagesRV"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_64sdp"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topLayout"
+                tools:itemCount="10" />
+
+            <!--Comment or delete bottom ImageView to see recyclerView because its just sample-->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/recyclerImg"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_64sdp"
+                android:layout_weight="1"
+                android:paddingTop="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:src="@drawable/new_background"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/commentsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cameraBtn"
+                android:layout_width="@dimen/_44sdp"
+                android:layout_height="0dp"
+                android:padding="@dimen/_10sdp"
+                android:src="@drawable/icon_camera_only"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/appBlue" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="0dp"
+                android:layout_height="49dp"
+                android:background="@null"
+                android:ems="10"
+                android:fontFamily="@font/inter_regular"
+                android:hint="@string/start_typing_your_comment_here"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/appGrey3"
+                android:textSize="15.5sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/confirmOrEditBtn"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/cameraBtn" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/confirmOrEditBtn"
+                android:layout_width="@dimen/_37sdp"
+                android:layout_height="0dp"
+                android:padding="@dimen/_9sdp"
+                android:src="@drawable/icon_circle_tick"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/editTextPassword"
+                app:tint="@color/appBlue" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
