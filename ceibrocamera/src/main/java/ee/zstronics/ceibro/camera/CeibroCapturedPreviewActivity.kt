@@ -1,5 +1,6 @@
 package ee.zstronics.ceibro.camera
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
@@ -36,8 +37,15 @@ class CeibroCapturedPreviewActivity : BaseActivity() {
             onBackPressed()
         }
         binding.gotoNext.setOnClickListener {
-            val pickedImages = arrayListOf<PickedImages>()
-            pickedImages.add(getPickedImage(capturedUri))
+            val listOfPickedImages = arrayListOf<PickedImages>()
+            listOfPickedImages.add(getPickedImage(capturedUri))
+
+            val ceibroCamera =
+                Intent(applicationContext, CeibroImageViewerActivity::class.java)
+            val bundle = Bundle()
+            bundle.putParcelableArrayList("images", listOfPickedImages)
+            ceibroCamera.putExtras(bundle)
+            startActivity(ceibroCamera)
         }
     }
 }
