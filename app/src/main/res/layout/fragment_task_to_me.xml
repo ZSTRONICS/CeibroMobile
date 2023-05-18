@@ -175,7 +175,7 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <SearchView
+        <android.widget.SearchView
             android:id="@+id/taskToMeSearchBar"
             android:layout_width="0dp"
             android:layout_height="48dp"
@@ -1105,7 +1105,7 @@
         </ScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/createTaskBtn"
+            android:id="@+id/createNewTaskBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
