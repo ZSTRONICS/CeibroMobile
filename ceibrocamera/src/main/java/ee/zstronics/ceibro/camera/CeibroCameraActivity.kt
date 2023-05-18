@@ -4,14 +4,19 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.hardware.display.DisplayManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.HandlerThread
 import android.util.Size
+import android.view.Surface
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.AspectRatio.RATIO_16_9
+import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,6 +27,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.absoluteValue
 
 class CeibroCameraActivity : AppCompatActivity() {
     lateinit var binding: ActivityCeibroCameraBinding
@@ -90,9 +96,23 @@ class CeibroCameraActivity : AppCompatActivity() {
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
 
+            // Retrieve the default camera resolution and aspect ratio
+            val cameraManager = getSystemService(CAMERA_SERVICE) as CameraManager
+            val cameraIds = cameraManager.cameraIdList
+            val defaultCameraId = cameraIds.firstOrNull()
+            val characteristics = cameraManager.getCameraCharacteristics(defaultCameraId!!)
+            val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+            val targetResolution = sensorSize?.let {
+                Size(it.width(), it.height())
+            }
+            val targetAspectRatio = sensorSize?.let {
+                it.width() / it.height()
+            }
+
             // Set up the preview configuration
             val preview = Preview.Builder()
-                .setTargetResolution(Size(640, 480)) // Set the desired resolution
+//                .setTargetResolution(targetResolution ?: Size(640, 480)) // Set desired resolution or aspect ratio (only one of them at a time in same config)
+                .setTargetAspectRatio(RATIO_4_3)
                 .build()
             // Set up the image capture use case
             imageCapture = ImageCapture.Builder()

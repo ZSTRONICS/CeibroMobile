@@ -23,23 +23,6 @@ class TaskToMeFragment :
         when (id) {
             R.id.createNewTaskBtn -> {
                 navigate(R.id.newTaskV2Fragment)
-//                if (!buttonOnSide) {
-//                    // If the sidebar is visible, hide it with animation
-//                    buttonOnSide = true
-//                    mViewDataBinding.createTaskBtn.animate()
-//                        .translationX(mViewDataBinding.createTaskBtn.width.toFloat()-20)
-//                        .setDuration(350)
-//                        .withEndAction { mViewDataBinding.createTaskBtn.visibility = View.VISIBLE }
-//                        .start()
-//                } else {
-//                    // If the sidebar is hidden, show it with animation
-//                    buttonOnSide = false
-//                    mViewDataBinding.createTaskBtn.visibility = View.VISIBLE
-//                    mViewDataBinding.createTaskBtn.animate()
-//                        .translationX(0f)
-//                        .setDuration(350)
-//                        .start()
-//                }
             }
         }
     }
