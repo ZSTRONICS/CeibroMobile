@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -41,10 +42,9 @@ android {
 }
 
 dependencies {
-
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -56,4 +56,5 @@ dependencies {
     implementation("androidx.camera:camera-extensions:1.2.2")
     implementation(DependenciesManager.thirdPartyImplementation)
     implementation(NetworkDependencies.GLIDE)
+    implementation(project(mapOf("path" to ":permissionx")))
 }

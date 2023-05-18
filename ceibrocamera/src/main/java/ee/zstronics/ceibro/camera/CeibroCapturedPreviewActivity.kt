@@ -2,12 +2,11 @@ package ee.zstronics.ceibro.camera
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroCapturedPreviewBinding
 
-class CeibroCapturedPreviewActivity : AppCompatActivity() {
+class CeibroCapturedPreviewActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroCapturedPreviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,13 +19,6 @@ class CeibroCapturedPreviewActivity : AppCompatActivity() {
                 false
             )
         setContentView(binding.root)
-        binding.close.setOnClickListener {
-            onBackPressed()
-        }
-
-        binding.retakePhoto.setOnClickListener {
-            onBackPressed()
-        }
 
         // Retrieve the URI from the bundle
         val capturedUri = intent.getParcelableExtra<Uri>("capturedUri")
@@ -35,5 +27,17 @@ class CeibroCapturedPreviewActivity : AppCompatActivity() {
         Glide.with(this)
             .load(capturedUri)
             .into(binding.previewViewImage)
+
+        binding.close.setOnClickListener {
+            onBackPressed()
+        }
+
+        binding.retakePhoto.setOnClickListener {
+            onBackPressed()
+        }
+        binding.gotoNext.setOnClickListener {
+            val pickedImages = arrayListOf<PickedImages>()
+            pickedImages.add(getPickedImage(capturedUri))
+        }
     }
 }

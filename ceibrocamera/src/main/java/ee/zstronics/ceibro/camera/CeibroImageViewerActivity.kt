@@ -1,16 +1,14 @@
 package ee.zstronics.ceibro.camera
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
-import ee.zstronics.ceibro.camera.databinding.ActivityCeibroCapturedPreviewBinding
+import androidx.lifecycle.MutableLiveData
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroImageViewerBinding
 
 class CeibroImageViewerActivity : AppCompatActivity() {
     lateinit var binding: ActivityCeibroImageViewerBinding
-
+    val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
@@ -21,6 +19,16 @@ class CeibroImageViewerActivity : AppCompatActivity() {
                 false
             )
         setContentView(binding.root)
+
+        val bundle = intent.extras
+        val images = bundle?.getParcelableArrayList<PickedImages>("images")
+        listOfImages.value = images
+
+
+        listOfImages.observe(this) {
+            /// add these images to adapter
+        }
+
         binding.closeBtn.setOnClickListener {
             finishAffinity()
         }
