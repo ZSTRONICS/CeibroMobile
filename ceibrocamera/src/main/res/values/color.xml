@@ -15,6 +15,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="black_transparency">#74000000</color>
+    <color name="transparent">#00000000</color>
     <color name="appShadedBlue">#800076C8</color>
     <color name="appDimBlue">#F8FCFF</color>
     <color name="appGrey1">#F4F4F4</color>

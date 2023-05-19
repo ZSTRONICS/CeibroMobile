@@ -69,25 +69,23 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@drawable/new_background"
-            android:visibility="visible"
+            android:visibility="gone"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topLayout" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fullSizeImagesRV"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/fullSizeImagesVP"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="horizontal"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topLayout"
-            tools:itemCount="10" />
+            app:layout_constraintTop_toBottomOf="@+id/topLayout"/>
 
 
         <LinearLayout
@@ -174,7 +172,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <TextView
                     android:id="@+id/moveBtn"
                     android:layout_width="@dimen/_70sdp"
                     android:layout_height="3dp"
@@ -189,18 +187,20 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/smallFooterImagesRV"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_64sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/_2sdp"
-                android:paddingBottom="@dimen/_5sdp"
-                android:visibility="gone"
+                android:paddingStart="@dimen/_1sdp"
+                android:paddingEnd="@dimen/_1sdp"
+                android:visibility="visible"
+                android:layout_gravity="center_horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topLayout"
-                tools:itemCount="10" />
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_ceibro_small_image_viewer"/>
 
             <!--Comment or delete bottom ImageView to see recyclerView because its just sample-->
             <androidx.appcompat.widget.AppCompatImageView
@@ -211,7 +211,7 @@
                 android:paddingTop="@dimen/_2sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:src="@drawable/new_background"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
         </LinearLayout>
 
