@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
     id("kotlin-parcelize")
 }
 
@@ -54,6 +55,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.2.2")
     implementation("androidx.camera:camera-view:1.2.2")
     implementation("androidx.camera:camera-extensions:1.2.2")
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation(DependenciesManager.thirdPartyImplementation)
     implementation(NetworkDependencies.GLIDE)
     implementation(project(mapOf("path" to ":permissionx")))

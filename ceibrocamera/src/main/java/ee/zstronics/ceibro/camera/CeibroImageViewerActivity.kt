@@ -3,14 +3,19 @@ package ee.zstronics.ceibro.camera
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroImageViewerBinding
 
 class CeibroImageViewerActivity : AppCompatActivity() {
     lateinit var binding: ActivityCeibroImageViewerBinding
     val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData()
     var isBottomImageLayoutVisible = true
+    var fullImageAdapter: CeibroFullImageVPAdapter = CeibroFullImageVPAdapter()
+    var smallImageAdapter: CeibroSmallImageRVAdapter = CeibroSmallImageRVAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +34,27 @@ class CeibroImageViewerActivity : AppCompatActivity() {
 
 
         listOfImages.observe(this) {
-            /// add these images to adapter
+            fullImageAdapter.setList(it)
+            smallImageAdapter.setList(it)
         }
+        binding.fullSizeImagesVP.adapter = fullImageAdapter
+        binding.smallFooterImagesRV.adapter = smallImageAdapter
+
+        smallImageAdapter.itemClickListener =
+            { _: View, position: Int ->
+                binding.fullSizeImagesVP.setCurrentItem(position, true)
+            }
+        binding.fullSizeImagesVP.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                binding.smallFooterImagesRV.smoothScrollToPosition(position)
+                smallImageAdapter.setSelectedItem(position)
+            }
+        })
+
 
         binding.closeBtn.setOnClickListener {
-            finishAffinity()
+            finish()
         }
-
 
         binding.footerImageLayoutMoveBtn.setOnClickListener {
             if (isBottomImageLayoutVisible) {
