@@ -30,11 +30,11 @@ class CeibroCapturedPreviewActivity : BaseActivity() {
             .into(binding.previewViewImage)
 
         binding.close.setOnClickListener {
-            onBackPressed()
+            reInitiateCamera()
         }
 
         binding.retakePhoto.setOnClickListener {
-            onBackPressed()
+            reInitiateCamera()
         }
         binding.gotoNext.setOnClickListener {
             val listOfPickedImages = arrayListOf<PickedImages>()
@@ -46,6 +46,20 @@ class CeibroCapturedPreviewActivity : BaseActivity() {
             bundle.putParcelableArrayList("images", listOfPickedImages)
             ceibroCamera.putExtras(bundle)
             startActivity(ceibroCamera)
+            finish()
         }
+    }
+
+    private fun reInitiateCamera() {
+        val ceibroCamera = Intent(
+            applicationContext,
+            CeibroCameraActivity::class.java
+        )
+        startActivity(ceibroCamera)
+        finish()
+    }
+
+    override fun onBackPressed() {
+        reInitiateCamera()
     }
 }

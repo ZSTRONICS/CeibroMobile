@@ -53,6 +53,7 @@
                 tools:ignore="TouchTargetSizeCheck" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/galleryButton"
                 android:layout_width="@dimen/_22sdp"
                 android:layout_height="@dimen/_22sdp"
                 android:layout_marginEnd="@dimen/_18sdp"

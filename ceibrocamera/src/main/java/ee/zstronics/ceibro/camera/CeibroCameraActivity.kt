@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Size
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.core.AspectRatio.RATIO_4_3
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -32,13 +33,13 @@ class CeibroCameraActivity : BaseActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private var isTorchOn: Boolean = false
     private var isFlashEnabled: Boolean = false
-
+    var sourceName = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
             DataBindingUtil.inflate(layoutInflater, R.layout.activity_ceibro_camera, null, false)
         setContentView(binding.root)
-
+        sourceName = intent.getStringExtra("source_name") ?: ""
         // Request camera permission
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -77,12 +78,22 @@ class CeibroCameraActivity : BaseActivity() {
                 )
             ) {
                 pickFiles { listOfPickedImages ->
-                    val ceibroCamera =
-                        Intent(applicationContext, CeibroImageViewerActivity::class.java)
-                    val bundle = Bundle()
-                    bundle.putParcelableArrayList("images", listOfPickedImages)
-                    ceibroCamera.putExtras(bundle)
-                    startActivity(ceibroCamera)
+                    if (sourceName == CeibroImageViewerActivity::class.java.name) {
+                        val ceibroImagesIntent =
+                            Intent()
+                        val newBundle = Bundle()
+                        newBundle.putParcelableArrayList("images", listOfPickedImages)
+                        ceibroImagesIntent.putExtras(newBundle)
+                        setResult(RESULT_OK, ceibroImagesIntent)
+                        finish()
+                    } else {
+                        val ceibroCamera =
+                            Intent(applicationContext, CeibroImageViewerActivity::class.java)
+                        val bundle = Bundle()
+                        bundle.putParcelableArrayList("images", listOfPickedImages)
+                        ceibroCamera.putExtras(bundle)
+                        ceibroImageViewerLauncher.launch(ceibroCamera)
+                    }
                 }
             }
         }
@@ -91,6 +102,14 @@ class CeibroCameraActivity : BaseActivity() {
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
+
+    private val ceibroImageViewerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                setResult(RESULT_OK, result.data)
+                finish()
+            }
+        }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -217,6 +236,7 @@ class CeibroCameraActivity : BaseActivity() {
                         )
                         intent.putExtra("capturedUri", savedUri)
                         startActivity(intent)
+                        finish()
                     }
 
                     override fun onError(exception: ImageCaptureException) {
