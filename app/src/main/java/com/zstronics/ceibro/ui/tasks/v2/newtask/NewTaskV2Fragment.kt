@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask
 
+import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -8,19 +9,19 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.TextInputLayout
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
-import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
+import ee.zstronics.ceibro.camera.CeibroSmallImageRVAdapter
+import ee.zstronics.ceibro.camera.PickedImages
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -54,7 +55,7 @@ class NewTaskV2Fragment :
                     requireContext(),
                     CeibroCameraActivity::class.java
                 )
-                startActivity(ceibroCamera)
+                ceibroImagesPickerLauncher.launch(ceibroCamera)
             }
 
             R.id.newTaskAttachBtn -> {
@@ -79,7 +80,7 @@ class NewTaskV2Fragment :
         }
     }
 
-
+    var smallImageAdapter: CeibroSmallImageRVAdapter = CeibroSmallImageRVAdapter()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.newTaskTopicField.endIconMode = TextInputLayout.END_ICON_CUSTOM
@@ -164,6 +165,11 @@ class NewTaskV2Fragment :
             }
             return@setOnTouchListener false
         }
+
+        viewModel.listOfImages.observe(viewLifecycleOwner) {
+            smallImageAdapter.setList(it)
+        }
+        mViewDataBinding.smallFooterImagesRV.adapter = smallImageAdapter
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -189,4 +195,15 @@ class NewTaskV2Fragment :
         mViewDataBinding.newTaskDueDateText.setText(sdf.format(cal.time))
     }
 
+    private val ceibroImagesPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val images = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                if (images != null) {
+                    val oldImages = viewModel.listOfImages.value
+                    oldImages?.addAll(images)
+                    viewModel.listOfImages.postValue(oldImages)
+                }
+            }
+        }
 }

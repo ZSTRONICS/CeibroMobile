@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroCapturedPreviewBinding
 
-class CeibroCapturedPreviewActivity : BaseActivity() {
+class CapturedPreviewActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroCapturedPreviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,12 +39,11 @@ class CeibroCapturedPreviewActivity : BaseActivity() {
         binding.gotoNext.setOnClickListener {
             val listOfPickedImages = arrayListOf<PickedImages>()
             listOfPickedImages.add(getPickedImage(capturedUri))
-            val ceibroCamera =
-                Intent()
+            val intent = Intent()
             val bundle = Bundle()
             bundle.putParcelableArrayList("images", listOfPickedImages)
-            ceibroCamera.putExtras(bundle)
-            setResult(RESULT_OK, ceibroCamera)
+            intent.putExtras(bundle)
+            setResult(RESULT_OK, intent)
             finish()
         }
     }
