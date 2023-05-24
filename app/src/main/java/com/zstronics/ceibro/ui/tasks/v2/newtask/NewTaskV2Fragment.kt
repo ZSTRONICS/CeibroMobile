@@ -14,11 +14,11 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.TextInputLayout
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
+import ee.zstronics.ceibro.camera.CeibroSmallImageRVAdapter
 import ee.zstronics.ceibro.camera.PickedImages
 import java.text.SimpleDateFormat
 import java.util.*
@@ -80,14 +80,7 @@ class NewTaskV2Fragment :
         }
     }
 
-    private val ceibroImagesPickerLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val images = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
-                toast("Data received ${images?.size}")
-            }
-        }
-
+    var smallImageAdapter: CeibroSmallImageRVAdapter = CeibroSmallImageRVAdapter()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.newTaskTopicField.endIconMode = TextInputLayout.END_ICON_CUSTOM
@@ -172,6 +165,11 @@ class NewTaskV2Fragment :
             }
             return@setOnTouchListener false
         }
+
+        viewModel.listOfImages.observe(viewLifecycleOwner) {
+            smallImageAdapter.setList(it)
+        }
+        mViewDataBinding.smallFooterImagesRV.adapter = smallImageAdapter
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -197,4 +195,15 @@ class NewTaskV2Fragment :
         mViewDataBinding.newTaskDueDateText.setText(sdf.format(cal.time))
     }
 
+    private val ceibroImagesPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val images = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                if (images != null) {
+                    val oldImages = viewModel.listOfImages.value
+                    oldImages?.addAll(images)
+                    viewModel.listOfImages.postValue(oldImages)
+                }
+            }
+        }
 }

@@ -110,6 +110,27 @@ class CeibroCameraActivity : BaseActivity() {
                 finish()
             }
         }
+    private val cameraPreviewLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                setResult(RESULT_OK, result.data)
+                finish()
+            }
+        }
+
+    private val cameraPreviewLauncherNoFinish =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val listOfPickedImages =
+                    result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                val ceibroCamera =
+                    Intent(applicationContext, CeibroImageViewerActivity::class.java)
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("images", listOfPickedImages)
+                ceibroCamera.putExtras(bundle)
+                ceibroImageViewerLauncher.launch(ceibroCamera)
+            }
+        }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -230,13 +251,21 @@ class CeibroCameraActivity : BaseActivity() {
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                         val savedUri = outputFileResults.savedUri ?: Uri.fromFile(photoFile)
-                        val intent = Intent(
-                            this@CeibroCameraActivity,
-                            CeibroCapturedPreviewActivity::class.java
-                        )
-                        intent.putExtra("capturedUri", savedUri)
-                        startActivity(intent)
-                        finish()
+                        if (sourceName == CeibroImageViewerActivity::class.java.name) {
+                            val intent = Intent(
+                                this@CeibroCameraActivity,
+                                CapturedPreviewActivity::class.java
+                            )
+                            intent.putExtra("capturedUri", savedUri)
+                            cameraPreviewLauncher.launch(intent)
+                        } else {
+                            val intent = Intent(
+                                this@CeibroCameraActivity,
+                                CeibroCapturedPreviewActivity::class.java
+                            )
+                            intent.putExtra("capturedUri", savedUri)
+                            cameraPreviewLauncherNoFinish.launch(intent)
+                        }
                     }
 
                     override fun onError(exception: ImageCaptureException) {

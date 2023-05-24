@@ -282,6 +282,7 @@
                     app:track="@drawable/switch_ios_track" />
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/doneRequirementLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_3sdp"
@@ -338,6 +339,22 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/smallFooterImagesRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/_1sdp"
+                    android:paddingEnd="@dimen/_1sdp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doneRequirementLayout"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_ceibro_small_image_viewer" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
