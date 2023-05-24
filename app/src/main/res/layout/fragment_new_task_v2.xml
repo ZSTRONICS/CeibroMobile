@@ -93,34 +93,70 @@
                     android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginEnd="@dimen/_14sdp"
                     android:background="@drawable/input_field_bottom_line"
-                    android:hint="@string/topic_required"
                     android:paddingStart="0dp"
-                    android:paddingEnd="-11dp"
+                    android:paddingEnd="11dp"
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
+                    app:endIconMode="custom"
                     app:hintTextColor="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/newTaskTopicText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
-                        android:ellipsize="end"
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
+                        android:hint="@string/topic_required"
                         android:inputType="text"
                         android:maxLines="1"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
-                        android:scrollHorizontally="true"
+                        android:paddingEnd="1dp"
                         android:text="@={viewState.taskTitle}"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/topicEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskTopicField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskTopicField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskTopicField"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_down"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/newTaskTopicClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/newTaskAssignToField"
@@ -130,8 +166,6 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/input_field_bottom_line"
                     android:hint="@string/assign_to_required_heading"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="-11dp"
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
@@ -152,9 +186,47 @@
                         android:maxLines="4"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:text="@={viewState.assignToText}"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/assignToEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskAssignToField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskAssignToField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskAssignToField"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_down"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/newTaskAssignToClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/newTaskProjectField"
@@ -164,8 +236,6 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/input_field_bottom_line"
                     android:hint="@string/project_heading"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="-11dp"
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
@@ -182,13 +252,51 @@
                         android:ellipsize="end"
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
-                        android:inputType="none"
+                        android:inputType="text"
                         android:maxLines="1"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
+                        android:paddingEnd="62dp"
+                        android:text="@={viewState.projectText}"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/projectEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskProjectField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskProjectField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskProjectField"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_down"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/newTaskProjectClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/newTaskDueDateField"
@@ -197,9 +305,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/input_field_bottom_line"
-                    android:hint="@string/due_date_heading"
                     android:paddingStart="-13dp"
-                    android:paddingEnd="-11dp"
+                    android:paddingEnd="0dp"
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
@@ -209,20 +316,58 @@
                     app:layout_constraintTop_toBottomOf="@+id/newTaskProjectField"
                     app:startIconDrawable="@drawable/icon_calender_new">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/newTaskDueDateText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
-                        android:inputType="none"
+                        android:hint="@string/due_date_heading"
+                        android:inputType="text"
                         android:maxLines="1"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="52dp"
+                        android:paddingEnd="64dp"
+                        android:text="@={viewState.dueDate}"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/dueDateEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                    app:layout_constraintVertical_bias="0.6">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_down"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/newTaskDueDateClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/newTaskDescriptionField"
@@ -233,7 +378,7 @@
                     android:background="@drawable/input_field_bottom_line"
                     android:hint="@string/description_heading"
                     android:paddingStart="0dp"
-                    android:paddingEnd="-11dp"
+                    android:paddingEnd="-10dp"
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
@@ -265,7 +410,7 @@
                     android:id="@+id/newTaskDoneReqSwitch"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:checked="@{viewState.isDoneReqAllowed}"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center|start"
@@ -276,7 +421,7 @@
                     android:thumb="@drawable/switch_ios_thumb"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintTop_toBottomOf="@+id/view4"
                     app:switchPadding="15dp"
                     app:thumbTint="@color/white"
                     app:track="@drawable/switch_ios_track" />
@@ -345,16 +490,27 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_9sdp"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/_1sdp"
                     android:paddingEnd="@dimen/_1sdp"
+                    android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/doneRequirementLayout"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionField"
                     tools:itemCount="3"
                     tools:listitem="@layout/layout_ceibro_small_image_viewer" />
 
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/smallFooterImagesRV"
+                    app:layout_constraintStart_toStartOf="@+id/smallFooterImagesRV"
+                    app:layout_constraintTop_toBottomOf="@+id/smallFooterImagesRV" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

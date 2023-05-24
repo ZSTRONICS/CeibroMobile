@@ -50,6 +50,23 @@ class NewTaskV2Fragment :
                 datePicker.show()
             }
 
+            R.id.newTaskTopicClearBtn -> {
+                viewState.taskTitle.value = ""
+            }
+
+            R.id.newTaskAssignToClearBtn -> {
+                viewState.assignToText.value = ""
+                // make this text from the array list of assign to members to display in UI
+            }
+
+            R.id.newTaskProjectClearBtn -> {
+                viewState.projectText.value = ""
+            }
+
+            R.id.newTaskDueDateClearBtn -> {
+                viewState.dueDate.value = ""
+            }
+
             R.id.newTaskPhotoBtn -> {
                 val ceibroCamera = Intent(
                     requireContext(),
@@ -83,66 +100,35 @@ class NewTaskV2Fragment :
     var smallImageAdapter: CeibroSmallImageRVAdapter = CeibroSmallImageRVAdapter()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewDataBinding.newTaskTopicField.endIconMode = TextInputLayout.END_ICON_CUSTOM
-        mViewDataBinding.newTaskTopicField.setEndIconDrawable(R.drawable.icon_close_round_grey)
-        mViewDataBinding.newTaskTopicField.isEndIconVisible = false
-        mViewDataBinding.newTaskTopicField.setEndIconOnClickListener {
-            mViewDataBinding.newTaskTopicField.editText?.setText("")
-        }
-        mViewDataBinding.newTaskTopicField.editText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mViewDataBinding.newTaskTopicField.isEndIconVisible = !s.isNullOrEmpty()
+
+        viewState.taskTitle.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.newTaskTopicClearBtn.visibility = View.GONE
+            } else {
+                mViewDataBinding.newTaskTopicClearBtn.visibility = View.VISIBLE
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        mViewDataBinding.newTaskAssignToField.endIconMode = TextInputLayout.END_ICON_CUSTOM
-        mViewDataBinding.newTaskAssignToField.setEndIconDrawable(R.drawable.icon_close_round_grey)
-        mViewDataBinding.newTaskAssignToField.isEndIconVisible = false
-        mViewDataBinding.newTaskAssignToField.setEndIconOnClickListener {
-            mViewDataBinding.newTaskAssignToField.editText?.setText("")
         }
-        mViewDataBinding.newTaskAssignToField.editText?.addTextChangedListener(object :
-            TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mViewDataBinding.newTaskAssignToField.isEndIconVisible = !s.isNullOrEmpty()
+        viewState.assignToText.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.newTaskAssignToClearBtn.visibility = View.GONE
+            } else {
+                mViewDataBinding.newTaskAssignToClearBtn.visibility = View.VISIBLE
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        mViewDataBinding.newTaskProjectField.endIconMode = TextInputLayout.END_ICON_CUSTOM
-        mViewDataBinding.newTaskProjectField.setEndIconDrawable(R.drawable.icon_close_round_grey)
-        mViewDataBinding.newTaskProjectField.isEndIconVisible = false
-        mViewDataBinding.newTaskProjectField.setEndIconOnClickListener {
-            mViewDataBinding.newTaskProjectField.editText?.setText("")
         }
-        mViewDataBinding.newTaskProjectField.editText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mViewDataBinding.newTaskProjectField.isEndIconVisible = !s.isNullOrEmpty()
+        viewState.projectText.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.newTaskProjectClearBtn.visibility = View.GONE
+            } else {
+                mViewDataBinding.newTaskProjectClearBtn.visibility = View.VISIBLE
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        mViewDataBinding.newTaskDueDateField.endIconMode = TextInputLayout.END_ICON_CUSTOM
-        mViewDataBinding.newTaskDueDateField.setEndIconDrawable(R.drawable.icon_close_round_grey)
-        mViewDataBinding.newTaskDueDateField.isEndIconVisible = false
-        mViewDataBinding.newTaskDueDateField.setEndIconOnClickListener {
-            mViewDataBinding.newTaskDueDateField.editText?.setText("")
         }
-        mViewDataBinding.newTaskDueDateField.editText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mViewDataBinding.newTaskDueDateField.isEndIconVisible = !s.isNullOrEmpty()
+        viewState.dueDate.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.newTaskDueDateClearBtn.visibility = View.GONE
+            } else {
+                mViewDataBinding.newTaskDueDateClearBtn.visibility = View.VISIBLE
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        }
 
 
 
@@ -168,6 +154,12 @@ class NewTaskV2Fragment :
 
         viewModel.listOfImages.observe(viewLifecycleOwner) {
             smallImageAdapter.setList(it)
+            mViewDataBinding.smallFooterImagesRV.visibility =
+                if (it.isNotEmpty()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
         }
         mViewDataBinding.smallFooterImagesRV.adapter = smallImageAdapter
     }
@@ -182,17 +174,11 @@ class NewTaskV2Fragment :
             updateDueDateInView()
         }
 
-
     private fun updateDueDateInView() {
-        val myFormat = "dd-MM-yyyy"
-        val sdf = SimpleDateFormat(myFormat, Locale.US)
-
-        val formatToSend = "dd-MM-yyyy"
+        val formatToSend = "dd.MM.yyyy"
         val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
 
-        viewState.dueDate = sdf1.format(cal.time)
-
-        mViewDataBinding.newTaskDueDateText.setText(sdf.format(cal.time))
+        viewState.dueDate.value = sdf1.format(cal.time)
     }
 
     private val ceibroImagesPickerLauncher =

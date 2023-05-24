@@ -1,4 +1,7 @@
 <resources>
     <string name="done">Done</string>
     <string name="start_typing_your_comment_here">Start typing your comment here</string>
+    <string name="do_you_want_to_cancel_all_the_changes_that_you_made">Do you want to cancel all the changes that you made?</string>
+    <string name="no_btn_text">No</string>
+    <string name="yes_btn_text">Yes</string>
 </resources>
