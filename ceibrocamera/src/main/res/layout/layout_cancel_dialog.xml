@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/cancel_dialog_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialog_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:fontFamily="@font/inter_regular"
+            android:text="@string/do_you_want_to_cancel_all_the_changes_that_you_made"
+            android:textSize="16sp"
+            android:layout_marginTop="32dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/appGrey3"
+            android:layout_marginTop="32dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/appBlue"
+                android:textSize="15sp"
+                android:text="@string/no_btn_text" />
+
+            <View
+                android:layout_width="0.8dp"
+                android:layout_height="match_parent"
+                android:background="@color/appGrey3" />
+
+            <Button
+                android:id="@+id/yesBtn"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/appBlue"
+                android:textSize="15sp"
+                android:text="@string/yes_btn_text" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

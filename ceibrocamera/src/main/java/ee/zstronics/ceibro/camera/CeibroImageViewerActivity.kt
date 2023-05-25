@@ -6,6 +6,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -56,23 +58,7 @@ class CeibroImageViewerActivity : BaseActivity() {
 
 
         binding.closeBtn.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Confirmation")
-            builder.setMessage("Do you want to cancel all the changes you made?")
-            builder.setPositiveButton("Yes") { dialogInterface: DialogInterface, _: Int ->
-                dialogInterface.dismiss()
-                val ceibroImagesIntent =
-                    Intent()
-                val newBundle = Bundle()
-                newBundle.putParcelableArrayList("images", arrayListOf())
-                ceibroImagesIntent.putExtras(newBundle)
-                setResult(RESULT_OK, ceibroImagesIntent)
-                finish()
-            }
-            builder.setNegativeButton("No") { dialogInterface: DialogInterface, _: Int ->
-                dialogInterface.dismiss()
-            }
-            builder.create().show()
+            showCancelDialog()
         }
 
         binding.doneBtn.setOnClickListener {
@@ -141,4 +127,30 @@ class CeibroImageViewerActivity : BaseActivity() {
                 listOfImages.postValue(oldImages)
             }
         }
+
+    private fun showCancelDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.layout_cancel_dialog, null)
+
+        val alertDialogBuilder = AlertDialog.Builder(this).setView(dialogView)
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+        val yesBtn = dialogView.findViewById<Button>(R.id.yesBtn)
+        val cancelBtn = dialogView.findViewById<Button>(R.id.cancelBtn)
+        alertDialog?.window?.setBackgroundDrawable(null)
+
+        yesBtn.setOnClickListener {
+            val ceibroImagesIntent = Intent()
+            val newBundle = Bundle()
+            newBundle.putParcelableArrayList("images", arrayListOf())
+            ceibroImagesIntent.putExtras(newBundle)
+            setResult(RESULT_OK, ceibroImagesIntent)
+            alertDialog.dismiss()
+            finish()
+        }
+
+        cancelBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
 }

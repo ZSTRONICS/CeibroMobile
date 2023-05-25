@@ -5,9 +5,11 @@ import com.zstronics.ceibro.base.state.BaseState
 import javax.inject.Inject
 
 class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
-    override var dueDate: String = ""
+    override var dueDate: MutableLiveData<String> = MutableLiveData("")
     override val isDoneReqAllowed: MutableLiveData<Boolean> = MutableLiveData(false)
     override val isAttachLayoutOpen: MutableLiveData<Boolean> = MutableLiveData(false)
     override var taskTitle: MutableLiveData<String> = MutableLiveData("")
+    override var assignToText: MutableLiveData<String> = MutableLiveData("")
+    override var projectText: MutableLiveData<String> = MutableLiveData("")
     override var description: MutableLiveData<String> = MutableLiveData("")
 }

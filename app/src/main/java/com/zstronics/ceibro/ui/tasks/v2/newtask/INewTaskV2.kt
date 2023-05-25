@@ -6,10 +6,12 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 
 interface INewTaskV2 {
     interface State : IBase.State {
-        var dueDate: String
+        var dueDate: MutableLiveData<String>
         val isDoneReqAllowed: MutableLiveData<Boolean>
         val isAttachLayoutOpen: MutableLiveData<Boolean>
         var taskTitle: MutableLiveData<String>
+        var assignToText: MutableLiveData<String>
+        var projectText: MutableLiveData<String>
         var description: MutableLiveData<String>
     }
 
