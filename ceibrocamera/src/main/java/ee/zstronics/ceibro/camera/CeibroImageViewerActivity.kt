@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroImageViewerBinding
+import java.lang.Exception
 
 class CeibroImageViewerActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroImageViewerBinding
@@ -40,6 +41,12 @@ class CeibroImageViewerActivity : BaseActivity() {
         listOfImages.observe(this) {
             fullImageAdapter.setList(it)
             smallImageAdapter.setList(it)
+            try {
+                binding.fullSizeImagesVP.offscreenPageLimit = fullImageAdapter.itemCount     //this is set bcz sometimes when image loaded from gallery again, it doesn't show
+            }
+            catch (e: Exception) {
+                println(e.toString())
+            }
         }
         binding.fullSizeImagesVP.adapter = fullImageAdapter
         binding.smallFooterImagesRV.adapter = smallImageAdapter
@@ -127,6 +134,12 @@ class CeibroImageViewerActivity : BaseActivity() {
                 listOfImages.postValue(oldImages)
             }
         }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+//        super.onBackPressed()
+        showCancelDialog()
+    }
 
     private fun showCancelDialog() {
         val dialogView = layoutInflater.inflate(R.layout.layout_cancel_dialog, null)
