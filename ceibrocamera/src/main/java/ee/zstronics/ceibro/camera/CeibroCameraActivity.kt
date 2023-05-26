@@ -3,11 +3,13 @@ package ee.zstronics.ceibro.camera
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.PorterDuff
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Size
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
@@ -62,6 +64,9 @@ class CeibroCameraActivity : BaseActivity() {
 
         // Button click listener to capture a photo
         binding.captureButton.setOnClickListener {
+            binding.captureButton.isEnabled = false
+            val tint = ContextCompat.getColor(this, R.color.appGrey3)
+            binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
             capturePhoto()
         }
 
@@ -101,6 +106,18 @@ class CeibroCameraActivity : BaseActivity() {
             finish()
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        binding.captureButton.isEnabled = true
+        val tint = ContextCompat.getColor(this, R.color.white)
+        binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
+//        if (sourceName == CeibroImageViewerActivity::class.java.name) {
+//            binding.imagesPicker.visibility = View.GONE
+//        } else {
+//            binding.imagesPicker.visibility = View.VISIBLE
+//        }
     }
 
     private val ceibroImageViewerLauncher =
