@@ -2,12 +2,15 @@ package ee.zstronics.ceibro.camera
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -21,6 +24,9 @@ class CeibroImageViewerActivity : BaseActivity() {
     var isBottomImageLayoutVisible = true
     var fullImageAdapter: CeibroFullImageVPAdapter = CeibroFullImageVPAdapter()
     var smallImageAdapter: CeibroSmallImageRVAdapter = CeibroSmallImageRVAdapter()
+    var lastSelectedPosition: Int = 0
+    var newImagesAdded: Boolean = false
+    var oldListIndexesSize: Int = 0         //this will be index count, considering from 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,8 @@ class CeibroImageViewerActivity : BaseActivity() {
             )
         setContentView(binding.root)
 
+        binding.commentsField.addTextChangedListener(textWatcher)
+
         val bundle = intent.extras
         val images = bundle?.getParcelableArrayList<PickedImages>("images")
         listOfImages.value = images
@@ -42,10 +50,17 @@ class CeibroImageViewerActivity : BaseActivity() {
             fullImageAdapter.setList(it)
             smallImageAdapter.setList(it)
             try {
-                binding.fullSizeImagesVP.offscreenPageLimit = fullImageAdapter.itemCount     //this is set bcz sometimes when image loaded from gallery again, it doesn't show
-            }
-            catch (e: Exception) {
+                binding.fullSizeImagesVP.offscreenPageLimit =
+                    fullImageAdapter.itemCount     //this is set bcz sometimes when image loaded from gallery again, it doesn't show
+            } catch (e: Exception) {
                 println(e.toString())
+            }
+            if (newImagesAdded) {
+                val newItemPosition = oldListIndexesSize + 1
+                binding.fullSizeImagesVP.setCurrentItem(newItemPosition, true)
+                binding.smallFooterImagesRV.smoothScrollToPosition(newItemPosition)
+                smallImageAdapter.setSelectedItem(newItemPosition)
+                newImagesAdded = false
             }
         }
         binding.fullSizeImagesVP.adapter = fullImageAdapter
@@ -54,18 +69,61 @@ class CeibroImageViewerActivity : BaseActivity() {
         smallImageAdapter.itemClickListener =
             { _: View, position: Int ->
                 binding.fullSizeImagesVP.setCurrentItem(position, true)
+                setUserCommentLogic(position)
+                hideKeyboard()
+                binding.commentsField.clearFocus()
+                lastSelectedPosition = position
             }
         binding.fullSizeImagesVP.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 binding.smallFooterImagesRV.smoothScrollToPosition(position)
                 smallImageAdapter.setSelectedItem(position)
+                setUserCommentLogic(position)
+                hideKeyboard()
+                binding.commentsField.clearFocus()
+                lastSelectedPosition = position
             }
         })
 
+        binding.commentsField.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                binding.confirmBtn.visibility = View.VISIBLE
+                binding.editBtn.visibility = View.INVISIBLE
+            }
+        }
+
+        binding.confirmBtn.setOnClickListener {
+            val comment = binding.commentsField.text.toString()
+            if (comment.isNotEmpty()) {
+                val oldImages = listOfImages.value
+                oldImages?.get(lastSelectedPosition)?.comment = comment
+                listOfImages.postValue(oldImages)
+                binding.confirmBtn.visibility = View.INVISIBLE
+                binding.editBtn.visibility = View.VISIBLE
+            } else {
+                binding.confirmBtn.visibility = View.INVISIBLE
+                binding.editBtn.visibility = View.INVISIBLE
+            }
+
+            binding.commentsField.clearFocus()
+            hideKeyboard()
+        }
+
+        binding.editBtn.setOnClickListener {
+            binding.commentsField.requestFocus()
+            binding.commentsField.text?.length?.let { it1 -> binding.commentsField.setSelection(it1) }
+            showKeyboard()
+            binding.confirmBtn.visibility = View.VISIBLE
+            binding.editBtn.visibility = View.INVISIBLE
+        }
 
         binding.closeBtn.setOnClickListener {
             showCancelDialog()
+        }
+
+        binding.deleteBtn.setOnClickListener {
+            showDeleteDialog()
         }
 
         binding.doneBtn.setOnClickListener {
@@ -123,6 +181,39 @@ class CeibroImageViewerActivity : BaseActivity() {
         }
     }
 
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            if (s.toString().isNotEmpty()) {
+                binding.confirmBtn.visibility = View.VISIBLE
+                binding.editBtn.visibility = View.INVISIBLE
+            }
+        }
+        override fun afterTextChanged(s: Editable?) {
+        }
+    }
+
+    private fun setUserCommentLogic(position: Int) {
+        val userComment = listOfImages.value?.get(position)?.comment
+        binding.commentsField.setText(userComment)
+        binding.confirmBtn.visibility = View.INVISIBLE
+        if (userComment?.isNotEmpty() == true) {
+            binding.editBtn.visibility = View.VISIBLE
+        } else {
+            binding.editBtn.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.commentsField.windowToken, 0)
+    }
+    private fun showKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.commentsField, InputMethodManager.SHOW_IMPLICIT)
+    }
+
     private val ceibroImagesPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -130,6 +221,10 @@ class CeibroImageViewerActivity : BaseActivity() {
                     result.data?.extras?.getParcelableArrayList<PickedImages>("images")
                         ?: arrayListOf()
                 val oldImages = listOfImages.value
+                if (listOfPickedImages.size > 0) {
+                    oldListIndexesSize = oldImages?.size?.minus(1) ?: 0
+                    newImagesAdded = true
+                }
                 oldImages?.addAll(listOfPickedImages)
                 listOfImages.postValue(oldImages)
             }
@@ -160,6 +255,31 @@ class CeibroImageViewerActivity : BaseActivity() {
             setResult(RESULT_OK, ceibroImagesIntent)
             alertDialog.dismiss()
             finish()
+        }
+
+        cancelBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+    private fun showDeleteDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.layout_cancel_dialog, null)
+
+        val alertDialogBuilder = AlertDialog.Builder(this).setView(dialogView)
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+        val yesBtn = dialogView.findViewById<Button>(R.id.yesBtn)
+        val cancelBtn = dialogView.findViewById<Button>(R.id.cancelBtn)
+        val dialog_text = dialogView.findViewById<TextView>(R.id.dialog_text)
+        dialog_text.text = resources.getString(R.string.do_you_want_to_delete_photo)
+        alertDialog?.window?.setBackgroundDrawable(null)
+
+        yesBtn.setOnClickListener {
+            val oldImages = listOfImages.value
+            oldImages?.removeAt(lastSelectedPosition)
+            listOfImages.postValue(oldImages)
+            alertDialog.dismiss()
         }
 
         cancelBtn.setOnClickListener {

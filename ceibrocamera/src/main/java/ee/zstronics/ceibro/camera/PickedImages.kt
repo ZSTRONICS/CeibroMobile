@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PickedImages(
     val fileUri: Uri?,
-    val comment: String = "",
+    var comment: String = "",
     val fileName: String = "",
     val fileSizeReadAble: String = "",
     val editingApplied: Boolean = false,
