@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/appGrey3"
+        tools:context=".CeibroCameraActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:orientation="horizontal"
+            android:padding="@dimen/_9sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/_1sdp"
+                android:src="@drawable/ic_cross"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/doneBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_25sdp"
+                android:background="@drawable/blue_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:text="@string/done"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/galleryButton"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
+                android:layout_marginEnd="@dimen/_18sdp"
+                android:padding="@dimen/_1sdp"
+                android:visibility="gone"
+                android:src="@drawable/ic_photo_picker"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/doneBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/displayImg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/new_background"
+            app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout" />
+
+
+        <LinearLayout
+            android:id="@+id/editInnerLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/black_transparency"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/squareBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_square"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/arrowBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_top_arrow"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/drawBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_edit_pencil"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/insertTextBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_insert_text"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/undoBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_undo"
+                app:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/deleteBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_44sdp"
+                android:layout_weight="1"
+                android:background="@color/appRed"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/icon_delete_bin"
+                app:tint="@color/white" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            android:orientation="horizontal"
+            android:padding="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/cancelBtn"
+                android:layout_width="@dimen/_31sdp"
+                android:layout_height="@dimen/_31sdp"
+                android:layout_gravity="center_vertical"
+                android:padding="@dimen/_3sdp"
+                android:layout_marginStart="@dimen/_7sdp"
+                android:src="@drawable/ic_cross"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/confirmBtn"
+                android:layout_width="@dimen/_31sdp"
+                android:layout_height="@dimen/_31sdp"
+                android:padding="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_7sdp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_check"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
