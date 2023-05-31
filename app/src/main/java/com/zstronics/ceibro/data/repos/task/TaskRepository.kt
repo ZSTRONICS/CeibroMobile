@@ -458,4 +458,27 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Error -> callBack(false, response.error.message, arrayListOf())
         }
     }
+
+
+
+
+
+
+    //New APIs for Task
+
+    override suspend fun getAllTopics(
+        callBack: (isSuccess: Boolean, message: String, data: TopicsResponse?) -> Unit
+    ) {
+        when (val response = remoteTask.getAllTopics()) {
+            is ApiResponse.Success -> {
+                val responseObj = response.data
+
+                callBack(true, "", response.data)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message, null)
+            }
+        }
+    }
+
 }

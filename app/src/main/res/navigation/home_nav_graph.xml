@@ -317,5 +317,30 @@
         android:id="@+id/newTaskV2Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2Fragment"
         android:label="NewTaskV2Fragment"
-        tools:layout="@layout/fragment_new_task_v2"/>
+        tools:layout="@layout/fragment_new_task_v2">
+        <action
+            android:id="@+id/action_newTaskV2Fragment_to_topicFragment"
+            app:destination="@id/topicFragment" />
+        <action
+            android:id="@+id/action_newTaskV2Fragment_to_assigneeFragment"
+            app:destination="@id/assigneeFragment" />
+        <action
+            android:id="@+id/action_newTaskV2Fragment_to_taskProjectFragment"
+            app:destination="@id/taskProjectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/topicFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.topic.TopicFragment"
+        android:label="TopicFragment"
+        tools:layout="@layout/fragment_topic" />
+    <fragment
+        android:id="@+id/assigneeFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.AssigneeFragment"
+        android:label="AssigneeFragment"
+        tools:layout="@layout/fragment_assignee" />
+    <fragment
+        android:id="@+id/taskProjectFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.taskproject.TaskProjectFragment"
+        android:label="TaskProjectFragment"
+        tools:layout="@layout/fragment_task_project" />
 </navigation>
