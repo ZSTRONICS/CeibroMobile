@@ -56,4 +56,24 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
+
+
+
+
+    override suspend fun getAllTopics(): ApiResponse<TopicsResponse> =
+        executeSafely(
+            call =
+            {
+                service.getAllTopics()
+            }
+        )
+
+    override suspend fun saveTopic(): ApiResponse<NewTopicResponse> =
+        executeSafely(
+            call =
+            {
+                service.saveTopic()
+            }
+        )
+
 }

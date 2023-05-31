@@ -11,4 +11,7 @@ interface ITaskRemoteDataSource {
     suspend fun updateTaskByIdNoAdvanceOptions(taskId: String, updateTask: UpdateDraftTaskRequestNoAdvanceOptions): ApiResponse<NewTaskResponse>
     suspend fun updateTaskNoStateNoAdvanceOptions(taskId: String, updateTask: UpdateTaskRequestNoAdvanceOptions): ApiResponse<NewTaskResponse>
     suspend fun deleteTask(taskId: String): ApiResponse<GenericResponse>
+
+    suspend fun getAllTopics(): ApiResponse<TopicsResponse>
+    suspend fun saveTopic(): ApiResponse<NewTopicResponse>
 }

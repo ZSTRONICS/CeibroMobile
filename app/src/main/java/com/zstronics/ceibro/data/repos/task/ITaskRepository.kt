@@ -109,4 +109,12 @@ interface ITaskRepository {
         callBack: (isSuccess: Boolean, message: String, allComments: ArrayList<SubTaskComments>) -> Unit
     )
 
+
+
+    //New APIs for Task
+
+    suspend fun getAllTopics(
+        callBack: (isSuccess: Boolean, message: String, data: TopicsResponse?) -> Unit
+    )
+
 }

@@ -36,6 +36,7 @@ class NewTaskV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
+            R.id.newTaskTopicText -> navigate(R.id.topicFragment)
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(

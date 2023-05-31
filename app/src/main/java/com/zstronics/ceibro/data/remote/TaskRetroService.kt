@@ -114,4 +114,16 @@ interface TaskRetroService {
         @Path("subTaskId") subTaskId: String
     ): Response<AllCommentsResponse>
 
+
+
+
+
+    //New APIs for Task
+
+    @GET("v2/task/topic")
+    suspend fun getAllTopics(): Response<TopicsResponse>
+
+    @POST("v2/task/topic")
+    suspend fun saveTopic(): Response<NewTopicResponse>
+
 }
