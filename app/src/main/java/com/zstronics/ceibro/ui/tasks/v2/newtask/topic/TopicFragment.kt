@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.topic
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
@@ -8,6 +9,7 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentTopicBinding
@@ -35,7 +37,12 @@ class TopicFragment :
             }
             R.id.saveTopicLayout -> {
                 val searchedText = mViewDataBinding.topicSearchBar.query.toString()
-                //API call in progress
+                if (searchedText.isNotEmpty()) {
+                    viewModel.saveTopic(searchedText) {
+                        mViewDataBinding.topicSearchBar.setQuery("", false)
+                        mViewDataBinding.topicSearchBar.clearFocus()
+                    }
+                }
             }
         }
     }
@@ -56,9 +63,9 @@ class TopicFragment :
         mViewDataBinding.recentTopicRV.adapter = recentTopicAdapter
         mViewDataBinding.allTopicsRV.adapter = allTopicsHeaderAdapter
 
+
         viewModel.allTopics.observe(viewLifecycleOwner) {
             if (it != null) {
-                println("All Topics: $it")
                 viewModel.groupDataByFirstLetter(it)
             }
         }
@@ -67,7 +74,6 @@ class TopicFragment :
                 allTopicsHeaderAdapter.setList(it)
             }
         }
-
         viewModel.recentTopics.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 mViewDataBinding.recentTopicLayout.visibility = View.VISIBLE
@@ -75,6 +81,17 @@ class TopicFragment :
             } else {
                 mViewDataBinding.recentTopicLayout.visibility = View.GONE
             }
+        }
+
+        recentTopicAdapter.recentTopicItemClickListener = { _: View, position: Int, data: TopicsResponse.TopicData ->
+            val bundle = Bundle()
+            bundle.putParcelable("topic", data)
+            navigateBackWithResult(Activity.RESULT_OK, bundle)
+        }
+        allTopicsHeaderAdapter.allTopicItemClickListener = { _: View, position: Int, data: TopicsResponse.TopicData ->
+            val bundle = Bundle()
+            bundle.putParcelable("topic", data)
+            navigateBackWithResult(Activity.RESULT_OK, bundle)
         }
 
 
@@ -89,6 +106,9 @@ class TopicFragment :
                         } else {
                             View.GONE
                         }
+                    viewModel.originalAllTopics.filter { it.topic.equals(query.trim(), true) }.map {
+                        mViewDataBinding.saveTopicLayout.visibility = View.GONE
+                    }
                     mViewDataBinding.saveTopicNameText.text = "\"$query\""
                 }
                 return true
@@ -102,11 +122,13 @@ class TopicFragment :
                         } else {
                             View.GONE
                         }
+                    viewModel.originalAllTopics.filter { it.topic.equals(newText.trim(), true) }.map {
+                        mViewDataBinding.saveTopicLayout.visibility = View.GONE
+                    }
                     mViewDataBinding.saveTopicNameText.text = "\"$newText\""
                 }
                 return true
             }
-
         })
     }
 

@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 
 interface INewTaskV2 {
     interface State : IBase.State {
@@ -10,6 +11,7 @@ interface INewTaskV2 {
         val isDoneReqAllowed: MutableLiveData<Boolean>
         val isAttachLayoutOpen: MutableLiveData<Boolean>
         var taskTitle: MutableLiveData<String>
+        var taskTopicObj: MutableLiveData<TopicsResponse.TopicData>
         var assignToText: MutableLiveData<String>
         var projectText: MutableLiveData<String>
         var description: MutableLiveData<String>

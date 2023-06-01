@@ -481,4 +481,20 @@ class TaskRepository @Inject constructor(
         }
     }
 
+    override suspend fun saveTopic(
+        requestBody: NewTopicCreateRequest,
+        callBack: (isSuccess: Boolean, message: String, data: NewTopicResponse?) -> Unit
+    ) {
+        when (val response = remoteTask.saveTopic(requestBody)) {
+            is ApiResponse.Success -> {
+                val responseObj = response.data
+
+                callBack(true, "", response.data)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message, null)
+            }
+        }
+    }
+
 }

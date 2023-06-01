@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/removeBtn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/rounded_black_bg"
+            android:backgroundTint="@color/appBlue"
+            android:elevation="1dp"
+            android:padding="3.5dp"
+            android:src="@drawable/icon_round_close"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/connectionImgCard"
+            app:layout_constraintEnd_toEndOf="@+id/connectionImgCard"
+            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toBottomOf="@+id/connectionImgCard" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/connectionImgCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardElevation="0dp"
+            android:outlineSpotShadowColor="@color/transparent"
+            app:cardBackgroundColor="@color/appGrey1"
+            app:cardCornerRadius="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/contactImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_img"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/contactInitials"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="center"
+                android:maxLength="3"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="KD"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

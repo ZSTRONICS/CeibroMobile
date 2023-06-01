@@ -1,11 +1,108 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.assignee
 
+import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class AssigneeVM @Inject constructor(
     override val viewState: AssigneeState,
+    val sessionManager: SessionManager,
+    val dashboardRepository: IDashboardRepository,
 ) : HiltBaseViewModel<IAssignee.State>(), IAssignee.ViewModel {
+    val user = sessionManager.getUser().value
+
+    private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+        MutableLiveData()
+    val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+        _allConnections
+    var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
+
+    private var _allGroupedConnections: MutableLiveData<MutableList<AssigneeConnectionGroup>> =
+        MutableLiveData()
+    val allGroupedConnections: MutableLiveData<MutableList<AssigneeConnectionGroup>> =
+        _allGroupedConnections
+
+    var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+
+
+    fun getAllConnectionsV2(callBack: () -> Unit) {
+        val userId = user?.id
+        launch {
+            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+                is ApiResponse.Success -> {
+                    val contacts = response.data.contacts.sortedByDescending { it.isCeiborUser }
+
+                    val allContacts = contacts.toMutableList()
+                    val oldSelectedContacts = selectedContacts.value
+                    if (!oldSelectedContacts.isNullOrEmpty()) {
+                        for (allItem in allContacts) {
+                            for (selectedItem in oldSelectedContacts) {
+                                if (allItem.id == selectedItem.id) {
+                                    val index = allContacts.indexOf(allItem)
+                                    allContacts.set(index, selectedItem)
+                                }
+                            }
+                        }
+                        _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+                        originalConnections = allContacts
+
+                    } else {
+                        if (contacts.isNotEmpty()) {
+                            originalConnections = contacts
+                            _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+                        }
+                    }
+                    callBack.invoke()
+                }
+                is ApiResponse.Error -> {
+                    callBack.invoke()
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    }
+
+
+    fun groupDataByFirstLetter(data: List<AllCeibroConnections.CeibroConnection>) {
+        val sections = mutableListOf<AssigneeConnectionGroup>()
+
+        val groupedData = data.groupBy {
+            if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
+                it.contactFirstName.first().lowercase()
+            } else {
+                '#'.toString()
+            }
+        }.toSortedMap(
+            compareBy<String> { it != "#" }
+                .then(compareBy { it.lowercase() })
+                .then(compareByDescending { it == "#" })
+        )
+
+        for (mapKey in groupedData.keys) {
+            sections.add(
+                AssigneeConnectionGroup(
+                    mapKey.toString().uppercase()[0],
+                    groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
+                        ?: emptyList()
+                )
+            )
+        }
+        _allGroupedConnections.value = sections
+    }
+
+    data class AssigneeConnectionGroup(
+        val sectionLetter: Char,
+        var items: List<AllCeibroConnections.CeibroConnection>
+    )
+
 }

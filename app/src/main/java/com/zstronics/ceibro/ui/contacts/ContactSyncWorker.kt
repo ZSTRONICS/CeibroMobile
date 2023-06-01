@@ -47,7 +47,7 @@ class ContactSyncWorker @AssistedInject constructor(
 
         val contacts =
             if (user?.autoContactSync == true) getLocalContacts(context) else sessionManager.getSyncedContacts()
-        if (sessionManager.isLoggedIn()) {
+        if (sessionManager.isLoggedIn() && contacts.isNotEmpty()) {
             val request = SyncContactsRequest(contacts = contacts)
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
