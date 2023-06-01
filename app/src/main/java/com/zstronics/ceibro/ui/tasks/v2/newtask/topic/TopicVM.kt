@@ -7,7 +7,9 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.dashboard.myconnectionsv2.MyConnectionV2VM
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,6 +56,7 @@ class TopicVM @Inject constructor(
                     }
                     callBack.invoke()
                 } else {
+                    callBack.invoke()
                     alert(error)
                 }
             }
@@ -61,25 +64,28 @@ class TopicVM @Inject constructor(
     }
 
     fun saveTopic(topic: String, callBack: () -> Unit) {
+        val request = NewTopicCreateRequest(
+            topic = topic
+        )
         launch {
-//            taskRepository.getAllTopics() { isSuccess, error, allTopics ->
-//                if (isSuccess) {
-//                    val allTopic1 = allTopics?.allTopics
-//                    val recentTopic1 = allTopics?.recentTopics
-//
-//                    if (allTopic1?.isNotEmpty() == true) {
-//                        originalAllTopics = allTopic1
-//                        _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
-//                    }
-//                    if (recentTopic1?.isNotEmpty() == true) {
-//                        originalRecentTopics = recentTopic1
-//                        _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
-//                    }
-//                    callBack.invoke()
-//                } else {
-//                    alert(error)
-//                }
-//            }
+            loading(true)
+            taskRepository.saveTopic(request) { isSuccess, error, newTopicResponse ->
+                if (isSuccess) {
+                    val newTopic = newTopicResponse?.newTopic
+
+                    if (newTopic != null) {
+                        val allTopics = originalAllTopics as MutableList<TopicsResponse.TopicData>
+                        allTopics.add(newTopic)
+                        originalAllTopics = allTopics
+                        _allTopics.postValue(allTopics)
+
+                    }
+                    loading(false, "")
+                    callBack.invoke()
+                } else {
+                    loading(false, error)
+                }
+            }
         }
     }
 
@@ -97,7 +103,7 @@ class TopicVM @Inject constructor(
 
         //For recent topics
         val recentFiltered = originalRecentTopics.filter {
-            it.topic.lowercase().contains(search, true)
+            it.topic.lowercase().contains(search.trim(), true)
         }
         if (recentFiltered.isNotEmpty())
             _recentTopics.postValue(recentFiltered as MutableList<TopicsResponse.TopicData>?)
@@ -106,7 +112,7 @@ class TopicVM @Inject constructor(
 
         //For all topics
         val allFiltered = originalAllTopics.filter {
-            it.topic.lowercase().contains(search, true)
+            it.topic.lowercase().contains(search.trim(), true)
         }
         if (allFiltered.isNotEmpty())
             _allTopics.postValue(allFiltered as MutableList<TopicsResponse.TopicData>?)

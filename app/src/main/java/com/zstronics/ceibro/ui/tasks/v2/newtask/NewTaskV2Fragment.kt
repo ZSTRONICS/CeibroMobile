@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -11,11 +12,18 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputLayout
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.navgraph.BackNavigationResult
+import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
+import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
 import ee.zstronics.ceibro.camera.CeibroSmallImageRVAdapter
@@ -26,17 +34,21 @@ import java.util.*
 
 @AndroidEntryPoint
 class NewTaskV2Fragment :
-    BaseNavViewModelFragment<FragmentNewTaskV2Binding, INewTaskV2.State, NewTaskV2VM>() {
+    BaseNavViewModelFragment<FragmentNewTaskV2Binding, INewTaskV2.State, NewTaskV2VM>(),
+    BackNavigationResultListener {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: NewTaskV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_new_task_v2
     override fun toolBarVisibility(): Boolean = false
+    private val TOPIC_REQUEST_CODE = 11
+    private val ASSIGNEE_REQUEST_CODE = 12
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
-            R.id.newTaskTopicText -> navigate(R.id.topicFragment)
+            R.id.newTaskTopicText -> navigateForResult(R.id.topicFragment, TOPIC_REQUEST_CODE)
+            R.id.newTaskAssignToText -> navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE)
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -53,6 +65,7 @@ class NewTaskV2Fragment :
 
             R.id.newTaskTopicClearBtn -> {
                 viewState.taskTitle.value = ""
+                viewState.taskTopicObj = MutableLiveData()
             }
 
             R.id.newTaskAssignToClearBtn -> {
@@ -193,4 +206,22 @@ class NewTaskV2Fragment :
                 }
             }
         }
+
+
+
+    override fun onNavigationResult(result: BackNavigationResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            when (result.requestCode) {
+                TOPIC_REQUEST_CODE -> {
+                    val selectedTopic = result.data?.getParcelable<TopicsResponse.TopicData>("topic")
+                    if (selectedTopic != null) {
+                        viewState.taskTopicObj.value = selectedTopic
+                        viewState.taskTitle.value = selectedTopic.topic
+                    } else {
+                        shortToastNow(resources.getString(R.string.topic_not_selected))
+                    }
+                }
+            }
+        }
+    }
 }

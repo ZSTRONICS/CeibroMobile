@@ -36,7 +36,8 @@ data class AllCeibroConnections(
         @SerializedName("updatedAt")
         val updatedAt: String,
         @SerializedName("userCeibroData")
-        val userCeibroData: UserCeibroData?
+        val userCeibroData: UserCeibroData?,
+        var isChecked: Boolean = false
     ) : BaseResponse(), Parcelable {
         @Parcelize
         data class UserCeibroData(

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -18,17 +19,134 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/backBtn"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:padding="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/assigneeSearchBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar"
+            app:srcCompat="@drawable/icon_back"
+            app:tint="@color/appBlue" />
+
+        <android.widget.SearchView
+            android:id="@+id/assigneeSearchBar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:background="@null"
+            android:elevation="0dp"
+            android:iconifiedByDefault="false"
+            android:paddingStart="-10dp"
+            android:paddingEnd="-10dp"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Start typing name"
+            android:searchIcon="@null"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toStartOf="@+id/addNewContact"
+            app:layout_constraintStart_toEndOf="@+id/backBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:theme="@style/AppSearchView" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/addNewContact"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:padding="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/assigneeSearchBar"
+            app:layout_constraintEnd_toStartOf="@+id/doneBtn"
+            app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar"
+            app:srcCompat="@drawable/icon_add_new_friends"
+            app:tint="@color/appBlue" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/doneBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Assignee Screen"
-            android:textColor="@color/black"
-            android:textSize="23sp"
+            android:layout_marginEnd="@dimen/_9sdp"
+            android:background="@drawable/task_card_less_corner_outline"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:paddingStart="@dimen/_9sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_9sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:text="@string/done"
+            android:textColor="@color/appTextGrey"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/assigneeSearchBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar" />
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="0dp"
+            android:layout_height="0.8dp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:background="@color/appGrey3"
+            app:layout_constraintEnd_toEndOf="@+id/assigneeSearchBar"
+            app:layout_constraintStart_toStartOf="@+id/assigneeSearchBar"
+            app:layout_constraintTop_toBottomOf="@+id/assigneeSearchBar" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/view5">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/parentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/selectedContactsRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_1sdp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_item_assignee_chip" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/allContactsRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_2sdp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_item_assignee_header" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

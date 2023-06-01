@@ -116,5 +116,9 @@ interface ITaskRepository {
     suspend fun getAllTopics(
         callBack: (isSuccess: Boolean, message: String, data: TopicsResponse?) -> Unit
     )
+    suspend fun saveTopic(
+        requestBody: NewTopicCreateRequest,
+        callBack: (isSuccess: Boolean, message: String, data: NewTopicResponse?) -> Unit
+    )
 
 }
