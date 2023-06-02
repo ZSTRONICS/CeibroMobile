@@ -52,7 +52,7 @@ class AssigneeSelectionAdapter @Inject constructor() :
             binding.root.setOnClickListener {
                 item.isChecked = !item.isChecked
                 dataList[absoluteAdapterPosition].isChecked = item.isChecked
-//                notifyDataSetChanged()
+                notifyDataSetChanged()
                 itemClickListener?.invoke(it, position, item)
             }
 

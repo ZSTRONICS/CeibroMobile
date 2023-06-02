@@ -187,6 +187,7 @@
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
                         android:paddingEnd="62dp"
+                        android:lineSpacingExtra="2dp"
                         android:text="@={viewState.assignToText}"
                         android:textSize="15sp" />
 

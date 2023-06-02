@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.assignee
 
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -30,6 +31,17 @@ class AssigneeVM @Inject constructor(
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
 
+
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+        val selectedContact = bundle?.getParcelableArray("contacts")
+        val selectedContactList =
+            selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                ?.toMutableList()
+        if (!selectedContactList.isNullOrEmpty()) {
+            selectedContacts.postValue(selectedContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
+        }
+    }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
         val userId = user?.id
@@ -69,7 +81,30 @@ class AssigneeVM @Inject constructor(
     }
 
     fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        originalConnections = allContacts
         _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    }
+
+
+    fun filterContacts(search: String) {
+        if (search.isEmpty()) {
+            if (originalConnections.isNotEmpty()) {
+                _allConnections.postValue(originalConnections as MutableList<AllCeibroConnections.CeibroConnection>?)
+            }
+
+            return
+        }
+        val filtered = originalConnections.filter {
+            (!it.contactFullName.isNullOrEmpty() && it.contactFullName.lowercase().contains(search, true)) ||
+                    (!it.contactFirstName.isNullOrEmpty() && it.contactFirstName.lowercase()
+                        .contains(search, true)) ||
+                    (!it.contactSurName.isNullOrEmpty() && it.contactSurName.lowercase()
+                        .contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _allConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)
+        else
+            _allConnections.postValue(mutableListOf())
     }
 
 
