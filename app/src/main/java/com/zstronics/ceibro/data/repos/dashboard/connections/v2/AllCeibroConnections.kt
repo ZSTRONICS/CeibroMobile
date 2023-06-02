@@ -44,9 +44,9 @@ data class AllCeibroConnections(
             @SerializedName("companyName")
             val companyName: String,
             @SerializedName("email")
-            val email: String,
+            val email: String?,
             @SerializedName("firstName")
-            val firstName: String,
+            val firstName: String?,
             @SerializedName("_id")
             val id: String,
             @SerializedName("jobTitle")
@@ -56,7 +56,7 @@ data class AllCeibroConnections(
             @SerializedName("profilePic")
             val profilePic: String,
             @SerializedName("surName")
-            val surName: String
+            val surName: String?
         ) : BaseResponse(), Parcelable
     }
 }

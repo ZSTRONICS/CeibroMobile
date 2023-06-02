@@ -21,6 +21,7 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
@@ -48,7 +49,12 @@ class NewTaskV2Fragment :
         when (id) {
             R.id.backBtn -> navigateBack()
             R.id.newTaskTopicText -> navigateForResult(R.id.topicFragment, TOPIC_REQUEST_CODE)
-            R.id.newTaskAssignToText -> navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE)
+            R.id.newTaskAssignToText -> {
+                val bundle = Bundle()
+                bundle.putParcelableArray("contacts", viewState.selectedContacts.value?.toTypedArray())
+                navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE, bundle)
+            }
+
             R.id.newTaskDueDateText -> {
                 val datePicker =
                     DatePickerDialog(
@@ -65,12 +71,12 @@ class NewTaskV2Fragment :
 
             R.id.newTaskTopicClearBtn -> {
                 viewState.taskTitle.value = ""
-                viewState.taskTopicObj = MutableLiveData()
+                viewState.selectedTopic = MutableLiveData()
             }
 
             R.id.newTaskAssignToClearBtn -> {
                 viewState.assignToText.value = ""
-                // make this text from the array list of assign to members to display in UI
+                viewState.selectedContacts = MutableLiveData()
             }
 
             R.id.newTaskProjectClearBtn -> {
@@ -208,20 +214,43 @@ class NewTaskV2Fragment :
         }
 
 
-
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {
                 TOPIC_REQUEST_CODE -> {
-                    val selectedTopic = result.data?.getParcelable<TopicsResponse.TopicData>("topic")
+                    val selectedTopic =
+                        result.data?.getParcelable<TopicsResponse.TopicData>("topic")
                     if (selectedTopic != null) {
-                        viewState.taskTopicObj.value = selectedTopic
+                        viewState.selectedTopic.value = selectedTopic
                         viewState.taskTitle.value = selectedTopic.topic
                     } else {
                         shortToastNow(resources.getString(R.string.topic_not_selected))
                     }
                 }
+
+                ASSIGNEE_REQUEST_CODE -> {
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    var assigneeMembers = ""
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFullName}"
+                            } else {
+                                "${item.contactFullName}; "
+                            }
+                            index++
+                        }
+                        viewState.assignToText.value = assigneeMembers
+                        viewState.selectedContacts.value = selectedContactList
+                    }
+                }
             }
         }
     }
+
 }

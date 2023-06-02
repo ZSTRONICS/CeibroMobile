@@ -1,10 +1,15 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.assignee
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
+import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentAssigneeBinding
@@ -24,7 +29,25 @@ class AssigneeFragment :
     override val viewModel: AssigneeVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_assignee
     override fun toolBarVisibility(): Boolean = false
+    var searchedContacts = false
     override fun onClick(id: Int) {
+        when (id) {
+            R.id.backBtn -> navigateBack()
+            R.id.addNewContact -> {
+                val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
+                startActivity(intent)
+            }
+            R.id.doneBtn -> {
+                val selectedContactList = viewModel.selectedContacts.value
+                if (selectedContactList.isNullOrEmpty()) {
+                    shortToastNow("Please select contacts to proceed")
+                } else {
+                    val bundle = Bundle()
+                    bundle.putParcelableArray("contacts", selectedContactList.toTypedArray())
+                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                }
+            }
+        }
     }
 
 
@@ -41,7 +64,13 @@ class AssigneeFragment :
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
             if (it != null) {
-                viewModel.groupDataByFirstLetter(it)
+                if (searchedContacts) {
+                    searchedContacts = false
+                    val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+                    viewModel.filterContacts(searchQuery)
+                } else {
+                    viewModel.groupDataByFirstLetter(it)
+                }
             }
         }
 
@@ -58,9 +87,10 @@ class AssigneeFragment :
         }
         chipAdapter.removeItemClickListener = { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
             val allContacts = viewModel.originalConnections.toMutableList()
-            if (allContacts.isNotEmpty()) {
-                data.isChecked = false
+            val selectedOnes = viewModel.selectedContacts.value?.toMutableList()
+            data.isChecked = false
 
+            if (allContacts.isNotEmpty()) {
                 val commonItem = allContacts.find { item1 ->
                     item1.id == data.id
                 }
@@ -68,7 +98,23 @@ class AssigneeFragment :
                     val index = allContacts.indexOf(commonItem)
                     allContacts.set(index, data)            //set is used for updating the specific item
                 }
+
+                val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+                if (searchQuery.isNotEmpty()) {
+                    searchedContacts = true
+                }
                 viewModel.updateContacts(allContacts)
+            }
+            //selected contacts also updated so that exact list be sent back on done
+            if (!selectedOnes.isNullOrEmpty()) {
+                val commonItem = selectedOnes.find { item1 ->
+                    item1.id == data.id
+                }
+                if (commonItem != null) {
+                    val index = selectedOnes.indexOf(commonItem)
+                    selectedOnes.removeAt(index)            //set is used for updating the specific item
+                }
+                viewModel.selectedContacts.postValue(selectedOnes)
             }
         }
 
@@ -80,7 +126,17 @@ class AssigneeFragment :
                     val selected = item.items.filter { it.isChecked }.map { it }
                     selectedContacts.addAll(selected)
                 }
-                viewModel.selectedContacts.postValue(selectedContacts)
+                val oldSelected = viewModel.originalConnections.filter { it.isChecked }.map { it }.toMutableList()
+                if (oldSelected.isNotEmpty()) {
+                    val combinedList = selectedContacts + oldSelected
+                    val distinctList = combinedList.distinct().toMutableList()
+                    selectedContacts.clear()
+                    selectedContacts.addAll(distinctList)
+                    viewModel.selectedContacts.postValue(distinctList)
+                } else {
+                    viewModel.selectedContacts.postValue(selectedContacts)
+                }
+
 
                 val allContacts = viewModel.originalConnections.toMutableList()
                 if (allContacts.isNotEmpty() && selectedContacts.isNotEmpty()) {
@@ -93,31 +149,31 @@ class AssigneeFragment :
                         }
                     }
 
+                    val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+                    if (searchQuery.isNotEmpty()) {
+                        searchedContacts = true
+                    }
                     viewModel.updateContacts(allContacts)
                 }
             }
 
 
+        mViewDataBinding.assigneeSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.filterContacts(query)
+                }
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.filterContacts(newText)
+                }
+                return true
+            }
+        })
 
-//        viewState.searchName.observe(viewLifecycleOwner) { search ->
-//            viewModel.filterContacts(search.lowercase())
-//        }
-//        mViewDataBinding.searchBar.setOnQueryTextListener(object :
-//            SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                if (query != null) {
-//                    viewModel.filterContacts(query)
-//                }
-//                return true
-//            }
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                if (newText != null) {
-//                    viewModel.filterContacts(newText)
-//                }
-//                return true
-//            }
-//
-//        })
     }
 
     override fun onResume() {
@@ -134,6 +190,10 @@ class AssigneeFragment :
 
             viewModel.getAllConnectionsV2 {
                 mViewDataBinding.allContactsRV.hideSkeleton()
+                val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.filterContacts(searchQuery)
+                }
             }
         } else {
             viewModel.getAllConnectionsV2 { }
