@@ -22,6 +22,7 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
@@ -45,13 +46,22 @@ class NewTaskV2Fragment :
     override fun toolBarVisibility(): Boolean = false
     private val TOPIC_REQUEST_CODE = 11
     private val ASSIGNEE_REQUEST_CODE = 12
+    private val PROJECT_REQUEST_CODE = 13
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
             R.id.newTaskTopicText -> navigateForResult(R.id.topicFragment, TOPIC_REQUEST_CODE)
+            R.id.newTaskProjectText -> navigateForResult(
+                R.id.taskProjectFragment,
+                PROJECT_REQUEST_CODE
+            )
+
             R.id.newTaskAssignToText -> {
                 val bundle = Bundle()
-                bundle.putParcelableArray("contacts", viewState.selectedContacts.value?.toTypedArray())
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewState.selectedContacts.value?.toTypedArray()
+                )
                 navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE, bundle)
             }
 
@@ -81,6 +91,7 @@ class NewTaskV2Fragment :
 
             R.id.newTaskProjectClearBtn -> {
                 viewState.projectText.value = ""
+                viewState.selectedProject = MutableLiveData()
             }
 
             R.id.newTaskDueDateClearBtn -> {
@@ -247,6 +258,17 @@ class NewTaskV2Fragment :
                         }
                         viewState.assignToText.value = assigneeMembers
                         viewState.selectedContacts.value = selectedContactList
+                    }
+                }
+
+                PROJECT_REQUEST_CODE -> {
+                    val selectedProject =
+                        result.data?.getParcelable<AllProjectsResponse.Projects>("project")
+                    if (selectedProject != null) {
+                        viewState.selectedProject.value = selectedProject
+                        viewState.projectText.value = selectedProject.title
+                    } else {
+                        shortToastNow(resources.getString(R.string.project_not_selected))
                     }
                 }
             }

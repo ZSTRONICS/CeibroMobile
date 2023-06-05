@@ -2,6 +2,8 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask.topic
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.SearchView
 import androidx.core.os.bundleOf
@@ -32,8 +34,7 @@ class TopicFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.cancelBtn -> {
-                mViewDataBinding.topicSearchBar.setQuery("", false)
-                mViewDataBinding.topicSearchBar.clearFocus()
+                navigateBack()
             }
             R.id.saveTopicLayout -> {
                 val searchedText = mViewDataBinding.topicSearchBar.query.toString()

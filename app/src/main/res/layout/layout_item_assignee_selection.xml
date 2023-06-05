@@ -7,7 +7,6 @@
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -16,16 +15,16 @@
             android:id="@+id/connectionImgCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_2sdp"
             android:elevation="0dp"
             android:outlineSpotShadowColor="@color/transparent"
             app:cardBackgroundColor="@color/appGrey1"
             app:cardCornerRadius="4dp"
-            android:layout_marginStart="@dimen/_2sdp"
             app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
             app:layout_constraintStart_toEndOf="@+id/contactCheckBox"
             app:layout_constraintTop_toTopOf="@+id/contactName">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/contactImage"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
@@ -53,8 +52,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_9sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_9sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_semibold"
             android:gravity="start"

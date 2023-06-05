@@ -820,5 +820,8 @@
     <string name="documents_heading">Documents</string>
     <string name="library_heading">Library</string>
     <string name="recent_used_topics">Recent used topics</string>
+    <string name="recent_used_projects">Recent used projects</string>
     <string name="topic_not_selected">Topic not selected</string>
+    <string name="project_not_selected">Project not selected</string>
+    <string name="add_new_project">Add new project</string>
 </resources>
