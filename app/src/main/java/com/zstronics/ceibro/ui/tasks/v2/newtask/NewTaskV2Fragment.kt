@@ -3,18 +3,19 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.text.Editable
-import android.text.TextWatcher
+import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.View
+import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import com.bumptech.glide.Glide
-import com.google.android.material.textfield.TextInputLayout
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -25,13 +26,22 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
-import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
+import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
-import ee.zstronics.ceibro.camera.CeibroSmallImageRVAdapter
+import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -47,6 +57,7 @@ class NewTaskV2Fragment :
     private val TOPIC_REQUEST_CODE = 11
     private val ASSIGNEE_REQUEST_CODE = 12
     private val PROJECT_REQUEST_CODE = 13
+    private val PICK_FILE_REQUEST = 1
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -125,12 +136,115 @@ class NewTaskV2Fragment :
                         .start()
                 }
             }
+
+            R.id.newTaskDocumentBtn -> {
+                chooseDocuments(
+                    mimeTypes = arrayOf(
+                        "text/plain",
+                        "application/pdf",
+                        "application/rtf",
+                        "application/zip",
+                        "application/x-rar-compressed",
+                        "application/vnd.android.package-archive",      //for APK file
+                        "application/msword",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .docx
+                        "application/vnd.ms-excel",
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",        // .xlsx
+                        "application/vnd.ms-powerpoint",
+                        "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
+                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
+                        "image/vnd.dwg" // AutoCAD Drawing Database (DWG)
+                    )
+                )
+            }
         }
     }
 
-    var smallImageAdapter: CeibroSmallImageRVAdapter = CeibroSmallImageRVAdapter()
+    private fun chooseDocuments(mimeTypes: Array<String>) {
+        requireActivity().openFilePicker(
+            mimeTypes = mimeTypes,
+            allowMultiple = true
+        ) { resultCode, data ->
+            val pickedDocuments = arrayListOf<PickedImages>()
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val clipData = data.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val fileUri = clipData.getItemAt(i).uri
+                        pickedDocuments.add(getPickedFileDetail(requireContext(), fileUri))
+                    }
+                } else {
+                    val fileUri = data.data
+                    fileUri.let {
+                        pickedDocuments.add(getPickedFileDetail(requireContext(), it))
+                    }
+
+                }
+            }
+
+            val oldDocuments = viewModel.documents.value
+            oldDocuments?.addAll(pickedDocuments)
+            viewModel.documents.postValue(oldDocuments)
+        }
+    }
+
+
+    private fun getPickedFileDetail(context: Context, fileUri: Uri?): PickedImages {
+        val mimeType = FileUtils.getMimeType(context, fileUri)
+        val fileName = FileUtils.getFileName(context, fileUri)
+        val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
+        val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+        val attachmentType = when {
+            mimeType == "application/pdf" -> {
+                AttachmentTypes.Pdf
+            }
+            mimeType.equals("image/vnd.adobe.photoshop", true) ||
+                    mimeType.equals("image/vnd.dwg", true) ||
+                    mimeType.equals("text/plain", true) ||
+                    mimeType.equals("application/rtf", true) ||
+                    mimeType.equals("application/zip", true) ||
+                    mimeType.equals("application/x-rar-compressed", true) ||
+                    mimeType.equals("application/vnd.android.package-archive", true) ||
+                    mimeType.equals("application/msword", true) ||
+                    mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", true) ||
+                    mimeType.equals("application/vnd.ms-excel", true) ||
+                    mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", true) ||
+                    mimeType.equals("application/vnd.ms-powerpoint", true) ||
+                    mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation", true) -> {
+                AttachmentTypes.Doc
+            }
+            mimeType.startsWith("image") -> {
+                AttachmentTypes.Image
+            }
+            mimeType.startsWith("video") -> {
+                AttachmentTypes.Video
+            }
+            else -> AttachmentTypes.Doc
+        }
+        return PickedImages(
+            fileUri = fileUri,
+            attachmentType = attachmentType,
+            fileName = fileName,
+            fileSizeReadAble = fileSizeReadAble
+        )
+    }
+
+
+
+
+
+
+    @Inject
+    lateinit var onlyImageAdapter: CeibroOnlyImageRVAdapter
+
+    @Inject
+    lateinit var imageWithCommentAdapter: CeibroImageWithCommentRVAdapter
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
+        mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
 
         viewState.taskTitle.observe(viewLifecycleOwner) {
             if (it == "") {
@@ -183,16 +297,32 @@ class NewTaskV2Fragment :
             return@setOnTouchListener false
         }
 
-        viewModel.listOfImages.observe(viewLifecycleOwner) {
-            smallImageAdapter.setList(it)
-            mViewDataBinding.smallFooterImagesRV.visibility =
-                if (it.isNotEmpty()) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
+
+        viewModel.imagesWithComments.observe(viewLifecycleOwner) {
+            imageWithCommentAdapter.setList(it)
+            if (it.isNotEmpty()) {
+                mViewDataBinding.imagesWithCommentRV.visibility = View.VISIBLE
+                mViewDataBinding.imagesWithCommentBottomLine.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.imagesWithCommentRV.visibility = View.GONE
+                mViewDataBinding.imagesWithCommentBottomLine.visibility = View.GONE
+            }
         }
-        mViewDataBinding.smallFooterImagesRV.adapter = smallImageAdapter
+        mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
+
+
+        viewModel.onlyImages.observe(viewLifecycleOwner) {
+            onlyImageAdapter.setList(it)
+            if (it.isNotEmpty()) {
+                mViewDataBinding.onlyImagesRV.visibility = View.VISIBLE
+                mViewDataBinding.onlyImagesBottomLine.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.onlyImagesRV.visibility = View.GONE
+                mViewDataBinding.onlyImagesBottomLine.visibility = View.GONE
+            }
+        }
+        mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
+
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -220,6 +350,22 @@ class NewTaskV2Fragment :
                     val oldImages = viewModel.listOfImages.value
                     oldImages?.addAll(images)
                     viewModel.listOfImages.postValue(oldImages)
+
+                    val allImages = viewModel.listOfImages.value
+                    if (allImages != null) {
+
+                        val onlyImages1 = arrayListOf<PickedImages>()
+                        val imagesWithComment1 = arrayListOf<PickedImages>()
+                        for (item in allImages) {
+                            if (item.comment.isNotEmpty()) {
+                                imagesWithComment1.add(item)
+                            } else {
+                                onlyImages1.add(item)
+                            }
+                        }
+                        viewModel.onlyImages.postValue(onlyImages1)
+                        viewModel.imagesWithComments.postValue(imagesWithComment1)
+                    }
                 }
             }
         }

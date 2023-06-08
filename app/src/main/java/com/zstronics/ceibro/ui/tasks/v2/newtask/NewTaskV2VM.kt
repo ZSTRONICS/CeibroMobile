@@ -14,4 +14,7 @@ class NewTaskV2VM @Inject constructor(
 ) : HiltBaseViewModel<INewTaskV2.State>(), INewTaskV2.ViewModel {
     val user = sessionManager.getUser().value
     val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
+    val onlyImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
+    val imagesWithComments: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
+    val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
 }
