@@ -67,7 +67,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollView2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -183,11 +183,11 @@
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="none"
+                        android:lineSpacingExtra="2dp"
                         android:maxLines="4"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
                         android:paddingEnd="62dp"
-                        android:lineSpacingExtra="2dp"
                         android:text="@={viewState.assignToText}"
                         android:textSize="15sp" />
 
@@ -407,6 +407,60 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/onlyImagesRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionField"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_ceibro_only_image" />
+
+                <View
+                    android:id="@+id/onlyImagesBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/onlyImagesRV"
+                    app:layout_constraintStart_toStartOf="@+id/onlyImagesRV"
+                    app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/imagesWithCommentRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintTop_toBottomOf="@+id/onlyImagesBottomLine"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/layout_ceibro_image_with_comment" />
+
+
+                <View
+                    android:id="@+id/imagesWithCommentBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/imagesWithCommentRV"
+                    app:layout_constraintStart_toStartOf="@+id/imagesWithCommentRV"
+                    app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
+
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/newTaskDoneReqSwitch"
                     android:layout_width="0dp"
@@ -422,7 +476,7 @@
                     android:thumb="@drawable/switch_ios_thumb"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintTop_toBottomOf="@+id/view4"
+                    app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentBottomLine"
                     app:switchPadding="15dp"
                     app:thumbTint="@color/white"
                     app:track="@drawable/switch_ios_track" />
@@ -432,13 +486,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
                     android:visibility="@{viewState.isDoneReqAllowed ? View.VISIBLE : View.GONE, default = visible}"
                     app:cardBackgroundColor="@color/appGrey1"
                     app:cardCornerRadius="7dp"
                     app:cardElevation="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDoneReqSwitch"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDoneReqSwitch"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskDoneReqSwitch">
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskDoneReqSwitch"
+                    app:layout_constraintVertical_bias="0.0">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -486,35 +543,8 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/smallFooterImagesRV"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/_9sdp"
-                    android:orientation="horizontal"
-                    android:paddingStart="@dimen/_1sdp"
-                    android:paddingEnd="@dimen/_1sdp"
-                    android:visibility="gone"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionField"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/layout_ceibro_small_image_viewer" />
-
-                <View
-                    android:id="@+id/view4"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/_7sdp"
-                    android:background="@color/appGrey3"
-                    app:layout_constraintEnd_toEndOf="@+id/smallFooterImagesRV"
-                    app:layout_constraintStart_toStartOf="@+id/smallFooterImagesRV"
-                    app:layout_constraintTop_toBottomOf="@+id/smallFooterImagesRV" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
 
         <LinearLayout
