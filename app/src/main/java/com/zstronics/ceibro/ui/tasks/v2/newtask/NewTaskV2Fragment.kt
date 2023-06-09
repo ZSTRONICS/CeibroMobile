@@ -3,30 +3,32 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.View
-import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,10 +36,6 @@ import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -58,6 +56,9 @@ class NewTaskV2Fragment :
     private val ASSIGNEE_REQUEST_CODE = 12
     private val PROJECT_REQUEST_CODE = 13
     private val PICK_FILE_REQUEST = 1
+    private var isExpanded = true
+    private val expandDuration = 100L
+
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -151,87 +152,33 @@ class NewTaskV2Fragment :
                         "application/vnd.ms-excel",
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",        // .xlsx
                         "application/vnd.ms-powerpoint",
-                        "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
-                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
-                        "image/vnd.dwg" // AutoCAD Drawing Database (DWG)
+                        "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
+//                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
+//                        "image/vnd.dwg" // AutoCAD Drawing Database (DWG)
                     )
                 )
             }
+
+            R.id.newTaskLibraryBtn -> {
+                chooseImages(
+                    mimeTypes = arrayOf(
+                        "image/jpeg",
+                        "image/jpg",
+                        "image/png",
+                        "image/gif",
+                        "image/webp",
+                        "image/bmp",
+                        "image/x-icon",
+                        "image/svg+xml",
+                        "image/tiff",
+                        "image/*"
+                    )
+                )
+            }
+
+            R.id.filesLayout -> toggleLayout(mViewDataBinding.filesLayout)
         }
     }
-
-    private fun chooseDocuments(mimeTypes: Array<String>) {
-        requireActivity().openFilePicker(
-            mimeTypes = mimeTypes,
-            allowMultiple = true
-        ) { resultCode, data ->
-            val pickedDocuments = arrayListOf<PickedImages>()
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                val clipData = data.clipData
-                if (clipData != null) {
-                    for (i in 0 until clipData.itemCount) {
-                        val fileUri = clipData.getItemAt(i).uri
-                        pickedDocuments.add(getPickedFileDetail(requireContext(), fileUri))
-                    }
-                } else {
-                    val fileUri = data.data
-                    fileUri.let {
-                        pickedDocuments.add(getPickedFileDetail(requireContext(), it))
-                    }
-
-                }
-            }
-
-            val oldDocuments = viewModel.documents.value
-            oldDocuments?.addAll(pickedDocuments)
-            viewModel.documents.postValue(oldDocuments)
-        }
-    }
-
-
-    private fun getPickedFileDetail(context: Context, fileUri: Uri?): PickedImages {
-        val mimeType = FileUtils.getMimeType(context, fileUri)
-        val fileName = FileUtils.getFileName(context, fileUri)
-        val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
-        val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
-        val attachmentType = when {
-            mimeType == "application/pdf" -> {
-                AttachmentTypes.Pdf
-            }
-            mimeType.equals("image/vnd.adobe.photoshop", true) ||
-                    mimeType.equals("image/vnd.dwg", true) ||
-                    mimeType.equals("text/plain", true) ||
-                    mimeType.equals("application/rtf", true) ||
-                    mimeType.equals("application/zip", true) ||
-                    mimeType.equals("application/x-rar-compressed", true) ||
-                    mimeType.equals("application/vnd.android.package-archive", true) ||
-                    mimeType.equals("application/msword", true) ||
-                    mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", true) ||
-                    mimeType.equals("application/vnd.ms-excel", true) ||
-                    mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", true) ||
-                    mimeType.equals("application/vnd.ms-powerpoint", true) ||
-                    mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation", true) -> {
-                AttachmentTypes.Doc
-            }
-            mimeType.startsWith("image") -> {
-                AttachmentTypes.Image
-            }
-            mimeType.startsWith("video") -> {
-                AttachmentTypes.Video
-            }
-            else -> AttachmentTypes.Doc
-        }
-        return PickedImages(
-            fileUri = fileUri,
-            attachmentType = attachmentType,
-            fileName = fileName,
-            fileSizeReadAble = fileSizeReadAble
-        )
-    }
-
-
-
-
 
 
     @Inject
@@ -239,7 +186,10 @@ class NewTaskV2Fragment :
 
     @Inject
     lateinit var imageWithCommentAdapter: CeibroImageWithCommentRVAdapter
-    
+
+    @Inject
+    lateinit var filesAdapter: CeibroFilesRVAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -298,6 +248,24 @@ class NewTaskV2Fragment :
         }
 
 
+        viewModel.listOfImages.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                val allImages = it
+
+                val onlyImages1 = arrayListOf<PickedImages>()
+                val imagesWithComment1 = arrayListOf<PickedImages>()
+                for (item in allImages) {
+                    if (item.comment.isNotEmpty()) {
+                        imagesWithComment1.add(item)
+                    } else {
+                        onlyImages1.add(item)
+                    }
+                }
+                viewModel.onlyImages.postValue(onlyImages1)
+                viewModel.imagesWithComments.postValue(imagesWithComment1)
+            }
+        }
+
         viewModel.imagesWithComments.observe(viewLifecycleOwner) {
             imageWithCommentAdapter.setList(it)
             if (it.isNotEmpty()) {
@@ -323,6 +291,25 @@ class NewTaskV2Fragment :
         }
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
 
+
+        viewModel.documents.observe(viewLifecycleOwner) {
+            filesAdapter.setList(it)
+            if (it.isNotEmpty()) {
+                mViewDataBinding.filesLayout.visibility = View.VISIBLE
+                mViewDataBinding.filesBottomLine.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.filesLayout.visibility = View.GONE
+                mViewDataBinding.filesBottomLine.visibility = View.GONE
+            }
+            mViewDataBinding.filesCount.text = "${it.size} file(s)"
+        }
+        mViewDataBinding.filesRV.adapter = filesAdapter
+
+        filesAdapter.itemClickListener = { _: View, position: Int, data: PickedImages ->
+            val oldDocuments = viewModel.documents.value
+            oldDocuments?.remove(data)
+            viewModel.documents.postValue(oldDocuments)
+        }
     }
 
     var cal: Calendar = Calendar.getInstance()
@@ -350,25 +337,142 @@ class NewTaskV2Fragment :
                     val oldImages = viewModel.listOfImages.value
                     oldImages?.addAll(images)
                     viewModel.listOfImages.postValue(oldImages)
-
-                    val allImages = viewModel.listOfImages.value
-                    if (allImages != null) {
-
-                        val onlyImages1 = arrayListOf<PickedImages>()
-                        val imagesWithComment1 = arrayListOf<PickedImages>()
-                        for (item in allImages) {
-                            if (item.comment.isNotEmpty()) {
-                                imagesWithComment1.add(item)
-                            } else {
-                                onlyImages1.add(item)
-                            }
-                        }
-                        viewModel.onlyImages.postValue(onlyImages1)
-                        viewModel.imagesWithComments.postValue(imagesWithComment1)
-                    }
                 }
             }
         }
+
+
+    private fun chooseImages(mimeTypes: Array<String>) {
+        requireActivity().openFilePicker(
+            mimeTypes = mimeTypes,
+            allowMultiple = true
+        ) { resultCode, data ->
+            val pickedImage = arrayListOf<PickedImages>()
+            val oldImages = viewModel.onlyImages.value
+
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val clipData = data.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val fileUri = clipData.getItemAt(i).uri
+                        val selectedImgDetail = getPickedFileDetail(requireContext(), fileUri)
+
+                        if (oldImages?.contains(selectedImgDetail) == true) {
+                            shortToastNow("You selected an already-added image")
+                        } else {
+                            pickedImage.add(selectedImgDetail)
+                        }
+                    }
+                } else {
+                    val fileUri = data.data
+                    fileUri.let {
+                        val selectedImgDetail = getPickedFileDetail(requireContext(), it)
+
+                        if (oldImages?.contains(selectedImgDetail) == true) {
+                            shortToastNow("You selected an already-added image")
+                        } else {
+                            pickedImage.add(selectedImgDetail)
+                        }
+                    }
+                }
+            }
+
+            val allOldImages = viewModel.listOfImages.value
+            allOldImages?.addAll(pickedImage)
+            viewModel.listOfImages.postValue(allOldImages)
+        }
+    }
+
+    private fun chooseDocuments(mimeTypes: Array<String>) {
+        requireActivity().openFilePicker(
+            mimeTypes = mimeTypes,
+            allowMultiple = true
+        ) { resultCode, data ->
+            val pickedDocuments = arrayListOf<PickedImages>()
+            val oldDocuments = viewModel.documents.value
+
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val clipData = data.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val fileUri = clipData.getItemAt(i).uri
+                        val selectedDocDetail = getPickedFileDetail(requireContext(), fileUri)
+
+                        if (oldDocuments?.contains(selectedDocDetail) == true) {
+                            shortToastNow("You selected an already-added document")
+                        } else {
+                            pickedDocuments.add(selectedDocDetail)
+                        }
+                    }
+                } else {
+                    val fileUri = data.data
+                    fileUri.let {
+                        val selectedDocDetail = getPickedFileDetail(requireContext(), it)
+
+                        if (oldDocuments?.contains(selectedDocDetail) == true) {
+                            shortToastNow("You selected an already-added document")
+                        } else {
+                            pickedDocuments.add(selectedDocDetail)
+                        }
+                    }
+                }
+            }
+
+            oldDocuments?.addAll(pickedDocuments)
+            viewModel.documents.postValue(oldDocuments)
+        }
+    }
+
+    private fun getPickedFileDetail(context: Context, fileUri: Uri?): PickedImages {
+        val mimeType = FileUtils.getMimeType(context, fileUri)
+        val fileName = FileUtils.getFileName(context, fileUri)
+        val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
+        val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+        val attachmentType = when {
+            mimeType == "application/pdf" -> {
+                AttachmentTypes.Pdf
+            }
+
+            mimeType.equals("text/plain", true) ||
+                    mimeType.equals("application/rtf", true) ||
+                    mimeType.equals("application/zip", true) ||
+                    mimeType.equals("application/x-rar-compressed", true) ||
+                    mimeType.equals("application/vnd.android.package-archive", true) ||
+                    mimeType.equals("application/msword", true) ||
+                    mimeType.equals(
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        true
+                    ) ||
+                    mimeType.equals("application/vnd.ms-excel", true) ||
+                    mimeType.equals(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        true
+                    ) ||
+                    mimeType.equals("application/vnd.ms-powerpoint", true) ||
+                    mimeType.equals(
+                        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                        true
+                    ) -> {
+                AttachmentTypes.Doc
+            }
+
+            mimeType.startsWith("image") -> {
+                AttachmentTypes.Image
+            }
+
+            mimeType.startsWith("video") -> {
+                AttachmentTypes.Video
+            }
+
+            else -> AttachmentTypes.Doc
+        }
+        return PickedImages(
+            fileUri = fileUri,
+            attachmentType = attachmentType,
+            fileName = fileName,
+            fileSizeReadAble = fileSizeReadAble
+        )
+    }
 
 
     override fun onNavigationResult(result: BackNavigationResult) {
@@ -419,6 +523,38 @@ class NewTaskV2Fragment :
                 }
             }
         }
+    }
+
+
+    private fun toggleLayout(filesLayout: ConstraintLayout) {
+        if (isExpanded) {
+            collapseLayout(filesLayout)
+        } else {
+            expandLayout(filesLayout)
+        }
+        isExpanded = !isExpanded
+    }
+
+    private fun expandLayout(fileLayout: ConstraintLayout) {
+        mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_up)
+//        TransitionManager.beginDelayedTransition(fileLayout)
+//        val transition = AutoTransition()
+//        transition.duration = expandDuration
+
+        val params = fileLayout.layoutParams
+        params.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+        fileLayout.layoutParams = params
+    }
+
+    private fun collapseLayout(fileLayout: ConstraintLayout) {
+        mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_down)
+//        val transition = AutoTransition()
+//        transition.duration = expandDuration
+//        TransitionManager.beginDelayedTransition(fileLayout, transition)
+
+        val params = fileLayout.layoutParams
+        params.height = 91
+        fileLayout.layoutParams = params
     }
 
 }

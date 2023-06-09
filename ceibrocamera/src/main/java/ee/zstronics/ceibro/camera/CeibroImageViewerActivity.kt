@@ -277,9 +277,19 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         yesBtn.setOnClickListener {
             val oldImages = listOfImages.value
-            oldImages?.removeAt(lastSelectedPosition)
-            listOfImages.postValue(oldImages)
             alertDialog.dismiss()
+
+            if (oldImages?.size == 1) {
+                val ceibroImagesIntent = Intent()
+                val newBundle = Bundle()
+                newBundle.putParcelableArrayList("images", arrayListOf())
+                ceibroImagesIntent.putExtras(newBundle)
+                setResult(RESULT_OK, ceibroImagesIntent)
+                finish()
+            } else {
+                oldImages?.removeAt(lastSelectedPosition)
+                listOfImages.postValue(oldImages)
+            }
         }
 
         cancelBtn.setOnClickListener {

@@ -157,6 +157,7 @@
             android:layout_marginEnd="@dimen/_8sdp"
             android:padding="@dimen/_4sdp"
             android:src="@drawable/icon_info"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/contactName"
