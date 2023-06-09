@@ -412,10 +412,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/_9sdp"
-                    android:orientation="horizontal"
-                    android:visibility="visible"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
@@ -440,9 +440,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_7sdp"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
                     android:visibility="visible"
-                    android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
@@ -461,6 +461,91 @@
                     app:layout_constraintStart_toStartOf="@+id/imagesWithCommentRV"
                     app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
 
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/filesLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentBottomLine">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fileHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_1sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/files_heading"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/view4"
+                        android:layout_width="0.8dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:background="@color/appGrey3"
+                        app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
+                        app:layout_constraintStart_toEndOf="@+id/fileHeading"
+                        app:layout_constraintTop_toTopOf="@+id/fileHeading" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/filesCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_9sdp"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="2 files"
+                        android:textColor="@color/black"
+                        android:textSize="14.5sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
+                        app:layout_constraintStart_toEndOf="@+id/view4"
+                        app:layout_constraintTop_toTopOf="@+id/fileHeading" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/downUpIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_navigate_up"
+                        app:layout_constraintBottom_toBottomOf="@+id/filesCount"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/filesCount" />
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/filesRV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/fileHeading"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/layout_ceibro_files" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/filesBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/filesLayout"
+                    app:layout_constraintStart_toStartOf="@+id/filesLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/filesLayout" />
+
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/newTaskDoneReqSwitch"
                     android:layout_width="0dp"
@@ -476,7 +561,7 @@
                     android:thumb="@drawable/switch_ios_thumb"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentBottomLine"
+                    app:layout_constraintTop_toBottomOf="@+id/filesBottomLine"
                     app:switchPadding="15dp"
                     app:thumbTint="@color/white"
                     app:track="@drawable/switch_ios_track" />
