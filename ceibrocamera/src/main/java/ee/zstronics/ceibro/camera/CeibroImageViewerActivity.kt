@@ -16,7 +16,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroImageViewerBinding
-import java.lang.Exception
 
 class CeibroImageViewerActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroImageViewerBinding
@@ -179,17 +178,37 @@ class CeibroImageViewerActivity : BaseActivity() {
                     .start()
             }
         }
+        binding.editInnerLayout.setOnClickListener {
+            listOfImages.value?.let {
+                images?.get(lastSelectedPosition)?.fileUri?.let { uri ->
+                    startEditor(uri) { updatedUri ->
+                        if (updatedUri != null) {
+                            val files = listOfImages.value
+                            val file = files?.get(lastSelectedPosition)
+                            file?.fileUri = updatedUri
+                            files?.removeAt(lastSelectedPosition)
+                            if (file != null) {
+                                files.add(lastSelectedPosition, file)
+                            }
+                            listOfImages.postValue(files)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
+
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             if (s.toString().isNotEmpty()) {
                 binding.confirmBtn.visibility = View.VISIBLE
                 binding.editBtn.visibility = View.INVISIBLE
             }
         }
+
         override fun afterTextChanged(s: Editable?) {
         }
     }
@@ -209,6 +228,7 @@ class CeibroImageViewerActivity : BaseActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.commentsField.windowToken, 0)
     }
+
     private fun showKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.commentsField, InputMethodManager.SHOW_IMPLICIT)
