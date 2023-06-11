@@ -47,7 +47,7 @@ import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.utils.FileUtils
-import com.zstronics.photoediting.EditImageActivity
+import ee.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
 import java.io.File
 import java.io.IOException

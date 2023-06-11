@@ -1,10 +1,7 @@
 package ee.zstronics.ceibro.camera
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroImageEditorBinding
 
 class CeibroImageEditorActivity : BaseActivity() {

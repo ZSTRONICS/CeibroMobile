@@ -1,9 +1,19 @@
 package ee.zstronics.ceibro.camera
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
+import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.ceibro.permissionx.PermissionX
+import com.github.florent37.inlineactivityresult.kotlin.startForResult
+import ee.zstronics.photoediting.EditImageActivity
+import java.io.File
 
 open class BaseActivity : AppCompatActivity() {
     fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
@@ -88,5 +98,103 @@ open class BaseActivity : AppCompatActivity() {
             fileName = fileName,
             fileSizeReadAble = fileSizeReadAble
         )
+    }
+
+    fun startEditor(imageUri: Uri, onPhotoEditedCallback: (updatedUri: Uri?) -> Unit) {
+        launchActivityForResult<EditImageActivity>(init = {
+            this.data = imageUri
+            action = Intent.ACTION_EDIT
+        }) { resultCode, data ->
+            onPhotoEditedCallback(data?.data)
+
+            if (imageUri.toString().contains("content://media/")) {
+                try {
+                    val contentResolver = applicationContext.contentResolver
+                    val projection = arrayOf(MediaStore.Images.Media.DATA)
+                    val cursor = contentResolver.query(imageUri, projection, null, null, null)
+                    val filePath: String? = cursor?.use { cursor ->
+                        if (cursor.moveToFirst()) {
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                        } else {
+                            null
+                        }
+                    }
+                    val fileToDelete = filePath?.let { File(it) }
+                    if (fileToDelete?.exists() == true) {
+                        val deleted = fileToDelete.delete()
+                    }
+                } catch (_: Exception) {
+                }
+            } else {
+                try {
+                    val oldFile = imageUri.toFile()
+                    if (oldFile.exists()) {
+                        val deleted = oldFile.delete()
+                    }
+                } catch (_: Exception) {
+                }
+            }
+        }
+    }
+
+    inline fun <reified T : Any> newIntent(context: Context): Intent =
+        Intent(context, T::class.java)
+
+    inline fun <reified T : Any> Fragment.launchActivityForResult(
+        options: Bundle? = null, clearPrevious: Boolean = false,
+        noinline init: Intent.() -> Unit = {},
+        noinline onActivityResult: ((resultCode: Int, data: Intent?) -> Unit)? = null
+    ) {
+
+        onActivityResult?.let {
+            val intent = newIntent<T>(requireContext())
+            intent.init()
+            intent.putExtra(EXTRA, options)
+            this.startForResult(intent) { result ->
+                it.invoke(result.resultCode, result.data)
+            }.onFailed { result ->
+                it.invoke(result.resultCode, result.data)
+            }
+        } ?: run {
+            launchActivity<T>(clearPrevious = clearPrevious, options = options)
+        }
+    }
+
+    inline fun <reified T : Any> Activity.launchActivity(
+        requestCode: Int = -1,
+        options: Bundle? = null,
+        clearPrevious: Boolean = false,
+        noinline init: Intent.() -> Unit = {}
+    ) {
+        val intent = newIntent<T>(this)
+        intent.init()
+        intent.putExtra(EXTRA, options)
+        if (clearPrevious) finish()
+        startActivityForResult(intent, requestCode, options)
+
+    }
+
+    inline fun <reified T : Any> FragmentActivity.launchActivityForResult(
+        requestCode: Int = -1,
+        options: Bundle? = null,
+        noinline init: Intent.() -> Unit = {},
+        noinline completionHandler: ((resultCode: Int, data: Intent?) -> Unit)? = null
+    ) {
+        completionHandler?.let {
+            val intent = newIntent<T>(this)
+            intent.init()
+            intent.putExtra(EXTRA, options)
+            this@launchActivityForResult.startForResult(intent) { result ->
+                it.invoke(result.resultCode, result.data)
+            }.onFailed { result ->
+                it.invoke(result.resultCode, result.data)
+            }
+        } ?: run {
+            launchActivity<T>(
+                requestCode = requestCode,
+                options = options,
+                init = init
+            )
+        }
     }
 }

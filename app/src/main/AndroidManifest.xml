@@ -45,7 +45,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name="com.zstronics.photoediting.EditImageActivity"
+            android:name="ee.zstronics.photoediting.EditImageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
