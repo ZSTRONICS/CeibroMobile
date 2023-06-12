@@ -47,7 +47,7 @@
                     android:background="@drawable/task_card_outline">
 
                     <LinearLayout
-                        android:id="@+id/taskFromLayout"
+                        android:id="@+id/taskToLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_15sdp"
@@ -60,19 +60,19 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
-                            android:id="@+id/taskFromHeading"
+                            android:id="@+id/taskToHeading"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:fontFamily="@font/inter_bold"
                             android:gravity="center"
                             android:maxLines="1"
-                            android:text="@string/from_heading"
+                            android:text="@string/to_heading"
                             android:textColor="@color/appTextGrey"
                             android:textSize="13sp" />
 
                         <TextView
-                            android:id="@+id/taskFromText"
+                            android:id="@+id/taskToText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -80,7 +80,7 @@
                             android:gravity="start"
                             android:layout_marginStart="@dimen/_3sdp"
                             android:maxLines="1"
-                            android:text="Kristo Vunukainen 1"
+                            android:text="Kristo Vunukainen  +1"
                             android:textColor="@color/appTextGrey"
                             android:textSize="13sp" />
                     </LinearLayout>
@@ -95,8 +95,8 @@
                         android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toEndOf="@+id/taskFromLayout"
-                        app:layout_constraintTop_toTopOf="@+id/taskFromLayout">
+                        app:layout_constraintStart_toEndOf="@+id/taskToLayout"
+                        app:layout_constraintTop_toTopOf="@+id/taskToLayout">
 
                         <TextView
                             android:id="@+id/taskProjectHeading"
@@ -139,7 +139,7 @@
                         android:textSize="16.5sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/taskFromLayout" />
+                        app:layout_constraintTop_toBottomOf="@+id/taskToLayout" />
 
                     <TextView
                         android:id="@+id/taskDescription"
@@ -433,6 +433,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

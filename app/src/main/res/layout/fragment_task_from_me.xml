@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeState" />
+            type="com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeState" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeVM" />
+            type="com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeVM" />
     </data>
 
 
@@ -37,13 +37,13 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/newStateLayout"
+                android:id="@+id/unreadStateLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
                 <TextView
-                    android:id="@+id/newStateText"
+                    android:id="@+id/unreadStateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_9sdp"
@@ -54,7 +54,7 @@
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:text="@string/new_heading"
+                    android:text="@string/unread_heading"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:textColor="@color/black"
                     android:textSize="13sp"
@@ -65,7 +65,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/newStateCount"
+                    android:id="@+id/unreadStateCount"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:background="@drawable/status_new_badge"
@@ -75,10 +75,10 @@
                     android:text="0"
                     android:textColor="@color/black"
                     android:textSize="11sp"
-                    app:layout_constraintBottom_toTopOf="@+id/newStateText"
-                    app:layout_constraintEnd_toEndOf="@+id/newStateText"
-                    app:layout_constraintStart_toEndOf="@+id/newStateText"
-                    app:layout_constraintTop_toTopOf="@+id/newStateText" />
+                    app:layout_constraintBottom_toTopOf="@+id/unreadStateText"
+                    app:layout_constraintEnd_toEndOf="@+id/unreadStateText"
+                    app:layout_constraintStart_toEndOf="@+id/unreadStateText"
+                    app:layout_constraintTop_toTopOf="@+id/unreadStateText" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -179,7 +179,7 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <android.widget.SearchView
-            android:id="@+id/taskToMeSearchBar"
+            android:id="@+id/taskFromMeSearchBar"
             android:layout_width="0dp"
             android:layout_height="48dp"
             app:theme="@style/AppSearchView"
@@ -209,7 +209,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskToMeSearchBar">
+            app:layout_constraintTop_toBottomOf="@+id/taskFromMeSearchBar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -231,7 +231,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:itemCount="10"
-                    tools:listitem="@layout/layout_task_box_v2" />
+                    tools:listitem="@layout/layout_task_box_v2_from_me" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

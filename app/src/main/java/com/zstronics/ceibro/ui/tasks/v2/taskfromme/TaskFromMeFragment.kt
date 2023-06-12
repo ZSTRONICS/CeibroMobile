@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v2.tasktome
+package com.zstronics.ceibro.ui.tasks.v2.taskfromme
 
 import android.os.Bundle
 import android.view.View
@@ -8,10 +8,12 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
@@ -19,28 +21,28 @@ import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TaskToMeFragment :
-    BaseNavViewModelFragment<FragmentTaskToMeBinding, ITaskToMe.State, TaskToMeVM>() {
+class TaskFromMeFragment :
+    BaseNavViewModelFragment<FragmentTaskFromMeBinding, ITaskFromMe.State, TaskFromMeVM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: TaskToMeVM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_task_to_me
+    override val viewModel: TaskFromMeVM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_task_from_me
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
                 navigate(R.id.newTaskV2Fragment)
             }
-            R.id.newStateText -> {
-                viewModel.selectedState = "new"
-                val newTask = viewModel.newTasks.value
-                if (!newTask.isNullOrEmpty()) {
-                    adapter.setList(newTask)
+            R.id.unreadStateText -> {
+                viewModel.selectedState = "unread"
+                val unreadTask = viewModel.unreadTasks.value
+                if (!unreadTask.isNullOrEmpty()) {
+                    adapter.setList(unreadTask)
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.newStateText.background = resources.getDrawable(R.drawable.status_new_filled_new)
+                mViewDataBinding.unreadStateText.background = resources.getDrawable(R.drawable.status_new_filled_new)
                 mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_outline_new)
                 mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_outline_new)
             }
@@ -52,7 +54,7 @@ class TaskToMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.newStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
+                mViewDataBinding.unreadStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
                 mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_filled_new)
                 mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_outline_new)
             }
@@ -64,7 +66,7 @@ class TaskToMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.newStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
+                mViewDataBinding.unreadStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
                 mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_outline_new)
                 mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_filled_new)
             }
@@ -75,20 +77,20 @@ class TaskToMeFragment :
 
 
     @Inject
-    lateinit var adapter: TaskToMeRVAdapter
+    lateinit var adapter: TaskFromMeRVAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            mViewDataBinding.newStateCount.text = it.new.size.toString()
+            mViewDataBinding.unreadStateCount.text = it.unread.size.toString()
             mViewDataBinding.ongoingStateCount.text = it.ongoing.size.toString()
             mViewDataBinding.doneStateCount.text = it.done.size.toString()
 
         }
 
-        viewModel.newTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("new", true)) {
+        viewModel.unreadTasks.observe(viewLifecycleOwner) {
+            if (viewModel.selectedState.equals("unread", true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -121,7 +123,7 @@ class TaskToMeFragment :
 
 
 
-        mViewDataBinding.taskToMeSearchBar.setOnQueryTextListener(object :
+        mViewDataBinding.taskFromMeSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
