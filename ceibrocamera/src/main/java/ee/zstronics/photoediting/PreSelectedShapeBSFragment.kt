@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,10 +36,12 @@ class PreSelectedShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBa
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val rvColor: RecyclerView = view.findViewById(R.id.shapeColors)
+        val shapeTypeTV: TextView = view.findViewById(R.id.shapeType)
         val sbOpacity = view.findViewById<SeekBar>(R.id.shapeOpacity)
         val sbBrushSize = view.findViewById<SeekBar>(R.id.shapeSize)
         val shapeGroup = view.findViewById<RadioGroup>(R.id.shapeRadioGroup)
         shapeGroup.visibility = View.GONE
+        shapeTypeTV.visibility = View.GONE
         mProperties!!.onShapePicked(shapeType)
         sbOpacity.setOnSeekBarChangeListener(this)
         sbBrushSize.setOnSeekBarChangeListener(this)
