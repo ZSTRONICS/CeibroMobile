@@ -14,4 +14,8 @@ interface ITaskRemoteDataSource {
 
     suspend fun getAllTopics(): ApiResponse<TopicsResponse>
     suspend fun saveTopic(requestBody: NewTopicCreateRequest): ApiResponse<NewTopicResponse>
+
+
+
+    suspend fun getAllTasks(rootState: String): ApiResponse<TaskV2Response>
 }

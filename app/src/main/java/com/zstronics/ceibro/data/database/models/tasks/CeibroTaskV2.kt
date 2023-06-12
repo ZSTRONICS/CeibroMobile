@@ -1,0 +1,101 @@
+package com.zstronics.ceibro.data.database.models.tasks
+
+
+import android.os.Parcelable
+import androidx.annotation.Keep
+import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+@Keep
+data class CeibroTaskV2(
+    @SerializedName("access")
+    val access: List<String>,
+    @SerializedName("assignedToState")
+    val assignedToState: List<AssignedToState>,
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("creator")
+    val creator: TaskMemberDetail,
+    @SerializedName("creatorState")
+    val creatorState: String,
+    @SerializedName("description")
+    val description: String,
+    @SerializedName("doneCommentsRequired")
+    val doneCommentsRequired: Boolean,
+    @SerializedName("doneImageRequired")
+    val doneImageRequired: Boolean,
+    @SerializedName("dueDate")
+    val dueDate: String,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("invitedNumbers")
+    val invitedNumbers: List<String>,
+    @SerializedName("locations")
+    val locations: List<String>,
+    @SerializedName("project")
+    val project: ProjectOfTask?,
+    @SerializedName("recentComments")
+    val recentComments: List<String>,
+    @SerializedName("rejectionComments")
+    val rejectionComments: List<String>,
+    @SerializedName("taskUID")
+    val taskUID: String,
+    @SerializedName("topic")
+    val topic: Topic?,
+    @SerializedName("updatedAt")
+    val updatedAt: String,
+    @SerializedName("__v")
+    val v: Int
+) : Parcelable
+
+@Parcelize
+@Keep
+data class Topic(
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("topic")
+    val topic: String
+) : Parcelable
+
+@Parcelize
+@Keep
+data class ProjectOfTask(
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("title")
+    val title: String,
+    @SerializedName("location")
+    val location: String
+) : Parcelable
+
+
+@Parcelize
+@Keep
+data class TaskMemberDetail (
+    @SerializedName("firstName") val firstName: String,
+    @SerializedName("surName") val surName: String,
+    @SerializedName("profilePic") val profilePic: String?,
+    @SerializedName("_id") val id: String,
+) : Parcelable
+
+
+@Parcelize
+@Keep
+data class AssignedToState(
+    @SerializedName("firstName")
+    val firstName: String,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("phoneNumber")
+    val phoneNumber: String,
+    @SerializedName("profilePic")
+    val profilePic: String,
+    @SerializedName("state")
+    val state: String,
+    @SerializedName("surName")
+    val surName: String,
+    @SerializedName("userId")
+    val userId: String
+) : Parcelable

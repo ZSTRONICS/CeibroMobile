@@ -34,6 +34,7 @@
                 android:layout_marginBottom="7dp"
                 app:cardCornerRadius="9dp"
                 app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,14 +44,14 @@
                     android:id="@+id/taskCardLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="1dp"
-                    android:background="@drawable/task_card_outline">
+                    android:background="@drawable/task_card_outline_no_background"
+                    android:padding="1dp">
 
                     <LinearLayout
                         android:id="@+id/taskFromLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginStart="@dimen/_8sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:gravity="start"
@@ -130,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
                         android:layout_marginEnd="@dimen/_8sdp"
-                        android:layout_marginTop="@dimen/_9sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_bold"
                         android:maxLines="1"
@@ -163,7 +164,7 @@
                         android:id="@+id/taskCommentPhotoFilesLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginTop="15dp"
                         android:background="@drawable/input_field_bottom_corner"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_8sdp"
@@ -318,7 +319,7 @@
                         android:layout_width="1dp"
                         android:layout_height="1dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.52"
+                        app:layout_constraintHorizontal_bias="0.51"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/taskDescription" />
 
@@ -332,8 +333,6 @@
                 android:layout_marginStart="1dp"
                 android:layout_marginEnd="1dp"
                 android:gravity="center_vertical"
-                android:background="@drawable/task_card_less_corner_outline"
-                android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toTopOf="@+id/taskCard"
                 app:layout_constraintEnd_toEndOf="@+id/taskCard"
                 app:layout_constraintStart_toStartOf="@+id/taskCard"
@@ -433,6 +432,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -126,4 +126,7 @@ interface TaskRetroService {
     @POST("v2/task/topic")
     suspend fun saveTopic(@Body requestBody: NewTopicCreateRequest): Response<NewTopicResponse>
 
+    @GET("v2/task/{rootState}")
+    suspend fun getAllTasks(@Path("rootState") rootState: String): Response<TaskV2Response>
+
 }

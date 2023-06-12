@@ -33,6 +33,7 @@ import com.zstronics.ceibro.ui.projects.ProjectsFragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.MainTasksFragment
+import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -90,6 +91,9 @@ class DashboardFragment :
             }
             R.id.fromMeBtn -> {
                 viewState.fromMeSelected.value = true
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, TaskFromMeFragment())
+                    .commit()
             }
             R.id.canceledBtn -> {
                 viewState.canceledSelected.value = true
@@ -114,20 +118,13 @@ class DashboardFragment :
 
         val handler = Handler()
         handler.postDelayed(Runnable {
+            viewState.toMeSelected.value = true
             childFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, TaskToMeFragment())
                 .commit()
-        }, 20)
+        }, 40)
 
 
-        mViewDataBinding.bottomNavigation1.setOnNavigationItemSelectedListener(navListener)
-//        mViewDataBinding.bottomNavigation.selectedItemId = R.id.nav_home
-//        childFragmentManager.beginTransaction().replace(R.id.fragment_container, HomeFragment())
-//            .commit()
-
-        viewState.selectedItem.observe(viewLifecycleOwner) {
-            mViewDataBinding.bottomNavigation1.selectedItemId = selectedItem
-        }
 
 
         SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
@@ -149,6 +146,7 @@ class DashboardFragment :
 
         startPeriodicContactSyncWorker(requireContext())
     }
+
 
     private fun handleFileUploaderSocketEvents() {
 
@@ -255,27 +253,9 @@ class DashboardFragment :
         }
     }
 
-    private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        selectedItem = item.itemId
-        val selectedFragment: Fragment = when (item.itemId) {
-            R.id.nav_home -> HomeFragment()
-            R.id.nav_chat -> ChatFragment()
-            R.id.nav_tasks -> MainTasksFragment()
-            R.id.nav_projects -> ProjectsFragment()
-            else -> WorksFragment()
-        }
 
-        childFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment)
-            .commit()
-        true
-    }
 
-    private fun setBadgeOnChat(menuItemId: Int, number: Int) {
-        val badge = mViewDataBinding.bottomNavigation1.getOrCreateBadge(menuItemId)
-        badge.isVisible = true
-        badge.number = number
-        badge.backgroundColor = resources.getColor(R.color.appRed)
-    }
+
 
     private fun navigateToProfile() {
         navigate(R.id.profileFragment)
