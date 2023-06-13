@@ -6,5 +6,5 @@ package ee.zstronics.photoediting.tools
  * @since 5/23/2018
  */
 enum class ToolType {
-    SHAPE, TEXT, ERASER, FILTER, EMOJI, STICKER, UNDO, ARROW_SHAPE, RECTANGLE_SHAPE
+    SHAPE, TEXT, ERASER, FILTER, EMOJI, STICKER, UNDO, ARROW_SHAPE, RECTANGLE_SHAPE, LINE, BRUSH
 }

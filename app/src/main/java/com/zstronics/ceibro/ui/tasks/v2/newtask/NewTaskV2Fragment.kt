@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Context
@@ -14,15 +13,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.transition.AutoTransition
-import androidx.transition.TransitionManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.dashboard.connections.MyConnection
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
@@ -37,8 +33,7 @@ import ee.zstronics.ceibro.camera.CeibroCameraActivity
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 import javax.inject.Inject
 
 
@@ -61,6 +56,21 @@ class NewTaskV2Fragment :
 
     override fun onClick(id: Int) {
         when (id) {
+            R.id.nextBtn -> {
+                var doneImageRequired = false
+                var doneCommentsRequired = false
+                if (mViewDataBinding.newTaskDoneReqSwitch.isChecked) {
+                    doneImageRequired = mViewDataBinding.imageCheckbox.isChecked
+                    doneCommentsRequired = mViewDataBinding.commentCheckbox.isChecked
+                }
+                viewModel.createNewTask(
+                    requireContext(),
+                    doneImageRequired = doneImageRequired,
+                    doneCommentsRequired = doneCommentsRequired
+                ) {
+                    navigateBack()
+                }
+            }
             R.id.backBtn -> navigateBack()
             R.id.newTaskTopicText -> navigateForResult(R.id.topicFragment, TOPIC_REQUEST_CODE)
             R.id.newTaskProjectText -> navigateForResult(
@@ -350,7 +360,7 @@ class NewTaskV2Fragment :
             val pickedImage = arrayListOf<PickedImages>()
             val oldImages = viewModel.onlyImages.value
 
-            if (resultCode == Activity.RESULT_OK && data != null) {
+            if (resultCode == RESULT_OK && data != null) {
                 val clipData = data.clipData
                 if (clipData != null) {
                     for (i in 0 until clipData.itemCount) {
@@ -391,7 +401,7 @@ class NewTaskV2Fragment :
             val pickedDocuments = arrayListOf<PickedImages>()
             val oldDocuments = viewModel.documents.value
 
-            if (resultCode == Activity.RESULT_OK && data != null) {
+            if (resultCode == RESULT_OK && data != null) {
                 val clipData = data.clipData
                 if (clipData != null) {
                     for (i in 0 until clipData.itemCount) {
@@ -470,13 +480,14 @@ class NewTaskV2Fragment :
             fileUri = fileUri,
             attachmentType = attachmentType,
             fileName = fileName,
-            fileSizeReadAble = fileSizeReadAble
+            fileSizeReadAble = fileSizeReadAble,
+            file = FileUtils.getFile(requireContext(), fileUri)
         )
     }
 
 
     override fun onNavigationResult(result: BackNavigationResult) {
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             when (result.requestCode) {
                 TOPIC_REQUEST_CODE -> {
                     val selectedTopic =

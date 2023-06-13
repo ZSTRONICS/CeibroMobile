@@ -57,11 +57,6 @@ class DashboardVM @Inject constructor(
     val iResourceProvider: IResourceProvider
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
 
-    override fun onResume() {
-        super.onResume()
-//        getOverallConnectionCount()
-    }
-
     init {
         sessionManager.setUser()
 //        sessionManager.setProject()
@@ -446,6 +441,19 @@ class DashboardVM @Inject constructor(
                         }
                     }
                     fileAttachmentsDataSource.insertAll(updatedFiles)
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUploadFilesToV2Server(uploadFilesToServer: LocalEvents.UploadFilesToV2Server) {
+        launch(Dispatcher.Main) {
+            when (val response = dashboardRepository.uploadFiles(uploadFilesToServer.request)) {
+                is ApiResponse.Success -> {
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)

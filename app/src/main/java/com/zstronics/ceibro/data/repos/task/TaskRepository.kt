@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -51,6 +52,20 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 response.data.newTask?.let { localTask.insertTask(it) }
                 callBack(true, "")
+            }
+            is ApiResponse.Error -> {
+                callBack(false, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun newTaskV2(
+        newTask: NewTaskV2Request,
+        callBack: (isSuccess: Boolean, taskId: String) -> Unit
+    ) {
+        when (val response = remoteTask.newTaskV2(newTask)) {
+            is ApiResponse.Success -> {
+                callBack(true, response.data.newTask.id)
             }
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
@@ -458,10 +473,6 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Error -> callBack(false, response.error.message, arrayListOf())
         }
     }
-
-
-
-
 
 
     //New APIs for Task

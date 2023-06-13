@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
+import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -18,8 +19,8 @@ import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class DashboardRepository @Inject constructor(
@@ -74,11 +75,9 @@ class DashboardRepository @Inject constructor(
         )
 
     override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadRequest): ApiResponse<UploadFilesResponse> {
-        val moduleName = RequestBody.create(
-            "text/plain".toMediaTypeOrNull(),
-            attachmentUploadRequest.moduleName
-        )
-        val id = RequestBody.create("text/plain".toMediaTypeOrNull(), attachmentUploadRequest._id)
+        val moduleName = attachmentUploadRequest.moduleName
+            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val id = attachmentUploadRequest._id.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val parts = attachmentUploadRequest.files?.map { file ->
             val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
@@ -86,6 +85,23 @@ class DashboardRepository @Inject constructor(
         }
         return executeSafely(call = {
             service.uploadFiles(moduleName, id, parts)
+        })
+    }
+
+    override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadV2Request): ApiResponse<UploadFilesResponse> {
+        val moduleName = attachmentUploadRequest.moduleName
+            .toRequestBody("text/plain".toMediaTypeOrNull())
+        val moduleId =
+            attachmentUploadRequest.moduleId.toRequestBody("text/plain".toMediaTypeOrNull())
+        val metadata =
+            attachmentUploadRequest.metadata.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val parts = attachmentUploadRequest.files?.map { file ->
+            val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("files", file.name, reqFile)
+        }
+        return executeSafely(call = {
+            service.uploadFilesV2(parts, moduleName, moduleId, metadata)
         })
     }
 

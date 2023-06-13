@@ -84,7 +84,7 @@ class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
             )
         )
         mToolList.add(ToolModel("Arrow Shape", R.drawable.icon_top_arrow, ToolType.ARROW_SHAPE))
-        mToolList.add(ToolModel("Filter", R.drawable.icon_edit_pencil, ToolType.FILTER))
+        mToolList.add(ToolModel("Brush", R.drawable.icon_edit_pencil, ToolType.BRUSH))
         mToolList.add(ToolModel("Text", R.drawable.icon_insert_text, ToolType.TEXT))
         mToolList.add(ToolModel("Undo", R.drawable.icon_undo, ToolType.UNDO))
 //        mToolList.add(ToolModel("Eraser", R.drawable.ic_eraser, ToolType.ERASER))

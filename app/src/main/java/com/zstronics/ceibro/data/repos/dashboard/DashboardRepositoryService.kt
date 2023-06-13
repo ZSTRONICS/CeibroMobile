@@ -50,6 +50,15 @@ interface DashboardRepositoryService {
         @Part files: List<MultipartBody.Part>?
     ): Response<UploadFilesResponse>
 
+    @Multipart
+    @POST("v1/docs/upload")
+    suspend fun uploadFilesV2(
+        @Part files: List<MultipartBody.Part>?,
+        @Part("moduleName") moduleName: RequestBody,
+        @Part("moduleId") moduleId: RequestBody,
+        @Part("metadata") metadata: RequestBody,
+    ): Response<UploadFilesResponse>
+
     @GET("v1/docs/viewFiles/{module}/{moduleId}")
     suspend fun getFilesByModuleId(
         @Path("module") module: String,

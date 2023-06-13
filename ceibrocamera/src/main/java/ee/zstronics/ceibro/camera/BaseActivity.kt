@@ -96,7 +96,8 @@ open class BaseActivity : AppCompatActivity() {
             fileUri = fileUri,
             attachmentType = attachmentType,
             fileName = fileName,
-            fileSizeReadAble = fileSizeReadAble
+            fileSizeReadAble = fileSizeReadAble,
+            file = FileUtils.getFile(applicationContext, fileUri)
         )
     }
 

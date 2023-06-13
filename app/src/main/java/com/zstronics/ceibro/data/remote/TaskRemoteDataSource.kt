@@ -4,6 +4,8 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import javax.inject.Inject
 
 class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroService) :
@@ -24,6 +26,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
+    override suspend fun newTaskV2(newTask: NewTaskV2Request): ApiResponse<NewTaskV2Response> =
+        executeSafely(
+            call =
+            {
+                service.newTaskV2(newTask)
+            }
+        )
+
     override suspend fun newTaskNoAdvanceOptions(newTask: NewTaskRequestNoAdvanceOptions): ApiResponse<NewTaskResponse> =
         executeSafely(
             call =
@@ -32,7 +42,10 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun updateTaskByIdNoAdvanceOptions(taskId:String, updateTask: UpdateDraftTaskRequestNoAdvanceOptions): ApiResponse<NewTaskResponse> =
+    override suspend fun updateTaskByIdNoAdvanceOptions(
+        taskId: String,
+        updateTask: UpdateDraftTaskRequestNoAdvanceOptions
+    ): ApiResponse<NewTaskResponse> =
         executeSafely(
             call =
             {

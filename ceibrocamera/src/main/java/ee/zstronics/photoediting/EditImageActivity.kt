@@ -20,7 +20,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresPermission
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -176,8 +175,8 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         val imgSave: AppCompatImageView = findViewById(R.id.imgSave)
         imgSave.setOnClickListener(this)
 
-        val doneBtn: AppCompatButton = findViewById(R.id.doneBtn)
-        doneBtn.setOnClickListener(this)
+//        val doneBtn: AppCompatButton = findViewById(R.id.doneBtn)
+//        doneBtn.setOnClickListener(this)
 
         val upperClose: AppCompatImageView = findViewById(R.id.upperClose)
         upperClose.setOnClickListener(this)
@@ -456,7 +455,6 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mTxtCurrentTool.setText(R.string.label_shape)
                 mShapeBSFragment.shapeType = ShapeType.Arrow()
                 showBottomSheetDialogFragment(mShapeBSFragment)
             }
@@ -464,10 +462,25 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mTxtCurrentTool.setText(R.string.label_shape)
                 mShapeBSFragment.shapeType = ShapeType.Rectangle
                 showBottomSheetDialogFragment(mShapeBSFragment)
             }
+
+            ToolType.LINE -> {
+                mPhotoEditor.setBrushDrawingMode(true)
+                mShapeBuilder = ShapeBuilder()
+                mPhotoEditor.setShape(mShapeBuilder)
+                mShapeBSFragment.shapeType = ShapeType.Line
+                showBottomSheetDialogFragment(mShapeBSFragment)
+            }
+            ToolType.BRUSH -> {
+                mPhotoEditor.setBrushDrawingMode(true)
+                mShapeBuilder = ShapeBuilder()
+                mPhotoEditor.setShape(mShapeBuilder)
+                mShapeBSFragment.shapeType = ShapeType.Brush
+                showBottomSheetDialogFragment(mShapeBSFragment)
+            }
+
         }
     }
 
