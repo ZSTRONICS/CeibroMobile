@@ -68,7 +68,7 @@ class NewTaskV2Fragment :
                     doneImageRequired = doneImageRequired,
                     doneCommentsRequired = doneCommentsRequired
                 ) {
-
+                    navigateBack()
                 }
             }
             R.id.backBtn -> navigateBack()
@@ -480,7 +480,8 @@ class NewTaskV2Fragment :
             fileUri = fileUri,
             attachmentType = attachmentType,
             fileName = fileName,
-            fileSizeReadAble = fileSizeReadAble
+            fileSizeReadAble = fileSizeReadAble,
+            file = FileUtils.getFile(requireContext(), fileUri)
         )
     }
 

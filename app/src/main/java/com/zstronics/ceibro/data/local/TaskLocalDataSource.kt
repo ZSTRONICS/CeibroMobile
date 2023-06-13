@@ -17,7 +17,7 @@ class TaskLocalDataSource @Inject constructor(private val taskDao: TaskDao) : IT
     }
 
     override suspend fun insertTask(task: CeibroTask) {
-        taskDao.insertTask(task)
+//        taskDao.insertTask(task)
     }
 
     override suspend fun getSingleTaskCount(taskId: String): Int {

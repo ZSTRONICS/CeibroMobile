@@ -3,6 +3,7 @@ package ee.zstronics.ceibro.camera
 import android.net.Uri
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.io.File
 
 @Parcelize
 data class PickedImages(
@@ -11,5 +12,6 @@ data class PickedImages(
     val fileName: String = "",
     val fileSizeReadAble: String = "",
     val editingApplied: Boolean = false,
-    val attachmentType: AttachmentTypes
+    val attachmentType: AttachmentTypes,
+    var file: File
 ) : Parcelable

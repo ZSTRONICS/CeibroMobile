@@ -127,10 +127,19 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         binding.doneBtn.setOnClickListener {
             listOfImages.value?.let { listOfPickedImages ->
+                val newList = listOfPickedImages.map { it ->
+                    it.apply {
+                        this.file = FileUtils.getFile(
+                            applicationContext,
+                            it.fileUri
+                        )
+                    }
+                } as ArrayList<PickedImages>
+
                 val ceibroImagesIntent =
                     Intent()
                 val newBundle = Bundle()
-                newBundle.putParcelableArrayList("images", listOfPickedImages)
+                newBundle.putParcelableArrayList("images", newList)
                 ceibroImagesIntent.putExtras(newBundle)
                 setResult(RESULT_OK, ceibroImagesIntent)
                 finish()

@@ -15,13 +15,11 @@ import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
-import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.FileUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.util.concurrent.TimeUnit
 
 
 abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),

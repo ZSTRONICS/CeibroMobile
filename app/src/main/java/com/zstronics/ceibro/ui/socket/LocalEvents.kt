@@ -4,6 +4,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
+import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroup
 import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
@@ -17,6 +18,10 @@ object LocalEvents {
     data class UploadFilesToServer(
         val request: AttachmentUploadRequest,
         val fileUriList: ArrayList<SubtaskAttachment?>
+    )
+
+    data class UploadFilesToV2Server(
+        val request: AttachmentUploadV2Request
     )
 
     object AllFilesUploaded
@@ -50,16 +55,18 @@ object LocalEvents {
     data class ApplySearchOnTask(
         val query: String?
     )
+
     data class ApplySearchOnSubTask(
         val query: String?
     )
+
     data class ApplySearchOnAdmins(
         val query: String?
     )
+
     data class ApplySearchOnAllUsers(
         val query: String?
     )
-
 
 
     data class ProjectCreatedEvent(val newProject: AllProjectsResponse.Projects)
