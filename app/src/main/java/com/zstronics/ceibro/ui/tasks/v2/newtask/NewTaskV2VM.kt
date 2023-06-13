@@ -46,7 +46,8 @@ class NewTaskV2VM @Inject constructor(
                     } ?: listOf()
             val invitedNumbers = viewState.selectedContacts.value?.filter { !it.isCeiborUser }
                 ?.map { it.phoneNumber } ?: listOf()
-            val projectId = viewState.selectedProject.value?.id ?: ""
+            val projectId = "648341057898edf39ae0b1e9"
+//            val projectId = viewState.selectedProject.value?.id ?: ""
             val newTaskRequest = NewTaskV2Request(
                 topic = viewState.selectedTopic.value?.id.toString(),
                 project = projectId,
