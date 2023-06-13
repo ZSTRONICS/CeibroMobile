@@ -3,6 +3,8 @@ package com.zstronics.ceibro.data.remote
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 
 interface ITaskRemoteDataSource {
     suspend fun tasks(state: String = "all", noPaginate: Boolean = true): ApiResponse<TasksResponse>
@@ -14,8 +16,5 @@ interface ITaskRemoteDataSource {
 
     suspend fun getAllTopics(): ApiResponse<TopicsResponse>
     suspend fun saveTopic(requestBody: NewTopicCreateRequest): ApiResponse<NewTopicResponse>
-
-
-
-    suspend fun getAllTasks(rootState: String): ApiResponse<TaskV2Response>
+    suspend fun newTaskV2(newTask: NewTaskV2Request): ApiResponse<NewTaskV2Response>
 }

@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 
 interface ITaskRepository {
     suspend fun tasks(): List<CeibroTask>
@@ -12,6 +13,11 @@ interface ITaskRepository {
     suspend fun newTask(
         newTask: NewTaskRequest,
         callBack: (isSuccess: Boolean, message: String) -> Unit
+    )
+
+    suspend fun newTaskV2(
+        newTask: NewTaskV2Request,
+        callBack: (isSuccess: Boolean, taskId: String) -> Unit
     )
 
     suspend fun newTaskNoAdvanceOptions(

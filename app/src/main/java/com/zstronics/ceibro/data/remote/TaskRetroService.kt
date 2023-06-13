@@ -2,6 +2,8 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -115,9 +117,6 @@ interface TaskRetroService {
     ): Response<AllCommentsResponse>
 
 
-
-
-
     //New APIs for Task
 
     @GET("v2/task/topic")
@@ -125,6 +124,9 @@ interface TaskRetroService {
 
     @POST("v2/task/topic")
     suspend fun saveTopic(@Body requestBody: NewTopicCreateRequest): Response<NewTopicResponse>
+
+    @POST("v2/task")
+    suspend fun newTaskV2(@Body requestBody: NewTaskV2Request): Response<NewTaskV2Response>
 
     @GET("v2/task/{rootState}")
     suspend fun getAllTasks(@Path("rootState") rootState: String): Response<TaskV2Response>
