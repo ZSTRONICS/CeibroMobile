@@ -454,6 +454,21 @@ class DashboardVM @Inject constructor(
         launch(Dispatcher.Main) {
             when (val response = dashboardRepository.uploadFiles(uploadFilesToServer.request)) {
                 is ApiResponse.Success -> {
+                    val filesCount = uploadFilesToServer.request.files?.size ?: 1
+                    val notificationTitle =
+                        if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
+
+                    EventBus.getDefault().post(
+                        LocalEvents.CreateNotification(
+                            moduleName = uploadFilesToServer.request.moduleName,
+                            moduleId = uploadFilesToServer.request.moduleId,
+                            notificationTitle = notificationTitle,
+                            isOngoing = false,
+                            indeterminate = false,
+                            notificationIcon = R.drawable.icon_upload
+                        )
+                    )
+
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)

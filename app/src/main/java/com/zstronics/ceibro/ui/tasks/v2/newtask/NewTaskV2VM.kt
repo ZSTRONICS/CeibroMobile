@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
@@ -53,8 +54,7 @@ class NewTaskV2VM @Inject constructor(
                     } ?: listOf()
             val invitedNumbers = viewState.selectedContacts.value?.filter { !it.isCeiborUser }
                 ?.map { it.phoneNumber } ?: listOf()
-            val projectId = "648341057898edf39ae0b1e9"
-//            val projectId = viewState.selectedProject.value?.id ?: ""
+            val projectId = viewState.selectedProject.value?.id ?: ""
             val newTaskRequest = NewTaskV2Request(
                 topic = viewState.selectedTopic.value?.id.toString(),
                 project = projectId,
@@ -127,8 +127,8 @@ class NewTaskV2VM @Inject constructor(
             )
         }
         val metadataString = Gson().toJson(metaData)
-        val metadataString2 = Gson().toJson(metadataString)     //again passing to make the json to convert into json string with slashes
-        //"[{\"comment\":\"comments\",\"fileName\":\"IMG_20230614_114840.jpg\",\"orignalFileName\":\"IMG_20230614_114840.jpg\",\"tag\":\"image+comment\"}]"
+        val metadataString2 =
+            Gson().toJson(metadataString)     //again passing to make the json to convert into json string with slashes
 
         val request = AttachmentUploadV2Request(
             moduleId = taskId,
@@ -137,7 +137,20 @@ class NewTaskV2VM @Inject constructor(
             metadata = metadataString2
         )
         println("RequestMetadataString22: $metadataString2")
+        val filesCount = attachmentUriList.size
+        val notificationTitle =
+            if (filesCount > 1) "$filesCount files uploading" else "$filesCount file uploading"
 
+        EventBus.getDefault().post(
+            LocalEvents.CreateNotification(
+                moduleName = AttachmentModules.Task.name,
+                moduleId = taskId,
+                notificationTitle = notificationTitle,
+                isOngoing = true,
+                indeterminate = false,
+                notificationIcon = R.drawable.icon_upload
+            )
+        )
         EventBus.getDefault()
             .post(LocalEvents.UploadFilesToV2Server(request))
     }
