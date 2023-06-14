@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.dashboard.admins.AdminUsersResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
+import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.UploadFilesV2Response
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -57,7 +58,7 @@ interface DashboardRepositoryService {
         @Part("moduleName") moduleName: RequestBody,
         @Part("moduleId") moduleId: RequestBody,
         @Part("metadata") metadata: RequestBody,
-    ): Response<UploadFilesResponse>
+    ): Response<UploadFilesV2Response>
 
     @GET("v1/docs/viewFiles/{module}/{moduleId}")
     suspend fun getFilesByModuleId(

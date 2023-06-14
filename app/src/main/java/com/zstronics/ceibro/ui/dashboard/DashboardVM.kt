@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshFolderSocketResponse
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshRootDocumentSocketResponse
@@ -452,11 +453,52 @@ class DashboardVM @Inject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUploadFilesToV2Server(uploadFilesToServer: LocalEvents.UploadFilesToV2Server) {
         launch(Dispatcher.Main) {
+
+            val filesCount = uploadFilesToServer.request.files?.size ?: 1
+
+            var notificationTitle =
+                if (filesCount > 1) "$filesCount files are uploading" else "$filesCount file is uploading"
+            createNotification(
+                LocalEvents.CreateNotification(
+                    moduleName = AttachmentModules.Task.name,
+                    moduleId = uploadFilesToServer.request.moduleId,
+                    notificationTitle = notificationTitle,
+                    isOngoing = true,
+                    indeterminate = true,
+                    notificationIcon = R.drawable.icon_upload
+                )
+            )
+
             when (val response = dashboardRepository.uploadFiles(uploadFilesToServer.request)) {
                 is ApiResponse.Success -> {
+                    notificationTitle =
+                        if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
+
+                    createNotification(
+                        LocalEvents.CreateNotification(
+                            moduleName = uploadFilesToServer.request.moduleName,
+                            moduleId = uploadFilesToServer.request.moduleId,
+                            notificationTitle = notificationTitle,
+                            isOngoing = false,
+                            indeterminate = false,
+                            notificationIcon = R.drawable.icon_upload
+                        )
+                    )
+
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
+
+                    createNotification(
+                        LocalEvents.CreateNotification(
+                            moduleName = uploadFilesToServer.request.moduleName,
+                            moduleId = uploadFilesToServer.request.moduleId,
+                            notificationTitle = response.error.message,
+                            isOngoing = false,
+                            indeterminate = false,
+                            notificationIcon = R.drawable.icon_upload
+                        )
+                    )
                 }
             }
         }
