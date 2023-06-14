@@ -1,14 +1,11 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.app.NotificationManager
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.BR
@@ -25,19 +22,12 @@ import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEv
 import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
-import com.zstronics.ceibro.ui.admin.admins.AdminsFragment
-import com.zstronics.ceibro.ui.chat.ChatFragment
 import com.zstronics.ceibro.ui.enums.EventType
-import com.zstronics.ceibro.ui.home.HomeFragment
-import com.zstronics.ceibro.ui.projects.ProjectsFragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
-import com.zstronics.ceibro.ui.tasks.MainTasksFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
-import com.zstronics.ceibro.ui.works.WorksFragment
 import dagger.hilt.android.AndroidEntryPoint
-import ee.zstronics.ceibro.camera.CeibroCameraActivity
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -145,6 +135,8 @@ class DashboardFragment :
         }
 
         startPeriodicContactSyncWorker(requireContext())
+
+        viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
     }
 
 
@@ -254,9 +246,6 @@ class DashboardFragment :
     }
 
 
-
-
-
     private fun navigateToProfile() {
         navigate(R.id.profileFragment)
     }
@@ -269,16 +258,17 @@ class DashboardFragment :
         var selectedItem: Int = R.id.nav_home
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onCreateNotification(event: LocalEvents.CreateNotification) {
-        createNotification(
-            event.moduleId,
-            "${event.moduleName}${event.moduleId}",
-            notificationTitle = event.notificationTitle,
-            isOngoing = event.isOngoing,
-            indeterminate = event.indeterminate,
-            notificationIcon = event.notificationIcon
-        )
+    private fun onCreateNotification(event: LocalEvents.CreateNotification?) {
+        if (event != null) {
+            createNotification(
+                event.moduleId,
+                "${event.moduleName}${event.moduleId}",
+                notificationTitle = event.notificationTitle,
+                isOngoing = event.isOngoing,
+                indeterminate = event.indeterminate,
+                notificationIcon = event.notificationIcon
+            )
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

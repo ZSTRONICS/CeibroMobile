@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.annotation.CallSuper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.work.*
@@ -111,6 +112,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     private val _fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>?> =
         MutableLiveData(arrayListOf())
     val fileUriList: MutableLiveData<ArrayList<SubtaskAttachment?>?> = _fileUriList
+
+    private val _notificationEvent: MutableLiveData<LocalEvents.CreateNotification?> =
+        MutableLiveData()
+    val notificationEvent: LiveData<LocalEvents.CreateNotification?> =
+        _notificationEvent
+
+    fun createNotification(notification: LocalEvents.CreateNotification?) {
+        _notificationEvent.postValue(notification)
+    }
 
     fun addUriToList(data: SubtaskAttachment) {
         val files = fileUriList.value
