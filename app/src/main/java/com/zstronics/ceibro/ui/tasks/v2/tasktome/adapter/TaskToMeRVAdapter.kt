@@ -76,6 +76,9 @@ class TaskToMeRVAdapter @Inject constructor() :
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
                 )
+                if (binding.taskDueDate.text == "") {
+                    binding.taskDueDate.text = "N/A"
+                }
             }
 
             binding.taskFromText.text = "${item.creator.firstName} ${item.creator.surName}"
