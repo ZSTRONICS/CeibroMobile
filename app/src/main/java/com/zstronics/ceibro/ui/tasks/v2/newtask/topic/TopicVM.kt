@@ -74,11 +74,18 @@ class TopicVM @Inject constructor(
                     val newTopic = newTopicResponse?.newTopic
 
                     if (newTopic != null) {
-                        val allTopics = originalAllTopics as MutableList<TopicsResponse.TopicData>
-                        allTopics.add(newTopic)
-                        originalAllTopics = allTopics
-                        _allTopics.postValue(allTopics)
-
+                        if (originalAllTopics.isNotEmpty()) {
+                            val allTopics =
+                                originalAllTopics as MutableList<TopicsResponse.TopicData>
+                            allTopics.add(newTopic)
+                            originalAllTopics = allTopics
+                            _allTopics.postValue(allTopics)
+                        } else {
+                            val allTopics: MutableList<TopicsResponse.TopicData> = mutableListOf()
+                            allTopics.add(newTopic)
+                            originalAllTopics = allTopics
+                            _allTopics.postValue(allTopics)
+                        }
                     }
                     loading(false, "")
                     callBack.invoke()

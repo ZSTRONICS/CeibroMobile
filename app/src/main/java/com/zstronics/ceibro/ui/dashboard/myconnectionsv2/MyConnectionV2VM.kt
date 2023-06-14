@@ -113,16 +113,16 @@ class MyConnectionV2VM @Inject constructor(
             return
         }
         val filtered = originalConnections.filter {
-            "${it.contactFullName?.lowercase()}".contains(search, true) ||
-                    it.phoneNumber.contains(search) ||
+            (!it.contactFullName.isNullOrEmpty() && it.contactFullName.lowercase().contains(search.trim(), true)) ||
+                    (!it.contactFirstName.isNullOrEmpty() && it.contactFirstName.lowercase()
+                        .contains(search.trim(), true)) ||
+                    (!it.contactSurName.isNullOrEmpty() && it.contactSurName.lowercase()
+                        .contains(search.trim(), true)) ||
+                    it.phoneNumber.contains(search.trim()) ||
                     (it.userCeibroData?.companyName != null && it.userCeibroData.companyName.lowercase()
-                        .contains(search, true)) ||
-                    (it.userCeibroData?.firstName != null && it.userCeibroData.firstName.lowercase()
-                        .contains(search, true)) ||
-                    (it.userCeibroData?.surName != null && it.userCeibroData.surName.lowercase()
-                        .contains(search, true)) ||
+                        .contains(search.trim(), true)) ||
                     (it.userCeibroData?.jobTitle != null && it.userCeibroData.jobTitle.lowercase()
-                        .contains(search, true))
+                        .contains(search.trim(), true))
         }
         if (filtered.isNotEmpty())
             _allConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)

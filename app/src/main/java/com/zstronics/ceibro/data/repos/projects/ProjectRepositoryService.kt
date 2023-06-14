@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -26,6 +27,9 @@ import retrofit2.http.*
 interface ProjectRepositoryService {
     @GET("v1/project")
     suspend fun getProjects(): Response<AllProjectsResponse>
+
+    @GET("v2/project")
+    suspend fun getProjectsV2(): Response<AllProjectsResponseV2>
 
     @POST("v1/project/getProjectsWithMembers")
     suspend fun getProjectsWithMembers(@Query("includeMe") includeMe: Boolean = false): Response<ProjectsWithMembersResponse>

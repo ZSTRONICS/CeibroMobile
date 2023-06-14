@@ -5,6 +5,7 @@ import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 
 interface INewTaskV2 {
@@ -14,7 +15,7 @@ interface INewTaskV2 {
         val isAttachLayoutOpen: MutableLiveData<Boolean>
         var taskTitle: MutableLiveData<String>
         var selectedTopic: MutableLiveData<TopicsResponse.TopicData>
-        var selectedProject: MutableLiveData<AllProjectsResponse.Projects>
+        var selectedProject: MutableLiveData<AllProjectsResponseV2.ProjectsV2>
         var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>>
         var assignToText: MutableLiveData<String>
         var projectText: MutableLiveData<String>

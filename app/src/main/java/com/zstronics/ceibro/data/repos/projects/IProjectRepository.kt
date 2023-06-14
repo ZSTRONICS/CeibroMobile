@@ -13,6 +13,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -85,4 +86,6 @@ interface IProjectRepository {
     ): ApiResponse<ProjectDocumentsResponse>
 
     suspend fun updateDocumentAccess(request: ManageProjectDocumentAccessRequest): ApiResponse<BaseResponse>
+
+    suspend fun getProjectsV2(): ApiResponse<AllProjectsResponseV2>
 }

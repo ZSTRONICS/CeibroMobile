@@ -413,7 +413,7 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault().post(LocalEvents.UserDataUpdated())
                         }
                         SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {
-                            getProfile()
+//                            getProfile()
                         }
                         SocketHandler.UserEvent.REFRESH_CONNECTIONS.name -> {
                             getOverallConnectionCount()
