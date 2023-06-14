@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.LayoutItemConnectionHeaderBinding
 import com.zstronics.ceibro.databinding.LayoutItemTopicHeaderBinding
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 class AllProjectsHeaderAdapter @Inject constructor() :
     RecyclerView.Adapter<AllProjectsHeaderAdapter.AllProjectsHeaderViewHolder>() {
-    var allProjectItemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? =
+    var allProjectItemClickListener: ((view: View, position: Int, data: AllProjectsResponseV2.ProjectsV2) -> Unit)? =
         null
     var listItems: MutableList<TaskProjectVM.CeibroProjectGroup> = mutableListOf()
     override fun onCreateViewHolder(
@@ -53,7 +54,7 @@ class AllProjectsHeaderAdapter @Inject constructor() :
             adapter.setList(item.items)
             binding.topicRV.adapter = adapter
             adapter.itemClickListener =
-                { it: View, position: Int, data: AllProjectsResponse.Projects ->
+                { it: View, position: Int, data: AllProjectsResponseV2.ProjectsV2 ->
                     allProjectItemClickListener?.invoke(it, absoluteAdapterPosition, data)
                 }
         }

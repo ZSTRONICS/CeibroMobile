@@ -9,6 +9,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentTaskProjectBinding
 import com.zstronics.ceibro.databinding.FragmentTopicBinding
@@ -64,7 +65,7 @@ class TaskProjectFragment :
             }
         }
 
-        allProjectsHeaderAdapter.allProjectItemClickListener = { _: View, position: Int, data: AllProjectsResponse.Projects ->
+        allProjectsHeaderAdapter.allProjectItemClickListener = { _: View, position: Int, data: AllProjectsResponseV2.ProjectsV2 ->
             val bundle = Bundle()
             bundle.putParcelable("project", data)
             navigateBackWithResult(Activity.RESULT_OK, bundle)

@@ -73,8 +73,12 @@ class CeibroConnectionsAdapter @Inject constructor() :
                     )
                 }
             }
-            binding.contactName.text =
+            binding.contactName.text = if (item.contactFullName.isNullOrEmpty()) {
+                "${item.contactFirstName} ${item.contactSurName}"
+            } else {
                 "${item.contactFullName}"
+            }
+
             if (item.userCeibroData?.profilePic.isNullOrEmpty()) {
                 binding.contactInitials.visibility = View.VISIBLE
                 binding.contactImage.visibility = View.GONE

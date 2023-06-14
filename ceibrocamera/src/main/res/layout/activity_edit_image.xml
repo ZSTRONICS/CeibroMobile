@@ -50,19 +50,32 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvConstraintTools"
+    <LinearLayout
+        android:id="@+id/rvConstraintToolsLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/black_transparency"
-        android:orientation="horizontal"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topLayout"
-        tools:listitem="@layout/row_editing_tools" />
+        app:layout_constraintTop_toBottomOf="@+id/topLayout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvConstraintTools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:itemCount="5"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLayout"
+            tools:listitem="@layout/row_editing_tools" />
+
+    </LinearLayout>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFilterView"
@@ -71,9 +84,9 @@
         android:background="@color/tool_bg"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="@+id/rvConstraintTools"
+        app:layout_constraintBottom_toBottomOf="@+id/rvConstraintToolsLayout"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/rvConstraintTools"
+        app:layout_constraintTop_toTopOf="@+id/rvConstraintToolsLayout"
         tools:listitem="@layout/row_filter_view" />
 
     <!--    <androidx.constraintlayout.widget.Guideline-->
@@ -90,7 +103,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rvConstraintTools"
+        app:layout_constraintTop_toBottomOf="@id/rvConstraintToolsLayout"
         app:photo_src="@drawable/blank_image" />
 
     <ImageView
@@ -101,7 +114,7 @@
         android:padding="8dp"
         android:src="@drawable/ic_undo"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/rvConstraintTools"
+        app:layout_constraintBottom_toTopOf="@+id/rvConstraintToolsLayout"
         app:layout_constraintEnd_toStartOf="@+id/imgRedo" />
 
     <ImageView
@@ -112,7 +125,7 @@
         android:padding="8dp"
         android:src="@drawable/ic_redo"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/rvConstraintTools"
+        app:layout_constraintBottom_toTopOf="@+id/rvConstraintToolsLayout"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
@@ -123,7 +136,7 @@
         android:padding="8dp"
         android:src="@drawable/ic_gallery"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/rvConstraintTools"
+        app:layout_constraintBottom_toTopOf="@+id/rvConstraintToolsLayout"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -134,7 +147,7 @@
         android:padding="8dp"
         android:src="@drawable/ic_camera"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/rvConstraintTools"
+        app:layout_constraintBottom_toTopOf="@+id/rvConstraintToolsLayout"
         app:layout_constraintStart_toEndOf="@id/imgGallery" />
 
 
@@ -173,7 +186,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/black"
-        android:padding="@dimen/_5sdp"
+        android:padding="@dimen/_13sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
