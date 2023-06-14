@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
@@ -230,4 +231,13 @@ class ProjectRepository @Inject constructor(
         executeSafely {
             service.updateDocumentAccess(request.fileOrFolderId, request)
         }
+
+
+    override suspend fun getProjectsV2(): ApiResponse<AllProjectsResponseV2> =
+        executeSafely(
+            call =
+            {
+                service.getProjectsV2()
+            }
+        )
 }

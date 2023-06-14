@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:padding="4dp">
+    android:paddingStart="7dp"
+    android:paddingEnd="7dp">
 
 
     <ImageView
         android:id="@+id/imgToolIcon"
         android:layout_width="@dimen/editor_size"
         android:layout_height="@dimen/editor_size"
-        android:layout_margin="4dp"
-        android:padding="@dimen/_3sdp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="10dp"
+        android:padding="@dimen/_5sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

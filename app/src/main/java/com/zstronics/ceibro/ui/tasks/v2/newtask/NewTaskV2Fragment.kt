@@ -21,6 +21,7 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -511,9 +512,9 @@ class NewTaskV2Fragment :
                     if (selectedContactList != null) {
                         for (item in selectedContactList) {
                             assigneeMembers += if (index == selectedContactList.size - 1) {
-                                "${item.contactFullName}"
+                                "${item.contactFirstName} ${item.contactSurName}"
                             } else {
-                                "${item.contactFullName}; "
+                                "${item.contactFirstName} ${item.contactSurName}; "
                             }
                             index++
                         }
@@ -524,7 +525,7 @@ class NewTaskV2Fragment :
 
                 PROJECT_REQUEST_CODE -> {
                     val selectedProject =
-                        result.data?.getParcelable<AllProjectsResponse.Projects>("project")
+                        result.data?.getParcelable<AllProjectsResponseV2.ProjectsV2>("project")
                     if (selectedProject != null) {
                         viewState.selectedProject.value = selectedProject
                         viewState.projectText.value = selectedProject.title

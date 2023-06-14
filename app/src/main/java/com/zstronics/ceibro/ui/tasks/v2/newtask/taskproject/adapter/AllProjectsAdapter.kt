@@ -12,6 +12,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.LayoutItemConnectionBinding
 import com.zstronics.ceibro.databinding.LayoutItemTopicBinding
@@ -20,9 +21,9 @@ import javax.inject.Inject
 
 class AllProjectsAdapter @Inject constructor() :
     RecyclerView.Adapter<AllProjectsAdapter.AllProjectsViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: AllProjectsResponse.Projects) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: AllProjectsResponseV2.ProjectsV2) -> Unit)? =
         null
-    var listItems: MutableList<AllProjectsResponse.Projects> = mutableListOf()
+    var listItems: MutableList<AllProjectsResponseV2.ProjectsV2> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllProjectsViewHolder {
         return AllProjectsViewHolder(
             LayoutItemTopicBinding.inflate(
@@ -41,7 +42,7 @@ class AllProjectsAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<AllProjectsResponse.Projects>) {
+    fun setList(list: List<AllProjectsResponseV2.ProjectsV2>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -50,7 +51,7 @@ class AllProjectsAdapter @Inject constructor() :
     inner class AllProjectsViewHolder(private val binding: LayoutItemTopicBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: AllProjectsResponse.Projects) {
+        fun bind(item: AllProjectsResponseV2.ProjectsV2) {
 
             binding.root.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)

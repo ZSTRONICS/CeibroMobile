@@ -118,10 +118,7 @@ class DashboardFragment :
 
         val handler = Handler()
         handler.postDelayed(Runnable {
-            viewState.toMeSelected.value = true
-            childFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TaskToMeFragment())
-                .commit()
+            changeSelectedTab(R.id.toMeBtn)
         }, 40)
 
 

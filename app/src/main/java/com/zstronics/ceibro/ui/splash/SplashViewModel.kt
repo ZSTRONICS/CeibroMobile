@@ -21,7 +21,7 @@ class SplashViewModel @Inject constructor(
 
     init {
         if (sessionManager.isUserLoggedIn()) {
-            getProfile()
+//            getProfile()
         }
     }
 
