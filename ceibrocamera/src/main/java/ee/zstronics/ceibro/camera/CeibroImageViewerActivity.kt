@@ -193,12 +193,12 @@ class CeibroImageViewerActivity : BaseActivity() {
                 images?.get(lastSelectedPosition)?.fileUri?.let { uri ->
                     startEditor(uri) { updatedUri ->
                         if (updatedUri != null) {
+                            val updatedPickedImage = getPickedImage(updatedUri)
                             val files = listOfImages.value
-                            val file = files?.get(lastSelectedPosition)
-                            file?.fileUri = updatedUri
-                            files?.removeAt(lastSelectedPosition)
-                            if (file != null) {
-                                files.add(lastSelectedPosition, file)
+
+                            if (files != null) {
+                                files.removeAt(lastSelectedPosition)
+                                files.add(lastSelectedPosition, updatedPickedImage)    //added after old file removal because file name and URI, everything is changed
                             }
                             listOfImages.postValue(files)
                         }
