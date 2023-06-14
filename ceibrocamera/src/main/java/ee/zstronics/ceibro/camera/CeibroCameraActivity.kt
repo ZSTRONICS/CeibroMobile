@@ -42,6 +42,13 @@ class CeibroCameraActivity : BaseActivity() {
             DataBindingUtil.inflate(layoutInflater, R.layout.activity_ceibro_camera, null, false)
         setContentView(binding.root)
         sourceName = intent.getStringExtra("source_name") ?: ""
+
+        binding.imagesPicker.visibility =
+            if (sourceName == CeibroImageViewerActivity::class.java.name) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
         // Request camera permission
         if (ContextCompat.checkSelfPermission(
                 this,
