@@ -42,6 +42,13 @@ class CeibroCameraActivity : BaseActivity() {
             DataBindingUtil.inflate(layoutInflater, R.layout.activity_ceibro_camera, null, false)
         setContentView(binding.root)
         sourceName = intent.getStringExtra("source_name") ?: ""
+
+        binding.imagesPicker.visibility =
+            if (sourceName == CeibroImageViewerActivity::class.java.name) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
         // Request camera permission
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -65,6 +72,9 @@ class CeibroCameraActivity : BaseActivity() {
         // Button click listener to capture a photo
         binding.captureButton.setOnClickListener {
             binding.captureButton.isEnabled = false
+            binding.flipCameraButton.isEnabled = false
+            binding.flashButton.isEnabled = false
+            binding.toggleTorchButton.isEnabled = false
             val tint = ContextCompat.getColor(this, R.color.appGrey3)
             binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
             capturePhoto()
@@ -111,6 +121,11 @@ class CeibroCameraActivity : BaseActivity() {
     override fun onRestart() {
         super.onRestart()
         binding.captureButton.isEnabled = true
+        binding.captureButton.isEnabled = true
+        binding.flipCameraButton.isEnabled = true
+        binding.flashButton.isEnabled = true
+        binding.toggleTorchButton.isEnabled = true
+        
         val tint = ContextCompat.getColor(this, R.color.white)
         binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
 //        if (sourceName == CeibroImageViewerActivity::class.java.name) {
