@@ -122,17 +122,21 @@ class NewTaskV2VM @Inject constructor(
                 fileName = file.fileName,
                 orignalFileName = file.fileName,
                 tag = tag,
-                comment = file.comment
+                comment = file.comment.trim()
             )
         }
         val metadataString = Gson().toJson(metaData)
+        val metadataString2 = Gson().toJson(metadataString)     //again passing to make the json to convert into json string with slashes
+        //"[{\"comment\":\"comments\",\"fileName\":\"IMG_20230614_114840.jpg\",\"orignalFileName\":\"IMG_20230614_114840.jpg\",\"tag\":\"image+comment\"}]"
 
         val request = AttachmentUploadV2Request(
             moduleId = taskId,
             moduleName = AttachmentModules.Task.name,
             files = attachmentUriList,
-            metadata = metadataString
+            metadata = metadataString2
         )
+        println("RequestMetadataString22: $metadataString2")
+
         EventBus.getDefault()
             .post(LocalEvents.UploadFilesToV2Server(request))
     }
