@@ -94,10 +94,11 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         binding.confirmBtn.setOnClickListener {
             val comment = binding.commentsField.text.toString()
+            val oldImages = listOfImages.value
+            oldImages?.get(lastSelectedPosition)?.comment = comment
+            listOfImages.postValue(oldImages)
+
             if (comment.isNotEmpty()) {
-                val oldImages = listOfImages.value
-                oldImages?.get(lastSelectedPosition)?.comment = comment
-                listOfImages.postValue(oldImages)
                 binding.confirmBtn.visibility = View.INVISIBLE
                 binding.editBtn.visibility = View.VISIBLE
             } else {

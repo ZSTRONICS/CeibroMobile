@@ -136,21 +136,6 @@ class NewTaskV2VM @Inject constructor(
             files = attachmentUriList,
             metadata = metadataString2
         )
-        println("RequestMetadataString22: $metadataString2")
-        val filesCount = attachmentUriList.size
-        val notificationTitle =
-            if (filesCount > 1) "$filesCount files uploading" else "$filesCount file uploading"
-
-        EventBus.getDefault().post(
-            LocalEvents.CreateNotification(
-                moduleName = AttachmentModules.Task.name,
-                moduleId = taskId,
-                notificationTitle = notificationTitle,
-                isOngoing = true,
-                indeterminate = false,
-                notificationIcon = R.drawable.icon_upload
-            )
-        )
         EventBus.getDefault()
             .post(LocalEvents.UploadFilesToV2Server(request))
     }

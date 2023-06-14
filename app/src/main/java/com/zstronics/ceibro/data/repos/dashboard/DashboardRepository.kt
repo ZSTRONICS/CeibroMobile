@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequ
 import com.zstronics.ceibro.data.repos.dashboard.attachment.GetAllFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.UploadFilesResponse
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
+import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.UploadFilesV2Response
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -88,7 +89,7 @@ class DashboardRepository @Inject constructor(
         })
     }
 
-    override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadV2Request): ApiResponse<UploadFilesResponse> {
+    override suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadV2Request): ApiResponse<UploadFilesV2Response> {
         val moduleName = attachmentUploadRequest.moduleName
             .toRequestBody("text/plain".toMediaTypeOrNull())
         val moduleId =
