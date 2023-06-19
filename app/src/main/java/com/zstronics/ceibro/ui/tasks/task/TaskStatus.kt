@@ -5,5 +5,7 @@ enum class TaskStatus {
     NEW,
     DRAFT,
     ACTIVE,
-    DONE
+    DONE,
+    UNREAD,
+    ONGOING
 }

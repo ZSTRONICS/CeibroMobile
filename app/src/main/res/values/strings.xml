@@ -400,4 +400,6 @@
     <string name="topic_not_selected">Topic not selected</string>
     <string name="project_not_selected">Project not selected</string>
     <string name="add_new_project">Add new project</string>
+    <string name="details_view">Details view</string>
+    <string name="added_details">Added details</string>
 </resources>

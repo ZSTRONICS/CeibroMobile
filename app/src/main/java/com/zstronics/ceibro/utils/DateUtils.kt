@@ -34,8 +34,9 @@ object DateUtils {
     const val FORMAT_SHORT_INPUT = "dd MM yy hh:mm:ss"
 
     //    const val FORMAT_TIME_24H_WITH_SECONDS = "HH:mm:ss"
-    const val FORMAT_SHORT_DATE_MON_YEAR = "dd-MM-yyyy"
-    const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT = "dd.MM.yyyy"
+    const val FORMAT_SHORT_DATE_MON_YEAR = "dd-MM-yyyy"             // 29-05-2023
+    const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT = "dd.MM.yyyy"    // 29.05.2023
+    const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY = "E, dd.MM.yy"  // Mon, 14.04.23
     fun getAge(date: Date): Int {
         val today = Calendar.getInstance()
         val dob = Calendar.getInstance()

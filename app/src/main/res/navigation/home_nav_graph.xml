@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_homeFragment_to_taskToMeFragment"
             app:destination="@id/taskToMeFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_taskFromMeFragment"
+            app:destination="@id/taskFromMeFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -312,6 +315,9 @@
         <action
             android:id="@+id/action_taskToMeFragment_to_newTaskV2Fragment"
             app:destination="@id/newTaskV2Fragment" />
+        <action
+            android:id="@+id/action_taskToMeFragment_to_taskDetailV2Fragment"
+            app:destination="@id/taskDetailV2Fragment" />
     </fragment>
     <fragment
         android:id="@+id/newTaskV2Fragment"
@@ -343,4 +349,21 @@
         android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.taskproject.TaskProjectFragment"
         android:label="TaskProjectFragment"
         tools:layout="@layout/fragment_task_project" />
+    <fragment
+        android:id="@+id/taskFromMeFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment"
+        android:label="TaskFromMeFragment"
+        tools:layout="@layout/fragment_task_from_me" >
+        <action
+            android:id="@+id/action_taskFromMeFragment_to_newTaskV2Fragment"
+            app:destination="@id/newTaskV2Fragment" />
+        <action
+            android:id="@+id/action_taskFromMeFragment_to_taskDetailV2Fragment"
+            app:destination="@id/taskDetailV2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskDetailV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskDetailV2Fragment"
+        android:label="TaskDetailV2Fragment"
+        tools:layout="@layout/fragment_task_detail_v2"  />
 </navigation>
