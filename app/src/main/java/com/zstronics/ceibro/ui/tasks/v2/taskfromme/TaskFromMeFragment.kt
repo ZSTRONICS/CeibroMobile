@@ -8,9 +8,11 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
+import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.tasks.task.TaskAdapter
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
@@ -120,7 +122,12 @@ class TaskFromMeFragment :
         }
 
         mViewDataBinding.taskRV.adapter = adapter
-
+        adapter.itemClickListener =
+            { _: View, position: Int, data: CeibroTaskV2 ->
+                val bundle = Bundle()
+                bundle.putParcelable("taskDetail", data)
+                navigate(R.id.taskDetailV2Fragment, bundle)
+            }
 
 
         mViewDataBinding.taskFromMeSearchBar.setOnQueryTextListener(object :

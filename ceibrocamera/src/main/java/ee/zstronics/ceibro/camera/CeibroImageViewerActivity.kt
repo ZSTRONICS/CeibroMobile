@@ -197,6 +197,9 @@ class CeibroImageViewerActivity : BaseActivity() {
                             val files = listOfImages.value
 
                             if (files != null) {
+                                val singleFile = files.get(lastSelectedPosition)
+                                updatedPickedImage.comment = singleFile.comment
+
                                 files.removeAt(lastSelectedPosition)
                                 files.add(lastSelectedPosition, updatedPickedImage)    //added after old file removal because file name and URI, everything is changed
                             }

@@ -55,7 +55,7 @@ class TaskFromMeRVAdapter @Inject constructor() :
             val context = binding.taskTickMark.context
 
             binding.root.setOnClickListener {
-                //itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
 
             binding.taskCardParentLayout.background = null
