@@ -247,6 +247,9 @@
     <string name="start_heading">Start</string>
     <string name="creator_heading">Creator</string>
     <string name="created_on_heading">Created on</string>
+    <string name="created_by_heading">Created by</string>
+    <string name="sent_to_heading">Sent to</string>
+    <string name="confirmer_heading">Confirmer</string>
     <string name="show_more_heading">Show More</string>
     <string name="show_less_heading">Show Less</string>
     <string name="attachments_heading">Attachments</string>
@@ -402,4 +405,5 @@
     <string name="add_new_project">Add new project</string>
     <string name="details_view">Details view</string>
     <string name="added_details">Added details</string>
+    <string name="task_details_info">Task details info</string>
 </resources>

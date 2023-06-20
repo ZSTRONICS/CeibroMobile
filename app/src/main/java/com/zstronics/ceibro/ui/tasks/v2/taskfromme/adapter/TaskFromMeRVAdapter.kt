@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
@@ -93,8 +94,16 @@ class TaskFromMeRVAdapter @Inject constructor() :
 
             if (item.project != null) {
                 binding.taskProjectText.text = item.project.title
+
+                val layoutParams = binding.bottomCenterPoint.layoutParams as ConstraintLayout.LayoutParams
+                layoutParams.horizontalBias = 0.52f  // Set the desired bias value between 0.0 and 1.0
+                binding.bottomCenterPoint.layoutParams = layoutParams
             } else {
-                binding.taskProjectText.text = "N/A"
+                binding.taskProjectLayout.visibility = View.GONE
+
+                val layoutParams = binding.bottomCenterPoint.layoutParams as ConstraintLayout.LayoutParams
+                layoutParams.horizontalBias = 0.85f  // Set the desired bias value between 0.0 and 1.0
+                binding.bottomCenterPoint.layoutParams = layoutParams
             }
 
             if (item.topic != null) {
