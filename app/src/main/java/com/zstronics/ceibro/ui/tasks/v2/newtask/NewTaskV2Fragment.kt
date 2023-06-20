@@ -153,17 +153,24 @@ class NewTaskV2Fragment :
                 chooseDocuments(
                     mimeTypes = arrayOf(
                         "text/plain",
+                        "text/csv",
                         "application/pdf",
                         "application/rtf",
                         "application/zip",
+                        "application/vnd.oasis.opendocument.text",                                  // .odt
+                        "application/vnd.oasis.opendocument.spreadsheet",                           // .ods
+                        "application/vnd.oasis.opendocument.presentation",                          // .odp
                         "application/x-rar-compressed",
                         "application/vnd.android.package-archive",      //for APK file
                         "application/msword",
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .docx
+                        "application/vnd.ms-word.document.macroEnabled.12",                         // .doc
                         "application/vnd.ms-excel",
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",        // .xlsx
+                        "application/vnd.ms-excel.sheet.macroEnabled.12",                           // .xls
                         "application/vnd.ms-powerpoint",
-                        "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
+                        "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
+                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12"                 // .ppt
 //                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
 //                        "image/vnd.dwg" // AutoCAD Drawing Database (DWG)
                     )
@@ -445,13 +452,21 @@ class NewTaskV2Fragment :
             }
 
             mimeType.equals("text/plain", true) ||
+                    mimeType.equals("text/csv", true) ||
                     mimeType.equals("application/rtf", true) ||
                     mimeType.equals("application/zip", true) ||
                     mimeType.equals("application/x-rar-compressed", true) ||
+                    mimeType.equals("application/vnd.oasis.opendocument.text", true) ||
+                    mimeType.equals("application/vnd.oasis.opendocument.spreadsheet", true) ||
+                    mimeType.equals("application/vnd.oasis.opendocument.presentation", true) ||
                     mimeType.equals("application/vnd.android.package-archive", true) ||
                     mimeType.equals("application/msword", true) ||
                     mimeType.equals(
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/vnd.ms-word.document.macroEnabled.12",
                         true
                     ) ||
                     mimeType.equals("application/vnd.ms-excel", true) ||
@@ -459,9 +474,17 @@ class NewTaskV2Fragment :
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         true
                     ) ||
+                    mimeType.equals(
+                        "application/vnd.ms-excel.sheet.macroEnabled.12",
+                        true
+                    ) ||
                     mimeType.equals("application/vnd.ms-powerpoint", true) ||
                     mimeType.equals(
                         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
                         true
                     ) -> {
                 AttachmentTypes.Doc

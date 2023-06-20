@@ -92,6 +92,7 @@
                         android:layout_marginStart="@dimen/_9sdp"
                         android:layout_marginEnd="@dimen/_8sdp"
                         android:gravity="start"
+                        android:visibility="visible"
                         android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"

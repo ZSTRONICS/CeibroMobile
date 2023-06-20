@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -25,8 +26,9 @@ class TaskDetailV2Fragment :
     override val layoutResId: Int = R.layout.fragment_task_detail_v2
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
-        when(id) {
+        when (id) {
             R.id.closeBtn -> navigateBack()
+            R.id.taskInfoBtn -> showTaskInfoBottomSheet()
             R.id.taskTitleBar -> {
                 if (mViewDataBinding.taskDescriptionImageLayout.visibility == View.VISIBLE) {
                     mViewDataBinding.taskDescriptionImageLayout.visibility = View.GONE
@@ -36,6 +38,7 @@ class TaskDetailV2Fragment :
                     mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_up)
                 }
             }
+
             R.id.filesHeaderLayout -> {
                 if (mViewDataBinding.filesRV.visibility == View.VISIBLE) {
                     mViewDataBinding.filesRV.visibility = View.GONE
@@ -82,18 +85,22 @@ class TaskDetailV2Fragment :
                     R.drawable.status_new_filled_more_corners,
                     requireContext().getString(R.string.new_heading)
                 )
+
                 TaskStatus.UNREAD.name -> Pair(
                     R.drawable.status_new_filled_more_corners,
                     requireContext().getString(R.string.unread_heading)
                 )
+
                 TaskStatus.ONGOING.name -> Pair(
                     R.drawable.status_ongoing_filled_more_corners,
                     requireContext().getString(R.string.ongoing_heading)
                 )
+
                 TaskStatus.DONE.name -> Pair(
                     R.drawable.status_done_filled_more_corners,
                     requireContext().getString(R.string.done_heading)
                 )
+
                 else -> Pair(
                     R.drawable.status_draft_outline,
                     state.ifEmpty {
@@ -116,13 +123,13 @@ class TaskDetailV2Fragment :
                 DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
                 DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
             )
-            if ( mViewDataBinding.taskDetailDueDate.text == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+            if (mViewDataBinding.taskDetailDueDate.text == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
                 mViewDataBinding.taskDetailDueDate.text = DateUtils.reformatStringDate(
                     date = item.dueDate,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
                 )
-                if ( mViewDataBinding.taskDetailDueDate.text == "") {
+                if (mViewDataBinding.taskDetailDueDate.text == "") {
                     mViewDataBinding.taskDetailDueDate.text = "N/A"
                 }
             }
@@ -180,6 +187,25 @@ class TaskDetailV2Fragment :
         }
         mViewDataBinding.filesRV.adapter = filesAdapter
 
+    }
+
+
+    private fun showTaskInfoBottomSheet() {
+        val sheet = TaskInfoBottomSheet(viewModel.taskDetail.value)
+//        sheet.dialog?.window?.setSoftInputMode(
+//            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+//                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+//        );
+//        sheet.onChangePassword = { oldPassword, newPassword ->
+//            viewModel.changePassword(oldPassword, newPassword) {
+//                logoutUser()
+//            }
+//        }
+//        sheet.onChangePasswordDismiss = {
+//
+//        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "TaskInfoBottomSheet")
     }
 
 }
