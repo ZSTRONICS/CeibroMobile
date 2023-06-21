@@ -155,6 +155,7 @@
     <string name="ok_quick_reply">OK</string>
     <string name="reply_to_message_text">Reply to message</string>
     <string name="forward_message_text">Forward message</string>
+    <string name="forward_heading">Forward</string>
     <string name="make_as_task_text">Make as task</string>
     <string name="add_temporary_member_text">Add temporary member</string>
     <string name="chat_members_text">Chat members</string>

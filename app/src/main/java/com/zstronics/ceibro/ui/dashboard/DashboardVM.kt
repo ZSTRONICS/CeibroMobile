@@ -33,6 +33,7 @@ import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEv
 import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
 import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
 import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.resourses.IResourceProvider
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -86,12 +87,35 @@ class DashboardVM @Inject constructor(
                 if (socketData.module == "task") {
                     when (socketData.eventType) {
                         SocketHandler.TaskEvent.TASK_CREATED.name -> {
-                            val taskCreatedData = gson.fromJson<SocketTaskCreatedResponse>(
+                            val taskCreatedData = gson.fromJson<SocketTaskV2CreatedResponse>(
                                 arguments,
-                                object : TypeToken<SocketTaskCreatedResponse>() {}.type
+                                object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
                             )
-                            taskCreatedData.data?.let { localTask.insertTask(it) }
+//                            taskCreatedData.data?.let { localTask.insertTask(it) }
+
+                            var notificationTitle = ""
+                            notificationTitle = if (taskCreatedData.data?.topic?.topic.isNullOrEmpty()) {
+                                ""
+                            } else {
+                                taskCreatedData.data?.topic?.topic.toString()
+                            }
+
+                            EventBus.getDefault().post(LocalEvents.CreateSimpleNotification(
+                                moduleId = taskCreatedData.data?.id ?: "",
+                                moduleName = socketData.module,
+                                notificationTitle =
+                                if (notificationTitle.isNotEmpty()) {
+                                    "New task created as \"$notificationTitle\""
+                                } else {
+                                    "New task created"
+                                },
+                                isOngoing = false,
+                                indeterminate = false,
+                                notificationIcon = R.drawable.app_logo
+                            ))
                             EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+
+//                            println("TASK_CREATED $arguments")
                         }
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
                             val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(

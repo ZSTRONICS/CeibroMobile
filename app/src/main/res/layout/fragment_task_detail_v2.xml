@@ -120,12 +120,13 @@
 
 
         <ScrollView
+            android:id="@+id/bodyScroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:contentDescription="@string/appbar_scrolling_view_behavior"
             android:fillViewport="true"
             android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottomFooterLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/taskDetailHeader">
@@ -260,7 +261,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_11sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:layout_marginEnd="@dimen/_11sdp"
                     android:paddingTop="@dimen/_1sdp"
                     android:paddingBottom="@dimen/_1sdp"
@@ -273,11 +274,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:fontFamily="@font/inter_regular"
                         android:maxLines="20"
                         android:text="Task description text over here."
                         android:textColor="@color/black"
                         android:textSize="14.5sp"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -322,10 +325,10 @@
                     android:id="@+id/taskDescriptionImageBottomLine"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:alpha="0.7"
                     android:layout_marginStart="@dimen/_11sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_11sdp"
+                    android:alpha="0.7"
                     android:background="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -509,6 +512,78 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/bottomFooterLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shadowfile"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_1sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/newTaskLocationBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:drawableTop="@drawable/icon_comment"
+                android:drawableTint="@color/appBlue"
+                android:fontFamily="@font/inter_medium"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:text="@string/comment_heading"
+                android:textAllCaps="false"
+                android:textColor="@color/appBlue"
+                android:textSize="@dimen/_9sdp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/newTaskAttachBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_forward"
+                android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:text="@string/forward_heading"
+                android:textAllCaps="false"
+                android:textColor="@drawable/bottom_nav_text_color"
+                android:textSize="@dimen/_9sdp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/nextBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:layout_weight="0.85"
+                android:text="@string/done"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14.5sp"
+                android:fontFamily="@font/inter_medium"
+                android:background="@drawable/signin_button_back"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
