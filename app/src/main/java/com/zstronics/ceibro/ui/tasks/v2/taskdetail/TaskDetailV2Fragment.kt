@@ -143,7 +143,12 @@ class TaskDetailV2Fragment :
                     "- - - - -"
                 }
 
-            mViewDataBinding.taskDescription.text = item.description
+            if (item.description.isNotEmpty()) {
+                mViewDataBinding.taskDescription.text = item.description
+            } else {
+                mViewDataBinding.taskDescription.visibility = View.GONE
+            }
+
 
             if (item.files.isNotEmpty()) {
                 viewModel.separateFiles(item.files)
@@ -196,14 +201,7 @@ class TaskDetailV2Fragment :
 //            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
 //                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
 //        );
-//        sheet.onChangePassword = { oldPassword, newPassword ->
-//            viewModel.changePassword(oldPassword, newPassword) {
-//                logoutUser()
-//            }
-//        }
-//        sheet.onChangePasswordDismiss = {
-//
-//        }
+
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "TaskInfoBottomSheet")
     }

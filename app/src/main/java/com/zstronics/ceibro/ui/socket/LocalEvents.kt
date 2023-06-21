@@ -34,6 +34,15 @@ object LocalEvents {
         val notificationIcon: Int = R.drawable.icon_upload
     )
 
+    data class CreateSimpleNotification(
+        val moduleId: String,
+        val moduleName: String,
+        val notificationTitle: String,
+        val isOngoing: Boolean,
+        val indeterminate: Boolean,
+        val notificationIcon: Int = R.drawable.app_logo
+    )
+
     data class ApplyFilterOnTask(
         val projectId: String,
         val selectedStatus: String,

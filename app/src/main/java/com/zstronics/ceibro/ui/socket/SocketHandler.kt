@@ -17,6 +17,15 @@ object SocketHandler {
     const val CHAT_EVENT_REQ_OVER_SOCKET = "CHAT_EVENT_REQ_OVER_SOCKET"
     const val CEIBRO_LIVE_EVENT_BY_USER = "CEIBRO_LIVE_EVENT_BY_USER"
     const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
+    var hbCounter = 0
+    var handler = android.os.Handler()
+    var delayMillis: Long = 2000 // 2 seconds
+    var runnable = object : Runnable {
+        override fun run() {
+            sendHeartbeat()
+            handler.postDelayed(this, delayMillis)
+        }
+    }
 
     enum class TaskEvent {
         TASK_CREATED, TASK_UPDATE_PUBLIC, TASK_UPDATE_PRIVATE, SUB_TASK_CREATED, SUB_TASK_UPDATE_PUBLIC, SUB_TASK_UPDATE_PRIVATE,
@@ -53,9 +62,24 @@ object SocketHandler {
             mSocket?.on(
                 Socket.EVENT_DISCONNECT
             ) {
-                println("Socket Disconnected")
-                establishConnection()
-                println("Socket Connected again")
+                println("Heartbeat, Socket Disconnected")
+                handler.removeCallbacks(runnable)
+            }
+
+            mSocket?.on(
+                Socket.EVENT_CONNECT
+            ) {
+                handler.removeCallbacks(runnable)
+                hbCounter = 0
+                handler.postDelayed(runnable, delayMillis)
+                println("Heartbeat, Socket on Connect")
+            }
+
+            mSocket?.on(
+                "heartbeatAck"
+            ) {
+                hbCounter -= 1
+//                println("HeartbeatAck Received $hbCounter")
             }
 
         } catch (exception: URISyntaxException) {
@@ -63,10 +87,31 @@ object SocketHandler {
         }
     }
 
+    fun sendHeartbeat() {
+        if (mSocket != null) {
+            if (mSocket?.connected() == true) {
+                mSocket?.emit("heartbeat")
+                hbCounter += 1
+//                println("Heartbeat Sent $hbCounter")
+                if(hbCounter == 6) {
+                    // reconnect logic here
+                    reconnectSocket()
+                }
+                if (hbCounter > 5) {
+                    hbCounter = 0;
+                }
+            } else {
+                handler.removeCallbacks(runnable)
+                reconnectSocket()
+            }
+        }
+    }
+
     @Synchronized
     fun reconnectSocket() {
         disconnectSocket()
         setSocket()
+        println("Heartbeat, Socket Connecting...")
         establishConnection()
     }
 
@@ -98,6 +143,9 @@ object SocketHandler {
         mSocket?.io()?.off(CHAT_EVENT_REQ_OVER_SOCKET)
         mSocket?.io()?.off(CEIBRO_LIVE_EVENT_BY_USER)
         mSocket?.io()?.off(CEIBRO_LIVE_EVENT_BY_SERVER)
+        mSocket?.io()?.off("heartbeat")
+        mSocket?.io()?.off("heartbeatAck")
+        handler.removeCallbacks(runnable)
     }
 
     @Synchronized

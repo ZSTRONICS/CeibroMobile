@@ -100,16 +100,19 @@ class DashboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*Set socket and establish connection*/
-        SocketHandler.setSocket()
-        SocketHandler.establishConnection()
+        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+            println("Heartbeat, Dashboard")
+            SocketHandler.setSocket()
+            SocketHandler.establishConnection()
+        }
+
         viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
 
         val handler = Handler()
         handler.postDelayed(Runnable {
             changeSelectedTab(R.id.toMeBtn)
-        }, 40)
+        }, 50)
 
 
 
@@ -285,6 +288,21 @@ class DashboardFragment :
         Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onCreateSimpleNotification(event: LocalEvents.CreateSimpleNotification?) {
+        event?.let {
+            createNotification(
+                channelId = event.moduleId,
+                chanelName = event.moduleName,
+                notificationTitle = event.notificationTitle,
+                isOngoing = event.isOngoing,
+                indeterminate = event.indeterminate,
+                notificationIcon = event.notificationIcon
+            )
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -294,4 +312,6 @@ class DashboardFragment :
         super.onStop()
         EventBus.getDefault().unregister(this)
     }
+
+
 }
