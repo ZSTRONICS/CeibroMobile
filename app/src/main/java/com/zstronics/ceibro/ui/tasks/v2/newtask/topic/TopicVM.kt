@@ -1,17 +1,12 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.topic
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
+import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
-import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.dashboard.myconnectionsv2.MyConnectionV2VM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,6 +15,7 @@ class TopicVM @Inject constructor(
     override val viewState: TopicState,
     private val taskRepository: ITaskRepository,
     private val sessionManager: SessionManager,
+    private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITopic.State>(), ITopic.ViewModel {
     val user = sessionManager.getUser().value
 
@@ -41,23 +37,40 @@ class TopicVM @Inject constructor(
 
     fun getAllTopics(callBack: () -> Unit) {
         launch {
-            taskRepository.getAllTopics() { isSuccess, error, allTopics ->
-                if (isSuccess) {
-                    val allTopic1 = allTopics?.allTopics
-                    val recentTopic1 = allTopics?.recentTopics
+            val topicsData = topicsV2Dao.getTopicsData()
+            if (topicsData != null) {
+                val allTopics = topicsData.topicsData
+                val allTopic1 = allTopics.allTopics
+                val recentTopic1 = allTopics.recentTopics
 
-                    if (allTopic1?.isNotEmpty() == true) {
-                        originalAllTopics = allTopic1
-                        _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+                if (allTopic1.isNotEmpty()) {
+                    originalAllTopics = allTopic1
+                    _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+                }
+                if (recentTopic1.isNotEmpty()) {
+                    originalRecentTopics = recentTopic1
+                    _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
+                }
+                callBack.invoke()
+            } else {
+                taskRepository.getAllTopics { isSuccess, error, allTopics ->
+                    if (isSuccess) {
+                        val allTopic1 = allTopics?.allTopics
+                        val recentTopic1 = allTopics?.recentTopics
+
+                        if (allTopic1?.isNotEmpty() == true) {
+                            originalAllTopics = allTopic1
+                            _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+                        }
+                        if (recentTopic1?.isNotEmpty() == true) {
+                            originalRecentTopics = recentTopic1
+                            _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
+                        }
+                        callBack.invoke()
+                    } else {
+                        callBack.invoke()
+                        alert(error)
                     }
-                    if (recentTopic1?.isNotEmpty() == true) {
-                        originalRecentTopics = recentTopic1
-                        _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
-                    }
-                    callBack.invoke()
-                } else {
-                    callBack.invoke()
-                    alert(error)
                 }
             }
         }

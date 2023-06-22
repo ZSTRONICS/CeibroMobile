@@ -482,8 +482,6 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteTask.getAllTopics()) {
             is ApiResponse.Success -> {
-                val responseObj = response.data
-
                 callBack(true, "", response.data)
             }
             is ApiResponse.Error -> {

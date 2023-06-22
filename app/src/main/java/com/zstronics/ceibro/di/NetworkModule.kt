@@ -78,15 +78,7 @@ class NetworkModule {
     internal fun providesAppDatabase(@ApplicationContext context: Context): CeibroDatabase {
         return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
             .addCallback(object : RoomDatabase.Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-//                    debug("DataBasePath>>" + db.path)
-                }
 
-                override fun onOpen(db: SupportSQLiteDatabase) {
-                    super.onOpen(db)
-//                    debug("DataBasePath>>" + db.path)
-                }
             })
             .fallbackToDestructiveMigration().build()
     }
@@ -166,6 +158,15 @@ class NetworkModule {
         okHttpBuilder.readTimeout(timeoutRead.toLong(), TimeUnit.SECONDS)
         return okHttpBuilder.build()
     }
+
+    @Provides
+    fun provideTaskV2Dao(database: CeibroDatabase) = database.getTaskV2sDao()
+
+    @Provides
+    fun provideTopicsV2Dao(database: CeibroDatabase) = database.getTopicsV2Dao()
+
+    @Provides
+    fun provideProjectsV2Dao(database: CeibroDatabase) = database.getProjectsV2Dao()
 }
 
 const val timeoutRead = 30   //In seconds

@@ -5,7 +5,7 @@ import com.zstronics.ceibro.data.database.TableNames
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
-
+@Deprecated("This dao is deprecated we are using v2 from now")
 @Dao
 interface SubTaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
