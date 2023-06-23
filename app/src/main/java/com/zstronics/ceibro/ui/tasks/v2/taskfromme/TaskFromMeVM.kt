@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskfromme
 
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
@@ -9,6 +11,8 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import koleton.api.hideSkeleton
+import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,7 +43,7 @@ class TaskFromMeVM @Inject constructor(
         selectedState = "unread"
     }
 
-    fun loadAllTasks(callBack: () -> Unit) {
+    fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
             val taskLocalData = taskDao.getTasks("from-me")
             if (taskLocalData != null) {
@@ -58,6 +62,12 @@ class TaskFromMeVM @Inject constructor(
                 allOriginalTasks.postValue(allTasks)
                 callBack.invoke()
             } else {
+                if (skeletonVisible) {
+                    taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
+                        itemCount(5)
+                        color(R.color.appGrey3)
+                    }
+                }
                 when (val response = remoteTask.getAllTasks("from-me")) {
                     is ApiResponse.Success -> {
 
@@ -82,10 +92,17 @@ class TaskFromMeVM @Inject constructor(
                         originalOngoingTasks = ongoingTask
                         originalDoneTasks = doneTask
                         allOriginalTasks.postValue(allTasks)
+
+                        if (skeletonVisible) {
+                            taskRV.hideSkeleton()
+                        }
                         callBack.invoke()
                     }
                     is ApiResponse.Error -> {
                         alert(response.error.message)
+                        if (skeletonVisible) {
+                            taskRV.hideSkeleton()
+                        }
                         callBack.invoke()
                     }
                 }

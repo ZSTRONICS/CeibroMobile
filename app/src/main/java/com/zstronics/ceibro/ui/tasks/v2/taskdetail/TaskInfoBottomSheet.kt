@@ -65,8 +65,29 @@ class TaskInfoBottomSheet(_taskDetail: CeibroTaskV2?) : BottomSheetDialogFragmen
                 binding.taskAssigneeNames.text = "No assignee members"
             }
 
+            if (taskDetail.invitedNumbers.isNotEmpty()) {
+                var invitedNumber = ""
+
+                var index = 0
+                for (item in taskDetail.invitedNumbers) {
+                    invitedNumber += if (index == taskDetail.invitedNumbers.size - 1) {
+                        item
+                    } else {
+                        "${item}, "
+                    }
+                    index++
+                }
+
+                binding.taskInvitedMembersNumbers.text = invitedNumber
+            } else {
+                binding.taskInvitedMembersLayout.visibility = View.GONE
+            }
+
+
             binding.taskConfirmerName.text = "No confirmer added on this task"
             binding.taskViewerName.text = "No viewer added on this task"
+            binding.taskConfirmerLayout.visibility = View.GONE
+            binding.taskViewerLayout.visibility = View.GONE
 
             if (taskDetail.project != null && taskDetail.project.title.isNotEmpty()) {
                 binding.taskProjectName.text = taskDetail.project.title

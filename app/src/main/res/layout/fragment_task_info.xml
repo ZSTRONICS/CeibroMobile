@@ -134,7 +134,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/taskConfirmerLayout"
+            android:id="@+id/taskInvitedMembersLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="start"
@@ -145,6 +145,44 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/taskAssignToLayout">
+
+            <TextView
+                android:id="@+id/taskInvitedMembersHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/invited_members"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/taskInvitedMembersNumbers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="20"
+                android:text="+372 56470496, +372 56470496"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/taskConfirmerLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskInvitedMembersLayout">
 
             <TextView
                 android:id="@+id/taskConfirmerHeading"

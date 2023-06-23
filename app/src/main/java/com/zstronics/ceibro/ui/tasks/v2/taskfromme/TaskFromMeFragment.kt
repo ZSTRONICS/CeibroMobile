@@ -7,17 +7,10 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
-import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
-import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.task.TaskAdapter
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -157,26 +150,12 @@ class TaskFromMeFragment :
 
 
     private fun loadTasks(skeletonVisible: Boolean) {
-        if (skeletonVisible) {
-            mViewDataBinding.taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
-                itemCount(5)
-                color(R.color.appGrey3)
-            }
-
-            viewModel.loadAllTasks {
-                mViewDataBinding.taskRV.hideSkeleton()
+        viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
+            mViewDataBinding.taskRV.hideSkeleton()
 //                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
 //                if (searchQuery.isNotEmpty()) {
 //                    viewModel.searchProject(searchQuery)
 //                }
-            }
-        } else {
-            viewModel.loadAllTasks {
-//                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
-//                if (searchQuery.isNotEmpty()) {
-//                    viewModel.searchProject(searchQuery)
-//                }
-            }
         }
     }
 
