@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
@@ -19,8 +20,8 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 @Database(
     entities = [CeibroTask::class, AdvanceOptions::class, SubTaskStatusCount::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
         Viewer::class, SubTaskAdvanceOptions::class, SubTaskStateItem::class, SubTaskComments::class, TaskDataOfSubTask::class, SubTaskProject::class, FilesAttachments::class, RejectionComment::class,
-        TasksV2DatabaseEntity::class, TopicsV2DatabaseEntity::class, ProjectsV2DatabaseEntity::class],
-    version = 48,
+        TasksV2DatabaseEntity::class, TopicsV2DatabaseEntity::class, ProjectsV2DatabaseEntity::class, ConnectionsV2DatabaseEntity::class],
+    version = 49,
     exportSchema = false
 )
 @TypeConverters(
@@ -52,6 +53,8 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
     TopicDataListTypeConverter::class,
     ProjectsV2ListTypeConverter::class,
     OwnerV2TypeConverter::class,
+    UserCeibroDataTypeConverter::class,
+    CeibroConnectionListTypeConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")
@@ -65,6 +68,7 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getTaskV2sDao(): TaskV2Dao
     abstract fun getTopicsV2Dao(): TopicsV2Dao
     abstract fun getProjectsV2Dao(): ProjectsV2Dao
+    abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
 
     companion object {
         const val DB_NAME = "ceibro_app.db"

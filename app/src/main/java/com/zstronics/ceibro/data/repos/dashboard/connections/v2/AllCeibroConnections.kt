@@ -2,8 +2,12 @@ package com.zstronics.ceibro.data.repos.dashboard.connections.v2
 
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.TableNamesV2
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -60,3 +64,11 @@ data class AllCeibroConnections(
         ) : BaseResponse(), Parcelable
     }
 }
+
+@Entity(tableName = TableNamesV2.Connections)
+data class ConnectionsV2DatabaseEntity(
+    @PrimaryKey
+    val id: Int = 0,
+    @ColumnInfo("contacts")
+    val contacts: List<AllCeibroConnections.CeibroConnection>
+)

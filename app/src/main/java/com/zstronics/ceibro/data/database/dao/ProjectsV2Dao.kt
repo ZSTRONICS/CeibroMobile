@@ -6,7 +6,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseE
 @Dao
 interface ProjectsV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(task: ProjectsV2DatabaseEntity)
+    suspend fun insert(projectsData: ProjectsV2DatabaseEntity)
 
     @Query("SELECT * FROM projects_v2")
     suspend fun getAll(): ProjectsV2DatabaseEntity?
