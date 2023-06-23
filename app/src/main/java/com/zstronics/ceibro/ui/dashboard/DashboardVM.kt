@@ -7,6 +7,7 @@ import com.zstronics.ceibro.base.KEY_USER
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -19,6 +20,7 @@ import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshFolderSocketResponse
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshRootDocumentSocketResponse
@@ -59,7 +61,9 @@ class DashboardVM @Inject constructor(
     private val taskDao: TaskV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectDao: ProjectsV2Dao,
+    private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
+    var userId: String? = ""
 
     init {
         sessionManager.setUser()
@@ -70,6 +74,7 @@ class DashboardVM @Inject constructor(
 //            repository.syncTasksAndSubTasks()
 //        }
         val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
+        userId = user?.id
         EventBus.getDefault().register(this)
         loadAppData()
     }
@@ -641,6 +646,13 @@ class DashboardVM @Inject constructor(
                     }
                 }
 
+                is ApiResponse.Error -> {
+                }
+            }
+            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+                is ApiResponse.Success -> {
+                    connectionsV2Dao.insert(ConnectionsV2DatabaseEntity(1, response.data.contacts))
+                }
                 is ApiResponse.Error -> {
                 }
             }

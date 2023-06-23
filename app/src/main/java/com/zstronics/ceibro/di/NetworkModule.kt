@@ -3,7 +3,6 @@ package com.zstronics.ceibro.di
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.BuildConfig.BASE_URL
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
@@ -167,6 +166,9 @@ class NetworkModule {
 
     @Provides
     fun provideProjectsV2Dao(database: CeibroDatabase) = database.getProjectsV2Dao()
+
+    @Provides
+    fun provideConnectionsV2Dao(database: CeibroDatabase) = database.getConnectionsV2Dao()
 }
 
 const val timeoutRead = 30   //In seconds

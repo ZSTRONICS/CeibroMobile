@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
@@ -18,7 +19,8 @@ class MyConnectionV2VM @Inject constructor(
     override val viewState: MyConnectionV2State,
     val sessionManager: SessionManager,
     val dashboardRepository: IDashboardRepository,
-    private val resProvider: IResourceProvider
+    private val resProvider: IResourceProvider,
+    private val connectionsV2Dao: ConnectionsV2Dao
 ) : HiltBaseViewModel<IMyConnectionV2.State>(), IMyConnectionV2.ViewModel {
     val user = sessionManager.getUser().value
     private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
@@ -40,20 +42,30 @@ class MyConnectionV2VM @Inject constructor(
     fun getAllConnectionsV2(callBack: () -> Unit) {
         val userId = sessionManager.getUser().value?.id
         launch {
-            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
-
-                is ApiResponse.Success -> {
-                    val contacts = response.data.contacts.sortedByDescending { it.isCeiborUser }
-                    callBack.invoke()
-                    originalConnections = contacts
-                    if (contacts.isNotEmpty()) {
-                        _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
-                    }
+            val connectionsData = connectionsV2Dao.getAll()
+            if (connectionsData != null) {
+                val contacts = connectionsData.contacts.sortedByDescending { it.isCeiborUser }
+                callBack.invoke()
+                originalConnections = contacts
+                if (contacts.isNotEmpty()) {
+                    _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
                 }
+                callBack.invoke()
+            } else {
+                when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+                    is ApiResponse.Success -> {
+                        val contacts = response.data.contacts.sortedByDescending { it.isCeiborUser }
+                        callBack.invoke()
+                        originalConnections = contacts
+                        if (contacts.isNotEmpty()) {
+                            _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+                        }
+                    }
 
-                is ApiResponse.Error -> {
-                    callBack.invoke()
-                    alert(response.error.message)
+                    is ApiResponse.Error -> {
+                        callBack.invoke()
+                        alert(response.error.message)
+                    }
                 }
             }
         }
@@ -113,7 +125,8 @@ class MyConnectionV2VM @Inject constructor(
             return
         }
         val filtered = originalConnections.filter {
-            (!it.contactFullName.isNullOrEmpty() && it.contactFullName.lowercase().contains(search.trim(), true)) ||
+            (!it.contactFullName.isNullOrEmpty() && it.contactFullName.lowercase()
+                .contains(search.trim(), true)) ||
                     (!it.contactFirstName.isNullOrEmpty() && it.contactFirstName.lowercase()
                         .contains(search.trim(), true)) ||
                     (!it.contactSurName.isNullOrEmpty() && it.contactSurName.lowercase()
