@@ -154,26 +154,12 @@ class TaskToMeFragment :
 
 
     private fun loadTasks(skeletonVisible: Boolean) {
-        if (skeletonVisible) {
-            mViewDataBinding.taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
-                itemCount(5)
-                color(R.color.appGrey3)
-            }
-
-            viewModel.loadAllTasks {
-                mViewDataBinding.taskRV.hideSkeleton()
+        viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
+            mViewDataBinding.taskRV.hideSkeleton()
 //                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
 //                if (searchQuery.isNotEmpty()) {
 //                    viewModel.searchProject(searchQuery)
 //                }
-            }
-        } else {
-            viewModel.loadAllTasks {
-//                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
-//                if (searchQuery.isNotEmpty()) {
-//                    viewModel.searchProject(searchQuery)
-//                }
-            }
         }
     }
 

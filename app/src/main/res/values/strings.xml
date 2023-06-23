@@ -407,4 +407,5 @@
     <string name="details_view">Details view</string>
     <string name="added_details">Added details</string>
     <string name="task_details_info">Task details info</string>
+    <string name="invited_members">Invited members</string>
 </resources>
