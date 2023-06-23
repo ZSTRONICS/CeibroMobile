@@ -7,9 +7,13 @@ import com.zstronics.ceibro.base.KEY_USER
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
@@ -24,18 +28,14 @@ import com.zstronics.ceibro.data.repos.projects.member.MemberAddedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectCreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
-import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
-import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketTaskCreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
+import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.resourses.IResourceProvider
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,13 +50,15 @@ class DashboardVM @Inject constructor(
     val sessionManager: SessionManager,
     private val localTask: TaskLocalDataSource,
     val localSubTask: SubTaskLocalDataSource,
-    private val repository: ITaskRepository,
     private val taskRepository: TaskRepository,
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
     private val authRepository: IAuthRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource,
-    val iResourceProvider: IResourceProvider
+    private val remoteTask: TaskRemoteDataSource,
+    private val taskDao: TaskV2Dao,
+    private val topicsV2Dao: TopicsV2Dao,
+    private val projectDao: ProjectsV2Dao,
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
 
     init {
@@ -68,10 +70,11 @@ class DashboardVM @Inject constructor(
 //            repository.syncTasksAndSubTasks()
 //        }
         val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
+        EventBus.getDefault().register(this)
+        loadAppData()
     }
 
     init {
-        EventBus.getDefault().register(this)
     }
 
     override fun handleSocketEvents() {
@@ -94,25 +97,28 @@ class DashboardVM @Inject constructor(
 //                            taskCreatedData.data?.let { localTask.insertTask(it) }
 
                             var notificationTitle = ""
-                            notificationTitle = if (taskCreatedData.data?.topic?.topic.isNullOrEmpty()) {
-                                ""
-                            } else {
-                                taskCreatedData.data?.topic?.topic.toString()
-                            }
-
-                            EventBus.getDefault().post(LocalEvents.CreateSimpleNotification(
-                                moduleId = taskCreatedData.data?.id ?: "",
-                                moduleName = socketData.module,
-                                notificationTitle =
-                                if (notificationTitle.isNotEmpty()) {
-                                    "New task created as \"$notificationTitle\""
+                            notificationTitle =
+                                if (taskCreatedData.data?.topic?.topic.isNullOrEmpty()) {
+                                    ""
                                 } else {
-                                    "New task created"
-                                },
-                                isOngoing = false,
-                                indeterminate = false,
-                                notificationIcon = R.drawable.app_logo
-                            ))
+                                    taskCreatedData.data?.topic?.topic.toString()
+                                }
+
+                            EventBus.getDefault().post(
+                                LocalEvents.CreateSimpleNotification(
+                                    moduleId = taskCreatedData.data?.id ?: "",
+                                    moduleName = socketData.module,
+                                    notificationTitle =
+                                    if (notificationTitle.isNotEmpty()) {
+                                        "New task created as \"$notificationTitle\""
+                                    } else {
+                                        "New task created"
+                                    },
+                                    isOngoing = false,
+                                    indeterminate = false,
+                                    notificationIcon = R.drawable.app_logo
+                                )
+                            )
                             EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
 
 //                            println("TASK_CREATED $arguments")
@@ -584,5 +590,60 @@ class DashboardVM @Inject constructor(
             taskRepository.eraseSubTaskTable()
         }
         sessionManager.endUserSession()
+    }
+
+    private fun loadAppData() {
+        launch {
+            when (val response = remoteTask.getAllTasks("to-me")) {
+                is ApiResponse.Success -> {
+                    taskDao.insertTaskData(
+                        TasksV2DatabaseEntity(
+                            rootState = "to-me",
+                            allTasks = response.data.allTasks
+                        )
+                    )
+                }
+                is ApiResponse.Error -> {
+                }
+            }
+
+            when (val response = remoteTask.getAllTasks("from-me")) {
+                is ApiResponse.Success -> {
+                    taskDao.insertTaskData(
+                        TasksV2DatabaseEntity(
+                            rootState = "from-me",
+                            allTasks = response.data.allTasks
+                        )
+                    )
+                }
+                is ApiResponse.Error -> {
+                }
+            }
+
+            when (val response = remoteTask.getAllTopics()) {
+                is ApiResponse.Success -> {
+                    topicsV2Dao.insertTopicData(
+                        TopicsV2DatabaseEntity(
+                            0,
+                            topicsData = response.data
+                        )
+                    )
+                }
+                is ApiResponse.Error -> {
+                }
+            }
+
+            when (val response = projectRepository.getProjectsV2()) {
+                is ApiResponse.Success -> {
+                    val data = response.data.projects
+                    if (data != null) {
+                        projectDao.insert(ProjectsV2DatabaseEntity(1, projects = data))
+                    }
+                }
+
+                is ApiResponse.Error -> {
+                }
+            }
+        }
     }
 }

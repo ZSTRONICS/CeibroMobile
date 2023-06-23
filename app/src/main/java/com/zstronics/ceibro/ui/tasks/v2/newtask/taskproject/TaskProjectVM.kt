@@ -1,15 +1,12 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.taskproject
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
-import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.tasks.v2.newtask.topic.TopicVM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,7 +14,8 @@ import javax.inject.Inject
 class TaskProjectVM @Inject constructor(
     override val viewState: TaskProjectState,
     val sessionManager: SessionManager,
-    private val projectRepository: IProjectRepository
+    private val projectRepository: IProjectRepository,
+    private val projectDao: ProjectsV2Dao,
 ) : HiltBaseViewModel<ITaskProject.State>(), ITaskProject.ViewModel {
     val user = sessionManager.getUser().value
 
@@ -35,21 +33,28 @@ class TaskProjectVM @Inject constructor(
 
     fun loadProjects(callBack: () -> Unit) {
         launch {
-            when (val response = projectRepository.getProjectsV2()) {
-
-                is ApiResponse.Success -> {
-                    val data = response.data.projects
-                    if (data != null) {
-                        originalAllProjects =
-                            (data as MutableList<AllProjectsResponseV2.ProjectsV2>).toMutableList()
-                        _allProjects.postValue(originalAllProjects)
+            val projectsData = projectDao.getAll()
+            if (projectsData != null) {
+                originalAllProjects =
+                    projectsData.projects as MutableList<AllProjectsResponseV2.ProjectsV2>
+                _allProjects.postValue(originalAllProjects)
+                callBack.invoke()
+            } else {
+                when (val response = projectRepository.getProjectsV2()) {
+                    is ApiResponse.Success -> {
+                        val data = response.data.projects
+                        if (data != null) {
+                            originalAllProjects =
+                                (data as MutableList<AllProjectsResponseV2.ProjectsV2>).toMutableList()
+                            _allProjects.postValue(originalAllProjects)
+                        }
+                        callBack.invoke()
                     }
-                    callBack.invoke()
-                }
 
-                is ApiResponse.Error -> {
-                    alert(response.error.message)
-                    callBack.invoke()
+                    is ApiResponse.Error -> {
+                        alert(response.error.message)
+                        callBack.invoke()
+                    }
                 }
             }
         }

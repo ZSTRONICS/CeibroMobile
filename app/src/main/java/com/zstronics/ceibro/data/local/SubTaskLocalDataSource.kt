@@ -4,7 +4,7 @@ import com.zstronics.ceibro.data.database.dao.SubTaskDao
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import javax.inject.Inject
-
+@Deprecated("This SubTaskLocalDataSource onward from v2")
 class SubTaskLocalDataSource @Inject constructor(private val subTaskDao: SubTaskDao) :
     ISubTaskLocalDataSource {
     override suspend fun getSubTasks(): List<AllSubtask> = subTaskDao.getAllSubTasks()

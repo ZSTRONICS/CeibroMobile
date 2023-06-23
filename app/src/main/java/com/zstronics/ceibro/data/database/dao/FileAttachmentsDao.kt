@@ -2,7 +2,7 @@ package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.*
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
-
+@Deprecated("This dao is deprecated we are using v2 from now")
 @Dao
 interface FileAttachmentsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

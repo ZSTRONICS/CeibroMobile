@@ -1,22 +1,21 @@
 package com.zstronics.ceibro.ui.tasks.v2.tasktome
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
-    private val remoteTask: TaskRemoteDataSource
+    private val remoteTask: TaskRemoteDataSource,
+    private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     var selectedState: String = "new"
 
@@ -42,27 +41,52 @@ class TaskToMeVM @Inject constructor(
 
     fun loadAllTasks(callBack: () -> Unit) {
         launch {
-            when (val response = remoteTask.getAllTasks("to-me")) {
-                is ApiResponse.Success -> {
-                    val newTask = response.data.allTasks.new
-                    val ongoingTask = response.data.allTasks.ongoing
-                    val doneTask = response.data.allTasks.done
-                    val allTasks = response.data.allTasks
+            val taskLocalData = taskDao.getTasks("to-me")
+            if (taskLocalData != null) {
+                val allTasks = taskLocalData.allTasks
+                val newTask = allTasks.new
+                val ongoingTask = allTasks.ongoing
+                val doneTask = allTasks.done
 
-                    _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
-                    _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                    _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-                    _allTasks.postValue(allTasks)
+                _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
+                _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
+                _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                _allTasks.postValue(allTasks)
 
-                    originalNewTasks = newTask
-                    originalOngoingTasks = ongoingTask
-                    originalDoneTasks = doneTask
-                    allOriginalTasks.postValue(allTasks)
-                    callBack.invoke()
-                }
-                is ApiResponse.Error -> {
-                    alert(response.error.message)
-                    callBack.invoke()
+                originalNewTasks = newTask
+                originalOngoingTasks = ongoingTask
+                originalDoneTasks = doneTask
+                allOriginalTasks.postValue(allTasks)
+                callBack.invoke()
+            } else {
+                when (val response = remoteTask.getAllTasks("to-me")) {
+                    is ApiResponse.Success -> {
+                        taskDao.insertTaskData(
+                            TasksV2DatabaseEntity(
+                                rootState = "to-me",
+                                allTasks = response.data.allTasks
+                            )
+                        )
+                        val newTask = response.data.allTasks.new
+                        val ongoingTask = response.data.allTasks.ongoing
+                        val doneTask = response.data.allTasks.done
+                        val allTasks = response.data.allTasks
+
+                        _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
+                        _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
+                        _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                        _allTasks.postValue(allTasks)
+
+                        originalNewTasks = newTask
+                        originalOngoingTasks = ongoingTask
+                        originalDoneTasks = doneTask
+                        allOriginalTasks.postValue(allTasks)
+                        callBack.invoke()
+                    }
+                    is ApiResponse.Error -> {
+                        alert(response.error.message)
+                        callBack.invoke()
+                    }
                 }
             }
         }
@@ -83,16 +107,14 @@ class TaskToMeVM @Inject constructor(
                             it.description.contains(query.trim(), true)
                 }
             _newTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
-        }
-        else if (selectedState.equals("ongoing", true)) {
+        } else if (selectedState.equals("ongoing", true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true)
                 }
             _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
-        }
-        else if (selectedState.equals("done", true)) {
+        } else if (selectedState.equals("done", true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
