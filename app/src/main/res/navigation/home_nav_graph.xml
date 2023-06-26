@@ -365,5 +365,14 @@
         android:id="@+id/taskDetailV2Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskDetailV2Fragment"
         android:label="TaskDetailV2Fragment"
-        tools:layout="@layout/fragment_task_detail_v2"  />
+        tools:layout="@layout/fragment_task_detail_v2"  >
+        <action
+            android:id="@+id/action_taskDetailV2Fragment_to_forwardFragment"
+            app:destination="@id/forwardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forwardFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.ForwardFragment"
+        android:label="ForwardFragment"
+        tools:layout="@layout/fragment_forward"/>
 </navigation>

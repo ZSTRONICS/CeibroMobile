@@ -127,6 +127,8 @@ class TaskToMeFragment :
             { _: View, position: Int, data: CeibroTaskV2 ->
                 val bundle = Bundle()
                 bundle.putParcelable("taskDetail", data)
+                bundle.putString("rootState", "to-me")
+                bundle.putString("selectedState", viewModel.selectedState)
                 navigate(R.id.taskDetailV2Fragment, bundle)
             }
 

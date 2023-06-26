@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/_1sdp"
+        android:paddingBottom="@dimen/_1sdp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/eventName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="@string/forwarded_by"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/eventBy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="Kristo Vunukainen"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/eventName"
+            app:layout_constraintEnd_toStartOf="@+id/eventDate"
+            app:layout_constraintStart_toEndOf="@+id/eventName"
+            app:layout_constraintTop_toTopOf="@+id/eventName" />
+
+        <TextView
+            android:id="@+id/eventDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:maxLength="16"
+            android:maxLines="1"
+            android:text="Mon, 14.04.23"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/eventName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/eventName" />
+
+        <TextView
+            android:id="@+id/onlyComment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="20"
+            android:text="Only comment will be shown here"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eventName" />
+
+        <TextView
+            android:id="@+id/forwardedToNames"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:maxLines="10"
+            android:text="Kristo Vunukainen ; Kristo Vunukainen"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/onlyComment" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/onlyImagesRV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/forwardedToNames"
+            tools:itemCount="3"
+            tools:listitem="@layout/layout_ceibro_only_image" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/imagesWithCommentRV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV"
+            tools:itemCount="1"
+            tools:listitem="@layout/layout_ceibro_image_with_comment" />
+
+
+        <View
+            android:id="@+id/eventsBottomLine"
+            android:layout_width="0dp"
+            android:layout_height="0.9dp"
+            android:alpha="0.6"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:background="@color/appGrey3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

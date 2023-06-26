@@ -1,14 +1,19 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.navgraph.BackNavigationResult
+import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
@@ -18,17 +23,37 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class TaskDetailV2Fragment :
-    BaseNavViewModelFragment<FragmentTaskDetailV2Binding, ITaskDetailV2.State, TaskDetailV2VM>() {
+    BaseNavViewModelFragment<FragmentTaskDetailV2Binding, ITaskDetailV2.State, TaskDetailV2VM>(),
+    BackNavigationResultListener {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: TaskDetailV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_task_detail_v2
     override fun toolBarVisibility(): Boolean = false
+    val FORWARD_REQUEST_CODE = 105
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
+            R.id.newTaskForwardBtn -> {
+                val assignTo = viewModel.taskDetail.value?.assignedToState?.map { it.phoneNumber }
+                val invited = viewModel.taskDetail.value?.invitedNumbers?.map { it.phoneNumber }
+                val combinedList = arrayListOf<String>()
+                if (assignTo != null) {
+                    combinedList.addAll(assignTo)
+                }
+                if (invited != null) {
+                    combinedList.addAll(invited)
+                }
+
+                val bundle = Bundle()
+                bundle.putStringArrayList(
+                    "assignToContacts",
+                    combinedList
+                )
+                navigateForResult(R.id.forwardFragment, FORWARD_REQUEST_CODE, bundle)
+            }
             R.id.taskTitleBar -> {
                 if (mViewDataBinding.taskDescriptionImageLayout.visibility == View.VISIBLE) {
                     mViewDataBinding.taskDescriptionImageLayout.visibility = View.GONE
@@ -48,6 +73,16 @@ class TaskDetailV2Fragment :
                     mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
                 }
             }
+
+            R.id.eventsHeaderLayout -> {
+                if (mViewDataBinding.eventsRV.visibility == View.VISIBLE) {
+                    mViewDataBinding.eventsRV.visibility = View.GONE
+                    mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
+                } else {
+                    mViewDataBinding.eventsRV.visibility = View.VISIBLE
+                    mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+                }
+            }
         }
     }
 
@@ -60,6 +95,9 @@ class TaskDetailV2Fragment :
 
     @Inject
     lateinit var filesAdapter: FilesRVAdapter
+
+    @Inject
+    lateinit var eventsAdapter: EventsRVAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -153,6 +191,13 @@ class TaskDetailV2Fragment :
             if (item.files.isNotEmpty()) {
                 viewModel.separateFiles(item.files)
             }
+
+            if (item.events.isNotEmpty()) {
+                mViewDataBinding.eventsLayout.visibility = View.VISIBLE
+                viewModel.handleEvents(item.events)
+            } else {
+                mViewDataBinding.eventsLayout.visibility = View.GONE
+            }
         }
 
 
@@ -192,6 +237,18 @@ class TaskDetailV2Fragment :
         }
         mViewDataBinding.filesRV.adapter = filesAdapter
 
+
+        viewModel.taskEvents.observe(viewLifecycleOwner) {
+            eventsAdapter.setList(it)
+            mViewDataBinding.eventsLayout.visibility =
+                if (it.isNotEmpty()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+        }
+        mViewDataBinding.eventsRV.adapter = eventsAdapter
+
     }
 
 
@@ -204,6 +261,58 @@ class TaskDetailV2Fragment :
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "TaskInfoBottomSheet")
+    }
+
+
+    override fun onNavigationResult(result: BackNavigationResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            when (result.requestCode) {
+                FORWARD_REQUEST_CODE -> {
+                    val selectedContact = result.data?.getParcelableArray("forwardContacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val taskData = viewModel.taskDetail.value
+
+                    if (!selectedContactList.isNullOrEmpty()) {
+                        var state = "new"
+                        if (taskData != null) {
+                            state = if (viewModel.user?.id == taskData.creator.id) {
+                                taskData.creatorState
+                            } else {
+                                taskData.assignedToState.find { it.userId == viewModel.user?.id }?.state
+                                    ?: "new"
+                            }
+                        }
+                        if (state.equals(TaskStatus.UNREAD.name, true)) {
+                            state = "new"
+                        }
+
+                        val assignedToCeibroUsers =
+                            selectedContactList.filter { it.isCeiborUser }
+                                .map {
+                                    ForwardTaskV2Request.AssignedToState(
+                                        phoneNumber = it.phoneNumber,
+                                        userId = it.userCeibroData?.id.toString(),
+                                        state = state
+                                    )
+                                } ?: listOf()
+                        val invitedNumbers = selectedContactList.filter { !it.isCeiborUser }
+                            .map { it.phoneNumber } ?: listOf()
+
+
+                        val forwardTaskRequest = ForwardTaskV2Request(
+                            assignedToState = assignedToCeibroUsers,
+                            invitedNumbers = invitedNumbers
+                        )
+
+                        viewModel.forwardTask(taskData?.id ?: "", forwardTaskRequest) { task ->
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

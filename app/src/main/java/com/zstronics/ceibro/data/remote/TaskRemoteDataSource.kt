@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import javax.inject.Inject
@@ -31,6 +32,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             call =
             {
                 service.newTaskV2(newTask)
+            }
+        )
+
+    override suspend fun forwardTask(taskId: String, forwardTaskV2Request: ForwardTaskV2Request): ApiResponse<NewTaskV2Response> =
+        executeSafely(
+            call =
+            {
+                service.forwardTask(taskId, forwardTaskV2Request)
             }
         )
 

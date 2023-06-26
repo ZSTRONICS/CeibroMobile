@@ -3,7 +3,9 @@ package com.zstronics.ceibro.data.repos.task
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 
 interface ITaskRepository {
@@ -18,6 +20,12 @@ interface ITaskRepository {
     suspend fun newTaskV2(
         newTask: NewTaskV2Request,
         callBack: (isSuccess: Boolean, taskId: String) -> Unit
+    )
+
+    suspend fun forwardTask(
+        taskId: String,
+        forwardTaskV2Request: ForwardTaskV2Request,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?) -> Unit
     )
 
     suspend fun newTaskNoAdvanceOptions(
