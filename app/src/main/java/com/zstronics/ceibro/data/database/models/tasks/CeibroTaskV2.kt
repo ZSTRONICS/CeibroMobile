@@ -31,7 +31,7 @@ data class CeibroTaskV2(
     @SerializedName("_id")
     val id: String,
     @SerializedName("invitedNumbers")
-    val invitedNumbers: List<String>,
+    val invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
     val locations: List<String>,
     @SerializedName("project")
@@ -49,7 +49,9 @@ data class CeibroTaskV2(
     @SerializedName("__v")
     val v: Int,
     @SerializedName("files")
-    val files: List<Files>
+    val files: List<Files>,
+    @SerializedName("events")
+    val events: List<Events>
 ) : Parcelable
 
 @Parcelize
@@ -138,4 +140,55 @@ data class Files(
     val v: Int,
     @SerializedName("version")
     val version: Int
+) : Parcelable
+
+@Parcelize
+@Keep
+data class Events(
+    @SerializedName("comment")
+    val comment: String,
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("eventData")
+    val eventData: List<EventData>,
+    @SerializedName("eventType")
+    val eventType: String,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("initiator")
+    val initiator: TaskMemberDetail,
+    @SerializedName("taskId")
+    val taskId: String,
+    @SerializedName("updatedAt")
+    val updatedAt: String,
+    @SerializedName("__v")
+    val v: Int
+) : Parcelable
+
+
+@Parcelize
+@Keep
+data class EventData(
+    @SerializedName("firstName")
+    val firstName: String,
+    @SerializedName("_id")
+    val id: String?,
+    @SerializedName("phoneNumber")
+    val phoneNumber: String?,
+    @SerializedName("profilePic")
+    val profilePic: String?,
+    @SerializedName("surName")
+    val surName: String
+) : Parcelable
+
+
+@Parcelize
+@Keep
+data class InvitedNumbers(
+    @SerializedName("firstName")
+    val firstName: String,
+    @SerializedName("phoneNumber")
+    val phoneNumber: String,
+    @SerializedName("surName")
+    val surName: String
 ) : Parcelable

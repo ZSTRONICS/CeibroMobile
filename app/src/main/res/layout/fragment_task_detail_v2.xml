@@ -441,7 +441,7 @@
                     android:layout_marginStart="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_11sdp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/filesLayout">
@@ -466,7 +466,7 @@
                             android:fontFamily="@font/inter_semibold"
                             android:text="@string/added_details"
                             android:textColor="@color/black"
-                            android:textSize="15.5sp"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -475,7 +475,7 @@
                             android:id="@+id/eventsDownUpIcon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/icon_navigate_down"
+                            android:src="@drawable/icon_navigate_up"
                             app:layout_constraintBottom_toBottomOf="@+id/eventsHeading"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/eventsHeading" />
@@ -487,6 +487,7 @@
                         android:layout_width="0dp"
                         android:layout_height="0.9dp"
                         android:alpha="0.6"
+                        android:layout_marginTop="@dimen/_4sdp"
                         android:background="@color/appGrey3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -504,9 +505,9 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventsHeaderLayout"
+                        app:layout_constraintTop_toBottomOf="@+id/eventsRVBottomLine"
                         tools:itemCount="2"
-                        tools:listitem="@layout/layout_ceibro_files" />
+                        tools:listitem="@layout/layout_ceibro_task_events" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -530,7 +531,7 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/newTaskLocationBtn"
+                android:id="@+id/newTaskCommentBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -549,7 +550,7 @@
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/newTaskAttachBtn"
+                android:id="@+id/newTaskForwardBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_10sdp"

@@ -71,9 +71,17 @@ class TaskInfoBottomSheet(_taskDetail: CeibroTaskV2?) : BottomSheetDialogFragmen
                 var index = 0
                 for (item in taskDetail.invitedNumbers) {
                     invitedNumber += if (index == taskDetail.invitedNumbers.size - 1) {
-                        item
+                        if (item.firstName.isNotEmpty()) {
+                            "${item.firstName} ${item.surName}"
+                        } else {
+                            item.phoneNumber
+                        }
                     } else {
-                        "${item}, "
+                        if (item.firstName.isNotEmpty()) {
+                            "${item.firstName} ${item.surName}, "
+                        } else {
+                            "${item.phoneNumber}, "
+                        }
                     }
                     index++
                 }

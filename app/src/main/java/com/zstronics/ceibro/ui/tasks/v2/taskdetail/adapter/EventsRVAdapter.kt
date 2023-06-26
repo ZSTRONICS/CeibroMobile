@@ -1,0 +1,131 @@
+package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
+import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
+import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
+import com.zstronics.ceibro.databinding.LayoutCeibroTaskEventsBinding
+import com.zstronics.ceibro.utils.DateUtils
+import ee.zstronics.ceibro.camera.PickedImages
+import javax.inject.Inject
+
+class EventsRVAdapter @Inject constructor() :
+    RecyclerView.Adapter<EventsRVAdapter.EventsViewHolder>() {
+    var itemClickListener: ((view: View, position: Int, data: Events) -> Unit)? =
+        null
+    var listItems: MutableList<Events> = mutableListOf()
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): EventsViewHolder {
+        return EventsViewHolder(
+            LayoutCeibroTaskEventsBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+    }
+
+    override fun onBindViewHolder(holder: EventsViewHolder, position: Int) {
+        holder.bind(listItems[position])
+    }
+
+    override fun getItemCount(): Int {
+        return listItems.size
+    }
+
+    fun setList(list: List<Events>) {
+        this.listItems.clear()
+        this.listItems.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    inner class EventsViewHolder(private val binding: LayoutCeibroTaskEventsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: Events) {
+//            binding.clearIcon.setOnClickListener {
+//                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+//            }
+
+            val context = binding.eventName.context
+            binding.onlyComment.visibility = View.GONE
+            binding.onlyImagesRV.visibility = View.GONE
+            binding.imagesWithCommentRV.visibility = View.GONE
+            binding.forwardedToNames.visibility = View.GONE
+
+            binding.eventName.text = ""
+            binding.eventBy.text = "${item.initiator.firstName} ${item.initiator.surName}"
+            binding.eventDate.text = DateUtils.reformatStringDate(
+                date = item.createdAt,
+                DateUtils.SERVER_DATE_FULL_FORMAT,
+                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY
+            )
+
+
+            when (item.eventType) {
+                TaskDetailEvents.ForwardTask.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.VISIBLE
+
+                    binding.eventName.text = context.resources.getString(R.string.forwarded_by)
+
+                    var forwardedToUsers = "To: "
+                    var index = 0
+                    if (item.eventData.isNotEmpty()) {
+                        for (event in item.eventData) {
+                            forwardedToUsers += if (index == item.eventData.size - 1) {
+                                "${event.firstName} ${event.surName}"
+                            } else {
+                                "${event.firstName} ${event.surName} ; "
+                            }
+                            index++
+                        }
+                    }
+                    binding.forwardedToNames.text = forwardedToUsers
+
+                }
+                TaskDetailEvents.InvitedUser.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.VISIBLE
+
+                    binding.eventName.text = context.resources.getString(R.string.invited_by)
+
+                    var invitedUsers = "To: "
+                    var index = 0
+                    for (event in item.eventData) {
+                        invitedUsers += if (index == item.eventData.size - 1) {
+                            if (event.firstName.isNotEmpty()) {
+                                "${event.firstName} ${event.surName}"
+                            } else {
+                                event.phoneNumber
+                            }
+                        } else {
+                            if (event.firstName.isNotEmpty()) {
+                                "${event.firstName} ${event.surName} ; "
+                            } else {
+                                "${event.phoneNumber} ; "
+                            }
+                        }
+                        index++
+                    }
+                    binding.forwardedToNames.text = invitedUsers
+                }
+            }
+
+        }
+    }
+}

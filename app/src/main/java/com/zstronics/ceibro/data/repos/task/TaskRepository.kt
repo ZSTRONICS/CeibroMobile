@@ -4,11 +4,13 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import javax.inject.Inject
 
@@ -69,6 +71,21 @@ class TaskRepository @Inject constructor(
             }
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun forwardTask(
+        taskId: String,
+        forwardTaskV2Request: ForwardTaskV2Request,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?) -> Unit
+    ) {
+        when (val response = remoteTask.forwardTask(taskId, forwardTaskV2Request)) {
+            is ApiResponse.Success -> {
+                callBack(true, response.data.newTask)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, null)
             }
         }
     }

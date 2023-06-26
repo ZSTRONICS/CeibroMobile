@@ -408,4 +408,8 @@
     <string name="added_details">Added details</string>
     <string name="task_details_info">Task details info</string>
     <string name="invited_members">Invited members</string>
+    <string name="added_by">Added by</string>
+    <string name="forwarded_by">Forwarded by</string>
+    <string name="invited_by">Invited by</string>
+    <string name="done_by">Done by</string>
 </resources>

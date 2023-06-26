@@ -22,13 +22,13 @@ data class TaskV2Response(
     @Keep
     data class AllTasks(
         @SerializedName("done")
-        val done: List<CeibroTaskV2>,
+        var done: List<CeibroTaskV2>,
         @SerializedName("new")
-        val new: List<CeibroTaskV2>,
+        var new: List<CeibroTaskV2>,
         @SerializedName("ongoing")
-        val ongoing: List<CeibroTaskV2>,
+        var ongoing: List<CeibroTaskV2>,
         @SerializedName("unread")
-        val unread: List<CeibroTaskV2>
+        var unread: List<CeibroTaskV2>
     ) : BaseResponse(), Parcelable
 }
 
