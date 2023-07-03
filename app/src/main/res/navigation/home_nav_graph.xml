@@ -369,10 +369,18 @@
         <action
             android:id="@+id/action_taskDetailV2Fragment_to_forwardFragment"
             app:destination="@id/forwardFragment" />
+        <action
+            android:id="@+id/action_taskDetailV2Fragment_to_commentFragment"
+            app:destination="@id/commentFragment" />
     </fragment>
     <fragment
         android:id="@+id/forwardFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.ForwardFragment"
         android:label="ForwardFragment"
         tools:layout="@layout/fragment_forward"/>
+    <fragment
+        android:id="@+id/commentFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentFragment"
+        android:label="CommentFragment"
+        tools:layout="@layout/fragment_comment"/>
 </navigation>
