@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.assignee
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
@@ -37,6 +39,7 @@ class AssigneeVM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
+        val selfAssigned = bundle?.getBoolean("self-assign")
         val selectedContact = bundle?.getParcelableArray("contacts")
         val selectedContactList =
             selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
@@ -44,6 +47,13 @@ class AssigneeVM @Inject constructor(
         if (!selectedContactList.isNullOrEmpty()) {
             selectedContacts.postValue(selectedContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
         }
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            if (selfAssigned != null) {
+                viewState.isSelfAssigned.value = selfAssigned
+            }
+        }, 50)
+
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {

@@ -16,6 +16,7 @@ class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
     override var selectedTopic: MutableLiveData<TopicsResponse.TopicData> = MutableLiveData()
     override var selectedProject: MutableLiveData<AllProjectsResponseV2.ProjectsV2> = MutableLiveData()
     override var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    override var selfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
     override var assignToText: MutableLiveData<String> = MutableLiveData("")
     override var projectText: MutableLiveData<String> = MutableLiveData("")
     override var description: MutableLiveData<String> = MutableLiveData("")

@@ -38,8 +38,8 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_3sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:background="@null"
             android:elevation="0dp"
             android:iconifiedByDefault="false"
@@ -137,14 +137,31 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingTop="0dp"
                     android:paddingBottom="@dimen/_2sdp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV"
+                    app:layout_constraintTop_toBottomOf="@+id/selfAssignCheckBox"
                     tools:itemCount="3"
                     tools:listitem="@layout/layout_item_assignee_header" />
+
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/selfAssignCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="@{viewState.isSelfAssigned}"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="@string/self_assign"
+                    android:textColor="@color/appTextGrey"
+                    android:textSize="14.5sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

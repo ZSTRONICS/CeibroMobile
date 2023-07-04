@@ -85,6 +85,7 @@ class NewTaskV2Fragment :
                     "contacts",
                     viewState.selectedContacts.value?.toTypedArray()
                 )
+                bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
                 navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE, bundle)
             }
 
@@ -109,6 +110,7 @@ class NewTaskV2Fragment :
 
             R.id.newTaskAssignToClearBtn -> {
                 viewState.assignToText.value = ""
+                viewState.selfAssigned.value = false
                 viewState.selectedContacts = MutableLiveData()
             }
 
@@ -526,11 +528,31 @@ class NewTaskV2Fragment :
                 }
 
                 ASSIGNEE_REQUEST_CODE -> {
+                    val selfAssigned = result.data?.getBoolean("self-assign")
                     val selectedContact = result.data?.getParcelableArray("contacts")
                     val selectedContactList =
                         selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
                             ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
                     var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        viewState.selfAssigned.value = selfAssigned
+                    }
 
                     var index = 0
                     if (selectedContactList != null) {
@@ -542,9 +564,9 @@ class NewTaskV2Fragment :
                             }
                             index++
                         }
-                        viewState.assignToText.value = assigneeMembers
                         viewState.selectedContacts.value = selectedContactList
                     }
+                    viewState.assignToText.value = assigneeMembers
                 }
 
                 PROJECT_REQUEST_CODE -> {

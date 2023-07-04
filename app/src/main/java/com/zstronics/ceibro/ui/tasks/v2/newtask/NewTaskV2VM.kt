@@ -43,15 +43,25 @@ class NewTaskV2VM @Inject constructor(
         if (viewState.taskTitle.value.toString() == "") {
             alert("Topic is required")
         } else if (viewState.assignToText.value.toString() == "") {
-            alert("Assign to required")
+            alert("Assignee is required")
         } else {
             val assignedToCeibroUsers =
-                viewState.selectedContacts.value?.filter { it.isCeiborUser }
+                (viewState.selectedContacts.value?.filter { it.isCeiborUser }
                     ?.map {
                         NewTaskV2Request.AssignedToState(
                             it.phoneNumber, it.userCeibroData?.id.toString()
                         )
-                    } ?: listOf()
+                    } ?: listOf()) as ArrayList<NewTaskV2Request.AssignedToState>
+            if (viewState.selfAssigned.value == true) {
+                if (user != null) {
+                    assignedToCeibroUsers.add(
+                        NewTaskV2Request.AssignedToState(
+                            user.phoneNumber, user.id
+                        )
+                    )
+                }
+            }
+            
             val invitedNumbers = viewState.selectedContacts.value?.filter { !it.isCeiborUser }
                 ?.map { it.phoneNumber } ?: listOf()
             val projectId = viewState.selectedProject.value?.id ?: ""
