@@ -3,12 +3,11 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask.assignee
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.ContactsContract
 import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -17,6 +16,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.databinding.FragmentAssigneeBinding
 import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeChipsAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeSelectionHeaderAdapter
+import com.zstronics.ceibro.utils.getDefaultCountryCode
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -41,11 +41,13 @@ class AssigneeFragment :
             }
             R.id.doneBtn -> {
                 val selectedContactList = viewModel.selectedContacts.value
-                if (selectedContactList.isNullOrEmpty()) {
+                val selfAssigned = viewState.isSelfAssigned.value
+                if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
                     shortToastNow("Please select contacts to proceed")
                 } else {
                     val bundle = Bundle()
-                    bundle.putParcelableArray("contacts", selectedContactList.toTypedArray())
+                    bundle.putParcelableArray("contacts", selectedContactList?.toTypedArray())
+                    bundle.putBoolean("self-assign", selfAssigned ?: false)
                     navigateBackWithResult(Activity.RESULT_OK, bundle)
                 }
             }
@@ -82,6 +84,7 @@ class AssigneeFragment :
             }
         }
 
+
         viewModel.selectedContacts.observe(viewLifecycleOwner) {
             if (it != null) {
                 chipAdapter.setList(it)
@@ -114,7 +117,10 @@ class AssigneeFragment :
                 }
                 if (commonItem != null) {
                     val index = selectedOnes.indexOf(commonItem)
-                    selectedOnes.removeAt(index)            //set is used for updating the specific item
+                    selectedOnes.removeAt(index)
+                    if (commonItem.id == viewModel.user?.id) {        //it means current user has self-assigned himself, this will uncheck self-assign
+                        viewState.isSelfAssigned.value = false
+                    }
                 }
                 viewModel.selectedContacts.postValue(selectedOnes)
             }
@@ -128,13 +134,35 @@ class AssigneeFragment :
                     val selected = item.items.filter { it.isChecked }.map { it }
                     selectedContacts.addAll(selected)
                 }
-                val oldSelected = viewModel.originalConnections.filter { it.isChecked }.map { it }.toMutableList()
-                if (oldSelected.isNotEmpty()) {
-                    val combinedList = selectedContacts + oldSelected
-                    val distinctList = combinedList.distinct().toMutableList()
-                    selectedContacts.clear()
-                    selectedContacts.addAll(distinctList)
-                    viewModel.selectedContacts.postValue(distinctList)
+//                val oldSelected = viewModel.originalConnections.filter { it.isChecked }.map { it }.toMutableList()
+                val oldSelected = viewModel.selectedContacts.value?.toMutableList()
+
+                if (!oldSelected.isNullOrEmpty()) {
+                    val tappedItem = selectedContacts.find { item1 ->
+                        item1.id == contact.id
+                    }
+                    if (tappedItem != null) {       //if not null then this contact has recently came and it means tapped item needs to be added
+                        val combinedList = selectedContacts + oldSelected
+                        val distinctList = combinedList.distinct().toMutableList()
+                        selectedContacts.clear()
+                        selectedContacts.addAll(distinctList)
+                        viewModel.selectedContacts.postValue(distinctList)
+                    } else {
+                        //if NULL then this contact has to be removed from selected contact list and then update list
+                        val finTappedItem = oldSelected.find { item1 ->
+                            item1.id == contact.id
+                        }
+                        if (finTappedItem != null) {
+                            val index = oldSelected.indexOf(finTappedItem)
+                            oldSelected.removeAt(index)
+                        }
+                        val combinedList = selectedContacts + oldSelected
+                        val distinctList = combinedList.distinct().toMutableList()
+                        selectedContacts.clear()
+                        selectedContacts.addAll(distinctList)
+                        viewModel.selectedContacts.postValue(distinctList)
+                    }
+
                 } else {
                     viewModel.selectedContacts.postValue(selectedContacts)
                 }
@@ -159,6 +187,77 @@ class AssigneeFragment :
                 }
             }
 
+        mViewDataBinding.selfAssignCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewState.isSelfAssigned.value = isChecked
+            val currentUser = viewModel.user
+            if (isChecked) {
+                if (currentUser != null) {
+                    val pn =
+                        PhoneNumberUtil.getInstance()
+                            .parse(
+                                currentUser.phoneNumber,
+                                getDefaultCountryCode(requireContext())
+                            )
+
+                    val userContact = AllCeibroConnections.CeibroConnection(
+                        contactFullName = null,
+                        contactFirstName = "M",
+                        contactSurName = "e",
+                        countryCode = "+${pn.countryCode}",
+                        id = currentUser.id,
+                        createdAt = "",
+                        isBlocked = false,
+                        isCeiborUser = true,
+                        isChecked = true,
+                        isSilent = false,
+                        phoneNumber = currentUser.phoneNumber,
+                        updatedAt = "",
+                        userCeibroData = AllCeibroConnections.CeibroConnection.UserCeibroData(
+                            companyName = currentUser.companyName ?: "",
+                            email = currentUser.email,
+                            firstName = currentUser.firstName,
+                            id = currentUser.id,
+                            jobTitle = currentUser.jobTitle,
+                            phoneNumber = currentUser.phoneNumber,
+                            profilePic = currentUser.profilePic,
+                            surName = currentUser.surName
+                        )
+                    )
+
+                    val currentContactList: ArrayList<AllCeibroConnections.CeibroConnection> = arrayListOf()
+                    currentContactList.add(userContact)
+                    val selectedContacts = viewModel.selectedContacts.value?.toMutableList()
+                    if (selectedContacts.isNullOrEmpty()) {
+                        viewModel.selectedContacts.postValue(currentContactList)
+                    } else {
+                        val selectedItem = selectedContacts.find { item1 ->
+                            item1.id == currentUser.id
+                        }
+                        if (selectedItem != null) {       //if not null then current user contact is already part of selected contact list
+                            val combinedList = selectedContacts + currentContactList
+                            val distinctList = combinedList.distinct().toMutableList()
+                            selectedContacts.clear()
+                            selectedContacts.addAll(distinctList)
+                            viewModel.selectedContacts.postValue(distinctList)
+                        } else {
+                            selectedContacts.addAll(currentContactList)
+                        }
+                        viewModel.selectedContacts.postValue(selectedContacts)
+                    }
+                }
+            } else {
+                val selectedContacts = viewModel.selectedContacts.value
+                if (!selectedContacts.isNullOrEmpty()) {
+                    val currentSelected =
+                        selectedContacts.find { it1 -> it1.id == currentUser?.id }
+                    if (currentSelected != null) {
+                        val index = selectedContacts.indexOf(currentSelected)
+                        selectedContacts.removeAt(index)
+                    }
+                    viewModel.selectedContacts.postValue(selectedContacts)
+                }
+            }
+        }
 
         mViewDataBinding.assigneeSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {

@@ -17,6 +17,7 @@ interface INewTaskV2 {
         var selectedTopic: MutableLiveData<TopicsResponse.TopicData>
         var selectedProject: MutableLiveData<AllProjectsResponseV2.ProjectsV2>
         var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>>
+        var selfAssigned: MutableLiveData<Boolean>
         var assignToText: MutableLiveData<String>
         var projectText: MutableLiveData<String>
         var description: MutableLiveData<String>
