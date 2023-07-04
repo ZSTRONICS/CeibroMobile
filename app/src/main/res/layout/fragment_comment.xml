@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentVM" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/newCommentHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="@dimen/_11sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/commentHeading"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/commentHeading"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <TextView
+                android:id="@+id/commentHeading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="1"
+                android:text="@string/new_comment"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@+id/newCommentAttachmentLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/newCommentHeader">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/commentField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/input_field_bottom_line"
+                    android:layout_marginStart="@dimen/_14sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_14sdp"
+                    android:hint="@string/comment_heading"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="-10dp"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:boxStrokeWidth="0dp"
+                    app:endIconDrawable="@drawable/icon_close_round_grey"
+                    app:endIconMode="clear_text"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/commentText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:inputType="none"
+                        android:maxLines="20"
+                        android:gravity="top|start"
+                        android:overScrollMode="always"
+                        android:paddingStart="1dp"
+                        android:scrollbarStyle="insideInset"
+                        android:scrollbars="none"
+                        android:text="@={viewState.comment}"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/onlyImagesRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/commentField"
+                    app:layout_constraintStart_toStartOf="@+id/commentField"
+                    app:layout_constraintTop_toBottomOf="@+id/commentField"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_ceibro_only_image" />
+
+                <View
+                    android:id="@+id/onlyImagesBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/onlyImagesRV"
+                    app:layout_constraintStart_toStartOf="@+id/onlyImagesRV"
+                    app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/imagesWithCommentRV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/commentField"
+                    app:layout_constraintStart_toStartOf="@+id/commentField"
+                    app:layout_constraintTop_toBottomOf="@+id/onlyImagesBottomLine"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/layout_ceibro_image_with_comment" />
+
+
+                <View
+                    android:id="@+id/imagesWithCommentBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/imagesWithCommentRV"
+                    app:layout_constraintStart_toStartOf="@+id/imagesWithCommentRV"
+                    app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/filesLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_9sdp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    app:layout_constraintEnd_toEndOf="@+id/commentField"
+                    app:layout_constraintStart_toStartOf="@+id/commentField"
+                    app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentBottomLine">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/filesHeaderLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:paddingTop="@dimen/_1sdp"
+                        android:paddingBottom="@dimen/_1sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/fileHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="@string/files_heading"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:id="@+id/view4"
+                            android:layout_width="0.8dp"
+                            android:layout_height="0dp"
+                            android:layout_marginStart="@dimen/_15sdp"
+                            android:background="@color/appGrey3"
+                            app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
+                            app:layout_constraintStart_toEndOf="@+id/fileHeading"
+                            app:layout_constraintTop_toTopOf="@+id/fileHeading" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/filesCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_9sdp"
+                            android:fontFamily="@font/inter_medium"
+                            android:text="2 files"
+                            android:textColor="@color/black"
+                            android:textSize="14.5sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
+                            app:layout_constraintStart_toEndOf="@+id/view4"
+                            app:layout_constraintTop_toTopOf="@+id/fileHeading" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/filesDownUpIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/icon_navigate_up"
+                            app:layout_constraintBottom_toBottomOf="@+id/filesCount"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/filesCount" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/filesRV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/layout_ceibro_files" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/filesBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="@+id/filesLayout"
+                    app:layout_constraintStart_toStartOf="@+id/filesLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/filesLayout" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+        <LinearLayout
+            android:id="@+id/newCommentAttachmentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shadowfile"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_1sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/newTaskBottomLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/newCommentDocumentBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:text="@string/documents_heading"
+                android:textAllCaps="false"
+                android:textColor="@color/appBlue"
+                android:textSize="@dimen/_9sdp"
+                app:icon="@drawable/icon_document"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconTint="@color/appBlue" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/newCommentLibraryBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:text="@string/library_heading"
+                android:textAllCaps="false"
+                android:textColor="@color/appBlue"
+                android:textSize="@dimen/_9sdp"
+                app:icon="@drawable/icon_library"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconTint="@color/appBlue" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/newTaskBottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shadowfile"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_1sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/newCommentPhotoBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_add_photo"
+                android:drawableTint="@color/appBlue"
+                android:fontFamily="@font/inter_medium"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:text="@string/photo_heading"
+                android:textAllCaps="false"
+                android:textColor="@color/appBlue"
+                android:textSize="@dimen/_9sdp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/newCommentAttachBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:drawableTop="@drawable/icon_attachment_straight"
+                android:drawableTint="@drawable/bottom_nav_color"
+                android:fontFamily="@font/inter_medium"
+                android:maxLines="1"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_3sdp"
+                android:paddingEnd="@dimen/_3sdp"
+                android:text="@string/attach_heading"
+                android:textAllCaps="false"
+                android:textColor="@drawable/bottom_nav_text_color"
+                android:textSize="@dimen/_9sdp"
+                app:checked="@{viewState.isAttachLayoutOpen}" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/nextBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:layout_weight="0.8"
+                android:background="@drawable/signin_button_back"
+                android:elevation="2dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="@dimen/_7sdp"
+                android:src="@drawable/icon_next"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

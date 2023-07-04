@@ -273,8 +273,8 @@
                         android:id="@+id/taskDescription"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
                         android:layout_marginTop="@dimen/_4sdp"
+                        android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
                         android:maxLines="20"
                         android:text="Task description text over here."
@@ -404,7 +404,6 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/filesRV"
                         android:layout_width="0dp"
@@ -486,8 +485,8 @@
                         android:id="@+id/eventsRVBottomLine"
                         android:layout_width="0dp"
                         android:layout_height="0.9dp"
-                        android:alpha="0.6"
                         android:layout_marginTop="@dimen/_4sdp"
+                        android:alpha="0.6"
                         android:background="@color/appGrey3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -531,12 +530,12 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/newTaskCommentBtn"
+                android:id="@+id/taskCommentBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_weight="1"
                 android:background="@color/transparent"
-                android:layout_marginStart="@dimen/_10sdp"
                 android:drawableTop="@drawable/icon_comment"
                 android:drawableTint="@color/appBlue"
                 android:fontFamily="@font/inter_medium"
@@ -550,7 +549,7 @@
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/newTaskForwardBtn"
+                android:id="@+id/taskForwardBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_10sdp"
@@ -569,20 +568,20 @@
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/nextBtn"
+                android:id="@+id/doneBtn"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_2sdp"
                 android:layout_weight="0.85"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:text="@string/done"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="14.5sp"
-                android:fontFamily="@font/inter_medium"
-                android:background="@drawable/signin_button_back"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}" />
+                android:textSize="14.5sp" />
 
         </LinearLayout>
 

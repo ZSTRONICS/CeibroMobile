@@ -36,7 +36,8 @@ class TaskDetailV2Fragment :
         when (id) {
             R.id.closeBtn -> navigateBack()
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
-            R.id.newTaskForwardBtn -> {
+            R.id.taskCommentBtn -> navigate(R.id.commentFragment)
+            R.id.taskForwardBtn -> {
                 val assignTo = viewModel.taskDetail.value?.assignedToState?.map { it.phoneNumber }
                 val invited = viewModel.taskDetail.value?.invitedNumbers?.map { it.phoneNumber }
                 val combinedList = arrayListOf<String>()
