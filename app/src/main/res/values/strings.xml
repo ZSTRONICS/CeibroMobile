@@ -411,6 +411,7 @@
     <string name="added_by">Added by</string>
     <string name="forwarded_by">Forwarded by</string>
     <string name="invited_by">Invited by</string>
+    <string name="comment_by">Comment by</string>
     <string name="done_by">Done by</string>
     <string name="new_comment">New comment</string>
     <string name="self_assign">Self-assign</string>

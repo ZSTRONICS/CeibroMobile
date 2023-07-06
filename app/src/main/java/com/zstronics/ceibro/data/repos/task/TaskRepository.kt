@@ -63,14 +63,14 @@ class TaskRepository @Inject constructor(
 
     override suspend fun newTaskV2(
         newTask: NewTaskV2Request,
-        callBack: (isSuccess: Boolean, taskId: String) -> Unit
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?) -> Unit
     ) {
         when (val response = remoteTask.newTaskV2(newTask)) {
             is ApiResponse.Success -> {
-                callBack(true, response.data.newTask.id)
+                callBack(true, response.data.newTask)
             }
             is ApiResponse.Error -> {
-                callBack(false, response.error.message)
+                callBack(false, null)
             }
         }
     }

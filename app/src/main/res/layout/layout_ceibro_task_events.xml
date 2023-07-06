@@ -134,6 +134,21 @@
             tools:itemCount="1"
             tools:listitem="@layout/layout_ceibro_image_with_comment" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filesRV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV"
+            tools:itemCount="2"
+            tools:listitem="@layout/layout_ceibro_files" />
 
         <View
             android:id="@+id/eventsBottomLine"
@@ -144,7 +159,7 @@
             android:background="@color/appGrey3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
+            app:layout_constraintTop_toBottomOf="@+id/filesRV" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.Files
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
@@ -35,6 +36,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -509,6 +511,7 @@ class DashboardVM @Inject constructor(
                     notificationTitle =
                         if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
 
+                    saveFilesInDB(uploadFilesToServer.request.moduleName, uploadFilesToServer.request.moduleId, response.data.uploadData)
                     createNotification(
                         LocalEvents.CreateNotification(
                             moduleName = uploadFilesToServer.request.moduleName,
@@ -533,6 +536,122 @@ class DashboardVM @Inject constructor(
                             indeterminate = false,
                             notificationIcon = R.drawable.icon_upload
                         )
+                    )
+                }
+            }
+        }
+    }
+
+
+    private fun saveFilesInDB(moduleName:String, moduleId: String, uploadedFiles: List<Files>) {
+        if (moduleName.equals(AttachmentModules.Task.name, true)) {
+            launch {
+                val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+
+                if (taskToMeLocalData != null) {
+                    val newTask = taskToMeLocalData.allTasks.new.find { it.id == moduleId }
+                    val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == moduleId }
+                    val ongoingTask = taskToMeLocalData.allTasks.ongoing.find { it.id == moduleId }
+                    val doneTask = taskToMeLocalData.allTasks.done.find { it.id == moduleId }
+
+                    if (newTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                        val taskIndex = allTaskList.indexOf(newTask)
+
+                        val oldFiles = newTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        newTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = newTask
+                        taskToMeLocalData.allTasks.new = allTaskList.toList()
+                    } else if (unreadTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
+                        val taskIndex = allTaskList.indexOf(unreadTask)
+
+                        val oldFiles = unreadTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        unreadTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = unreadTask
+                        taskToMeLocalData.allTasks.unread = allTaskList.toList()
+                    } else if (ongoingTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
+                        val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                        val oldFiles = ongoingTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        ongoingTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = ongoingTask
+                        taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                    } else if (doneTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
+                        val taskIndex = allTaskList.indexOf(doneTask)
+
+                        val oldFiles = doneTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        doneTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = doneTask
+                        taskToMeLocalData.allTasks.done = allTaskList.toList()
+                    }
+
+                    taskDao.insertTaskData(
+                        taskToMeLocalData
+                    )
+                }
+
+                if (taskFromMeLocalData != null) {
+                    val newTask = taskFromMeLocalData.allTasks.new.find { it.id == moduleId }
+                    val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == moduleId }
+                    val ongoingTask = taskFromMeLocalData.allTasks.ongoing.find { it.id == moduleId }
+                    val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == moduleId }
+
+                    if (newTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.new.toMutableList()
+                        val taskIndex = allTaskList.indexOf(newTask)
+
+                        val oldFiles = newTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        newTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = newTask
+                        taskFromMeLocalData.allTasks.new = allTaskList.toList()
+                    } else if (unreadTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
+                        val taskIndex = allTaskList.indexOf(unreadTask)
+
+                        val oldFiles = unreadTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        unreadTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = unreadTask
+                        taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                    } else if (ongoingTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                        val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                        val oldFiles = ongoingTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        ongoingTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = ongoingTask
+                        taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                    } else if (doneTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
+                        val taskIndex = allTaskList.indexOf(doneTask)
+
+                        val oldFiles = doneTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        doneTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = doneTask
+                        taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                    }
+
+                    taskDao.insertTaskData(
+                        taskFromMeLocalData
                     )
                 }
             }
@@ -599,11 +718,11 @@ class DashboardVM @Inject constructor(
 
     private fun loadAppData() {
         launch {
-            when (val response = remoteTask.getAllTasks("to-me")) {
+            when (val response = remoteTask.getAllTasks(TaskRootStateTags.ToMe.tagValue)) {
                 is ApiResponse.Success -> {
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
-                            rootState = "to-me",
+                            rootState = TaskRootStateTags.ToMe.tagValue,
                             allTasks = response.data.allTasks
                         )
                     )
@@ -612,11 +731,11 @@ class DashboardVM @Inject constructor(
                 }
             }
 
-            when (val response = remoteTask.getAllTasks("from-me")) {
+            when (val response = remoteTask.getAllTasks(TaskRootStateTags.FromMe.tagValue)) {
                 is ApiResponse.Success -> {
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
-                            rootState = "from-me",
+                            rootState = TaskRootStateTags.FromMe.tagValue,
                             allTasks = response.data.allTasks
                         )
                     )

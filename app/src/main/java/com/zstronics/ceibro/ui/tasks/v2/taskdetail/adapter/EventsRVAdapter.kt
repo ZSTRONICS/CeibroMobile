@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
 import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
@@ -83,7 +84,7 @@ class EventsRVAdapter @Inject constructor() :
 
                     var forwardedToUsers = "To: "
                     var index = 0
-                    if (item.eventData.isNotEmpty()) {
+                    if (!item.eventData.isNullOrEmpty()) {
                         for (event in item.eventData) {
                             forwardedToUsers += if (index == item.eventData.size - 1) {
                                 "${event.firstName} ${event.surName}"
@@ -106,26 +107,92 @@ class EventsRVAdapter @Inject constructor() :
 
                     var invitedUsers = "To: "
                     var index = 0
-                    for (event in item.eventData) {
-                        invitedUsers += if (index == item.eventData.size - 1) {
-                            if (event.firstName.isNotEmpty()) {
-                                "${event.firstName} ${event.surName}"
+                    if (!item.eventData.isNullOrEmpty()) {
+                        for (event in item.eventData) {
+                            invitedUsers += if (index == item.eventData.size - 1) {
+                                if (event.firstName.isNotEmpty()) {
+                                    "${event.firstName} ${event.surName}"
+                                } else {
+                                    event.phoneNumber
+                                }
                             } else {
-                                event.phoneNumber
+                                if (event.firstName.isNotEmpty()) {
+                                    "${event.firstName} ${event.surName} ; "
+                                } else {
+                                    "${event.phoneNumber} ; "
+                                }
                             }
-                        } else {
-                            if (event.firstName.isNotEmpty()) {
-                                "${event.firstName} ${event.surName} ; "
-                            } else {
-                                "${event.phoneNumber} ; "
-                            }
+                            index++
                         }
-                        index++
                     }
                     binding.forwardedToNames.text = invitedUsers
                 }
+                TaskDetailEvents.NewComment.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.filesRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.GONE
+
+                    binding.eventName.text = context.resources.getString(R.string.comment_by)
+
+                    if (item.commentData != null) {
+
+                        if (item.commentData.message.isNotEmpty()) {
+                            binding.onlyComment.text = item.commentData.message
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.visibility = View.GONE
+                        }
+
+                        if (item.commentData.files.isNotEmpty()) {
+                            separateFiles(item.commentData.files)
+                        }
+                    }
+                }
             }
 
+        }
+
+        private fun separateFiles(files: List<Files>) {
+            val onlyImage: ArrayList<Files> = arrayListOf()
+            val imagesWithComment: ArrayList<Files> = arrayListOf()
+            val document: ArrayList<Files> = arrayListOf()
+
+            for (item in files) {
+                when (item.fileTag) {
+                    AttachmentTags.Image.tagValue -> {
+                        onlyImage.add(item)
+                    }
+
+                    AttachmentTags.ImageWithComment.tagValue -> {
+                        imagesWithComment.add(item)
+                    }
+
+                    AttachmentTags.File.tagValue -> {
+                        document.add(item)
+                    }
+                }
+            }
+
+            if (onlyImage.isNotEmpty()) {
+                val onlyImageAdapter = OnlyImageRVAdapter()
+                binding.onlyImagesRV.adapter = onlyImageAdapter
+                onlyImageAdapter.setList(onlyImage)
+                binding.onlyImagesRV.visibility = View.VISIBLE
+            }
+            if (imagesWithComment.isNotEmpty()) {
+                val imageWithCommentAdapter = ImageWithCommentRVAdapter()
+                binding.imagesWithCommentRV.adapter = imageWithCommentAdapter
+                imageWithCommentAdapter.setList(imagesWithComment)
+                binding.imagesWithCommentRV.visibility = View.VISIBLE
+            }
+            if (document.isNotEmpty()) {
+                val filesAdapter = FilesRVAdapter()
+                binding.filesRV.adapter = filesAdapter
+                filesAdapter.setList(document)
+                binding.filesRV.visibility = View.VISIBLE
+            }
         }
     }
 }

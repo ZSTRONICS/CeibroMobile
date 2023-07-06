@@ -10,6 +10,7 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -114,7 +115,7 @@ class TaskDetailV2Fragment :
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
 
             var state = ""
-            state = if (viewModel.user?.id == item.creator.id) {
+            state = if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
                 item.creatorState
             } else {
                 item.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""

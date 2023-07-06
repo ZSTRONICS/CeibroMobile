@@ -8,12 +8,12 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 class EventsDataTypeConverter {
 
     @TypeConverter
-    fun fromString(value: String): EventData {
+    fun fromString(value: String): EventData? {
         return Gson().fromJson(value, EventData::class.java)
     }
 
     @TypeConverter
-    fun fromTaskMember(taskMemberDetail: EventData): String {
+    fun fromTaskMember(taskMemberDetail: EventData?): String {
         return Gson().toJson(taskMemberDetail)
     }
 }
