@@ -21,7 +21,7 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
     entities = [CeibroTask::class, AdvanceOptions::class, SubTaskStatusCount::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
         Viewer::class, SubTaskAdvanceOptions::class, SubTaskStateItem::class, SubTaskComments::class, TaskDataOfSubTask::class, SubTaskProject::class, FilesAttachments::class, RejectionComment::class,
         TasksV2DatabaseEntity::class, TopicsV2DatabaseEntity::class, ProjectsV2DatabaseEntity::class, ConnectionsV2DatabaseEntity::class],
-    version = 51,
+    version = 52,
     exportSchema = false
 )
 @TypeConverters(
@@ -50,6 +50,8 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
     TopicTypeConverter::class,
     FilesListTypeConverter::class,
     EventsListTypeConverter::class,
+    CommentDataTypeConverter::class,
+    EventsDataListTypeConverter::class,
     EventsDataTypeConverter::class,
     InvitedNumbersListTypeConverter::class,
     TopicsResponseTypeConverter::class,

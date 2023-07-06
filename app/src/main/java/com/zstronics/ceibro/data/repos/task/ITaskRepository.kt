@@ -19,7 +19,7 @@ interface ITaskRepository {
 
     suspend fun newTaskV2(
         newTask: NewTaskV2Request,
-        callBack: (isSuccess: Boolean, taskId: String) -> Unit
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?) -> Unit
     )
 
     suspend fun forwardTask(

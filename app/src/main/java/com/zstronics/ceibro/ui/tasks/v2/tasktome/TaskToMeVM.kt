@@ -121,21 +121,24 @@ class TaskToMeVM @Inject constructor(
             val filteredTasks =
                 originalNewTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
-                            it.description.contains(query.trim(), true)
+                            it.description.contains(query.trim(), true) ||
+                            it.taskUID.contains(query.trim(), true)
                 }
             _newTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         } else if (selectedState.equals("ongoing", true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
-                            it.description.contains(query.trim(), true)
+                            it.description.contains(query.trim(), true) ||
+                            it.taskUID.contains(query.trim(), true)
                 }
             _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         } else if (selectedState.equals("done", true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
-                            it.description.contains(query.trim(), true)
+                            it.description.contains(query.trim(), true) ||
+                            it.taskUID.contains(query.trim(), true)
                 }
             _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         }

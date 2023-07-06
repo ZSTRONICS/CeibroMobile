@@ -49,7 +49,7 @@ data class CeibroTaskV2(
     @SerializedName("__v")
     val v: Int,
     @SerializedName("files")
-    val files: List<Files>,
+    var files: List<Files>,
     @SerializedName("events")
     val events: List<Events>
 ) : Parcelable
@@ -150,7 +150,9 @@ data class Events(
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("eventData")
-    val eventData: List<EventData>,
+    val eventData: List<EventData>?,
+    @SerializedName("commentData")
+    val commentData: CommentData?,
     @SerializedName("eventType")
     val eventType: String,
     @SerializedName("_id")
@@ -181,6 +183,19 @@ data class EventData(
     val surName: String
 ) : Parcelable
 
+
+@Parcelize
+@Keep
+data class CommentData(
+    @SerializedName("files")
+    val files: List<Files>,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("isFileAttached")
+    val isFileAttached: Boolean,
+    @SerializedName("message")
+    val message: String
+) : Parcelable
 
 @Parcelize
 @Keep

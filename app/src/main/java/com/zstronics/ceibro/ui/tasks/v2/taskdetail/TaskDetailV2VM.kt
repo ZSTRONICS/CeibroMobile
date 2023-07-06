@@ -1,8 +1,10 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -10,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.Files
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
@@ -32,7 +35,8 @@ class TaskDetailV2VM @Inject constructor(
     private val _onlyImages: MutableLiveData<ArrayList<Files>> = MutableLiveData(arrayListOf())
     val onlyImages: MutableLiveData<ArrayList<Files>> = _onlyImages
 
-    private val _imagesWithComments: MutableLiveData<ArrayList<Files>> = MutableLiveData(arrayListOf())
+    private val _imagesWithComments: MutableLiveData<ArrayList<Files>> =
+        MutableLiveData(arrayListOf())
     val imagesWithComments: MutableLiveData<ArrayList<Files>> = _imagesWithComments
 
     private val _documents: MutableLiveData<ArrayList<Files>> = MutableLiveData(arrayListOf())
@@ -71,9 +75,11 @@ class TaskDetailV2VM @Inject constructor(
                 AttachmentTags.Image.tagValue -> {
                     onlyImage.add(item)
                 }
+
                 AttachmentTags.ImageWithComment.tagValue -> {
                     imagesWithComment.add(item)
                 }
+
                 AttachmentTags.File.tagValue -> {
                     document.add(item)
                 }
@@ -117,80 +123,104 @@ class TaskDetailV2VM @Inject constructor(
     }
 
     private fun insertUpdatedTask(task: CeibroTaskV2?) {
-        launch {
-            val taskLocalData = taskDao.getTasks(rootState)
+        var taskToMe = false
+        var taskFromMe = false
+        if (task != null) {
+            if (task.creator.id == user?.id) {
+                taskFromMe = true
+            }
+            for (item in task.assignedToState) {
+                if (item.userId == user?.id) {
+                    taskToMe = true
+                }
+            }
 
-            if (taskLocalData != null) {
-                if (selectedState.equals("new", true)) {
+            launch {
+                if (taskFromMe) {
+                    val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                    val index = taskLocalData.allTasks.new.indexOfFirst { it.id == task?.id } ?: -1
-                    if (index >= 0) {
-                        val updatedList = taskLocalData.allTasks.new.toMutableList()
-                        if (task != null) {
-                            updatedList[index] = task
+                    if (taskFromMeLocalData != null) {
+                        val newTask = taskFromMeLocalData.allTasks.new.find { it.id == task.id }
+                        val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == task.id }
+                        val ongoingTask = taskFromMeLocalData.allTasks.ongoing.find { it.id == task.id }
+                        val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == task.id }
+                        if (newTask != null) {
+                            val allTaskList = taskFromMeLocalData.allTasks.new.toMutableList()
+                            val taskIndex = allTaskList.indexOf(newTask)
+
+                            allTaskList[taskIndex] = task
+                            taskFromMeLocalData.allTasks.new = allTaskList.toList()
+
+                        } else if (unreadTask != null) {
+                            val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
+                            val taskIndex = allTaskList.indexOf(unreadTask)
+
+                            allTaskList[taskIndex] = task
+                            taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+
+                        } else if (ongoingTask != null) {
+                            val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                            allTaskList[taskIndex] = task
+                            taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+                        } else if (doneTask != null) {
+                            val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allTaskList.indexOf(doneTask)
+
+                            allTaskList[taskIndex] = task
+                            taskFromMeLocalData.allTasks.done = allTaskList.toList()
                         }
-                        taskLocalData.allTasks.new = updatedList.toList()
-                    }
 
-                } else if (selectedState.equals("unread", true)) {
-
-                    val index = taskLocalData.allTasks.unread.indexOfFirst { it.id == task?.id } ?: -1
-                    if (index >= 0) {
-                        val updatedList = taskLocalData.allTasks.unread.toMutableList()
-                        if (task != null) {
-                            updatedList[index] = task
-                        }
-                        taskLocalData.allTasks.unread = updatedList.toList()
-                    }
-
-                } else if (selectedState.equals("ongoing", true)) {
-
-                    val index = taskLocalData.allTasks.ongoing.indexOfFirst { it.id == task?.id } ?: -1
-                    if (index >= 0) {
-                        val updatedList = taskLocalData.allTasks.ongoing.toMutableList()
-                        if (task != null) {
-                            updatedList[index] = task
-                        }
-                        taskLocalData.allTasks.ongoing = updatedList.toList()
-                    }
-
-                } else if (selectedState.equals("done", true)) {
-
-                    val index = taskLocalData.allTasks.done.indexOfFirst { it.id == task?.id } ?: -1
-                    if (index >= 0) {
-                        val updatedList = taskLocalData.allTasks.done.toMutableList()
-                        if (task != null) {
-                            updatedList[index] = task
-                        }
-                        taskLocalData.allTasks.done = updatedList.toList()
-                    }
-
-                } else {
-                    if (rootState == "from-me") {
-                        val index = taskLocalData.allTasks.unread.indexOfFirst { it.id == task?.id } ?: -1
-                        if (index >= 0) {
-                            val updatedList = taskLocalData.allTasks.unread.toMutableList()
-                            if (task != null) {
-                                updatedList[index] = task
-                            }
-                            taskLocalData.allTasks.unread = updatedList.toList()
-                        }
-                    } else {
-                        //this will be for rootState "to-me" and for to-me we'll insert it in new
-                        val index = taskLocalData.allTasks.new.indexOfFirst { it.id == task?.id } ?: -1
-                        if (index >= 0) {
-                            val updatedList = taskLocalData.allTasks.new.toMutableList()
-                            if (task != null) {
-                                updatedList[index] = task
-                            }
-                            taskLocalData.allTasks.new = updatedList.toList()
-                        }
+                        taskDao.insertTaskData(
+                            taskFromMeLocalData
+                        )
                     }
                 }
 
-                taskDao.insertTaskData(
-                    taskLocalData
-                )
+                if (taskToMe) {
+                    val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+
+                    if (taskToMeLocalData != null) {
+                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == task.id }
+                        val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == task.id }
+                        val ongoingTask = taskToMeLocalData.allTasks.ongoing.find { it.id == task.id }
+                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == task.id }
+                        if (newTask != null) {
+                            val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                            val taskIndex = allTaskList.indexOf(newTask)
+
+                            allTaskList[taskIndex] = task
+                            taskToMeLocalData.allTasks.new = allTaskList.toList()
+
+                        } else if (unreadTask != null) {
+                            val allTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
+                            val taskIndex = allTaskList.indexOf(unreadTask)
+
+                            allTaskList[taskIndex] = task
+                            taskToMeLocalData.allTasks.unread = allTaskList.toList()
+
+                        } else if (ongoingTask != null) {
+                            val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                            allTaskList[taskIndex] = task
+                            taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+                        } else if (doneTask != null) {
+                            val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allTaskList.indexOf(doneTask)
+
+                            allTaskList[taskIndex] = task
+                            taskToMeLocalData.allTasks.done = allTaskList.toList()
+                        }
+
+                        taskDao.insertTaskData(
+                            taskToMeLocalData
+                        )
+                    }
+                }
             }
 
         }
