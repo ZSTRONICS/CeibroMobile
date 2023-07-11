@@ -13,13 +13,13 @@ data class CeibroTaskV2(
     @SerializedName("access")
     val access: List<String>,
     @SerializedName("assignedToState")
-    val assignedToState: List<AssignedToState>,
+    var assignedToState: ArrayList<AssignedToState>,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("creator")
     val creator: TaskMemberDetail,
     @SerializedName("creatorState")
-    val creatorState: String,
+    var creatorState: String,
     @SerializedName("description")
     val description: String,
     @SerializedName("doneCommentsRequired")
@@ -28,8 +28,12 @@ data class CeibroTaskV2(
     val doneImageRequired: Boolean,
     @SerializedName("dueDate")
     val dueDate: String,
+    @SerializedName("hiddenBy")
+    val hiddenBy: List<String>,
     @SerializedName("_id")
     val id: String,
+    @SerializedName("isCanceled")
+    val isCanceled: Boolean,
     @SerializedName("invitedNumbers")
     val invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
@@ -40,6 +44,8 @@ data class CeibroTaskV2(
     val recentComments: List<String>,
     @SerializedName("rejectionComments")
     val rejectionComments: List<String>,
+    @SerializedName("seenBy")
+    var seenBy: List<String>,
     @SerializedName("taskUID")
     val taskUID: String,
     @SerializedName("topic")

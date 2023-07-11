@@ -293,7 +293,7 @@ class TaskDetailV2Fragment :
                         val assignedToCeibroUsers =
                             selectedContactList.filter { it.isCeiborUser }
                                 .map {
-                                    ForwardTaskV2Request.AssignedToState(
+                                    ForwardTaskV2Request.AssignedToStateRequest(
                                         phoneNumber = it.phoneNumber,
                                         userId = it.userCeibroData?.id.toString(),
                                         state = state

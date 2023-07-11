@@ -399,7 +399,7 @@
                         android:textSize="11.5sp" />
                 </LinearLayout>
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/taskTickMark"
                     android:layout_width="21dp"
                     android:layout_height="0dp"

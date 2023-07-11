@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 data class NewTaskV2Request(
     @SerializedName("topic") val topic: String,
     @SerializedName("project") val project: String,
-    @SerializedName("assignedToState") val assignedToState: List<AssignedToState>,
+    @SerializedName("assignedToState") val assignedToState: List<AssignedToStateNewRequest>,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("creator") val creator: String,
     @SerializedName("description") val description: String,
@@ -17,7 +17,7 @@ data class NewTaskV2Request(
     @SerializedName("invitedNumbers") val invitedNumbers: List<String>
 ) {
     @Keep
-    data class AssignedToState(
+    data class AssignedToStateNewRequest(
         @SerializedName("phoneNumber") val phoneNumber: String,
         @SerializedName("userId") val userId: String,
         @SerializedName("state") val state: String = "new",

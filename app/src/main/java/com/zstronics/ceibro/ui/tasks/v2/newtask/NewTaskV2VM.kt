@@ -55,14 +55,14 @@ class NewTaskV2VM @Inject constructor(
             val assignedToCeibroUsers =
                 (viewState.selectedContacts.value?.filter { it.isCeiborUser }
                     ?.map {
-                        NewTaskV2Request.AssignedToState(
+                        NewTaskV2Request.AssignedToStateNewRequest(
                             it.phoneNumber, it.userCeibroData?.id.toString()
                         )
-                    } ?: listOf()) as ArrayList<NewTaskV2Request.AssignedToState>
+                    } ?: listOf()) as ArrayList<NewTaskV2Request.AssignedToStateNewRequest>
             if (viewState.selfAssigned.value == true) {
                 if (user != null) {
                     assignedToCeibroUsers.add(
-                        NewTaskV2Request.AssignedToState(
+                        NewTaskV2Request.AssignedToStateNewRequest(
                             user.phoneNumber, user.id
                         )
                     )

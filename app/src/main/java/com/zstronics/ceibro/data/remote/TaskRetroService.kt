@@ -5,6 +5,7 @@ import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -137,5 +138,10 @@ interface TaskRetroService {
         @Path("taskId") taskId: String,
         @Body request: ForwardTaskV2Request
     ): Response<NewTaskV2Response>
+
+    @POST("v2/task/seen/{taskId}")
+    suspend fun taskSeen(
+        @Path("taskId") taskId: String
+    ): Response<TaskSeenResponse>
 
 }

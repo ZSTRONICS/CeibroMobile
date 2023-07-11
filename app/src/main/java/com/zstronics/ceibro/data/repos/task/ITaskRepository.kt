@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 
 interface ITaskRepository {
     suspend fun tasks(): List<CeibroTask>
@@ -26,6 +27,11 @@ interface ITaskRepository {
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?) -> Unit
+    )
+
+    suspend fun taskSeen(
+        taskId: String,
+        callBack: (isSuccess: Boolean, taskSeenData: TaskSeenResponse.TaskSeen?) -> Unit
     )
 
     suspend fun newTaskNoAdvanceOptions(
