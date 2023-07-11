@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -83,6 +84,20 @@ class TaskRepository @Inject constructor(
         when (val response = remoteTask.forwardTask(taskId, forwardTaskV2Request)) {
             is ApiResponse.Success -> {
                 callBack(true, response.data.newTask)
+            }
+            is ApiResponse.Error -> {
+                callBack(false, null)
+            }
+        }
+    }
+
+    override suspend fun taskSeen(
+        taskId: String,
+        callBack: (isSuccess: Boolean, taskSeenData: TaskSeenResponse.TaskSeen?) -> Unit
+    ) {
+        when (val response = remoteTask.taskSeen(taskId)) {
+            is ApiResponse.Success -> {
+                callBack(true, response.data.taskSeen)
             }
             is ApiResponse.Error -> {
                 callBack(false, null)

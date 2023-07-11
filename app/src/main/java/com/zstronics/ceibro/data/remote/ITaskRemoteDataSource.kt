@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import retrofit2.http.Body
 
 interface ITaskRemoteDataSource {
@@ -21,4 +22,5 @@ interface ITaskRemoteDataSource {
     suspend fun getAllTasks(rootState: String): ApiResponse<TaskV2Response>
     suspend fun newTaskV2(newTask: NewTaskV2Request): ApiResponse<NewTaskV2Response>
     suspend fun forwardTask(taskId: String, forwardTaskV2Request: ForwardTaskV2Request): ApiResponse<NewTaskV2Response>
+    suspend fun taskSeen(taskId: String): ApiResponse<TaskSeenResponse>
 }

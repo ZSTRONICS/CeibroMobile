@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter
 
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.auth.login.User
+import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
 import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
 import com.zstronics.ceibro.databinding.LayoutTaskBoxV2Binding
@@ -20,6 +23,7 @@ class TaskToMeRVAdapter @Inject constructor() :
     var itemClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
     var listItems: MutableList<CeibroTaskV2> = mutableListOf()
+    val currentUser = SessionManager.user.value
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -52,7 +56,7 @@ class TaskToMeRVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CeibroTaskV2) {
-            val context = binding.taskTickMark.context
+            val context = binding.root.context
 
             binding.root.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
@@ -63,6 +67,15 @@ class TaskToMeRVAdapter @Inject constructor() :
             //Use following two lines if a task is cancelled
 //            binding.taskCardParentLayout.background = context.resources.getDrawable(R.drawable.task_card_cancel_outline)
 //            binding.taskCanceledText.visibility = View.VISIBLE
+
+            val seenByMe = item.seenBy.find { it == currentUser?.id }
+            if (seenByMe != null) {
+                val tintColor = context.resources.getColor(R.color.appBlue)
+                binding.taskTickMark.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+            } else {
+                val tintColor = context.resources.getColor(R.color.appGrey3)
+                binding.taskTickMark.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+            }
 
             binding.taskId.text = item.taskUID
 

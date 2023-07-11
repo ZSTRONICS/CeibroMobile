@@ -7,12 +7,12 @@ import com.google.gson.annotations.SerializedName
 @Keep
 data class ForwardTaskV2Request(
     @SerializedName("assignedToState")
-    val assignedToState: List<AssignedToState>,
+    val assignedToState: List<AssignedToStateRequest>,
     @SerializedName("invitedNumbers")
     val invitedNumbers: List<String>
 ) {
     @Keep
-    data class AssignedToState(
+    data class AssignedToStateRequest(
         @SerializedName("phoneNumber") val phoneNumber: String,
         @SerializedName("userId") val userId: String,
         @SerializedName("state") val state: String = "new",
