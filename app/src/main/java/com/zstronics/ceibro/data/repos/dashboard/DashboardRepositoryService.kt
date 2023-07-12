@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -59,6 +60,26 @@ interface DashboardRepositoryService {
         @Part("moduleId") moduleId: RequestBody,
         @Part("metadata") metadata: RequestBody,
     ): Response<UploadFilesV2Response>
+
+    @Multipart
+    @POST("v2/task/upload/{event}/{taskId}")
+    suspend fun uploadEventWithFilesV2(
+        @Path("event") event: String,
+        @Path("taskId") taskId: String,
+        @Query("hasFiles") hasFiles: Boolean,
+        @Part files: List<MultipartBody.Part>?,
+        @Part("message") message: RequestBody,
+        @Part("metadata") metadata: RequestBody,
+    ): Response<EventV2Response>
+
+    @Multipart
+    @POST("v2/task/upload/{event}/{taskId}")
+    suspend fun uploadEventWithoutFilesV2(
+        @Path("event") event: String,
+        @Path("taskId") taskId: String,
+        @Query("hasFiles") hasFiles: Boolean,
+        @Part("message") message: RequestBody
+    ): Response<EventV2Response>
 
     @GET("v1/docs/viewFiles/{module}/{moduleId}")
     suspend fun getFilesByModuleId(

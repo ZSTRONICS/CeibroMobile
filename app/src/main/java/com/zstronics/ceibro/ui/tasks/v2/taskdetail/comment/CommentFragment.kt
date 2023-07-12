@@ -118,6 +118,15 @@ class CommentFragment :
                     )
                 )
             }
+            R.id.nextBtn -> {
+                viewModel.uploadComment(
+                    requireContext()
+                ) {
+                    val bundle = Bundle()
+                    bundle.putParcelable("taskData", viewModel.taskData)
+                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                }
+            }
         }
     }
 

@@ -17,6 +17,9 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
+import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 
 interface IDashboardRepository {
     suspend fun getAllConnections(): ApiResponse<AllConnectionsResponse>
@@ -31,6 +34,21 @@ interface IDashboardRepository {
     suspend fun acceptOrRejectAllInvitations(accepted: Boolean): ApiResponse<GenericResponse>
     suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadRequest): ApiResponse<UploadFilesResponse>
     suspend fun uploadFiles(attachmentUploadRequest: AttachmentUploadV2Request): ApiResponse<UploadFilesV2Response>
+
+    suspend fun uploadEventWithFilesV2(
+        event: String,
+        taskId: String,
+        hasFiles: Boolean,
+        eventWithFileUploadV2Request: EventWithFileUploadV2Request
+    ): ApiResponse<EventV2Response>
+
+    suspend fun uploadEventWithoutFilesV2(
+        event: String,
+        taskId: String,
+        hasFiles: Boolean,
+        eventCommentOnlyUploadV2Request: EventCommentOnlyUploadV2Request
+    ): ApiResponse<EventV2Response>
+
     suspend fun getFilesByModuleId(
         module: String,
         moduleId: String

@@ -6,16 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutCeibroImageWithCommentBinding
-import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
 class ImageWithCommentRVAdapter @Inject constructor() :
     RecyclerView.Adapter<ImageWithCommentRVAdapter.ImageWithCommentViewHolder>() {
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
-    var listItems: MutableList<Files> = mutableListOf()
+    var listItems: MutableList<TaskFiles> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(
@@ -39,7 +38,7 @@ class ImageWithCommentRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<Files>) {
+    fun setList(list: List<TaskFiles>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -48,7 +47,7 @@ class ImageWithCommentRVAdapter @Inject constructor() :
     inner class ImageWithCommentViewHolder(private val binding: LayoutCeibroImageWithCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Files) {
+        fun bind(item: TaskFiles) {
             binding.root.setOnClickListener {
 //                itemClickListener?.invoke(it, adapterPosition)
             }

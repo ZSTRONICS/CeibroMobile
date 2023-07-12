@@ -11,7 +11,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
-import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
@@ -543,7 +543,7 @@ class DashboardVM @Inject constructor(
     }
 
 
-    private fun saveFilesInDB(moduleName:String, moduleId: String, uploadedFiles: List<Files>) {
+    private fun saveFilesInDB(moduleName:String, moduleId: String, uploadedFiles: List<TaskFiles>) {
         if (moduleName.equals(AttachmentModules.Task.name, true)) {
             launch {
                 val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)

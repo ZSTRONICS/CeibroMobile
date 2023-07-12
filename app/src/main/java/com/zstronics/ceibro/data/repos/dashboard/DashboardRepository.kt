@@ -18,6 +18,9 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
+import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -103,6 +106,53 @@ class DashboardRepository @Inject constructor(
         }
         return executeSafely(call = {
             service.uploadFilesV2(parts, moduleName, moduleId, metadata)
+        })
+    }
+
+    override suspend fun uploadEventWithFilesV2(
+        event: String,
+        taskId: String,
+        hasFiles: Boolean,
+        eventWithFileUploadV2Request: EventWithFileUploadV2Request
+    ): ApiResponse<EventV2Response> {
+        val message = eventWithFileUploadV2Request.message
+            .toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val metadata =
+            eventWithFileUploadV2Request.metadata.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val parts = eventWithFileUploadV2Request.files?.map { file ->
+            val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("files", file.name, reqFile)
+        }
+        return executeSafely(call = {
+            service.uploadEventWithFilesV2(
+                event = event,
+                taskId = taskId,
+                hasFiles = hasFiles,
+                files = parts,
+                message = message,
+                metadata = metadata
+            )
+        })
+    }
+
+    override suspend fun uploadEventWithoutFilesV2(
+        event: String,
+        taskId: String,
+        hasFiles: Boolean,
+        eventCommentOnlyUploadV2Request: EventCommentOnlyUploadV2Request
+    ): ApiResponse<EventV2Response> {
+        val message = eventCommentOnlyUploadV2Request.message
+            .toRequestBody("text/plain".toMediaTypeOrNull())
+
+        return executeSafely(call = {
+            service.uploadEventWithoutFilesV2(
+                event = event,
+                taskId = taskId,
+                hasFiles = hasFiles,
+                message = message
+            )
         })
     }
 

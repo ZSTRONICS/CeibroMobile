@@ -126,7 +126,7 @@ class NewTaskV2VM @Inject constructor(
 
                                         taskDao.insertTaskData(
                                             TasksV2DatabaseEntity(
-                                                rootState = "from-me",
+                                                rootState = TaskRootStateTags.FromMe.tagValue,
                                                 allTasks = TaskV2Response.AllTasks(
                                                     new = listOf(),
                                                     unread = newList.toList(),
@@ -162,7 +162,7 @@ class NewTaskV2VM @Inject constructor(
 
                                         taskDao.insertTaskData(
                                             TasksV2DatabaseEntity(
-                                                rootState = "to-me",
+                                                rootState = TaskRootStateTags.ToMe.tagValue,
                                                 allTasks = TaskV2Response.AllTasks(
                                                     unread = listOf(),
                                                     new = newList.toList(),

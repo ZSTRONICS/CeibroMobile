@@ -1,0 +1,54 @@
+package com.zstronics.ceibro.data.repos.task.models.v2
+
+
+import android.os.Parcelable
+import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.tasks.CommentData
+import com.zstronics.ceibro.data.database.models.tasks.EventData
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+@Keep
+data class EventV2Response(
+    @SerializedName("data")
+    val `data`: Data
+) : BaseResponse(), Parcelable {
+
+    @Parcelize
+    @Keep
+    data class Data(
+        @SerializedName("commentData")
+        val commentData: CommentData?,
+        @SerializedName("createdAt")
+        val createdAt: String,
+        @SerializedName("eventData")
+        val eventData: List<EventData>?,
+        @SerializedName("eventType")
+        val eventType: String,
+        @SerializedName("_id")
+        val id: String,
+        @SerializedName("initiator")
+        val initiator: TaskMemberDetail,
+        @SerializedName("taskId")
+        val taskId: String,
+        @SerializedName("taskData")
+        val taskData: TaskData,
+        @SerializedName("updatedAt")
+        val updatedAt: String
+    ) : Parcelable {
+
+        @Parcelize
+        @Keep
+        data class TaskData(
+            @SerializedName("creatorState")
+            val creatorState: String,
+            @SerializedName("hiddenBy")
+            val hiddenBy: List<String>,
+            @SerializedName("seenBy")
+            val seenBy: List<String>
+        ) : Parcelable
+    }
+}

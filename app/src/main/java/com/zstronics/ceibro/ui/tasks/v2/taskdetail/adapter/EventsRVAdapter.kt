@@ -4,17 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
-import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
-import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
-import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskEventsBinding
 import com.zstronics.ceibro.utils.DateUtils
-import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
 class EventsRVAdapter @Inject constructor() :
@@ -127,7 +124,7 @@ class EventsRVAdapter @Inject constructor() :
                     }
                     binding.forwardedToNames.text = invitedUsers
                 }
-                TaskDetailEvents.NewComment.eventValue -> {
+                TaskDetailEvents.Comment.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -154,10 +151,10 @@ class EventsRVAdapter @Inject constructor() :
 
         }
 
-        private fun separateFiles(files: List<Files>) {
-            val onlyImage: ArrayList<Files> = arrayListOf()
-            val imagesWithComment: ArrayList<Files> = arrayListOf()
-            val document: ArrayList<Files> = arrayListOf()
+        private fun separateFiles(files: List<EventFiles>) {
+            val onlyImage: ArrayList<EventFiles> = arrayListOf()
+            val imagesWithComment: ArrayList<EventFiles> = arrayListOf()
+            val document: ArrayList<EventFiles> = arrayListOf()
 
             for (item in files) {
                 when (item.fileTag) {
@@ -176,19 +173,19 @@ class EventsRVAdapter @Inject constructor() :
             }
 
             if (onlyImage.isNotEmpty()) {
-                val onlyImageAdapter = OnlyImageRVAdapter()
+                val onlyImageAdapter = EventsOnlyImageRVAdapter()
                 binding.onlyImagesRV.adapter = onlyImageAdapter
                 onlyImageAdapter.setList(onlyImage)
                 binding.onlyImagesRV.visibility = View.VISIBLE
             }
             if (imagesWithComment.isNotEmpty()) {
-                val imageWithCommentAdapter = ImageWithCommentRVAdapter()
+                val imageWithCommentAdapter = EventsImageWithCommentRVAdapter()
                 binding.imagesWithCommentRV.adapter = imageWithCommentAdapter
                 imageWithCommentAdapter.setList(imagesWithComment)
                 binding.imagesWithCommentRV.visibility = View.VISIBLE
             }
             if (document.isNotEmpty()) {
-                val filesAdapter = FilesRVAdapter()
+                val filesAdapter = EventsFilesRVAdapter()
                 binding.filesRV.adapter = filesAdapter
                 filesAdapter.setList(document)
                 binding.filesRV.visibility = View.VISIBLE

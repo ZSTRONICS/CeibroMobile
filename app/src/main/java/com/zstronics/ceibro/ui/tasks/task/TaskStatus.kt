@@ -7,5 +7,6 @@ enum class TaskStatus {
     ACTIVE,
     DONE,
     UNREAD,
-    ONGOING
+    ONGOING,
+    CANCELED
 }
