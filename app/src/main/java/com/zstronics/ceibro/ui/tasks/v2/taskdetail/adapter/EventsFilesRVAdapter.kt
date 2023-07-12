@@ -4,15 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
 import javax.inject.Inject
 
-class FilesRVAdapter @Inject constructor() :
-    RecyclerView.Adapter<FilesRVAdapter.FilesViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: TaskFiles) -> Unit)? =
+class EventsFilesRVAdapter @Inject constructor() :
+    RecyclerView.Adapter<EventsFilesRVAdapter.FilesViewHolder>() {
+    var itemClickListener: ((view: View, position: Int, data: EventFiles) -> Unit)? =
         null
-    var listItems: MutableList<TaskFiles> = mutableListOf()
+    var listItems: MutableList<EventFiles> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,7 +36,7 @@ class FilesRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<TaskFiles>) {
+    fun setList(list: List<EventFiles>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -44,7 +45,7 @@ class FilesRVAdapter @Inject constructor() :
     inner class FilesViewHolder(private val binding: LayoutCeibroFilesBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TaskFiles) {
+        fun bind(item: EventFiles) {
             binding.clearIcon.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

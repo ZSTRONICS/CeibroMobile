@@ -9,6 +9,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
@@ -33,11 +34,16 @@ class TaskDetailV2Fragment :
     override val layoutResId: Int = R.layout.fragment_task_detail_v2
     override fun toolBarVisibility(): Boolean = false
     val FORWARD_REQUEST_CODE = 105
+    val COMMENT_REQUEST_CODE = 106
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
-            R.id.taskCommentBtn -> navigate(R.id.commentFragment)
+            R.id.taskCommentBtn -> {
+                val bundle = Bundle()
+                bundle.putParcelable("taskData", viewModel.taskDetail.value)
+                navigateForResult(R.id.commentFragment, COMMENT_REQUEST_CODE, bundle)
+            }
             R.id.taskForwardBtn -> {
                 val assignTo = viewModel.taskDetail.value?.assignedToState?.map { it.phoneNumber }
                 val invited = viewModel.taskDetail.value?.invitedNumbers?.map { it.phoneNumber }
@@ -312,6 +318,14 @@ class TaskDetailV2Fragment :
 
                         }
                     }
+                }
+
+                COMMENT_REQUEST_CODE -> {
+                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
+                    if (updatedTask != null) {
+                        viewModel._taskDetail.postValue(updatedTask)
+                    }
+
                 }
             }
         }

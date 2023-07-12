@@ -7,7 +7,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
-import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -27,18 +27,18 @@ class TaskDetailV2VM @Inject constructor(
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
     val user = sessionManager.getUser().value
 
-    private val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
+    val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
     val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
 
-    private val _onlyImages: MutableLiveData<ArrayList<Files>> = MutableLiveData(arrayListOf())
-    val onlyImages: MutableLiveData<ArrayList<Files>> = _onlyImages
+    private val _onlyImages: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
+    val onlyImages: MutableLiveData<ArrayList<TaskFiles>> = _onlyImages
 
-    private val _imagesWithComments: MutableLiveData<ArrayList<Files>> =
+    private val _imagesWithComments: MutableLiveData<ArrayList<TaskFiles>> =
         MutableLiveData(arrayListOf())
-    val imagesWithComments: MutableLiveData<ArrayList<Files>> = _imagesWithComments
+    val imagesWithComments: MutableLiveData<ArrayList<TaskFiles>> = _imagesWithComments
 
-    private val _documents: MutableLiveData<ArrayList<Files>> = MutableLiveData(arrayListOf())
-    val documents: MutableLiveData<ArrayList<Files>> = _documents
+    private val _documents: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
+    val documents: MutableLiveData<ArrayList<TaskFiles>> = _documents
 
     private val _taskEvents: MutableLiveData<ArrayList<Events>> = MutableLiveData()
     val taskEvents: MutableLiveData<ArrayList<Events>> = _taskEvents
@@ -68,10 +68,10 @@ class TaskDetailV2VM @Inject constructor(
     }
 
 
-    fun separateFiles(files: List<Files>) {
-        val onlyImage: ArrayList<Files> = arrayListOf()
-        val imagesWithComment: ArrayList<Files> = arrayListOf()
-        val document: ArrayList<Files> = arrayListOf()
+    fun separateFiles(files: List<TaskFiles>) {
+        val onlyImage: ArrayList<TaskFiles> = arrayListOf()
+        val imagesWithComment: ArrayList<TaskFiles> = arrayListOf()
+        val document: ArrayList<TaskFiles> = arrayListOf()
 
         for (item in files) {
             when (item.fileTag) {
@@ -95,7 +95,7 @@ class TaskDetailV2VM @Inject constructor(
     }
 
     fun handleEvents(events: List<Events>) {
-        _taskEvents.postValue(events as ArrayList<Events>)
+        _taskEvents.postValue(ArrayList(events))
     }
 
 

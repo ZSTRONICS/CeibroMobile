@@ -3,9 +3,9 @@ package com.zstronics.ceibro.data.repos.dashboard.attachment.v2
 
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
-import com.zstronics.ceibro.data.database.models.tasks.Files
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 
 data class UploadFilesV2Response(
     @SerializedName("data")
-    val uploadData: List<Files>
+    val uploadData: List<TaskFiles>
 ) : BaseResponse()

@@ -3,7 +3,6 @@ package com.zstronics.ceibro.data.database.models.tasks
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
@@ -29,7 +28,7 @@ data class CeibroTaskV2(
     @SerializedName("dueDate")
     val dueDate: String,
     @SerializedName("hiddenBy")
-    val hiddenBy: List<String>,
+    var hiddenBy: List<String>,
     @SerializedName("_id")
     val id: String,
     @SerializedName("isCanceled")
@@ -55,9 +54,9 @@ data class CeibroTaskV2(
     @SerializedName("__v")
     val v: Int,
     @SerializedName("files")
-    var files: List<Files>,
+    var files: List<TaskFiles>,
     @SerializedName("events")
-    val events: List<Events>
+    var events: List<Events>
 ) : Parcelable
 
 @Parcelize
@@ -83,7 +82,7 @@ data class ProjectOfTask(
 
 @Parcelize
 @Keep
-data class TaskMemberDetail (
+data class TaskMemberDetail(
     @SerializedName("firstName") val firstName: String,
     @SerializedName("surName") val surName: String,
     @SerializedName("profilePic") val profilePic: String?,
@@ -113,7 +112,7 @@ data class AssignedToState(
 
 @Parcelize
 @Keep
-data class Files(
+data class TaskFiles(
     @SerializedName("access")
     val access: List<String>,
     @SerializedName("comment")
@@ -148,11 +147,33 @@ data class Files(
     val version: Int
 ) : Parcelable
 
+
+@Parcelize
+@Keep
+data class EventFiles(
+    @SerializedName("comment")
+    val comment: String,
+    @SerializedName("fileName")
+    val fileName: String,
+    @SerializedName("fileTag")
+    val fileTag: String,
+    @SerializedName("fileUrl")
+    val fileUrl: String,
+    @SerializedName("hasComment")
+    val hasComment: Boolean,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("moduleId")
+    val moduleId: String,
+    @SerializedName("moduleType")
+    val moduleType: String,
+    @SerializedName("uploadStatus")
+    val uploadStatus: String
+) : Parcelable
+
 @Parcelize
 @Keep
 data class Events(
-    @SerializedName("comment")
-    val comment: String,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("eventData")
@@ -170,7 +191,7 @@ data class Events(
     @SerializedName("updatedAt")
     val updatedAt: String,
     @SerializedName("__v")
-    val v: Int
+    val v: Int?
 ) : Parcelable
 
 
@@ -194,13 +215,15 @@ data class EventData(
 @Keep
 data class CommentData(
     @SerializedName("files")
-    val files: List<Files>,
+    val files: List<EventFiles>,
     @SerializedName("_id")
     val id: String,
     @SerializedName("isFileAttached")
     val isFileAttached: Boolean,
     @SerializedName("message")
-    val message: String
+    val message: String,
+    @SerializedName("taskId")
+    val taskId: String?
 ) : Parcelable
 
 @Parcelize

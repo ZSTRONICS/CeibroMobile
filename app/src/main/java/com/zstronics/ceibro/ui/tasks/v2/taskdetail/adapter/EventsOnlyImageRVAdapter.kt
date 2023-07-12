@@ -5,15 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
 import javax.inject.Inject
 
-class OnlyImageRVAdapter @Inject constructor() :
-    RecyclerView.Adapter<OnlyImageRVAdapter.OnlyImageViewHolder>() {
+class EventsOnlyImageRVAdapter @Inject constructor() :
+    RecyclerView.Adapter<EventsOnlyImageRVAdapter.OnlyImageViewHolder>() {
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
-    var listItems: MutableList<TaskFiles> = mutableListOf()
+    var listItems: MutableList<EventFiles> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(
@@ -37,7 +38,7 @@ class OnlyImageRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<TaskFiles>) {
+    fun setList(list: List<EventFiles>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -46,7 +47,7 @@ class OnlyImageRVAdapter @Inject constructor() :
     inner class OnlyImageViewHolder(private val binding: LayoutCeibroOnlyImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TaskFiles) {
+        fun bind(item: EventFiles) {
             binding.root.setOnClickListener {
 
             }

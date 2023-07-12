@@ -1,27 +1,29 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
-import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
+import com.zstronics.ceibro.databinding.LayoutCeibroImageWithCommentBinding
 import javax.inject.Inject
 
-class OnlyImageRVAdapter @Inject constructor() :
-    RecyclerView.Adapter<OnlyImageRVAdapter.OnlyImageViewHolder>() {
+class EventsImageWithCommentRVAdapter @Inject constructor() :
+    RecyclerView.Adapter<EventsImageWithCommentRVAdapter.ImageWithCommentViewHolder>() {
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
-    var listItems: MutableList<TaskFiles> = mutableListOf()
+    var listItems: MutableList<EventFiles> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): OnlyImageViewHolder {
-        return OnlyImageViewHolder(
-            LayoutCeibroOnlyImageBinding.inflate(
+    ): ImageWithCommentViewHolder {
+        return ImageWithCommentViewHolder(
+            LayoutCeibroImageWithCommentBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -29,7 +31,7 @@ class OnlyImageRVAdapter @Inject constructor() :
         )
     }
 
-    override fun onBindViewHolder(holder: OnlyImageViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ImageWithCommentViewHolder, position: Int) {
         holder.bind(listItems[position])
     }
 
@@ -37,18 +39,18 @@ class OnlyImageRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<TaskFiles>) {
+    fun setList(list: List<EventFiles>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
     }
 
-    inner class OnlyImageViewHolder(private val binding: LayoutCeibroOnlyImageBinding) :
+    inner class ImageWithCommentViewHolder(private val binding: LayoutCeibroImageWithCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TaskFiles) {
+        fun bind(item: EventFiles) {
             binding.root.setOnClickListener {
-
+//                itemClickListener?.invoke(it, adapterPosition)
             }
 
             val context = binding.smallImgView.context
@@ -57,12 +59,10 @@ class OnlyImageRVAdapter @Inject constructor() :
                 .load(item.fileUrl)
                 .into(binding.smallImgView)
 
-
-//            if (adapterPosition == selectedItemPosition) {
-//                binding.parentCard.background = context.resources.getDrawable(R.drawable.card_outline)
-//            } else {
-//                binding.parentCard.background = null
-//            }
+            if (item.hasComment) {
+                binding.imgComment.movementMethod = ScrollingMovementMethod()
+                binding.imgComment.text = item.comment
+            }
 
         }
     }
