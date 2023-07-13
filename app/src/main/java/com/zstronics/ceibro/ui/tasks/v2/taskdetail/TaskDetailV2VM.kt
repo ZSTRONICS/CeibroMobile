@@ -486,7 +486,7 @@ class TaskDetailV2VM @Inject constructor(
                                     taskToMeLocalData.allTasks.ongoing =
                                         newAllOngoingTaskList.toList()
 
-                                } else if (taskSeen.creatorState.equals(
+                                } else if (taskSeen.state.state.equals(
                                         TaskStatus.DONE.name,
                                         true
                                     )
@@ -529,7 +529,7 @@ class TaskDetailV2VM @Inject constructor(
                                 }
 
 
-                                if (taskSeen.creatorState.equals(TaskStatus.UNREAD.name, true)) {
+                                if (taskSeen.state.state.equals(TaskStatus.UNREAD.name, true)) {
                                     val allUnreadTaskList =
                                         taskToMeLocalData.allTasks.unread.toMutableList()
                                     val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
@@ -542,7 +542,7 @@ class TaskDetailV2VM @Inject constructor(
                                     taskToMeLocalData.allTasks.unread =
                                         newAllUnreadTaskList.toList()
 
-                                } else if (taskSeen.creatorState.equals(
+                                } else if (taskSeen.state.state.equals(
                                         TaskStatus.DONE.name,
                                         true
                                     )
@@ -585,7 +585,7 @@ class TaskDetailV2VM @Inject constructor(
                                 }
 
 
-                                if (taskSeen.creatorState.equals(TaskStatus.UNREAD.name, true)) {
+                                if (taskSeen.state.state.equals(TaskStatus.UNREAD.name, true)) {
                                     val allUnreadTaskList =
                                         taskToMeLocalData.allTasks.unread.toMutableList()
                                     val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
@@ -598,7 +598,7 @@ class TaskDetailV2VM @Inject constructor(
                                     taskToMeLocalData.allTasks.unread =
                                         newAllUnreadTaskList.toList()
 
-                                } else if (taskSeen.creatorState.equals(
+                                } else if (taskSeen.state.state.equals(
                                         TaskStatus.ONGOING.name,
                                         true
                                     )
