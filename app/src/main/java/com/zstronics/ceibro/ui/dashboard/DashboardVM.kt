@@ -125,8 +125,6 @@ class DashboardVM @Inject constructor(
                                     notificationIcon = R.drawable.app_logo
                                 )
                             )
-                            EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
-
                         }
                         SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
                             val task = gson.fromJson<SocketTaskV2CreatedResponse>(
@@ -140,6 +138,16 @@ class DashboardVM @Inject constructor(
                                 arguments,
                                 object : TypeToken<TaskSeenResponse>() {}.type
                             ).taskSeen
+
+                            updateGenericTaskSeenInLocal(taskSeen, taskDao)
+                        }
+                        SocketHandler.TaskEvent.TOPIC_CREATED.name -> {
+                            val taskSeen = gson.fromJson<TaskSeenResponse>(
+                                arguments,
+                                object : TypeToken<TaskSeenResponse>() {}.type
+                            ).taskSeen
+
+                            updateGenericTaskSeenInLocal(taskSeen, taskDao)
                         }
                         SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
                             val taskCommentData = gson.fromJson<EventV2Response>(
