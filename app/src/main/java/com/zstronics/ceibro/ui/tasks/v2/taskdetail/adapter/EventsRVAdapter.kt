@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
-import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskEventsBinding
@@ -80,16 +79,15 @@ class EventsRVAdapter @Inject constructor() :
                     binding.eventName.text = context.resources.getString(R.string.forwarded_by)
 
                     var forwardedToUsers = "To: "
-                    var index = 0
                     if (!item.eventData.isNullOrEmpty()) {
-                        for (event in item.eventData) {
-                            forwardedToUsers += if (index == item.eventData.size - 1) {
-                                "${event.firstName} ${event.surName}"
-                            } else {
-                                "${event.firstName} ${event.surName} ; "
-                            }
-                            index++
+                        forwardedToUsers += item.eventData.map {
+                            if (it.firstName.isNullOrEmpty())
+                                " ${it.phoneNumber} ;"
+                            else
+                                " ${it.firstName} ${it.surName} ;"
                         }
+                            .toString().removeSurrounding("[", "]")
+                        forwardedToUsers = forwardedToUsers.removeSuffix(";").replace(",", "")
                     }
                     binding.forwardedToNames.text = forwardedToUsers
 
@@ -103,24 +101,14 @@ class EventsRVAdapter @Inject constructor() :
                     binding.eventName.text = context.resources.getString(R.string.invited_by)
 
                     var invitedUsers = "To: "
-                    var index = 0
                     if (!item.eventData.isNullOrEmpty()) {
-                        for (event in item.eventData) {
-                            invitedUsers += if (index == item.eventData.size - 1) {
-                                if (event.firstName.isNotEmpty()) {
-                                    "${event.firstName} ${event.surName}"
-                                } else {
-                                    event.phoneNumber
-                                }
-                            } else {
-                                if (event.firstName.isNotEmpty()) {
-                                    "${event.firstName} ${event.surName} ; "
-                                } else {
-                                    "${event.phoneNumber} ; "
-                                }
-                            }
-                            index++
-                        }
+                        invitedUsers += item.eventData.map {
+                            if (it.firstName.isNullOrEmpty())
+                                " ${it.phoneNumber} ;"
+                            else
+                                " ${it.firstName} ${it.surName} ;"
+                        }.toString().removeSurrounding("[", "]")
+                        invitedUsers = invitedUsers.removeSuffix(";").replace(",", "")
                     }
                     binding.forwardedToNames.text = invitedUsers
                 }

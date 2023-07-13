@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.socket
 
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
@@ -105,4 +106,6 @@ object LocalEvents {
 
     class LogoutUserEvent
     object ContactsSynced
+    data class TaskForwardEvent(val task: CeibroTaskV2?)
+
 }

@@ -4,17 +4,12 @@ import android.content.Context
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -88,99 +83,13 @@ class NewTaskV2VM @Inject constructor(
                 loading(true)
                 taskRepository.newTaskV2(newTaskRequest) { isSuccess, task ->
                     if (isSuccess) {
-                        if (task != null) {
-                            var taskToMe = false
-                            var taskFromMe = false
-                            if (task.creator.id == user?.id) {
-                                taskFromMe = true
-                            }
-                            for (item in task.assignedToState) {
-                                if (item.userId == user?.id) {
-                                    taskToMe = true
-                                }
-                            }
-
-                            launch {
-                                if (taskFromMe) {
-                                    val taskLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
-
-                                    if (taskLocalData != null) {
-                                        val index = taskLocalData.allTasks.unread.indexOfFirst { it.id == task.id } ?: -1
-                                        if (index >= 0) {       //it means this task ID already exists
-                                            val updatedList = taskLocalData.allTasks.unread.toMutableList()
-                                            updatedList[index] = task
-                                            taskLocalData.allTasks.unread = updatedList.toList()
-                                        } else {
-                                            val newList: MutableList<CeibroTaskV2> = mutableListOf()
-                                            val oldList = taskLocalData.allTasks.unread.toMutableList()
-                                            newList.add(task)
-                                            newList.addAll(oldList)
-                                            taskLocalData.allTasks.unread = newList.toList()
-                                        }
-                                        taskDao.insertTaskData(
-                                            taskLocalData
-                                        )
-                                    } else {
-                                        val newList: MutableList<CeibroTaskV2> = mutableListOf()
-                                        newList.add(task)
-
-                                        taskDao.insertTaskData(
-                                            TasksV2DatabaseEntity(
-                                                rootState = TaskRootStateTags.FromMe.tagValue,
-                                                allTasks = TaskV2Response.AllTasks(
-                                                    new = listOf(),
-                                                    unread = newList.toList(),
-                                                    ongoing = listOf(),
-                                                    done = listOf()
-                                                )
-                                            )
-                                        )
-                                    }
-                                }
-                                if (taskToMe) {
-                                    val taskLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
-
-                                    if (taskLocalData != null) {
-                                        val index = taskLocalData.allTasks.new.indexOfFirst { it.id == task.id } ?: -1
-                                        if (index >= 0) {       //it means this task ID already exists
-                                            val updatedList = taskLocalData.allTasks.new.toMutableList()
-                                            updatedList[index] = task
-                                            taskLocalData.allTasks.new = updatedList.toList()
-                                        } else {
-                                            val newList: MutableList<CeibroTaskV2> = mutableListOf()
-                                            val oldList = taskLocalData.allTasks.new.toMutableList()
-                                            newList.add(task)
-                                            newList.addAll(oldList)
-                                            taskLocalData.allTasks.new = newList.toList()
-                                        }
-                                        taskDao.insertTaskData(
-                                            taskLocalData
-                                        )
-                                    } else {
-                                        val newList: MutableList<CeibroTaskV2> = mutableListOf()
-                                        newList.add(task)
-
-                                        taskDao.insertTaskData(
-                                            TasksV2DatabaseEntity(
-                                                rootState = TaskRootStateTags.ToMe.tagValue,
-                                                allTasks = TaskV2Response.AllTasks(
-                                                    unread = listOf(),
-                                                    new = newList.toList(),
-                                                    ongoing = listOf(),
-                                                    done = listOf()
-                                                )
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        updateCreatedTaskInLocal(task, taskDao, user?.id)
                         val list = getCombinedList()
                         if (list.isNotEmpty()) {
                             task?.id?.let { uploadTaskFiles(context, list, it) }
                         }
                         val handler = Handler()
-                        handler.postDelayed(Runnable {
+                        handler.postDelayed({
                             onBack()
                             loading(false, "")
                         }, 50)

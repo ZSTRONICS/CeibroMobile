@@ -199,7 +199,7 @@ data class Events(
 @Keep
 data class EventData(
     @SerializedName("firstName")
-    val firstName: String,
+    val firstName: String?,
     @SerializedName("_id")
     val id: String?,
     @SerializedName("phoneNumber")
