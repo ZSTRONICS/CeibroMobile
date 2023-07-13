@@ -86,8 +86,8 @@ class EventsRVAdapter @Inject constructor() :
                             else
                                 " ${it.firstName} ${it.surName} ;"
                         }
-                            .toString().removeSurrounding("[", "]")
-                        forwardedToUsers = forwardedToUsers.removeSuffix(";").replace(",", "")
+                            .toString().removeSurrounding("[", "]").removeSuffix(";")
+                            .replace(",", "")
                     }
                     binding.forwardedToNames.text = forwardedToUsers
 
@@ -107,8 +107,7 @@ class EventsRVAdapter @Inject constructor() :
                                 " ${it.phoneNumber} ;"
                             else
                                 " ${it.firstName} ${it.surName} ;"
-                        }.toString().removeSurrounding("[", "]")
-                        invitedUsers = invitedUsers.removeSuffix(";").replace(",", "")
+                        }.toString().removeSurrounding("[", "]").removeSuffix(";").replace(",", "")
                     }
                     binding.forwardedToNames.text = invitedUsers
                 }
