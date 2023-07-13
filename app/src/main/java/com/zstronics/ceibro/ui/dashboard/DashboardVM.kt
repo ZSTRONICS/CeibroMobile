@@ -39,8 +39,8 @@ import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -134,20 +134,11 @@ class DashboardVM @Inject constructor(
                             updateForwardTaskInLocal(task, taskDao, userId)
                         }
                         SocketHandler.TaskEvent.TASK_SEEN.name -> {
-                            val taskSeen = gson.fromJson<TaskSeenResponse>(
+                            val taskSeen = gson.fromJson<SocketTaskSeenV2Response>(
                                 arguments,
-                                object : TypeToken<TaskSeenResponse>() {}.type
-                            ).taskSeen
-
-                            updateGenericTaskSeenInLocal(taskSeen, taskDao)
-                        }
-                        SocketHandler.TaskEvent.TOPIC_CREATED.name -> {
-                            val taskSeen = gson.fromJson<TaskSeenResponse>(
-                                arguments,
-                                object : TypeToken<TaskSeenResponse>() {}.type
-                            ).taskSeen
-
-                            updateGenericTaskSeenInLocal(taskSeen, taskDao)
+                                object : TypeToken<SocketTaskSeenV2Response>() {}.type
+                            ).data
+                            updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
                         }
                         SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
                             val taskCommentData = gson.fromJson<EventV2Response>(
@@ -778,18 +769,18 @@ class DashboardVM @Inject constructor(
                 }
             }
 
-            when (val response = remoteTask.getAllTopics()) {
-                is ApiResponse.Success -> {
-                    topicsV2Dao.insertTopicData(
-                        TopicsV2DatabaseEntity(
-                            0,
-                            topicsData = response.data
-                        )
-                    )
-                }
-                is ApiResponse.Error -> {
-                }
-            }
+//            when (val response = remoteTask.getAllTopics()) {
+//                is ApiResponse.Success -> {
+//                    topicsV2Dao.insertTopicData(
+//                        TopicsV2DatabaseEntity(
+//                            0,
+//                            topicsData = response.data
+//                        )
+//                    )
+//                }
+//                is ApiResponse.Error -> {
+//                }
+//            }
 
             when (val response = projectRepository.getProjectsV2()) {
                 is ApiResponse.Success -> {

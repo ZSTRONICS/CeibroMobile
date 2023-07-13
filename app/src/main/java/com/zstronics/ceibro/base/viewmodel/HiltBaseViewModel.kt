@@ -367,7 +367,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     fun updateGenericTaskSeenInLocal(
         taskSeen: TaskSeenResponse.TaskSeen?,
-        taskDao: TaskV2Dao
+        taskDao: TaskV2Dao,
+        userId: String?
     ) {
         if (taskSeen != null) {
             launch {
@@ -553,6 +554,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskDao.insertTaskData(
                             taskFromMeLocalData
                         )
+                        EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                     }
                 }
 
@@ -581,7 +583,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
 
-                                if (taskSeen.state.state.equals(TaskStatus.ONGOING.name, true)) {
+                                if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
+                                        TaskStatus.ONGOING.name,
+                                        true
+                                    )
+                                ) {
                                     val allOngoingTaskList =
                                         taskToMeLocalData.allTasks.ongoing.toMutableList()
                                     val newAllOngoingTaskList: MutableList<CeibroTaskV2> =
@@ -594,7 +600,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     taskToMeLocalData.allTasks.ongoing =
                                         newAllOngoingTaskList.toList()
 
-                                } else if (taskSeen.state.state.equals(
+                                } else if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
                                         TaskStatus.DONE.name,
                                         true
                                     )
@@ -619,7 +625,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 taskToMeLocalData.allTasks.new = allTaskList.toList()
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(newTask))
-
                         } else if (ongoingTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -637,7 +642,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
 
-                                if (taskSeen.state.state.equals(TaskStatus.UNREAD.name, true)) {
+                                if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
+                                        TaskStatus.UNREAD.name,
+                                        true
+                                    )
+                                ) {
                                     val allUnreadTaskList =
                                         taskToMeLocalData.allTasks.unread.toMutableList()
                                     val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
@@ -650,7 +659,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     taskToMeLocalData.allTasks.unread =
                                         newAllUnreadTaskList.toList()
 
-                                } else if (taskSeen.state.state.equals(
+                                } else if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
                                         TaskStatus.DONE.name,
                                         true
                                     )
@@ -693,7 +702,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
 
-                                if (taskSeen.state.state.equals(TaskStatus.UNREAD.name, true)) {
+                                if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
+                                        TaskStatus.UNREAD.name,
+                                        true
+                                    )
+                                ) {
                                     val allUnreadTaskList =
                                         taskToMeLocalData.allTasks.unread.toMutableList()
                                     val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
@@ -706,7 +719,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     taskToMeLocalData.allTasks.unread =
                                         newAllUnreadTaskList.toList()
 
-                                } else if (taskSeen.state.state.equals(
+                                } else if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
                                         TaskStatus.ONGOING.name,
                                         true
                                     )
@@ -737,6 +750,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskDao.insertTaskData(
                             taskToMeLocalData
                         )
+                        EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
                     }
                 }
             }

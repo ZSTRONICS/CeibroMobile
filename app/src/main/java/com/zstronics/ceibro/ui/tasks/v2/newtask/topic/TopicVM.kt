@@ -14,7 +14,7 @@ import javax.inject.Inject
 class TopicVM @Inject constructor(
     override val viewState: TopicState,
     private val taskRepository: ITaskRepository,
-    private val sessionManager: SessionManager,
+    sessionManager: SessionManager,
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITopic.State>(), ITopic.ViewModel {
     val user = sessionManager.getUser().value
@@ -37,32 +37,32 @@ class TopicVM @Inject constructor(
 
     fun getAllTopics(callBack: () -> Unit) {
         launch {
-            val topicsData = topicsV2Dao.getTopicsData()
-            if (topicsData != null) {
-                val allTopics = topicsData.topicsData
-                val allTopic1 = allTopics.allTopics
-                val recentTopic1 = allTopics.recentTopics
+//            val topicsData = topicsV2Dao.getTopicsData()
+//            if (topicsData != null) {
+//                val allTopics = topicsData.topicsData
+//                val allTopic1 = allTopics.allTopics
+//                val recentTopic1 = allTopics.recentTopics
+//
+//                if (allTopic1.isNotEmpty()) {
+//                    originalAllTopics = allTopic1
+//                    _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+//                }
+//                if (recentTopic1.isNotEmpty()) {
+//                    originalRecentTopics = recentTopic1
+//                    _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
+//                }
+//                callBack.invoke()
+//            } else {
+            taskRepository.getAllTopics { isSuccess, error, allTopics ->
+                if (isSuccess) {
+                    val allTopic1 = allTopics?.allTopics
+                    val recentTopic1 = allTopics?.recentTopics
 
-                if (allTopic1.isNotEmpty()) {
-                    originalAllTopics = allTopic1
-                    _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
-                }
-                if (recentTopic1.isNotEmpty()) {
-                    originalRecentTopics = recentTopic1
-                    _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
-                }
-                callBack.invoke()
-            } else {
-                taskRepository.getAllTopics { isSuccess, error, allTopics ->
-                    if (isSuccess) {
-                        val allTopic1 = allTopics?.allTopics
-                        val recentTopic1 = allTopics?.recentTopics
-
-                        if (allTopic1?.isNotEmpty() == true) {
-                            originalAllTopics = allTopic1
-                            _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
-                        }
-                        if (recentTopic1?.isNotEmpty() == true) {
+                    if (allTopic1?.isNotEmpty() == true) {
+                        originalAllTopics = allTopic1
+                        _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+                    }
+                    if (recentTopic1?.isNotEmpty() == true) {
                             originalRecentTopics = recentTopic1
                             _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
                         }
@@ -72,7 +72,7 @@ class TopicVM @Inject constructor(
                         alert(error)
                     }
                 }
-            }
+//            }
         }
     }
 

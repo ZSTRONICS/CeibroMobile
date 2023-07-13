@@ -27,7 +27,7 @@ data class TaskSeenResponse(
         @SerializedName("isAssignedToMe")
         val isAssignedToMe: Boolean,
         @SerializedName("isCreator")
-        val isCreator: Boolean,
+        var isCreator: Boolean,
         @SerializedName("seenBy")
         val seenBy: List<String>,
         @SerializedName("state")

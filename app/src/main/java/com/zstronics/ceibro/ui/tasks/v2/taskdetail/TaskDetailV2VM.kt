@@ -115,7 +115,7 @@ class TaskDetailV2VM @Inject constructor(
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
                     if (taskSeenData != null) {
-                        updateGenericTaskSeenInLocal(taskSeenData, taskDao)
+                        updateGenericTaskSeenInLocal(taskSeenData, taskDao, user?.id)
                         onBack(taskSeenData)
                     }
                     //loading(false, "")
