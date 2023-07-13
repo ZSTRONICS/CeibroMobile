@@ -38,7 +38,7 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.*
-import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -141,10 +141,13 @@ class DashboardVM @Inject constructor(
                             updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
                         }
                         SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
-                            val taskCommentData = gson.fromJson<EventV2Response>(
+                            val commentData = gson.fromJson<SocketNewTaskCommentV2Response>(
                                 arguments,
-                                object : TypeToken<EventV2Response>() {}.type
+                                object : TypeToken<SocketNewTaskCommentV2Response>() {}.type
                             ).data
+                            if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
+                                updateTaskCommentInLocal(commentData, taskDao, userId)
+                            }
                         }
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
                             val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
@@ -162,7 +165,7 @@ class DashboardVM @Inject constructor(
                                     localTask.updateTask(taskUpdatedData.data)
                                 }
                             }
-                            EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                         }
                         SocketHandler.TaskEvent.SUB_TASK_CREATED.name -> {
                             val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
@@ -209,7 +212,7 @@ class DashboardVM @Inject constructor(
                                     localTask.updateTask(taskUpdatedData.data)
                                 }
                             }
-                            EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                         }
                         SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
                             val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
@@ -250,7 +253,7 @@ class DashboardVM @Inject constructor(
 
                             if (task != null) {
                                 localTask.updateTask(task)
-                                EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
+                                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                             }
                         }
                     }

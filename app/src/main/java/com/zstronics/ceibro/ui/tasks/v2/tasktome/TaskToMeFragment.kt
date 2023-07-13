@@ -7,17 +7,12 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.task.TaskAdapter
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -174,10 +169,11 @@ class TaskToMeFragment :
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
+    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
 //        showToast("New Task Created")
         loadTasks(false)
     }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

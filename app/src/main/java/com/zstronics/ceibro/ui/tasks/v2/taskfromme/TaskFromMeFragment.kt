@@ -13,7 +13,6 @@ import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -41,9 +40,12 @@ class TaskFromMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.unreadStateText.background = resources.getDrawable(R.drawable.status_new_filled_new)
-                mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_outline_new)
+                mViewDataBinding.unreadStateText.background =
+                    resources.getDrawable(R.drawable.status_new_filled_new)
+                mViewDataBinding.ongoingStateText.background =
+                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
+                mViewDataBinding.doneStateText.background =
+                    resources.getDrawable(R.drawable.status_done_outline_new)
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = "ongoing"
@@ -53,9 +55,12 @@ class TaskFromMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.unreadStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
-                mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_filled_new)
-                mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_outline_new)
+                mViewDataBinding.unreadStateText.background =
+                    resources.getDrawable(R.drawable.status_new_outline_new)
+                mViewDataBinding.ongoingStateText.background =
+                    resources.getDrawable(R.drawable.status_ongoing_filled_new)
+                mViewDataBinding.doneStateText.background =
+                    resources.getDrawable(R.drawable.status_done_outline_new)
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = "done"
@@ -65,14 +70,15 @@ class TaskFromMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.unreadStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
-                mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_filled_new)
+                mViewDataBinding.unreadStateText.background =
+                    resources.getDrawable(R.drawable.status_new_outline_new)
+                mViewDataBinding.ongoingStateText.background =
+                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
+                mViewDataBinding.doneStateText.background =
+                    resources.getDrawable(R.drawable.status_done_filled_new)
             }
         }
     }
-
-
 
 
     @Inject
@@ -137,6 +143,7 @@ class TaskFromMeFragment :
                 }
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.searchTasks(newText)
@@ -146,9 +153,6 @@ class TaskFromMeFragment :
         })
 
     }
-
-
-
 
 
     private fun loadTasks(skeletonVisible: Boolean) {
@@ -167,12 +171,11 @@ class TaskFromMeFragment :
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
-//        showToast("New Task Created")
+    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
         loadTasks(false)
     }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

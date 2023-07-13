@@ -15,7 +15,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
@@ -221,10 +220,11 @@ class TasksFragment :
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
+    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
 //        showToast("New Task Created")
         viewModel.getTasks()
     }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

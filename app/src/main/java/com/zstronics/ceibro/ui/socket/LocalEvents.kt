@@ -13,7 +13,7 @@ import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 
 object LocalEvents {
-    class TaskCreatedEvent
+    class RefreshTasksEvent
     data class SubTaskCreatedEvent(val taskId: String)
     data class NewSubTaskComment(val newComment: SubTaskComments, val commentId: String)
     data class UploadFilesToServer(

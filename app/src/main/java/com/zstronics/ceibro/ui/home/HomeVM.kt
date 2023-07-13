@@ -33,12 +33,6 @@ class HomeVM @Inject constructor(
     val homeTasks: LiveData<List<CeibroTask>> = _homeTasks
     var originalTasks: List<CeibroTask> = listOf()
 
-    override fun onResume() {
-        super.onResume()
-//        loadProjects("all")
-//        getTasks()
-    }
-
     init {
         EventBus.getDefault().register(this)
     }
@@ -110,7 +104,7 @@ class HomeVM @Inject constructor(
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTaskCreatedEvent(event: LocalEvents.TaskCreatedEvent?) {
+    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
 //        getTasks()
     }
 
