@@ -128,7 +128,7 @@ class TaskDetailV2VM @Inject constructor(
     ) {
         launch {
             loading(true)
-            taskRepository.forwardTask(taskId, forwardTaskV2Request) { isSuccess, task ->
+            taskRepository.forwardTask(taskId, forwardTaskV2Request) { isSuccess, task, errorMsg ->
                 if (isSuccess) {
 
                     if (task != null) {
@@ -138,7 +138,7 @@ class TaskDetailV2VM @Inject constructor(
                     loading(false, "")
                     insertUpdatedTask(task)
                 } else {
-                    loading(false, "")
+                        loading(false, errorMsg)
                 }
             }
         }

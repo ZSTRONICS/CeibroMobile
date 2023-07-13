@@ -22,7 +22,7 @@ abstract class BaseNetworkRepository : INetwork {
             return ApiResponse.Error(
                 ApiError(
                     MALFORMED_JSON_EXCEPTION_CODE,
-                    exception.localizedMessage ?: ""
+                    "No response from server"
                 )
             )
         } catch (exception: Exception) {
@@ -37,7 +37,7 @@ abstract class BaseNetworkRepository : INetwork {
                 return ApiResponse.Error(
                     ApiError(
                         getDefaultCode(),
-                        exception.localizedMessage ?: ""
+                        "No response from server"
                     )
                 )
             }
@@ -50,7 +50,7 @@ abstract class BaseNetworkRepository : INetwork {
             401 -> getApiError(mapError(NetworkErrors.Unauthorized, response.code(), jsonObj.getString("message")))
             403 -> getApiError(mapError(NetworkErrors.Forbidden, response.code(), response.message()))
             404 -> getApiError(mapError(NetworkErrors.NotFound, response.code(), response.message()))
-            502 -> getApiError(mapError(NetworkErrors.BadGateway, response.code(), response.message()))
+            502 -> getApiError(mapError(NetworkErrors.BadGateway, response.code(), "No response from server"))
             504 -> getApiError(mapError(NetworkErrors.NoInternet, response.code(), response.message()))
             in 400..500 -> getApiError(mapError(NetworkErrors.InternalServerError, response.code(), jsonObj.getString("message")))
             -1009 -> getApiError(mapError(NetworkErrors.NoInternet, response.code(), response.message()))
