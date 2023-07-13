@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.*
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 
 @Dao
@@ -13,5 +12,5 @@ interface TaskV2Dao {
     suspend fun getTasks(rootState: String): TasksV2DatabaseEntity?
 
     @Query("DELETE FROM tasks_v2")
-    suspend fun deleteAllTasks()
+    suspend fun deleteAllData()
 }

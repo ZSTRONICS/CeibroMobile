@@ -28,7 +28,9 @@ data class TaskV2Response(
         @SerializedName("ongoing")
         var ongoing: List<CeibroTaskV2>,
         @SerializedName("unread")
-        var unread: List<CeibroTaskV2>
+        var unread: List<CeibroTaskV2>,
+        @SerializedName("canceled")
+        var canceled: List<CeibroTaskV2> = listOf()
     ) : BaseResponse(), Parcelable
 }
 

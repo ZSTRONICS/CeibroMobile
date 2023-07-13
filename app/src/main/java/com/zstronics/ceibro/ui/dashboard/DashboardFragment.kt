@@ -25,6 +25,7 @@ import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
+import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,6 +88,9 @@ class DashboardFragment :
             }
             R.id.canceledBtn -> {
                 viewState.canceledSelected.value = true
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, TaskHiddenFragment())
+                    .commit()
             }
             R.id.locationBtn -> {
                 viewState.locationSelected.value = true

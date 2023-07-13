@@ -1,0 +1,194 @@
+package com.zstronics.ceibro.ui.tasks.v2.hidden_tasks
+
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
+import dagger.hilt.android.lifecycle.HiltViewModel
+import koleton.api.hideSkeleton
+import koleton.api.loadSkeleton
+import javax.inject.Inject
+
+@HiltViewModel
+class TaskHiddenVM @Inject constructor(
+    override val viewState: TaskHiddenState,
+    private val remoteTask: TaskRemoteDataSource,
+    private val taskDao: TaskV2Dao
+) : HiltBaseViewModel<ITaskHidden.State>(), ITaskHidden.ViewModel {
+    var selectedState: String = "ongoing"
+
+    private val _cancelledTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val cancelledTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _cancelledTasks
+    var originalCancelledTasks: MutableList<CeibroTaskV2> = mutableListOf()
+
+    private val _ongoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val ongoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingTasks
+    var originalOngoingTasks: MutableList<CeibroTaskV2> = mutableListOf()
+
+    private val _doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _doneTasks
+    var originalDoneTasks: MutableList<CeibroTaskV2> = mutableListOf()
+
+    private val _allTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
+    val allTasks: MutableLiveData<TaskV2Response.AllTasks> = _allTasks
+    var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
+
+    fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
+        launch {
+            val taskLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+            if (taskLocalData != null) {
+                val allTasks = taskLocalData.allTasks
+                val canceled = allTasks.canceled
+                val ongoingTask = allTasks.ongoing
+                val doneTask = allTasks.done
+                _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
+                _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                _cancelledTasks.postValue(canceled as MutableList<CeibroTaskV2>?)
+                _allTasks.postValue(allTasks)
+
+                originalCancelledTasks = canceled
+                originalOngoingTasks = ongoingTask
+                originalDoneTasks = doneTask
+                allOriginalTasks.postValue(allTasks)
+                callBack.invoke()
+            } else {
+                if (skeletonVisible) {
+                    taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
+                        itemCount(5)
+                        color(R.color.appGrey3)
+                    }
+                }
+                when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
+                    is ApiResponse.Success -> {
+                        taskDao.insertTaskData(
+                            TasksV2DatabaseEntity(
+                                rootState = TaskRootStateTags.Hidden.tagValue,
+                                allTasks = response.data.allTasks
+                            )
+                        )
+                        val ongoingTask = response.data.allTasks.ongoing
+                        val doneTask = response.data.allTasks.done
+                        val allTasks = response.data.allTasks
+                        val canceled = response.data.allTasks.canceled
+                        _cancelledTasks.postValue(canceled as MutableList<CeibroTaskV2>?)
+                        _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
+                        _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                        _allTasks.postValue(allTasks)
+
+                        originalCancelledTasks = canceled
+                        originalOngoingTasks = ongoingTask
+                        originalDoneTasks = doneTask
+                        allOriginalTasks.postValue(allTasks)
+
+                        if (skeletonVisible) {
+                            taskRV.hideSkeleton()
+                        }
+                        callBack.invoke()
+                    }
+                    is ApiResponse.Error -> {
+                        alert(response.error.message)
+                        if (skeletonVisible) {
+                            taskRV.hideSkeleton()
+                        }
+                        callBack.invoke()
+                    }
+                }
+            }
+        }
+    }
+
+    fun searchTasks(query: String) {
+        if (query.isEmpty()) {
+            _allTasks.postValue(allOriginalTasks.value)
+            _cancelledTasks.postValue(originalCancelledTasks)
+            _ongoingTasks.postValue(originalOngoingTasks)
+            _doneTasks.postValue(originalDoneTasks)
+            return
+        }
+        if (selectedState.equals("cancelled", true)) {
+            val filteredTasks =
+                originalCancelledTasks.filter {
+                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                            it.description.contains(query.trim(), true) ||
+                            it.taskUID.contains(query.trim(), true) ||
+                            it.assignedToState.any { assignee ->
+                                assignee.firstName.contains(
+                                    query.trim(),
+                                    true
+                                ) || assignee.surName.contains(query.trim(), true)
+                            } ||
+                            it.events.filter { events ->
+                                events.eventType.equals(
+                                    TaskDetailEvents.Comment.eventValue,
+                                    true
+                                )
+                            }.any { filteredComments ->
+                                filteredComments.commentData?.message?.contains(
+                                    query,
+                                    true
+                                ) == true
+                            }
+                }
+            _cancelledTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+        } else if (selectedState.equals("ongoing", true)) {
+            val filteredTasks =
+                originalOngoingTasks.filter {
+                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                            it.description.contains(query.trim(), true) ||
+                            it.taskUID.contains(query.trim(), true) ||
+                            it.assignedToState.any { assignee ->
+                                assignee.firstName.contains(
+                                    query.trim(),
+                                    true
+                                ) || assignee.surName.contains(query.trim(), true)
+                            } ||
+                            it.events.filter { events ->
+                                events.eventType.equals(
+                                    TaskDetailEvents.Comment.eventValue,
+                                    true
+                                )
+                            }.any { filteredComments ->
+                                filteredComments.commentData?.message?.contains(
+                                    query,
+                                    true
+                                ) == true
+                            }
+                }
+            _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+        } else if (selectedState.equals("done", true)) {
+            val filteredTasks =
+                originalDoneTasks.filter {
+                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                            it.description.contains(query.trim(), true) ||
+                            it.taskUID.contains(query.trim(), true) ||
+                            it.assignedToState.any { assignee ->
+                                assignee.firstName.contains(
+                                    query.trim(),
+                                    true
+                                ) || assignee.surName.contains(query.trim(), true)
+                            } ||
+                            it.events.filter { events ->
+                                events.eventType.equals(
+                                    TaskDetailEvents.Comment.eventValue,
+                                    true
+                                )
+                            }.any { filteredComments ->
+                                filteredComments.commentData?.message?.contains(
+                                    query,
+                                    true
+                                ) == true
+                            }
+                }
+            _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+        }
+    }
+
+}

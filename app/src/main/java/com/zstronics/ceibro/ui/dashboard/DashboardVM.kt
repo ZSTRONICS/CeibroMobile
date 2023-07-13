@@ -772,6 +772,19 @@ class DashboardVM @Inject constructor(
                 }
             }
 
+            when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
+                is ApiResponse.Success -> {
+                    taskDao.insertTaskData(
+                        TasksV2DatabaseEntity(
+                            rootState = TaskRootStateTags.Hidden.tagValue,
+                            allTasks = response.data.allTasks
+                        )
+                    )
+                }
+                is ApiResponse.Error -> {
+                }
+            }
+
 //            when (val response = remoteTask.getAllTopics()) {
 //                is ApiResponse.Success -> {
 //                    topicsV2Dao.insertTopicData(

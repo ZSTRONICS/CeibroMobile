@@ -11,6 +11,9 @@ import android.widget.PopupWindow
 import androidx.work.WorkManager
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
@@ -26,7 +29,10 @@ import javax.inject.Inject
 class ProfileVM @Inject constructor(
     override val viewState: ProfileState,
     val sessionManager: SessionManager,
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val taskDao: TaskV2Dao,
+    private val topicsV2Dao: TopicsV2Dao,
+    private val projectsV2Dao: ProjectsV2Dao,
 ) : HiltBaseViewModel<IProfile.State>(), IProfile.ViewModel {
     var user = sessionManager.getUser().value
 
@@ -89,6 +95,9 @@ class ProfileVM @Inject constructor(
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
+            taskDao.deleteAllData()
+            topicsV2Dao.deleteAllData()
+            projectsV2Dao.deleteAll()
         }
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"

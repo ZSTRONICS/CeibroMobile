@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_homeFragment_to_taskFromMeFragment"
             app:destination="@id/taskFromMeFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_taskHiddenFragment"
+            app:destination="@id/taskHiddenFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -377,10 +380,15 @@
         android:id="@+id/forwardFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.ForwardFragment"
         android:label="ForwardFragment"
-        tools:layout="@layout/fragment_forward"/>
+        tools:layout="@layout/fragment_forward" />
     <fragment
         android:id="@+id/commentFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentFragment"
         android:label="CommentFragment"
-        tools:layout="@layout/fragment_comment"/>
+        tools:layout="@layout/fragment_comment" />
+    <fragment
+        android:id="@+id/taskHiddenFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment"
+        android:label="TaskHiddenFragment"
+        tools:layout="@layout/fragment_task_hidden" />
 </navigation>

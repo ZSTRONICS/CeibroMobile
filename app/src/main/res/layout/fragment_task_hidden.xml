@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/taskToMeStatusLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="5dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_2sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ongoingStateLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/ongoingStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_11sdp"
+                    android:layout_marginEnd="@dimen/_13sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@drawable/status_ongoing_filled_new"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/ongoing_heading"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/appYellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/ongoingStateCount"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/status_ongoing_badge"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:maxLength="3"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toTopOf="@+id/ongoingStateText"
+                    app:layout_constraintEnd_toEndOf="@+id/ongoingStateText"
+                    app:layout_constraintStart_toEndOf="@+id/ongoingStateText"
+                    app:layout_constraintTop_toTopOf="@+id/ongoingStateText" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/doneStateLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/doneStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_11sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@drawable/status_done_outline_new"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/done_heading"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/appYellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/doneStateCount"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/status_done_badge"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:maxLength="3"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toTopOf="@+id/doneStateText"
+                    app:layout_constraintEnd_toEndOf="@+id/doneStateText"
+                    app:layout_constraintStart_toEndOf="@+id/doneStateText"
+                    app:layout_constraintTop_toTopOf="@+id/doneStateText" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cancelledStateLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/cancelledStateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginTop="@dimen/_11sdp"
+                    android:layout_marginEnd="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@drawable/status_cancelled_outline"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="@string/canceled"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/appYellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cancelledStateCount"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/status_cancelled_badge"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:maxLength="3"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toTopOf="@+id/cancelledStateText"
+                    app:layout_constraintEnd_toEndOf="@+id/cancelledStateText"
+                    app:layout_constraintStart_toEndOf="@+id/cancelledStateText"
+                    app:layout_constraintTop_toTopOf="@+id/cancelledStateText" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <android.widget.SearchView
+            android:id="@+id/taskToMeSearchBar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/_11sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_11sdp"
+            android:background="@drawable/search_view_bottom_border"
+            android:elevation="0dp"
+            android:iconifiedByDefault="false"
+            android:paddingStart="-15dp"
+            android:paddingEnd="-15dp"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Start typing for search"
+            android:searchIcon="@null"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskToMeStatusLayout"
+            app:theme="@style/AppSearchView" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:contentDescription="@string/appbar_scrolling_view_behavior"
+            android:fillViewport="true"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskToMeSearchBar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:paddingStart="1dp"
+                android:paddingEnd="1dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/taskRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="1dp"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="10"
+                    tools:listitem="@layout/layout_task_box_v2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/createNewTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="6dp"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:src="@drawable/ic_add"
+            android:tooltipText="@string/new_task_heading"
+            app:elevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:shapeAppearanceOverlay="@style/fab_square"
+            app:tint="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
