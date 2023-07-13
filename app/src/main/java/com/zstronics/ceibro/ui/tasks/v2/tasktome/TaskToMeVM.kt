@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -122,7 +123,24 @@ class TaskToMeVM @Inject constructor(
                 originalNewTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
-                            it.taskUID.contains(query.trim(), true)
+                            it.taskUID.contains(query.trim(), true) ||
+                            it.assignedToState.any { assignee ->
+                                assignee.firstName.contains(
+                                    query.trim(),
+                                    true
+                                ) || assignee.surName.contains(query.trim(), true)
+                            } ||
+                            it.events.filter { events ->
+                                events.eventType.equals(
+                                    TaskDetailEvents.Comment.eventValue,
+                                    true
+                                )
+                            }.any { filteredComments ->
+                                filteredComments.commentData?.message?.contains(
+                                    query,
+                                    true
+                                ) == true
+                            }
                 }
             _newTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         } else if (selectedState.equals("ongoing", true)) {
@@ -130,7 +148,24 @@ class TaskToMeVM @Inject constructor(
                 originalOngoingTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
-                            it.taskUID.contains(query.trim(), true)
+                            it.taskUID.contains(query.trim(), true) ||
+                            it.assignedToState.any { assignee ->
+                                assignee.firstName.contains(
+                                    query.trim(),
+                                    true
+                                ) || assignee.surName.contains(query.trim(), true)
+                            } ||
+                            it.events.filter { events ->
+                                events.eventType.equals(
+                                    TaskDetailEvents.Comment.eventValue,
+                                    true
+                                )
+                            }.any { filteredComments ->
+                                filteredComments.commentData?.message?.contains(
+                                    query,
+                                    true
+                                ) == true
+                            }
                 }
             _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         } else if (selectedState.equals("done", true)) {
@@ -138,7 +173,24 @@ class TaskToMeVM @Inject constructor(
                 originalDoneTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
-                            it.taskUID.contains(query.trim(), true)
+                            it.taskUID.contains(query.trim(), true) ||
+                            it.assignedToState.any { assignee ->
+                                assignee.firstName.contains(
+                                    query.trim(),
+                                    true
+                                ) || assignee.surName.contains(query.trim(), true)
+                            } ||
+                            it.events.filter { events ->
+                                events.eventType.equals(
+                                    TaskDetailEvents.Comment.eventValue,
+                                    true
+                                )
+                            }.any { filteredComments ->
+                                filteredComments.commentData?.message?.contains(
+                                    query,
+                                    true
+                                ) == true
+                            }
                 }
             _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         }
