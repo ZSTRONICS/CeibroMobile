@@ -33,7 +33,9 @@ data class TaskSeenResponse(
         @SerializedName("state")
         val state: AssignedToState,
         @SerializedName("stateChanged")
-        val stateChanged: Boolean
+        val stateChanged: Boolean,
+        @SerializedName("eventInitiator")
+        val eventInitiator: String
     ) : Parcelable
 
 }
