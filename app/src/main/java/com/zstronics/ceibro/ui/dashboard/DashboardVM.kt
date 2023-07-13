@@ -38,7 +38,9 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -81,9 +83,6 @@ class DashboardVM @Inject constructor(
         loadAppData()
     }
 
-    init {
-    }
-
     override fun handleSocketEvents() {
 
         SocketHandler.getSocket()?.on(SocketHandler.CEIBRO_LIVE_EVENT_BY_SERVER) { args ->
@@ -101,15 +100,15 @@ class DashboardVM @Inject constructor(
                                 arguments,
                                 object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
                             )
-//                            taskCreatedData.data?.let { localTask.insertTask(it) }
+                            updateCreatedTaskInLocal(
+                                taskCreatedData.data,
+                                taskDao,
+                                userId
+                            )
 
-                            var notificationTitle = ""
-                            notificationTitle =
-                                if (taskCreatedData.data?.topic?.topic.isNullOrEmpty()) {
-                                    ""
-                                } else {
-                                    taskCreatedData.data?.topic?.topic.toString()
-                                }
+                            val notificationTitle: String =
+                                if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
+                                    "" else taskCreatedData.data?.topic?.topic.toString()
 
                             EventBus.getDefault().post(
                                 LocalEvents.CreateSimpleNotification(
@@ -128,7 +127,25 @@ class DashboardVM @Inject constructor(
                             )
                             EventBus.getDefault().post(LocalEvents.TaskCreatedEvent())
 
-//                            println("TASK_CREATED $arguments")
+                        }
+                        SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
+                            val task = gson.fromJson<SocketTaskV2CreatedResponse>(
+                                arguments,
+                                object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
+                            ).data
+                            updateForwardTaskInLocal(task, taskDao, userId)
+                        }
+                        SocketHandler.TaskEvent.TASK_SEEN.name -> {
+                            val taskSeen = gson.fromJson<TaskSeenResponse>(
+                                arguments,
+                                object : TypeToken<TaskSeenResponse>() {}.type
+                            ).taskSeen
+                        }
+                        SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
+                            val taskCommentData = gson.fromJson<EventV2Response>(
+                                arguments,
+                                object : TypeToken<EventV2Response>() {}.type
+                            ).data
                         }
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
                             val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
@@ -511,7 +528,11 @@ class DashboardVM @Inject constructor(
                     notificationTitle =
                         if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
 
-                    saveFilesInDB(uploadFilesToServer.request.moduleName, uploadFilesToServer.request.moduleId, response.data.uploadData)
+                    saveFilesInDB(
+                        uploadFilesToServer.request.moduleName,
+                        uploadFilesToServer.request.moduleId,
+                        response.data.uploadData
+                    )
                     createNotification(
                         LocalEvents.CreateNotification(
                             moduleName = uploadFilesToServer.request.moduleName,
@@ -543,7 +564,11 @@ class DashboardVM @Inject constructor(
     }
 
 
-    private fun saveFilesInDB(moduleName:String, moduleId: String, uploadedFiles: List<TaskFiles>) {
+    private fun saveFilesInDB(
+        moduleName: String,
+        moduleId: String,
+        uploadedFiles: List<TaskFiles>
+    ) {
         if (moduleName.equals(AttachmentModules.Task.name, true)) {
             launch {
                 val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
@@ -605,7 +630,8 @@ class DashboardVM @Inject constructor(
                 if (taskFromMeLocalData != null) {
                     val newTask = taskFromMeLocalData.allTasks.new.find { it.id == moduleId }
                     val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == moduleId }
-                    val ongoingTask = taskFromMeLocalData.allTasks.ongoing.find { it.id == moduleId }
+                    val ongoingTask =
+                        taskFromMeLocalData.allTasks.ongoing.find { it.id == moduleId }
                     val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == moduleId }
 
                     if (newTask != null) {

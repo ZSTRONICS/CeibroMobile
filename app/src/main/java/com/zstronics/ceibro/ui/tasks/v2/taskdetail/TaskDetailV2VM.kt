@@ -14,8 +14,12 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +49,10 @@ class TaskDetailV2VM @Inject constructor(
 
     var rootState = ""
     var selectedState = ""
+
+    init {
+        EventBus.getDefault().register(this)
+    }
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -136,7 +144,7 @@ class TaskDetailV2VM @Inject constructor(
                         onBack(task)
                     }
                     loading(false, "")
-                    insertUpdatedTask(task)
+                    updateForwardTaskInLocal(task, taskDao, user?.id)
                 } else {
                     loading(false, "")
                 }
@@ -163,8 +171,10 @@ class TaskDetailV2VM @Inject constructor(
 
                     if (taskFromMeLocalData != null) {
                         val newTask = taskFromMeLocalData.allTasks.new.find { it.id == task.id }
-                        val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == task.id }
-                        val ongoingTask = taskFromMeLocalData.allTasks.ongoing.find { it.id == task.id }
+                        val unreadTask =
+                            taskFromMeLocalData.allTasks.unread.find { it.id == task.id }
+                        val ongoingTask =
+                            taskFromMeLocalData.allTasks.ongoing.find { it.id == task.id }
                         val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == task.id }
                         if (newTask != null) {
                             val allTaskList = taskFromMeLocalData.allTasks.new.toMutableList()
@@ -207,7 +217,8 @@ class TaskDetailV2VM @Inject constructor(
                     if (taskToMeLocalData != null) {
                         val newTask = taskToMeLocalData.allTasks.new.find { it.id == task.id }
                         val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == task.id }
-                        val ongoingTask = taskToMeLocalData.allTasks.ongoing.find { it.id == task.id }
+                        val ongoingTask =
+                            taskToMeLocalData.allTasks.ongoing.find { it.id == task.id }
                         val doneTask = taskToMeLocalData.allTasks.done.find { it.id == task.id }
                         if (newTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
@@ -255,9 +266,12 @@ class TaskDetailV2VM @Inject constructor(
                     val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
 
                     if (taskFromMeLocalData != null) {
-                        val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == taskSeen.id }
-                        val ongoingTask = taskFromMeLocalData.allTasks.ongoing.find { it.id == taskSeen.id }
-                        val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == taskSeen.id }
+                        val unreadTask =
+                            taskFromMeLocalData.allTasks.unread.find { it.id == taskSeen.id }
+                        val ongoingTask =
+                            taskFromMeLocalData.allTasks.ongoing.find { it.id == taskSeen.id }
+                        val doneTask =
+                            taskFromMeLocalData.allTasks.done.find { it.id == taskSeen.id }
                         if (unreadTask != null) {
                             val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             val taskIndex = allTaskList.indexOf(unreadTask)
@@ -276,19 +290,27 @@ class TaskDetailV2VM @Inject constructor(
 
 
                                 if (taskSeen.creatorState.equals(TaskStatus.ONGOING.name, true)) {
-                                    val allOngoingTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
-                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                    val allOngoingTaskList =
+                                        taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllOngoingTaskList.add(unreadTask)
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskFromMeLocalData.allTasks.unread = allTaskList.toList()
-                                    taskFromMeLocalData.allTasks.ongoing = newAllOngoingTaskList.toList()
+                                    taskFromMeLocalData.allTasks.ongoing =
+                                        newAllOngoingTaskList.toList()
 
-                                }
-                                else if (taskSeen.creatorState.equals(TaskStatus.DONE.name, true)) {
-                                    val allDoneTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
-                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                } else if (taskSeen.creatorState.equals(
+                                        TaskStatus.DONE.name,
+                                        true
+                                    )
+                                ) {
+                                    val allDoneTaskList =
+                                        taskFromMeLocalData.allTasks.done.toMutableList()
+                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllDoneTaskList.add(unreadTask)
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
@@ -304,7 +326,7 @@ class TaskDetailV2VM @Inject constructor(
                                 allTaskList[taskIndex] = unreadTask
                                 taskFromMeLocalData.allTasks.unread = allTaskList.toList()
                             }
-                            _taskDetail.postValue(unreadTask as CeibroTaskV2)
+                            _taskDetail.postValue(unreadTask)
 
                         } else if (ongoingTask != null) {
                             val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
@@ -324,19 +346,27 @@ class TaskDetailV2VM @Inject constructor(
 
 
                                 if (taskSeen.creatorState.equals(TaskStatus.UNREAD.name, true)) {
-                                    val allUnreadTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
-                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                    val allUnreadTaskList =
+                                        taskFromMeLocalData.allTasks.unread.toMutableList()
+                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllUnreadTaskList.add(ongoingTask)
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
-                                    taskFromMeLocalData.allTasks.unread = newAllUnreadTaskList.toList()
+                                    taskFromMeLocalData.allTasks.unread =
+                                        newAllUnreadTaskList.toList()
 
-                                }
-                                else if (taskSeen.creatorState.equals(TaskStatus.DONE.name, true)) {
-                                    val allDoneTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
-                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                } else if (taskSeen.creatorState.equals(
+                                        TaskStatus.DONE.name,
+                                        true
+                                    )
+                                ) {
+                                    val allDoneTaskList =
+                                        taskFromMeLocalData.allTasks.done.toMutableList()
+                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllDoneTaskList.add(ongoingTask)
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
@@ -352,7 +382,7 @@ class TaskDetailV2VM @Inject constructor(
                                 allTaskList[taskIndex] = ongoingTask
                                 taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
                             }
-                            _taskDetail.postValue(ongoingTask as CeibroTaskV2)
+                            _taskDetail.postValue(ongoingTask)
 
                         } else if (doneTask != null) {
                             val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
@@ -372,25 +402,34 @@ class TaskDetailV2VM @Inject constructor(
 
 
                                 if (taskSeen.creatorState.equals(TaskStatus.UNREAD.name, true)) {
-                                    val allUnreadTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
-                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                    val allUnreadTaskList =
+                                        taskFromMeLocalData.allTasks.unread.toMutableList()
+                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllUnreadTaskList.add(doneTask)
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskFromMeLocalData.allTasks.done = allTaskList.toList()
-                                    taskFromMeLocalData.allTasks.unread = newAllUnreadTaskList.toList()
+                                    taskFromMeLocalData.allTasks.unread =
+                                        newAllUnreadTaskList.toList()
 
-                                }
-                                else if (taskSeen.creatorState.equals(TaskStatus.ONGOING.name, true)) {
-                                    val allOngoingTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
-                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                } else if (taskSeen.creatorState.equals(
+                                        TaskStatus.ONGOING.name,
+                                        true
+                                    )
+                                ) {
+                                    val allOngoingTaskList =
+                                        taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllOngoingTaskList.add(doneTask)
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskFromMeLocalData.allTasks.done = allTaskList.toList()
-                                    taskFromMeLocalData.allTasks.ongoing = newAllOngoingTaskList.toList()
+                                    taskFromMeLocalData.allTasks.ongoing =
+                                        newAllOngoingTaskList.toList()
 
                                 } else {
                                     allTaskList[taskIndex] = doneTask
@@ -400,7 +439,7 @@ class TaskDetailV2VM @Inject constructor(
                                 allTaskList[taskIndex] = doneTask
                                 taskFromMeLocalData.allTasks.done = allTaskList.toList()
                             }
-                            _taskDetail.postValue(doneTask as CeibroTaskV2)
+                            _taskDetail.postValue(doneTask)
                         }
 
                         taskDao.insertTaskData(
@@ -414,7 +453,8 @@ class TaskDetailV2VM @Inject constructor(
 
                     if (taskToMeLocalData != null) {
                         val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskSeen.id }
-                        val ongoingTask = taskToMeLocalData.allTasks.ongoing.find { it.id == taskSeen.id }
+                        val ongoingTask =
+                            taskToMeLocalData.allTasks.ongoing.find { it.id == taskSeen.id }
                         val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskSeen.id }
                         if (newTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
@@ -434,19 +474,27 @@ class TaskDetailV2VM @Inject constructor(
 
 
                                 if (taskSeen.state.state.equals(TaskStatus.ONGOING.name, true)) {
-                                    val allOngoingTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
-                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                    val allOngoingTaskList =
+                                        taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllOngoingTaskList.add(newTask)
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskToMeLocalData.allTasks.new = allTaskList.toList()
-                                    taskToMeLocalData.allTasks.ongoing = newAllOngoingTaskList.toList()
+                                    taskToMeLocalData.allTasks.ongoing =
+                                        newAllOngoingTaskList.toList()
 
-                                }
-                                else if (taskSeen.creatorState.equals(TaskStatus.DONE.name, true)) {
-                                    val allDoneTaskList = taskToMeLocalData.allTasks.done.toMutableList()
-                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                } else if (taskSeen.creatorState.equals(
+                                        TaskStatus.DONE.name,
+                                        true
+                                    )
+                                ) {
+                                    val allDoneTaskList =
+                                        taskToMeLocalData.allTasks.done.toMutableList()
+                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllDoneTaskList.add(newTask)
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
@@ -462,7 +510,7 @@ class TaskDetailV2VM @Inject constructor(
                                 allTaskList[taskIndex] = newTask
                                 taskToMeLocalData.allTasks.new = allTaskList.toList()
                             }
-                            _taskDetail.postValue(newTask as CeibroTaskV2)
+                            _taskDetail.postValue(newTask)
 
                         } else if (ongoingTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
@@ -482,19 +530,27 @@ class TaskDetailV2VM @Inject constructor(
 
 
                                 if (taskSeen.creatorState.equals(TaskStatus.UNREAD.name, true)) {
-                                    val allUnreadTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
-                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                    val allUnreadTaskList =
+                                        taskToMeLocalData.allTasks.unread.toMutableList()
+                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllUnreadTaskList.add(ongoingTask)
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
-                                    taskToMeLocalData.allTasks.unread = newAllUnreadTaskList.toList()
+                                    taskToMeLocalData.allTasks.unread =
+                                        newAllUnreadTaskList.toList()
 
-                                }
-                                else if (taskSeen.creatorState.equals(TaskStatus.DONE.name, true)) {
-                                    val allDoneTaskList = taskToMeLocalData.allTasks.done.toMutableList()
-                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                } else if (taskSeen.creatorState.equals(
+                                        TaskStatus.DONE.name,
+                                        true
+                                    )
+                                ) {
+                                    val allDoneTaskList =
+                                        taskToMeLocalData.allTasks.done.toMutableList()
+                                    val newAllDoneTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllDoneTaskList.add(ongoingTask)
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
@@ -510,7 +566,7 @@ class TaskDetailV2VM @Inject constructor(
                                 allTaskList[taskIndex] = ongoingTask
                                 taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
                             }
-                            _taskDetail.postValue(ongoingTask as CeibroTaskV2)
+                            _taskDetail.postValue(ongoingTask)
 
                         } else if (doneTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
@@ -530,25 +586,34 @@ class TaskDetailV2VM @Inject constructor(
 
 
                                 if (taskSeen.creatorState.equals(TaskStatus.UNREAD.name, true)) {
-                                    val allUnreadTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
-                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                    val allUnreadTaskList =
+                                        taskToMeLocalData.allTasks.unread.toMutableList()
+                                    val newAllUnreadTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllUnreadTaskList.add(doneTask)
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskToMeLocalData.allTasks.done = allTaskList.toList()
-                                    taskToMeLocalData.allTasks.unread = newAllUnreadTaskList.toList()
+                                    taskToMeLocalData.allTasks.unread =
+                                        newAllUnreadTaskList.toList()
 
-                                }
-                                else if (taskSeen.creatorState.equals(TaskStatus.ONGOING.name, true)) {
-                                    val allOngoingTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
-                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+                                } else if (taskSeen.creatorState.equals(
+                                        TaskStatus.ONGOING.name,
+                                        true
+                                    )
+                                ) {
+                                    val allOngoingTaskList =
+                                        taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                    val newAllOngoingTaskList: MutableList<CeibroTaskV2> =
+                                        mutableListOf()
                                     newAllOngoingTaskList.add(doneTask)
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
                                     taskToMeLocalData.allTasks.done = allTaskList.toList()
-                                    taskToMeLocalData.allTasks.ongoing = newAllOngoingTaskList.toList()
+                                    taskToMeLocalData.allTasks.ongoing =
+                                        newAllOngoingTaskList.toList()
 
                                 } else {
                                     allTaskList[taskIndex] = doneTask
@@ -558,7 +623,7 @@ class TaskDetailV2VM @Inject constructor(
                                 allTaskList[taskIndex] = doneTask
                                 taskToMeLocalData.allTasks.done = allTaskList.toList()
                             }
-                            _taskDetail.postValue(doneTask as CeibroTaskV2)
+                            _taskDetail.postValue(doneTask)
                         }
 
                         taskDao.insertTaskData(
@@ -571,4 +636,22 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskForwardEvent(event: LocalEvents.TaskForwardEvent?) {
+        val task = event?.task
+        if (task != null) {
+            taskDetail.value?.let { taskDetail ->
+                if (task.id == taskDetail.id) {
+                    task.let {
+                        _taskDetail.postValue(it)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        EventBus.getDefault().unregister(this)
+    }
 }

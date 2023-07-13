@@ -29,7 +29,7 @@ object SocketHandler {
 
     enum class TaskEvent {
         TASK_CREATED, TASK_UPDATE_PUBLIC, TASK_UPDATE_PRIVATE, SUB_TASK_CREATED, SUB_TASK_UPDATE_PUBLIC, SUB_TASK_UPDATE_PRIVATE,
-        TASK_SUBTASK_UPDATED, COMMENT_WITH_FILES, SUBTASK_NEW_COMMENT
+        TASK_SUBTASK_UPDATED, COMMENT_WITH_FILES, SUBTASK_NEW_COMMENT, TASK_FORWARDED, TASK_SEEN, NEW_TASK_COMMENT, TASK_DONE, CANCELED_TASK, TASK_HIDDEN, TASK_SHOWN
     }
 
     enum class ProjectEvent {
@@ -53,7 +53,7 @@ object SocketHandler {
 
             options.forceNew = true
 //            options.transports = arrayOf( Polling.NAME )
-            options.reconnectionAttempts = Integer.MAX_VALUE;
+            options.reconnectionAttempts = Integer.MAX_VALUE
             options.timeout = 10000
             options.auth = mapOf("token" to CookiesManager.jwtToken) // Use auth instead of query
 
@@ -93,12 +93,12 @@ object SocketHandler {
                 mSocket?.emit("heartbeat")
                 hbCounter += 1
 //                println("Heartbeat Sent $hbCounter")
-                if(hbCounter == 6) {
+                if (hbCounter == 6) {
                     // reconnect logic here
                     reconnectSocket()
                 }
                 if (hbCounter > 5) {
-                    hbCounter = 0;
+                    hbCounter = 0
                 }
             } else {
                 handler.removeCallbacks(runnable)
