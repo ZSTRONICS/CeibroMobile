@@ -123,6 +123,8 @@ class TaskDetailV2Fragment :
             var state = ""
             state = if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
                 item.creatorState
+            } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
+                item.creatorState
             } else {
                 item.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""
             }
@@ -145,6 +147,11 @@ class TaskDetailV2Fragment :
                 TaskStatus.DONE.name -> Pair(
                     R.drawable.status_done_filled_more_corners,
                     requireContext().getString(R.string.done_heading)
+                )
+
+                TaskStatus.CANCELED.name -> Pair(
+                    R.drawable.status_cancelled_filled_more_corners,
+                    requireContext().getString(R.string.canceled)
                 )
 
                 else -> Pair(

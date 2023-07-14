@@ -134,6 +134,44 @@ class EventsRVAdapter @Inject constructor() :
                         }
                     }
                 }
+                TaskDetailEvents.CancelTask.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.filesRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.GONE
+
+                    binding.eventName.text = context.resources.getString(R.string.canceled_by)
+                    binding.onlyComment.text = context.resources.getString(R.string.task_has_been_canceled)
+                    binding.onlyComment.visibility = View.VISIBLE
+                }
+                TaskDetailEvents.DoneTask.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.filesRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.GONE
+
+                    binding.eventName.text = context.resources.getString(R.string.done_by)
+                    if (item.commentData != null) {
+
+                        if (item.commentData.message.isNotEmpty()) {
+                            binding.onlyComment.text = item.commentData.message
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.text = context.resources.getString(R.string.task_has_been_closed)
+                            binding.onlyComment.visibility = View.VISIBLE
+                        }
+
+                        if (item.commentData.files.isNotEmpty()) {
+                            separateFiles(item.commentData.files)
+                        }
+                    } else {
+                        binding.onlyComment.text = context.resources.getString(R.string.task_has_been_closed)
+                        binding.onlyComment.visibility = View.VISIBLE
+                    }
+//                    binding.root.setBackgroundColor(context.resources.getColor(R.color.appMidGreen))
+                }
             }
 
         }

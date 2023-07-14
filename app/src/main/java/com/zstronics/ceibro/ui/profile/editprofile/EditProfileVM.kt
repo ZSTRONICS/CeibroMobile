@@ -3,10 +3,14 @@ package com.zstronics.ceibro.ui.profile.editprofile
 import android.content.Context
 import android.os.Handler
 import androidx.core.net.toUri
+import androidx.work.WorkManager
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.signup.ForgetPasswordRequest
 import com.zstronics.ceibro.data.repos.editprofile.ChangeNumberRequest
@@ -15,6 +19,7 @@ import com.zstronics.ceibro.data.repos.editprofile.ChangePasswordRequest
 import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +34,9 @@ class EditProfileVM @Inject constructor(
     override var validator: Validator?,
     private val repository: IAuthRepository,
     private val taskRepository: TaskRepository,
+    private val taskDao: TaskV2Dao,
+    private val topicsV2Dao: TopicsV2Dao,
+    private val projectsV2Dao: ProjectsV2Dao,
     val sessionManager: SessionManager
 ) : HiltBaseViewModel<IEditProfile.State>(), IEditProfile.ViewModel, IValidator {
     val user = sessionManager.getUser().value
@@ -214,11 +222,17 @@ class EditProfileVM @Inject constructor(
         EventBus.getDefault().unregister(this)
     }
 
-    override fun endUserSession() {
+    override fun endUserSession(context: Context) {
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
+            taskDao.deleteAllData()
+            topicsV2Dao.deleteAllData()
+            projectsV2Dao.deleteAll()
         }
         sessionManager.endUserSession()
+        // Cancel all periodic work with the tag "contactSync"
+        WorkManager.getInstance(context)
+            .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
     }
 }

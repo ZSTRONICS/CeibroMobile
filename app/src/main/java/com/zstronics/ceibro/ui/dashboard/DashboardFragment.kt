@@ -277,7 +277,7 @@ class DashboardFragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onLogoutUserEvent(event: LocalEvents.LogoutUserEvent) {
-        viewModel.endUserSession()
+        viewModel.endUserSession(requireContext())
         shortToastNow("Session expired, please login")
         launchActivityWithFinishAffinity<NavHostPresenterActivity>(
             options = Bundle(),

@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter.HiddenRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
@@ -34,7 +35,7 @@ class TaskHiddenFragment :
                 navigate(R.id.newTaskV2Fragment)
             }
             R.id.cancelledStateText -> {
-                viewModel.selectedState = "cancelled"
+                viewModel.selectedState = "canceled"
                 val cancelledTasks = viewModel.cancelledTasks.value
                 if (!cancelledTasks.isNullOrEmpty()) {
                     adapter.setList(cancelledTasks)
@@ -83,7 +84,7 @@ class TaskHiddenFragment :
 
 
     @Inject
-    lateinit var adapter: TaskToMeRVAdapter
+    lateinit var adapter: HiddenRVAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -96,7 +97,7 @@ class TaskHiddenFragment :
         }
 
         viewModel.cancelledTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("cancelled", true)) {
+            if (viewModel.selectedState.equals("canceled", true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {

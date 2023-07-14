@@ -412,6 +412,9 @@
     <string name="forwarded_by">Forwarded by</string>
     <string name="invited_by">Invited by</string>
     <string name="comment_by">Comment by</string>
+    <string name="canceled_by">Canceled by</string>
+    <string name="task_has_been_canceled">Task has been canceled</string>
+    <string name="task_has_been_closed">Task has been closed</string>
     <string name="done_by">Done by</string>
     <string name="new_comment">New comment</string>
     <string name="self_assign">Self-assign</string>

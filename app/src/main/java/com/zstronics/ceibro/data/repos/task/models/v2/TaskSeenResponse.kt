@@ -22,8 +22,8 @@ data class TaskSeenResponse(
         val creatorState: String,
         @SerializedName("creatorStateChanged")
         val creatorStateChanged: Boolean,
-        @SerializedName("_id")
-        val id: String,
+        @SerializedName("taskId")
+        val taskId: String,
         @SerializedName("isAssignedToMe")
         val isAssignedToMe: Boolean,
         @SerializedName("isCreator")

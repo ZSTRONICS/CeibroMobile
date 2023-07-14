@@ -379,11 +379,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                     if (taskFromMeLocalData != null) {
                         val unreadTask =
-                            taskFromMeLocalData.allTasks.unread.find { it.id == taskSeen.id }
+                            taskFromMeLocalData.allTasks.unread.find { it.id == taskSeen.taskId }
                         val ongoingTask =
-                            taskFromMeLocalData.allTasks.ongoing.find { it.id == taskSeen.id }
+                            taskFromMeLocalData.allTasks.ongoing.find { it.id == taskSeen.taskId }
                         val doneTask =
-                            taskFromMeLocalData.allTasks.done.find { it.id == taskSeen.id }
+                            taskFromMeLocalData.allTasks.done.find { it.id == taskSeen.taskId }
                         if (unreadTask != null) {
                             val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             val taskIndex = allTaskList.indexOf(unreadTask)
@@ -564,10 +564,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
 
                     if (taskToMeLocalData != null) {
-                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskSeen.id }
+                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskSeen.taskId }
                         val ongoingTask =
-                            taskToMeLocalData.allTasks.ongoing.find { it.id == taskSeen.id }
-                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskSeen.id }
+                            taskToMeLocalData.allTasks.ongoing.find { it.id == taskSeen.taskId }
+                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskSeen.taskId }
                         if (newTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                             val taskIndex = allTaskList.indexOf(newTask)
@@ -752,8 +752,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskDao.insertTaskData(
                             taskToMeLocalData
                         )
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                 }
             }
 

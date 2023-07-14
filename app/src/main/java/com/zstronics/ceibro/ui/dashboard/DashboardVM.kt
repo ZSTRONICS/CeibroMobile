@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.dashboard
 
+import android.content.Context
+import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.R
@@ -42,6 +44,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskCommentV2Resp
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -64,6 +67,7 @@ class DashboardVM @Inject constructor(
     private val remoteTask: TaskRemoteDataSource,
     private val taskDao: TaskV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
+    private val projectsV2Dao: ProjectsV2Dao,
     private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
@@ -736,12 +740,18 @@ class DashboardVM @Inject constructor(
         }
     }
 
-    fun endUserSession() {
+    fun endUserSession(context: Context) {
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
+            taskDao.deleteAllData()
+            topicsV2Dao.deleteAllData()
+            projectsV2Dao.deleteAll()
         }
         sessionManager.endUserSession()
+        // Cancel all periodic work with the tag "contactSync"
+        WorkManager.getInstance(context)
+            .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
     }
 
     private fun loadAppData() {
