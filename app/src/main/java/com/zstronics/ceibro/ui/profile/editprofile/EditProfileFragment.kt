@@ -201,7 +201,7 @@ class EditProfileFragment :
 
 
     private fun logoutUser() {
-        viewModel.endUserSession()
+        viewModel.endUserSession(requireContext())
         launchActivityWithFinishAffinity<NavHostPresenterActivity>(
             options = Bundle(),
             clearPrevious = true

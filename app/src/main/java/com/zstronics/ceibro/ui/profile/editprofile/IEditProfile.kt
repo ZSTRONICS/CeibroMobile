@@ -23,6 +23,6 @@ interface IEditProfile {
         fun changePhoneNumber(newNumber: String, countryCode: String, password: String, onNumberChanged: () -> Unit)
         fun changePhoneNumberVerifyOtp(newNumber: String, otp: String, onNumberVerified: () -> Unit)
         fun resendOtp(phoneNumber: String, onOtpResend: () -> Unit)
-        fun endUserSession()
+        fun endUserSession(context: Context)
     }
 }

@@ -113,7 +113,7 @@ class TaskHiddenVM @Inject constructor(
             _doneTasks.postValue(originalDoneTasks)
             return
         }
-        if (selectedState.equals("cancelled", true)) {
+        if (selectedState.equals("canceled", true)) {
             val filteredTasks =
                 originalCancelledTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||

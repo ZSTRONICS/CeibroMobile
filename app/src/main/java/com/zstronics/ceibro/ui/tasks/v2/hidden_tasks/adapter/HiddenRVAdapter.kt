@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter
+package com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter
 
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
@@ -9,17 +9,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
 import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
 import com.zstronics.ceibro.databinding.LayoutTaskBoxV2Binding
-import com.zstronics.ceibro.databinding.LayoutTaskBoxV2FromMeBinding
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
-class TaskFromMeRVAdapter @Inject constructor() :
-    RecyclerView.Adapter<TaskFromMeRVAdapter.TaskFromMeViewHolder>() {
+class HiddenRVAdapter @Inject constructor() :
+    RecyclerView.Adapter<HiddenRVAdapter.TaskToMeViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
     var listItems: MutableList<CeibroTaskV2> = mutableListOf()
@@ -28,9 +29,9 @@ class TaskFromMeRVAdapter @Inject constructor() :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): TaskFromMeViewHolder {
-        return TaskFromMeViewHolder(
-            LayoutTaskBoxV2FromMeBinding.inflate(
+    ): TaskToMeViewHolder {
+        return TaskToMeViewHolder(
+            LayoutTaskBoxV2Binding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -38,7 +39,7 @@ class TaskFromMeRVAdapter @Inject constructor() :
         )
     }
 
-    override fun onBindViewHolder(holder: TaskFromMeViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TaskToMeViewHolder, position: Int) {
         holder.bind(listItems[position])
     }
 
@@ -52,7 +53,7 @@ class TaskFromMeRVAdapter @Inject constructor() :
         notifyDataSetChanged()
     }
 
-    inner class TaskFromMeViewHolder(private val binding: LayoutTaskBoxV2FromMeBinding) :
+    inner class TaskToMeViewHolder(private val binding: LayoutTaskBoxV2Binding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CeibroTaskV2) {
@@ -64,9 +65,33 @@ class TaskFromMeRVAdapter @Inject constructor() :
 
             binding.taskCardParentLayout.background = null
             binding.taskCanceledText.visibility = View.GONE
-            //Use following two lines if a task is cancelled
-//            binding.taskCardParentLayout.background = context.resources.getDrawable(R.drawable.task_card_cancel_outline)
-//            binding.taskCanceledText.visibility = View.VISIBLE
+            //Use if a task is cancelled
+            if (item.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                binding.taskCardParentLayout.background =
+                    context.resources.getDrawable(R.drawable.task_card_cancel_outline)
+                binding.taskCanceledText.visibility = View.VISIBLE
+
+                binding.taskFromHeading.text = context.resources.getString(R.string.to_heading)
+                binding.taskFromText.text =
+                    if (item.assignedToState.size == 1) {
+                        if (item.assignedToState[0].firstName.isEmpty()) {
+                            item.assignedToState[0].phoneNumber
+                        } else {
+                            "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}"
+                        }
+                    } else if (item.assignedToState.size > 1) {
+                        if (item.assignedToState[0].firstName.isEmpty()) {
+                            "${item.assignedToState[0].phoneNumber}  +${item.assignedToState.size - 1}"
+                        } else {
+                            "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}  +${item.assignedToState.size - 1}"
+                        }
+                    } else {
+                        "N/A"
+                    }
+            } else {
+                binding.taskFromHeading.text = context.resources.getString(R.string.from_heading)
+                binding.taskFromText.text = "${item.creator.firstName} ${item.creator.surName}"
+            }
 
             val seenByMe = item.seenBy.find { it == currentUser?.id }
             if (seenByMe != null) {
@@ -95,22 +120,7 @@ class TaskFromMeRVAdapter @Inject constructor() :
                 }
             }
 
-            binding.taskToText.text =
-                if (item.assignedToState.size == 1) {
-                    if (item.assignedToState[0].firstName.isEmpty()) {
-                        item.assignedToState[0].phoneNumber
-                    } else {
-                        "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}"
-                    }
-                } else if (item.assignedToState.size > 1) {
-                    if (item.assignedToState[0].firstName.isEmpty()) {
-                        "${item.assignedToState[0].phoneNumber}  +${item.assignedToState.size - 1}"
-                    } else {
-                        "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}  +${item.assignedToState.size - 1}"
-                    }
-                } else {
-                    "N/A"
-                }
+
 
             if (item.project != null) {
                 binding.taskProjectText.text = item.project.title

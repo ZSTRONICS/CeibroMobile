@@ -95,6 +95,7 @@ class SplashActivity :
     }
 
     private fun navigateToLoginScreen() {
+        viewModel.endUserSession(applicationContext)
         launchActivity<NavHostPresenterActivity>(
             options = Bundle(),
             clearPrevious = true
@@ -124,7 +125,7 @@ class SplashActivity :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onLogoutUserEvent(event: LocalEvents.LogoutUserEvent) {
         handler.removeCallbacks(runnable)
-        viewModel.endUserSession()
+        viewModel.endUserSession(applicationContext)
         shortToastNow("Session expired, please login")
         launchActivity<NavHostPresenterActivity>(
             options = Bundle(),

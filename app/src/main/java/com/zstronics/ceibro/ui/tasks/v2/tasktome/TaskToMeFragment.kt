@@ -8,6 +8,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
@@ -122,7 +123,7 @@ class TaskToMeFragment :
             { _: View, position: Int, data: CeibroTaskV2 ->
                 val bundle = Bundle()
                 bundle.putParcelable("taskDetail", data)
-                bundle.putString("rootState", "to-me")
+                bundle.putString("rootState", TaskRootStateTags.ToMe.tagValue.lowercase())
                 bundle.putString("selectedState", viewModel.selectedState)
                 navigate(R.id.taskDetailV2Fragment, bundle)
             }
