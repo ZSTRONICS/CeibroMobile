@@ -1,5 +1,11 @@
 package com.zstronics.ceibro.ui.tasks.v2.tasktome
 
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
@@ -195,5 +201,31 @@ class TaskToMeVM @Inject constructor(
             _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         }
     }
+
+
+
+    fun showHideTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_hide_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            //hit API to cancel task
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
 
 }

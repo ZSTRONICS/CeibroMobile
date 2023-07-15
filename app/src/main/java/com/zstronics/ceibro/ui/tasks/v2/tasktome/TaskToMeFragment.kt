@@ -127,6 +127,13 @@ class TaskToMeFragment :
                 bundle.putString("selectedState", viewModel.selectedState)
                 navigate(R.id.taskDetailV2Fragment, bundle)
             }
+        adapter.itemLongClickListener =
+            { _: View, position: Int, data: CeibroTaskV2 ->
+                //user cannot hide a task of new state
+                if (viewModel.selectedState.equals("ongoing", true) || viewModel.selectedState.equals("done", true)) {
+                    viewModel.showHideTaskDialog(requireContext(), data)
+                }
+            }
 
 
         mViewDataBinding.taskToMeSearchBar.setOnQueryTextListener(object :

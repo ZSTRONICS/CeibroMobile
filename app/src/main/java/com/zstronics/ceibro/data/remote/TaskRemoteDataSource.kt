@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
@@ -112,6 +113,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             call =
             {
                 service.getAllTasks(rootState)
+            }
+        )
+
+    override suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response> =
+        executeSafely(
+            call =
+            {
+                service.cancelTask(taskId)
             }
         )
 

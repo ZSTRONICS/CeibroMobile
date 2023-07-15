@@ -1,5 +1,14 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskfromme
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
@@ -197,20 +206,73 @@ class TaskFromMeVM @Inject constructor(
         }
     }
 
-    fun filterOngoingByAssignee(query: String) {
-        originalOngoingTasks.filter {
-            it.events.filter { events ->
-                events.eventType.equals(
-                    TaskDetailEvents.Comment.eventValue,
-                    true
-                )
-            }.any { filteredComments ->
-                filteredComments.commentData?.message?.contains(
-                    query,
-                    true
-                ) == true
-            }
+
+    fun showCancelTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_cancel_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            //hit API to cancel task
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
         }
     }
+
+
+//
+//    fun cancelTask(taskId: String, callBack: () -> Unit) {
+//        launch {
+//            when (val response = remoteTask.cancelTask(taskId)) {
+//                is ApiResponse.Success -> {
+//
+//                    taskDao.insertTaskData(
+//                        TasksV2DatabaseEntity(
+//                            rootState = "from-me",
+//                            allTasks = response.data.allTasks
+//                        )
+//                    )
+//
+//                    val unreadTask = response.data.allTasks.unread
+//                    val ongoingTask = response.data.allTasks.ongoing
+//                    val doneTask = response.data.allTasks.done
+//                    val allTasks = response.data.allTasks
+//
+//                    _unreadTasks.postValue(unreadTask as MutableList<CeibroTaskV2>?)
+//                    _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
+//                    _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+//                    _allTasks.postValue(allTasks)
+//
+//                    originalUnreadTasks = unreadTask
+//                    originalOngoingTasks = ongoingTask
+//                    originalDoneTasks = doneTask
+//                    allOriginalTasks.postValue(allTasks)
+//
+//                    if (skeletonVisible) {
+//                        taskRV.hideSkeleton()
+//                    }
+//                    callBack.invoke()
+//                }
+//                is ApiResponse.Error -> {
+//                    alert(response.error.message)
+//                    if (skeletonVisible) {
+//                        taskRV.hideSkeleton()
+//                    }
+//                    callBack.invoke()
+//                }
+//            }
+//        }
+//    }
 
 }

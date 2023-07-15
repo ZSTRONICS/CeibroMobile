@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
@@ -143,5 +144,10 @@ interface TaskRetroService {
     suspend fun taskSeen(
         @Path("taskId") taskId: String
     ): Response<TaskSeenResponse>
+
+    @POST("v2/task/cancel/{taskId}")
+    suspend fun cancelTask(
+        @Path("taskId") taskId: String
+    ): Response<EventV2Response>
 
 }
