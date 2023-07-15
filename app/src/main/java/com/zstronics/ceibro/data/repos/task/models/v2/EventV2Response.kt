@@ -36,6 +36,10 @@ data class EventV2Response(
         val taskId: String,
         @SerializedName("taskData")
         val taskData: TaskData,
+        @SerializedName("newTaskData")
+        val newTaskData: TaskStatesData,
+        @SerializedName("oldTaskData")
+        val oldTaskData: TaskStatesData,
         @SerializedName("updatedAt")
         val updatedAt: String
     ) : Parcelable {
@@ -48,7 +52,27 @@ data class EventV2Response(
             @SerializedName("hiddenBy")
             val hiddenBy: List<String>,
             @SerializedName("seenBy")
-            val seenBy: List<String>
+            val seenBy: List<String>,
+            @SerializedName("creator")
+            val creator: String
+        ) : Parcelable
+
+
+        @Parcelize
+        @Keep
+        data class TaskStatesData(
+            @SerializedName("creatorState")
+            val creatorState: String,
+            @SerializedName("isAssignedToMe")
+            val isAssignedToMe: Boolean,
+            @SerializedName("isCreator")
+            val isCreator: Boolean,
+            @SerializedName("isHiddenByMe")
+            val isHiddenByMe: Boolean,
+            @SerializedName("isSeenByMe")
+            val isSeenByMe: Boolean,
+            @SerializedName("userSubState")
+            val userSubState: String
         ) : Parcelable
     }
 }

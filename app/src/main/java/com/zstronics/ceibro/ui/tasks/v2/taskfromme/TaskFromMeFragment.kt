@@ -134,6 +134,13 @@ class TaskFromMeFragment :
                 bundle.putString("selectedState", viewModel.selectedState)
                 navigate(R.id.taskDetailV2Fragment, bundle)
             }
+        adapter.itemLongClickListener =
+            { _: View, position: Int, data: CeibroTaskV2 ->
+                //creator cannot cancel a task which is already in done state
+                if (viewModel.selectedState.equals("unread", true) || viewModel.selectedState.equals("ongoing", true)) {
+                    viewModel.showCancelTaskDialog(requireContext(), data)
+                }
+            }
 
 
         mViewDataBinding.taskFromMeSearchBar.setOnQueryTextListener(object :

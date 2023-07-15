@@ -22,6 +22,8 @@ class TaskToMeRVAdapter @Inject constructor() :
     RecyclerView.Adapter<TaskToMeRVAdapter.TaskToMeViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
+    var itemLongClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
+        null
     var listItems: MutableList<CeibroTaskV2> = mutableListOf()
     val currentUser = SessionManager.user.value
 
@@ -60,6 +62,10 @@ class TaskToMeRVAdapter @Inject constructor() :
 
             binding.root.setOnClickListener {
                 itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+            binding.root.setOnLongClickListener {
+                itemLongClickListener?.invoke(it, absoluteAdapterPosition, item)
+                true
             }
 
             binding.taskCardParentLayout.background = null
