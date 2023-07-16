@@ -53,9 +53,17 @@ class TaskInfoBottomSheet(_taskDetail: CeibroTaskV2?) : BottomSheetDialogFragmen
                 if (allAssignee.isNotEmpty()) {
                     for (item in allAssignee) {
                         assigneeMembers += if (index == allAssignee.size - 1) {
-                            "${item.firstName} ${item.surName}"
+                            if (item.firstName.isEmpty()) {
+                                item.phoneNumber
+                            } else {
+                                "${item.firstName} ${item.surName}"
+                            }
                         } else {
-                            "${item.firstName} ${item.surName}, "
+                            if (item.firstName.isEmpty()) {
+                                "${item.phoneNumber}, "
+                            } else {
+                                "${item.firstName} ${item.surName}, "
+                            }
                         }
                         index++
                     }

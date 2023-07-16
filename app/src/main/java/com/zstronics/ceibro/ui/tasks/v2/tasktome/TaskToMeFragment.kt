@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
@@ -130,7 +131,7 @@ class TaskToMeFragment :
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
                 //user cannot hide a task of new state
-                if (viewModel.selectedState.equals("ongoing", true) || viewModel.selectedState.equals("done", true)) {
+                if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
                     viewModel.showHideTaskDialog(requireContext(), data)
                 }
             }

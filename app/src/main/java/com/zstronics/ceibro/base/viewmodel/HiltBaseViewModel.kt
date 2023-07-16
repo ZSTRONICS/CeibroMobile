@@ -241,6 +241,108 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 val taskFromMe = task.creator.id == userId
                 val taskToMe = !task.assignedToState.none { it.userId == userId }
                 val myState = task.assignedToState.find { it.userId == userId }?.state
+                val hiddenByMe = task.hiddenBy.find { it == userId }.toBoolean()
+
+                //first check hidden and move task from hidden
+                launch {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+
+                    if (taskHiddenLocalData != null) {
+                        val ongoingTask =
+                            taskHiddenLocalData.allTasks.ongoing.find { it.id == task.id }
+                        val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == task.id }
+
+                        if (ongoingTask != null) {
+                            val allOngoingTaskList =
+                                taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
+
+                            allOngoingTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+
+                            if (taskToMeLocalData != null) {
+                                val ongoingTaskToMe =
+                                    taskToMeLocalData.allTasks.ongoing.find { it.id == task.id }
+                                val allOngoingToMeTaskList =
+                                    taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                if (ongoingTaskToMe != null) {
+                                    val index = allOngoingToMeTaskList.indexOf(ongoingTaskToMe)
+                                    allOngoingToMeTaskList[index] = task
+                                    taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
+                                } else {
+                                    allOngoingToMeTaskList.add(0, task)
+                                    taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
+                                }
+                            }
+
+                        } else if (doneTask != null) {
+                            val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allDoneTaskList.indexOf(doneTask)
+
+                            allDoneTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+
+                            if (taskToMeLocalData != null) {
+                                val doneTaskToMe =
+                                    taskToMeLocalData.allTasks.done.find { it.id == task.id }
+                                val allDoneToMeTaskList =
+                                    taskToMeLocalData.allTasks.done.toMutableList()
+                                if (doneTaskToMe != null) {
+                                    val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                    allDoneToMeTaskList[index] = task
+                                    taskToMeLocalData.allTasks.done = allDoneToMeTaskList
+                                } else {
+                                    allDoneToMeTaskList.add(0, task)
+                                    taskToMeLocalData.allTasks.done = allDoneToMeTaskList
+                                }
+                            }
+                        }
+
+                        taskDao.insertTaskData(
+                            taskHiddenLocalData
+                        )
+                        if (taskToMeLocalData != null) {
+                            taskDao.insertTaskData(
+                                taskToMeLocalData
+                            )
+                        }
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(task))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+
+                }
+
+                if (task.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                    // it means task must be in hidden rootState and child state will be canceled. search an update the task only
+                    launch {
+                        val taskHiddenLocalData =
+                            taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                        if (taskHiddenLocalData != null) {
+                            val canceledTask =
+                                taskHiddenLocalData.allTasks.canceled.find { it.id == task.id }
+                            if (canceledTask != null) {
+                                val allCancelTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val taskIndex = allCancelTaskList.indexOf(canceledTask)
+
+                                allCancelTaskList[taskIndex] = task
+                                taskHiddenLocalData.allTasks.canceled =
+                                    allCancelTaskList.toList()
+
+                                taskDao.insertTaskData(
+                                    taskHiddenLocalData
+                                )
+                                // send task data for ui update
+                                EventBus.getDefault()
+                                    .post(LocalEvents.TaskForwardEvent(canceledTask))
+                                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                            }
+                        }
+                    }
+                }
 
                 if (taskFromMe) {
                     val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
@@ -253,7 +355,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTaskIndex =
                             taskFromMeLocalData.allTasks.done.indexOfFirst { it.id == task.id }
 
-                        if (unreadTaskIndex != -1) {
+                        if (unreadTaskIndex >= 0) {
                             val unreadList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             if (task.creatorState.equals(TaskStatus.ONGOING.name, true)) {
                                 /// remove from unread
@@ -267,7 +369,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 unreadList[unreadTaskIndex] = task
                                 taskFromMeLocalData.allTasks.unread = unreadList.toList()
                             }
-                        } else if (ongoingTaskIndex != -1) {
+                        } else if (ongoingTaskIndex >= 0) {
                             val ongoingList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
                             if (task.creatorState.equals(TaskStatus.DONE.name, true)) {
                                 /// remove from unread
@@ -281,7 +383,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 ongoingList[ongoingTaskIndex] = task
                                 taskFromMeLocalData.allTasks.ongoing = ongoingList.toList()
                             }
-                        } else if (doneTaskIndex != -1) {
+                        } else if (doneTaskIndex >= 0) {
                             val doneList = taskFromMeLocalData.allTasks.done.toMutableList()
                             doneList[doneTaskIndex] = task
                             taskFromMeLocalData.allTasks.done = doneList.toList()
@@ -306,7 +408,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTaskIndex =
                             taskToMeLocalData.allTasks.done.indexOfFirst { it.id == task.id }
 
-                        if (newTaskIndex != -1) {
+                        if (newTaskIndex >= 0) {
                             if (myState.equals(TaskStatus.ONGOING.name, true)) {
                                 val newTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 newTaskList.removeAt(newTaskIndex)
@@ -330,7 +432,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 allTaskList[newTaskIndex] = task
                                 taskToMeLocalData.allTasks.new = allTaskList.toList()
                             }
-                        } else if (ongoingTaskIndex != -1) {
+                        } else if (ongoingTaskIndex >= 0) {
                             if (myState.equals(TaskStatus.DONE.name, true)) {
                                 val ongoingTaskList =
                                     taskToMeLocalData.allTasks.ongoing.toMutableList()
@@ -346,14 +448,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
                             }
 
-                        } else if (doneTaskIndex != -1) {
+                        } else if (doneTaskIndex >= 0) {
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             allTaskList[doneTaskIndex] = task
                             taskToMeLocalData.allTasks.done = allTaskList.toList()
                         } else {
-                            val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
-                            allTaskList.add(0, task)
-                            taskToMeLocalData.allTasks.new = allTaskList.toList()
+                            if (myState.equals(TaskStatus.NEW.name, true)) {
+                                val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                                allTaskList.add(0, task)
+                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+                            }
                         }
 
                         taskDao.insertTaskData(
@@ -374,6 +478,55 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     ) {
         if (taskSeen != null) {
             launch {
+                if (taskSeen.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                    // it means task must be in hidden rootState and child state will be canceled. search an update the task only
+                    launch {
+                        val taskHiddenLocalData =
+                            taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                        if (taskHiddenLocalData != null) {
+                            val canceledTask =
+                                taskHiddenLocalData.allTasks.canceled.find { it.id == taskSeen.taskId }
+                            if (canceledTask != null) {
+                                val allCancelTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val taskIndex = allCancelTaskList.indexOf(canceledTask)
+
+                                canceledTask.seenBy = taskSeen.seenBy
+
+                                if (taskSeen.creatorStateChanged || taskSeen.stateChanged) {
+                                    canceledTask.creatorState = taskSeen.creatorState
+
+                                    val foundState =
+                                        canceledTask.assignedToState.find { it.userId == taskSeen.state.userId }
+                                    if (foundState != null) {
+                                        val stateIndex =
+                                            canceledTask.assignedToState.indexOf(foundState)
+                                        canceledTask.assignedToState[stateIndex] = taskSeen.state
+                                    }
+
+                                    allCancelTaskList[taskIndex] = canceledTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCancelTaskList.toList()
+
+                                } else {
+                                    allCancelTaskList[taskIndex] = canceledTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCancelTaskList.toList()
+                                }
+
+                                taskDao.insertTaskData(
+                                    taskHiddenLocalData
+                                )
+                                // send task data for ui update
+                                EventBus.getDefault()
+                                    .post(LocalEvents.TaskForwardEvent(canceledTask))
+                                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                            }
+                        }
+                    }
+                }
+
                 if (taskSeen.isCreator) {
                     val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
 
@@ -564,10 +717,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
 
                     if (taskToMeLocalData != null) {
-                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskSeen.taskId }
+                        val newTask =
+                            taskToMeLocalData.allTasks.new.find { it.id == taskSeen.taskId }
                         val ongoingTask =
                             taskToMeLocalData.allTasks.ongoing.find { it.id == taskSeen.taskId }
-                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskSeen.taskId }
+                        val doneTask =
+                            taskToMeLocalData.allTasks.done.find { it.id == taskSeen.taskId }
                         if (newTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                             val taskIndex = allTaskList.indexOf(newTask)
@@ -769,34 +924,220 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
         if (eventData != null) {
             val taskID = eventData.taskId
+            val taskEvent = Events(
+                id = eventData.id,
+                taskId = eventData.taskId,
+                eventType = eventData.eventType,
+                initiator = eventData.initiator,
+                eventData = eventData.eventData,
+                commentData = eventData.commentData,
+                createdAt = eventData.createdAt,
+                updatedAt = eventData.updatedAt,
+                v = null
+            )
+            val taskEventList: MutableList<Events> = mutableListOf()
+            taskEventList.add(taskEvent)
 
-            val hiddenByCurrentUser = eventData.taskData.hiddenBy.find { it == userId }
-            if (hiddenByCurrentUser != null) {
+            val hiddenByCurrentUser = eventData.oldTaskData.isHiddenByMe
+            if (hiddenByCurrentUser) {
                 //it means task must be searched from hidden rootState and child states[ongoing and done] and then move the task to another root state from hidden
-            } else if (eventData.taskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
-                // it means task must be in hidden rootState and child state will be canceled. search an update the task only
-            } else {
-                val taskEvent = Events(
-                    id = eventData.id,
-                    taskId = eventData.taskId,
-                    eventType = eventData.eventType,
-                    initiator = eventData.initiator,
-                    eventData = eventData.eventData,
-                    commentData = eventData.commentData,
-                    createdAt = eventData.createdAt,
-                    updatedAt = eventData.updatedAt,
-                    v = null
-                )
-                val taskEventList: MutableList<Events> = mutableListOf()
-                taskEventList.add(taskEvent)
-
                 launch {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
                     val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
                     val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
 
+                    if (taskHiddenLocalData != null) {
+                        val ongoingTask =
+                            taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (ongoingTask != null) {
+                            val allOngoingTaskList =
+                                taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
+
+                            var oldEvents = ongoingTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    ongoingTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                ongoingTask.events = oldEvents.toList()
+                            }
+                            ongoingTask.hiddenBy = listOf()
+                            ongoingTask.seenBy = eventData.taskData.seenBy
+
+                            allOngoingTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+
+                            if (eventData.oldTaskData.isAssignedToMe) {
+                                if (taskToMeLocalData != null) {
+                                    val ongoingTaskToMe =
+                                        taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                                    val allOngoingToMeTaskList =
+                                        taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                    if (ongoingTaskToMe != null) {
+                                        val index = allOngoingToMeTaskList.indexOf(ongoingTaskToMe)
+                                        allOngoingToMeTaskList[index] = ongoingTask
+                                        taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
+                                    } else {
+                                        allOngoingToMeTaskList.add(0, ongoingTask)
+                                        taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
+                                    }
+                                }
+                            }
+                            if (eventData.oldTaskData.isCreator) {
+                                if (taskFromMeLocalData != null) {
+                                    val ongoingTaskFromMe =
+                                        taskFromMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                                    val allOngoingFromMeTaskList =
+                                        taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                                    if (ongoingTaskFromMe != null) {
+                                        val index =
+                                            allOngoingFromMeTaskList.indexOf(ongoingTaskFromMe)
+                                        allOngoingFromMeTaskList[index] = ongoingTask
+                                        taskFromMeLocalData.allTasks.ongoing =
+                                            allOngoingFromMeTaskList
+                                    }
+                                }
+                            }
+                            updatedTask = ongoingTask
+
+                        } else if (doneTask != null) {
+                            val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allDoneTaskList.indexOf(doneTask)
+
+                            var oldEvents = doneTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    doneTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    doneTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                doneTask.events = oldEvents.toList()
+                            }
+                            doneTask.hiddenBy = listOf()
+                            doneTask.seenBy = eventData.taskData.seenBy
+
+                            allDoneTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+
+                            if (eventData.oldTaskData.isAssignedToMe) {
+                                if (taskToMeLocalData != null) {
+                                    val doneTaskToMe =
+                                        taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneToMeTaskList =
+                                        taskToMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskToMe != null) {
+                                        val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                        allDoneToMeTaskList[index] = doneTask
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList
+                                    } else {
+                                        allDoneToMeTaskList.add(0, doneTask)
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList
+                                    }
+                                }
+                            }
+                            if (eventData.oldTaskData.isCreator) {
+                                if (taskFromMeLocalData != null) {
+                                    val doneTaskFromMe =
+                                        taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneFromMeTaskList =
+                                        taskFromMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskFromMe != null) {
+                                        val index = allDoneFromMeTaskList.indexOf(doneTaskFromMe)
+                                        allDoneFromMeTaskList[index] = doneTask
+                                        taskFromMeLocalData.allTasks.done = allDoneFromMeTaskList
+                                    }
+                                }
+                            }
+                            updatedTask = doneTask
+                        }
+
+                        taskDao.insertTaskData(
+                            taskHiddenLocalData
+                        )
+                        if (taskToMeLocalData != null) {
+                            taskDao.insertTaskData(
+                                taskToMeLocalData
+                            )
+                        }
+                        if (taskFromMeLocalData != null) {
+                            taskDao.insertTaskData(
+                                taskFromMeLocalData
+                            )
+                        }
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+
+                }
+            } else if (eventData.oldTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                // it means task must be in hidden rootState and child state will be canceled. search an update the task only
+                launch {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                    if (taskHiddenLocalData != null) {
+                        val canceledTask =
+                            taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                        if (canceledTask != null) {
+                            val allCancelTaskList =
+                                taskHiddenLocalData.allTasks.canceled.toMutableList()
+                            val taskIndex = allCancelTaskList.indexOf(canceledTask)
+
+                            var oldEvents = canceledTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    canceledTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    canceledTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                canceledTask.events = oldEvents.toList()
+                            }
+                            canceledTask.hiddenBy = listOf()
+                            canceledTask.seenBy = eventData.taskData.seenBy
+
+                            allCancelTaskList[taskIndex] = canceledTask
+                            taskHiddenLocalData.allTasks.canceled = allCancelTaskList.toList()
+
+                            updatedTask = canceledTask
+                            taskDao.insertTaskData(
+                                taskHiddenLocalData
+                            )
+                            // send task data for ui update
+                            EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                        }
+                    }
+                }
+            }
+            launch {
+                val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+
+                if (eventData.oldTaskData.isAssignedToMe) {
                     if (taskToMeLocalData != null) {
                         val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
-                        val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == taskID }
                         val ongoingTask =
                             taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
                         val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskID }
@@ -820,37 +1161,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 oldEvents = taskEventList
                                 newTask.events = oldEvents.toList()
                             }
-                            newTask.hiddenBy = eventData.taskData.hiddenBy
+                            newTask.hiddenBy = listOf()
                             newTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = newTask
                             taskToMeLocalData.allTasks.new = allTaskList.toList()
                             updatedTask = newTask
-                        } else if (unreadTask != null) {
-                            val allTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
-                            val taskIndex = allTaskList.indexOf(unreadTask)
-
-                            var oldEvents = unreadTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    unreadTask.events = oldEvents.toList()
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    unreadTask.events = oldEvents.toList()
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                unreadTask.events = oldEvents.toList()
-                            }
-                            unreadTask.hiddenBy = eventData.taskData.hiddenBy
-                            unreadTask.seenBy = eventData.taskData.seenBy
-
-                            allTaskList[taskIndex] = unreadTask
-                            taskToMeLocalData.allTasks.unread = allTaskList.toList()
-                            updatedTask = unreadTask
                         } else if (ongoingTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -870,7 +1186,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 oldEvents = taskEventList
                                 ongoingTask.events = oldEvents.toList()
                             }
-                            ongoingTask.hiddenBy = eventData.taskData.hiddenBy
+                            ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = ongoingTask
@@ -895,7 +1211,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 oldEvents = taskEventList
                                 doneTask.events = oldEvents.toList()
                             }
-                            doneTask.hiddenBy = eventData.taskData.hiddenBy
+                            doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = doneTask
@@ -906,42 +1222,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskDao.insertTaskData(
                             taskToMeLocalData
                         )
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
+                }
 
+                if (eventData.oldTaskData.isCreator) {
                     if (taskFromMeLocalData != null) {
-                        val newTask = taskFromMeLocalData.allTasks.new.find { it.id == taskID }
                         val unreadTask =
                             taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
                         val ongoingTask =
                             taskFromMeLocalData.allTasks.ongoing.find { it.id == taskID }
                         val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == taskID }
 
-                        if (newTask != null) {
-                            val allTaskList = taskFromMeLocalData.allTasks.new.toMutableList()
-                            val taskIndex = allTaskList.indexOf(newTask)
-
-                            var oldEvents = newTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    newTask.events = oldEvents.toList()
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    newTask.events = oldEvents.toList()
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                newTask.events = oldEvents.toList()
-                            }
-                            newTask.hiddenBy = eventData.taskData.hiddenBy
-                            newTask.seenBy = eventData.taskData.seenBy
-
-                            allTaskList[taskIndex] = newTask
-                            taskFromMeLocalData.allTasks.new = allTaskList.toList()
-                            updatedTask = newTask
-                        } else if (unreadTask != null) {
+                        if (unreadTask != null) {
                             val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             val taskIndex = allTaskList.indexOf(unreadTask)
 
@@ -960,7 +1255,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 oldEvents = taskEventList
                                 unreadTask.events = oldEvents.toList()
                             }
-                            unreadTask.hiddenBy = eventData.taskData.hiddenBy
+                            unreadTask.hiddenBy = listOf()
                             unreadTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = unreadTask
@@ -985,7 +1280,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 oldEvents = taskEventList
                                 ongoingTask.events = oldEvents.toList()
                             }
-                            ongoingTask.hiddenBy = eventData.taskData.hiddenBy
+                            ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = ongoingTask
@@ -1010,7 +1305,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 oldEvents = taskEventList
                                 doneTask.events = oldEvents.toList()
                             }
-                            doneTask.hiddenBy = eventData.taskData.hiddenBy
+                            doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = doneTask
@@ -1020,6 +1315,1022 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskDao.insertTaskData(
                             taskFromMeLocalData
                         )
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+            }
+        }
+        return updatedTask
+    }
+
+    fun updateTaskCanceledInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        userId: String?
+    ): CeibroTaskV2? {
+        var updatedTask: CeibroTaskV2? = null
+
+        if (eventData != null) {
+            val taskID = eventData.taskId
+            val taskEvent = Events(
+                id = eventData.id,
+                taskId = eventData.taskId,
+                eventType = eventData.eventType,
+                initiator = eventData.initiator,
+                eventData = eventData.eventData,
+                commentData = eventData.commentData,
+                createdAt = eventData.createdAt,
+                updatedAt = eventData.updatedAt,
+                v = null
+            )
+            val taskEventList: MutableList<Events> = mutableListOf()
+            taskEventList.add(taskEvent)
+
+            val hiddenByCurrentUser = eventData.oldTaskData.isHiddenByMe
+            if (hiddenByCurrentUser) {
+                //it means task must be searched from hidden rootState and child states[ongoing and done] and then move the task to another root state from hidden
+                launch {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                    if (taskHiddenLocalData != null) {
+                        val ongoingTask =
+                            taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (ongoingTask != null) {
+                            val allOngoingTaskList =
+                                taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
+
+                            var oldEvents = ongoingTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    ongoingTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                ongoingTask.events = oldEvents.toList()
+                            }
+                            ongoingTask.hiddenBy = listOf()
+                            ongoingTask.seenBy = eventData.taskData.seenBy
+                            ongoingTask.creatorState = eventData.taskData.creatorState
+                            val assignToList = ongoingTask.assignedToState
+                            assignToList.map {
+                                it.state = eventData.taskData.creatorState
+                            }     //as creator state is canceled, so all assignee will be canceled
+                            ongoingTask.assignedToState = assignToList
+
+                            allOngoingTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+
+                            val allCanceledTaskList =
+                                taskHiddenLocalData.allTasks.canceled.toMutableList()
+                            val canceledTask =
+                                taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                            if (canceledTask != null) {
+                                val canceledTaskIndex =
+                                    allCanceledTaskList.indexOf(canceledTask)
+                                allCanceledTaskList[canceledTaskIndex] = ongoingTask
+                                taskHiddenLocalData.allTasks.canceled =
+                                    allCanceledTaskList.toList()
+                            } else {
+                                allCanceledTaskList.add(0, ongoingTask)
+                                taskHiddenLocalData.allTasks.canceled =
+                                    allCanceledTaskList.toList()
+                            }
+                            updatedTask = ongoingTask
+
+                        } else if (doneTask != null) {
+                            val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allDoneTaskList.indexOf(doneTask)
+
+                            var oldEvents = doneTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    doneTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    doneTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                doneTask.events = oldEvents.toList()
+                            }
+                            doneTask.hiddenBy = listOf()
+                            doneTask.seenBy = eventData.taskData.seenBy
+                            doneTask.creatorState = eventData.taskData.creatorState
+                            val assignToList = doneTask.assignedToState
+                            assignToList.map {
+                                it.state = eventData.taskData.creatorState
+                            }     //as creator state is canceled, so all assignee will be canceled
+                            doneTask.assignedToState = assignToList
+
+                            allDoneTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+
+                            val allCanceledTaskList =
+                                taskHiddenLocalData.allTasks.canceled.toMutableList()
+                            val canceledTask =
+                                taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                            if (canceledTask != null) {
+                                val canceledTaskIndex =
+                                    allCanceledTaskList.indexOf(canceledTask)
+                                allCanceledTaskList[canceledTaskIndex] = doneTask
+                                taskHiddenLocalData.allTasks.canceled =
+                                    allCanceledTaskList.toList()
+                            } else {
+                                allCanceledTaskList.add(0, doneTask)
+                                taskHiddenLocalData.allTasks.canceled =
+                                    allCanceledTaskList.toList()
+                            }
+                            updatedTask = doneTask
+                        }
+
+                        taskDao.insertTaskData(
+                            taskHiddenLocalData
+                        )
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+
+                }
+            } else if (eventData.oldTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                // it means task must be in hidden rootState and child state will be canceled. search and update the task only
+                launch {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                    if (taskHiddenLocalData != null) {
+                        val canceledTask =
+                            taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                        if (canceledTask != null) {
+                            val allCancelTaskList =
+                                taskHiddenLocalData.allTasks.canceled.toMutableList()
+                            val taskIndex = allCancelTaskList.indexOf(canceledTask)
+
+                            canceledTask.hiddenBy = listOf()
+                            canceledTask.seenBy = eventData.taskData.seenBy
+                            canceledTask.creatorState = eventData.taskData.creatorState
+                            val assignToList = canceledTask.assignedToState
+                            assignToList.map {
+                                it.state = eventData.taskData.creatorState
+                            }     //as creator state is canceled, so all assignee will be canceled
+                            canceledTask.assignedToState = assignToList
+
+                            allCancelTaskList[taskIndex] = canceledTask
+                            taskHiddenLocalData.allTasks.canceled = allCancelTaskList.toList()
+
+                            updatedTask = canceledTask
+                            taskDao.insertTaskData(
+                                taskHiddenLocalData
+                            )
+                            // send task data for ui update
+                            EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                        }
+                    }
+                }
+            }
+            launch {
+                val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+                val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                if (eventData.oldTaskData.isAssignedToMe) {
+                    if (taskToMeLocalData != null) {
+                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
+                        val ongoingTask =
+                            taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (taskHiddenLocalData != null) {
+                            if (newTask != null) {
+                                val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                                val taskIndex = allTaskList.indexOf(newTask)
+
+                                var oldEvents = newTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        newTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        newTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    newTask.events = oldEvents.toList()
+                                }
+                                newTask.hiddenBy = listOf()
+                                newTask.seenBy = eventData.taskData.seenBy
+                                newTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = newTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                newTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+
+                                val allCanceledTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val canceledTask =
+                                    taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                                if (canceledTask != null) {
+                                    val canceledTaskIndex =
+                                        allCanceledTaskList.indexOf(canceledTask)
+                                    allCanceledTaskList[canceledTaskIndex] = newTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                } else {
+                                    allCanceledTaskList.add(0, newTask)
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                }
+                                updatedTask = newTask
+
+                            } else if (ongoingTask != null) {
+                                val allTaskList =
+                                    taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                                var oldEvents = ongoingTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        ongoingTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        ongoingTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                                ongoingTask.hiddenBy = listOf()
+                                ongoingTask.seenBy = eventData.taskData.seenBy
+                                ongoingTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = ongoingTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                ongoingTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+                                val allCanceledTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val canceledTask =
+                                    taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                                if (canceledTask != null) {
+                                    val canceledTaskIndex =
+                                        allCanceledTaskList.indexOf(canceledTask)
+                                    allCanceledTaskList[canceledTaskIndex] = ongoingTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                } else {
+                                    allCanceledTaskList.add(0, ongoingTask)
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                }
+                                updatedTask = ongoingTask
+
+                            } else if (doneTask != null) {
+                                val allTaskList =
+                                    taskToMeLocalData.allTasks.done.toMutableList()
+                                val taskIndex = allTaskList.indexOf(doneTask)
+
+                                var oldEvents = doneTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        doneTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        doneTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    doneTask.events = oldEvents.toList()
+                                }
+                                doneTask.hiddenBy = listOf()
+                                doneTask.seenBy = eventData.taskData.seenBy
+                                doneTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = doneTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                doneTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskToMeLocalData.allTasks.done = allTaskList.toList()
+
+                                val allCanceledTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val canceledTask =
+                                    taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                                if (canceledTask != null) {
+                                    val canceledTaskIndex =
+                                        allCanceledTaskList.indexOf(canceledTask)
+                                    allCanceledTaskList[canceledTaskIndex] = doneTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                } else {
+                                    allCanceledTaskList.add(0, doneTask)
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                }
+                                updatedTask = doneTask
+                            }
+
+                            taskDao.insertTaskData(
+                                taskToMeLocalData
+                            )
+                            taskDao.insertTaskData(
+                                taskHiddenLocalData
+                            )
+                        }
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+
+                if (eventData.oldTaskData.isCreator) {
+                    if (taskFromMeLocalData != null) {
+                        val unreadTask =
+                            taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
+                        val ongoingTask =
+                            taskFromMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask =
+                            taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (taskHiddenLocalData != null) {
+                            if (unreadTask != null) {
+                                val allTaskList =
+                                    taskFromMeLocalData.allTasks.unread.toMutableList()
+                                val taskIndex = allTaskList.indexOf(unreadTask)
+
+                                var oldEvents = unreadTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        unreadTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        unreadTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    unreadTask.events = oldEvents.toList()
+                                }
+                                unreadTask.hiddenBy = listOf()
+                                unreadTask.seenBy = eventData.taskData.seenBy
+                                unreadTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = unreadTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                unreadTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+
+                                val allCanceledTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val canceledTask =
+                                    taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                                if (canceledTask != null) {
+                                    val canceledTaskIndex =
+                                        allCanceledTaskList.indexOf(canceledTask)
+                                    allCanceledTaskList[canceledTaskIndex] = unreadTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                } else {
+                                    allCanceledTaskList.add(0, unreadTask)
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                }
+                                updatedTask = unreadTask
+
+                            } else if (ongoingTask != null) {
+                                val allTaskList =
+                                    taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                                val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                                var oldEvents = ongoingTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        ongoingTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        ongoingTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                                ongoingTask.hiddenBy = listOf()
+                                ongoingTask.seenBy = eventData.taskData.seenBy
+                                ongoingTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = ongoingTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                ongoingTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+                                val allCanceledTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val canceledTask =
+                                    taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                                if (canceledTask != null) {
+                                    val canceledTaskIndex =
+                                        allCanceledTaskList.indexOf(canceledTask)
+                                    allCanceledTaskList[canceledTaskIndex] = ongoingTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                } else {
+                                    allCanceledTaskList.add(0, ongoingTask)
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                }
+                                updatedTask = ongoingTask
+
+                            } else if (doneTask != null) {
+                                val allTaskList =
+                                    taskFromMeLocalData.allTasks.done.toMutableList()
+                                val taskIndex = allTaskList.indexOf(doneTask)
+
+                                var oldEvents = doneTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        doneTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        doneTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    doneTask.events = oldEvents.toList()
+                                }
+                                doneTask.hiddenBy = listOf()
+                                doneTask.seenBy = eventData.taskData.seenBy
+                                doneTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = doneTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                doneTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskFromMeLocalData.allTasks.done = allTaskList.toList()
+
+                                val allCanceledTaskList =
+                                    taskHiddenLocalData.allTasks.canceled.toMutableList()
+                                val canceledTask =
+                                    taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                                if (canceledTask != null) {
+                                    val canceledTaskIndex =
+                                        allCanceledTaskList.indexOf(canceledTask)
+                                    allCanceledTaskList[canceledTaskIndex] = doneTask
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                } else {
+                                    allCanceledTaskList.add(0, doneTask)
+                                    taskHiddenLocalData.allTasks.canceled =
+                                        allCanceledTaskList.toList()
+                                }
+                                updatedTask = doneTask
+                            }
+
+                            taskDao.insertTaskData(
+                                taskFromMeLocalData
+                            )
+
+                            taskDao.insertTaskData(
+                                taskHiddenLocalData
+                            )
+                        }
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+            }
+        }
+        return updatedTask
+    }
+
+    fun updateTaskDoneInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        userId: String?
+    ): CeibroTaskV2? {
+        var updatedTask: CeibroTaskV2? = null
+
+        if (eventData != null) {
+            val taskID = eventData.taskId
+            val taskEvent = Events(
+                id = eventData.id,
+                taskId = eventData.taskId,
+                eventType = eventData.eventType,
+                initiator = eventData.initiator,
+                eventData = eventData.eventData,
+                commentData = eventData.commentData,
+                createdAt = eventData.createdAt,
+                updatedAt = eventData.updatedAt,
+                v = null
+            )
+            val taskEventList: MutableList<Events> = mutableListOf()
+            taskEventList.add(taskEvent)
+
+            val hiddenByCurrentUser = eventData.oldTaskData.isHiddenByMe
+            if (hiddenByCurrentUser) {
+                //it means task must be searched from hidden rootState and child states[ongoing and done] and then move the task to another root state from hidden
+                launch {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+
+                    if (taskHiddenLocalData != null) {
+                        val ongoingTask =
+                            taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (ongoingTask != null) {
+                            val allOngoingTaskList =
+                                taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
+
+                            var oldEvents = ongoingTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    ongoingTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                ongoingTask.events = oldEvents.toList()
+                            }
+                            ongoingTask.hiddenBy = listOf()
+                            ongoingTask.seenBy = eventData.taskData.seenBy
+                            ongoingTask.creatorState = eventData.taskData.creatorState
+                            val assignToList = ongoingTask.assignedToState
+                            assignToList.map {
+                                it.state = eventData.taskData.creatorState
+                            }     //as creator state is canceled, so all assignee will be canceled
+                            ongoingTask.assignedToState = assignToList
+
+                            allOngoingTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+
+                            if (eventData.oldTaskData.isAssignedToMe) {
+                                if (taskToMeLocalData != null) {
+                                    val doneTaskToMe =
+                                        taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneToMeTaskList =
+                                        taskToMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskToMe != null) {
+                                        val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                        allDoneToMeTaskList[index] = ongoingTask
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                    } else {
+                                        allDoneToMeTaskList.add(0, ongoingTask)
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                    }
+                                }
+                            }
+                            if (eventData.oldTaskData.isCreator) {
+                                if (taskFromMeLocalData != null) {
+                                    val doneTaskFromMe =
+                                        taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneFromMeTaskList =
+                                        taskFromMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskFromMe != null) {
+                                        val index =
+                                            allDoneFromMeTaskList.indexOf(doneTaskFromMe)
+                                        allDoneFromMeTaskList[index] = ongoingTask
+                                        taskFromMeLocalData.allTasks.done =
+                                            allDoneFromMeTaskList.toList()
+                                    }
+                                }
+                            }
+                            updatedTask = ongoingTask
+
+                        } else if (doneTask != null) {
+                            val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allDoneTaskList.indexOf(doneTask)
+
+                            var oldEvents = doneTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    doneTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    doneTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                doneTask.events = oldEvents.toList()
+                            }
+                            doneTask.hiddenBy = listOf()
+                            doneTask.seenBy = eventData.taskData.seenBy
+                            doneTask.creatorState = eventData.taskData.creatorState
+                            val assignToList = doneTask.assignedToState
+                            assignToList.map {
+                                it.state = eventData.taskData.creatorState
+                            }     //as creator state is canceled, so all assignee will be canceled
+                            doneTask.assignedToState = assignToList
+
+                            allDoneTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+
+                            if (eventData.oldTaskData.isAssignedToMe) {
+                                if (taskToMeLocalData != null) {
+                                    val doneTaskToMe =
+                                        taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneToMeTaskList =
+                                        taskToMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskToMe != null) {
+                                        val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                        allDoneToMeTaskList[index] = doneTask
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                    } else {
+                                        allDoneToMeTaskList.add(0, doneTask)
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                    }
+                                }
+                            }
+                            if (eventData.oldTaskData.isCreator) {
+                                if (taskFromMeLocalData != null) {
+                                    val doneTaskFromMe =
+                                        taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneFromMeTaskList =
+                                        taskFromMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskFromMe != null) {
+                                        val index =
+                                            allDoneFromMeTaskList.indexOf(doneTaskFromMe)
+                                        allDoneFromMeTaskList[index] = doneTask
+                                        taskFromMeLocalData.allTasks.done =
+                                            allDoneFromMeTaskList.toList()
+                                    }
+                                }
+                            }
+                            updatedTask = doneTask
+                        }
+
+                        taskDao.insertTaskData(
+                            taskHiddenLocalData
+                        )
+                        if (taskToMeLocalData != null) {
+                            taskDao.insertTaskData(
+                                taskToMeLocalData
+                            )
+                        }
+                        if (taskFromMeLocalData != null) {
+                            taskDao.insertTaskData(
+                                taskFromMeLocalData
+                            )
+                        }
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+
+                }
+            }
+            launch {
+                val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+                val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+                if (eventData.oldTaskData.isAssignedToMe) {
+                    if (taskToMeLocalData != null) {
+                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
+                        val ongoingTask =
+                            taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (taskHiddenLocalData != null) {
+                            if (newTask != null) {
+                                val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                                val taskIndex = allTaskList.indexOf(newTask)
+
+                                var oldEvents = newTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        newTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        newTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    newTask.events = oldEvents.toList()
+                                }
+                                newTask.hiddenBy = listOf()
+                                newTask.seenBy = eventData.taskData.seenBy
+                                newTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = newTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is done, so all assignee will be done
+                                newTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+
+                                val doneTaskToMe =
+                                    taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                                val allDoneToMeTaskList =
+                                    taskToMeLocalData.allTasks.done.toMutableList()
+                                if (doneTaskToMe != null) {
+                                    val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                    allDoneToMeTaskList[index] = newTask
+                                    taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                } else {
+                                    allDoneToMeTaskList.add(0, newTask)
+                                    taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                }
+                                updatedTask = newTask
+
+                            } else if (ongoingTask != null) {
+                                val allTaskList =
+                                    taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                                var oldEvents = ongoingTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        ongoingTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        ongoingTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                                ongoingTask.hiddenBy = listOf()
+                                ongoingTask.seenBy = eventData.taskData.seenBy
+                                ongoingTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = ongoingTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                ongoingTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+                                val doneTaskToMe =
+                                    taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                                val allDoneToMeTaskList =
+                                    taskToMeLocalData.allTasks.done.toMutableList()
+                                if (doneTaskToMe != null) {
+                                    val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                    allDoneToMeTaskList[index] = ongoingTask
+                                    taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                } else {
+                                    allDoneToMeTaskList.add(0, ongoingTask)
+                                    taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                }
+                                updatedTask = ongoingTask
+
+                            } else if (doneTask != null) {
+                                val allTaskList =
+                                    taskToMeLocalData.allTasks.done.toMutableList()
+                                val taskIndex = allTaskList.indexOf(doneTask)
+
+                                var oldEvents = doneTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        doneTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        doneTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    doneTask.events = oldEvents.toList()
+                                }
+                                doneTask.hiddenBy = listOf()
+                                doneTask.seenBy = eventData.taskData.seenBy
+                                doneTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = doneTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                doneTask.assignedToState = assignToList
+
+                                allTaskList[taskIndex] = doneTask
+                                taskToMeLocalData.allTasks.done = allTaskList.toList()
+
+                                updatedTask = doneTask
+                            }
+
+                            taskDao.insertTaskData(
+                                taskToMeLocalData
+                            )
+                        }
+                        // send task data for ui update
+                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+
+                if (eventData.oldTaskData.isCreator) {
+                    if (taskFromMeLocalData != null) {
+                        val unreadTask =
+                            taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
+                        val ongoingTask =
+                            taskFromMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask =
+                            taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (taskHiddenLocalData != null) {
+                            if (unreadTask != null) {
+                                val allTaskList =
+                                    taskFromMeLocalData.allTasks.unread.toMutableList()
+                                val taskIndex = allTaskList.indexOf(unreadTask)
+
+                                var oldEvents = unreadTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        unreadTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        unreadTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    unreadTask.events = oldEvents.toList()
+                                }
+                                unreadTask.hiddenBy = listOf()
+                                unreadTask.seenBy = eventData.taskData.seenBy
+                                unreadTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = unreadTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                unreadTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+
+                                val doneTaskFromMe =
+                                    taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+                                val allDoneFromMeTaskList =
+                                    taskFromMeLocalData.allTasks.done.toMutableList()
+                                if (doneTaskFromMe != null) {
+                                    val index =
+                                        allDoneFromMeTaskList.indexOf(doneTaskFromMe)
+                                    allDoneFromMeTaskList[index] = unreadTask
+                                    taskFromMeLocalData.allTasks.done =
+                                        allDoneFromMeTaskList.toList()
+                                } else {
+                                    allDoneFromMeTaskList.add(0, unreadTask)
+                                    taskFromMeLocalData.allTasks.done = allDoneFromMeTaskList.toList()
+                                }
+                                updatedTask = unreadTask
+
+                            } else if (ongoingTask != null) {
+                                val allTaskList =
+                                    taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                                val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                                var oldEvents = ongoingTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        ongoingTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        ongoingTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                                ongoingTask.hiddenBy = listOf()
+                                ongoingTask.seenBy = eventData.taskData.seenBy
+                                ongoingTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = ongoingTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                ongoingTask.assignedToState = assignToList
+
+                                allTaskList.removeAt(taskIndex)
+                                taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+                                val doneTaskFromMe =
+                                    taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+                                val allDoneFromMeTaskList =
+                                    taskFromMeLocalData.allTasks.done.toMutableList()
+                                if (doneTaskFromMe != null) {
+                                    val index =
+                                        allDoneFromMeTaskList.indexOf(doneTaskFromMe)
+                                    allDoneFromMeTaskList[index] = ongoingTask
+                                    taskFromMeLocalData.allTasks.done =
+                                        allDoneFromMeTaskList.toList()
+                                } else {
+                                    allDoneFromMeTaskList.add(0, ongoingTask)
+                                    taskFromMeLocalData.allTasks.done = allDoneFromMeTaskList.toList()
+                                }
+                                updatedTask = ongoingTask
+
+                            } else if (doneTask != null) {
+                                val allTaskList =
+                                    taskFromMeLocalData.allTasks.done.toMutableList()
+                                val taskIndex = allTaskList.indexOf(doneTask)
+
+                                var oldEvents = doneTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        doneTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        doneTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    doneTask.events = oldEvents.toList()
+                                }
+                                doneTask.hiddenBy = listOf()
+                                doneTask.seenBy = eventData.taskData.seenBy
+                                doneTask.creatorState = eventData.taskData.creatorState
+                                val assignToList = doneTask.assignedToState
+                                assignToList.map {
+                                    it.state = eventData.taskData.creatorState
+                                }     //as creator state is canceled, so all assignee will be canceled
+                                doneTask.assignedToState = assignToList
+
+                                allTaskList[taskIndex] = doneTask
+                                taskFromMeLocalData.allTasks.done = allTaskList.toList()
+
+                                updatedTask = doneTask
+                            }
+
+                            taskDao.insertTaskData(
+                                taskFromMeLocalData
+                            )
+                        }
                         // send task data for ui update
                         EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())

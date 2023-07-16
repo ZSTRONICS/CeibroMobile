@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class SocketNewTaskCommentV2Response(
+data class SocketNewTaskEventV2Response(
     @SerializedName("eventType")
     val eventType: String,
     @SerializedName("data")

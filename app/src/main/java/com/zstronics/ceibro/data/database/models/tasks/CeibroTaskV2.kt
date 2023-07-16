@@ -102,7 +102,7 @@ data class AssignedToState(
     @SerializedName("profilePic")
     val profilePic: String,
     @SerializedName("state")
-    val state: String,
+    var state: String,
     @SerializedName("surName")
     val surName: String,
     @SerializedName("userId")

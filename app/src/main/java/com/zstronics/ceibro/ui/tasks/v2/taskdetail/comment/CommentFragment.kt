@@ -14,6 +14,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentCommentBinding
 import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -119,12 +120,22 @@ class CommentFragment :
                 )
             }
             R.id.nextBtn -> {
-                viewModel.uploadComment(
-                    requireContext()
-                ) {
-                    val bundle = Bundle()
-                    bundle.putParcelable("taskData", viewModel.taskData)
-                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                if (viewModel.actionToPerform.equals(TaskDetailEvents.Comment.eventValue, true)) {
+                    viewModel.uploadComment(
+                        requireContext()
+                    ) {
+                        val bundle = Bundle()
+                        bundle.putParcelable("taskData", viewModel.taskData)
+                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+                    }
+                } else if (viewModel.actionToPerform.equals(TaskDetailEvents.DoneTask.eventValue, true)) {
+                    viewModel.doneTask(
+                        requireContext()
+                    ) {
+                        val bundle = Bundle()
+                        bundle.putParcelable("taskData", viewModel.taskData)
+                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+                    }
                 }
             }
         }

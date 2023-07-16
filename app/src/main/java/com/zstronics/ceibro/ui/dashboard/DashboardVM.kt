@@ -40,7 +40,7 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.*
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskCommentV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -145,12 +145,18 @@ class DashboardVM @Inject constructor(
                             updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
                         }
                         SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
-                            val commentData = gson.fromJson<SocketNewTaskCommentV2Response>(
+                            val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                                 arguments,
-                                object : TypeToken<SocketNewTaskCommentV2Response>() {}.type
+                                object : TypeToken<SocketNewTaskEventV2Response>() {}.type
                             ).data
                             if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
                                 updateTaskCommentInLocal(commentData, taskDao, userId)
+                            }
+                            if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
+                                updateTaskCanceledInLocal(commentData, taskDao, userId)
+                            }
+                            if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
+                                updateTaskDoneInLocal(commentData, taskDao, userId)
                             }
                         }
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
