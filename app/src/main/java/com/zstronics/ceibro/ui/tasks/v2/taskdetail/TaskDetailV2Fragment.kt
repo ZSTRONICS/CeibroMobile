@@ -13,6 +13,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
@@ -35,6 +36,7 @@ class TaskDetailV2Fragment :
     override fun toolBarVisibility(): Boolean = false
     val FORWARD_REQUEST_CODE = 105
     val COMMENT_REQUEST_CODE = 106
+    val DONE_REQUEST_CODE = 107
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
@@ -42,7 +44,14 @@ class TaskDetailV2Fragment :
             R.id.taskCommentBtn -> {
                 val bundle = Bundle()
                 bundle.putParcelable("taskData", viewModel.taskDetail.value)
+                bundle.putString("action", TaskDetailEvents.Comment.eventValue)
                 navigateForResult(R.id.commentFragment, COMMENT_REQUEST_CODE, bundle)
+            }
+            R.id.doneBtn -> {
+                val bundle = Bundle()
+                bundle.putParcelable("taskData", viewModel.taskDetail.value)
+                bundle.putString("action", TaskDetailEvents.DoneTask.eventValue)
+                navigateForResult(R.id.commentFragment, DONE_REQUEST_CODE, bundle)
             }
             R.id.taskForwardBtn -> {
                 val assignTo = viewModel.taskDetail.value?.assignedToState?.map { it.phoneNumber }
@@ -119,6 +128,23 @@ class TaskDetailV2Fragment :
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
+            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(TaskStatus.CANCELED.name, true) ||
+                (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(TaskStatus.NEW.name, true)
+            ) {
+                mViewDataBinding.doneBtn.isEnabled = false
+                mViewDataBinding.doneBtn.isClickable = false
+                mViewDataBinding.doneBtn.alpha = 0.6f
+                mViewDataBinding.taskForwardBtn.isEnabled = false
+                mViewDataBinding.taskForwardBtn.isClickable = false
+                mViewDataBinding.taskForwardBtn.alpha = 0.6f
+            } else {
+                mViewDataBinding.doneBtn.isEnabled = true
+                mViewDataBinding.doneBtn.isClickable = true
+                mViewDataBinding.doneBtn.alpha = 1f
+                mViewDataBinding.taskForwardBtn.isEnabled = true
+                mViewDataBinding.taskForwardBtn.isClickable = true
+                mViewDataBinding.taskForwardBtn.alpha = 1f
+            }
 
             var state = ""
             state = if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
@@ -332,7 +358,13 @@ class TaskDetailV2Fragment :
                     if (updatedTask != null) {
                         viewModel._taskDetail.postValue(updatedTask)
                     }
+                }
 
+                DONE_REQUEST_CODE -> {
+                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
+                    if (updatedTask != null) {
+                        viewModel._taskDetail.postValue(updatedTask)
+                    }
                 }
             }
         }

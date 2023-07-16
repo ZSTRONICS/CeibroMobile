@@ -117,6 +117,15 @@ class TaskDetailV2VM @Inject constructor(
                     if (taskSeenData != null) {
                         updateGenericTaskSeenInLocal(taskSeenData, taskDao, user?.id)
                         onBack(taskSeenData)
+//                        val task = taskDetail.value
+//                        val userSeen = task?.assignedToState?.find { it.userId == taskSeenData.state.userId }
+//                        if (userSeen != null) {
+//                            val index = task.assignedToState.indexOf(userSeen)
+//                            task.assignedToState[index] = taskSeenData.state
+//                        }
+//                        task?.creatorState = taskSeenData.creatorState
+//                        task?.seenBy = taskSeenData.seenBy
+//                        task.let { _taskDetail.postValue(it) }
                     }
                     //loading(false, "")
 
@@ -151,112 +160,7 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-    private fun insertUpdatedTask(task: CeibroTaskV2?) {
-        var taskToMe = false
-        var taskFromMe = false
-        if (task != null) {
-            if (task.creator.id == user?.id) {
-                taskFromMe = true
-            }
-            for (item in task.assignedToState) {
-                if (item.userId == user?.id) {
-                    taskToMe = true
-                }
-            }
 
-            launch {
-                if (taskFromMe) {
-                    val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
-
-                    if (taskFromMeLocalData != null) {
-                        val newTask = taskFromMeLocalData.allTasks.new.find { it.id == task.id }
-                        val unreadTask =
-                            taskFromMeLocalData.allTasks.unread.find { it.id == task.id }
-                        val ongoingTask =
-                            taskFromMeLocalData.allTasks.ongoing.find { it.id == task.id }
-                        val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == task.id }
-                        if (newTask != null) {
-                            val allTaskList = taskFromMeLocalData.allTasks.new.toMutableList()
-                            val taskIndex = allTaskList.indexOf(newTask)
-
-                            allTaskList[taskIndex] = task
-                            taskFromMeLocalData.allTasks.new = allTaskList.toList()
-
-                        } else if (unreadTask != null) {
-                            val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
-                            val taskIndex = allTaskList.indexOf(unreadTask)
-
-                            allTaskList[taskIndex] = task
-                            taskFromMeLocalData.allTasks.unread = allTaskList.toList()
-
-                        } else if (ongoingTask != null) {
-                            val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
-                            val taskIndex = allTaskList.indexOf(ongoingTask)
-
-                            allTaskList[taskIndex] = task
-                            taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
-
-                        } else if (doneTask != null) {
-                            val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
-                            val taskIndex = allTaskList.indexOf(doneTask)
-
-                            allTaskList[taskIndex] = task
-                            taskFromMeLocalData.allTasks.done = allTaskList.toList()
-                        }
-
-                        taskDao.insertTaskData(
-                            taskFromMeLocalData
-                        )
-                    }
-                }
-
-                if (taskToMe) {
-                    val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
-
-                    if (taskToMeLocalData != null) {
-                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == task.id }
-                        val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == task.id }
-                        val ongoingTask =
-                            taskToMeLocalData.allTasks.ongoing.find { it.id == task.id }
-                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == task.id }
-                        if (newTask != null) {
-                            val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
-                            val taskIndex = allTaskList.indexOf(newTask)
-
-                            allTaskList[taskIndex] = task
-                            taskToMeLocalData.allTasks.new = allTaskList.toList()
-
-                        } else if (unreadTask != null) {
-                            val allTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
-                            val taskIndex = allTaskList.indexOf(unreadTask)
-
-                            allTaskList[taskIndex] = task
-                            taskToMeLocalData.allTasks.unread = allTaskList.toList()
-
-                        } else if (ongoingTask != null) {
-                            val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
-                            val taskIndex = allTaskList.indexOf(ongoingTask)
-
-                            allTaskList[taskIndex] = task
-                            taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
-
-                        } else if (doneTask != null) {
-                            val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
-                            val taskIndex = allTaskList.indexOf(doneTask)
-
-                            allTaskList[taskIndex] = task
-                            taskToMeLocalData.allTasks.done = allTaskList.toList()
-                        }
-
-                        taskDao.insertTaskData(
-                            taskToMeLocalData
-                        )
-                    }
-                }
-            }
-
-        }
-    }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskForwardEvent(event: LocalEvents.TaskForwardEvent?) {
         val task = event?.task

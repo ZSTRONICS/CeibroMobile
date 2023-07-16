@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.tasks.v2.taskfromme
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -20,6 +21,8 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
+import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -29,8 +32,10 @@ import javax.inject.Inject
 class TaskFromMeVM @Inject constructor(
     override val viewState: TaskFromMeState,
     private val remoteTask: TaskRemoteDataSource,
+    private val sessionManager: SessionManager,
     private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskFromMe.State>(), ITaskFromMe.ViewModel {
+    val user = sessionManager.getUser().value
     var selectedState: String = "unread"
 
     private val _unreadTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
@@ -128,7 +133,7 @@ class TaskFromMeVM @Inject constructor(
             _doneTasks.postValue(originalDoneTasks)
             return
         }
-        if (selectedState.equals("unread", true)) {
+        if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
             val filteredTasks =
                 originalUnreadTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
@@ -153,7 +158,7 @@ class TaskFromMeVM @Inject constructor(
                             }
                 }
             _unreadTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
-        } else if (selectedState.equals("ongoing", true)) {
+        } else if (selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
@@ -178,7 +183,7 @@ class TaskFromMeVM @Inject constructor(
                             }
                 }
             _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
-        } else if (selectedState.equals("done", true)) {
+        } else if (selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
                     (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
@@ -207,7 +212,7 @@ class TaskFromMeVM @Inject constructor(
     }
 
 
-    fun showCancelTaskDialog(context: Context, taskData: CeibroTaskV2) {
+    fun showCancelTaskDialog(context: Context, taskData: CeibroTaskV2, callBack: () -> Unit) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
 
@@ -222,7 +227,9 @@ class TaskFromMeVM @Inject constructor(
         alertDialog.show()
 
         yesBtn.setOnClickListener {
-            //hit API to cancel task
+            cancelTask(taskData.id) { isSuccess ->
+                alertDialog.dismiss()
+            }
         }
 
         noBtn.setOnClickListener {
@@ -231,48 +238,25 @@ class TaskFromMeVM @Inject constructor(
     }
 
 
-//
-//    fun cancelTask(taskId: String, callBack: () -> Unit) {
-//        launch {
-//            when (val response = remoteTask.cancelTask(taskId)) {
-//                is ApiResponse.Success -> {
-//
-//                    taskDao.insertTaskData(
-//                        TasksV2DatabaseEntity(
-//                            rootState = "from-me",
-//                            allTasks = response.data.allTasks
-//                        )
-//                    )
-//
-//                    val unreadTask = response.data.allTasks.unread
-//                    val ongoingTask = response.data.allTasks.ongoing
-//                    val doneTask = response.data.allTasks.done
-//                    val allTasks = response.data.allTasks
-//
-//                    _unreadTasks.postValue(unreadTask as MutableList<CeibroTaskV2>?)
-//                    _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-//                    _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-//                    _allTasks.postValue(allTasks)
-//
-//                    originalUnreadTasks = unreadTask
-//                    originalOngoingTasks = ongoingTask
-//                    originalDoneTasks = doneTask
-//                    allOriginalTasks.postValue(allTasks)
-//
-//                    if (skeletonVisible) {
-//                        taskRV.hideSkeleton()
-//                    }
-//                    callBack.invoke()
-//                }
-//                is ApiResponse.Error -> {
-//                    alert(response.error.message)
-//                    if (skeletonVisible) {
-//                        taskRV.hideSkeleton()
-//                    }
-//                    callBack.invoke()
-//                }
-//            }
-//        }
-//    }
+
+    private fun cancelTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.cancelTask(taskId)) {
+                is ApiResponse.Success -> {
+                    updateTaskCanceledInLocal(response.data.data, taskDao, user?.id)
+                    val handler = Handler()
+                    handler.postDelayed({
+                        loading(false, "")
+                        callBack.invoke(true)
+                    }, 50)
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
+    }
 
 }

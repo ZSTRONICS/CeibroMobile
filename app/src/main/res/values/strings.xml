@@ -419,5 +419,8 @@
     <string name="new_comment">New comment</string>
     <string name="self_assign">Self-assign</string>
     <string name="do_you_want_to_hide_the_task">Do you want to hide the task?</string>
+    <string name="do_you_want_to_un_hide_the_task">Do you want to un-hide the task?</string>
     <string name="do_you_want_to_cancel_the_task">Do you want to cancel the task?</string>
+    <string name="comment_is_required_to_mark_task_as_done">Comment is required to mark task as done</string>
+    <string name="image_is_required_to_mark_task_as_done">Image is required to mark task as done</string>
 </resources>

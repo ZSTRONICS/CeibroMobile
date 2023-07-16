@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter.HiddenRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +36,7 @@ class TaskHiddenFragment :
                 navigate(R.id.newTaskV2Fragment)
             }
             R.id.cancelledStateText -> {
-                viewModel.selectedState = "canceled"
+                viewModel.selectedState = TaskStatus.CANCELED.name.lowercase()
                 val cancelledTasks = viewModel.cancelledTasks.value
                 if (!cancelledTasks.isNullOrEmpty()) {
                     adapter.setList(cancelledTasks)
@@ -50,7 +51,7 @@ class TaskHiddenFragment :
                     resources.getDrawable(R.drawable.status_done_outline_new)
             }
             R.id.ongoingStateText -> {
-                viewModel.selectedState = "ongoing"
+                viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 val ongoingTask = viewModel.ongoingTasks.value
                 if (!ongoingTask.isNullOrEmpty()) {
                     adapter.setList(ongoingTask)
@@ -65,7 +66,7 @@ class TaskHiddenFragment :
                     resources.getDrawable(R.drawable.status_done_outline_new)
             }
             R.id.doneStateText -> {
-                viewModel.selectedState = "done"
+                viewModel.selectedState = TaskStatus.DONE.name.lowercase()
                 val doneTask = viewModel.doneTasks.value
                 if (!doneTask.isNullOrEmpty()) {
                     adapter.setList(doneTask)
@@ -97,7 +98,7 @@ class TaskHiddenFragment :
         }
 
         viewModel.cancelledTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("canceled", true)) {
+            if (viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -107,7 +108,7 @@ class TaskHiddenFragment :
         }
 
         viewModel.ongoingTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("ongoing", true)) {
+            if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -117,7 +118,7 @@ class TaskHiddenFragment :
         }
 
         viewModel.doneTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("done", true)) {
+            if (viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -134,6 +135,13 @@ class TaskHiddenFragment :
                 bundle.putString("rootState", TaskRootStateTags.Hidden.tagValue.lowercase())
                 bundle.putString("selectedState", viewModel.selectedState)
                 navigate(R.id.taskDetailV2Fragment, bundle)
+            }
+        adapter.itemLongClickListener =
+            { _: View, position: Int, data: CeibroTaskV2 ->
+                //user cannot hide a task of new state
+                if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
+                    viewModel.showUnHideTaskDialog(requireContext(), data)
+                }
             }
 
 

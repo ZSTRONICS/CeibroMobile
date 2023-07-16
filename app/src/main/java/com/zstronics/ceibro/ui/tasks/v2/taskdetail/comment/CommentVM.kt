@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
@@ -35,13 +36,18 @@ class CommentVM @Inject constructor(
         MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
     var taskData: CeibroTaskV2? = null
+    var actionToPerform = ""
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
         val bundleTaskData: CeibroTaskV2? = bundle?.getParcelable("taskData")
+        val action = bundle?.getString("action")
         if (bundleTaskData != null) {
             taskData = bundleTaskData
+        }
+        if (action != null) {
+            actionToPerform = action
         }
     }
 
@@ -133,6 +139,109 @@ class CommentVM @Inject constructor(
                 }
 
                 taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id)
+
+                val handler = Handler()
+                handler.postDelayed(Runnable {
+                    loading(false, "")
+                    if (isSuccess) {
+                        onBack()
+                    }
+                }, 50)
+
+            }
+        }
+    }
+
+    fun doneTask(
+        context: Context,
+        onBack: () -> Unit
+    ) {
+        val list = getCombinedList()
+        if (taskData?.doneCommentsRequired == true && viewState.comment.value.toString() == "") {
+            alert(context.resources.getString(R.string.comment_is_required_to_mark_task_as_done))
+        } else if (taskData?.doneImageRequired == true && list.isEmpty()) {
+            alert(context.resources.getString(R.string.image_is_required_to_mark_task_as_done))
+        } else {
+            launch {
+                var eventData: EventV2Response.Data? = null
+                var isSuccess = false
+
+                if (list.isNotEmpty()) {
+                    val attachmentUriList = list.map {
+                        it.file
+                    }
+                    val metaData = list.map { file ->
+                        var tag = ""
+                        if (file.attachmentType == AttachmentTypes.Image) {
+                            tag = if (file.comment.isNotEmpty()) {
+                                AttachmentTags.ImageWithComment.tagValue
+                            } else {
+                                AttachmentTags.Image.tagValue
+                            }
+                        } else if (file.attachmentType == AttachmentTypes.Pdf || file.attachmentType == AttachmentTypes.Doc) {
+                            tag = AttachmentTags.File.tagValue
+                        }
+
+                        EventWithFileUploadV2Request.AttachmentMetaData(
+                            fileName = file.fileName,
+                            orignalFileName = file.fileName,
+                            tag = tag,
+                            comment = file.comment.trim()
+                        )
+                    }
+                    val metadataString = Gson().toJson(metaData)
+                    val metadataString2 =
+                        Gson().toJson(metadataString)     //again passing to make the json to convert into json string with slashes
+
+                    val request = EventWithFileUploadV2Request(
+                        files = attachmentUriList,
+                        message = viewState.comment.value.toString() ?: "",
+                        metadata = metadataString2
+                    )
+
+                    loading(true)
+                    when (val response = dashboardRepository.uploadEventWithFilesV2(
+                        event = TaskDetailEvents.DoneTask.eventValue,
+                        taskId = taskData?.id ?: "",
+                        hasFiles = true,
+                        eventWithFileUploadV2Request = request
+                    )) {
+                        is ApiResponse.Success -> {
+                            val commentData = response.data.data
+                            eventData = commentData
+                            isSuccess = true
+                        }
+
+                        is ApiResponse.Error -> {
+                            loading(false, response.error.message)
+                        }
+                    }
+
+                } else {        //if list is empty, moving to else part
+                    val request = EventCommentOnlyUploadV2Request(
+                        message = viewState.comment.value.toString() ?: ""
+                    )
+
+                    loading(true)
+                    when (val response = dashboardRepository.uploadEventWithoutFilesV2(
+                        event = TaskDetailEvents.DoneTask.eventValue,
+                        taskId = taskData?.id ?: "",
+                        hasFiles = false,
+                        eventCommentOnlyUploadV2Request = request
+                    )) {
+                        is ApiResponse.Success -> {
+                            val commentData = response.data.data
+                            eventData = commentData
+                            isSuccess = true
+                        }
+
+                        is ApiResponse.Error -> {
+                            loading(false, response.error.message)
+                        }
+                    }
+                }
+
+                taskData = updateTaskDoneInLocal(eventData, taskDao, user?.id)
 
                 val handler = Handler()
                 handler.postDelayed(Runnable {

@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
@@ -96,7 +97,7 @@ class TaskFromMeFragment :
         }
 
         viewModel.unreadTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("unread", true)) {
+            if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -106,7 +107,7 @@ class TaskFromMeFragment :
         }
 
         viewModel.ongoingTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("ongoing", true)) {
+            if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -116,7 +117,7 @@ class TaskFromMeFragment :
         }
 
         viewModel.doneTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedState.equals("done", true)) {
+            if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                 } else {
@@ -137,8 +138,8 @@ class TaskFromMeFragment :
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
                 //creator cannot cancel a task which is already in done state
-                if (viewModel.selectedState.equals("unread", true) || viewModel.selectedState.equals("ongoing", true)) {
-                    viewModel.showCancelTaskDialog(requireContext(), data)
+                if (viewModel.selectedState.equals(TaskStatus.UNREAD.name, true) || viewModel.selectedState.equals(TaskStatus.ONGOING.name, true)) {
+                    viewModel.showCancelTaskDialog(requireContext(), data) { }
                 }
             }
 
