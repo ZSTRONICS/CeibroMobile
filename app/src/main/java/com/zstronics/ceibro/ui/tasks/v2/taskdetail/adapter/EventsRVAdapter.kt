@@ -17,6 +17,8 @@ class EventsRVAdapter @Inject constructor() :
     RecyclerView.Adapter<EventsRVAdapter.EventsViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: Events) -> Unit)? =
         null
+    var openEventImageClickListener: ((view: View, position: Int, fileUrl: ArrayList<String>) -> Unit)? =
+        null
     var listItems: MutableList<Events> = mutableListOf()
 
     override fun onCreateViewHolder(
@@ -201,12 +203,22 @@ class EventsRVAdapter @Inject constructor() :
                 val onlyImageAdapter = EventsOnlyImageRVAdapter()
                 binding.onlyImagesRV.adapter = onlyImageAdapter
                 onlyImageAdapter.setList(onlyImage)
+                onlyImageAdapter.openImageClickListener =
+                    { view: View, position: Int, fileUrl: String ->
+                        val fileUrls: ArrayList<String> = onlyImage.map { it.fileUrl } as ArrayList<String>
+                        openEventImageClickListener?.invoke(view, position, fileUrls)
+                    }
                 binding.onlyImagesRV.visibility = View.VISIBLE
             }
             if (imagesWithComment.isNotEmpty()) {
                 val imageWithCommentAdapter = EventsImageWithCommentRVAdapter()
                 binding.imagesWithCommentRV.adapter = imageWithCommentAdapter
                 imageWithCommentAdapter.setList(imagesWithComment)
+                imageWithCommentAdapter.openImageClickListener =
+                    { view: View, position: Int, fileUrl: String ->
+                        val fileUrls: ArrayList<String> = imagesWithComment.map { it.fileUrl } as ArrayList<String>
+                        openEventImageClickListener?.invoke(view, position, fileUrls)
+                    }
                 binding.imagesWithCommentRV.visibility = View.VISIBLE
             }
             if (document.isNotEmpty()) {

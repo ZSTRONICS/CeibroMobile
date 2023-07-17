@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -1928,10 +1929,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (doneTaskToMe != null) {
                                         val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                         allDoneToMeTaskList[index] = ongoingTask
-                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                        taskToMeLocalData.allTasks.done =
+                                            allDoneToMeTaskList.toList()
                                     } else {
                                         allDoneToMeTaskList.add(0, ongoingTask)
-                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                        taskToMeLocalData.allTasks.done =
+                                            allDoneToMeTaskList.toList()
                                     }
                                 }
                             }
@@ -1992,10 +1995,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (doneTaskToMe != null) {
                                         val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                         allDoneToMeTaskList[index] = doneTask
-                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                        taskToMeLocalData.allTasks.done =
+                                            allDoneToMeTaskList.toList()
                                     } else {
                                         allDoneToMeTaskList.add(0, doneTask)
-                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                        taskToMeLocalData.allTasks.done =
+                                            allDoneToMeTaskList.toList()
                                     }
                                 }
                             }
@@ -2240,7 +2245,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allDoneFromMeTaskList.toList()
                                 } else {
                                     allDoneFromMeTaskList.add(0, unreadTask)
-                                    taskFromMeLocalData.allTasks.done = allDoneFromMeTaskList.toList()
+                                    taskFromMeLocalData.allTasks.done =
+                                        allDoneFromMeTaskList.toList()
                                 }
                                 updatedTask = unreadTask
 
@@ -2288,7 +2294,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allDoneFromMeTaskList.toList()
                                 } else {
                                     allDoneFromMeTaskList.add(0, ongoingTask)
-                                    taskFromMeLocalData.allTasks.done = allDoneFromMeTaskList.toList()
+                                    taskFromMeLocalData.allTasks.done =
+                                        allDoneFromMeTaskList.toList()
                                 }
                                 updatedTask = ongoingTask
 
@@ -2341,6 +2348,229 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         return updatedTask
     }
 
+
+    fun updateTaskHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao, userId: String?) {
+        launch {
+            val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+            val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+            if (hideData != null) {
+                if (taskToMeLocalData != null) {
+                    val ongoingTask =
+                        taskToMeLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
+                    val doneTask = taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
+
+                    if (taskHiddenLocalData != null) {
+                        if (ongoingTask != null) {
+                            val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                            ongoingTask.hiddenBy = hideData.hiddenBy
+
+                            allTaskList.removeAt(taskIndex)
+                            taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+
+
+                            val allOngoingTaskList =
+                                taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                            val hiddenOngoingTask =
+                                taskHiddenLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
+                            if (hiddenOngoingTask != null) {
+                                val ongoingTaskIndex = allOngoingTaskList.indexOf(hiddenOngoingTask)
+                                allOngoingTaskList[ongoingTaskIndex] = ongoingTask
+                                taskHiddenLocalData.allTasks.ongoing =
+                                    allOngoingTaskList.toList()
+                            } else {
+                                allOngoingTaskList.add(0, ongoingTask)
+                                taskHiddenLocalData.allTasks.ongoing =
+                                    allOngoingTaskList.toList()
+                            }
+                        }
+                        if (doneTask != null) {
+                            val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allTaskList.indexOf(doneTask)
+
+                            doneTask.hiddenBy = hideData.hiddenBy
+
+                            allTaskList.removeAt(taskIndex)
+                            taskToMeLocalData.allTasks.done = allTaskList.toList()
+
+
+                            val allDoneTaskList =
+                                taskHiddenLocalData.allTasks.done.toMutableList()
+                            val hiddenDoneTask =
+                                taskHiddenLocalData.allTasks.done.find { it.id == hideData.taskId }
+                            if (hiddenDoneTask != null) {
+                                val doneTaskIndex = allDoneTaskList.indexOf(hiddenDoneTask)
+                                allDoneTaskList[doneTaskIndex] = doneTask
+                                taskHiddenLocalData.allTasks.done =
+                                    allDoneTaskList.toList()
+                            } else {
+                                allDoneTaskList.add(0, doneTask)
+                                taskHiddenLocalData.allTasks.done =
+                                    allDoneTaskList.toList()
+                            }
+                        }
+
+                        taskDao.insertTaskData(
+                            taskToMeLocalData
+                        )
+                        taskDao.insertTaskData(
+                            taskHiddenLocalData
+                        )
+
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+
+                if (taskHiddenLocalData != null) {
+                    val ongoingTask =
+                        taskHiddenLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
+                    val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == hideData.taskId }
+
+                    if (ongoingTask != null) {
+                        val allTaskList = taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                        val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                        ongoingTask.hiddenBy = hideData.hiddenBy
+
+                        allTaskList[taskIndex] = ongoingTask
+                        taskHiddenLocalData.allTasks.ongoing =
+                            allTaskList.toList()
+                    }
+                    if (doneTask != null) {
+                        val allTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
+                        val taskIndex = allTaskList.indexOf(doneTask)
+
+                        doneTask.hiddenBy = hideData.hiddenBy
+
+                        allTaskList[taskIndex] = doneTask
+                        taskHiddenLocalData.allTasks.done =
+                            allTaskList.toList()
+                    }
+
+                    taskDao.insertTaskData(
+                        taskHiddenLocalData
+                    )
+
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                }
+            }
+        }
+
+    }
+
+    fun updateTaskUnHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao, userId: String?) {
+        launch {
+            val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+            val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+            if (hideData != null) {
+                if (taskHiddenLocalData != null) {
+                    val ongoingTask =
+                        taskHiddenLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
+                    val doneTask =
+                        taskHiddenLocalData.allTasks.done.find { it.id == hideData.taskId }
+
+                    if (taskToMeLocalData != null) {
+                        if (ongoingTask != null) {
+                            val allTaskList = taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                            val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                            ongoingTask.hiddenBy = hideData.hiddenBy
+
+                            allTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.ongoing = allTaskList.toList()
+
+
+                            val allOngoingTaskList =
+                                taskToMeLocalData.allTasks.ongoing.toMutableList()
+                            val toMeOngoingTask =
+                                taskToMeLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
+                            if (toMeOngoingTask != null) {
+                                val ongoingTaskIndex = allOngoingTaskList.indexOf(toMeOngoingTask)
+                                allOngoingTaskList[ongoingTaskIndex] = ongoingTask
+                                taskToMeLocalData.allTasks.ongoing =
+                                    allOngoingTaskList.toList()
+                            } else {
+                                allOngoingTaskList.add(0, ongoingTask)
+                                taskToMeLocalData.allTasks.ongoing =
+                                    allOngoingTaskList.toList()
+                            }
+                        }
+                        if (doneTask != null) {
+                            val allTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
+                            val taskIndex = allTaskList.indexOf(doneTask)
+
+                            doneTask.hiddenBy = hideData.hiddenBy
+
+                            allTaskList.removeAt(taskIndex)
+                            taskHiddenLocalData.allTasks.done = allTaskList.toList()
+
+
+                            val allDoneTaskList =
+                                taskToMeLocalData.allTasks.done.toMutableList()
+                            val toMeDoneTask =
+                                taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
+                            if (toMeDoneTask != null) {
+                                val doneTaskIndex = allDoneTaskList.indexOf(toMeDoneTask)
+                                allDoneTaskList[doneTaskIndex] = doneTask
+                                taskToMeLocalData.allTasks.done =
+                                    allDoneTaskList.toList()
+                            } else {
+                                allDoneTaskList.add(0, doneTask)
+                                taskToMeLocalData.allTasks.done =
+                                    allDoneTaskList.toList()
+                            }
+                        }
+
+                        taskDao.insertTaskData(
+                            taskToMeLocalData
+                        )
+                        taskDao.insertTaskData(
+                            taskHiddenLocalData
+                        )
+
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+
+                if (taskToMeLocalData != null) {
+                    val ongoingTask =
+                        taskToMeLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
+                    val doneTask = taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
+
+                    if (ongoingTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
+                        val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                        ongoingTask.hiddenBy = hideData.hiddenBy
+
+                        allTaskList[taskIndex] = ongoingTask
+                        taskToMeLocalData.allTasks.ongoing =
+                            allTaskList.toList()
+                    }
+                    if (doneTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
+                        val taskIndex = allTaskList.indexOf(doneTask)
+
+                        doneTask.hiddenBy = hideData.hiddenBy
+
+                        allTaskList[taskIndex] = doneTask
+                        taskToMeLocalData.allTasks.done =
+                            allTaskList.toList()
+                    }
+
+                    taskDao.insertTaskData(
+                        taskToMeLocalData
+                    )
+
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                }
+            }
+        }
+
+    }
 }
 
 

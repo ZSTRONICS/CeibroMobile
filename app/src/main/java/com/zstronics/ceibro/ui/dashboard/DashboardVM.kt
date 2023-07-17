@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
+import android.os.Handler
 import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -40,7 +41,9 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskCreatedResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -157,6 +160,18 @@ class DashboardVM @Inject constructor(
                             }
                             if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
                                 updateTaskDoneInLocal(commentData, taskDao, userId)
+                            }
+                        }
+                        SocketHandler.TaskEvent.TASK_HIDDEN.name, SocketHandler.TaskEvent.TASK_SHOWN.name -> {
+                            val hideData = gson.fromJson<SocketHideUnHideTaskResponse>(
+                                arguments,
+                                object : TypeToken<SocketHideUnHideTaskResponse>() {}.type
+                            ).data
+                            if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
+                                updateTaskHideInLocal(hideData, taskDao, userId)
+                            }
+                            if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
+                                updateTaskUnHideInLocal(hideData, taskDao, userId)
                             }
                         }
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
@@ -828,6 +843,28 @@ class DashboardVM @Inject constructor(
             when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                 is ApiResponse.Success -> {
                     connectionsV2Dao.insert(ConnectionsV2DatabaseEntity(1, response.data.contacts))
+                }
+                is ApiResponse.Error -> {
+                }
+            }
+        }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onGetALlContactsFromAPI(event: LocalEvents.GetALlContactsFromAPI) {
+        loadConnectionsData()
+    }
+
+    private fun loadConnectionsData() {
+        launch {
+            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+                is ApiResponse.Success -> {
+                    connectionsV2Dao.insert(ConnectionsV2DatabaseEntity(1, response.data.contacts))
+                    val handler = Handler()
+                    handler.postDelayed(Runnable {
+                        EventBus.getDefault().post(LocalEvents.ContactsSynced)
+                    }, 50)
                 }
                 is ApiResponse.Error -> {
                 }

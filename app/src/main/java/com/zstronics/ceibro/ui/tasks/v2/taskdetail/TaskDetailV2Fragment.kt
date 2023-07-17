@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
@@ -252,6 +253,11 @@ class TaskDetailV2Fragment :
                 }
         }
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
+        onlyImageAdapter.openImageClickListener =
+            { _: View, position: Int, fileUrl: String ->
+                val fileUrls: ArrayList<String> = viewModel.onlyImages.value?.map { it.fileUrl } as ArrayList<String>
+                viewModel.openImageViewer(requireContext(), fileUrls, position)
+            }
 
 
         viewModel.imagesWithComments.observe(viewLifecycleOwner) {
@@ -264,7 +270,11 @@ class TaskDetailV2Fragment :
                 }
         }
         mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
-
+        imageWithCommentAdapter.openImageClickListener =
+            { _: View, position: Int, fileUrl: String ->
+                val fileUrls: ArrayList<String> = viewModel.imagesWithComments.value?.map { it.fileUrl } as ArrayList<String>
+                viewModel.openImageViewer(requireContext(), fileUrls, position)
+            }
 
         viewModel.documents.observe(viewLifecycleOwner) {
             filesAdapter.setList(it)
@@ -289,7 +299,13 @@ class TaskDetailV2Fragment :
                 }
         }
         mViewDataBinding.eventsRV.adapter = eventsAdapter
-
+        eventsAdapter.openEventImageClickListener =
+            { _: View, position: Int, fileUrls: ArrayList<String> ->
+                viewModel.openImageViewer(requireContext(), fileUrls, position)
+            }
+        val layoutManager = LinearLayoutManager(context)
+        layoutManager.isAutoMeasureEnabled = false      //to show all content in RV
+        mViewDataBinding.eventsRV.layoutManager = layoutManager
     }
 
 

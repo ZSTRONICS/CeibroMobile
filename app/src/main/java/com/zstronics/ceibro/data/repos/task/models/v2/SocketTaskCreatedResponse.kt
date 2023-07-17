@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.data.repos.task.models
+package com.zstronics.ceibro.data.repos.task.models.v2
 
 import android.os.Parcelable
 import androidx.annotation.Keep

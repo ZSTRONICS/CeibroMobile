@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -37,6 +38,7 @@ class MyConnectionV2Fragment :
     override val viewModel: MyConnectionV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_connections_v2
     override fun toolBarVisibility(): Boolean = false
+    var runUIOnce = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.syncIV -> {
@@ -79,7 +81,7 @@ class MyConnectionV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startOneTimeContactSyncWorker(requireContext())
+
         mViewDataBinding.connectionRV.adapter = adapter
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
@@ -122,7 +124,11 @@ class MyConnectionV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        loadConnections(true)
+        if (!runUIOnce) {
+            loadConnections(true)
+            runUIOnce = true
+        }
+        startOneTimeContactSyncWorker(requireContext())
         mViewDataBinding.searchBar.setQuery("", true)
     }
 

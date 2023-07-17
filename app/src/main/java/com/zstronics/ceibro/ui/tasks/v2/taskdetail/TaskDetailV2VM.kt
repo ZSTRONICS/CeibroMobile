@@ -1,8 +1,11 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -10,10 +13,10 @@ import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
@@ -178,5 +181,29 @@ class TaskDetailV2VM @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         EventBus.getDefault().unregister(this)
+    }
+
+
+    fun openImageViewer(context: Context, fileUrl: ArrayList<String>?, position: Int) {
+        if (!fileUrl.isNullOrEmpty()) {
+            val fileExtension = fileUrl[0].substringAfterLast(".")
+            if (imageExtensions.contains(".$fileExtension")) {
+                val fullImageIntent = Intent(
+                    context,
+                    FullScreenImageViewActivity::class.java
+                )
+
+                val uriString: ArrayList<String> = arrayListOf()
+                uriString.addAll(fileUrl)
+                fullImageIntent.putExtra(FullScreenImageViewActivity.URI_LIST_DATA, uriString)
+
+                fullImageIntent.putExtra(
+                    FullScreenImageViewActivity.IMAGE_FULL_SCREEN_CURRENT_POS, position
+                )
+                context.startActivity(fullImageIntent)
+            } else {
+                // Handle other file types
+            }
+        }
     }
 }

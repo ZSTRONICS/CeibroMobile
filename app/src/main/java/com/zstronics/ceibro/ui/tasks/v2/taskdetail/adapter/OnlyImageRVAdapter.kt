@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class OnlyImageRVAdapter @Inject constructor() :
     RecyclerView.Adapter<OnlyImageRVAdapter.OnlyImageViewHolder>() {
-    var itemClickListener: ((view: View, position: Int) -> Unit)? =
+    var openImageClickListener: ((view: View, position: Int, fileUrl: String) -> Unit)? =
         null
     var listItems: MutableList<TaskFiles> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
@@ -48,7 +48,7 @@ class OnlyImageRVAdapter @Inject constructor() :
 
         fun bind(item: TaskFiles) {
             binding.root.setOnClickListener {
-
+                openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
 
             val context = binding.smallImgView.context

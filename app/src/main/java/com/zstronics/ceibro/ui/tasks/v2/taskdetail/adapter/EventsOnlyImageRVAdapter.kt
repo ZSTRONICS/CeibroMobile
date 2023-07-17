@@ -14,6 +14,8 @@ class EventsOnlyImageRVAdapter @Inject constructor() :
     RecyclerView.Adapter<EventsOnlyImageRVAdapter.OnlyImageViewHolder>() {
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
+    var openImageClickListener: ((view: View, position: Int, fileUrl: String) -> Unit)? =
+        null
     var listItems: MutableList<EventFiles> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
@@ -49,7 +51,7 @@ class EventsOnlyImageRVAdapter @Inject constructor() :
 
         fun bind(item: EventFiles) {
             binding.root.setOnClickListener {
-
+                openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
 
             val context = binding.smallImgView.context

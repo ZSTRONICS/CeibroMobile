@@ -62,13 +62,15 @@ class AssigneeVM @Inject constructor(
         launch {
             val connectionsData = connectionsV2Dao.getAll()
             if (connectionsData != null) {
-                processConnectionsData(connectionsData.contacts)
-                callBack.invoke()
+                processConnectionsData(connectionsData.contacts) {
+                    callBack.invoke()
+                }
             } else {
                 when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                     is ApiResponse.Success -> {
-                        processConnectionsData(response.data.contacts)
-                        callBack.invoke()
+                        processConnectionsData(response.data.contacts) {
+                            callBack.invoke()
+                        }
                     }
                     is ApiResponse.Error -> {
                         callBack.invoke()
@@ -79,8 +81,9 @@ class AssigneeVM @Inject constructor(
         }
     }
 
-    private fun processConnectionsData(contactsResponse: List<AllCeibroConnections.CeibroConnection>) {
-        val allContacts = contactsResponse.sortedByDescending { it.isCeiborUser }.toMutableList()
+    private fun processConnectionsData(contactsResponse: List<AllCeibroConnections.CeibroConnection>, callBack: () -> Unit) {
+
+        /*val allContacts = contactsResponse.sortedByDescending { it.isCeiborUser }.toMutableList()
         val oldSelectedContacts = selectedContacts.value
         if (!oldSelectedContacts.isNullOrEmpty()) {
             for (allItem in allContacts) {
@@ -93,12 +96,36 @@ class AssigneeVM @Inject constructor(
             }
             _allConnections.postValue(allContacts)
             originalConnections = allContacts
+            callBack.invoke()
 
         } else {
             if (allContacts.isNotEmpty()) {
                 originalConnections = allContacts
                 _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
             }
+            callBack.invoke()
+        }*/
+
+        val allContacts = contactsResponse.sortedByDescending { it.isCeiborUser }.toMutableList()
+        val oldSelectedContacts = selectedContacts.value
+
+        if (!oldSelectedContacts.isNullOrEmpty()) {
+            val oldSelectedContactsMap = oldSelectedContacts.associateBy { it.id }
+            for (allItem in allContacts) {
+                oldSelectedContactsMap[allItem.id]?.let { selectedItem ->
+                    val index = allContacts.indexOf(allItem)
+                    allContacts[index] = selectedItem
+                }
+            }
+            _allConnections.value = allContacts
+            originalConnections = allContacts
+            callBack.invoke()
+        } else {
+            if (allContacts.isNotEmpty()) {
+                originalConnections = allContacts
+                _allConnections.value = allContacts
+            }
+            callBack.invoke()
         }
     }
 

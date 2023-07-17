@@ -80,4 +80,5 @@ dependencies {
     implementation("com.googlecode.libphonenumber:libphonenumber:8.12.30")
     implementation("com.hbb20:ccp:2.6.1")
     implementation("io.ak1.pix:piximagepicker:1.6.3")
+    implementation("androidx.paging:paging-runtime-ktx:3.1.1")
 }
