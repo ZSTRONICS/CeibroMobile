@@ -46,16 +46,21 @@ class ContactSyncWorker @AssistedInject constructor(
         val user = sessionManager.getUser().value
 
         val contacts =
-            if (user?.autoContactSync == true) getLocalContacts(context) else sessionManager.getSyncedContacts()
+            if (user?.autoContactSync == true)
+                getLocalContacts(context)
+            else
+                sessionManager.getSyncedContacts()
         if (sessionManager.isLoggedIn() && contacts.isNotEmpty()) {
             val request = SyncContactsRequest(contacts = contacts)
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
                 is ApiResponse.Success -> {
+                    EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
                     EventBus.getDefault().post(LocalEvents.ContactsSynced)
                     sessionManager.saveSyncedContacts(contacts)
                     Result.success()
                 }
+
                 is ApiResponse.Error -> {
                     Result.failure()
                 }

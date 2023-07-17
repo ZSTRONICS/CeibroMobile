@@ -17,6 +17,7 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -26,8 +27,10 @@ import javax.inject.Inject
 class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
     private val remoteTask: TaskRemoteDataSource,
+    private val sessionManager: SessionManager,
     private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
+    val user = sessionManager.getUser().value
     var selectedState: String = "new"
 
     private val _newTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
@@ -219,7 +222,9 @@ class TaskToMeVM @Inject constructor(
         alertDialog.show()
 
         yesBtn.setOnClickListener {
-            //hit API to cancel task
+            hideTask(taskData.id) { isSuccess ->
+                alertDialog.dismiss()
+            }
         }
 
         noBtn.setOnClickListener {
@@ -227,5 +232,24 @@ class TaskToMeVM @Inject constructor(
         }
     }
 
+
+    private fun hideTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.hideTask(taskId)) {
+                is ApiResponse.Success -> {
+                    val hideResponse = response.data
+                    updateTaskHideInLocal(hideResponse, taskDao, user?.id)
+                    loading(false, "")
+                    callBack.invoke(true)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
+    }
 
 }

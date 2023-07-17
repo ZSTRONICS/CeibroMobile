@@ -15,6 +15,8 @@ class EventsImageWithCommentRVAdapter @Inject constructor() :
     RecyclerView.Adapter<EventsImageWithCommentRVAdapter.ImageWithCommentViewHolder>() {
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
+    var openImageClickListener: ((view: View, position: Int, fileUrl: String) -> Unit)? =
+        null
     var listItems: MutableList<EventFiles> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
@@ -49,8 +51,8 @@ class EventsImageWithCommentRVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: EventFiles) {
-            binding.root.setOnClickListener {
-//                itemClickListener?.invoke(it, adapterPosition)
+            binding.smallImgView.setOnClickListener {
+                openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
 
             val context = binding.smallImgView.context

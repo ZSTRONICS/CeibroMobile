@@ -106,6 +106,7 @@ object LocalEvents {
 
     class LogoutUserEvent
     object ContactsSynced
+    object GetALlContactsFromAPI
     data class TaskForwardEvent(val task: CeibroTaskV2?)
 
 }

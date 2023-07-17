@@ -129,6 +129,7 @@ class HiddenRVAdapter @Inject constructor() :
 
 
             if (item.project != null) {
+                binding.taskProjectLayout.visibility = View.VISIBLE
                 binding.taskProjectText.text = item.project.title
 
                 val layoutParams = binding.bottomCenterPoint.layoutParams as ConstraintLayout.LayoutParams
