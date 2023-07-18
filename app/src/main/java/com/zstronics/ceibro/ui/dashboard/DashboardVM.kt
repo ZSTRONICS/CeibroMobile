@@ -842,7 +842,7 @@ class DashboardVM @Inject constructor(
             }
             when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                 is ApiResponse.Success -> {
-                    connectionsV2Dao.insert(ConnectionsV2DatabaseEntity(1, response.data.contacts))
+                    connectionsV2Dao.insertAll(response.data.contacts)
                 }
                 is ApiResponse.Error -> {
                 }
@@ -860,7 +860,7 @@ class DashboardVM @Inject constructor(
         launch {
             when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                 is ApiResponse.Success -> {
-                    connectionsV2Dao.insert(ConnectionsV2DatabaseEntity(1, response.data.contacts))
+                    connectionsV2Dao.insertAll(response.data.contacts)
                     val handler = Handler()
                     handler.postDelayed(Runnable {
                         EventBus.getDefault().post(LocalEvents.ContactsSynced)

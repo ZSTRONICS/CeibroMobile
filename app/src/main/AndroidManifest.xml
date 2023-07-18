@@ -23,6 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ceibro"
         android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true"
         android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
         <activity
             android:name=".ui.splash.SplashActivity"
