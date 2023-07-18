@@ -43,8 +43,8 @@ class MyConnectionV2VM @Inject constructor(
         val userId = sessionManager.getUser().value?.id
         launch {
             val connectionsData = connectionsV2Dao.getAll()
-            if (connectionsData != null) {
-                val contacts = connectionsData.contacts.sortedByDescending { it.isCeiborUser }
+            if (connectionsData.isNotEmpty()) {
+                val contacts = connectionsData.sortedByDescending { it.isCeiborUser }
                 originalConnections = contacts
                 if (contacts.isNotEmpty()) {
                     _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)

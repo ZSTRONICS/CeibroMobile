@@ -61,8 +61,8 @@ class AssigneeVM @Inject constructor(
 
         launch {
             val connectionsData = connectionsV2Dao.getAll()
-            if (connectionsData != null) {
-                processConnectionsData(connectionsData.contacts) {
+            if (connectionsData.isNotEmpty()) {
+                processConnectionsData(connectionsData) {
                     callBack.invoke()
                 }
             } else {

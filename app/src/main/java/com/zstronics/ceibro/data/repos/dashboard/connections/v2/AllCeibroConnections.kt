@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.repos.dashboard.connections.v2
 
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,12 +12,19 @@ import com.zstronics.ceibro.data.database.TableNamesV2
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Keep
 data class AllCeibroConnections(
     @SerializedName("contacts")
     val contacts: List<CeibroConnection>
 ) : BaseResponse(), Parcelable {
+
+    @Entity(tableName = TableNamesV2.Connections)
     @Parcelize
+    @Keep
     data class CeibroConnection(
+        @PrimaryKey
+        @SerializedName("_id")
+        val id: String,
         @SerializedName("contactFullName")
         val contactFullName: String?,
         @SerializedName("contactFirstName")
@@ -27,8 +35,6 @@ data class AllCeibroConnections(
         val countryCode: String,
         @SerializedName("createdAt")
         val createdAt: String,
-        @SerializedName("_id")
-        val id: String,
         @SerializedName("isBlocked")
         var isBlocked: Boolean,
         @SerializedName("isCeiborUser")
@@ -44,7 +50,10 @@ data class AllCeibroConnections(
         var isChecked: Boolean = false
     ) : BaseResponse(), Parcelable {
         @Parcelize
+        @Keep
         data class UserCeibroData(
+            @PrimaryKey(autoGenerate = true)
+            val UserCeibroDataId: Int = 0,
             @SerializedName("companyName")
             val companyName: String,
             @SerializedName("email")
@@ -65,7 +74,7 @@ data class AllCeibroConnections(
     }
 }
 
-@Entity(tableName = TableNamesV2.Connections)
+//@Entity(tableName = TableNamesV2.Connections)
 data class ConnectionsV2DatabaseEntity(
     @PrimaryKey
     val id: Int = 0,

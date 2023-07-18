@@ -67,6 +67,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.5.0")
     implementation("androidx.room:room-runtime:2.5.0")
     implementation("androidx.room:room-common:2.5.0")
+    implementation("androidx.room:room-paging:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")
 
     implementation("io.socket:socket.io-client:2.0.0"){
@@ -81,4 +82,6 @@ dependencies {
     implementation("com.hbb20:ccp:2.6.1")
     implementation("io.ak1.pix:piximagepicker:1.6.3")
     implementation("androidx.paging:paging-runtime-ktx:3.1.1")
+    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.paging:paging-common:3.1.1")
 }
