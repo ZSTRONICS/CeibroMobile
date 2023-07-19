@@ -170,8 +170,13 @@ class TaskDetailV2VM @Inject constructor(
         if (task != null) {
             taskDetail.value?.let { taskDetail ->
                 if (task.id == taskDetail.id) {
-                    task.let {
-                        _taskDetail.postValue(it)
+                    task.let { it1 ->
+                        _taskDetail.postValue(it1)
+                        val seenByMe = it1.seenBy.find { it == user?.id }
+                        if (seenByMe == null) {
+                            println("TaskSeen-CalledOnTaskForwardReceived: ${it1.id}")
+                            taskSeen(it1.id) { }
+                        }
                     }
                 }
             }

@@ -74,6 +74,7 @@ class DashboardVM @Inject constructor(
     private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
+    var user = sessionManager.getUser().value
     var userId: String? = ""
 
     init {
@@ -84,8 +85,9 @@ class DashboardVM @Inject constructor(
 //        launch {
 //            repository.syncTasksAndSubTasks()
 //        }
-        val user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
-        userId = user?.id
+        val _user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
+        userId = _user?.id
+        user = _user
         EventBus.getDefault().register(this)
         loadAppData()
     }
@@ -854,6 +856,12 @@ class DashboardVM @Inject constructor(
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGetALlContactsFromAPI(event: LocalEvents.GetALlContactsFromAPI) {
         loadConnectionsData()
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onInitSocketEventCallBack(event: LocalEvents.InitSocketEventCallBack?) {
+        handleSocketEvents()
     }
 
     private fun loadConnectionsData() {

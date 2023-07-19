@@ -664,6 +664,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 .setConstraints(constraints)
                 .build()
 
+            println("PhoneNumber-OneTimeContactSyncWorker")
             WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
         }
     }
