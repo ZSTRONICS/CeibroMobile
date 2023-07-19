@@ -109,4 +109,6 @@ object LocalEvents {
     object GetALlContactsFromAPI
     data class TaskForwardEvent(val task: CeibroTaskV2?)
 
+    class InitSocketEventCallBack
+
 }

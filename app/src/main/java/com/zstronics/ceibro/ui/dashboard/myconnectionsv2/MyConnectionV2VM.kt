@@ -40,7 +40,8 @@ class MyConnectionV2VM @Inject constructor(
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
-        val userId = sessionManager.getUser().value?.id
+        val userId = user?.id
+        println("PhoneNumber-MyConnectionV2VM-SyncEnable: true, for: $user")
         launch {
             val connectionsData = connectionsV2Dao.getAll()
             if (connectionsData.isNotEmpty()) {
@@ -74,7 +75,7 @@ class MyConnectionV2VM @Inject constructor(
         selectedContacts: List<SyncContactsRequest.CeibroContactLight>,
         onSuccess: () -> Unit
     ) {
-        val userId = sessionManager.getUser().value?.id
+        val userId = user?.id
         launch {
             val request = SyncContactsRequest(contacts = selectedContacts)
             // Handle the API response
@@ -83,6 +84,7 @@ class MyConnectionV2VM @Inject constructor(
                 dashboardRepository.syncContacts(userId ?: "", request)) {
                 is ApiResponse.Success -> {
                     loading(false)
+                    getAllConnectionsV2() {}
                     onSuccess.invoke()
                 }
                 is ApiResponse.Error -> {
@@ -95,10 +97,11 @@ class MyConnectionV2VM @Inject constructor(
     fun syncContactsEnabled(
         onSuccess: () -> Unit
     ) {
-        val phone = sessionManager.getUser().value?.phoneNumber
+        val phone = user?.phoneNumber
 //        val phone = "+923120619435"
         launch {
             // Handle the API response
+            println("PhoneNumber-MyConnectionV2VM-SyncEnable: true, for: $phone")
             when (val response =
                 dashboardRepository.syncContactsEnabled(phone ?: "", enabled = true)) {
                 is ApiResponse.Success -> {
@@ -106,7 +109,13 @@ class MyConnectionV2VM @Inject constructor(
                     val userObj = sessionManager.getUserObj()
                     userObj?.autoContactSync = true
                     userObj?.let { sessionManager.updateUser(userObj = it) }
-                    syncContacts(contacts, onSuccess)
+                    if (contacts.isNotEmpty()) {
+                        syncContacts(contacts) {
+                            onSuccess.invoke()
+                        }
+                    } else {
+                        onSuccess.invoke()
+                    }
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)

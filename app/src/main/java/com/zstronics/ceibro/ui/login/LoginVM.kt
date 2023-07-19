@@ -5,6 +5,7 @@ import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -21,6 +22,7 @@ class LoginVM @Inject constructor(
     private val repository: IAuthRepository,
     private val sessionManager: SessionManager,
     private val resourceProvider: IResourceProvider,
+    private val connectionsV2Dao: ConnectionsV2Dao,
     val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<ILogin.State>(), ILogin.ViewModel, IValidator {
 
@@ -80,6 +82,7 @@ class LoginVM @Inject constructor(
                             contactFullName = it.contactFullName ?: ""
                         )
                     }
+                    connectionsV2Dao.insertAll(response.data.contacts)
                     sessionManager.saveSyncedContacts(selectedContacts)
                     callBack.invoke()
                 }

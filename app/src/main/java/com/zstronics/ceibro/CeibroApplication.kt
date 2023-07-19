@@ -12,7 +12,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-open class CeibroApplication : Application(), Configuration.Provider {
+open class CeibroApplication : Application() {
     @Inject
     lateinit var sessionValidator: SessionValidator
 
@@ -22,8 +22,8 @@ open class CeibroApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var authApi: IAuthRepository
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+//    @Inject
+//    lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
@@ -49,10 +49,10 @@ open class CeibroApplication : Application(), Configuration.Provider {
         SocketHandler.closeConnectionAndRemoveObservers()
     }
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .setMinimumLoggingLevel(android.util.Log.DEBUG)
-            .build()
-    }
+//    override fun getWorkManagerConfiguration(): Configuration {
+//        return Configuration.Builder()
+//            .setWorkerFactory(workerFactory)
+//            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+//            .build()
+//    }
 }

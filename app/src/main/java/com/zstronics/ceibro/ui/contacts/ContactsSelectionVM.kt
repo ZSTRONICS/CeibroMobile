@@ -23,6 +23,7 @@ class ContactsSelectionVM @Inject constructor(
     private val resProvider: IResourceProvider,
     private val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<IContactsSelection.State>(), IContactsSelection.ViewModel, IValidator {
+    val user = sessionManager.getUser().value
     private val _contacts: MutableLiveData<List<SyncContactsRequest.CeibroContactLight>> =
         MutableLiveData()
     val contacts: LiveData<List<SyncContactsRequest.CeibroContactLight>> = _contacts
@@ -46,7 +47,7 @@ class ContactsSelectionVM @Inject constructor(
         selectedContacts: List<SyncContactsRequest.CeibroContactLight>,
         onSuccess: () -> Unit
     ) {
-        val userId = sessionManager.getUserId()
+        val userId = user?.id ?: ""
         launch {
             val request = SyncContactsRequest(contacts = selectedContacts)
             // Handle the API response
@@ -68,17 +69,20 @@ class ContactsSelectionVM @Inject constructor(
         enabled: Boolean,
         onSuccess: () -> Unit
     ) {
-        val phone = sessionManager.getUser().value?.phoneNumber
+        val phone = user?.phoneNumber
 //        val phone = "+923120619435"
         launch {
             // Handle the API response
+            println("PhoneNumber-ContactSelectionVM-SyncEnable: $enabled, for: $phone")
             when (val response =
                 dashboardRepository.syncContactsEnabled(phone ?: "", enabled = enabled)) {
                 is ApiResponse.Success -> {
                     sessionManager.updateAutoSync(enabled)
                     if (enabled) {
                         val contacts = getLocalContacts(resProvider.context)
-                        syncContacts(contacts, onSuccess)
+                        syncContacts(contacts) {
+                            onSuccess.invoke()
+                        }
                     }
                 }
                 is ApiResponse.Error -> {

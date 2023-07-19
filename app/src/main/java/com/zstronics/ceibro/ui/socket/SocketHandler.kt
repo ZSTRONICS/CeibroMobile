@@ -4,6 +4,7 @@ import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.data.base.CookiesManager
 import io.socket.client.IO
 import io.socket.client.Socket
+import org.greenrobot.eventbus.EventBus
 import java.net.URISyntaxException
 
 object SocketHandler {
@@ -68,20 +69,31 @@ object SocketHandler {
             }
 
             mSocket?.on(
+                Socket.EVENT_CONNECT_ERROR
+            ) {
+//                println("Heartbeat, Socket EVENT_CONNECT_ERROR")
+                handler.removeCallbacks(runnable)
+                hbCounter = 0
+                handler.postDelayed(runnable, delayMillis)
+            }
+
+            mSocket?.on(
                 Socket.EVENT_CONNECT
             ) {
                 handler.removeCallbacks(runnable)
                 hbCounter = 0
                 handler.postDelayed(runnable, delayMillis)
                 println("Heartbeat, Socket on Connect")
+
             }
 
             mSocket?.on(
                 "heartbeatAck"
             ) {
                 hbCounter -= 1
-//                println("HeartbeatAck Received $hbCounter")
             }
+
+            EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
 
         } catch (exception: URISyntaxException) {
             exception.message
@@ -102,17 +114,23 @@ object SocketHandler {
                     hbCounter = 0
                 }
             } else {
+//                println("Heartbeat Socket not connected")
                 handler.removeCallbacks(runnable)
                 reconnectSocket()
             }
         }
+//        else {
+//            println("Heartbeat Socket is null")
+//            handler.removeCallbacks(runnable)
+//            reconnectSocket()
+//        }
     }
 
     @Synchronized
     fun reconnectSocket() {
         disconnectSocket()
         setSocket()
-        println("Heartbeat, Socket Connecting...")
+//        println("Heartbeat, Socket Re-Connecting...")
         establishConnection()
     }
 
@@ -124,12 +142,14 @@ object SocketHandler {
     @Synchronized
     fun establishConnection() {
         mSocket?.connect()
+//        println("Heartbeat Socket connecting...")
     }
 
     @Synchronized
     fun disconnectSocket() {
-        println("Disconnecting Socket")
+//        println("Disconnecting Socket")
         mSocket?.disconnect()
+
     }
 
     @Synchronized
@@ -147,6 +167,7 @@ object SocketHandler {
         mSocket?.io()?.off("heartbeat")
         mSocket?.io()?.off("heartbeatAck")
         handler.removeCallbacks(runnable)
+//        EventBus.getDefault().unregister(this)
     }
 
     @Synchronized
@@ -158,4 +179,6 @@ object SocketHandler {
     fun sendLiveEventRequest(body: String) {
         mSocket?.emit(CEIBRO_LIVE_EVENT_BY_USER, body)
     }
+
+
 }

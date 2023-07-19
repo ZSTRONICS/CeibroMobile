@@ -45,8 +45,9 @@ class ContactsSelectionFragment :
             }
             R.id.skipBtn -> {
                 viewModel.syncContactsEnabled(false) {
-                    navigateToDashboard()
+
                 }
+                navigateToDashboard()
             }
         }
     }

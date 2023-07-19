@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -18,6 +19,7 @@ import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2Binding
+import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
@@ -39,36 +41,31 @@ class MyConnectionV2Fragment :
     override val layoutResId: Int = R.layout.fragment_connections_v2
     override fun toolBarVisibility(): Boolean = false
     var runUIOnce = false
+    val CONTACT_ADD_REQUEST = 108
     override fun onClick(id: Int) {
         when (id) {
             R.id.syncIV -> {
-                checkPermission(
-                    immutableListOf(
-                        Manifest.permission.READ_CONTACTS,
-                    )
-                ) {
-                    val builder = MaterialAlertDialogBuilder(requireContext())
-                    builder.setMessage(resources.getString(R.string.sync_contacts_statement))
-                    builder.setCancelable(false)
-                    builder.setPositiveButton("Allow") { dialog, which ->
-                        // User clicked Allow button
-                        // Add your logic here
-                        viewModel.syncContactsEnabled {
-                            toast("Your all contacts synced with server")
-                            loadConnections(false)
-                            viewModel.sessionManager.updateAutoSync(true)
-                            viewState.isAutoSyncEnabled.value = true
-                        }
+                val builder = MaterialAlertDialogBuilder(requireContext())
+                builder.setMessage(resources.getString(R.string.sync_contacts_statement))
+                builder.setCancelable(false)
+                builder.setPositiveButton("Allow") { dialog, which ->
+                    // User clicked Allow button
+                    // Add your logic here
+                    viewModel.syncContactsEnabled {
+//                            toast("Your all contacts synced with server")
+//                            loadConnections(false)
+                        viewModel.sessionManager.updateAutoSync(true)
+                        viewState.isAutoSyncEnabled.value = true
                     }
-                    builder.setNegativeButton("Deny") { dialog, which ->
-
-                    }
-                    builder.show()
                 }
+                builder.setNegativeButton("Deny") { dialog, which ->
+
+                }
+                builder.show()
             }
             R.id.addContactsBtn -> {
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
-                startActivity(intent)
+                startActivityForResult(intent, CONTACT_ADD_REQUEST)
             }
             R.id.closeBtn -> {
                 navigateBack()
@@ -81,7 +78,7 @@ class MyConnectionV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        startOneTimeContactSyncWorker(requireContext())
         mViewDataBinding.connectionRV.adapter = adapter
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
@@ -128,7 +125,6 @@ class MyConnectionV2Fragment :
             loadConnections(true)
             runUIOnce = true
         }
-        startOneTimeContactSyncWorker(requireContext())
         mViewDataBinding.searchBar.setQuery("", true)
     }
 
@@ -141,9 +137,18 @@ class MyConnectionV2Fragment :
 
             viewModel.getAllConnectionsV2 {
                 mViewDataBinding.connectionRV.hideSkeleton()
+                val searchQuery = mViewDataBinding.searchBar.query.toString()
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.filterContacts(searchQuery)
+                }
             }
         } else {
-            viewModel.getAllConnectionsV2 { }
+            viewModel.getAllConnectionsV2 {
+                val searchQuery = mViewDataBinding.searchBar.query.toString()
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.filterContacts(searchQuery)
+                }
+            }
         }
     }
 
@@ -164,5 +169,18 @@ class MyConnectionV2Fragment :
 
     companion object {
         const val CONNECTION_KEY: String = "Connection"
+    }
+
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CONTACT_ADD_REQUEST) {
+//            println("ContactAddedRequest")
+            if (resultCode == Activity.RESULT_OK){
+//                println("ContactAdded")
+                startOneTimeContactSyncWorker(requireContext())
+            }
+        }
     }
 }

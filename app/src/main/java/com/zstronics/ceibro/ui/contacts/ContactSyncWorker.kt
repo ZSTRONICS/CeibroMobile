@@ -42,6 +42,7 @@ class ContactSyncWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = coroutineScope {
         val dashboardRepository = DashboardRepository(providesDashboardRepoService())
 
+        println("PhoneNumber-SyncWorkerRunning")
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
         val user = sessionManager.getUser().value
 
