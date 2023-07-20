@@ -234,20 +234,5 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/createNewTaskBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="6dp"
-            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-            android:src="@drawable/ic_add"
-            android:tooltipText="@string/new_task_heading"
-            app:elevation="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:shapeAppearanceOverlay="@style/fab_square"
-            app:tint="@color/white" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

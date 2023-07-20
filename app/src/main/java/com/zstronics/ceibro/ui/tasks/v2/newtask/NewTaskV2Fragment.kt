@@ -20,7 +20,6 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
@@ -69,7 +68,9 @@ class NewTaskV2Fragment :
                     doneImageRequired = doneImageRequired,
                     doneCommentsRequired = doneCommentsRequired
                 ) {
-                    navigateBack()
+                    val bundle = Bundle()
+                    bundle.putBoolean("createdNewTask", true)
+                    navigateBackWithResult(RESULT_OK, bundle)
                 }
             }
             R.id.backBtn -> navigateBack()

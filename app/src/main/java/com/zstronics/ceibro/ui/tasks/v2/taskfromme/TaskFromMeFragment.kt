@@ -9,6 +9,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -31,9 +32,6 @@ class TaskFromMeFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.createNewTaskBtn -> {
-                navigate(R.id.newTaskV2Fragment)
-            }
             R.id.unreadStateText -> {
                 viewModel.selectedState = "unread"
                 val unreadTask = viewModel.unreadTasks.value
@@ -90,10 +88,7 @@ class TaskFromMeFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            mViewDataBinding.unreadStateCount.text = it.unread.size.toString()
-            mViewDataBinding.ongoingStateCount.text = it.ongoing.size.toString()
-            mViewDataBinding.doneStateCount.text = it.done.size.toString()
-
+            updateCount(it)
         }
 
         viewModel.unreadTasks.observe(viewLifecycleOwner) {
@@ -138,7 +133,11 @@ class TaskFromMeFragment :
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
                 //creator cannot cancel a task which is already in done state
-                if (viewModel.selectedState.equals(TaskStatus.UNREAD.name, true) || viewModel.selectedState.equals(TaskStatus.ONGOING.name, true)) {
+                if (viewModel.selectedState.equals(
+                        TaskStatus.UNREAD.name,
+                        true
+                    ) || viewModel.selectedState.equals(TaskStatus.ONGOING.name, true)
+                ) {
                     viewModel.showCancelTaskDialog(requireContext(), data) { }
                 }
             }
@@ -195,4 +194,12 @@ class TaskFromMeFragment :
         EventBus.getDefault().unregister(this)
     }
 
+    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
+        val unreadCount = allTasks.unread.count { task -> viewModel.user?.id !in task.seenBy }
+        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
+        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
+        mViewDataBinding.unreadStateCount.text = unreadCount.toString()
+        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
+        mViewDataBinding.doneStateCount.text = doneCount.toString()
+    }
 }

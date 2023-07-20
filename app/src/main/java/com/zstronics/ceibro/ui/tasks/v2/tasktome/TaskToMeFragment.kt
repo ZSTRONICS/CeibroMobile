@@ -9,6 +9,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -31,9 +32,6 @@ class TaskToMeFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.createNewTaskBtn -> {
-                navigate(R.id.newTaskV2Fragment)
-            }
             R.id.newStateText -> {
                 viewModel.selectedState = "new"
                 val newTask = viewModel.newTasks.value
@@ -42,9 +40,12 @@ class TaskToMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.newStateText.background = resources.getDrawable(R.drawable.status_new_filled_new)
-                mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_outline_new)
+                mViewDataBinding.newStateText.background =
+                    resources.getDrawable(R.drawable.status_new_filled_new)
+                mViewDataBinding.ongoingStateText.background =
+                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
+                mViewDataBinding.doneStateText.background =
+                    resources.getDrawable(R.drawable.status_done_outline_new)
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = "ongoing"
@@ -54,9 +55,12 @@ class TaskToMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.newStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
-                mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_filled_new)
-                mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_outline_new)
+                mViewDataBinding.newStateText.background =
+                    resources.getDrawable(R.drawable.status_new_outline_new)
+                mViewDataBinding.ongoingStateText.background =
+                    resources.getDrawable(R.drawable.status_ongoing_filled_new)
+                mViewDataBinding.doneStateText.background =
+                    resources.getDrawable(R.drawable.status_done_outline_new)
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = "done"
@@ -66,14 +70,15 @@ class TaskToMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.newStateText.background = resources.getDrawable(R.drawable.status_new_outline_new)
-                mViewDataBinding.ongoingStateText.background = resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background = resources.getDrawable(R.drawable.status_done_filled_new)
+                mViewDataBinding.newStateText.background =
+                    resources.getDrawable(R.drawable.status_new_outline_new)
+                mViewDataBinding.ongoingStateText.background =
+                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
+                mViewDataBinding.doneStateText.background =
+                    resources.getDrawable(R.drawable.status_done_filled_new)
             }
         }
     }
-
-
 
 
     @Inject
@@ -83,10 +88,7 @@ class TaskToMeFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            mViewDataBinding.newStateCount.text = it.new.size.toString()
-            mViewDataBinding.ongoingStateCount.text = it.ongoing.size.toString()
-            mViewDataBinding.doneStateCount.text = it.done.size.toString()
-
+            updateCount(it)
         }
 
         viewModel.newTasks.observe(viewLifecycleOwner) {
@@ -131,7 +133,11 @@ class TaskToMeFragment :
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
                 //user cannot hide a task of new state
-                if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
+                if (viewModel.selectedState.equals(
+                        TaskStatus.ONGOING.name,
+                        true
+                    ) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)
+                ) {
                     viewModel.showHideTaskDialog(requireContext(), data)
                 }
             }
@@ -145,6 +151,7 @@ class TaskToMeFragment :
                 }
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.searchTasks(newText)
@@ -154,10 +161,6 @@ class TaskToMeFragment :
         })
 
     }
-
-
-
-
 
     private fun loadTasks(skeletonVisible: Boolean) {
         viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
@@ -175,8 +178,6 @@ class TaskToMeFragment :
     }
 
 
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
 //        showToast("New Task Created")
@@ -191,5 +192,14 @@ class TaskToMeFragment :
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
+        val newCount = allTasks.new.count { task -> viewModel.user?.id !in task.seenBy }
+        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
+        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
+        mViewDataBinding.newStateCount.text = newCount.toString()
+        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
+        mViewDataBinding.doneStateCount.text = doneCount.toString()
     }
 }

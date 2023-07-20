@@ -1,9 +1,12 @@
 package com.zstronics.ceibro.ui.dashboard
 
+import android.app.Activity
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -12,6 +15,8 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.navgraph.BackNavigationResult
+import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
@@ -36,7 +41,8 @@ import org.greenrobot.eventbus.ThreadMode
 
 @AndroidEntryPoint
 class DashboardFragment :
-    BaseNavViewModelFragment<FragmentDashboardBinding, IDashboard.State, DashboardVM>() {
+    BaseNavViewModelFragment<FragmentDashboardBinding, IDashboard.State, DashboardVM>(),
+    BackNavigationResultListener {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -45,7 +51,9 @@ class DashboardFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-//            R.id.profileIcon -> navigate(R.id.profileFragment)
+            R.id.createNewTaskBtn -> {
+                navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
+            }
             R.id.profileImg -> navigateToProfile()
             R.id.friendsReqBtn -> navigateToConnections()
             R.id.toMeBtn -> {
@@ -113,13 +121,6 @@ class DashboardFragment :
         viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
 
-        val handler = Handler()
-        handler.postDelayed(Runnable {
-            changeSelectedTab(R.id.toMeBtn)
-        }, 50)
-
-
-
 
         SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
             val navHostFragment =
@@ -143,6 +144,13 @@ class DashboardFragment :
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val handler = Handler()
+        handler.postDelayed({
+            changeSelectedTab(R.id.toMeBtn)
+        }, 200)
+    }
 
     private fun handleFileUploaderSocketEvents() {
 
@@ -260,6 +268,7 @@ class DashboardFragment :
 
     companion object {
         var selectedItem: Int = R.id.nav_home
+        val CREATE_NEW_TASK_CODE = 1122
     }
 
     private fun onCreateNotification(event: LocalEvents.CreateNotification?) {
@@ -318,4 +327,13 @@ class DashboardFragment :
     }
 
 
+    override fun onNavigationResult(result: BackNavigationResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            when (result.requestCode) {
+                CREATE_NEW_TASK_CODE -> {
+                    changeSelectedTab(R.id.fromMeBtn)
+                }
+            }
+        }
+    }
 }

@@ -9,11 +9,11 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter.HiddenRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import org.greenrobot.eventbus.EventBus
@@ -32,9 +32,6 @@ class TaskHiddenFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.createNewTaskBtn -> {
-                navigate(R.id.newTaskV2Fragment)
-            }
             R.id.cancelledStateText -> {
                 viewModel.selectedState = TaskStatus.CANCELED.name.lowercase()
                 val cancelledTasks = viewModel.cancelledTasks.value
@@ -91,10 +88,7 @@ class TaskHiddenFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            mViewDataBinding.cancelledStateCount.text = it.canceled.size.toString()
-            mViewDataBinding.ongoingStateCount.text = it.ongoing.size.toString()
-            mViewDataBinding.doneStateCount.text = it.done.size.toString()
-
+            updateCount(it)
         }
 
         viewModel.cancelledTasks.observe(viewLifecycleOwner) {
@@ -189,5 +183,14 @@ class TaskHiddenFragment :
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
+        val canceledCount = allTasks.canceled.count { task -> viewModel.user?.id !in task.seenBy }
+        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
+        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
+        mViewDataBinding.cancelledStateCount.text = canceledCount.toString()
+        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
+        mViewDataBinding.doneStateCount.text = doneCount.toString()
     }
 }

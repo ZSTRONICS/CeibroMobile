@@ -24,7 +24,6 @@ import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshFolderSocketResponse
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshRootDocumentSocketResponse
@@ -40,12 +39,11 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.*
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskCreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
+import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.*
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -539,54 +537,53 @@ class DashboardVM @Inject constructor(
 
             val filesCount = uploadFilesToServer.request.files?.size ?: 1
 
-            var notificationTitle =
-                if (filesCount > 1) "$filesCount files are uploading" else "$filesCount file is uploading"
-            createNotification(
-                LocalEvents.CreateNotification(
-                    moduleName = AttachmentModules.Task.name,
-                    moduleId = uploadFilesToServer.request.moduleId,
-                    notificationTitle = notificationTitle,
-                    isOngoing = true,
-                    indeterminate = true,
-                    notificationIcon = R.drawable.icon_upload
-                )
-            )
+//            var notificationTitle =
+//                if (filesCount > 1) "$filesCount files are uploading" else "$filesCount file is uploading"
+//            createNotification(
+//                LocalEvents.CreateNotification(
+//                    moduleName = AttachmentModules.Task.name,
+//                    moduleId = uploadFilesToServer.request.moduleId,
+//                    notificationTitle = notificationTitle,
+//                    isOngoing = true,
+//                    indeterminate = true,
+//                    notificationIcon = R.drawable.icon_upload
+//                )
+//            )
 
             when (val response = dashboardRepository.uploadFiles(uploadFilesToServer.request)) {
                 is ApiResponse.Success -> {
-                    notificationTitle =
-                        if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
-
                     saveFilesInDB(
                         uploadFilesToServer.request.moduleName,
                         uploadFilesToServer.request.moduleId,
                         response.data.uploadData
                     )
-                    createNotification(
-                        LocalEvents.CreateNotification(
-                            moduleName = uploadFilesToServer.request.moduleName,
-                            moduleId = uploadFilesToServer.request.moduleId,
-                            notificationTitle = notificationTitle,
-                            isOngoing = false,
-                            indeterminate = false,
-                            notificationIcon = R.drawable.icon_upload
-                        )
-                    )
+//                    notificationTitle =
+//                        if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
+//                    createNotification(
+//                        LocalEvents.CreateNotification(
+//                            moduleName = uploadFilesToServer.request.moduleName,
+//                            moduleId = uploadFilesToServer.request.moduleId,
+//                            notificationTitle = notificationTitle,
+//                            isOngoing = false,
+//                            indeterminate = false,
+//                            notificationIcon = R.drawable.icon_upload
+//                        )
+//                    )
 
                 }
                 is ApiResponse.Error -> {
                     alert(response.error.message)
 
-                    createNotification(
-                        LocalEvents.CreateNotification(
-                            moduleName = uploadFilesToServer.request.moduleName,
-                            moduleId = uploadFilesToServer.request.moduleId,
-                            notificationTitle = response.error.message,
-                            isOngoing = false,
-                            indeterminate = false,
-                            notificationIcon = R.drawable.icon_upload
-                        )
-                    )
+//                    createNotification(
+//                        LocalEvents.CreateNotification(
+//                            moduleName = uploadFilesToServer.request.moduleName,
+//                            moduleId = uploadFilesToServer.request.moduleId,
+//                            notificationTitle = response.error.message,
+//                            isOngoing = false,
+//                            indeterminate = false,
+//                            notificationIcon = R.drawable.icon_upload
+//                        )
+//                    )
                 }
             }
         }

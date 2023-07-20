@@ -162,6 +162,21 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/homeHeader" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/createNewTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="6dp"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:src="@drawable/ic_add"
+            android:tooltipText="@string/new_task_heading"
+            app:elevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:shapeAppearanceOverlay="@style/fab_square"
+            app:tint="@color/white" />
 
         <LinearLayout
             android:id="@+id/bottom_navigation"
