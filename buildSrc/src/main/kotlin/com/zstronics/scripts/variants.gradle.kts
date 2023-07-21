@@ -16,7 +16,7 @@ private object ProductFlavors {
     const val LIVE = "live"
     const val PREPROD = "preprod"
     const val STG = "stg"
-    const val QA = "qa"
+    const val EU_QA = "eu_qa"
 }
 
 private object FlavorDimensions {
@@ -123,6 +123,35 @@ android {
                         buildConfigString(
                             "ONE_SIGNAL_ID",
                             decodeBase64(properties["ONE_SIGNAL_DEV"].toString())
+                        )
+                    }
+                }
+                create(ProductFlavors.EU_QA) {
+                    dimension = FlavorDimensions.DEFAULT
+                    applicationIdSuffix = ".${ProductFlavors.EU_QA}"
+                    resValue("string","app_name", "Ceibro debug")
+
+//                    versionNameSuffix = "-${ProductFlavors.DEV} -${AppConfig.VERSION_NAME}"
+                    if (properties.containsKey("BASE_URL_EU_QA")) {
+                        buildConfigString(
+                            "BASE_URL",
+                            decodeBase64(properties["BASE_URL_EU_QA"].toString())
+                        )
+                    }
+
+                    if (properties.containsKey("SOCKET_URL_EU_QA")) {
+                        dimension = FlavorDimensions.DEFAULT
+                        buildConfigString(
+                            "SOCKET_URL",
+                            decodeBase64(properties["SOCKET_URL_EU_QA"].toString())
+                        )
+                    }
+
+                    if (properties.containsKey("ONE_SIGNAL_EU_QA")) {
+                        dimension = FlavorDimensions.DEFAULT
+                        buildConfigString(
+                            "ONE_SIGNAL_ID",
+                            decodeBase64(properties["ONE_SIGNAL_EU_QA"].toString())
                         )
                     }
                 }
