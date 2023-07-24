@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.ImageViewCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.LayoutItemConnectionBinding
 import javax.inject.Inject
@@ -38,9 +38,10 @@ class CeibroConnectionsAdapter @Inject constructor() :
     }
 
     fun setList(list: List<AllCeibroConnections.CeibroConnection>) {
+        val diffResult = DiffUtil.calculateDiff(CeibroConnectionsDiffCallback(listItems, list))
         this.listItems.clear()
         this.listItems.addAll(list)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class CeibroConnectionsViewHolder(private val binding: LayoutItemConnectionBinding) :
@@ -122,13 +123,37 @@ class CeibroConnectionsAdapter @Inject constructor() :
                 binding.companyName.visibility = View.VISIBLE
                 binding.dot.visibility = View.VISIBLE
                 binding.jobTitle.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 binding.phoneNumber.text = item.phoneNumber
                 binding.companyName.visibility = View.GONE
                 binding.dot.visibility = View.GONE
                 binding.jobTitle.visibility = View.GONE
             }
         }
+    }
+}
+
+class CeibroConnectionsDiffCallback(
+    private val oldList: List<AllCeibroConnections.CeibroConnection>,
+    private val newList: List<AllCeibroConnections.CeibroConnection>
+) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int {
+        return oldList.size
+    }
+
+    override fun getNewListSize(): Int {
+        return newList.size
+    }
+
+    override fun areItemsTheSame(oldPosition: Int, newPosition: Int): Boolean {
+        // Assuming your item has an identifier, compare the identifiers to check if the items are the same.
+        return oldList[oldPosition].id == newList[newPosition].id
+    }
+
+    override fun areContentsTheSame(oldPosition: Int, newPosition: Int): Boolean {
+        // If the items have the same identifier, compare the contents of the items to check if they are the same.
+        // In this case, you can consider the lists as being equal if the items are equal.
+        return oldList[oldPosition].id == newList[newPosition].id
     }
 }

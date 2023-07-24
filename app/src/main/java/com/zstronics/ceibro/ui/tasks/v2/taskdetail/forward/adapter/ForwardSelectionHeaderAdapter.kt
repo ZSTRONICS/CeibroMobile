@@ -51,8 +51,8 @@ class ForwardSelectionHeaderAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ForwardVM.ForwardConnectionGroup) {
             binding.headerTitle.text = item.sectionLetter.toString()
-            val adapter = ForwardSelectionAdapter(oldContacts)
-            adapter.setList(item.items)
+            val adapter = ForwardSelectionAdapter()
+            adapter.setList(item.items, oldContacts)
             binding.connectionRV.adapter = adapter
             adapter.itemClickListener =
                 { it: View, position: Int, data: AllCeibroConnections.CeibroConnection ->

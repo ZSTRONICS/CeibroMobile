@@ -29,11 +29,6 @@ class MyConnectionV2VM @Inject constructor(
         _allConnections
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
 
-    private var _allGroupedConnections: MutableLiveData<MutableList<CeibroConnectionGroup>> =
-        MutableLiveData()
-    val allGroupedConnections: MutableLiveData<MutableList<CeibroConnectionGroup>> =
-        _allGroupedConnections
-
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         viewState.isAutoSyncEnabled.postValue(user?.autoContactSync)
@@ -45,7 +40,7 @@ class MyConnectionV2VM @Inject constructor(
         launch {
             val connectionsData = connectionsV2Dao.getAll()
             if (connectionsData.isNotEmpty()) {
-                val contacts = connectionsData.sortedByDescending { it.isCeiborUser }
+                val contacts = connectionsData.groupDataByFirstLetter()
                 originalConnections = contacts
                 if (contacts.isNotEmpty()) {
                     _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
@@ -54,7 +49,7 @@ class MyConnectionV2VM @Inject constructor(
             } else {
                 when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                     is ApiResponse.Success -> {
-                        val contacts = response.data.contacts.sortedByDescending { it.isCeiborUser }
+                        val contacts = response.data.contacts.groupDataByFirstLetter()
                         callBack.invoke()
                         originalConnections = contacts
                         if (contacts.isNotEmpty()) {
@@ -84,7 +79,7 @@ class MyConnectionV2VM @Inject constructor(
                 dashboardRepository.syncContacts(userId ?: "", request)) {
                 is ApiResponse.Success -> {
                     loading(false)
-                    getAllConnectionsV2() {}
+                    getAllConnectionsV2 {}
                     onSuccess.invoke()
                 }
                 is ApiResponse.Error -> {
@@ -151,10 +146,8 @@ class MyConnectionV2VM @Inject constructor(
             _allConnections.postValue(mutableListOf())
     }
 
-    fun groupDataByFirstLetter(data: List<AllCeibroConnections.CeibroConnection>) {
-        val sections = mutableListOf<CeibroConnectionGroup>()
-
-        val groupedData = data.groupBy {
+    fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<AllCeibroConnections.CeibroConnection> {
+        val groupedData = this.groupBy {
             if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
                 it.contactFirstName.first().lowercase()
             } else {
@@ -166,16 +159,15 @@ class MyConnectionV2VM @Inject constructor(
                 .then(compareByDescending { it == "#" })
         )
 
+        val sortedItems = mutableListOf<AllCeibroConnections.CeibroConnection>()
         for (mapKey in groupedData.keys) {
-            sections.add(
-                CeibroConnectionGroup(
-                    mapKey.toString().uppercase()[0],
-                    groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
-                        ?: emptyList()
-                )
-            )
+            val sortedGroupItems =
+                groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
+                    ?: emptyList()
+            sortedItems.addAll(sortedGroupItems)
         }
-        _allGroupedConnections.value = sections
+
+        return sortedItems
     }
 
     data class CeibroConnectionGroup(

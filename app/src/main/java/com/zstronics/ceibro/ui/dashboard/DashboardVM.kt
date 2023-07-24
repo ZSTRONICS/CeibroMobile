@@ -767,6 +767,7 @@ class DashboardVM @Inject constructor(
             taskDao.deleteAllData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
+            connectionsV2Dao.deleteAll()
         }
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"

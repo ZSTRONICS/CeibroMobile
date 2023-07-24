@@ -2,21 +2,14 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask.topic
 
 import android.app.Activity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentTopicBinding
-import com.zstronics.ceibro.ui.dashboard.myconnectionsv2.CeibroConnectionsHeaderAdapter
-import com.zstronics.ceibro.ui.dashboard.myconnectionsv2.MyConnectionV2Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton

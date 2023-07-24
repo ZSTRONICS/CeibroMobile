@@ -6,18 +6,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
 import javax.inject.Inject
 
-class ForwardSelectionAdapter @Inject constructor(oldSelectedContacts: ArrayList<String>) :
+class ForwardSelectionAdapter @Inject constructor() :
     RecyclerView.Adapter<ForwardSelectionAdapter.ForwardSelectionViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
     var dataList: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
-    var oldContacts: ArrayList<String> = oldSelectedContacts
+    var oldContacts: ArrayList<String> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForwardSelectionViewHolder {
         return ForwardSelectionViewHolder(
@@ -37,9 +36,14 @@ class ForwardSelectionAdapter @Inject constructor(oldSelectedContacts: ArrayList
         return dataList.size
     }
 
-    fun setList(list: List<AllCeibroConnections.CeibroConnection>) {
+    fun setList(
+        list: List<AllCeibroConnections.CeibroConnection>,
+        oldSelectedContacts: ArrayList<String>
+    ) {
         this.dataList.clear()
         this.dataList.addAll(list)
+        this.oldContacts.clear()
+        this.oldContacts.addAll(oldSelectedContacts)
         notifyDataSetChanged()
     }
 
@@ -59,36 +63,25 @@ class ForwardSelectionAdapter @Inject constructor(oldSelectedContacts: ArrayList
 
             binding.contactName.text = "${item.contactFirstName} ${item.contactSurName}"
 
-            val phoneNumberUtil = PhoneNumberUtil.getInstance()
-            val parsedNumber = phoneNumberUtil.parse(item.phoneNumber, null)
-            val formattedNumber =
-                phoneNumberUtil.format(
-                    parsedNumber,
-                    PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL
-                )
-
             if (item.isCeiborUser) {
                 binding.phoneNumber.text = ""
                 binding.companyName.text =
                     if (item.userCeibroData?.companyName.equals("")) {
                         "N/A"
-                    }
-                    else {
+                    } else {
                         item.userCeibroData?.companyName
                     }
                 binding.jobTitle.text =
                     if (item.userCeibroData?.jobTitle.equals("")) {
                         "N/A"
-                    }
-                    else {
+                    } else {
                         item.userCeibroData?.jobTitle
                     }
                 binding.companyName.visibility = View.VISIBLE
                 binding.dot.visibility = View.VISIBLE
                 binding.jobTitle.visibility = View.VISIBLE
-            }
-            else {
-                binding.phoneNumber.text = formattedNumber
+            } else {
+                binding.phoneNumber.text = item.phoneNumber
                 binding.companyName.visibility = View.GONE
                 binding.dot.visibility = View.GONE
                 binding.jobTitle.visibility = View.GONE

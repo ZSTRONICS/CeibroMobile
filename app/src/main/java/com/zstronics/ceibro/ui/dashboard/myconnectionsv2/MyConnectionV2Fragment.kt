@@ -1,30 +1,24 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2Binding
-import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
-import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -74,24 +68,27 @@ class MyConnectionV2Fragment :
     }
 
     @Inject
-    lateinit var adapter: CeibroConnectionsHeaderAdapter
+    lateinit var adapter: CeibroConnectionsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startOneTimeContactSyncWorker(requireContext())
         mViewDataBinding.connectionRV.adapter = adapter
+        mViewDataBinding.connectionRV.layoutManager?.isItemPrefetchEnabled = true
+        mViewDataBinding.connectionRV.setRecycledViewPool(RecyclerView.RecycledViewPool())
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
             if (it != null) {
-                viewModel.groupDataByFirstLetter(it)
+                adapter.setList(it)
+//                viewModel.groupDataByFirstLetter(it)
             }
         }
 
-        viewModel.allGroupedConnections.observe(viewLifecycleOwner) {
-            if (it != null) {
-                adapter.setList(it)
-            }
-        }
+//        viewModel.allGroupedConnections.observe(viewLifecycleOwner) {
+//            if (it != null) {
+//                adapter.setList(it)
+//            }
+//        }
         adapter.itemClickListener =
             { _: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
                 if (data.isCeiborUser)

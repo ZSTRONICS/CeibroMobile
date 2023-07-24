@@ -6,12 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
-import com.zstronics.ceibro.databinding.LayoutItemContactBinding
 import javax.inject.Inject
 
 class AssigneeSelectionAdapter @Inject constructor() :
@@ -58,21 +55,20 @@ class AssigneeSelectionAdapter @Inject constructor() :
 
             binding.contactName.text = "${item.contactFirstName} ${item.contactSurName}"
 
-            val phoneNumberUtil = PhoneNumberUtil.getInstance()
-            val parsedNumber = phoneNumberUtil.parse(item.phoneNumber, null)
-            val formattedNumber =
-                phoneNumberUtil.format(
-                    parsedNumber,
-                    PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL
-                )
+//            val phoneNumberUtil = PhoneNumberUtil.getInstance()
+//            val parsedNumber = phoneNumberUtil.parse(item.phoneNumber, null)
+//            val formattedNumber =
+//                phoneNumberUtil.format(
+//                    parsedNumber,
+//                    PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL
+//                )
 
             if (item.isCeiborUser) {
                 binding.phoneNumber.text = ""
                 binding.companyName.text =
                     if (item.userCeibroData?.companyName.equals("")) {
                         "N/A"
-                    }
-                    else {
+                    } else {
                         item.userCeibroData?.companyName
                     }
                 binding.jobTitle.text =
@@ -87,7 +83,7 @@ class AssigneeSelectionAdapter @Inject constructor() :
                 binding.jobTitle.visibility = View.VISIBLE
             }
             else {
-                binding.phoneNumber.text = formattedNumber
+                binding.phoneNumber.text = item.phoneNumber
                 binding.companyName.visibility = View.GONE
                 binding.dot.visibility = View.GONE
                 binding.jobTitle.visibility = View.GONE

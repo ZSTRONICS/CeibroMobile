@@ -26,11 +26,6 @@ class ForwardVM @Inject constructor(
         _allConnections
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
 
-    private var _allGroupedConnections: MutableLiveData<MutableList<ForwardConnectionGroup>> =
-        MutableLiveData()
-    val allGroupedConnections: MutableLiveData<MutableList<ForwardConnectionGroup>> =
-        _allGroupedConnections
-
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
 
@@ -51,12 +46,12 @@ class ForwardVM @Inject constructor(
         launch {
             val connectionsData = connectionsV2Dao.getAll()
             if (connectionsData.isNotEmpty()) {
-                processConnectionsData(connectionsData)
+                processConnectionsData(connectionsData, callBack)
                 callBack.invoke()
             } else {
                 when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                     is ApiResponse.Success -> {
-                        processConnectionsData(response.data.contacts)
+                        processConnectionsData(response.data.contacts, callBack)
                         callBack.invoke()
                     }
                     is ApiResponse.Error -> {
@@ -68,26 +63,27 @@ class ForwardVM @Inject constructor(
         }
     }
 
-    private fun processConnectionsData(contactsResponse: List<AllCeibroConnections.CeibroConnection>) {
-        val allContacts = contactsResponse.sortedByDescending { it.isCeiborUser }.toMutableList()
+    private fun processConnectionsData(
+        contactsResponse: List<AllCeibroConnections.CeibroConnection>,
+        callBack: () -> Unit
+    ) {
+        val allContacts = contactsResponse.groupDataByFirstLetter().toMutableList()
         val oldSelectedContacts = selectedContacts.value
-        if (!oldSelectedContacts.isNullOrEmpty()) {
-            for (allItem in allContacts) {
-                for (selectedItem in oldSelectedContacts) {
-                    if (allItem.id == selectedItem.id) {
-                        val index = allContacts.indexOf(allItem)
-                        allContacts[index] = selectedItem
-                    }
-                }
-            }
-            _allConnections.postValue(allContacts)
-            originalConnections = allContacts
 
+        if (!oldSelectedContacts.isNullOrEmpty()) {
+            oldSelectedContacts.forEach { oldContact ->
+                val matchingContact = allContacts.find { it.id == oldContact.id }
+                matchingContact?.isChecked = true
+            }
+            _allConnections.value = allContacts
+            originalConnections = allContacts
+            callBack.invoke()
         } else {
             if (allContacts.isNotEmpty()) {
                 originalConnections = allContacts
-                _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+                _allConnections.value = allContacts
             }
+            callBack.invoke()
         }
     }
 
@@ -119,11 +115,8 @@ class ForwardVM @Inject constructor(
             _allConnections.postValue(mutableListOf())
     }
 
-
-    fun groupDataByFirstLetter(data: List<AllCeibroConnections.CeibroConnection>) {
-        val sections = mutableListOf<ForwardConnectionGroup>()
-
-        val groupedData = data.groupBy {
+    fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<AllCeibroConnections.CeibroConnection> {
+        val groupedData = this.groupBy {
             if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
                 it.contactFirstName.first().lowercase()
             } else {
@@ -135,16 +128,15 @@ class ForwardVM @Inject constructor(
                 .then(compareByDescending { it == "#" })
         )
 
+        val sortedItems = mutableListOf<AllCeibroConnections.CeibroConnection>()
         for (mapKey in groupedData.keys) {
-            sections.add(
-                ForwardConnectionGroup(
-                    mapKey.toString().uppercase()[0],
-                    groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
-                        ?: emptyList()
-                )
-            )
+            val sortedGroupItems =
+                groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
+                    ?: emptyList()
+            sortedItems.addAll(sortedGroupItems)
         }
-        _allGroupedConnections.value = sections
+
+        return sortedItems
     }
 
     data class ForwardConnectionGroup(

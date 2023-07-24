@@ -2,8 +2,8 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask.assignee
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
@@ -11,6 +11,8 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,16 +24,11 @@ class AssigneeVM @Inject constructor(
 ) : HiltBaseViewModel<IAssignee.State>(), IAssignee.ViewModel {
     val user = sessionManager.getUser().value
 
-    private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+    private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
-    val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+    val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         _allConnections
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
-
-    private var _allGroupedConnections: MutableLiveData<MutableList<AssigneeConnectionGroup>> =
-        MutableLiveData()
-    val allGroupedConnections: MutableLiveData<MutableList<AssigneeConnectionGroup>> =
-        _allGroupedConnections
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
@@ -58,19 +55,14 @@ class AssigneeVM @Inject constructor(
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
         val userId = user?.id
-
         launch {
             val connectionsData = connectionsV2Dao.getAll()
             if (connectionsData.isNotEmpty()) {
-                processConnectionsData(connectionsData) {
-                    callBack.invoke()
-                }
+                processConnectionsData(connectionsData, callBack)
             } else {
                 when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                     is ApiResponse.Success -> {
-                        processConnectionsData(response.data.contacts) {
-                            callBack.invoke()
-                        }
+                        processConnectionsData(response.data.contacts, callBack)
                     }
                     is ApiResponse.Error -> {
                         callBack.invoke()
@@ -81,41 +73,18 @@ class AssigneeVM @Inject constructor(
         }
     }
 
-    private fun processConnectionsData(contactsResponse: List<AllCeibroConnections.CeibroConnection>, callBack: () -> Unit) {
+    private fun processConnectionsData(
+        contactsResponse: List<AllCeibroConnections.CeibroConnection>,
+        callBack: () -> Unit
+    ) {
 
-        /*val allContacts = contactsResponse.sortedByDescending { it.isCeiborUser }.toMutableList()
-        val oldSelectedContacts = selectedContacts.value
-        if (!oldSelectedContacts.isNullOrEmpty()) {
-            for (allItem in allContacts) {
-                for (selectedItem in oldSelectedContacts) {
-                    if (allItem.id == selectedItem.id) {
-                        val index = allContacts.indexOf(allItem)
-                        allContacts[index] = selectedItem
-                    }
-                }
-            }
-            _allConnections.postValue(allContacts)
-            originalConnections = allContacts
-            callBack.invoke()
-
-        } else {
-            if (allContacts.isNotEmpty()) {
-                originalConnections = allContacts
-                _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
-            }
-            callBack.invoke()
-        }*/
-
-        val allContacts = contactsResponse.sortedByDescending { it.isCeiborUser }.toMutableList()
+        val allContacts = contactsResponse.groupDataByFirstLetter().toMutableList()
         val oldSelectedContacts = selectedContacts.value
 
         if (!oldSelectedContacts.isNullOrEmpty()) {
-            val oldSelectedContactsMap = oldSelectedContacts.associateBy { it.id }
-            for (allItem in allContacts) {
-                oldSelectedContactsMap[allItem.id]?.let { selectedItem ->
-                    val index = allContacts.indexOf(allItem)
-                    allContacts[index] = selectedItem
-                }
+            oldSelectedContacts.forEach { oldContact ->
+                val matchingContact = allContacts.find { it.id == oldContact.id }
+                matchingContact?.isChecked = true
             }
             _allConnections.value = allContacts
             originalConnections = allContacts
@@ -157,11 +126,8 @@ class AssigneeVM @Inject constructor(
             _allConnections.postValue(mutableListOf())
     }
 
-
-    fun groupDataByFirstLetter(data: List<AllCeibroConnections.CeibroConnection>) {
-        val sections = mutableListOf<AssigneeConnectionGroup>()
-
-        val groupedData = data.groupBy {
+    fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<AllCeibroConnections.CeibroConnection> {
+        val groupedData = this.groupBy {
             if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
                 it.contactFirstName.first().lowercase()
             } else {
@@ -173,21 +139,23 @@ class AssigneeVM @Inject constructor(
                 .then(compareByDescending { it == "#" })
         )
 
+        val sortedItems = mutableListOf<AllCeibroConnections.CeibroConnection>()
         for (mapKey in groupedData.keys) {
-            sections.add(
-                AssigneeConnectionGroup(
-                    mapKey.toString().uppercase()[0],
-                    groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
-                        ?: emptyList()
-                )
-            )
+            val sortedGroupItems =
+                groupedData[mapKey]?.sortedBy { it.contactFirstName?.lowercase() }
+                    ?: emptyList()
+            sortedItems.addAll(sortedGroupItems)
         }
-        _allGroupedConnections.value = sections
+
+        return sortedItems
     }
 
-    data class AssigneeConnectionGroup(
-        val sectionLetter: Char,
-        var items: List<AllCeibroConnections.CeibroConnection>
-    )
-
+    companion object {
+        fun printCurrentTimeWithSeconds(line: Int) {
+            val currentTime = System.currentTimeMillis()
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val dateString = sdf.format(Date(currentTime))
+            Log.d("getAllConnectionsV2", "Line $line Time: $dateString")
+        }
+    }
 }

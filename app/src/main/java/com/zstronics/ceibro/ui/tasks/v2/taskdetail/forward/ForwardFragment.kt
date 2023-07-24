@@ -14,7 +14,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentForwardBinding
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.ForwardChipsAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.ForwardSelectionHeaderAdapter
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.ForwardSelectionAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -51,9 +51,9 @@ class ForwardFragment :
     }
 
 
-
     @Inject
-    lateinit var adapter: ForwardSelectionHeaderAdapter
+    lateinit var adapter: ForwardSelectionAdapter
+
     @Inject
     lateinit var chipAdapter: ForwardChipsAdapter
 
@@ -69,14 +69,8 @@ class ForwardFragment :
                     val searchQuery = mViewDataBinding.forwardSearchBar.query.toString()
                     viewModel.filterContacts(searchQuery)
                 } else {
-                    viewModel.groupDataByFirstLetter(it)
+                    adapter.setList(it, viewModel.oldSelectedContacts)
                 }
-            }
-        }
-
-        viewModel.allGroupedConnections.observe(viewLifecycleOwner) {
-            if (it != null) {
-                adapter.setList(it, viewModel.oldSelectedContacts)
             }
         }
 
@@ -85,48 +79,51 @@ class ForwardFragment :
                 chipAdapter.setList(it)
             }
         }
-        chipAdapter.removeItemClickListener = { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
-            val allContacts = viewModel.originalConnections.toMutableList()
-            val selectedOnes = viewModel.selectedContacts.value?.toMutableList()
-            data.isChecked = false
+        chipAdapter.removeItemClickListener =
+            { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
+                val allContacts = viewModel.originalConnections.toMutableList()
+                val selectedOnes = viewModel.selectedContacts.value?.toMutableList()
+                data.isChecked = false
 
-            if (allContacts.isNotEmpty()) {
-                val commonItem = allContacts.find { item1 ->
-                    item1.id == data.id
-                }
-                if (commonItem != null) {
-                    val index = allContacts.indexOf(commonItem)
-                    allContacts.set(index, data)            //set is used for updating the specific item
-                }
+                if (allContacts.isNotEmpty()) {
+                    val commonItem = allContacts.find { item1 ->
+                        item1.id == data.id
+                    }
+                    if (commonItem != null) {
+                        val index = allContacts.indexOf(commonItem)
+                        allContacts.set(
+                            index,
+                            data
+                        )            //set is used for updating the specific item
+                    }
 
-                val searchQuery = mViewDataBinding.forwardSearchBar.query.toString()
-                if (searchQuery.isNotEmpty()) {
-                    searchedContacts = true
+                    val searchQuery = mViewDataBinding.forwardSearchBar.query.toString()
+                    if (searchQuery.isNotEmpty()) {
+                        searchedContacts = true
+                    }
+                    viewModel.updateContacts(allContacts)
                 }
-                viewModel.updateContacts(allContacts)
+                //selected contacts also updated so that exact list be sent back on done
+                if (!selectedOnes.isNullOrEmpty()) {
+                    val commonItem = selectedOnes.find { item1 ->
+                        item1.id == data.id
+                    }
+                    if (commonItem != null) {
+                        val index = selectedOnes.indexOf(commonItem)
+                        selectedOnes.removeAt(index)            //set is used for updating the specific item
+                    }
+                    viewModel.selectedContacts.postValue(selectedOnes)
+                }
             }
-            //selected contacts also updated so that exact list be sent back on done
-            if (!selectedOnes.isNullOrEmpty()) {
-                val commonItem = selectedOnes.find { item1 ->
-                    item1.id == data.id
-                }
-                if (commonItem != null) {
-                    val index = selectedOnes.indexOf(commonItem)
-                    selectedOnes.removeAt(index)            //set is used for updating the specific item
-                }
-                viewModel.selectedContacts.postValue(selectedOnes)
-            }
-        }
 
         adapter.itemClickListener =
             { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
                 val selectedContacts: MutableList<AllCeibroConnections.CeibroConnection> =
                     mutableListOf()
-                for (item in adapter.listItems) {
-                    val selected = item.items.filter { it.isChecked }.map { it }
-                    selectedContacts.addAll(selected)
-                }
-                val oldSelected = viewModel.originalConnections.filter { it.isChecked }.map { it }.toMutableList()
+                val selected = adapter.dataList.filter { it.isChecked }.map { it }
+                selectedContacts.addAll(selected)
+                val oldSelected =
+                    viewModel.originalConnections.filter { it.isChecked }.map { it }.toMutableList()
                 if (oldSelected.isNotEmpty()) {
                     val combinedList = selectedContacts + oldSelected
                     val distinctList = combinedList.distinct().toMutableList()
@@ -166,6 +163,7 @@ class ForwardFragment :
                 }
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.filterContacts(newText)

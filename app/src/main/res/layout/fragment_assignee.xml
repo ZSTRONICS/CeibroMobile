@@ -98,73 +98,57 @@
             app:layout_constraintStart_toStartOf="@+id/assigneeSearchBar"
             app:layout_constraintTop_toBottomOf="@+id/assigneeSearchBar" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/parentLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:contentDescription="@string/appbar_scrolling_view_behavior"
-            android:fillViewport="true"
-            android:scrollbars="none"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view5">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/parentLayout"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectedContactsRV"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_1sdp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_item_assignee_chip" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/selectedContactsRV"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="horizontal"
-                    android:paddingStart="@dimen/_5sdp"
-                    android:paddingTop="@dimen/_6sdp"
-                    android:paddingEnd="@dimen/_4sdp"
-                    android:paddingBottom="@dimen/_1sdp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/layout_item_assignee_chip" />
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/selfAssignCheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:checked="@{viewState.isSelfAssigned}"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:text="@string/self_assign"
+                android:textColor="@color/appTextGrey"
+                android:textSize="14.5sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/allContactsRV"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:paddingTop="0dp"
-                    android:paddingBottom="@dimen/_2sdp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/selfAssignCheckBox"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/layout_item_assignee_header" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/allContactsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="2dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="10"
+                tools:listitem="@layout/layout_item_assignee_selection" />
 
-
-                <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/selfAssignCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="@{viewState.isSelfAssigned}"
-                    android:paddingStart="@dimen/_5sdp"
-                    android:paddingEnd="@dimen/_5sdp"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:fontFamily="@font/inter_medium"
-                    android:text="@string/self_assign"
-                    android:textColor="@color/appTextGrey"
-                    android:textSize="14.5sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

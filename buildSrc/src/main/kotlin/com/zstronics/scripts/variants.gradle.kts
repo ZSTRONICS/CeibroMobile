@@ -129,7 +129,7 @@ android {
                 create(ProductFlavors.EU_QA) {
                     dimension = FlavorDimensions.DEFAULT
                     applicationIdSuffix = ".${ProductFlavors.EU_QA}"
-                    resValue("string","app_name", "Ceibro debug")
+                    resValue("string","app_name", "Ceibro EU QA")
 
 //                    versionNameSuffix = "-${ProductFlavors.DEV} -${AppConfig.VERSION_NAME}"
                     if (properties.containsKey("BASE_URL_EU_QA")) {
