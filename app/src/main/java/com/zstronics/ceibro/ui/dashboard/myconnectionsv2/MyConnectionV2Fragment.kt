@@ -80,24 +80,14 @@ class MyConnectionV2Fragment :
         viewModel.allConnections.observe(viewLifecycleOwner) {
             if (it != null) {
                 adapter.setList(it)
-//                viewModel.groupDataByFirstLetter(it)
             }
         }
-
-//        viewModel.allGroupedConnections.observe(viewLifecycleOwner) {
-//            if (it != null) {
-//                adapter.setList(it)
-//            }
-//        }
         adapter.itemClickListener =
             { _: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
                 if (data.isCeiborUser)
                     navigate(R.id.myConnectionV2ProfileFragment, bundleOf(CONNECTION_KEY to data))
             }
 
-//        viewState.searchName.observe(viewLifecycleOwner) { search ->
-//            viewModel.filterContacts(search.lowercase())
-//        }
         mViewDataBinding.searchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -106,6 +96,7 @@ class MyConnectionV2Fragment :
                 }
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.filterContacts(newText)
@@ -174,7 +165,7 @@ class MyConnectionV2Fragment :
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CONTACT_ADD_REQUEST) {
 //            println("ContactAddedRequest")
-            if (resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
 //                println("ContactAdded")
                 startOneTimeContactSyncWorker(requireContext())
             }
