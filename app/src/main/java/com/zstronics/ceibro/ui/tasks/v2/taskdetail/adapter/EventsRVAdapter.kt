@@ -63,7 +63,7 @@ class EventsRVAdapter @Inject constructor() :
             binding.forwardedToNames.visibility = View.GONE
 
             binding.eventName.text = ""
-            binding.eventBy.text = "${item.initiator.firstName} ${item.initiator.surName}"
+            binding.eventBy.text = "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
             binding.eventDate.text = DateUtils.reformatStringDate(
                 date = item.createdAt,
                 DateUtils.SERVER_DATE_FULL_FORMAT,
@@ -83,10 +83,15 @@ class EventsRVAdapter @Inject constructor() :
                     var forwardedToUsers = "To: "
                     if (!item.eventData.isNullOrEmpty()) {
                         forwardedToUsers += item.eventData.map {
-                            if (it.firstName.isNullOrEmpty())
-                                " ${it.phoneNumber} ;"
-                            else
+                            if (it.firstName.isNullOrEmpty()) {
+                                if (it.phoneNumber.isNullOrEmpty()) {
+                                    " Unknown User ;"
+                                } else {
+                                    " ${it.phoneNumber} ;"
+                                }
+                            } else {
                                 " ${it.firstName} ${it.surName} ;"
+                            }
                         }
                             .toString().removeSurrounding("[", "]").removeSuffix(";")
                             .replace(",", "")

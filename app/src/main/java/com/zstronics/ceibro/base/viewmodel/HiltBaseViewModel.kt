@@ -783,7 +783,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 taskToMeLocalData.allTasks.new = allTaskList.toList()
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(newTask))
-                        } else if (ongoingTask != null) {
+                        }
+                        else if (ongoingTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -843,7 +844,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(ongoingTask))
 
-                        } else if (doneTask != null) {
+                        }
+                        else if (doneTask != null) {
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -908,8 +910,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskDao.insertTaskData(
                             taskToMeLocalData
                         )
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+
                 }
             }
 

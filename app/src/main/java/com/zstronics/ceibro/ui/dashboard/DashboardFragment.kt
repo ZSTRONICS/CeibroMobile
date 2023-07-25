@@ -49,6 +49,9 @@ class DashboardFragment :
     override val viewModel: DashboardVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_dashboard
     override fun toolBarVisibility(): Boolean = false
+    private var taskToMeFragmentInstance: TaskToMeFragment? = null
+    private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
+    private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
@@ -57,47 +60,60 @@ class DashboardFragment :
             R.id.profileImg -> navigateToProfile()
             R.id.friendsReqBtn -> navigateToConnections()
             R.id.toMeBtn -> {
-                changeSelectedTab(R.id.toMeBtn)
+                changeSelectedTab(R.id.toMeBtn, false)
             }
             R.id.fromMeBtn -> {
-                changeSelectedTab(R.id.fromMeBtn)
+                changeSelectedTab(R.id.fromMeBtn, false)
             }
-            R.id.canceledBtn -> {
-                changeSelectedTab(R.id.canceledBtn)
+            R.id.hiddenBtn -> {
+                changeSelectedTab(R.id.hiddenBtn, false)
             }
             R.id.locationBtn -> {
-                changeSelectedTab(R.id.locationBtn)
+                changeSelectedTab(R.id.locationBtn, false)
             }
             R.id.projectsBtn -> {
-                changeSelectedTab(R.id.projectsBtn)
+                changeSelectedTab(R.id.projectsBtn, false)
             }
         }
     }
 
-    private fun changeSelectedTab(btnID: Int) {
+    private fun changeSelectedTab(btnID: Int, newTask: Boolean) {
         viewState.toMeSelected.value = false
         viewState.fromMeSelected.value = false
-        viewState.canceledSelected.value = false
+        viewState.hiddenSelected.value = false
         viewState.locationSelected.value = false
         viewState.projectsSelected.value = false
 
         when (btnID) {
             R.id.toMeBtn -> {
                 viewState.toMeSelected.value = true
+                if (taskToMeFragmentInstance == null) {
+                    taskToMeFragmentInstance = TaskToMeFragment()
+                }
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, TaskToMeFragment())
+                    .replace(R.id.fragment_container, taskToMeFragmentInstance!!)
                     .commit()
             }
             R.id.fromMeBtn -> {
                 viewState.fromMeSelected.value = true
+                if (newTask) {
+                    taskFromMeFragmentInstance = TaskFromMeFragment()
+                } else {
+                    if (taskFromMeFragmentInstance == null) {
+                        taskFromMeFragmentInstance = TaskFromMeFragment()
+                    }
+                }
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, TaskFromMeFragment())
+                    .replace(R.id.fragment_container, taskFromMeFragmentInstance!!)
                     .commit()
             }
-            R.id.canceledBtn -> {
-                viewState.canceledSelected.value = true
+            R.id.hiddenBtn -> {
+                viewState.hiddenSelected.value = true
+                if (taskHiddenFragmentInstance == null) {
+                    taskHiddenFragmentInstance = TaskHiddenFragment()
+                }
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, TaskHiddenFragment())
+                    .replace(R.id.fragment_container, taskHiddenFragmentInstance!!)
                     .commit()
             }
             R.id.locationBtn -> {
@@ -148,8 +164,8 @@ class DashboardFragment :
         super.onAttach(context)
         val handler = Handler()
         handler.postDelayed({
-            changeSelectedTab(R.id.toMeBtn)
-        }, 200)
+            changeSelectedTab(R.id.toMeBtn, false)
+        }, 100)
     }
 
     private fun handleFileUploaderSocketEvents() {
@@ -331,7 +347,7 @@ class DashboardFragment :
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {
                 CREATE_NEW_TASK_CODE -> {
-                    changeSelectedTab(R.id.fromMeBtn)
+                    changeSelectedTab(R.id.fromMeBtn, true)
                 }
             }
         }

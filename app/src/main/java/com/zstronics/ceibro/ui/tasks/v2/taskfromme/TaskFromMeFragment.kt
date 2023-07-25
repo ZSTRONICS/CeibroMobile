@@ -33,49 +33,34 @@ class TaskFromMeFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.unreadStateText -> {
-                viewModel.selectedState = "unread"
+                viewModel.selectedState = TaskStatus.UNREAD.name.lowercase()
                 val unreadTask = viewModel.unreadTasks.value
                 if (!unreadTask.isNullOrEmpty()) {
                     adapter.setList(unreadTask)
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.unreadStateText.background =
-                    resources.getDrawable(R.drawable.status_new_filled_new)
-                mViewDataBinding.ongoingStateText.background =
-                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background =
-                    resources.getDrawable(R.drawable.status_done_outline_new)
+                changeSelectedUserState()
             }
             R.id.ongoingStateText -> {
-                viewModel.selectedState = "ongoing"
+                viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 val ongoingTask = viewModel.ongoingTasks.value
                 if (!ongoingTask.isNullOrEmpty()) {
                     adapter.setList(ongoingTask)
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.unreadStateText.background =
-                    resources.getDrawable(R.drawable.status_new_outline_new)
-                mViewDataBinding.ongoingStateText.background =
-                    resources.getDrawable(R.drawable.status_ongoing_filled_new)
-                mViewDataBinding.doneStateText.background =
-                    resources.getDrawable(R.drawable.status_done_outline_new)
+                changeSelectedUserState()
             }
             R.id.doneStateText -> {
-                viewModel.selectedState = "done"
+                viewModel.selectedState = TaskStatus.DONE.name.lowercase()
                 val doneTask = viewModel.doneTasks.value
                 if (!doneTask.isNullOrEmpty()) {
                     adapter.setList(doneTask)
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.unreadStateText.background =
-                    resources.getDrawable(R.drawable.status_new_outline_new)
-                mViewDataBinding.ongoingStateText.background =
-                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background =
-                    resources.getDrawable(R.drawable.status_done_filled_new)
+                changeSelectedUserState()
             }
         }
     }
@@ -86,6 +71,7 @@ class TaskFromMeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        changeSelectedUserState()
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
             updateCount(it)
@@ -201,5 +187,32 @@ class TaskFromMeFragment :
         mViewDataBinding.unreadStateCount.text = unreadCount.toString()
         mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
         mViewDataBinding.doneStateCount.text = doneCount.toString()
+    }
+
+    private fun changeSelectedUserState() {
+        if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
+            mViewDataBinding.unreadStateText.background =
+                resources.getDrawable(R.drawable.status_new_filled_new)
+            mViewDataBinding.ongoingStateText.background =
+                resources.getDrawable(R.drawable.status_ongoing_outline_new)
+            mViewDataBinding.doneStateText.background =
+                resources.getDrawable(R.drawable.status_done_outline_new)
+        }
+        if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
+            mViewDataBinding.unreadStateText.background =
+                resources.getDrawable(R.drawable.status_new_outline_new)
+            mViewDataBinding.ongoingStateText.background =
+                resources.getDrawable(R.drawable.status_ongoing_filled_new)
+            mViewDataBinding.doneStateText.background =
+                resources.getDrawable(R.drawable.status_done_outline_new)
+        }
+        if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
+            mViewDataBinding.unreadStateText.background =
+                resources.getDrawable(R.drawable.status_new_outline_new)
+            mViewDataBinding.ongoingStateText.background =
+                resources.getDrawable(R.drawable.status_ongoing_outline_new)
+            mViewDataBinding.doneStateText.background =
+                resources.getDrawable(R.drawable.status_done_filled_new)
+        }
     }
 }

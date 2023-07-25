@@ -316,7 +316,7 @@ class TaskDetailV2Fragment :
 //                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
 //        );
 
-        sheet.isCancelable = false
+        sheet.isCancelable = true
         sheet.show(childFragmentManager, "TaskInfoBottomSheet")
     }
 
