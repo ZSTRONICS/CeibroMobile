@@ -189,7 +189,9 @@
             android:paddingTop="@dimen/_4sdp"
             android:paddingEnd="@dimen/_1sdp"
             android:paddingBottom="@dimen/_2sdp"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/toMeBtn"
@@ -230,7 +232,7 @@
                 app:checked="@{viewState.fromMeSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/canceledBtn"
+                android:id="@+id/hiddenBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -246,7 +248,7 @@
                 android:textAllCaps="false"
                 android:textColor="@drawable/bottom_nav_text_color"
                 android:textSize="@dimen/_8sdp"
-                app:checked="@{viewState.canceledSelected}" />
+                app:checked="@{viewState.hiddenSelected}" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/locationBtn"

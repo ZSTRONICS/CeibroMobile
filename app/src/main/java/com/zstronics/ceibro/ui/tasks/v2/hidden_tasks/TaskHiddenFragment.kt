@@ -40,12 +40,7 @@ class TaskHiddenFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.cancelledStateText.background =
-                    resources.getDrawable(R.drawable.status_cancelled_fill)
-                mViewDataBinding.ongoingStateText.background =
-                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background =
-                    resources.getDrawable(R.drawable.status_done_outline_new)
+                changeSelectedUserState()
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
@@ -55,12 +50,7 @@ class TaskHiddenFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.cancelledStateText.background =
-                    resources.getDrawable(R.drawable.status_cancelled_outline)
-                mViewDataBinding.ongoingStateText.background =
-                    resources.getDrawable(R.drawable.status_ongoing_filled_new)
-                mViewDataBinding.doneStateText.background =
-                    resources.getDrawable(R.drawable.status_done_outline_new)
+                changeSelectedUserState()
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
@@ -70,12 +60,7 @@ class TaskHiddenFragment :
                 } else {
                     adapter.setList(listOf())
                 }
-                mViewDataBinding.cancelledStateText.background =
-                    resources.getDrawable(R.drawable.status_cancelled_outline)
-                mViewDataBinding.ongoingStateText.background =
-                    resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                mViewDataBinding.doneStateText.background =
-                    resources.getDrawable(R.drawable.status_done_filled_new)
+                changeSelectedUserState()
             }
         }
     }
@@ -86,6 +71,7 @@ class TaskHiddenFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        changeSelectedUserState()
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
             updateCount(it)
@@ -192,5 +178,32 @@ class TaskHiddenFragment :
         mViewDataBinding.cancelledStateCount.text = canceledCount.toString()
         mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
         mViewDataBinding.doneStateCount.text = doneCount.toString()
+    }
+
+    private fun changeSelectedUserState() {
+        if (viewModel.selectedState.equals(TaskStatus.CANCELED.name.lowercase(), true)) {
+            mViewDataBinding.cancelledStateText.background =
+                resources.getDrawable(R.drawable.status_cancelled_fill)
+            mViewDataBinding.ongoingStateText.background =
+                resources.getDrawable(R.drawable.status_ongoing_outline_new)
+            mViewDataBinding.doneStateText.background =
+                resources.getDrawable(R.drawable.status_done_outline_new)
+        }
+        if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
+            mViewDataBinding.cancelledStateText.background =
+                resources.getDrawable(R.drawable.status_cancelled_outline)
+            mViewDataBinding.ongoingStateText.background =
+                resources.getDrawable(R.drawable.status_ongoing_filled_new)
+            mViewDataBinding.doneStateText.background =
+                resources.getDrawable(R.drawable.status_done_outline_new)
+        }
+        if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
+            mViewDataBinding.cancelledStateText.background =
+                resources.getDrawable(R.drawable.status_cancelled_outline)
+            mViewDataBinding.ongoingStateText.background =
+                resources.getDrawable(R.drawable.status_ongoing_outline_new)
+            mViewDataBinding.doneStateText.background =
+                resources.getDrawable(R.drawable.status_done_filled_new)
+        }
     }
 }

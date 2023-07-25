@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -32,6 +33,7 @@ class TaskToMeVM @Inject constructor(
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = "new"
+    var firstStartOfFragment = true
 
     private val _newTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val newTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _newTasks
@@ -50,7 +52,7 @@ class TaskToMeVM @Inject constructor(
     var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
 
     init {
-        selectedState = "new"
+        selectedState = TaskStatus.NEW.name.lowercase()
     }
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
@@ -62,6 +64,14 @@ class TaskToMeVM @Inject constructor(
                 val ongoingTask = allTasks.ongoing
                 val doneTask = allTasks.done
 
+                if (firstStartOfFragment) {
+                    selectedState = if (newTask.isNotEmpty()) {
+                        TaskStatus.NEW.name.lowercase()
+                    } else {
+                        TaskStatus.ONGOING.name.lowercase()
+                    }
+                    firstStartOfFragment = false
+                }
                 _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
                 _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
                 _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
@@ -91,6 +101,15 @@ class TaskToMeVM @Inject constructor(
                         val ongoingTask = response.data.allTasks.ongoing
                         val doneTask = response.data.allTasks.done
                         val allTasks = response.data.allTasks
+
+                        if (firstStartOfFragment) {
+                            selectedState = if (newTask.isNotEmpty()) {
+                                TaskStatus.NEW.name.lowercase()
+                            } else {
+                                TaskStatus.ONGOING.name.lowercase()
+                            }
+                            firstStartOfFragment = false
+                        }
 
                         _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
                         _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
