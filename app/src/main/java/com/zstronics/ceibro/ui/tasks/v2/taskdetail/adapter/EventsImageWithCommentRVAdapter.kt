@@ -5,7 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutCeibroImageWithCommentBinding
@@ -57,8 +61,21 @@ class EventsImageWithCommentRVAdapter @Inject constructor() :
 
             val context = binding.smallImgView.context
 
+            val circularProgressDrawable = CircularProgressDrawable(context)
+            circularProgressDrawable.strokeWidth = 5f
+            circularProgressDrawable.centerRadius = 30f
+            circularProgressDrawable.start()
+
+            val requestOptions = RequestOptions()
+                .placeholder(circularProgressDrawable)
+                .error(R.drawable.icon_corrupt_file)
+                .skipMemoryCache(true)
+                .centerCrop()
+
             Glide.with(context)
                 .load(item.fileUrl)
+                .apply(requestOptions)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.smallImgView)
 
             if (item.hasComment) {

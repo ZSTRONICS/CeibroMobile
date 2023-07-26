@@ -20,7 +20,7 @@ object SocketHandler {
     const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
     var hbCounter = 0
     var handler = android.os.Handler()
-    var delayMillis: Long = 2000 // 2 seconds
+    var delayMillis: Long = 10000 // 10 seconds
     var runnable = object : Runnable {
         override fun run() {
             sendHeartbeat()
@@ -61,20 +61,21 @@ object SocketHandler {
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)
 
-            mSocket?.on(
-                Socket.EVENT_DISCONNECT
-            ) {
-                println("Heartbeat, Socket Disconnected")
-                handler.removeCallbacks(runnable)
-            }
+//            mSocket?.on(
+//                Socket.EVENT_DISCONNECT
+//            ) {
+//                println("Heartbeat, Socket Disconnected")
+//                handler.removeCallbacks(runnable)
+//            }
 
             mSocket?.on(
                 Socket.EVENT_CONNECT_ERROR
             ) {
 //                println("Heartbeat, Socket EVENT_CONNECT_ERROR")
                 handler.removeCallbacks(runnable)
-                hbCounter = 0
-                handler.postDelayed(runnable, delayMillis)
+//                hbCounter = 0
+//                handler.postDelayed(runnable, delayMillis)
+                establishConnection()
             }
 
             mSocket?.on(
@@ -90,7 +91,7 @@ object SocketHandler {
             mSocket?.on(
                 "heartbeatAck"
             ) {
-                hbCounter -= 1
+//                hbCounter -= 1
             }
 
             EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
@@ -104,19 +105,19 @@ object SocketHandler {
         if (mSocket != null) {
             if (mSocket?.connected() == true) {
                 mSocket?.emit("heartbeat")
-                hbCounter += 1
-//                println("Heartbeat Sent $hbCounter")
-                if (hbCounter == 6) {
-                    // reconnect logic here
-                    reconnectSocket()
-                }
-                if (hbCounter > 5) {
-                    hbCounter = 0
-                }
+//                hbCounter += 1
+////                println("Heartbeat Sent $hbCounter")
+//                if (hbCounter == 6) {
+//                    // reconnect logic here
+//                    reconnectSocket()
+//                }
+//                if (hbCounter > 5) {
+//                    hbCounter = 0
+//                }
             } else {
 //                println("Heartbeat Socket not connected")
-                handler.removeCallbacks(runnable)
-                reconnectSocket()
+//                handler.removeCallbacks(runnable)
+//                reconnectSocket()
             }
         }
 //        else {
@@ -147,7 +148,7 @@ object SocketHandler {
 
     @Synchronized
     fun disconnectSocket() {
-//        println("Disconnecting Socket")
+        handler.removeCallbacks(runnable)
         mSocket?.disconnect()
 
     }
