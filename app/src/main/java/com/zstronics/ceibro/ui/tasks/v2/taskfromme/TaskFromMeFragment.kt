@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -11,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
+import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
@@ -187,6 +189,9 @@ class TaskFromMeFragment :
         mViewDataBinding.unreadStateCount.text = unreadCount.toString()
         mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
         mViewDataBinding.doneStateCount.text = doneCount.toString()
+
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isFromMeUnread.value = !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
 
     private fun changeSelectedUserState() {

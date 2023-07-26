@@ -8,6 +8,7 @@ import android.os.Handler
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -52,6 +53,7 @@ class DashboardFragment :
     private var taskToMeFragmentInstance: TaskToMeFragment? = null
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
+    var serverDataLoadedOnce = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
@@ -127,6 +129,10 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (!serverDataLoadedOnce) {
+            viewModel.loadAppData(requireActivity())
+            serverDataLoadedOnce = true
+        }
 
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
             println("Heartbeat, Dashboard")
@@ -137,6 +143,28 @@ class DashboardFragment :
         viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
 
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isToMeUnread.observe(viewLifecycleOwner) { isUnread ->
+            if (isUnread) {
+                mViewDataBinding.toMeUnreadBadge.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.toMeUnreadBadge.visibility = View.GONE
+            }
+        }
+        sharedViewModel.isFromMeUnread.observe(viewLifecycleOwner) { isUnread ->
+            if (isUnread) {
+                mViewDataBinding.fromMeUnreadBadge.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.fromMeUnreadBadge.visibility = View.GONE
+            }
+        }
+        sharedViewModel.isHiddenUnread.observe(viewLifecycleOwner) { isUnread ->
+            if (isUnread) {
+                mViewDataBinding.hiddenUnreadBadge.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.hiddenUnreadBadge.visibility = View.GONE
+            }
+        }
 
         SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
             val navHostFragment =
@@ -159,6 +187,7 @@ class DashboardFragment :
 
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

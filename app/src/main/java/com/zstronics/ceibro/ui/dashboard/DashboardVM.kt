@@ -2,6 +2,8 @@ package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
 import android.os.Handler
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -42,6 +44,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
 import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.*
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -87,7 +90,6 @@ class DashboardVM @Inject constructor(
         userId = _user?.id
         user = _user
         EventBus.getDefault().register(this)
-        loadAppData()
     }
 
     override fun handleSocketEvents() {
@@ -775,10 +777,11 @@ class DashboardVM @Inject constructor(
             .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
     }
 
-    private fun loadAppData() {
+    fun loadAppData(requireActivity: FragmentActivity) {
         launch {
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.ToMe.tagValue)) {
                 is ApiResponse.Success -> {
+                    updateToMeUnread(response.data.allTasks, requireActivity)
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.ToMe.tagValue,
@@ -792,6 +795,7 @@ class DashboardVM @Inject constructor(
 
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.FromMe.tagValue)) {
                 is ApiResponse.Success -> {
+                    updateFromMeUnread(response.data.allTasks, requireActivity)
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.FromMe.tagValue,
@@ -805,6 +809,7 @@ class DashboardVM @Inject constructor(
 
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
                 is ApiResponse.Success -> {
+                    updateHiddenUnread(response.data.allTasks, requireActivity)
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.Hidden.tagValue,
@@ -850,6 +855,39 @@ class DashboardVM @Inject constructor(
         }
     }
 
+    private fun updateToMeUnread(
+        allTasks: TaskV2Response.AllTasks,
+        requireActivity: FragmentActivity
+    ) {
+        val newCount = allTasks.new.count { task -> user?.id !in task.seenBy }
+        val ongoingCount = allTasks.ongoing.count { task -> user?.id !in task.seenBy }
+        val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
+
+        val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
+        sharedViewModel.isToMeUnread.value = !(newCount == 0 && ongoingCount == 0 && doneCount == 0)
+    }
+    private fun updateFromMeUnread(
+        allTasks: TaskV2Response.AllTasks,
+        requireActivity: FragmentActivity
+    ) {
+        val unreadCount = allTasks.unread.count { task -> user?.id !in task.seenBy }
+        val ongoingCount = allTasks.ongoing.count { task -> user?.id !in task.seenBy }
+        val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
+
+        val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
+        sharedViewModel.isFromMeUnread.value = !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)
+    }
+    private fun updateHiddenUnread(
+        allTasks: TaskV2Response.AllTasks,
+        requireActivity: FragmentActivity
+    ) {
+        val canceledCount = allTasks.canceled.count { task -> user?.id !in task.seenBy }
+        val ongoingCount = allTasks.ongoing.count { task -> user?.id !in task.seenBy }
+        val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
+
+        val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
+        sharedViewModel.isHiddenUnread.value = !(canceledCount == 0 && ongoingCount == 0 && doneCount == 0)
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGetALlContactsFromAPI(event: LocalEvents.GetALlContactsFromAPI) {
