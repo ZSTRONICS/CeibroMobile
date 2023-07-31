@@ -56,7 +56,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="1"
-                android:text="@string/new_comment"
+                android:text="@string/reply_heading"
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"

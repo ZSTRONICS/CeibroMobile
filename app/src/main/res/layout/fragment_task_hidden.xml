@@ -65,8 +65,8 @@
 
                 <TextView
                     android:id="@+id/ongoingStateCount"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:background="@drawable/status_ongoing_badge"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
@@ -74,6 +74,7 @@
                     android:text="0"
                     android:textColor="@color/black"
                     android:textSize="11sp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/ongoingStateText"
                     app:layout_constraintEnd_toEndOf="@+id/ongoingStateText"
                     app:layout_constraintStart_toEndOf="@+id/ongoingStateText"
@@ -112,8 +113,8 @@
 
                 <TextView
                     android:id="@+id/doneStateCount"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:background="@drawable/status_done_badge"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
@@ -121,6 +122,7 @@
                     android:text="0"
                     android:textColor="@color/black"
                     android:textSize="11sp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/doneStateText"
                     app:layout_constraintEnd_toEndOf="@+id/doneStateText"
                     app:layout_constraintStart_toEndOf="@+id/doneStateText"
@@ -158,8 +160,8 @@
 
                 <TextView
                     android:id="@+id/cancelledStateCount"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
                     android:background="@drawable/status_cancelled_badge"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
@@ -167,6 +169,7 @@
                     android:text="0"
                     android:textColor="@color/black"
                     android:textSize="11sp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/cancelledStateText"
                     app:layout_constraintEnd_toEndOf="@+id/cancelledStateText"
                     app:layout_constraintStart_toEndOf="@+id/cancelledStateText"

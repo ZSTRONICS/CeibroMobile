@@ -175,14 +175,31 @@ class TaskHiddenFragment :
 
     private fun updateCount(allTasks: TaskV2Response.AllTasks) {
         val canceledCount = allTasks.canceled.count { task -> viewModel.user?.id !in task.seenBy }
-        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
-        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
-        mViewDataBinding.cancelledStateCount.text = canceledCount.toString()
-        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
-        mViewDataBinding.doneStateCount.text = doneCount.toString()
+        mViewDataBinding.cancelledStateCount.text =
+            if (canceledCount > 99) {
+                "99+"
+            } else {
+                "+$canceledCount"
+            }
+
+        //we don't need counters on ongoing and done in Hidden
+//        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
+//        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
+//        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
+//        mViewDataBinding.doneStateCount.text = doneCount.toString()
+
+        mViewDataBinding.cancelledStateCount.visibility =
+            if (canceledCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        //we don't need counters on ongoing and done in Hidden
+        mViewDataBinding.ongoingStateCount.visibility = View.GONE
+        mViewDataBinding.doneStateCount.visibility = View.GONE
 
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        sharedViewModel.isHiddenUnread.value = !(canceledCount == 0 && ongoingCount == 0 && doneCount == 0)
+        sharedViewModel.isHiddenUnread.value = !(canceledCount == 0)
     }
 
     private fun changeSelectedUserState() {
