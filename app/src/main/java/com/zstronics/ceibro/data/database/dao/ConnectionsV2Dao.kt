@@ -1,9 +1,7 @@
 package com.zstronics.ceibro.data.database.dao
 
-import androidx.paging.PagingSource
 import androidx.room.*
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionsV2DatabaseEntity
 
 @Dao
 interface ConnectionsV2Dao {
@@ -11,7 +9,12 @@ interface ConnectionsV2Dao {
     suspend fun insert(connectionData: AllCeibroConnections.CeibroConnection)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(connectionsList: List<AllCeibroConnections.CeibroConnection>)
+    suspend fun insertAllContacts(connectionsList: List<AllCeibroConnections.CeibroConnection>)
+
+    suspend fun insertAll(connectionsList: List<AllCeibroConnections.CeibroConnection>) {
+        deleteAll()
+        insertAllContacts(connectionsList)
+    }
 
     @Query("SELECT * FROM connections_v2")
     suspend fun getAll(): List<AllCeibroConnections.CeibroConnection>

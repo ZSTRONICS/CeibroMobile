@@ -1,13 +1,18 @@
 package com.zstronics.ceibro.ui.contacts
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.hilt.work.HiltWorker
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
+import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepositoryService
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
@@ -21,7 +26,7 @@ import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -46,11 +51,53 @@ class ContactSyncWorker @AssistedInject constructor(
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
         val user = sessionManager.getUser().value
 
-        val contacts =
-            if (user?.autoContactSync == true)
-                getLocalContacts(context)
-            else
-                sessionManager.getSyncedContacts()
+        val room = providesAppDatabase(context)
+        val roomContacts = room.getConnectionsV2Dao().getAll()
+
+        val phoneContacts = getLocalContacts(context)
+
+        val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
+
+        val contacts = if (user?.autoContactSync == true) {
+            phoneContacts
+        } else {
+            manualContacts
+        }
+
+        val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
+
+        val updatedContacts =
+            compareContactsAndUpdateList(roomContacts, contacts)
+
+        val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+        updatedAndNewContacts.addAll(updatedContacts)
+
+        if (user?.autoContactSync == true) {
+            val newContacts = findNewContacts(roomContacts, contacts)
+            updatedAndNewContacts.addAll(newContacts)
+        }
+
+        // Delete contacts API call
+        if (deletedContacts.isNotEmpty()) {
+            val request = SyncContactsRequest(contacts = deletedContacts)
+            when (val response = dashboardRepository.syncDeletedContacts(request)) {
+                is ApiResponse.Success -> {
+                    EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
+                    EventBus.getDefault().post(LocalEvents.ContactsSynced)
+                    if (user?.autoContactSync == false) {
+                        sessionManager.saveSyncedContacts(manualContacts)
+                    }
+                    updateLocalContacts(dashboardRepository, room, user?.id ?: "")
+                    Result.success()
+                }
+
+                is ApiResponse.Error -> {
+                    Result.failure()
+                }
+            }
+        }
+
+        /// No Change in contacts
         if (sessionManager.isLoggedIn() && contacts.isNotEmpty()) {
             val request = SyncContactsRequest(contacts = contacts)
             when (val response =
@@ -58,7 +105,10 @@ class ContactSyncWorker @AssistedInject constructor(
                 is ApiResponse.Success -> {
                     EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
                     EventBus.getDefault().post(LocalEvents.ContactsSynced)
-                    sessionManager.saveSyncedContacts(contacts)
+                    if (user?.autoContactSync == false) {
+                        sessionManager.saveSyncedContacts(manualContacts)
+                    }
+                    updateLocalContacts(dashboardRepository, room, user?.id ?: "")
                     Result.success()
                 }
 
@@ -68,6 +118,30 @@ class ContactSyncWorker @AssistedInject constructor(
             }
         } else {
             Result.failure()
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private suspend fun updateLocalContacts(
+        dashboardRepository: DashboardRepository,
+        room: CeibroDatabase,
+        userId: String
+    ) {
+        when (val response = dashboardRepository.getAllConnectionsV2(userId)) {
+            is ApiResponse.Success -> {
+                room.getConnectionsV2Dao().insertAll(response.data.contacts)
+                EventBus.getDefault().post(LocalEvents.UpdateConnections)
+                GlobalScope.launch(Dispatchers.IO) {
+                    Looper.prepare()
+                    val handler = Handler()
+                    handler.postDelayed({
+                        EventBus.getDefault().post(LocalEvents.ContactsSynced)
+                    }, 50)
+                    Looper.loop()
+                }
+            }
+            is ApiResponse.Error -> {
+            }
         }
     }
 
@@ -135,6 +209,15 @@ class ContactSyncWorker @AssistedInject constructor(
     private fun getSessionManager(
         sharedPreferenceManager: SharedPreferenceManager
     ) = SessionManager(sharedPreferenceManager)
+
+    private fun provideConnectionsV2Dao(database: CeibroDatabase) = database.getConnectionsV2Dao()
+    private fun providesAppDatabase(context: Context): CeibroDatabase {
+        return Room.databaseBuilder(context, CeibroDatabase::class.java, CeibroDatabase.DB_NAME)
+            .addCallback(object : RoomDatabase.Callback() {
+
+            })
+            .fallbackToDestructiveMigration().build()
+    }
 
     companion object {
         const val CONTACT_SYNC_WORKER_TAG: String = "ContactSyncWorker"

@@ -119,4 +119,8 @@ interface DashboardRepositoryService {
         @Path("contactId") contactId: String,
     ): Response<BlockUserResponse>
 
+    @POST("v2/users/contacts/delete")
+    suspend fun syncDeletedContacts(
+        @Body syncContactsRequest: SyncContactsRequest
+    ): Response<GetContactsResponse>
 }

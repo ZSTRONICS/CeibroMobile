@@ -171,4 +171,9 @@ class MyConnectionV2Fragment :
             }
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onGetAllContactsFromAPI(event: LocalEvents.UpdateConnections) {
+        loadConnections(false)
+    }
 }

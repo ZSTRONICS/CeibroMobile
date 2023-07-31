@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -667,5 +666,10 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             println("PhoneNumber-OneTimeContactSyncWorker")
             WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startOneTimeContactSyncWorker(requireContext())
     }
 }

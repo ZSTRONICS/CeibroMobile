@@ -19,8 +19,8 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.invites.MyInvitations
 import com.zstronics.ceibro.data.repos.dashboard.invites.SendInviteRequest
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -180,6 +180,15 @@ class DashboardRepository @Inject constructor(
         call =
         {
             service.syncContacts(userId, contacts)
+        }
+    )
+
+    override suspend fun syncDeletedContacts(
+        contacts: SyncContactsRequest
+    ): ApiResponse<GetContactsResponse> = executeSafely(
+        call =
+        {
+            service.syncDeletedContacts(contacts)
         }
     )
 

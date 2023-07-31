@@ -18,8 +18,11 @@ data class SyncContactsRequest(
         var phoneNumber: String = "",
         @SerializedName("contactFullName")
         var contactFullName: String? = "",
+        @Transient
         var beneficiaryPictureUrl: String = "",
+        @Transient
         var email: String = "",
+        @Transient
         var isChecked: Boolean = false
     )
 }

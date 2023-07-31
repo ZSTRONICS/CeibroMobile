@@ -60,6 +60,10 @@ interface IDashboardRepository {
         contacts: SyncContactsRequest
     ): ApiResponse<GetContactsResponse>
 
+    suspend fun syncDeletedContacts(
+        contacts: SyncContactsRequest
+    ): ApiResponse<GetContactsResponse>
+
     suspend fun syncContactsEnabled(
         phoneNumber: String,
         enabled: Boolean

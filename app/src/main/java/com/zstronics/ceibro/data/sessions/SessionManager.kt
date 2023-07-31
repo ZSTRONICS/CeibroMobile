@@ -144,7 +144,7 @@ class SessionManager constructor(
         sharedPreferenceManager.saveSyncedContacts(KEY_SYNCED_CONTACTS, selectedContacts)
     }
 
-    fun getSyncedContacts(): List<SyncContactsRequest.CeibroContactLight> {
+    fun getSyncedContacts(): List<SyncContactsRequest.CeibroContactLight>? {
         return sharedPreferenceManager.getSyncedContacts(KEY_SYNCED_CONTACTS)
     }
 

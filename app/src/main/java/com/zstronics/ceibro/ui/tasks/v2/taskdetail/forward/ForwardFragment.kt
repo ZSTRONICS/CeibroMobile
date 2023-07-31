@@ -13,11 +13,15 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentForwardBinding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.ForwardChipsAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.ForwardSelectionAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -177,6 +181,7 @@ class ForwardFragment :
     override fun onResume() {
         super.onResume()
         loadConnections(true)
+        mViewDataBinding.forwardSearchBar.setQuery("", true)
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {
@@ -198,4 +203,18 @@ class ForwardFragment :
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onGetAllContactsFromAPI(event: LocalEvents.UpdateConnections) {
+        loadConnections(false)
+    }
 }

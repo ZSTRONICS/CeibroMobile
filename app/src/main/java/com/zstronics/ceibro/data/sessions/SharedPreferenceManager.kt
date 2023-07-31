@@ -197,7 +197,8 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         editor.commit()
         editor.apply()
     }
-    fun getSyncedContacts(KEY_NAME: String): List<SyncContactsRequest.CeibroContactLight> {
+
+    fun getSyncedContacts(KEY_NAME: String): List<SyncContactsRequest.CeibroContactLight>? {
         val gson = Gson()
         val listType = object : TypeToken<List<SyncContactsRequest.CeibroContactLight>>() {}.type
         val json = sharedPref.getString(KEY_NAME, "")

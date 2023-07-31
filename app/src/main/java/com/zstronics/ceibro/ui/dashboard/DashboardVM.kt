@@ -41,11 +41,7 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
-import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.*
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
@@ -866,6 +862,7 @@ class DashboardVM @Inject constructor(
         val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.value = !(newCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
+
     private fun updateFromMeUnread(
         allTasks: TaskV2Response.AllTasks,
         requireActivity: FragmentActivity
@@ -875,8 +872,10 @@ class DashboardVM @Inject constructor(
         val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
 
         val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
-        sharedViewModel.isFromMeUnread.value = !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)
+        sharedViewModel.isFromMeUnread.value =
+            !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
+
     private fun updateHiddenUnread(
         allTasks: TaskV2Response.AllTasks,
         requireActivity: FragmentActivity
@@ -886,7 +885,8 @@ class DashboardVM @Inject constructor(
         val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
 
         val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
-        sharedViewModel.isHiddenUnread.value = !(canceledCount == 0 && ongoingCount == 0 && doneCount == 0)
+        sharedViewModel.isHiddenUnread.value =
+            !(canceledCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -905,6 +905,7 @@ class DashboardVM @Inject constructor(
             when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                 is ApiResponse.Success -> {
                     connectionsV2Dao.insertAll(response.data.contacts)
+                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
                     val handler = Handler()
                     handler.postDelayed(Runnable {
                         EventBus.getDefault().post(LocalEvents.ContactsSynced)
