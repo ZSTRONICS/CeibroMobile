@@ -6,17 +6,17 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.extensions.showKeyboardWithFocus
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentCommentBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
@@ -47,6 +47,7 @@ class CommentFragment :
                 )
                 ceibroImagesPickerLauncher.launch(ceibroCamera)
             }
+
             R.id.filesHeaderLayout -> {
                 if (mViewDataBinding.filesRV.visibility == View.VISIBLE) {
                     mViewDataBinding.filesRV.visibility = View.GONE
@@ -56,6 +57,7 @@ class CommentFragment :
                     mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
                 }
             }
+
             R.id.newCommentAttachBtn -> {
                 if (viewState.isAttachLayoutOpen.value == true) {
                     viewState.isAttachLayoutOpen.value = false
@@ -103,6 +105,7 @@ class CommentFragment :
                     )
                 )
             }
+
             R.id.newCommentLibraryBtn -> {
                 chooseImages(
                     mimeTypes = arrayOf(
@@ -119,6 +122,7 @@ class CommentFragment :
                     )
                 )
             }
+
             R.id.nextBtn -> {
                 if (viewModel.actionToPerform.equals(TaskDetailEvents.Comment.eventValue, true)) {
                     viewModel.uploadComment(
@@ -128,7 +132,11 @@ class CommentFragment :
                         bundle.putParcelable("taskData", viewModel.taskData)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
-                } else if (viewModel.actionToPerform.equals(TaskDetailEvents.DoneTask.eventValue, true)) {
+                } else if (viewModel.actionToPerform.equals(
+                        TaskDetailEvents.DoneTask.eventValue,
+                        true
+                    )
+                ) {
                     viewModel.doneTask(
                         requireContext()
                     ) {
@@ -140,7 +148,6 @@ class CommentFragment :
             }
         }
     }
-
 
 
     @Inject
@@ -167,18 +174,19 @@ class CommentFragment :
             mViewDataBinding.newCommentAttachmentLayout.animate()
                 .translationY(mViewDataBinding.newCommentAttachmentLayout.height.toFloat())
                 .setDuration(20)
-                .withEndAction { mViewDataBinding.newCommentAttachmentLayout.visibility = View.GONE }
+                .withEndAction {
+                    mViewDataBinding.newCommentAttachmentLayout.visibility = View.GONE
+                }
                 .start()
         }, 20)
 
-        mViewDataBinding.commentText.setOnTouchListener { view, event ->
-            view.parent.requestDisallowInterceptTouchEvent(true)
-            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-                view.parent.requestDisallowInterceptTouchEvent(false)
-            }
-            return@setOnTouchListener false
-        }
-
+//        mViewDataBinding.commentText.setOnTouchListener { view, event ->
+//            view.parent.requestDisallowInterceptTouchEvent(true)
+//            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+//                view.parent.requestDisallowInterceptTouchEvent(false)
+//            }
+//            return@setOnTouchListener false
+//        }
 
 
         viewModel.listOfImages.observe(viewLifecycleOwner) {
@@ -243,6 +251,14 @@ class CommentFragment :
             oldDocuments?.remove(data)
             viewModel.documents.postValue(oldDocuments)
         }
+
+        val handler1 = Handler()
+        handler1.postDelayed(Runnable {
+            mViewDataBinding.commentText.post {
+                mViewDataBinding.commentText.showKeyboardWithFocus()
+            }
+        }, 300)
+
     }
 
 

@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
 
 fun View.showKeyboard(request: Boolean, forced: Boolean) {
     requestFocus()
@@ -75,6 +76,18 @@ fun View.showKeyboardWithFocus() {
     (this as EditText).setRawInputType(InputType.TYPE_CLASS_TEXT)
     this.setTextIsSelectable(true)
     imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
+}
+/**
+ * Opens up the keyboard forcefully
+ * & Focus on view
+ * @receiver TextInputEditText
+ */
+fun TextInputEditText.showKeyboardWithFocus() {
+    val imm = this.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    this.requestFocus()
+    (this as TextInputEditText).setRawInputType(InputType.TYPE_CLASS_TEXT)
+//    this.setTextIsSelectable(true)
+    imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 
