@@ -198,21 +198,23 @@ class TaskDetailV2Fragment :
                 DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY
             )
 
-            mViewDataBinding.taskDetailDueDate.text = DateUtils.reformatStringDate(
+            var dueDate = ""
+            dueDate = DateUtils.reformatStringDate(
                 date = item.dueDate,
                 DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
                 DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
             )
-            if (mViewDataBinding.taskDetailDueDate.text == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
-                mViewDataBinding.taskDetailDueDate.text = DateUtils.reformatStringDate(
+            if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+                dueDate = DateUtils.reformatStringDate(
                     date = item.dueDate,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
                 )
-                if (mViewDataBinding.taskDetailDueDate.text == "") {
-                    mViewDataBinding.taskDetailDueDate.text = "N/A"
+                if (dueDate == "") {
+                    dueDate = "N/A"
                 }
             }
+            mViewDataBinding.taskDetailDueDate.text = "Due Date  $dueDate"
 
             mViewDataBinding.taskTitle.text =
                 if (item.topic != null) {

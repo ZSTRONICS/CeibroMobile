@@ -186,9 +186,43 @@ class TaskFromMeFragment :
         val unreadCount = allTasks.unread.count { task -> viewModel.user?.id !in task.seenBy }
         val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
         val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
-        mViewDataBinding.unreadStateCount.text = unreadCount.toString()
-        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
-        mViewDataBinding.doneStateCount.text = doneCount.toString()
+        mViewDataBinding.unreadStateCount.text =
+            if (unreadCount > 99) {
+                "99+"
+            } else {
+                "+$unreadCount"
+            }
+        mViewDataBinding.ongoingStateCount.text =
+            if (ongoingCount > 99) {
+                "99+"
+            } else {
+                "+$ongoingCount"
+            }
+        mViewDataBinding.doneStateCount.text =
+            if (doneCount > 99) {
+                "99+"
+            } else {
+                "+$doneCount"
+            }
+
+        mViewDataBinding.unreadStateCount.visibility =
+            if (unreadCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        mViewDataBinding.ongoingStateCount.visibility =
+            if (ongoingCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        mViewDataBinding.doneStateCount.visibility =
+            if (doneCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
 
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isFromMeUnread.value = !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)

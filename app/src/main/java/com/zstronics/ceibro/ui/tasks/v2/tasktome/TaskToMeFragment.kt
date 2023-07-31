@@ -189,9 +189,43 @@ class TaskToMeFragment :
         val newCount = allTasks.new.count { task -> viewModel.user?.id !in task.seenBy }
         val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
         val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
-        mViewDataBinding.newStateCount.text = newCount.toString()
-        mViewDataBinding.ongoingStateCount.text = ongoingCount.toString()
-        mViewDataBinding.doneStateCount.text = doneCount.toString()
+        mViewDataBinding.newStateCount.text =
+            if (newCount > 99) {
+                "99+"
+            } else {
+                "+$newCount"
+            }
+        mViewDataBinding.ongoingStateCount.text =
+            if (ongoingCount > 99) {
+                "99+"
+            } else {
+                "+$ongoingCount"
+            }
+        mViewDataBinding.doneStateCount.text =
+            if (doneCount > 99) {
+                "99+"
+            } else {
+                "+$doneCount"
+            }
+
+        mViewDataBinding.newStateCount.visibility =
+            if (newCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        mViewDataBinding.ongoingStateCount.visibility =
+            if (ongoingCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        mViewDataBinding.doneStateCount.visibility =
+            if (doneCount == 0) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
 
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.value = !(newCount == 0 && ongoingCount == 0 && doneCount == 0)
