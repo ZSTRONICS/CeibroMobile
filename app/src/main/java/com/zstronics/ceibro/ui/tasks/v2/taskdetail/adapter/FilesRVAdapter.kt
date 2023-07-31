@@ -46,13 +46,14 @@ class FilesRVAdapter @Inject constructor() :
 
         fun bind(item: TaskFiles) {
             binding.clearIcon.setOnClickListener {
-                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+//                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
 
             val context = binding.uploadImg.context
 
             binding.fileName.text = item.fileName
             binding.fileSize.text = item.fileTag
+            binding.clearIcon.visibility = View.GONE
 
         }
     }
