@@ -52,9 +52,7 @@ class MyConnectionV2VM @Inject constructor(
                         val contacts = response.data.contacts.groupDataByFirstLetter()
                         callBack.invoke()
                         originalConnections = contacts
-                        if (contacts.isNotEmpty()) {
-                            _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
-                        }
+                        _allConnections.postValue(contacts as MutableList<AllCeibroConnections.CeibroConnection>?)
                     }
 
                     is ApiResponse.Error -> {

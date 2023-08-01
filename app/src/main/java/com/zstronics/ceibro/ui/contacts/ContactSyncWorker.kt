@@ -84,6 +84,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 is ApiResponse.Success -> {
                     EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
                     EventBus.getDefault().post(LocalEvents.ContactsSynced)
+                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
                     updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                     Result.success()
                 }

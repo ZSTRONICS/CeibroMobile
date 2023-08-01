@@ -25,6 +25,7 @@ class ManualContactsSelectionFragment :
     override val viewModel: ManualContactsSelectionVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_manual_contacts_selection
     override fun toolBarVisibility(): Boolean = true
+    override fun getToolBarTitle() = getString(R.string.select_contacts)
     var searchedContacts = false
     var isLoadingTrue = false
     override fun onClick(id: Int) {
@@ -58,7 +59,7 @@ class ManualContactsSelectionFragment :
         adapter.itemClickListener =
             { childView: View, position: Int, contacts: SyncContactsRequest.CeibroContactLight ->
                 val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
-                mViewDataBinding.confirmBtn.isEnabled = selectedContacts.isNotEmpty()
+                mViewDataBinding.confirmBtn.isEnabled = true
             }
         mViewDataBinding.recyclerView.adapter = adapter
         mViewDataBinding.searchBar.addTextChangedListener { editable ->

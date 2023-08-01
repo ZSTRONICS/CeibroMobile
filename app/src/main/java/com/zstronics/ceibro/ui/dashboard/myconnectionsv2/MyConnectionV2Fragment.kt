@@ -11,9 +11,9 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2Binding
@@ -131,31 +131,42 @@ class MyConnectionV2Fragment :
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.disableSync -> {
-                    val builder = MaterialAlertDialogBuilder(requireContext())
-                    builder.setMessage(resources.getString(R.string.sync_contacts_statement_disable))
-                    builder.setCancelable(false)
-                    builder.setPositiveButton("Allow") { dialog, which ->
-                        viewModel.syncContactsDisable {
-                            viewModel.sessionManager.updateAutoSync(false)
-                            viewState.isAutoSyncEnabled.value = false
-                        }
+//                    val builder = MaterialAlertDialogBuilder(requireContext())
+//                    builder.setMessage(resources.getString(R.string.sync_contacts_statement_disable))
+//                    builder.setCancelable(false)
+//                    builder.setPositiveButton("Allow") { dialog, which ->
+//                        viewModel.syncContactsDisable {
+//                            viewModel.sessionManager.updateAutoSync(false)
+//                            viewState.isAutoSyncEnabled.value = false
+//                        }
+//                    }
+//                    builder.setNegativeButton("Deny") { dialog, which -> }
+//                    builder.show()
+                    viewModel.syncContactsDisable {
+                        viewModel.sessionManager.updateAutoSync(false)
+                        viewState.isAutoSyncEnabled.value = false
                     }
-                    builder.setNegativeButton("Deny") { dialog, which -> }
-                    builder.show()
+                    toast("Contacts sync disabled")
                     true
                 }
                 R.id.enableSync -> {
-                    val builder = MaterialAlertDialogBuilder(requireContext())
-                    builder.setMessage(resources.getString(R.string.sync_contacts_statement))
-                    builder.setCancelable(false)
-                    builder.setPositiveButton("Allow") { dialog, which ->
-                        viewModel.syncContactsEnabled {
-                            viewModel.sessionManager.updateAutoSync(true)
-                            viewState.isAutoSyncEnabled.value = true
-                        }
+//                    val builder = MaterialAlertDialogBuilder(requireContext())
+//                    builder.setMessage(resources.getString(R.string.sync_contacts_statement))
+//                    builder.setCancelable(false)
+//                    builder.setPositiveButton("Allow") { dialog, which ->
+//                        viewModel.syncContactsEnabled {
+//                            viewModel.sessionManager.updateAutoSync(true)
+//                            viewState.isAutoSyncEnabled.value = true
+//                        }
+//                    }
+//                    builder.setNegativeButton("Deny") { dialog, which -> }
+//                    builder.show()
+                    viewModel.syncContactsEnabled {
+                        viewModel.sessionManager.updateAutoSync(true)
+                        viewState.isAutoSyncEnabled.value = true
+                        startOneTimeContactSyncWorker(requireContext())
                     }
-                    builder.setNegativeButton("Deny") { dialog, which -> }
-                    builder.show()
+                    toast("Contacts sync enabled")
                     true
                 }
                 R.id.selectContacts -> {
