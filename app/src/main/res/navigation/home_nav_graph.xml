@@ -391,4 +391,9 @@
         android:name="com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment"
         android:label="TaskHiddenFragment"
         tools:layout="@layout/fragment_task_hidden" />
+    <fragment
+        android:id="@+id/manualContactsSelectionFragment"
+        android:name="com.zstronics.ceibro.ui.dashboard.manual_contact_selection.ManualContactsSelectionFragment"
+        android:label="ManualContactsSelectionFragment"
+        tools:layout="@layout/fragment_manual_contacts_selection" />
 </navigation>

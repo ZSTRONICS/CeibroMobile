@@ -13,29 +13,62 @@
         android:background="@color/transparent"
         android:visibility="visible">
 
-        <View
-            android:id="@+id/layer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/white"
-            android:visibility="visible" />
+        <!--        <View-->
+        <!--            android:id="@+id/layer"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:alpha="0"-->
+        <!--            android:background="@color/white"-->
+        <!--            android:visibility="visible" />-->
 
-        <com.zstronics.ceibro.base.progressbar.CircularProgressBar
-            android:id="@+id/circularProgressBar"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_90sdp"
-            android:layout_centerInParent="true"
-            android:visibility="invisible"
-            app:cpb_background_progressbar_color="@color/grey"
-            app:cpb_background_progressbar_width="4dp"
-            app:cpb_indeterminate_mode="true"
-            app:cpb_progress="50"
-            app:cpb_progress_direction="to_right"
-            app:cpb_progress_max="100"
-            app:cpb_progressbar_color="?attr/colorPrimary"
-            app:cpb_progressbar_width="4dp"
-            app:cpb_round_border="false"
-            app:cpb_start_angle="-90" />
+        <!--        <com.zstronics.ceibro.base.progressbar.CircularProgressBar-->
+        <!--            android:id="@+id/circularProgressBar"-->
+        <!--            android:layout_width="@dimen/_90sdp"-->
+        <!--            android:layout_height="@dimen/_90sdp"-->
+        <!--            android:layout_centerInParent="true"-->
+        <!--            android:visibility="invisible"-->
+        <!--            app:cpb_background_progressbar_color="@color/grey"-->
+        <!--            app:cpb_background_progressbar_width="4dp"-->
+        <!--            app:cpb_indeterminate_mode="true"-->
+        <!--            app:cpb_progress="50"-->
+        <!--            app:cpb_progress_direction="to_right"-->
+        <!--            app:cpb_progress_max="100"-->
+        <!--            app:cpb_progressbar_color="?attr/colorPrimary"-->
+        <!--            app:cpb_progressbar_width="4dp"-->
+        <!--            app:cpb_round_border="false"-->
+        <!--            app:cpb_start_angle="-90" />-->
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ceibro_logo_outer"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.44" />
+
+            <ImageView
+                android:id="@+id/centerLogoC"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="21dp"
+                android:layout_marginTop="21dp"
+                android:layout_marginEnd="21dp"
+                android:layout_marginBottom="21dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintEnd_toEndOf="@+id/imageView2"
+                app:layout_constraintStart_toStartOf="@+id/imageView2"
+                app:layout_constraintTop_toTopOf="@+id/imageView2"
+                app:srcCompat="@drawable/ceibro_logo_inner" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </RelativeLayout>
 </layout>

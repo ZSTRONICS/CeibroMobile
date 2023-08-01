@@ -159,6 +159,7 @@ class MyConnectionV2Fragment :
                     true
                 }
                 R.id.selectContacts -> {
+                    navigate(R.id.manualContactsSelectionFragment)
                     true
                 }
                 R.id.refreshSync -> {

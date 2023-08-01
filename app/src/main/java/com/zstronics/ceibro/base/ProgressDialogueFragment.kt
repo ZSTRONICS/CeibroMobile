@@ -1,24 +1,27 @@
 package com.zstronics.ceibro.base
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.content.DialogInterface
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.databinding.ProgressDialogueFragmentBinding
+import com.zstronics.ceibro.databinding.CeibroLogoDialogueFragmentBinding
 
 class ProgressDialogueFragment : DialogFragment() {
-    lateinit var binding: ProgressDialogueFragmentBinding
+    lateinit var binding: CeibroLogoDialogueFragmentBinding
+    var count = 0
+    lateinit var handler: Handler
+    lateinit var runnable: Runnable
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ProgressDialogueFragmentBinding.inflate(
+        binding = CeibroLogoDialogueFragmentBinding.inflate(
             layoutInflater,
             container,
             false
@@ -34,23 +37,42 @@ class ProgressDialogueFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.circularProgressBar.visibility = View.VISIBLE
-        binding.layer.visibility = View.VISIBLE
-        binding.layer.alpha = 0f
-        binding.layer.animate().alpha(0.6f).setDuration(300)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    binding.circularProgressBar.indeterminateMode = true
-                    binding.layer.visibility = View.VISIBLE
-                }
-            })
+        startSplashAnimation()
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        binding.circularProgressBar.clearProgressAnimation()
-        binding.circularProgressBar.visibility = View.GONE
-        binding.layer.visibility = View.GONE
-        super.onDismiss(dialog)
+
+    private fun startSplashAnimation() {
+        // Set the total duration for the animation (5 seconds)
+        val totalDuration = 5000L
+
+        // The duration for each individual animation
+        val individualDuration = 740L
+
+        // Calculate the number of times to run the animation
+        val repeatCount = totalDuration / (individualDuration * 2)
+
+        object : CountDownTimer(totalDuration, individualDuration * 2) {
+            override fun onTick(millisUntilFinished: Long) {
+                // Run the animation on each tick
+                animateLogo()
+            }
+
+            override fun onFinish() {
+                // Animation finished
+                // You can navigate to the next screen or perform any other action here.
+            }
+        }.start()
+    }
+
+    private fun animateLogo() {
+        // Run the scaleX animation
+        binding.centerLogoC.animate()
+            .scaleX(-1F)
+            .setDuration(370)
+            .withEndAction {
+                // After the first animation is finished, run the second scaleX animation
+                binding.centerLogoC.animate()
+                    .scaleX(1F).duration = 370
+            }
     }
 }
