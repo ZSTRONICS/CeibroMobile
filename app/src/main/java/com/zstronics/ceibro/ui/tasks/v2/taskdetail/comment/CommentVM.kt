@@ -138,7 +138,7 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id)
+                taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
 
                 val handler = Handler()
                 handler.postDelayed(Runnable {
@@ -241,7 +241,7 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                taskData = updateTaskDoneInLocal(eventData, taskDao, user?.id)
+                taskData = updateTaskDoneInLocal(eventData, taskDao, user?.id, sessionManager)
 
                 val handler = Handler()
                 handler.postDelayed(Runnable {

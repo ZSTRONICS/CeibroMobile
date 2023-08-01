@@ -108,7 +108,8 @@ class DashboardVM @Inject constructor(
                             updateCreatedTaskInLocal(
                                 taskCreatedData.data,
                                 taskDao,
-                                userId
+                                userId,
+                                sessionManager
                             )
 
                             val notificationTitle: String =
@@ -154,13 +155,13 @@ class DashboardVM @Inject constructor(
                                 object : TypeToken<SocketNewTaskEventV2Response>() {}.type
                             ).data
                             if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
-                                updateTaskCommentInLocal(commentData, taskDao, userId)
+                                updateTaskCommentInLocal(commentData, taskDao, userId, sessionManager)
                             }
                             if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
-                                updateTaskCanceledInLocal(commentData, taskDao, userId)
+                                updateTaskCanceledInLocal(commentData, taskDao, userId, sessionManager)
                             }
                             if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
-                                updateTaskDoneInLocal(commentData, taskDao, userId)
+                                updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)
                             }
                         }
 
