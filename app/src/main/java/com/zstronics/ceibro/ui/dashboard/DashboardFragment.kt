@@ -59,20 +59,25 @@ class DashboardFragment :
             R.id.createNewTaskBtn -> {
                 navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
             }
+
             R.id.profileImg -> navigateToProfile()
             R.id.friendsReqBtn -> navigateToConnections()
             R.id.toMeBtn -> {
                 changeSelectedTab(R.id.toMeBtn, false)
             }
+
             R.id.fromMeBtn -> {
                 changeSelectedTab(R.id.fromMeBtn, false)
             }
+
             R.id.hiddenBtn -> {
                 changeSelectedTab(R.id.hiddenBtn, false)
             }
+
             R.id.locationBtn -> {
                 changeSelectedTab(R.id.locationBtn, false)
             }
+
             R.id.projectsBtn -> {
                 changeSelectedTab(R.id.projectsBtn, false)
             }
@@ -96,6 +101,7 @@ class DashboardFragment :
                     .replace(R.id.fragment_container, taskToMeFragmentInstance!!)
                     .commit()
             }
+
             R.id.fromMeBtn -> {
                 viewState.fromMeSelected.value = true
                 if (newTask) {
@@ -109,6 +115,7 @@ class DashboardFragment :
                     .replace(R.id.fragment_container, taskFromMeFragmentInstance!!)
                     .commit()
             }
+
             R.id.hiddenBtn -> {
                 viewState.hiddenSelected.value = true
                 if (taskHiddenFragmentInstance == null) {
@@ -118,9 +125,11 @@ class DashboardFragment :
                     .replace(R.id.fragment_container, taskHiddenFragmentInstance!!)
                     .commit()
             }
+
             R.id.locationBtn -> {
                 viewState.locationSelected.value = true
             }
+
             R.id.projectsBtn -> {
                 viewState.projectsSelected.value = true
             }
@@ -133,6 +142,7 @@ class DashboardFragment :
             viewModel.loadAppData(requireActivity())
             serverDataLoadedOnce = true
         }
+        viewModel.updateRootUnread(requireActivity())
 
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
             println("Heartbeat, Dashboard")
@@ -225,6 +235,7 @@ class DashboardFragment :
                         builder.setProgress(100, progress, false)
                         notificationManager.notify(fileProgress?.fileId.hashCode(), builder.build())
                     }
+
                     SocketHandler.FileAttachmentEvents.FILE_UPLOADED.name -> {
                         val fileUploaded = gson.fromJson<FileUploadedEventResponse>(
                             arguments,
@@ -251,6 +262,7 @@ class DashboardFragment :
                             }
                         }
                     }
+
                     SocketHandler.FileAttachmentEvents.FILES_UPLOAD_COMPLETED.name -> {
 
                         requireActivity().getSystemService(NotificationManager::class.java)

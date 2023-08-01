@@ -259,4 +259,8 @@ class TaskFromMeVM @Inject constructor(
         }
     }
 
+    fun saveFromMeUnread(isUnread: Boolean) {
+        sessionManager.saveFromMeUnread(isUnread)
+    }
+
 }

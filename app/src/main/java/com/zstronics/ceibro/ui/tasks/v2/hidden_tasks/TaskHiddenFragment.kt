@@ -156,6 +156,9 @@ class TaskHiddenFragment :
     override fun onResume() {
         super.onResume()
         loadTasks(true)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isHiddenUnread.value = false
+        viewModel.saveHiddenUnread(false)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -197,9 +200,6 @@ class TaskHiddenFragment :
         //we don't need counters on ongoing and done in Hidden
         mViewDataBinding.ongoingStateCount.visibility = View.GONE
         mViewDataBinding.doneStateCount.visibility = View.GONE
-
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        sharedViewModel.isHiddenUnread.value = !(canceledCount == 0)
     }
 
     private fun changeSelectedUserState() {

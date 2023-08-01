@@ -12,6 +12,8 @@
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.dashboard.DashboardVM" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -209,11 +211,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:drawableTop="@drawable/icon_task_to_me"
                     android:drawableTint="@drawable/bottom_nav_color"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:text="@string/to_me_heading"
                     android:textAllCaps="false"
                     android:textColor="@drawable/bottom_nav_text_color"
@@ -255,11 +257,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:drawableTop="@drawable/icon_task_from_me"
                     android:drawableTint="@drawable/bottom_nav_color"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:text="@string/from_me_heading"
                     android:textAllCaps="false"
                     android:textColor="@drawable/bottom_nav_text_color"
@@ -301,11 +303,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:drawableTop="@drawable/icon_canceled"
                     android:drawableTint="@drawable/bottom_nav_color"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:text="@string/hidden_heading"
                     android:textAllCaps="false"
                     android:textColor="@drawable/bottom_nav_text_color"

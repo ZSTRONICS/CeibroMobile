@@ -667,9 +667,4 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             WorkManager.getInstance(context).enqueue(oneTimeWorkRequest)
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        startOneTimeContactSyncWorker(requireContext())
-    }
 }

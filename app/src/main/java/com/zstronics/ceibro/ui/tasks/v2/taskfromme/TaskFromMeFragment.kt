@@ -164,6 +164,9 @@ class TaskFromMeFragment :
     override fun onResume() {
         super.onResume()
         loadTasks(true)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isFromMeUnread.value = false
+        viewModel.saveFromMeUnread(false)
     }
 
 
@@ -223,9 +226,6 @@ class TaskFromMeFragment :
             } else {
                 View.VISIBLE
             }
-
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        sharedViewModel.isFromMeUnread.value = !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
 
     private fun changeSelectedUserState() {

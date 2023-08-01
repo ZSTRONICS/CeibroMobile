@@ -163,11 +163,14 @@ class TaskToMeFragment :
         }
     }
 
+
     override fun onResume() {
         super.onResume()
         loadTasks(true)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isToMeUnread.value = false
+        viewModel.saveToMeUnread(false)
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
@@ -226,9 +229,6 @@ class TaskToMeFragment :
             } else {
                 View.VISIBLE
             }
-
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        sharedViewModel.isToMeUnread.value = !(newCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
 
     private fun changeSelectedUserState() {
