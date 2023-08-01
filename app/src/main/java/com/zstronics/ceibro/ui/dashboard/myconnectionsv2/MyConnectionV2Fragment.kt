@@ -1,11 +1,12 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.View
 import android.widget.SearchView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -35,7 +36,6 @@ class MyConnectionV2Fragment :
     override val layoutResId: Int = R.layout.fragment_connections_v2
     override fun toolBarVisibility(): Boolean = false
     var runUIOnce = false
-    val CONTACT_ADD_REQUEST = 108
     override fun onClick(id: Int) {
         when (id) {
             R.id.syncIV -> {
@@ -59,7 +59,7 @@ class MyConnectionV2Fragment :
             }
             R.id.addContactsBtn -> {
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
-                startActivityForResult(intent, CONTACT_ADD_REQUEST)
+                addContactResultLauncher.launch(intent)
             }
             R.id.closeBtn -> {
                 navigateBack()
@@ -160,17 +160,14 @@ class MyConnectionV2Fragment :
     }
 
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CONTACT_ADD_REQUEST) {
-//            println("ContactAddedRequest")
-            if (resultCode == Activity.RESULT_OK) {
-//                println("ContactAdded")
-                startOneTimeContactSyncWorker(requireContext())
-            }
+    private val addContactResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            val resultCode = result.resultCode
+//            if (resultCode == Activity.RESULT_OK) {
+            // Contact added successfully, trigger your desired action here
+            startOneTimeContactSyncWorker(requireContext())
+//            }
         }
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGetAllContactsFromAPI(event: LocalEvents.UpdateConnections) {

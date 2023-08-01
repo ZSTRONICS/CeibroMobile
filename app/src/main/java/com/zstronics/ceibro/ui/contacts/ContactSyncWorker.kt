@@ -117,7 +117,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
         } else {
-            Result.failure()
+            Result.success()
         }
     }
 
