@@ -176,6 +176,9 @@ class TaskToMeFragment :
     fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
 //        showToast("New Task Created")
         loadTasks(false)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isToMeUnread.value = false
+        viewModel.saveToMeUnread(false)
     }
 
     override fun onStart() {

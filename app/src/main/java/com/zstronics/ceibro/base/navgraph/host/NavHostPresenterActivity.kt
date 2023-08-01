@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.base.navgraph.host
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -26,6 +27,15 @@ class NavHostPresenterActivity :
         destination: NavDestination?,
         arguments: Bundle?
     ) {
+    }
+
+    companion object {
+        var activityInstance: NavHostPresenterActivity? = null
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        activityInstance = this
     }
 
     override fun onClick(id: Int) {
