@@ -1,11 +1,13 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.View
 import android.widget.SearchView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -35,31 +37,14 @@ class MyConnectionV2Fragment :
     override val layoutResId: Int = R.layout.fragment_connections_v2
     override fun toolBarVisibility(): Boolean = false
     var runUIOnce = false
-    val CONTACT_ADD_REQUEST = 108
     override fun onClick(id: Int) {
         when (id) {
-            R.id.syncIV -> {
-                val builder = MaterialAlertDialogBuilder(requireContext())
-                builder.setMessage(resources.getString(R.string.sync_contacts_statement))
-                builder.setCancelable(false)
-                builder.setPositiveButton("Allow") { dialog, which ->
-                    // User clicked Allow button
-                    // Add your logic here
-                    viewModel.syncContactsEnabled {
-//                            toast("Your all contacts synced with server")
-//                            loadConnections(false)
-                        viewModel.sessionManager.updateAutoSync(true)
-                        viewState.isAutoSyncEnabled.value = true
-                    }
-                }
-                builder.setNegativeButton("Deny") { dialog, which ->
-
-                }
-                builder.show()
+            R.id.optionMenuIV -> {
+                showPopupMenu(mViewDataBinding.optionMenuIV)
             }
             R.id.addContactsBtn -> {
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
-                startActivityForResult(intent, CONTACT_ADD_REQUEST)
+                addContactResultLauncher.launch(intent)
             }
             R.id.closeBtn -> {
                 navigateBack()
@@ -140,6 +125,59 @@ class MyConnectionV2Fragment :
         }
     }
 
+    private fun showPopupMenu(anchorView: View) {
+        val popupMenu = PopupMenu(requireContext(), anchorView)
+        popupMenu.inflate(if (viewModel.sessionManager.getUser().value?.autoContactSync == true) R.menu.sync_enabled_menu else R.menu.sync_disabled_menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.disableSync -> {
+                    val builder = MaterialAlertDialogBuilder(requireContext())
+                    builder.setMessage(resources.getString(R.string.sync_contacts_statement_disable))
+                    builder.setCancelable(false)
+                    builder.setPositiveButton("Allow") { dialog, which ->
+                        viewModel.syncContactsDisable {
+                            viewModel.sessionManager.updateAutoSync(false)
+                            viewState.isAutoSyncEnabled.value = false
+                        }
+                    }
+                    builder.setNegativeButton("Deny") { dialog, which -> }
+                    builder.show()
+                    true
+                }
+                R.id.enableSync -> {
+                    val builder = MaterialAlertDialogBuilder(requireContext())
+                    builder.setMessage(resources.getString(R.string.sync_contacts_statement))
+                    builder.setCancelable(false)
+                    builder.setPositiveButton("Allow") { dialog, which ->
+                        viewModel.syncContactsEnabled {
+                            viewModel.sessionManager.updateAutoSync(true)
+                            viewState.isAutoSyncEnabled.value = true
+                        }
+                    }
+                    builder.setNegativeButton("Deny") { dialog, which -> }
+                    builder.show()
+                    true
+                }
+                R.id.selectContacts -> {
+                    true
+                }
+                R.id.refreshSync -> {
+                    startOneTimeContactSyncWorker(requireContext())
+                    true
+                }
+                R.id.addContactsBtn -> {
+                    val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
+                    addContactResultLauncher.launch(intent)
+                    true
+                }
+                else -> {
+                    true
+                }
+            }
+        }
+        popupMenu.show()
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -160,17 +198,14 @@ class MyConnectionV2Fragment :
     }
 
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CONTACT_ADD_REQUEST) {
-//            println("ContactAddedRequest")
-            if (resultCode == Activity.RESULT_OK) {
-//                println("ContactAdded")
-                startOneTimeContactSyncWorker(requireContext())
-            }
+    private val addContactResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            val resultCode = result.resultCode
+//            if (resultCode == Activity.RESULT_OK) {
+            // Contact added successfully, trigger your desired action here
+            startOneTimeContactSyncWorker(requireContext())
+//            }
         }
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGetAllContactsFromAPI(event: LocalEvents.UpdateConnections) {

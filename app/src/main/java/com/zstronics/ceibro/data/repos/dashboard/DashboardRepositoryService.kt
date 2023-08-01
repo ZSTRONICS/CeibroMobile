@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.UploadFilesV2Resp
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
@@ -108,6 +109,9 @@ interface DashboardRepositoryService {
     suspend fun getAllConnectionsV2(
         @Path("userId") userId: String,
     ): Response<AllCeibroConnections>
+
+    @GET("v2/users/recent/contacts")
+    suspend fun getRecentCeibroConnections(): Response<RecentCeibroConnections>
 
     @POST("v2/users/contacts/block/{contactId}")
     suspend fun blockUser(

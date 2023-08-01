@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/disableSync"
+        android:title="@string/disable_auto_sync"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/refreshSync"
+        android:title="@string/heading_refresh"
+        app:showAsAction="never" />
+</menu>

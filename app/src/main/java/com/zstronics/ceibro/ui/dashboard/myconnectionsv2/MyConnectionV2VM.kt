@@ -119,6 +119,23 @@ class MyConnectionV2VM @Inject constructor(
         }
     }
 
+    fun syncContactsDisable(
+        onSuccess: () -> Unit
+    ) {
+        val phone = user?.phoneNumber
+        launch {
+            when (val response =
+                dashboardRepository.syncContactsEnabled(phone ?: "", enabled = false)) {
+                is ApiResponse.Success -> {
+                    onSuccess.invoke()
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
     fun filterContacts(search: String) {
         if (search.isEmpty()) {
             if (originalConnections.isNotEmpty()) {

@@ -84,10 +84,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 is ApiResponse.Success -> {
                     EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
                     EventBus.getDefault().post(LocalEvents.ContactsSynced)
-                    if (user?.autoContactSync == false) {
-                        sessionManager.saveSyncedContacts(manualContacts)
-                    }
-                    updateLocalContacts(dashboardRepository, room, user?.id ?: "")
+                    updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                     Result.success()
                 }
 
@@ -105,10 +102,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 is ApiResponse.Success -> {
                     EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
                     EventBus.getDefault().post(LocalEvents.ContactsSynced)
-                    if (user?.autoContactSync == false) {
-                        sessionManager.saveSyncedContacts(manualContacts)
-                    }
-                    updateLocalContacts(dashboardRepository, room, user?.id ?: "")
+                    updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                     Result.success()
                 }
 
@@ -117,7 +111,7 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
         } else {
-            Result.failure()
+            Result.success()
         }
     }
 
@@ -125,11 +119,13 @@ class ContactSyncWorker @AssistedInject constructor(
     private suspend fun updateLocalContacts(
         dashboardRepository: DashboardRepository,
         room: CeibroDatabase,
-        userId: String
+        userId: String,
+        sessionManager: SessionManager
     ) {
         when (val response = dashboardRepository.getAllConnectionsV2(userId)) {
             is ApiResponse.Success -> {
                 room.getConnectionsV2Dao().insertAll(response.data.contacts)
+                sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
                 EventBus.getDefault().post(LocalEvents.UpdateConnections)
                 GlobalScope.launch(Dispatchers.IO) {
                     Looper.prepare()

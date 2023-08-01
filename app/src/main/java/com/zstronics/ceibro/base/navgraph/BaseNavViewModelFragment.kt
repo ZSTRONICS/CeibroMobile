@@ -18,6 +18,7 @@ import android.transition.Fade
 import android.transition.Slide
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
@@ -82,6 +83,11 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             (activity as ManageToolBarListener).displayHomeAsUpEnabled = setDisplayHomeAsUpEnabled()
             (activity as ManageToolBarListener).homeAsUpIndicator = setHomeAsUpIndicator()
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        startOneTimeContactSyncWorker(requireContext())
     }
 
     override fun getToolBarTitle(): String? = null
@@ -659,8 +665,16 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
+            val customBackoffDelayMillis =
+                60 * 60 * 1000L // Set the initial delay to 1 hour (adjust as needed)
+
             val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ContactSyncWorker::class.java)
                 .setConstraints(constraints)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    customBackoffDelayMillis,
+                    TimeUnit.MILLISECONDS
+                )
                 .build()
 
             println("PhoneNumber-OneTimeContactSyncWorker")

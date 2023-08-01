@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.UploadFilesV2Resp
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
@@ -72,6 +73,8 @@ interface IDashboardRepository {
     suspend fun getAllConnectionsV2(
         userId: String,
     ): ApiResponse<AllCeibroConnections>
+
+    suspend fun getRecentCeibroConnections(): ApiResponse<RecentCeibroConnections>
 
     suspend fun blockUser(
         contactId: String,

@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.UploadFilesV2Resp
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.GetContactsResponse
@@ -225,4 +226,13 @@ class DashboardRepository @Inject constructor(
                 service.unblockUser(contactId)
             }
         )
+
+    override suspend fun getRecentCeibroConnections(): ApiResponse<RecentCeibroConnections> =
+        executeSafely(
+            call =
+            {
+                service.getRecentCeibroConnections()
+            }
+        )
+
 }
