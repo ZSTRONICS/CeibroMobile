@@ -1,15 +1,12 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskfromme
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
@@ -244,7 +241,7 @@ class TaskFromMeVM @Inject constructor(
             loading(true)
             when (val response = remoteTask.cancelTask(taskId)) {
                 is ApiResponse.Success -> {
-                    updateTaskCanceledInLocal(response.data.data, taskDao, user?.id)
+                    updateTaskCanceledInLocal(response.data.data, taskDao, user?.id, sessionManager)
                     val handler = Handler()
                     handler.postDelayed({
                         loading(false, "")

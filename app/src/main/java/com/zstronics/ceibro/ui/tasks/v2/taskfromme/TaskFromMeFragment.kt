@@ -173,6 +173,9 @@ class TaskFromMeFragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
         loadTasks(false)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isFromMeUnread.value = false
+        viewModel.saveFromMeUnread(false)
     }
 
     override fun onStart() {

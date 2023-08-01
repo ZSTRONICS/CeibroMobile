@@ -373,6 +373,11 @@ class DashboardFragment :
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
+        viewModel.updateRootUnread(requireActivity())
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)

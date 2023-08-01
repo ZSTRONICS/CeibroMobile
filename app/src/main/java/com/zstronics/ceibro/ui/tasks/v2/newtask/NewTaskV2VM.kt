@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NewTaskV2VM @Inject constructor(
     override val viewState: NewTaskV2State,
-    sessionManager: SessionManager,
+    private val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
     private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<INewTaskV2.State>(), INewTaskV2.ViewModel {
@@ -83,7 +83,7 @@ class NewTaskV2VM @Inject constructor(
                 loading(true)
                 taskRepository.newTaskV2(newTaskRequest) { isSuccess, task ->
                     if (isSuccess) {
-                        updateCreatedTaskInLocal(task, taskDao, user?.id)
+                        updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
                         val list = getCombinedList()
                         if (list.isNotEmpty()) {
                             task?.id?.let { uploadTaskFiles(context, list, it) }
