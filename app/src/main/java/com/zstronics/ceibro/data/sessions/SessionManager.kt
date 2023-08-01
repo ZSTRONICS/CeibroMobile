@@ -49,6 +49,26 @@ class SessionManager constructor(
         var projects: LiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> = _projects
     }
 
+    fun saveToMeUnread(isUnread: Boolean) {
+        sharedPreferenceManager.saveBoolean(KEY_IS_TO_ME_UNREAD, isUnread)
+    }
+    fun saveFromMeUnread(isUnread: Boolean) {
+        sharedPreferenceManager.saveBoolean(KEY_IS_FROM_ME_UNREAD, isUnread)
+    }
+    fun saveHiddenUnread(isUnread: Boolean) {
+        sharedPreferenceManager.saveBoolean(KEY_IS_HIDDEN_UNREAD, isUnread)
+    }
+
+    fun isToMeUnread(): Boolean {
+        return sharedPreferenceManager.getValueBoolean(KEY_IS_TO_ME_UNREAD, false)
+    }
+    fun isFromMeUnread(): Boolean {
+        return sharedPreferenceManager.getValueBoolean(KEY_IS_FROM_ME_UNREAD, false)
+    }
+    fun isHiddenUnread(): Boolean {
+        return sharedPreferenceManager.getValueBoolean(KEY_IS_HIDDEN_UNREAD, false)
+    }
+
     fun getUser(): LiveData<User?> {
         return user
     }
@@ -156,7 +176,7 @@ class SessionManager constructor(
         }
     }
 
-    fun isFirstTimeLaunch():Boolean {
+    fun isFirstTimeLaunch(): Boolean {
         return sharedPreferenceManager.getValueBoolean(KEY_IS_FIRST_TIME_LAUNCH, true)
     }
 

@@ -131,6 +131,7 @@ class DashboardVM @Inject constructor(
                                 )
                             )
                         }
+
                         SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
                             val task = gson.fromJson<SocketTaskV2CreatedResponse>(
                                 arguments,
@@ -138,6 +139,7 @@ class DashboardVM @Inject constructor(
                             ).data
                             updateForwardTaskInLocal(task, taskDao, userId)
                         }
+
                         SocketHandler.TaskEvent.TASK_SEEN.name -> {
                             val taskSeen = gson.fromJson<SocketTaskSeenV2Response>(
                                 arguments,
@@ -145,6 +147,7 @@ class DashboardVM @Inject constructor(
                             ).data
                             updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
                         }
+
                         SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
                             val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                                 arguments,
@@ -160,6 +163,7 @@ class DashboardVM @Inject constructor(
                                 updateTaskDoneInLocal(commentData, taskDao, userId)
                             }
                         }
+
                         SocketHandler.TaskEvent.TASK_HIDDEN.name, SocketHandler.TaskEvent.TASK_SHOWN.name -> {
                             val hideData = gson.fromJson<SocketHideUnHideTaskResponse>(
                                 arguments,
@@ -172,6 +176,7 @@ class DashboardVM @Inject constructor(
                                 updateTaskUnHideInLocal(hideData, taskDao, userId)
                             }
                         }
+
                         SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
                             val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
                                 arguments,
@@ -190,6 +195,7 @@ class DashboardVM @Inject constructor(
                             }
                             EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                         }
+
                         SocketHandler.TaskEvent.SUB_TASK_CREATED.name -> {
                             val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
                                 arguments,
@@ -237,6 +243,7 @@ class DashboardVM @Inject constructor(
                             }
                             EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                         }
+
                         SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
                             val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
                                 arguments,
@@ -329,6 +336,7 @@ class DashboardVM @Inject constructor(
                                 )
                             )
                         }
+
                         SocketHandler.ProjectEvent.PROJECT_UPDATED.name -> {
                             val updatedProject =
                                 gson.fromJson<ProjectCreatedSocketResponse>(
@@ -350,6 +358,7 @@ class DashboardVM @Inject constructor(
                                 )
                             )
                         }
+
                         SocketHandler.ProjectEvent.REFRESH_PROJECTS.name -> {
 
                             EventBus.getDefault().post(LocalEvents.ProjectRefreshEvent())
@@ -365,6 +374,7 @@ class DashboardVM @Inject constructor(
 
                             EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(newRole))
                         }
+
                         SocketHandler.ProjectEvent.ROLE_UPDATED.name -> {
                             try {
                                 val updatedRole =
@@ -379,6 +389,7 @@ class DashboardVM @Inject constructor(
                                 print("Some data error")
                             }
                         }
+
                         SocketHandler.ProjectEvent.REFRESH_ROLES.name -> {
                             val refreshRole =
                                 gson.fromJson<RoleRefreshSocketResponse>(
@@ -399,6 +410,7 @@ class DashboardVM @Inject constructor(
 
                             EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
                         }
+
                         SocketHandler.ProjectEvent.PROJECT_GROUP_UPDATED.name -> {
                             try {
                                 val updatedGroup =
@@ -413,6 +425,7 @@ class DashboardVM @Inject constructor(
                                 print("Some data error")
                             }
                         }
+
                         SocketHandler.ProjectEvent.REFRESH_PROJECT_GROUP.name -> {
                             val refreshGroup =
                                 gson.fromJson<GroupRefreshSocketResponse>(
@@ -434,6 +447,7 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault()
                                 .post(LocalEvents.ProjectMemberAddedEvent(newMember))
                         }
+
                         SocketHandler.ProjectEvent.PROJECT_MEMBERS_UPDATED.name -> {
                             val updatedMember =
                                 gson.fromJson<MemberUpdatedSocketResponse>(
@@ -444,6 +458,7 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault()
                                 .post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
                         }
+
                         SocketHandler.ProjectEvent.REFRESH_PROJECT_MEMBERS.name -> {
                             val refreshMember =
                                 gson.fromJson<MemberRefreshSocketResponse>(
@@ -454,6 +469,7 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault()
                                 .post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
                         }
+
                         SocketHandler.ProjectEvent.REFRESH_ROOT_DOCUMENTS.name -> {
                             val refreshRootDoc =
                                 gson.fromJson<RefreshRootDocumentSocketResponse>(
@@ -464,6 +480,7 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault()
                                 .post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
                         }
+
                         SocketHandler.ProjectEvent.REFRESH_FOLDER.name -> {
                             val refreshFolder =
                                 gson.fromJson<RefreshFolderSocketResponse>(
@@ -491,13 +508,16 @@ class DashboardVM @Inject constructor(
                             sessionManager.updateUser(updatedUser)
                             EventBus.getDefault().post(LocalEvents.UserDataUpdated())
                         }
+
                         SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {
 //                            getProfile()
                         }
+
                         SocketHandler.UserEvent.REFRESH_CONNECTIONS.name -> {
                             getOverallConnectionCount()
                             EventBus.getDefault().post(LocalEvents.ConnectionRefreshEvent())
                         }
+
                         SocketHandler.UserEvent.REFRESH_INVITATIONS.name -> {
                             EventBus.getDefault().post(LocalEvents.InvitationRefreshEvent())
                         }
@@ -522,6 +542,7 @@ class DashboardVM @Inject constructor(
                     }
                     fileAttachmentsDataSource.insertAll(updatedFiles)
                 }
+
                 is ApiResponse.Error -> {
                     alert(response.error.message)
                 }
@@ -569,6 +590,7 @@ class DashboardVM @Inject constructor(
 //                    )
 
                 }
+
                 is ApiResponse.Error -> {
                     alert(response.error.message)
 
@@ -724,6 +746,7 @@ class DashboardVM @Inject constructor(
                         }
                     }
                 }
+
                 is ApiResponse.Error -> {
 
                 }
@@ -737,6 +760,7 @@ class DashboardVM @Inject constructor(
                 is ApiResponse.Success -> {
                     viewState.connectionCount.value = response.data.count
                 }
+
                 is ApiResponse.Error -> {
 
                 }
@@ -777,7 +801,6 @@ class DashboardVM @Inject constructor(
         launch {
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.ToMe.tagValue)) {
                 is ApiResponse.Success -> {
-                    updateToMeUnread(response.data.allTasks, requireActivity)
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.ToMe.tagValue,
@@ -785,13 +808,13 @@ class DashboardVM @Inject constructor(
                         )
                     )
                 }
+
                 is ApiResponse.Error -> {
                 }
             }
 
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.FromMe.tagValue)) {
                 is ApiResponse.Success -> {
-                    updateFromMeUnread(response.data.allTasks, requireActivity)
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.FromMe.tagValue,
@@ -799,13 +822,13 @@ class DashboardVM @Inject constructor(
                         )
                     )
                 }
+
                 is ApiResponse.Error -> {
                 }
             }
 
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
                 is ApiResponse.Success -> {
-                    updateHiddenUnread(response.data.allTasks, requireActivity)
                     taskDao.insertTaskData(
                         TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.Hidden.tagValue,
@@ -813,6 +836,7 @@ class DashboardVM @Inject constructor(
                         )
                     )
                 }
+
                 is ApiResponse.Error -> {
                 }
             }
@@ -845,24 +869,27 @@ class DashboardVM @Inject constructor(
                 is ApiResponse.Success -> {
                     connectionsV2Dao.insertAll(response.data.contacts)
                 }
+
                 is ApiResponse.Error -> {
                 }
             }
         }
     }
 
-    private fun updateToMeUnread(
-        allTasks: TaskV2Response.AllTasks,
+    fun updateRootUnread(
         requireActivity: FragmentActivity
     ) {
-        val newCount = allTasks.new.count { task -> user?.id !in task.seenBy }
-        val ongoingCount = allTasks.ongoing.count { task -> user?.id !in task.seenBy }
-        val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
+        val toMeUnread = sessionManager.isToMeUnread()
+        val fromMeUnread = sessionManager.isFromMeUnread()
+        val hiddenUnread = sessionManager.isHiddenUnread()
 
         val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
-        sharedViewModel.isToMeUnread.value = !(newCount == 0 && ongoingCount == 0 && doneCount == 0)
+        sharedViewModel.isToMeUnread.value = toMeUnread
+        sharedViewModel.isFromMeUnread.value = fromMeUnread
+        sharedViewModel.isHiddenUnread.value = hiddenUnread
     }
 
+    //old logic for red dot on footer, now its not used
     private fun updateFromMeUnread(
         allTasks: TaskV2Response.AllTasks,
         requireActivity: FragmentActivity
@@ -876,18 +903,6 @@ class DashboardVM @Inject constructor(
             !(unreadCount == 0 && ongoingCount == 0 && doneCount == 0)
     }
 
-    private fun updateHiddenUnread(
-        allTasks: TaskV2Response.AllTasks,
-        requireActivity: FragmentActivity
-    ) {
-        val canceledCount = allTasks.canceled.count { task -> user?.id !in task.seenBy }
-        val ongoingCount = allTasks.ongoing.count { task -> user?.id !in task.seenBy }
-        val doneCount = allTasks.done.count { task -> user?.id !in task.seenBy }
-
-        val sharedViewModel = ViewModelProvider(requireActivity).get(SharedViewModel::class.java)
-        sharedViewModel.isHiddenUnread.value =
-            !(canceledCount == 0 && ongoingCount == 0 && doneCount == 0)
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGetALlContactsFromAPI(event: LocalEvents.GetALlContactsFromAPI) {
@@ -911,6 +926,7 @@ class DashboardVM @Inject constructor(
                         EventBus.getDefault().post(LocalEvents.ContactsSynced)
                     }, 50)
                 }
+
                 is ApiResponse.Error -> {
                 }
             }

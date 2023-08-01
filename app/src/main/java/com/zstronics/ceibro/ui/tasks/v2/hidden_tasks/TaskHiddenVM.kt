@@ -247,4 +247,8 @@ class TaskHiddenVM @Inject constructor(
         }
     }
 
+    fun saveHiddenUnread(isUnread: Boolean) {
+        sessionManager.saveHiddenUnread(isUnread)
+    }
+
 }

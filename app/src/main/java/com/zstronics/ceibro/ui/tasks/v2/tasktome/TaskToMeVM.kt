@@ -271,4 +271,8 @@ class TaskToMeVM @Inject constructor(
         }
     }
 
+    fun saveToMeUnread(isUnread: Boolean) {
+        sessionManager.saveToMeUnread(isUnread)
+    }
+
 }
