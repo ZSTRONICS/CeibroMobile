@@ -275,7 +275,12 @@ class AssigneeFragment :
                 }
             }
         } else {
-            viewModel.getAllConnectionsV2 { }
+            viewModel.getAllConnectionsV2 {
+                val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.filterContacts(searchQuery)
+                }
+            }
         }
     }
 
