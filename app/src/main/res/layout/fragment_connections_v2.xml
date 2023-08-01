@@ -61,18 +61,18 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                app:layout_constraintEnd_toStartOf="@+id/syncIV"
+                app:layout_constraintEnd_toStartOf="@+id/optionMenuIV"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/syncIV"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
+                android:id="@+id/optionMenuIV"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:src="@drawable/ic_sync"
-                android:visibility="@{viewState.isAutoSyncEnabled ? View.GONE : View.VISIBLE, default = gone}"
+                android:src="@drawable/ic_menu_dots"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
