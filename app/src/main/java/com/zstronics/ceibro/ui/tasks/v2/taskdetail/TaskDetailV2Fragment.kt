@@ -219,10 +219,10 @@ class TaskDetailV2Fragment :
             mViewDataBinding.taskTitle.text =
                 if (item.topic != null) {
                     item.topic.topic.ifEmpty {
-                        "- - - - -"
+                        "N/A"
                     }
                 } else {
-                    "- - - - -"
+                    "N/A"
                 }
 
             if (item.description.isNotEmpty()) {

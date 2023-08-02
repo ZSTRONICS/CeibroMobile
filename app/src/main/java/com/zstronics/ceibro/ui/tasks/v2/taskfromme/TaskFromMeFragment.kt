@@ -86,6 +86,7 @@ class TaskFromMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
+                changeSelectedUserState()
             }
         }
 
@@ -96,6 +97,7 @@ class TaskFromMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
+                changeSelectedUserState()
             }
         }
 
@@ -106,6 +108,22 @@ class TaskFromMeFragment :
                 } else {
                     adapter.setList(listOf())
                 }
+                changeSelectedUserState()
+            }
+        }
+
+        viewModel.disabledUnreadState.observe(viewLifecycleOwner) {
+            if (it) {
+                if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                    viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
+                }
+                mViewDataBinding.unreadStateText.isEnabled = false
+                mViewDataBinding.unreadStateText.isClickable = false
+                mViewDataBinding.unreadStateText.setTextColor(resources.getColor(R.color.appGrey2))
+            } else {
+                mViewDataBinding.unreadStateText.isEnabled = true
+                mViewDataBinding.unreadStateText.isClickable = true
+                mViewDataBinding.unreadStateText.setTextColor(resources.getColor(R.color.black))
             }
         }
 
@@ -229,6 +247,19 @@ class TaskFromMeFragment :
             } else {
                 View.VISIBLE
             }
+
+        if (allTasks.unread.isEmpty()) {
+            if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
+            }
+            mViewDataBinding.unreadStateText.isEnabled = false
+            mViewDataBinding.unreadStateText.isClickable = false
+            mViewDataBinding.unreadStateText.setTextColor(resources.getColor(R.color.appGrey2))
+        } else {
+            mViewDataBinding.unreadStateText.isEnabled = true
+            mViewDataBinding.unreadStateText.isClickable = true
+            mViewDataBinding.unreadStateText.setTextColor(resources.getColor(R.color.black))
+        }
     }
 
     private fun changeSelectedUserState() {
