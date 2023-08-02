@@ -47,12 +47,10 @@ class ForwardVM @Inject constructor(
             val connectionsData = connectionsV2Dao.getAll()
             if (connectionsData.isNotEmpty()) {
                 processConnectionsData(connectionsData, callBack)
-                callBack.invoke()
             } else {
                 when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
                     is ApiResponse.Success -> {
                         processConnectionsData(response.data.contacts, callBack)
-                        callBack.invoke()
                     }
                     is ApiResponse.Error -> {
                         callBack.invoke()
@@ -80,10 +78,10 @@ class ForwardVM @Inject constructor(
             appendRecentConnections(callBack)
         } else {
             if (allContacts.isNotEmpty()) {
+                appendRecentConnections(callBack)
                 originalConnections = allContacts
                 _allConnections.value = allContacts
             }
-            appendRecentConnections(callBack)
         }
     }
 
@@ -91,14 +89,16 @@ class ForwardVM @Inject constructor(
         launch {
             when (val response = dashboardRepository.getRecentCeibroConnections()) {
                 is ApiResponse.Success -> {
-                    val newItemsList = response.data.recentContacts // Your 10 items here
+                    val newItemsList =
+                        response.data.recentContacts.distinctBy { it.id } // Your 10 items here
                     if (newItemsList.isNotEmpty()) {
-                        val currentList: MutableList<AllCeibroConnections.CeibroConnection>? =
-                            _allConnections.value
+                        val currentList: MutableList<AllCeibroConnections.CeibroConnection> =
+                            originalConnections.toMutableList()
                         val updatedList: MutableList<AllCeibroConnections.CeibroConnection> =
-                            currentList?.toMutableList() ?: mutableListOf()
+                            mutableListOf()
                         updatedList.addAll(0, newItemsList)
-                        _allConnections.value = updatedList
+                        updatedList.addAll(currentList)
+                        _allConnections.postValue(updatedList)
                         originalConnections = updatedList
                     }
                     callBack.invoke()

@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
-import android.os.Handler
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
@@ -866,14 +865,6 @@ class DashboardVM @Inject constructor(
                 is ApiResponse.Error -> {
                 }
             }
-            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
-                is ApiResponse.Success -> {
-                    connectionsV2Dao.insertAll(response.data.contacts)
-                }
-
-                is ApiResponse.Error -> {
-                }
-            }
         }
     }
 
@@ -905,10 +896,10 @@ class DashboardVM @Inject constructor(
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onGetALlContactsFromAPI(event: LocalEvents.GetALlContactsFromAPI) {
-        loadConnectionsData()
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onGetALlContactsFromAPI(event: LocalEvents.GetALlContactsFromAPI) {
+//        loadConnectionsData()
+//    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -916,21 +907,21 @@ class DashboardVM @Inject constructor(
         handleSocketEvents()
     }
 
-    private fun loadConnectionsData() {
-        launch {
-            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
-                is ApiResponse.Success -> {
-                    connectionsV2Dao.insertAll(response.data.contacts)
-                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
-                    val handler = Handler()
-                    handler.postDelayed(Runnable {
-                        EventBus.getDefault().post(LocalEvents.ContactsSynced)
-                    }, 50)
-                }
-
-                is ApiResponse.Error -> {
-                }
-            }
-        }
-    }
+//    private fun loadConnectionsData() {
+//        launch {
+//            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+//                is ApiResponse.Success -> {
+//                    connectionsV2Dao.insertAll(response.data.contacts)
+//                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
+//                    val handler = Handler()
+//                    handler.postDelayed(Runnable {
+//                        EventBus.getDefault().post(LocalEvents.ContactsSynced)
+//                    }, 50)
+//                }
+//
+//                is ApiResponse.Error -> {
+//                }
+//            }
+//        }
+//    }
 }

@@ -56,24 +56,16 @@ class ContactSyncWorker @AssistedInject constructor(
 
         val phoneContacts = getLocalContacts(context)
 
-        val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
-
-        val contacts = if (user?.autoContactSync == true) {
-            phoneContacts
-        } else {
-            manualContacts
-        }
-
-        val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
+        val deletedContacts = findDeletedContacts(roomContacts, phoneContacts).toLightContacts()
 
         val updatedContacts =
-            compareContactsAndUpdateList(roomContacts, contacts)
+            compareContactsAndUpdateList(roomContacts, phoneContacts)
 
         val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
         updatedAndNewContacts.addAll(updatedContacts)
 
         if (user?.autoContactSync == true) {
-            val newContacts = findNewContacts(roomContacts, contacts)
+            val newContacts = findNewContacts(roomContacts, phoneContacts)
             updatedAndNewContacts.addAll(newContacts)
         }
 
@@ -96,8 +88,8 @@ class ContactSyncWorker @AssistedInject constructor(
         }
 
         /// No Change in contacts
-        if (sessionManager.isLoggedIn() && contacts.isNotEmpty()) {
-            val request = SyncContactsRequest(contacts = contacts)
+        if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
+            val request = SyncContactsRequest(contacts = updatedAndNewContacts)
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
                 is ApiResponse.Success -> {
@@ -126,7 +118,6 @@ class ContactSyncWorker @AssistedInject constructor(
         when (val response = dashboardRepository.getAllConnectionsV2(userId)) {
             is ApiResponse.Success -> {
                 room.getConnectionsV2Dao().insertAll(response.data.contacts)
-                sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
                 EventBus.getDefault().post(LocalEvents.UpdateConnections)
                 GlobalScope.launch(Dispatchers.IO) {
                     Looper.prepare()

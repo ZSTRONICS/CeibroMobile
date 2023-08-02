@@ -83,7 +83,6 @@ class LoginVM @Inject constructor(
                         )
                     }
                     connectionsV2Dao.insertAll(response.data.contacts)
-                    sessionManager.saveSyncedContacts(selectedContacts)
                     callBack.invoke()
                 }
 

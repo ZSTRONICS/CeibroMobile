@@ -7,7 +7,6 @@ import com.zstronics.ceibro.base.*
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 
 class SessionManager constructor(
@@ -32,6 +31,7 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_USER)
         sharedPreferenceManager.removeValue(KEY_TOKEN)
         sharedPreferenceManager.removeValue(KEY_PASS)
+        sharedPreferenceManager.removeValue(KEY_IS_TO_ME_UNREAD)
         _user = MutableLiveData()
 
         CookiesManager.isLoggedIn = false
@@ -52,9 +52,11 @@ class SessionManager constructor(
     fun saveToMeUnread(isUnread: Boolean) {
         sharedPreferenceManager.saveBoolean(KEY_IS_TO_ME_UNREAD, isUnread)
     }
+
     fun saveFromMeUnread(isUnread: Boolean) {
         sharedPreferenceManager.saveBoolean(KEY_IS_FROM_ME_UNREAD, isUnread)
     }
+
     fun saveHiddenUnread(isUnread: Boolean) {
         sharedPreferenceManager.saveBoolean(KEY_IS_HIDDEN_UNREAD, isUnread)
     }
@@ -62,9 +64,11 @@ class SessionManager constructor(
     fun isToMeUnread(): Boolean {
         return sharedPreferenceManager.getValueBoolean(KEY_IS_TO_ME_UNREAD, false)
     }
+
     fun isFromMeUnread(): Boolean {
         return sharedPreferenceManager.getValueBoolean(KEY_IS_FROM_ME_UNREAD, false)
     }
+
     fun isHiddenUnread(): Boolean {
         return sharedPreferenceManager.getValueBoolean(KEY_IS_HIDDEN_UNREAD, false)
     }
@@ -158,14 +162,6 @@ class SessionManager constructor(
     fun getToken(): String? {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         return tokenPref?.access?.token
-    }
-
-    fun saveSyncedContacts(selectedContacts: List<SyncContactsRequest.CeibroContactLight>) {
-        sharedPreferenceManager.saveSyncedContacts(KEY_SYNCED_CONTACTS, selectedContacts)
-    }
-
-    fun getSyncedContacts(): List<SyncContactsRequest.CeibroContactLight>? {
-        return sharedPreferenceManager.getSyncedContacts(KEY_SYNCED_CONTACTS)
     }
 
     fun updateAutoSync(enabled: Boolean) {

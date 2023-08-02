@@ -83,3 +83,23 @@ fun List<AllCeibroConnections.CeibroConnection>.toLightContacts(): List<SyncCont
         )
     }
 }
+
+fun List<SyncContactsRequest.CeibroContactLight>.toCeibroContacts(): List<AllCeibroConnections.CeibroConnection> {
+    return this.map { contact ->
+        AllCeibroConnections.CeibroConnection(
+            contactFirstName = contact.contactFirstName,
+            contactSurName = contact.contactSurName,
+            countryCode = contact.countryCode,
+            phoneNumber = contact.phoneNumber,
+            contactFullName = contact.contactFullName,
+            id = "",
+            createdAt = "",
+            isBlocked = false,
+            isCeiborUser = false,
+            isSilent = false,
+            updatedAt = "",
+            userCeibroData = null,
+            isChecked = false
+        )
+    }
+}

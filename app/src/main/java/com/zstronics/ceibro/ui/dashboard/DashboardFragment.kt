@@ -140,6 +140,7 @@ class DashboardFragment :
         super.onViewCreated(view, savedInstanceState)
         if (!serverDataLoadedOnce) {
             viewModel.loadAppData(requireActivity())
+            startOneTimeContactSyncWorker(requireContext())
             serverDataLoadedOnce = true
         }
         viewModel.updateRootUnread(requireActivity())
