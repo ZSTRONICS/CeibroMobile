@@ -155,7 +155,7 @@ class TaskDetailV2VM @Inject constructor(
                         onBack(task)
                     }
                     loading(false, "")
-                    updateForwardTaskInLocal(task, taskDao, user?.id)
+                    updateForwardTaskInLocal(task, taskDao, user?.id, sessionManager)
                 } else {
                         loading(false, errorMsg)
                 }

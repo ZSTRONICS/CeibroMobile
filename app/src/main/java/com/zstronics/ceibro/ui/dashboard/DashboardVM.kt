@@ -138,7 +138,7 @@ class DashboardVM @Inject constructor(
                                 arguments,
                                 object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
                             ).data
-                            updateForwardTaskInLocal(task, taskDao, userId)
+                            updateForwardTaskInLocal(task, taskDao, userId, sessionManager)
                         }
 
                         SocketHandler.TaskEvent.TASK_SEEN.name -> {

@@ -251,7 +251,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         }
     }
 
-    fun updateForwardTaskInLocal(task: CeibroTaskV2?, taskDao: TaskV2Dao, userId: String?) {
+    fun updateForwardTaskInLocal(
+        task: CeibroTaskV2?,
+        taskDao: TaskV2Dao,
+        userId: String?,
+        sessionManager: SessionManager
+    ) {
+        val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+            ViewModelProvider(it).get(SharedViewModel::class.java)
+        }
         launch {
             if (task != null) {
                 val taskFromMe = task.creator.id == userId
@@ -348,6 +356,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 taskHiddenLocalData.allTasks.canceled =
                                     allCancelTaskList.toList()
 
+                                sharedViewModel?.isHiddenUnread?.value = true
+                                sessionManager.saveHiddenUnread(true)
+
                                 taskDao.insertTaskData(
                                     taskHiddenLocalData
                                 )
@@ -385,6 +396,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 unreadList[unreadTaskIndex] = task
                                 taskFromMeLocalData.allTasks.unread = unreadList.toList()
                             }
+                            sharedViewModel?.isFromMeUnread?.value = true
+                            sessionManager.saveFromMeUnread(true)
+
                         } else if (ongoingTaskIndex >= 0) {
                             val ongoingList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
                             if (task.creatorState.equals(TaskStatus.DONE.name, true)) {
@@ -399,10 +413,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 ongoingList[ongoingTaskIndex] = task
                                 taskFromMeLocalData.allTasks.ongoing = ongoingList.toList()
                             }
+                            sharedViewModel?.isFromMeUnread?.value = true
+                            sessionManager.saveFromMeUnread(true)
+
                         } else if (doneTaskIndex >= 0) {
                             val doneList = taskFromMeLocalData.allTasks.done.toMutableList()
                             doneList[doneTaskIndex] = task
                             taskFromMeLocalData.allTasks.done = doneList.toList()
+
+                            sharedViewModel?.isFromMeUnread?.value = true
+                            sessionManager.saveFromMeUnread(true)
                         }
 
                         taskDao.insertTaskData(
@@ -448,6 +468,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 allTaskList[newTaskIndex] = task
                                 taskToMeLocalData.allTasks.new = allTaskList.toList()
                             }
+                            sharedViewModel?.isToMeUnread?.value = true
+                            sessionManager.saveToMeUnread(true)
+
                         } else if (ongoingTaskIndex >= 0) {
                             if (myState.equals(TaskStatus.DONE.name, true)) {
                                 val ongoingTaskList =
@@ -463,16 +486,23 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 allTaskList[ongoingTaskIndex] = task
                                 taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
                             }
+                            sharedViewModel?.isToMeUnread?.value = true
+                            sessionManager.saveToMeUnread(true)
 
                         } else if (doneTaskIndex >= 0) {
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             allTaskList[doneTaskIndex] = task
                             taskToMeLocalData.allTasks.done = allTaskList.toList()
+                            sharedViewModel?.isToMeUnread?.value = true
+                            sessionManager.saveToMeUnread(true)
                         } else {
                             if (myState.equals(TaskStatus.NEW.name, true)) {
                                 val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 allTaskList.add(0, task)
                                 taskToMeLocalData.allTasks.new = allTaskList.toList()
+
+                                sharedViewModel?.isToMeUnread?.value = true
+                                sessionManager.saveToMeUnread(true)
                             }
                         }
 
