@@ -52,7 +52,7 @@ class FilesRVAdapter @Inject constructor() :
             val context = binding.uploadImg.context
 
             binding.fileName.text = item.fileName
-            binding.fileSize.text = item.fileTag
+            binding.fileSize.text = "File size: unknown"
             binding.clearIcon.visibility = View.GONE
 
         }
