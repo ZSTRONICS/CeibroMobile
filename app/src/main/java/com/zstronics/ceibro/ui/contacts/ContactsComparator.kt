@@ -42,8 +42,8 @@ fun findDeletedContacts(
 
     // Iterate through phone contacts and compare with room contacts
     for (roomContact in roomContacts) {
-        if (!phoneContacts.any { it.phoneNumber == roomContact.phoneNumber }) {
-            // If the room contact's phoneNumber is not found in phone contacts, it was deleted from the phone
+        val foundContact = phoneContacts.find { it.phoneNumber == roomContact.phoneNumber }
+        if (foundContact == null) {
             deletedContacts.add(roomContact)
         }
     }

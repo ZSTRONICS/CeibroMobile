@@ -56,7 +56,15 @@ class ContactSyncWorker @AssistedInject constructor(
 
         val phoneContacts = getLocalContacts(context)
 
+        val contacts: MutableList<SyncContactsRequest.CeibroContactLight> =
+            if (user?.autoContactSync == true) {
+                phoneContacts
+            } else {
+                roomContacts.toLightContacts().toMutableList()
+            }
+
         val deletedContacts = findDeletedContacts(roomContacts, phoneContacts).toLightContacts()
+        contacts.removeAll(deletedContacts)
 
         val updatedContacts =
             compareContactsAndUpdateList(roomContacts, phoneContacts)
@@ -86,9 +94,10 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
         }
+        EventBus.getDefault().post(LocalEvents.UpdateConnections)
 
         /// No Change in contacts
-        if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
+        if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty() && user?.autoContactSync == true) {
             val request = SyncContactsRequest(contacts = updatedAndNewContacts)
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {

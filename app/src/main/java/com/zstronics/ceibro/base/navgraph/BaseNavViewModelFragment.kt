@@ -18,7 +18,6 @@ import android.transition.Fade
 import android.transition.Slide
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
@@ -83,11 +82,6 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             (activity as ManageToolBarListener).displayHomeAsUpEnabled = setDisplayHomeAsUpEnabled()
             (activity as ManageToolBarListener).homeAsUpIndicator = setHomeAsUpIndicator()
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        startOneTimeContactSyncWorker(requireContext())
     }
 
     override fun getToolBarTitle(): String? = null
