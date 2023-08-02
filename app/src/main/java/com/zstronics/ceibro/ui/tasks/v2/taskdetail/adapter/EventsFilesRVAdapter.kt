@@ -47,13 +47,14 @@ class EventsFilesRVAdapter @Inject constructor() :
 
         fun bind(item: EventFiles) {
             binding.clearIcon.setOnClickListener {
-                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+//                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
 
             val context = binding.uploadImg.context
 
             binding.fileName.text = item.fileName
-            binding.fileSize.text = item.fileTag
+            binding.fileSize.text = "File size: unknown"
+            binding.clearIcon.visibility = View.GONE
 
         }
     }
