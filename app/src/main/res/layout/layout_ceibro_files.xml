@@ -64,7 +64,6 @@
             android:textColor="@color/appTextGrey"
             android:textSize="12sp"
             android:text="100Kb"
-            android:visibility="@{ceibroConnection.isCeiborUser ? View.INVISIBLE : View.VISIBLE, default = visible}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/fileName"
             app:layout_constraintStart_toStartOf="@+id/fileName"
