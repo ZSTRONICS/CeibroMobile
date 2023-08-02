@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.databinding.LayoutItemContactBinding
@@ -54,15 +53,7 @@ class ContactsSelectionAdapter @Inject constructor() :
                 itemClickListener?.invoke(it, position, item)
             }
 
-            val phoneNumberUtil = PhoneNumberUtil.getInstance()
-            val parsedNumber = phoneNumberUtil.parse(item.phoneNumber, null)
-            val formattedNumber =
-                phoneNumberUtil.format(
-                    parsedNumber,
-                    PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL
-                )
-
-            binding.phoneNumber.text = formattedNumber
+            binding.phoneNumber.text = item.phoneNumber
             binding.contactName.text = "${item.contactFirstName} ${item.contactSurName}"
             if (item.beneficiaryPictureUrl.isEmpty()) {
                 binding.contactInitials.visibility = View.VISIBLE
