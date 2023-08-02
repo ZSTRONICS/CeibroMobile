@@ -33,7 +33,7 @@ class ManualContactsSelectionFragment :
             R.id.confirmBtn -> {
                 isLoadingTrue = true
                 viewModel.loading(true)
-                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
+                val selectedContacts = viewModel.originalContacts.filter { it.isChecked }.map { it }
                 viewModel.sessionManager.saveSyncedContacts(selectedContacts)
                 startOneTimeContactSyncWorker(requireContext())
                 mViewDataBinding.confirmBtn.isEnabled = false
@@ -57,8 +57,11 @@ class ManualContactsSelectionFragment :
             }
         }
         adapter.itemClickListener =
-            { childView: View, position: Int, contacts: SyncContactsRequest.CeibroContactLight ->
-                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
+            { childView: View, position: Int, contact: SyncContactsRequest.CeibroContactLight ->
+                val originalContacts = viewModel.originalContacts
+                val index = originalContacts.indexOf(contact)
+                originalContacts[index].isChecked = contact.isChecked
+                viewModel.originalContacts = originalContacts
                 mViewDataBinding.confirmBtn.isEnabled = true
             }
         mViewDataBinding.recyclerView.adapter = adapter
