@@ -92,13 +92,15 @@ class ForwardVM @Inject constructor(
             when (val response = dashboardRepository.getRecentCeibroConnections()) {
                 is ApiResponse.Success -> {
                     val newItemsList = response.data.recentContacts // Your 10 items here
-                    val currentList: MutableList<AllCeibroConnections.CeibroConnection>? =
-                        _allConnections.value
-                    val updatedList: MutableList<AllCeibroConnections.CeibroConnection> =
-                        currentList?.toMutableList() ?: mutableListOf()
-                    updatedList.addAll(0, newItemsList)
-                    _allConnections.value = updatedList
-                    originalConnections = updatedList
+                    if (newItemsList.isNotEmpty()) {
+                        val currentList: MutableList<AllCeibroConnections.CeibroConnection>? =
+                            _allConnections.value
+                        val updatedList: MutableList<AllCeibroConnections.CeibroConnection> =
+                            currentList?.toMutableList() ?: mutableListOf()
+                        updatedList.addAll(0, newItemsList)
+                        _allConnections.value = updatedList
+                        originalConnections = updatedList
+                    }
                     callBack.invoke()
                 }
                 is ApiResponse.Error -> {

@@ -33,7 +33,9 @@ class TaskFromMeVM @Inject constructor(
     private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskFromMe.State>(), ITaskFromMe.ViewModel {
     val user = sessionManager.getUser().value
-    var selectedState: String = "unread"
+    var selectedState: String = TaskStatus.UNREAD.name.lowercase()
+    var disabledUnreadState: MutableLiveData<Boolean> = MutableLiveData()
+    var firstStartOfFragment = true
 
     private val _unreadTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val unreadTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _unreadTasks
@@ -52,7 +54,7 @@ class TaskFromMeVM @Inject constructor(
     var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
 
     init {
-        selectedState = "unread"
+        selectedState = TaskStatus.UNREAD.name.lowercase()
     }
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
@@ -63,10 +65,28 @@ class TaskFromMeVM @Inject constructor(
                 val unreadTask = allTasks.unread
                 val ongoingTask = allTasks.ongoing
                 val doneTask = allTasks.done
+
+                if (firstStartOfFragment) {
+                    selectedState = if (unreadTask.isNotEmpty()) {
+                        TaskStatus.UNREAD.name.lowercase()
+                    } else {
+                        TaskStatus.ONGOING.name.lowercase()
+                    }
+                    firstStartOfFragment = false
+                }
+                if (unreadTask.isEmpty()) {
+                    disabledUnreadState.value = true
+                    if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                        selectedState = TaskStatus.ONGOING.name.lowercase()
+                    }
+                } else {
+                    disabledUnreadState.value = false
+                }
+
+                _allTasks.postValue(allTasks)
                 _unreadTasks.postValue(unreadTask as MutableList<CeibroTaskV2>?)
                 _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
                 _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-                _allTasks.postValue(allTasks)
 
                 originalUnreadTasks = unreadTask
                 originalOngoingTasks = ongoingTask
@@ -89,16 +109,32 @@ class TaskFromMeVM @Inject constructor(
                                 allTasks = response.data.allTasks
                             )
                         )
-
                         val unreadTask = response.data.allTasks.unread
                         val ongoingTask = response.data.allTasks.ongoing
                         val doneTask = response.data.allTasks.done
                         val allTasks = response.data.allTasks
 
+                        if (firstStartOfFragment) {
+                            selectedState = if (unreadTask.isNotEmpty()) {
+                                TaskStatus.UNREAD.name.lowercase()
+                            } else {
+                                TaskStatus.ONGOING.name.lowercase()
+                            }
+                            firstStartOfFragment = false
+                        }
+                        if (unreadTask.isEmpty()) {
+                            disabledUnreadState.value = true
+                            if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                                selectedState = TaskStatus.ONGOING.name.lowercase()
+                            }
+                        } else {
+                            disabledUnreadState.value = false
+                        }
+
+                        _allTasks.postValue(allTasks)
                         _unreadTasks.postValue(unreadTask as MutableList<CeibroTaskV2>?)
                         _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
                         _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-                        _allTasks.postValue(allTasks)
 
                         originalUnreadTasks = unreadTask
                         originalOngoingTasks = ongoingTask

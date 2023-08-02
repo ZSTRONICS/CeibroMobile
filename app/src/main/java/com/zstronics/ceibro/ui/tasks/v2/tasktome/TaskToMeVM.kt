@@ -32,7 +32,8 @@ class TaskToMeVM @Inject constructor(
     private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
-    var selectedState: String = "new"
+    var selectedState: String = TaskStatus.NEW.name.lowercase()
+    var disabledNewState: MutableLiveData<Boolean> = MutableLiveData()
     var firstStartOfFragment = true
 
     private val _newTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
@@ -72,10 +73,18 @@ class TaskToMeVM @Inject constructor(
                     }
                     firstStartOfFragment = false
                 }
+                if (newTask.isEmpty()) {
+                    disabledNewState.value = true
+                    if (selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                        selectedState = TaskStatus.ONGOING.name.lowercase()
+                    }
+                } else {
+                    disabledNewState.value = false
+                }
+                _allTasks.postValue(allTasks)
                 _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
                 _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
                 _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-                _allTasks.postValue(allTasks)
 
                 originalNewTasks = newTask
                 originalOngoingTasks = ongoingTask
@@ -110,11 +119,18 @@ class TaskToMeVM @Inject constructor(
                             }
                             firstStartOfFragment = false
                         }
-
+                        if (newTask.isEmpty()) {
+                            disabledNewState.value = true
+                            if (selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                                selectedState = TaskStatus.ONGOING.name.lowercase()
+                            }
+                        } else {
+                            disabledNewState.value = false
+                        }
+                        _allTasks.postValue(allTasks)
                         _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
                         _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
                         _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-                        _allTasks.postValue(allTasks)
 
                         originalNewTasks = newTask
                         originalOngoingTasks = ongoingTask

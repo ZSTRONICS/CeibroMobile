@@ -112,6 +112,21 @@ class TaskToMeFragment :
             }
         }
 
+        viewModel.disabledNewState.observe(viewLifecycleOwner) {
+            if (it) {
+                if (viewModel.selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                    viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
+                }
+                mViewDataBinding.newStateText.isEnabled = false
+                mViewDataBinding.newStateText.isClickable = false
+                mViewDataBinding.newStateText.setTextColor(resources.getColor(R.color.appGrey2))
+            } else {
+                mViewDataBinding.newStateText.isEnabled = true
+                mViewDataBinding.newStateText.isClickable = true
+                mViewDataBinding.newStateText.setTextColor(resources.getColor(R.color.black))
+            }
+        }
+
         mViewDataBinding.taskRV.adapter = adapter
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
@@ -232,6 +247,19 @@ class TaskToMeFragment :
             } else {
                 View.VISIBLE
             }
+
+        if (allTasks.new.isEmpty()) {
+            if (viewModel.selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
+            }
+            mViewDataBinding.newStateText.isEnabled = false
+            mViewDataBinding.newStateText.isClickable = false
+            mViewDataBinding.newStateText.setTextColor(resources.getColor(R.color.appGrey2))
+        } else {
+            mViewDataBinding.newStateText.isEnabled = true
+            mViewDataBinding.newStateText.isClickable = true
+            mViewDataBinding.newStateText.setTextColor(resources.getColor(R.color.black))
+        }
     }
 
     private fun changeSelectedUserState() {

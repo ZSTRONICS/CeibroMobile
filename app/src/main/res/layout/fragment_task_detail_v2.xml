@@ -16,8 +16,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:theme="@style/SelectableTextTheme">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/taskDetailHeader"
@@ -138,7 +137,8 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="1dp"
                 android:paddingEnd="1dp"
-                android:paddingBottom="@dimen/_5sdp">
+                android:paddingBottom="@dimen/_5sdp"
+                android:theme="@style/SelectableTextTheme">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/taskDetailStatusBar"
