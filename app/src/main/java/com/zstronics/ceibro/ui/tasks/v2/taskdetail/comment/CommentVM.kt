@@ -36,7 +36,7 @@ class CommentVM @Inject constructor(
         MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
     var taskData: CeibroTaskV2? = null
-    var actionToPerform = ""
+    var actionToPerform: MutableLiveData<String> = MutableLiveData("")
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -46,9 +46,7 @@ class CommentVM @Inject constructor(
         if (bundleTaskData != null) {
             taskData = bundleTaskData
         }
-        if (action != null) {
-            actionToPerform = action
-        }
+        action?.let { actionToPerform.value = it }
     }
 
     fun uploadComment(
@@ -157,9 +155,10 @@ class CommentVM @Inject constructor(
         onBack: () -> Unit
     ) {
         val list = getCombinedList()
+        val imageList = getCombinedImagesList()
         if (taskData?.doneCommentsRequired == true && viewState.comment.value.toString() == "") {
             alert(context.resources.getString(R.string.comment_is_required_to_mark_task_as_done))
-        } else if (taskData?.doneImageRequired == true && list.isEmpty()) {
+        } else if (taskData?.doneImageRequired == true && imageList.isEmpty()) {
             alert(context.resources.getString(R.string.image_is_required_to_mark_task_as_done))
         } else {
             launch {
@@ -266,6 +265,18 @@ class CommentVM @Inject constructor(
         if (documents != null) {
             combinedList.addAll(documents)
         }
+        return combinedList
+    }
+    private fun getCombinedImagesList(): ArrayList<PickedImages> {
+        val listOfImages = listOfImages.value
+//        val documents = documents.value
+        val combinedList = arrayListOf<PickedImages>()
+        if (listOfImages != null) {
+            combinedList.addAll(listOfImages)
+        }
+//        if (documents != null) {
+//            combinedList.addAll(documents)
+//        }
         return combinedList
     }
 

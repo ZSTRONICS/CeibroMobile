@@ -87,13 +87,30 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white">
 
+                <TextView
+                    android:id="@+id/commentRequiredHeading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="1"
+                    android:text="@string/comment_is_required"
+                    android:textColor="@color/appRed"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/commentField"
+                    app:layout_constraintStart_toStartOf="@+id/commentField"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/commentField"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_14sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_11sdp"
                     android:layout_marginEnd="@dimen/_14sdp"
                     android:background="@drawable/input_field_bottom_line"
                     android:hint="@string/comment_heading"
@@ -107,7 +124,7 @@
                     app:hintTextColor="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toBottomOf="@+id/commentRequiredHeading">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/commentText"
@@ -127,6 +144,34 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    android:id="@+id/imageRequiredHeading"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="1"
+                    android:text="@string/image_is_required"
+                    android:textColor="@color/appRed"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/commentField"
+                    app:layout_constraintStart_toStartOf="@+id/commentField"
+                    app:layout_constraintTop_toBottomOf="@+id/commentField" />
+
+                <View
+                    android:id="@+id/imageRequiredBottomLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:background="@color/appGrey3"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/imageRequiredHeading"
+                    app:layout_constraintStart_toStartOf="@+id/imageRequiredHeading"
+                    app:layout_constraintTop_toBottomOf="@+id/imageRequiredHeading" />
+
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/onlyImagesRV"
                     android:layout_width="0dp"
@@ -139,7 +184,7 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="@+id/commentField"
                     app:layout_constraintStart_toStartOf="@+id/commentField"
-                    app:layout_constraintTop_toBottomOf="@+id/commentField"
+                    app:layout_constraintTop_toBottomOf="@+id/imageRequiredBottomLine"
                     tools:itemCount="3"
                     tools:listitem="@layout/layout_ceibro_only_image" />
 

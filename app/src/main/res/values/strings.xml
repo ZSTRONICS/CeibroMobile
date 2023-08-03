@@ -429,4 +429,6 @@
     <string name="select_contacts">Select Contacts</string>
     <string name="heading_refresh">Refresh</string>
     <string name="disable_auto_sync">Disable Auto Sync</string>
+    <string name="comment_is_required">Comment is required</string>
+    <string name="image_is_required">Image is required</string>
 </resources>

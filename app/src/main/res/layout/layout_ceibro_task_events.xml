@@ -44,6 +44,7 @@
             android:fontFamily="@font/inter_medium"
             android:gravity="start"
             android:maxLines="1"
+            android:singleLine="true"
             android:text="Kristo Vunukainen"
             android:textColor="@color/black"
             android:textSize="14sp"

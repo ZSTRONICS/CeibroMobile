@@ -49,10 +49,18 @@ class TaskDetailV2Fragment :
                 navigateForResult(R.id.commentFragment, COMMENT_REQUEST_CODE, bundle)
             }
             R.id.doneBtn -> {
-                val bundle = Bundle()
-                bundle.putParcelable("taskData", viewModel.taskDetail.value)
-                bundle.putString("action", TaskDetailEvents.DoneTask.eventValue)
-                navigateForResult(R.id.commentFragment, DONE_REQUEST_CODE, bundle)
+                if (viewModel.taskDetail.value?.doneCommentsRequired == true || viewModel.taskDetail.value?.doneImageRequired == true) {
+                    val bundle = Bundle()
+                    bundle.putParcelable("taskData", viewModel.taskDetail.value)
+                    bundle.putString("action", TaskDetailEvents.DoneTask.eventValue)
+                    navigateForResult(R.id.commentFragment, DONE_REQUEST_CODE, bundle)
+                } else {
+                    viewModel.doneTask(viewModel.taskDetail.value?.id ?: "") { task ->
+                        if (task != null) {
+                            viewModel._taskDetail.postValue(task)
+                        }
+                    }
+                }
             }
             R.id.taskForwardBtn -> {
                 val assignTo = viewModel.taskDetail.value?.assignedToState?.map { it.phoneNumber }
