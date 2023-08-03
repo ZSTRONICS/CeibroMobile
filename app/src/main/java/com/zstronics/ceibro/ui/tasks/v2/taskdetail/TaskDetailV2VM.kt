@@ -3,22 +3,32 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
+import com.google.gson.Gson
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ee.zstronics.ceibro.camera.AttachmentTypes
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -29,6 +39,7 @@ class TaskDetailV2VM @Inject constructor(
     override val viewState: TaskDetailV2State,
     private val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
+    val dashboardRepository: IDashboardRepository,
     private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
     val user = sessionManager.getUser().value
@@ -120,17 +131,7 @@ class TaskDetailV2VM @Inject constructor(
                     if (taskSeenData != null) {
                         updateGenericTaskSeenInLocal(taskSeenData, taskDao, user?.id)
                         onBack(taskSeenData)
-//                        val task = taskDetail.value
-//                        val userSeen = task?.assignedToState?.find { it.userId == taskSeenData.state.userId }
-//                        if (userSeen != null) {
-//                            val index = task.assignedToState.indexOf(userSeen)
-//                            task.assignedToState[index] = taskSeenData.state
-//                        }
-//                        task?.creatorState = taskSeenData.creatorState
-//                        task?.seenBy = taskSeenData.seenBy
-//                        task.let { _taskDetail.postValue(it) }
                     }
-                    //loading(false, "")
 
                 } else {
                     //loading(false, "")
@@ -157,12 +158,51 @@ class TaskDetailV2VM @Inject constructor(
                     loading(false, "")
                     updateForwardTaskInLocal(task, taskDao, user?.id, sessionManager)
                 } else {
-                        loading(false, errorMsg)
+                    loading(false, errorMsg)
                 }
             }
         }
     }
 
+
+    fun doneTask(
+        taskId: String,
+        onBack: (task: CeibroTaskV2?) -> Unit
+    ) {
+        launch {
+            var isSuccess = false
+            var taskData: CeibroTaskV2? = null
+
+            val request = EventCommentOnlyUploadV2Request(
+                message = ""
+            )
+
+            loading(true)
+            when (val response = dashboardRepository.uploadEventWithoutFilesV2(
+                event = TaskDetailEvents.DoneTask.eventValue,
+                taskId = taskId,
+                hasFiles = false,
+                eventCommentOnlyUploadV2Request = request
+            )) {
+                is ApiResponse.Success -> {
+                    val commentData = response.data.data
+                    taskData = updateTaskDoneInLocal(commentData, taskDao, user?.id, sessionManager)
+                    isSuccess = true
+                }
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+
+            val handler = Handler()
+            handler.postDelayed(Runnable {
+                loading(false, "")
+                if (isSuccess) {
+                    onBack(taskData)
+                }
+            }, 50)
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskForwardEvent(event: LocalEvents.TaskForwardEvent?) {

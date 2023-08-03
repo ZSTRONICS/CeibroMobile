@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
@@ -124,7 +125,7 @@ class CommentFragment :
             }
 
             R.id.nextBtn -> {
-                if (viewModel.actionToPerform.equals(TaskDetailEvents.Comment.eventValue, true)) {
+                if (viewModel.actionToPerform.value.equals(TaskDetailEvents.Comment.eventValue, true)) {
                     viewModel.uploadComment(
                         requireContext()
                     ) {
@@ -132,7 +133,7 @@ class CommentFragment :
                         bundle.putParcelable("taskData", viewModel.taskData)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
-                } else if (viewModel.actionToPerform.equals(
+                } else if (viewModel.actionToPerform.value.equals(
                         TaskDetailEvents.DoneTask.eventValue,
                         true
                     )
@@ -180,16 +181,67 @@ class CommentFragment :
                 .start()
         }, 20)
 
-//        mViewDataBinding.commentText.setOnTouchListener { view, event ->
-//            view.parent.requestDisallowInterceptTouchEvent(true)
-//            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-//                view.parent.requestDisallowInterceptTouchEvent(false)
-//            }
-//            return@setOnTouchListener false
-//        }
+        mViewDataBinding.commentText.setOnTouchListener { view, event ->
+            view.parent.requestDisallowInterceptTouchEvent(true)
+            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                view.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return@setOnTouchListener false
+        }
 
+        viewModel.actionToPerform.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                if (it.equals(TaskDetailEvents.Comment.eventValue, true)) {
+                    mViewDataBinding.commentHeading.text = resources.getString(R.string.reply_heading)
+                    mViewDataBinding.commentRequiredHeading.visibility = View.GONE
+                    mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                    mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
+
+                } else if (it.equals(TaskDetailEvents.DoneTask.eventValue, true)
+                ) {
+                    mViewDataBinding.commentHeading.text = resources.getString(R.string.done_requirements_heading)
+                    if (viewModel.taskData != null) {
+                        if (viewModel.taskData?.doneCommentsRequired == true) {
+                            mViewDataBinding.commentRequiredHeading.visibility = View.VISIBLE
+                        }
+                        if (viewModel.taskData?.doneImageRequired == true) {
+                            mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
+                            mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+
+        viewState.comment.observe(viewLifecycleOwner) {
+            if (viewModel.actionToPerform.value.equals(TaskDetailEvents.DoneTask.eventValue, true)) {
+                if (!it.isNullOrEmpty()) {
+                    mViewDataBinding.commentRequiredHeading.visibility = View.GONE
+                } else {
+                    if (viewModel.taskData?.doneCommentsRequired == true) {
+                        mViewDataBinding.commentRequiredHeading.visibility = View.VISIBLE
+                    } else {
+                        mViewDataBinding.commentRequiredHeading.visibility = View.GONE
+                    }
+                }
+            }
+        }
 
         viewModel.listOfImages.observe(viewLifecycleOwner) {
+            if (viewModel.actionToPerform.value.equals(TaskDetailEvents.DoneTask.eventValue, true)) {
+                if (!it.isNullOrEmpty()) {
+                    mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                    mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
+                } else {
+                    if (viewModel.taskData?.doneImageRequired == true) {
+                        mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
+                        mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
+                    } else {
+                        mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                        mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
+                    }
+                }
+            }
             if (!it.isNullOrEmpty()) {
                 val allImages = it
 
