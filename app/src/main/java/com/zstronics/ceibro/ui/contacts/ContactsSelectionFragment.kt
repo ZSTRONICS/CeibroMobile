@@ -39,6 +39,7 @@ class ContactsSelectionFragment :
                 }
 //                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
                 viewModel.syncContacts(selectedContacts) {
+                    viewModel.sessionManager.saveSyncedContacts(selectedContacts)
                     navigateToDashboard()
                 }
             }

@@ -861,7 +861,13 @@ class DashboardVM @Inject constructor(
                         projectDao.insert(ProjectsV2DatabaseEntity(1, projects = data))
                     }
                 }
-
+                is ApiResponse.Error -> {
+                }
+            }
+            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+                is ApiResponse.Success -> {
+                    connectionsV2Dao.insertAll(response.data.contacts)
+                }
                 is ApiResponse.Error -> {
                 }
             }

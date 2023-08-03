@@ -7,7 +7,6 @@ import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -22,8 +21,7 @@ class ContactsSelectionVM @Inject constructor(
     override var validator: Validator?,
     val sessionManager: SessionManager,
     private val resProvider: IResourceProvider,
-    private val dashboardRepository: IDashboardRepository,
-    private val connectionsV2Dao: ConnectionsV2Dao
+    private val dashboardRepository: IDashboardRepository
 ) : HiltBaseViewModel<IContactsSelection.State>(), IContactsSelection.ViewModel, IValidator {
     val user = sessionManager.getUser().value
     private val _contacts: MutableLiveData<List<SyncContactsRequest.CeibroContactLight>> =
@@ -57,7 +55,6 @@ class ContactsSelectionVM @Inject constructor(
             when (val response =
                 dashboardRepository.syncContacts(userId, request)) {
                 is ApiResponse.Success -> {
-                    connectionsV2Dao.insertAll(selectedContacts.toCeibroContacts())
                     loading(false)
                     onSuccess.invoke()
                 }

@@ -9,9 +9,9 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.resourses.IResourceProvider
+import com.zstronics.ceibro.ui.contacts.toLightContacts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -73,15 +73,7 @@ class LoginVM @Inject constructor(
 
                 is ApiResponse.Success -> {
                     val contacts = response.data.contacts
-                    val selectedContacts = contacts.map {
-                        SyncContactsRequest.CeibroContactLight(
-                            contactFirstName = it.contactFirstName ?: "",
-                            contactSurName = it.contactSurName ?: "",
-                            countryCode = it.countryCode,
-                            phoneNumber = it.phoneNumber,
-                            contactFullName = it.contactFullName ?: ""
-                        )
-                    }
+                    sessionManager.saveSyncedContacts(contacts.toLightContacts())
                     connectionsV2Dao.insertAll(response.data.contacts)
                     callBack.invoke()
                 }

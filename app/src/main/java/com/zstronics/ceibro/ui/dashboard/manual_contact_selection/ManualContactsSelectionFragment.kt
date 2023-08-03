@@ -10,7 +10,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.databinding.FragmentManualContactsSelectionBinding
 import com.zstronics.ceibro.ui.contacts.adapter.ContactsSelectionAdapter
-import com.zstronics.ceibro.ui.contacts.toCeibroContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -35,9 +34,7 @@ class ManualContactsSelectionFragment :
                 isLoadingTrue = true
                 viewModel.loading(true)
                 val selectedContacts = viewModel.originalContacts.filter { it.isChecked }.map { it }
-                viewModel.launch {
-                    viewModel.connectionsV2Dao.insertAll(selectedContacts.toCeibroContacts())
-                }
+                viewModel.sessionManager.saveSyncedContacts(selectedContacts)
                 startOneTimeContactSyncWorker(requireContext())
                 mViewDataBinding.confirmBtn.isEnabled = false
             }

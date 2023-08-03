@@ -56,24 +56,24 @@ class ContactSyncWorker @AssistedInject constructor(
 
         val phoneContacts = getLocalContacts(context)
 
-        val contacts: MutableList<SyncContactsRequest.CeibroContactLight> =
-            if (user?.autoContactSync == true) {
-                phoneContacts
-            } else {
-                roomContacts.toLightContacts().toMutableList()
-            }
+        val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
 
-        val deletedContacts = findDeletedContacts(roomContacts, phoneContacts).toLightContacts()
-        contacts.removeAll(deletedContacts)
+        val contacts = if (user?.autoContactSync == true) {
+            phoneContacts
+        } else {
+            manualContacts
+        }
+
+        val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
 
         val updatedContacts =
-            compareContactsAndUpdateList(roomContacts, phoneContacts)
+            compareContactsAndUpdateList(roomContacts, contacts)
 
         val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
         updatedAndNewContacts.addAll(updatedContacts)
 
         if (user?.autoContactSync == true) {
-            val newContacts = findNewContacts(roomContacts, phoneContacts)
+            val newContacts = findNewContacts(roomContacts, contacts)
             updatedAndNewContacts.addAll(newContacts)
         }
 
@@ -94,11 +94,10 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
         }
-        EventBus.getDefault().post(LocalEvents.UpdateConnections)
 
         /// No Change in contacts
-        if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty() && user?.autoContactSync == true) {
-            val request = SyncContactsRequest(contacts = updatedAndNewContacts)
+        if (sessionManager.isLoggedIn() && contacts.isNotEmpty()) {
+            val request = SyncContactsRequest(contacts = contacts)
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
                 is ApiResponse.Success -> {
@@ -127,6 +126,7 @@ class ContactSyncWorker @AssistedInject constructor(
         when (val response = dashboardRepository.getAllConnectionsV2(userId)) {
             is ApiResponse.Success -> {
                 room.getConnectionsV2Dao().insertAll(response.data.contacts)
+                sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
                 EventBus.getDefault().post(LocalEvents.UpdateConnections)
                 GlobalScope.launch(Dispatchers.IO) {
                     Looper.prepare()

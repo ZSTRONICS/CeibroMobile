@@ -57,7 +57,6 @@ class MyConnectionV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startOneTimeContactSyncWorker(requireContext())
         mViewDataBinding.connectionRV.adapter = adapter
         mViewDataBinding.connectionRV.layoutManager?.isItemPrefetchEnabled = true
         mViewDataBinding.connectionRV.setRecycledViewPool(RecyclerView.RecycledViewPool())
