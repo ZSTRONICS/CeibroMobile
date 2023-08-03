@@ -98,6 +98,7 @@ class MyConnectionV2Fragment :
             runUIOnce = true
         }
         mViewDataBinding.searchBar.setQuery("", true)
+        startOneTimeContactSyncWorker(requireContext())
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {
@@ -188,6 +189,7 @@ class MyConnectionV2Fragment :
         }
         popupMenu.show()
     }
+
 
     override fun onStart() {
         super.onStart()

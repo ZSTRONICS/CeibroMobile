@@ -6,8 +6,8 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.provider.ContactsContract
 import androidx.core.content.ContextCompat
+import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.zstronics.ceibro.base.extensions.removeSpecialChar
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.utils.getDefaultCountryCode
 
@@ -48,7 +48,6 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                 val id = cursor.getLong(idColumnIndex)
                 var contact = contacts[id]
                 if (contact == null) {
-
                     contact = SyncContactsRequest.CeibroContactLight()
                     val displayName = cursor.getString(displayNamePrimaryColumnIndex)
                     if (displayName != null && displayName.isNotEmpty()) {
@@ -68,27 +67,34 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
                         }
                     }
                     mapThumbnail(cursor, contact, thumbnailColumnIndex)
-                    contacts[id] = contact
-                }
-                val mimetype = cursor.getString(mimetypeColumnIndex)
-                when (mimetype) {
-                    ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> mapEmail(
-                        cursor,
-                        contact,
-                        dataColumnIndex
-                    )
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
-                        var phoneNumber: String? = cursor.getString(dataColumnIndex)
-                        if (phoneNumber != null && phoneNumber.isNotEmpty()) {
-                            phoneNumber = phoneNumber.replace("\\s+".toRegex(), "")
+                    val mimetype = cursor.getString(mimetypeColumnIndex)
+                    when (mimetype) {
+                        ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE -> mapEmail(
+                            cursor,
+                            contact,
+                            dataColumnIndex
+                        )
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> {
+                            var phoneNumber: String? = cursor.getString(dataColumnIndex)
+                            if (phoneNumber != null && phoneNumber.isNotEmpty()) {
+                                phoneNumber = phoneNumber.replace("\\s+".toRegex(), "")
 
-                            try {
-                                val pn =
-                                    PhoneNumberUtil.getInstance()
-                                        .parse(phoneNumber, getDefaultCountryCode(context))
-                                contact.phoneNumber = "+${pn.countryCode}${pn.nationalNumber.toString()}"
-                                contact.countryCode = "+${pn.countryCode}"
-                            } catch (e: Exception) {
+                                // Skip contacts with special phone numbers
+                                try {
+                                    val phoneNumberUtil = PhoneNumberUtil.getInstance()
+                                    val pn = phoneNumberUtil.parse(
+                                        phoneNumber,
+                                        getDefaultCountryCode(context)
+                                    )
+                                    if (phoneNumberUtil.isValidNumber(pn)) {
+                                        contact.phoneNumber =
+                                            "+${pn.countryCode}${pn.nationalNumber}"
+                                        contact.countryCode = "+${pn.countryCode}"
+                                        contacts[id] = contact
+                                    }
+                                } catch (e: NumberParseException) {
+                                    // Handle parsing exception if needed
+                                }
                             }
                         }
                     }

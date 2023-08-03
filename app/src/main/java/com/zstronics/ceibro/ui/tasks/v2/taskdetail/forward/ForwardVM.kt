@@ -75,10 +75,12 @@ class ForwardVM @Inject constructor(
             }
             _allConnections.value = allContacts
             originalConnections = allContacts
-            appendRecentConnections(callBack)
+            callBack.invoke()
+//            appendRecentConnections(callBack)
         } else {
             if (allContacts.isNotEmpty()) {
-                appendRecentConnections(callBack)
+//                appendRecentConnections(callBack)
+                callBack.invoke()
                 originalConnections = allContacts
                 _allConnections.value = allContacts
             }

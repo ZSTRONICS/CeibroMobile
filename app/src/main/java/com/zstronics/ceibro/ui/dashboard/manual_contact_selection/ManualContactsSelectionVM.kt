@@ -30,7 +30,8 @@ class ManualContactsSelectionVM @Inject constructor(
     val contacts: LiveData<List<SyncContactsRequest.CeibroContactLight>> = _contacts
     var originalContacts = listOf<SyncContactsRequest.CeibroContactLight>()
 
-    init {
+    override fun onResume() {
+        super.onResume()
         loadContacts()
     }
 

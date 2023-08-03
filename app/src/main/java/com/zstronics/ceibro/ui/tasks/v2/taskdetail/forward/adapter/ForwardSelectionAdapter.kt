@@ -54,6 +54,13 @@ class ForwardSelectionAdapter @Inject constructor() :
             val context = binding.contactName.context
 
             binding.contactCheckBox.isChecked = item.isChecked
+            binding.mainLayout.isEnabled = true
+            binding.root.isEnabled = true
+            binding.root.isClickable = true
+            binding.root.alpha = 1.0f
+            binding.contactInitials.setTextColor(context.resources.getColor(R.color.black))
+            binding.contactName.setTextColor(context.resources.getColor(R.color.black))
+
             binding.root.setOnClickListener {
                 item.isChecked = !item.isChecked
                 dataList[absoluteAdapterPosition].isChecked = item.isChecked
