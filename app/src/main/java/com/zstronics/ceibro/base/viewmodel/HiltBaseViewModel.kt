@@ -241,10 +241,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             )
                         )
                     )
-                    if (task.creator.id != userId) {
-                        sharedViewModel?.isToMeUnread?.value = true
-                        sessionManager.saveToMeUnread(true)
-                    }
+
+                    sharedViewModel?.isToMeUnread?.value = true
+                    sessionManager.saveToMeUnread(true)
+
                     EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                 }
             }
