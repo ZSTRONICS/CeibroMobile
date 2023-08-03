@@ -43,10 +43,10 @@ class ProgressDialogueFragment : DialogFragment() {
 
     private fun startSplashAnimation() {
         // Set the total duration for the animation (5 seconds)
-        val totalDuration = 5000L
+        val totalDuration = 500000L
 
         // The duration for each individual animation
-        val individualDuration = 740L
+        val individualDuration = 640L
 
         // Calculate the number of times to run the animation
         val repeatCount = totalDuration / (individualDuration * 2)
