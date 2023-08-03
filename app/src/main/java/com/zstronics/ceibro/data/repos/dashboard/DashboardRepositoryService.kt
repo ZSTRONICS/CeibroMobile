@@ -125,6 +125,7 @@ interface DashboardRepositoryService {
 
     @POST("v2/users/contacts/delete")
     suspend fun syncDeletedContacts(
+        @Query("deleteAll") deleteAll: Boolean = false,
         @Body syncContactsRequest: SyncContactsRequest
     ): Response<GetContactsResponse>
 }

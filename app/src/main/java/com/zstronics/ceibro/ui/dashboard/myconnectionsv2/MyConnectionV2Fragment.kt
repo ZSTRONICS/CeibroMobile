@@ -201,11 +201,6 @@ class MyConnectionV2Fragment :
         EventBus.getDefault().unregister(this)
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onContactsSynced(event: LocalEvents.ContactsSynced) {
-        loadConnections(false)
-    }
-
     companion object {
         const val CONNECTION_KEY: String = "Connection"
     }

@@ -185,11 +185,12 @@ class DashboardRepository @Inject constructor(
     )
 
     override suspend fun syncDeletedContacts(
+        deleteAll: Boolean,
         contacts: SyncContactsRequest
     ): ApiResponse<GetContactsResponse> = executeSafely(
         call =
         {
-            service.syncDeletedContacts(contacts)
+            service.syncDeletedContacts(deleteAll, contacts)
         }
     )
 

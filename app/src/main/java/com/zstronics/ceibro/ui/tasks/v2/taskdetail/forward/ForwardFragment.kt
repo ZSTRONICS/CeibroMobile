@@ -120,10 +120,14 @@ class ForwardFragment :
             { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
                 val selectedContacts: MutableList<AllCeibroConnections.CeibroConnection> =
                     mutableListOf()
-                val selected = adapter.dataList.filter { it.isChecked }.map { it }
-                selectedContacts.addAll(selected)
+                val onlyConnections1 =
+                    adapter.dataList.filterIsInstance<AllCeibroConnections.CeibroConnection>()
+                val selected = onlyConnections1.filter { it.isChecked }.map { it }
+                selectedContacts.addAll(selected as MutableList<AllCeibroConnections.CeibroConnection>)
+                val onlyConnections =
+                    viewModel.originalConnections.filterIsInstance<AllCeibroConnections.CeibroConnection>()
                 val oldSelected =
-                    viewModel.originalConnections.filter { it.isChecked }.map { it }.toMutableList()
+                    onlyConnections.filter { it.isChecked }.map { it }.toMutableList()
                 if (oldSelected.isNotEmpty()) {
                     val combinedList = selectedContacts + oldSelected
                     val distinctList = combinedList.distinct().toMutableList()
@@ -135,7 +139,9 @@ class ForwardFragment :
                 }
 
 
-                val allContacts = viewModel.originalConnections.toMutableList()
+                val allContacts =
+                    viewModel.originalConnections.filterIsInstance<AllCeibroConnections.CeibroConnection>()
+                        .toMutableList()
                 if (allContacts.isNotEmpty() && selectedContacts.isNotEmpty()) {
                     for (allItem in allContacts) {
                         for (selectedItem in selectedContacts) {

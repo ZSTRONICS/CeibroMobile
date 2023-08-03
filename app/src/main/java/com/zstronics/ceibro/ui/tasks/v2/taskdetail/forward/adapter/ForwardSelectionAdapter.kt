@@ -7,37 +7,64 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.HeaderItem
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
+import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
 import javax.inject.Inject
 
 class ForwardSelectionAdapter @Inject constructor() :
-    RecyclerView.Adapter<ForwardSelectionAdapter.ForwardSelectionViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
-    var dataList: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
+    var dataList: MutableList<BaseResponse> = mutableListOf()
     var oldContacts: ArrayList<String> = arrayListOf()
+    val ITEM_TYPE_HEADER = 0
+    val ITEM_TYPE_CONNECTION = 1
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            ITEM_TYPE_HEADER ->
+                HeaderViewHolder(
+                    LayoutItemHeaderBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            else ->
+                ForwardSelectionViewHolder(
+                    LayoutItemAssigneeSelectionBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+        }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForwardSelectionViewHolder {
-        return ForwardSelectionViewHolder(
-            LayoutItemAssigneeSelectionBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
     }
 
-    override fun onBindViewHolder(holder: ForwardSelectionViewHolder, position: Int) {
-        holder.bind(dataList[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ForwardSelectionViewHolder)
+            holder.bind(dataList[position])
+        else if (holder is HeaderViewHolder)
+            holder.bind(dataList[position])
     }
 
     override fun getItemCount(): Int {
         return dataList.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        val item = dataList[position]
+        return if (item is HeaderItem)
+            ITEM_TYPE_HEADER
+        else
+            ITEM_TYPE_CONNECTION
+    }
+
     fun setList(
-        list: List<AllCeibroConnections.CeibroConnection>,
+        list: List<BaseResponse>,
         oldSelectedContacts: ArrayList<String>
     ) {
         this.dataList.clear()
@@ -50,7 +77,8 @@ class ForwardSelectionAdapter @Inject constructor() :
     inner class ForwardSelectionViewHolder(private val binding: LayoutItemAssigneeSelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: AllCeibroConnections.CeibroConnection) {
+        fun bind(itemParent: BaseResponse) {
+            val item = itemParent as AllCeibroConnections.CeibroConnection
             val context = binding.contactName.context
 
             binding.contactCheckBox.isChecked = item.isChecked
@@ -63,7 +91,8 @@ class ForwardSelectionAdapter @Inject constructor() :
 
             binding.root.setOnClickListener {
                 item.isChecked = !item.isChecked
-                dataList[absoluteAdapterPosition].isChecked = item.isChecked
+                (dataList[absoluteAdapterPosition] as AllCeibroConnections.CeibroConnection).isChecked =
+                    item.isChecked
                 notifyDataSetChanged()
                 itemClickListener?.invoke(it, position, item)
             }
@@ -144,6 +173,13 @@ class ForwardSelectionAdapter @Inject constructor() :
                 binding.contactName.setTextColor(context.resources.getColor(R.color.appGrey3))
             }
 
+        }
+    }
+
+    inner class HeaderViewHolder(private val binding: LayoutItemHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(itemParent: BaseResponse) {
+            binding.headerTitle.text = (itemParent as HeaderItem).title
         }
     }
 }

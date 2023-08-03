@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.HeaderItem
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -66,14 +68,17 @@ class ForwardVM @Inject constructor(
         callBack: () -> Unit
     ) {
         val allContacts = contactsResponse.groupDataByFirstLetter().toMutableList()
+//        allContacts[0] = HeaderItem("All Connections")
         val oldSelectedContacts = selectedContacts.value
-
         if (!oldSelectedContacts.isNullOrEmpty()) {
             oldSelectedContacts.forEach { oldContact ->
-                val matchingContact = allContacts.find { it.id == oldContact.id }
-                matchingContact?.isChecked = true
+                val matchingContact =
+                    allContacts.find { (it as AllCeibroConnections.CeibroConnection).id == oldContact.id }
+                if (matchingContact is AllCeibroConnections.CeibroConnection)
+                    matchingContact.isChecked = true
             }
-            _allConnections.value = allContacts
+            _allConnections.value =
+                allContacts as MutableList<AllCeibroConnections.CeibroConnection>
             originalConnections = allContacts
             callBack.invoke()
 //            appendRecentConnections(callBack)
@@ -81,7 +86,8 @@ class ForwardVM @Inject constructor(
             if (allContacts.isNotEmpty()) {
 //                appendRecentConnections(callBack)
                 callBack.invoke()
-                originalConnections = allContacts
+                originalConnections =
+                    allContacts as MutableList<AllCeibroConnections.CeibroConnection>
                 _allConnections.value = allContacts
             }
         }
@@ -96,11 +102,12 @@ class ForwardVM @Inject constructor(
                     if (newItemsList.isNotEmpty()) {
                         val currentList: MutableList<AllCeibroConnections.CeibroConnection> =
                             originalConnections.toMutableList()
-                        val updatedList: MutableList<AllCeibroConnections.CeibroConnection> =
+                        val updatedList: MutableList<BaseResponse> =
                             mutableListOf()
                         updatedList.addAll(0, newItemsList)
+                        updatedList[0] = HeaderItem("Recent Connections")
                         updatedList.addAll(currentList)
-                        _allConnections.postValue(updatedList)
+                        _allConnections.postValue(updatedList as MutableList<AllCeibroConnections.CeibroConnection>)
                         originalConnections = updatedList
                     }
                     callBack.invoke()
@@ -127,7 +134,9 @@ class ForwardVM @Inject constructor(
 
             return
         }
-        val filtered = originalConnections.filter {
+        val onlyConnections =
+            originalConnections.filterIsInstance<AllCeibroConnections.CeibroConnection>()
+        val filtered = onlyConnections.filter {
             (!it.contactFullName.isNullOrEmpty() && it.contactFullName.lowercase()
                 .contains(search, true)) ||
                     (!it.contactFirstName.isNullOrEmpty() && it.contactFirstName.lowercase()
@@ -141,7 +150,7 @@ class ForwardVM @Inject constructor(
             _allConnections.postValue(mutableListOf())
     }
 
-    fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<AllCeibroConnections.CeibroConnection> {
+    fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<BaseResponse> {
         val groupedData = this.groupBy {
             if (it.contactFirstName?.firstOrNull()?.isLetter() == true) {
                 it.contactFirstName.first().lowercase()

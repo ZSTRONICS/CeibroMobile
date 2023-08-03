@@ -73,18 +73,22 @@ class ContactSyncWorker @AssistedInject constructor(
         updatedAndNewContacts.addAll(updatedContacts)
 
 //        if (user?.autoContactSync == true) {
-            val newContacts = findNewContacts(roomContacts, contacts)
-            updatedAndNewContacts.addAll(newContacts)
+        val newContacts = findNewContacts(roomContacts, contacts)
+        updatedAndNewContacts.addAll(newContacts)
 //        }
 
         // Delete contacts API call
         if (deletedContacts.isNotEmpty()) {
-            val request = SyncContactsRequest(contacts = deletedContacts)
-            when (val response = dashboardRepository.syncDeletedContacts(request)) {
+
+            val isDeleteAll = deletedContacts.size == roomContacts.size
+
+            val contactsToDelete: List<SyncContactsRequest.CeibroContactLight> =
+                if (isDeleteAll) emptyList()
+                else deletedContacts
+
+            val request = SyncContactsRequest(contacts = contactsToDelete)
+            when (val response = dashboardRepository.syncDeletedContacts(isDeleteAll, request)) {
                 is ApiResponse.Success -> {
-                    EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
-                    EventBus.getDefault().post(LocalEvents.ContactsSynced)
-                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
                     updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                     Result.success()
                 }
@@ -95,15 +99,11 @@ class ContactSyncWorker @AssistedInject constructor(
             }
         }
 
-        /// No Change in contacts
         if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
             val request = SyncContactsRequest(contacts = updatedAndNewContacts)
             when (val response =
                 dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
                 is ApiResponse.Success -> {
-                    EventBus.getDefault().post(LocalEvents.GetALlContactsFromAPI)
-                    EventBus.getDefault().post(LocalEvents.ContactsSynced)
-                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
                     updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                     Result.success()
                 }
@@ -128,17 +128,17 @@ class ContactSyncWorker @AssistedInject constructor(
             is ApiResponse.Success -> {
                 room.getConnectionsV2Dao().insertAll(response.data.contacts)
                 sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
-                EventBus.getDefault().post(LocalEvents.UpdateConnections)
                 GlobalScope.launch(Dispatchers.IO) {
                     Looper.prepare()
                     val handler = Handler()
                     handler.postDelayed({
-                        EventBus.getDefault().post(LocalEvents.ContactsSynced)
+                        EventBus.getDefault().post(LocalEvents.UpdateConnections)
                     }, 50)
                     Looper.loop()
                 }
             }
             is ApiResponse.Error -> {
+                EventBus.getDefault().post(LocalEvents.UpdateConnections)
             }
         }
     }

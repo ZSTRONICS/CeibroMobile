@@ -62,6 +62,7 @@ interface IDashboardRepository {
     ): ApiResponse<GetContactsResponse>
 
     suspend fun syncDeletedContacts(
+        deleteAll: Boolean,
         contacts: SyncContactsRequest
     ): ApiResponse<GetContactsResponse>
 

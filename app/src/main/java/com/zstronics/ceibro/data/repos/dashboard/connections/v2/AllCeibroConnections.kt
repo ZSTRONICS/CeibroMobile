@@ -81,3 +81,5 @@ data class ConnectionsV2DatabaseEntity(
     @ColumnInfo("contacts")
     val contacts: List<AllCeibroConnections.CeibroConnection>
 )
+
+data class HeaderItem(val title: String) : BaseResponse()
