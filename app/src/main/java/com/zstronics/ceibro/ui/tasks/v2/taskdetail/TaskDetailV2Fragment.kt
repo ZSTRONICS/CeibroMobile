@@ -11,9 +11,7 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -35,7 +33,7 @@ class TaskDetailV2Fragment :
     override val viewModel: TaskDetailV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_task_detail_v2
     override fun toolBarVisibility(): Boolean = false
-    val FORWARD_REQUEST_CODE = 105
+    val FORWARD_TASK_REQUEST_CODE = 104
     val COMMENT_REQUEST_CODE = 106
     val DONE_REQUEST_CODE = 107
     override fun onClick(id: Int) {
@@ -78,7 +76,8 @@ class TaskDetailV2Fragment :
                     "assignToContacts",
                     combinedList
                 )
-                navigateForResult(R.id.forwardFragment, FORWARD_REQUEST_CODE, bundle)
+                bundle.putParcelable("taskDetail", viewModel.taskDetail.value)
+                navigateForResult(R.id.forwardTaskFragment, FORWARD_TASK_REQUEST_CODE, bundle)
             }
             R.id.taskTitleBar -> {
                 if (mViewDataBinding.taskDescriptionImageLayout.visibility == View.VISIBLE) {
@@ -334,48 +333,10 @@ class TaskDetailV2Fragment :
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {
-                FORWARD_REQUEST_CODE -> {
-                    val selectedContact = result.data?.getParcelableArray("forwardContacts")
-                    val selectedContactList =
-                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
-                            ?.toMutableList()
-                    val taskData = viewModel.taskDetail.value
-
-                    if (!selectedContactList.isNullOrEmpty()) {
-                        var state = "new"
-                        if (taskData != null) {
-                            state = if (viewModel.user?.id == taskData.creator.id) {
-                                taskData.creatorState
-                            } else {
-                                taskData.assignedToState.find { it.userId == viewModel.user?.id }?.state
-                                    ?: "new"
-                            }
-                        }
-                        if (state.equals(TaskStatus.UNREAD.name, true)) {
-                            state = "new"
-                        }
-
-                        val assignedToCeibroUsers =
-                            selectedContactList.filter { it.isCeiborUser }
-                                .map {
-                                    ForwardTaskV2Request.AssignedToStateRequest(
-                                        phoneNumber = it.phoneNumber,
-                                        userId = it.userCeibroData?.id.toString(),
-                                        state = state
-                                    )
-                                } ?: listOf()
-                        val invitedNumbers = selectedContactList.filter { !it.isCeiborUser }
-                            .map { it.phoneNumber } ?: listOf()
-
-
-                        val forwardTaskRequest = ForwardTaskV2Request(
-                            assignedToState = assignedToCeibroUsers,
-                            invitedNumbers = invitedNumbers
-                        )
-
-                        viewModel.forwardTask(taskData?.id ?: "", forwardTaskRequest) { task ->
-
-                        }
+                FORWARD_TASK_REQUEST_CODE -> {
+                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
+                    if (updatedTask != null) {
+                        viewModel._taskDetail.postValue(updatedTask)
                     }
                 }
 
