@@ -36,10 +36,18 @@ class ForwardVM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
-        val selectedContact = bundle?.getStringArrayList("assignToContacts")
-        if (!selectedContact.isNullOrEmpty()) {
-            oldSelectedContacts = selectedContact
+        val oldSelectedContact = bundle?.getStringArrayList("assignToContacts")
+        if (!oldSelectedContact.isNullOrEmpty()) {
+            oldSelectedContacts = oldSelectedContact
         }
+        val selectedContact = bundle?.getParcelableArray("selectedContacts")
+        val selectedContactList =
+            selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                ?.toMutableList()
+        if (!selectedContactList.isNullOrEmpty()) {
+            selectedContactList.let { selectedContacts.postValue(it) }
+        }
+
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {

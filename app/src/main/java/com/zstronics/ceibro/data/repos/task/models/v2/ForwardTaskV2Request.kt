@@ -9,7 +9,9 @@ data class ForwardTaskV2Request(
     @SerializedName("assignedToState")
     val assignedToState: List<AssignedToStateRequest>,
     @SerializedName("invitedNumbers")
-    val invitedNumbers: List<String>
+    val invitedNumbers: List<String>,
+    @SerializedName("comment")
+    val comment: String
 ) {
     @Keep
     data class AssignedToStateRequest(
