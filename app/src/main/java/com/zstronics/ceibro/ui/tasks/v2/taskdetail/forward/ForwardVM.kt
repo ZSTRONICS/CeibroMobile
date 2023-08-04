@@ -27,7 +27,7 @@ class ForwardVM @Inject constructor(
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
 
     private var _recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
-        MutableLiveData()
+        MutableLiveData(mutableListOf())
     val recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
         _recentAllConnections
     var recentOriginalConnections = listOf<AllCeibroConnections.CeibroConnection>()
@@ -51,7 +51,6 @@ class ForwardVM @Inject constructor(
         if (!selectedContactList.isNullOrEmpty()) {
             selectedContactList.let { selectedContacts.postValue(it) }
         }
-
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
@@ -103,6 +102,11 @@ class ForwardVM @Inject constructor(
                         }
                         _recentAllConnections.postValue(allContacts)
                         recentOriginalConnections = allContacts
+                    } else {
+                        if (allContacts.isNotEmpty()) {
+                            recentOriginalConnections = allContacts
+                            _recentAllConnections.value = allContacts
+                        }
                     }
                 }
                 is ApiResponse.Error -> {
@@ -189,10 +193,5 @@ class ForwardVM @Inject constructor(
 
         return sortedItems
     }
-
-    data class ForwardConnectionGroup(
-        val sectionLetter: Char,
-        var items: List<AllCeibroConnections.CeibroConnection>
-    )
 
 }
