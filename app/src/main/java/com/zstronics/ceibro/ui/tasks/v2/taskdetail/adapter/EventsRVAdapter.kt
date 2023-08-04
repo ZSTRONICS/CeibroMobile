@@ -98,6 +98,15 @@ class EventsRVAdapter @Inject constructor() :
                     }
                     binding.forwardedToNames.text = forwardedToUsers
 
+                    if (item.commentData != null) {
+                        if (item.commentData.message.isNotEmpty()) {
+                            binding.onlyComment.text = item.commentData.message
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.visibility = View.GONE
+                        }
+                    }
+
                 }
                 TaskDetailEvents.InvitedUser.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
@@ -117,6 +126,15 @@ class EventsRVAdapter @Inject constructor() :
                         }.toString().removeSurrounding("[", "]").removeSuffix(";").replace(",", "")
                     }
                     binding.forwardedToNames.text = invitedUsers
+
+                    if (item.commentData != null) {
+                        if (item.commentData.message.isNotEmpty()) {
+                            binding.onlyComment.text = item.commentData.message
+                            binding.onlyComment.visibility = View.VISIBLE
+                        } else {
+                            binding.onlyComment.visibility = View.GONE
+                        }
+                    }
                 }
                 TaskDetailEvents.Comment.eventValue -> {
                     binding.onlyComment.visibility = View.GONE

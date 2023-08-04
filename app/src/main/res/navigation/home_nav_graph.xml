@@ -370,11 +370,11 @@
         android:label="TaskDetailV2Fragment"
         tools:layout="@layout/fragment_task_detail_v2"  >
         <action
-            android:id="@+id/action_taskDetailV2Fragment_to_forwardFragment"
-            app:destination="@id/forwardFragment" />
-        <action
             android:id="@+id/action_taskDetailV2Fragment_to_commentFragment"
             app:destination="@id/commentFragment" />
+        <action
+            android:id="@+id/action_taskDetailV2Fragment_to_forwardTaskFragment"
+            app:destination="@id/forwardTaskFragment" />
     </fragment>
     <fragment
         android:id="@+id/forwardFragment"
@@ -396,4 +396,13 @@
         android:name="com.zstronics.ceibro.ui.dashboard.manual_contact_selection.ManualContactsSelectionFragment"
         android:label="ManualContactsSelectionFragment"
         tools:layout="@layout/fragment_manual_contacts_selection" />
+    <fragment
+        android:id="@+id/forwardTaskFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask.ForwardTaskFragment"
+        android:label="ForwardTaskFragment"
+        tools:layout="@layout/fragment_forward_task" >
+        <action
+            android:id="@+id/action_forwardTaskFragment_to_forwardFragment"
+            app:destination="@id/forwardFragment" />
+    </fragment>
 </navigation>

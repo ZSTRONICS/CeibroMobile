@@ -19,9 +19,6 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -135,30 +132,6 @@ class TaskDetailV2VM @Inject constructor(
 
                 } else {
                     //loading(false, "")
-                }
-            }
-        }
-    }
-
-
-    fun forwardTask(
-        taskId: String,
-        forwardTaskV2Request: ForwardTaskV2Request,
-        onBack: (task: CeibroTaskV2) -> Unit,
-    ) {
-        launch {
-            loading(true)
-            taskRepository.forwardTask(taskId, forwardTaskV2Request) { isSuccess, task, errorMsg ->
-                if (isSuccess) {
-
-                    if (task != null) {
-                        _taskDetail.postValue(task)
-                        onBack(task)
-                    }
-                    loading(false, "")
-                    updateForwardTaskInLocal(task, taskDao, user?.id, sessionManager)
-                } else {
-                    loading(false, errorMsg)
                 }
             }
         }
