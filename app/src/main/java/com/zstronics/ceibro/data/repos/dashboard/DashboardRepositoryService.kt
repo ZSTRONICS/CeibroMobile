@@ -46,7 +46,7 @@ interface DashboardRepositoryService {
     ): Response<GenericResponse>
 
     @Multipart
-    @POST("v1/docs/uploadFiles")
+    @POST("v2/docs/uploadFiles")
     suspend fun uploadFiles(
         @Part("moduleName") moduleName: RequestBody,
         @Part("_id") id: RequestBody,
@@ -54,7 +54,7 @@ interface DashboardRepositoryService {
     ): Response<UploadFilesResponse>
 
     @Multipart
-    @POST("v1/docs/upload")
+    @POST("v2/docs/upload")
     suspend fun uploadFilesV2(
         @Part files: List<MultipartBody.Part>?,
         @Part("moduleName") moduleName: RequestBody,
@@ -82,7 +82,7 @@ interface DashboardRepositoryService {
         @Part("message") message: RequestBody
     ): Response<EventV2Response>
 
-    @GET("v1/docs/viewFiles/{module}/{moduleId}")
+    @GET("v2/docs/viewFiles/{module}/{moduleId}")
     suspend fun getFilesByModuleId(
         @Path("module") module: String,
         @Path("moduleId") moduleId: String
@@ -104,9 +104,8 @@ interface DashboardRepositoryService {
         @Path("enabled") enabled: Boolean
     ): Response<ContactSyncEnableResponse>
 
-    @GET("v2/users/contacts/{userId}")
+    @GET("v2/users/contacts")
     suspend fun getAllConnectionsV2(
-        @Path("userId") userId: String,
     ): Response<AllCeibroConnections>
 
     @GET("v2/users/recent/contacts")

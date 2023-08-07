@@ -433,4 +433,5 @@
     <string name="comment_is_required">Comment is required</string>
     <string name="image_is_required">Image is required</string>
     <string name="forward_task">Forward task</string>
+    <string name="app_data_sync_message">Please wait while we sync your data</string>
 </resources>

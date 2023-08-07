@@ -62,18 +62,15 @@ class DashboardVM @Inject constructor(
     val dashboardRepository: IDashboardRepository,
     private val authRepository: IAuthRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource,
-    private val remoteTask: TaskRemoteDataSource,
     private val taskDao: TaskV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
-    private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     var user = sessionManager.getUser().value
     var userId: String? = ""
 
     init {
-        sessionManager.setUser()
         userId = sessionManager.getUserId()
         user = sessionManager.getUser().value
         EventBus.getDefault().register(this)
@@ -797,83 +794,6 @@ class DashboardVM @Inject constructor(
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)
             .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
-    }
-
-    fun loadAppData(requireActivity: FragmentActivity) {
-        launch {
-            when (val response = remoteTask.getAllTasks(TaskRootStateTags.ToMe.tagValue)) {
-                is ApiResponse.Success -> {
-                    taskDao.insertTaskData(
-                        TasksV2DatabaseEntity(
-                            rootState = TaskRootStateTags.ToMe.tagValue,
-                            allTasks = response.data.allTasks
-                        )
-                    )
-                }
-
-                is ApiResponse.Error -> {
-                }
-            }
-
-            when (val response = remoteTask.getAllTasks(TaskRootStateTags.FromMe.tagValue)) {
-                is ApiResponse.Success -> {
-                    taskDao.insertTaskData(
-                        TasksV2DatabaseEntity(
-                            rootState = TaskRootStateTags.FromMe.tagValue,
-                            allTasks = response.data.allTasks
-                        )
-                    )
-                }
-
-                is ApiResponse.Error -> {
-                }
-            }
-
-            when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
-                is ApiResponse.Success -> {
-                    taskDao.insertTaskData(
-                        TasksV2DatabaseEntity(
-                            rootState = TaskRootStateTags.Hidden.tagValue,
-                            allTasks = response.data.allTasks
-                        )
-                    )
-                }
-
-                is ApiResponse.Error -> {
-                }
-            }
-
-//            when (val response = remoteTask.getAllTopics()) {
-//                is ApiResponse.Success -> {
-//                    topicsV2Dao.insertTopicData(
-//                        TopicsV2DatabaseEntity(
-//                            0,
-//                            topicsData = response.data
-//                        )
-//                    )
-//                }
-//                is ApiResponse.Error -> {
-//                }
-//            }
-
-            when (val response = projectRepository.getProjectsV2()) {
-                is ApiResponse.Success -> {
-                    val data = response.data.projects
-                    if (data != null) {
-                        projectDao.insert(ProjectsV2DatabaseEntity(1, projects = data))
-                    }
-                }
-                is ApiResponse.Error -> {
-                }
-            }
-            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
-                is ApiResponse.Success -> {
-                    connectionsV2Dao.insertAll(response.data.contacts)
-                }
-                is ApiResponse.Error -> {
-                }
-            }
-        }
     }
 
     fun updateRootUnread(

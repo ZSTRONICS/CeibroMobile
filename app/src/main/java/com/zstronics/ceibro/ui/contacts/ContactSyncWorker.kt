@@ -113,6 +113,8 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
         } else {
+            if (sessionManager.isLoggedIn())
+                updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
             Result.success()
         }
     }

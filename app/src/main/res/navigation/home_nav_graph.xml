@@ -405,4 +405,9 @@
             android:id="@+id/action_forwardTaskFragment_to_forwardFragment"
             app:destination="@id/forwardFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/ceibroDataLoadingFragment"
+        android:name="com.zstronics.ceibro.ui.dataloading.CeibroDataLoadingFragment"
+        android:label="CeibroDataLoadingFragment"
+        tools:layout="@layout/fragment_ceibro_data_loading"/>
 </navigation>
