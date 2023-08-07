@@ -7,7 +7,6 @@ import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.KEY_USER
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -75,15 +74,8 @@ class DashboardVM @Inject constructor(
 
     init {
         sessionManager.setUser()
-//        sessionManager.setProject()
-//        loadProjectsWithMembers()
-//        getOverallConnectionCount()
-//        launch {
-//            repository.syncTasksAndSubTasks()
-//        }
-        val _user = sessionManager.sharedPreferenceManager.getCompleteUserObj(KEY_USER)
-        userId = _user?.id
-        user = _user
+        userId = sessionManager.getUserId()
+        user = sessionManager.getUser().value
         EventBus.getDefault().register(this)
     }
 
@@ -154,10 +146,20 @@ class DashboardVM @Inject constructor(
                                 object : TypeToken<SocketNewTaskEventV2Response>() {}.type
                             ).data
                             if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
-                                updateTaskCommentInLocal(commentData, taskDao, userId, sessionManager)
+                                updateTaskCommentInLocal(
+                                    commentData,
+                                    taskDao,
+                                    userId,
+                                    sessionManager
+                                )
                             }
                             if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
-                                updateTaskCanceledInLocal(commentData, taskDao, userId, sessionManager)
+                                updateTaskCanceledInLocal(
+                                    commentData,
+                                    taskDao,
+                                    userId,
+                                    sessionManager
+                                )
                             }
                             if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
                                 updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)

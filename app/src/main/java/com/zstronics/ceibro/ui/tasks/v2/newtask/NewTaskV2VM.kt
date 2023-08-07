@@ -81,7 +81,7 @@ class NewTaskV2VM @Inject constructor(
 
             launch {
                 loading(true)
-                taskRepository.newTaskV2(newTaskRequest) { isSuccess, task ->
+                taskRepository.newTaskV2(newTaskRequest) { isSuccess, task,errorMessage ->
                     if (isSuccess) {
                         updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
                         val list = getCombinedList()
@@ -94,7 +94,7 @@ class NewTaskV2VM @Inject constructor(
                             loading(false, "")
                         }, 50)
                     } else {
-                        loading(false, "Unable to create task")
+                        loading(false, errorMessage)
                     }
                 }
             }
