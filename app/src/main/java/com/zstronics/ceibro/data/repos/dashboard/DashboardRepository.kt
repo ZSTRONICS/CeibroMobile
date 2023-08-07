@@ -175,12 +175,11 @@ class DashboardRepository @Inject constructor(
         )
 
     override suspend fun syncContacts(
-        userId: String,
         contacts: SyncContactsRequest
     ): ApiResponse<GetContactsResponse> = executeSafely(
         call =
         {
-            service.syncContacts(userId, contacts)
+            service.syncContacts(contacts)
         }
     )
 

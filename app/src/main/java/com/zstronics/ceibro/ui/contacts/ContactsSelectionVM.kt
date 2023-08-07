@@ -53,7 +53,7 @@ class ContactsSelectionVM @Inject constructor(
             // Handle the API response
             loading(true)
             when (val response =
-                dashboardRepository.syncContacts(userId, request)) {
+                dashboardRepository.syncContacts(request)) {
                 is ApiResponse.Success -> {
                     loading(false)
                     onSuccess.invoke()

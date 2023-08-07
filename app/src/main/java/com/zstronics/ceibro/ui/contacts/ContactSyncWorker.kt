@@ -102,7 +102,7 @@ class ContactSyncWorker @AssistedInject constructor(
         if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
             val request = SyncContactsRequest(contacts = updatedAndNewContacts)
             when (val response =
-                dashboardRepository.syncContacts(sessionManager.getUserId(), request)) {
+                dashboardRepository.syncContacts( request)) {
                 is ApiResponse.Success -> {
                     updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                     Result.success()

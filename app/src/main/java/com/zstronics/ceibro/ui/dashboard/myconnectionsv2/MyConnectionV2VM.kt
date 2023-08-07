@@ -7,7 +7,6 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.resourses.IResourceProvider
@@ -43,29 +42,6 @@ class MyConnectionV2VM @Inject constructor(
             originalConnections = contacts
             _allConnections.postValue(contacts)
             callBack.invoke()
-        }
-    }
-
-    private fun syncContacts(
-        selectedContacts: List<SyncContactsRequest.CeibroContactLight>,
-        onSuccess: () -> Unit
-    ) {
-        val userId = user?.id
-        launch {
-            val request = SyncContactsRequest(contacts = selectedContacts)
-            // Handle the API response
-            loading(true)
-            when (val response =
-                dashboardRepository.syncContacts(userId ?: "", request)) {
-                is ApiResponse.Success -> {
-                    loading(false)
-                    getAllConnectionsV2 {}
-                    onSuccess.invoke()
-                }
-                is ApiResponse.Error -> {
-                    loading(false, response.error.message)
-                }
-            }
         }
     }
 

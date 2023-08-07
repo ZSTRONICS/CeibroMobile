@@ -93,9 +93,8 @@ interface DashboardRepositoryService {
         @Query("role") role: String
     ): Response<AdminUsersResponse>
 
-    @POST("v2/users/contacts/{userId}/sync")
+    @POST("v2/users/contacts/sync")
     suspend fun syncContacts(
-        @Path("userId") userId: String,
         @Body syncContactsRequest: SyncContactsRequest
     ): Response<GetContactsResponse>
 

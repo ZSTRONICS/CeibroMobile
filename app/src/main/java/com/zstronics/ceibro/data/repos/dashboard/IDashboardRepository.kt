@@ -57,7 +57,6 @@ interface IDashboardRepository {
 
     suspend fun getAdminsOrUsersList(role: String): ApiResponse<AdminUsersResponse>
     suspend fun syncContacts(
-        userId: String,
         contacts: SyncContactsRequest
     ): ApiResponse<GetContactsResponse>
 
