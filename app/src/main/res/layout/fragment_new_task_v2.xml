@@ -241,6 +241,8 @@
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
                     app:hintTextColor="@color/appGrey3"
+                    android:enabled="false"
+                    android:alpha="0.5"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskAssignToField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskAssignToField"
                     app:layout_constraintTop_toBottomOf="@+id/newTaskAssignToField">
@@ -255,6 +257,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapSentences"
                         android:maxLines="1"
+                        android:enabled="false"
+                        android:alpha="0.5"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
                         android:paddingEnd="62dp"
@@ -268,12 +272,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:enabled="false"
+                    android:alpha="0.4"
                     app:layout_constraintBottom_toBottomOf="@+id/newTaskProjectField"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskProjectField"
                     app:layout_constraintTop_toTopOf="@+id/newTaskProjectField"
                     app:layout_constraintVertical_bias="0.6">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="29dp"
                         android:layout_height="29dp"
                         android:layout_marginEnd="@dimen/_3sdp"
@@ -284,7 +290,7 @@
                         app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
                         app:layout_constraintVertical_bias="0.6" />
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/newTaskProjectClearBtn"
                         android:layout_width="29dp"
                         android:layout_height="29dp"

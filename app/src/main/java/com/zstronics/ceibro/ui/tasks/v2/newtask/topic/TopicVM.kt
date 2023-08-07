@@ -76,7 +76,7 @@ class TopicVM @Inject constructor(
         }
     }
 
-    fun saveTopic(topic: String, callBack: () -> Unit) {
+    fun saveTopic(topic: String, callBack: (isSuccess: Boolean, newTopic: TopicsResponse.TopicData?) -> Unit) {
         val request = NewTopicCreateRequest(
             topic = topic
         )
@@ -101,7 +101,7 @@ class TopicVM @Inject constructor(
                         }
                     }
                     loading(false, "")
-                    callBack.invoke()
+                    callBack.invoke(isSuccess, newTopic)
                 } else {
                     loading(false, error)
                 }

@@ -222,6 +222,7 @@
                 android:layout_marginBottom="@dimen/_2sdp"
                 android:layout_weight="1"
                 android:text="@string/forward_heading"
+                android:fontFamily="@font/inter_medium"
                 android:textColor="@color/white"
                 android:background="@drawable/signin_button_back"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
