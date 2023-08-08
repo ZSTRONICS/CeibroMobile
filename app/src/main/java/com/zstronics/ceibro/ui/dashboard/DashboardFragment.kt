@@ -53,7 +53,6 @@ class DashboardFragment :
     private var taskToMeFragmentInstance: TaskToMeFragment? = null
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
-    var serverDataLoadedOnce = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
@@ -138,10 +137,6 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!serverDataLoadedOnce) {
-            viewModel.loadAppData(requireActivity())
-            serverDataLoadedOnce = true
-        }
         viewModel.updateRootUnread(requireActivity())
 
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
@@ -192,9 +187,6 @@ class DashboardFragment :
 //                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
             }
         }
-
-        startPeriodicContactSyncWorker(requireContext())
-
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
     }
 

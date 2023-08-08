@@ -207,7 +207,7 @@ class DashboardRepository @Inject constructor(
         executeSafely(
             call =
             {
-                service.getAllConnectionsV2(userId)
+                service.getAllConnectionsV2()
             }
         )
 

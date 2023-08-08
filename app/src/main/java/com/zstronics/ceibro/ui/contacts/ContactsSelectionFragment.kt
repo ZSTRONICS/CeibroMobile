@@ -40,14 +40,13 @@ class ContactsSelectionFragment :
 //                val selectedContacts = adapter.dataList.filter { it.isChecked }.map { it }
                 viewModel.syncContacts(selectedContacts) {
                     viewModel.sessionManager.saveSyncedContacts(selectedContacts)
-                    navigateToDashboard()
+                    navigateToAppLoadingScreen()
                 }
             }
             R.id.skipBtn -> {
                 viewModel.syncContactsEnabled(false) {
-
                 }
-                navigateToDashboard()
+                navigateToAppLoadingScreen()
             }
         }
     }
@@ -87,7 +86,7 @@ class ContactsSelectionFragment :
                 // User clicked Allow button
                 // Add your logic here
                 viewModel.syncContactsEnabled(true) {
-                    navigateToDashboard()
+                    navigateToAppLoadingScreen()
                 }
             }
             builder.setNegativeButton("Deny") { dialog, which ->
@@ -102,19 +101,6 @@ class ContactsSelectionFragment :
 
         viewState.searchName.observe(viewLifecycleOwner) { search ->
             viewModel.filterContacts(search.lowercase())
-        }
-    }
-
-    private fun navigateToDashboard() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.homeFragment
-            )
         }
     }
 }

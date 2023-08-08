@@ -34,8 +34,15 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_PASS)
         sharedPreferenceManager.removeValue(KEY_IS_TO_ME_UNREAD)
         sharedPreferenceManager.removeValue(KEY_SYNCED_CONTACTS)
-        _user = MutableLiveData()
-
+        _user.postValue(
+            user.value?.copy(
+                phoneNumber = "",
+                firstName = "",
+                surName = "",
+                companyName = "",
+                profilePic = "", autoContactSync = false
+            )
+        )
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
         OneSignal.removeExternalUserId()
@@ -84,8 +91,7 @@ class SessionManager constructor(
     }
 
     fun getUserObj(): User? {
-        val userPref: User? = sharedPreferenceManager.getCompleteUserObj(KEY_USER)
-        return userPref
+        return sharedPreferenceManager.getCompleteUserObj(KEY_USER)
     }
 
     fun setUser() {

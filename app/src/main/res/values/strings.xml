@@ -435,4 +435,5 @@
     <string name="forward_task">Forward task</string>
     <string name="topics_heading">Topics</string>
     <string name="save_and_use"><![CDATA[Save & use]]></string>
+    <string name="app_data_sync_message">Please wait while we sync your data</string>
 </resources>

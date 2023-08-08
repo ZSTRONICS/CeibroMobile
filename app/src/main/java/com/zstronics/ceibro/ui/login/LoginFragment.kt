@@ -39,7 +39,8 @@ class LoginFragment :
                 showOrHidePassword(isPassShown)
             }
             R.id.loginBtn -> {
-                val phoneNumber = mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
+                val phoneNumber =
+                    mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
                 val phoneCode = mViewDataBinding.ccp.selectedCountryCodeWithPlus        // +1, +92
                 val nameCode = mViewDataBinding.ccp.selectedCountryNameCode             // US, PK
                 val password = viewState.password.value.toString()
@@ -54,11 +55,13 @@ class LoginFragment :
                         shortToastNow(resources.getString(R.string.error_message_phone_validation))
                     } else if (!validatePassword(password)) {
                         shortToastNow(resources.getString(R.string.error_message_password_length))
-                    }
-                    else {
-                        val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
+                    } else {
+                        val formattedNumber = phoneNumberUtil.format(
+                            parsedNumber,
+                            PhoneNumberUtil.PhoneNumberFormat.E164
+                        )
                         viewModel.doLogin(formattedNumber, password, rememberMe ?: false) {
-                            navigateToDashboard()
+                            navigateToAppLoadingScreen()
                         }
                     }
                 } catch (e: NumberParseException) {
@@ -78,26 +81,12 @@ class LoginFragment :
             mViewDataBinding.editTextPassword.transformationMethod =
                 HideReturnsTransformationMethod.getInstance()
             mViewDataBinding.loginPasswordEye.setImageResource(R.drawable.icon_visibility_on)
-        }
-        else {
+        } else {
             mViewDataBinding.editTextPassword.transformationMethod =
                 PasswordTransformationMethod.getInstance()
             mViewDataBinding.loginPasswordEye.setImageResource(R.drawable.icon_visibility_off)
         }
         mViewDataBinding.editTextPassword.setSelection(mViewDataBinding.editTextPassword.text.toString().length)
-    }
-
-    private fun navigateToDashboard() {
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.homeFragment
-            )
-        }
     }
 
 
