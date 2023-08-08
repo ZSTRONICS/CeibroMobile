@@ -59,14 +59,31 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:gravity="start"
-            android:maxLength="15"
+            android:maxLength="18"
             android:maxLines="1"
-            android:text="Mon, 14.04.23"
+            android:text="Yesterday 13:30"
             android:textColor="@color/black"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@+id/eventName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/eventName" />
+
+        <TextView
+            android:id="@+id/forwardedToNames"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:maxLines="10"
+            android:text="To: Kristo Vunukainen ; Kristo Vunukainen"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/eventName" />
 
         <TextView
             android:id="@+id/onlyComment"
@@ -83,24 +100,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/eventName" />
-
-        <TextView
-            android:id="@+id/forwardedToNames"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_medium"
-            android:gravity="start"
-            android:maxLines="10"
-            android:text="Kristo Vunukainen ; Kristo Vunukainen"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/onlyComment" />
+            app:layout_constraintTop_toBottomOf="@+id/forwardedToNames" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/onlyImagesRV"
@@ -114,7 +114,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/forwardedToNames"
+            app:layout_constraintTop_toBottomOf="@+id/onlyComment"
             tools:itemCount="3"
             tools:listitem="@layout/layout_ceibro_only_image" />
 

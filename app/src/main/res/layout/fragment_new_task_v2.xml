@@ -137,7 +137,7 @@
                         android:layout_height="29dp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:padding="@dimen/_2sdp"
-                        android:src="@drawable/icon_drop_down"
+                        android:src="@drawable/icon_drop_next"
                         app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
                         app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
                         app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
@@ -208,7 +208,7 @@
                         android:layout_height="29dp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:padding="@dimen/_2sdp"
-                        android:src="@drawable/icon_drop_down"
+                        android:src="@drawable/icon_drop_next"
                         app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
                         app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
                         app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
@@ -284,7 +284,7 @@
                         android:layout_height="29dp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:padding="@dimen/_2sdp"
-                        android:src="@drawable/icon_drop_down"
+                        android:src="@drawable/icon_drop_next"
                         app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
                         app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
                         app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
@@ -356,7 +356,7 @@
                         android:layout_height="29dp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:padding="@dimen/_2sdp"
-                        android:src="@drawable/icon_drop_down"
+                        android:src="@drawable/icon_drop_next"
                         app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
                         app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
                         app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
@@ -448,7 +448,7 @@
                     android:layout_marginTop="@dimen/_7sdp"
                     android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
@@ -552,7 +552,7 @@
                     app:layout_constraintStart_toStartOf="@+id/filesLayout"
                     app:layout_constraintTop_toBottomOf="@+id/filesLayout" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/newTaskDoneReqSwitch"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

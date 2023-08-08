@@ -153,6 +153,16 @@ class TaskDetailV2Fragment :
                 mViewDataBinding.taskForwardBtn.isClickable = true
                 mViewDataBinding.taskForwardBtn.alpha = 1f
             }
+            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                mViewDataBinding.doneRequirementBadge.visibility = View.GONE
+            } else {
+                if (item.doneCommentsRequired || item.doneImageRequired) {
+                    mViewDataBinding.doneRequirementBadge.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.doneRequirementBadge.visibility = View.GONE
+                }
+            }
+
 
             var state = ""
             state = if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
@@ -199,10 +209,9 @@ class TaskDetailV2Fragment :
             mViewDataBinding.taskDetailStatusName.setBackgroundResource(background)
             mViewDataBinding.taskDetailStatusName.text = status
 
-            mViewDataBinding.taskDetailCreationDate.text = DateUtils.reformatStringDate(
-                date = item.createdAt,
-                DateUtils.SERVER_DATE_FULL_FORMAT,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY
+            mViewDataBinding.taskDetailCreationDate.text = DateUtils.formatCreationUTCTimeToCustom(
+                utcTime = item.createdAt,
+                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
             )
 
             var dueDate = ""
@@ -221,7 +230,7 @@ class TaskDetailV2Fragment :
                     dueDate = "N/A"
                 }
             }
-            mViewDataBinding.taskDetailDueDate.text = "Due Date  $dueDate"
+            mViewDataBinding.taskDetailDueDate.text = "Due Date: $dueDate"
 
             mViewDataBinding.taskTitle.text =
                 if (item.topic != null) {
@@ -319,7 +328,11 @@ class TaskDetailV2Fragment :
 
 
     private fun showTaskInfoBottomSheet() {
-        val sheet = TaskInfoBottomSheet(viewModel.taskDetail.value)
+        val sheet = TaskInfoBottomSheet(
+            _rootState = viewModel.rootState,
+            _selectedState = viewModel.selectedState,
+            _userId = viewModel.user?.id ?: "",
+            _taskDetail = viewModel.taskDetail.value)
 //        sheet.dialog?.window?.setSoftInputMode(
 //            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
 //                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE

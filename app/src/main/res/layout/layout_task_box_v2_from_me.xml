@@ -130,24 +130,27 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
                         android:layout_marginEnd="@dimen/_8sdp"
-                        android:layout_marginTop="@dimen/_9sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_bold"
                         android:maxLines="1"
                         android:text="Elektrikaabli paigaldus"
                         android:textColor="@color/black"
                         android:textSize="16.5sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/taskToLayout" />
+                        app:layout_constraintTop_toBottomOf="@+id/taskToLayout"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <TextView
                         android:id="@+id/taskDescription"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_2sdp"
-                        android:layout_marginBottom="@dimen/_11sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_medium"
                         android:maxLines="2"
@@ -164,12 +167,13 @@
                         android:id="@+id/taskCommentPhotoFilesLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_9sdp"
                         android:background="@drawable/input_field_bottom_corner"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingEnd="@dimen/_8sdp"
                         android:paddingTop="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_8sdp"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -209,7 +213,7 @@
                                     android:textSize="11.5sp" />
 
                                 <TextView
-                                    android:id="@+id/taskCreationDate"
+                                    android:id="@+id/taskCreationDate1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="3dp"
@@ -328,6 +332,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/taskCardHeaderLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1dp"
@@ -374,14 +379,14 @@
                     app:layout_constraintTop_toTopOf="@+id/taskId">
 
                     <TextView
-                        android:id="@+id/taskDueDateHeading"
+                        android:id="@+id/taskCreationDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
+                        android:layout_marginStart="1dp"
+                        android:elevation="0dp"
                         android:fontFamily="@font/inter_regular"
-                        android:maxLength="16"
-                        android:maxLines="1"
-                        android:text="@string/due_date_heading"
+                        android:maxLength="18"
+                        android:text="Yesterday 13:30"
                         android:textColor="@color/black"
                         android:textSize="11.5sp" />
 
@@ -389,12 +394,12 @@
                         android:id="@+id/taskDueDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="14dp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
-                        android:maxLength="16"
+                        android:maxLength="25"
                         android:maxLines="1"
-                        android:text="29.05.2023"
+                        android:text="Due date: 29.05.2023"
                         android:textColor="@color/black"
                         android:textSize="11.5sp" />
                 </LinearLayout>
@@ -406,6 +411,7 @@
                     android:layout_gravity="end"
                     android:layout_marginEnd="1dp"
                     android:src="@drawable/icon_done_all"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/taskId"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/taskId"

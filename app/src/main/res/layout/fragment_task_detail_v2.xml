@@ -175,12 +175,12 @@
                         android:backgroundTint="@color/white"
                         android:elevation="0dp"
                         android:fontFamily="@font/inter_regular"
-                        android:maxLength="17"
+                        android:maxLength="18"
                         android:paddingStart="10dp"
                         android:paddingTop="2dp"
                         android:paddingEnd="7dp"
                         android:paddingBottom="2dp"
-                        android:text="Mon, 22.05.2021"
+                        android:text="Yesterday 13:30"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
@@ -216,7 +216,7 @@
                         android:paddingTop="2dp"
                         android:paddingEnd="1dp"
                         android:paddingBottom="2dp"
-                        android:text="22.05.2021"
+                        android:text="Due date: 22.05.2021"
                         android:textColor="@color/black"
                         android:textSize="12sp" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -538,7 +538,7 @@
                 android:id="@+id/taskCommentBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_8sdp"
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_reply"
@@ -557,7 +557,7 @@
                 android:id="@+id/taskForwardBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_forward"
@@ -572,21 +572,45 @@
                 android:textColor="@drawable/bottom_nav_text_color"
                 android:textSize="@dimen/_9sdp" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/doneBtn"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_2sdp"
-                android:layout_weight="0.85"
-                android:background="@drawable/signin_button_back"
-                android:fontFamily="@font/inter_medium"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:text="@string/done"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="14.5sp" />
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_weight="0.9">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/doneBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:background="@drawable/signin_button_back"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/done"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="14.5sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/doneRequirementBadge"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/button_back_red"
+                    android:elevation="7dp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:outlineSpotShadowColor="@color/white"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 

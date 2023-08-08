@@ -64,10 +64,9 @@ class EventsRVAdapter @Inject constructor() :
 
             binding.eventName.text = ""
             binding.eventBy.text = "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
-            binding.eventDate.text = DateUtils.reformatStringDate(
-                date = item.createdAt,
-                DateUtils.SERVER_DATE_FULL_FORMAT,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY
+            binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustom(
+                utcTime = item.createdAt,
+                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
             )
 
 
