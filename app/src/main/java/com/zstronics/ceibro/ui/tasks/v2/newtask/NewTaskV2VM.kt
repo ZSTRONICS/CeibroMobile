@@ -67,6 +67,8 @@ class NewTaskV2VM @Inject constructor(
             val invitedNumbers = viewState.selectedContacts.value?.filter { !it.isCeiborUser }
                 ?.map { it.phoneNumber } ?: listOf()
             val projectId = viewState.selectedProject.value?.id ?: ""
+            val list = getCombinedList()
+
             val newTaskRequest = NewTaskV2Request(
                 topic = viewState.selectedTopic.value?.id.toString(),
                 project = projectId,
@@ -74,9 +76,10 @@ class NewTaskV2VM @Inject constructor(
                 dueDate = viewState.dueDate.value.toString(),
                 creator = user?.id.toString(),
                 description = viewState.description.value.toString(),
-                invitedNumbers = invitedNumbers,
                 doneImageRequired = doneImageRequired,
-                doneCommentsRequired = doneCommentsRequired
+                doneCommentsRequired = doneCommentsRequired,
+                invitedNumbers = invitedNumbers,
+                hasPendingFilesToUpload = list.isNotEmpty()
             )
 
             launch {
@@ -84,7 +87,7 @@ class NewTaskV2VM @Inject constructor(
                 taskRepository.newTaskV2(newTaskRequest) { isSuccess, task,errorMessage ->
                     if (isSuccess) {
                         updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
-                        val list = getCombinedList()
+
                         if (list.isNotEmpty()) {
                             task?.id?.let { uploadTaskFiles(context, list, it) }
                         }
