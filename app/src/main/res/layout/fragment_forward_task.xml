@@ -140,7 +140,7 @@
                         android:layout_height="29dp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:padding="@dimen/_2sdp"
-                        android:src="@drawable/icon_drop_down" />
+                        android:src="@drawable/icon_drop_next" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/forwardToClearBtn"
@@ -182,8 +182,8 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="top|start"
-                        android:inputType="text"
-                        android:maxLines="20"
+                        android:inputType="none"
+                        android:maxLines="5"
                         android:overScrollMode="always"
                         android:paddingStart="1dp"
                         android:scrollbarStyle="insideInset"
@@ -216,16 +216,17 @@
                 android:id="@+id/forwardBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_marginStart="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_2sdp"
                 android:layout_weight="1"
-                android:text="@string/forward_heading"
-                android:textColor="@color/white"
                 android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_medium"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="@dimen/_7sdp" />
+                android:padding="@dimen/_7sdp"
+                android:text="@string/forward_heading"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

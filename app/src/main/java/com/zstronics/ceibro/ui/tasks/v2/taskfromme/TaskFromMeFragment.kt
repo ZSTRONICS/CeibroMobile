@@ -207,14 +207,14 @@ class TaskFromMeFragment :
     }
 
     private fun updateCount(allTasks: TaskV2Response.AllTasks) {
-        val unreadCount = allTasks.unread.count { task -> viewModel.user?.id !in task.seenBy }
+        val unreadCount = allTasks.unread.count()
         val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
         val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
         mViewDataBinding.unreadStateCount.text =
             if (unreadCount > 99) {
                 "99+"
             } else {
-                "+$unreadCount"
+                "$unreadCount"
             }
         mViewDataBinding.ongoingStateCount.text =
             if (ongoingCount > 99) {

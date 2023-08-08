@@ -7,6 +7,7 @@ import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentTopicBinding
@@ -26,16 +27,24 @@ class TopicFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.cancelBtn -> {
+            R.id.backBtn -> {
                 navigateBack()
             }
-            R.id.saveTopicLayout -> {
+            R.id.saveTopicBtn -> {
                 val searchedText = mViewDataBinding.topicSearchBar.query.toString()
                 if (searchedText.isNotEmpty()) {
-                    viewModel.saveTopic(searchedText) {
+                    viewModel.saveTopic(searchedText) { isSuccess, newTopic ->
                         mViewDataBinding.topicSearchBar.setQuery("", false)
                         mViewDataBinding.topicSearchBar.clearFocus()
+
+                        if (isSuccess) {
+                            val bundle = Bundle()
+                            bundle.putParcelable("topic", newTopic)
+                            navigateBackWithResult(Activity.RESULT_OK, bundle)
+                        }
                     }
+                } else {
+                    shortToastNow("Nothing to save")
                 }
             }
         }
@@ -49,7 +58,7 @@ class TopicFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewDataBinding.saveTopicLayout.visibility = View.GONE
+        mViewDataBinding.saveTopicBtn.visibility = View.GONE
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
 
         mViewDataBinding.recentTopicRV.isNestedScrollingEnabled = false
@@ -94,32 +103,30 @@ class TopicFragment :
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     viewModel.filterTopics(query)
-                    mViewDataBinding.saveTopicLayout.visibility =
+                    mViewDataBinding.saveTopicBtn.visibility =
                         if (query.isNotEmpty()) {
                             View.VISIBLE
                         } else {
                             View.GONE
                         }
                     viewModel.originalAllTopics.filter { it.topic.equals(query.trim(), true) }.map {
-                        mViewDataBinding.saveTopicLayout.visibility = View.GONE
+                        mViewDataBinding.saveTopicBtn.visibility = View.GONE
                     }
-                    mViewDataBinding.saveTopicNameText.text = "\"$query\""
                 }
                 return true
             }
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.filterTopics(newText)
-                    mViewDataBinding.saveTopicLayout.visibility =
+                    mViewDataBinding.saveTopicBtn.visibility =
                         if (newText.isNotEmpty()) {
                             View.VISIBLE
                         } else {
                             View.GONE
                         }
                     viewModel.originalAllTopics.filter { it.topic.equals(newText.trim(), true) }.map {
-                        mViewDataBinding.saveTopicLayout.visibility = View.GONE
+                        mViewDataBinding.saveTopicBtn.visibility = View.GONE
                     }
-                    mViewDataBinding.saveTopicNameText.text = "\"$newText\""
                 }
                 return true
             }
@@ -138,13 +145,12 @@ class TopicFragment :
                 val searchQuery = mViewDataBinding.topicSearchBar.query.toString()
                 if (searchQuery.isNotEmpty()) {
                     viewModel.filterTopics(searchQuery)
-                    mViewDataBinding.saveTopicLayout.visibility =
+                    mViewDataBinding.saveTopicBtn.visibility =
                         if (searchQuery.isNotEmpty()) {
                             View.VISIBLE
                         } else {
                             View.GONE
                         }
-                    mViewDataBinding.saveTopicNameText.text = "\"$searchQuery\""
                 }
             }
         } else {
@@ -155,7 +161,7 @@ class TopicFragment :
 
     override fun onResume() {
         super.onResume()
-        mViewDataBinding.saveTopicLayout.visibility = View.GONE
+        mViewDataBinding.saveTopicBtn.visibility = View.GONE
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
         loadTopics(true)
     }

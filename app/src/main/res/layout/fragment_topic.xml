@@ -14,183 +14,184 @@
             type="com.zstronics.ceibro.ui.tasks.v2.newtask.topic.TopicVM" />
     </data>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-        <android.widget.SearchView
-            android:id="@+id/topicSearchBar"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:background="@null"
-            android:elevation="0dp"
-            android:iconifiedByDefault="false"
-            android:queryBackground="@android:color/transparent"
-            android:queryHint="Start typing"
-            android:searchIcon="@null"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toStartOf="@+id/cancelBtn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:theme="@style/AppSearchView" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/cancelBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="center"
-            android:paddingStart="@dimen/_8sdp"
-            android:paddingEnd="@dimen/_10sdp"
-            android:text="@string/cancel_btn_text"
-            android:textColor="@color/appTextGrey"
-            android:textSize="15sp"
-            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-            app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topicSearchBar" />
-
-        <View
-            android:id="@+id/view5"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topicHeader"
             android:layout_width="match_parent"
-            android:layout_height="0.8dp"
-            android:layout_marginTop="@dimen/_3sdp"
-            android:background="@color/appGrey3"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topicSearchBar" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.core.widget.NestedScrollView
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="@dimen/_11sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/topicHeading"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topicHeading"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <TextView
+                android:id="@+id/topicHeading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="1"
+                android:text="@string/topics_heading"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:contentDescription="@string/appbar_scrolling_view_behavior"
-            android:fillViewport="true"
-            android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view5">
+            app:layout_constraintTop_toBottomOf="@+id/topicHeader">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/parentLayout"
+            <SearchView
+                android:id="@+id/topicSearchBar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:iconifiedByDefault="false"
+                android:closeIcon="@drawable/icon_close_round_grey"
+                android:elevation="0dp"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Start typing"
+                android:searchIcon="@drawable/icon_search"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/AppSearchView" />
+
+            <View
+                android:id="@+id/view5"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="0.8dp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginStart="@dimen/_11sdp"
+                android:layout_marginEnd="@dimen/_11sdp"
+                android:background="@color/appGrey3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topicSearchBar" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:contentDescription="@string/appbar_scrolling_view_behavior"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view5">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/saveTopicLayout"
+                    android:id="@+id/parentLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_height="wrap_content">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/saveHeading"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_11sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:layout_marginBottom="@dimen/_10sdp"
-                        android:fontFamily="@font/inter_bold"
-                        android:gravity="center"
-                        android:text="@string/save_collin_heading"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/saveTopicNameText"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="@dimen/_7sdp"
-                        android:layout_marginEnd="@dimen/_11sdp"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="start"
-                        android:maxLines="1"
-                        android:paddingStart="@dimen/_1sdp"
-                        android:paddingEnd="@dimen/_1sdp"
-                        android:text="saving text"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/saveHeading"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/saveHeading"
-                        app:layout_constraintTop_toTopOf="@+id/saveHeading" />
-
-                    <View
-                        android:id="@+id/view6"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/recentTopicLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="0.8dp"
-                        android:layout_marginStart="@dimen/_11sdp"
-                        android:layout_marginTop="@dimen/_3sdp"
-                        android:layout_marginEnd="@dimen/_11sdp"
-                        android:background="@color/appGrey3"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recentTopicLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/saveTopicLayout">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/recentTopicHeading"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="@dimen/_11sdp"
-                        android:layout_marginTop="@dimen/_13sdp"
-                        android:fontFamily="@font/inter_semibold"
-                        android:gravity="center"
-                        android:text="@string/recent_used_topics"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_11sdp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/recentTopicHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_marginStart="@dimen/_11sdp"
+                            android:layout_marginTop="@dimen/_13sdp"
+                            android:fontFamily="@font/inter_semibold"
+                            android:gravity="center"
+                            android:text="@string/recent_used_topics"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11sdp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recentTopicRV"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:paddingBottom="2dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/recentTopicHeading"
+                            tools:itemCount="3"
+                            tools:listitem="@layout/layout_item_topic" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recentTopicRV"
+                        android:id="@+id/allTopicsRV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
-                        android:paddingBottom="2dp"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_2sdp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recentTopicHeading"
+                        app:layout_constraintTop_toBottomOf="@+id/recentTopicLayout"
                         tools:itemCount="3"
-                        tools:listitem="@layout/layout_item_topic" />
+                        tools:listitem="@layout/layout_item_topic_header" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/allTopicsRV"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:paddingTop="@dimen/_4sdp"
-                    android:paddingBottom="@dimen/_2sdp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recentTopicLayout"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/layout_item_topic_header" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/saveTopicBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginBottom="@dimen/_7sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_regular"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:text="@string/save_and_use"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:paddingStart="@dimen/_9sdp"
+            android:paddingEnd="@dimen/_9sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

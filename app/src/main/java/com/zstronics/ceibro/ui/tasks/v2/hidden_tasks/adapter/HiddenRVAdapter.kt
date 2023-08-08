@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter
 
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
@@ -101,31 +102,43 @@ class HiddenRVAdapter @Inject constructor() :
 
             val seenByMe = item.seenBy.find { it == currentUser?.id }
             if (seenByMe != null) {
-                val tintColor = context.resources.getColor(R.color.appBlue)
-                binding.taskTickMark.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+//                val tintColor = context.resources.getColor(R.color.appBlue)
+//                binding.taskTickMark.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+                val tintColor = context.resources.getColor(R.color.white)
+                binding.taskCardHeaderLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
+                binding.taskCardLayout.setBackgroundResource(R.drawable.task_card_outline)
             } else {
-                val tintColor = context.resources.getColor(R.color.appGrey3)
-                binding.taskTickMark.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+//                val tintColor = context.resources.getColor(R.color.appGrey3)
+//                binding.taskTickMark.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+                val tintColor = context.resources.getColor(R.color.appPaleBlue)
+                binding.taskCardHeaderLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
+                binding.taskCardLayout.setBackgroundResource(R.drawable.task_card_outline_unseen)
             }
 
             binding.taskId.text = item.taskUID
 
-            binding.taskDueDate.text = DateUtils.reformatStringDate(
+            binding.taskCreationDate.text = DateUtils.formatCreationUTCTimeToCustom(
+                utcTime = item.createdAt,
+                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
+            )
+
+            var dueDate = ""
+            dueDate = DateUtils.reformatStringDate(
                 date = item.dueDate,
                 DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+                DateUtils.SHORT_DATE_MON_YEAR_ONLY
             )
-            if (binding.taskDueDate.text == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
-                binding.taskDueDate.text = DateUtils.reformatStringDate(
+            if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+                dueDate = DateUtils.reformatStringDate(
                     date = item.dueDate,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+                    DateUtils.SHORT_DATE_MON_YEAR_ONLY
                 )
-                if (binding.taskDueDate.text == "") {
-                    binding.taskDueDate.text = "N/A"
+                if (dueDate == "") {
+                    dueDate = "N/A"
                 }
             }
-
+            binding.taskDueDate.text = "Due Date: $dueDate"
 
 
             if (item.project != null) {
@@ -149,13 +162,13 @@ class HiddenRVAdapter @Inject constructor() :
                 binding.taskTitle.text = "N/A"
             }
 
-            binding.taskDescription.text = item.description
-
-            binding.taskCreationDate.text = DateUtils.reformatStringDate(
-                date = item.createdAt,
-                DateUtils.SERVER_DATE_FULL_FORMAT,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
-            )
+            if (item.description.isEmpty()) {
+                binding.taskDescription.visibility = View.GONE
+                binding.taskDescription.text = ""
+            } else {
+                binding.taskDescription.visibility = View.VISIBLE
+                binding.taskDescription.text = item.description
+            }
 
         }
     }

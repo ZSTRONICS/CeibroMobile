@@ -15,12 +15,18 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskInfoBinding
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.utils.DateUtils
 
-class TaskInfoBottomSheet(_taskDetail: CeibroTaskV2?) : BottomSheetDialogFragment() {
+class TaskInfoBottomSheet(_rootState: String, _selectedState: String, _userId: String, _taskDetail: CeibroTaskV2?) : BottomSheetDialogFragment() {
     lateinit var binding: FragmentTaskInfoBinding
     var onChangePassword: ((oldPassword: String, newPassword: String) -> Unit)? = null
     var onChangePasswordDismiss: (() -> Unit)? = null
+    val rootState = _rootState
+    val selectedState = _selectedState
+    val userId = _userId
     val taskDetail = _taskDetail
 
     override fun onCreateView(
@@ -43,6 +49,75 @@ class TaskInfoBottomSheet(_taskDetail: CeibroTaskV2?) : BottomSheetDialogFragmen
         super.onViewCreated(view, savedInstanceState)
 
         if (taskDetail != null) {
+            var state = ""
+            state = if (rootState == TaskRootStateTags.FromMe.tagValue && userId == taskDetail.creator.id) {
+                taskDetail.creatorState
+            } else if (rootState == TaskRootStateTags.Hidden.tagValue && selectedState.equals(TaskStatus.CANCELED.name, true)) {
+                taskDetail.creatorState
+            } else {
+                taskDetail.assignedToState.find { it.userId == userId }?.state ?: ""
+            }
+            val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
+                TaskStatus.NEW.name -> Pair(
+                    R.drawable.status_new_filled_more_corners,
+                    requireContext().getString(R.string.new_heading)
+                )
+
+                TaskStatus.UNREAD.name -> Pair(
+                    R.drawable.status_new_filled_more_corners,
+                    requireContext().getString(R.string.unread_heading)
+                )
+
+                TaskStatus.ONGOING.name -> Pair(
+                    R.drawable.status_ongoing_filled_more_corners,
+                    requireContext().getString(R.string.ongoing_heading)
+                )
+
+                TaskStatus.DONE.name -> Pair(
+                    R.drawable.status_done_filled_more_corners,
+                    requireContext().getString(R.string.done_heading)
+                )
+
+                TaskStatus.CANCELED.name -> Pair(
+                    R.drawable.status_cancelled_filled_more_corners,
+                    requireContext().getString(R.string.canceled)
+                )
+
+                else -> Pair(
+                    R.drawable.status_draft_outline,
+                    state.ifEmpty {
+                        "N/A"
+                    }
+                )
+            }
+            val (background, status) = taskStatusNameBg
+            binding.taskDetailStatusName.setBackgroundResource(background)
+            binding.taskDetailStatusName.text = status
+
+            binding.taskDetailCreationDate.text = DateUtils.formatCreationUTCTimeToCustom(
+                utcTime = taskDetail.createdAt,
+                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
+            )
+
+            var dueDate = ""
+            dueDate = DateUtils.reformatStringDate(
+                date = taskDetail.dueDate,
+                DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+            )
+            if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+                dueDate = DateUtils.reformatStringDate(
+                    date = taskDetail.dueDate,
+                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
+                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+                )
+                if (dueDate == "") {
+                    dueDate = "N/A"
+                }
+            }
+            binding.taskDetailDueDate.text = "Due Date: $dueDate"
+
+
             binding.taskCreatorName.text = "${taskDetail.creator.firstName} ${taskDetail.creator.surName}"
 
             if (taskDetail.assignedToState.isNotEmpty()) {

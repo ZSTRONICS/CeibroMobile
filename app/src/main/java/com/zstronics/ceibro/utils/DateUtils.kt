@@ -19,6 +19,7 @@ object DateUtils {
     const val FORMAT_LONG_INPUT_ERROR = "dd  yy HH:mm:ss"//02  21 13:35:48
     const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm"//2015-11-28 10:17:18
     const val SERVER_DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"//2015-11-28 10:17:18
+    const val SERVER_DATE_FULL_FORMAT_IN_UTC = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //2023-08-08T06:47:14.018Z
     const val LEAN_PLUM_EVENT_FORMAT = "yyyy-MM-dd HH:mm:ss"//2015-11-28 10:17:18
     const val FORMAT_MON_YEAR = "MMMM yyyy"
     const val FORMAT_DATE_MON_YEAR = "EEEE dd MMM "
@@ -36,6 +37,8 @@ object DateUtils {
     //    const val FORMAT_TIME_24H_WITH_SECONDS = "HH:mm:ss"
     const val FORMAT_SHORT_DATE_MON_YEAR = "dd-MM-yyyy"             // 29-05-2023
     const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT = "dd.MM.yyyy"    // 29.05.2023
+    const val SHORT_DATE_MON_YEAR_ONLY = "dd.MM.yy"    // 29.05.23
+    const val SHORT_DATE_MON_YEAR_WITH_TIME = "dd.MM.yy HH:mm"    // 29.05.23 13:30
     const val FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY = "E, dd.MM.yy"  // Mon, 14.04.23
     fun getAge(date: Date): Int {
         val today = Calendar.getInstance()
@@ -71,6 +74,44 @@ object DateUtils {
         val yy = if (year < 10) "0$year" else "" + year
         val format = SimpleDateFormat("dd-mm-yy", Locale.getDefault())
         return format.parse("$dd-$mm-$yy")
+    }
+
+
+    fun formatCreationUTCTimeToCustom(
+        utcTime: String,
+        inputFormatter: String? = SERVER_DATE_FULL_FORMAT_IN_UTC
+    ): String {
+        val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        val outputFormat = SimpleDateFormat(FORMAT_TIME_24H, Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault()
+
+        val utcDate: Date = inputFormat.parse(utcTime) ?: return ""
+
+        val calendarNow = Calendar.getInstance()
+        val calendarOfUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        calendarOfUTC.time = utcDate
+
+        val timeFormatted = outputFormat.format(utcDate)
+
+        if (isSameDay(calendarNow, calendarOfUTC)) {
+            return "Today $timeFormatted"
+        } else if (isYesterday(calendarNow, calendarOfUTC)) {
+            return "Yesterday $timeFormatted"
+        } else {
+            val customFormat = SimpleDateFormat(SHORT_DATE_MON_YEAR_WITH_TIME, Locale.getDefault())
+            return customFormat.format(utcDate)
+        }
+    }
+
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+    }
+    private fun isYesterday(cal1: Calendar, cal2: Calendar): Boolean {
+        cal1.add(Calendar.DAY_OF_YEAR, -1)
+        return isSameDay(cal1, cal2)
     }
 
     fun reformatStringDate(
