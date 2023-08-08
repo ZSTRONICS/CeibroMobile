@@ -60,7 +60,7 @@ class AssigneeVM @Inject constructor(
             if (connectionsData.isNotEmpty()) {
                 processConnectionsData(connectionsData, callBack)
             } else {
-                when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+                when (val response = dashboardRepository.getAllConnectionsV2()) {
                     is ApiResponse.Success -> {
                         processConnectionsData(response.data.contacts, callBack)
                     }

@@ -114,30 +114,6 @@ class SplashActivity :
     }
 
     private fun navigateToCeibroDataLoading() {
-        checkPermission(
-            immutableListOf(
-                Manifest.permission.READ_CONTACTS,
-            )
-        ) {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-
-            val customBackoffDelayMillis =
-                60 * 60 * 1000L // Set the initial delay to 1 hour (adjust as needed)
-
-            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(ContactSyncWorker::class.java)
-                .setConstraints(constraints)
-                .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    customBackoffDelayMillis,
-                    TimeUnit.MILLISECONDS
-                )
-                .build()
-
-            println("PhoneNumber-OneTimeContactSyncWorker")
-            WorkManager.getInstance(applicationContext).enqueue(oneTimeWorkRequest)
-        }
         launchActivity<NavHostPresenterActivity>(
             options = Bundle(),
             clearPrevious = true

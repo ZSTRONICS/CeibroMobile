@@ -71,7 +71,6 @@ interface IDashboardRepository {
     ): ApiResponse<ContactSyncEnableResponse>
 
     suspend fun getAllConnectionsV2(
-        userId: String,
     ): ApiResponse<AllCeibroConnections>
 
     suspend fun getRecentCeibroConnections(): ApiResponse<RecentCeibroConnections>

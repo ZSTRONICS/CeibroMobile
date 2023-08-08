@@ -27,7 +27,7 @@ class CeibroDataLoadingFragment :
     override val viewModel: CeibroDataLoadingVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_ceibro_data_loading
     override fun toolBarVisibility(): Boolean = false
-    private val API_CALL_COUNT = 5
+    private val API_CALL_COUNT = 6
     override fun onClick(id: Int) {
         navigateToDashboard()
     }
@@ -35,8 +35,14 @@ class CeibroDataLoadingFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startSplashAnimation()
-        viewModel.loadAppData {
-            if (viewModel.apiSucceedCount == API_CALL_COUNT) {
+        viewModel.loadAppData(requireContext()) {
+            val progress = viewModel.apiSucceedCount.div(API_CALL_COUNT).times(
+                100
+            ).toInt()
+            mViewDataBinding.syncProgress.setProgress(
+                progress, true
+            )
+            if (viewModel.apiSucceedCount >= API_CALL_COUNT) {
                 navigateToDashboard()
             }
         }

@@ -69,7 +69,7 @@ class LoginVM @Inject constructor(
     private fun getSavedContactsToStoreInSharePreference(callBack: () -> Unit) {
         val userId = sessionManager.getUser().value?.id
         launch {
-            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
+            when (val response = dashboardRepository.getAllConnectionsV2()) {
 
                 is ApiResponse.Success -> {
                     val contacts = response.data.contacts

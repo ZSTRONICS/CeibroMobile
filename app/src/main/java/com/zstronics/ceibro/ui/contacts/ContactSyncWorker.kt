@@ -126,7 +126,7 @@ class ContactSyncWorker @AssistedInject constructor(
         userId: String,
         sessionManager: SessionManager
     ) {
-        when (val response = dashboardRepository.getAllConnectionsV2(userId)) {
+        when (val response = dashboardRepository.getAllConnectionsV2()) {
             is ApiResponse.Success -> {
                 room.getConnectionsV2Dao().insertAll(response.data.contacts)
                 sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())

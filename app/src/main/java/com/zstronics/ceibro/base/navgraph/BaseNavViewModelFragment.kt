@@ -687,7 +687,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
     // Helper function to check network connectivity
-    fun isNetworkConnected(context: Context): Boolean {
+    private fun isNetworkConnected(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
@@ -705,6 +705,5 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 R.id.ceibroDataLoadingFragment
             )
         }
-        startOneTimeContactSyncWorker(requireContext())
     }
 }

@@ -203,7 +203,7 @@ class DashboardRepository @Inject constructor(
         }
     )
 
-    override suspend fun getAllConnectionsV2(userId: String): ApiResponse<AllCeibroConnections> =
+    override suspend fun getAllConnectionsV2(): ApiResponse<AllCeibroConnections> =
         executeSafely(
             call =
             {
