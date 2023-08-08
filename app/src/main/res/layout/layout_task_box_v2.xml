@@ -432,7 +432,7 @@
                     android:text="@string/canceled"
                     android:textColor="@color/appBlue"
                     android:textSize="11.5sp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/taskId"
                     app:layout_constraintEnd_toStartOf="@+id/taskTickMark"
                     app:layout_constraintTop_toTopOf="@+id/taskId" />
