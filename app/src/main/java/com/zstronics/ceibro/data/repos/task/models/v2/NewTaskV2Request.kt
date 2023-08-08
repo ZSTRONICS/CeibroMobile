@@ -14,7 +14,8 @@ data class NewTaskV2Request(
     @SerializedName("description") val description: String,
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
     @SerializedName("doneCommentsRequired") val doneCommentsRequired: Boolean,
-    @SerializedName("invitedNumbers") val invitedNumbers: List<String>
+    @SerializedName("invitedNumbers") val invitedNumbers: List<String>,
+    @SerializedName("hasPendingFilesToUpload") val hasPendingFilesToUpload: Boolean
 ) {
     @Keep
     data class AssignedToStateNewRequest(
