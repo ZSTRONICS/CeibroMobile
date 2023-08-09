@@ -174,8 +174,6 @@ class CeibroDataLoadingVM @Inject constructor(
                 when (val response =
                     dashboardRepository.syncDeletedContacts(isDeleteAll, request)) {
                     is ApiResponse.Success -> {
-                        apiSucceedCount++
-                        callBack.invoke()
                         updateLocalContacts( callBack)
                     }
 
@@ -184,6 +182,9 @@ class CeibroDataLoadingVM @Inject constructor(
                         callBack.invoke()
                     }
                 }
+            }else{
+                apiSucceedCount++
+                callBack.invoke()
             }
 
             if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
@@ -191,8 +192,6 @@ class CeibroDataLoadingVM @Inject constructor(
                 when (val response =
                     dashboardRepository.syncContacts(request)) {
                     is ApiResponse.Success -> {
-                        apiSucceedCount++
-                        callBack.invoke()
                         updateLocalContacts(callBack)
                     }
 

@@ -12,11 +12,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentCeibroDataLoadingBinding
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 
 @AndroidEntryPoint
 class CeibroDataLoadingFragment :
@@ -27,9 +23,9 @@ class CeibroDataLoadingFragment :
     override val viewModel: CeibroDataLoadingVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_ceibro_data_loading
     override fun toolBarVisibility(): Boolean = false
-    private val API_CALL_COUNT = 6
+    private val API_CALL_COUNT = 7
+    var isNavigated = false
     override fun onClick(id: Int) {
-        navigateToDashboard()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +38,8 @@ class CeibroDataLoadingFragment :
             mViewDataBinding.syncProgress.setProgress(
                 progress, true
             )
-            if (viewModel.apiSucceedCount >= API_CALL_COUNT) {
+            if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
+                isNavigated = true
                 navigateToDashboard()
             }
         }
@@ -96,24 +93,5 @@ class CeibroDataLoadingFragment :
                 R.id.homeFragment
             )
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onUpdateConnections(event: LocalEvents.UpdateConnections) {
-//        viewModel.loadAppData {
-//            if (viewModel.apiSucceedCount == API_CALL_COUNT) {
-//                navigateToDashboard()
-//            }
-//        }
     }
 }
