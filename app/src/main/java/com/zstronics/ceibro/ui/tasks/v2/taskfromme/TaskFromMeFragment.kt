@@ -76,7 +76,8 @@ class TaskFromMeFragment :
         changeSelectedUserState()
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            updateCount(it)
+            if (it != null)
+                updateCount(it)
         }
 
         viewModel.unreadTasks.observe(viewLifecycleOwner) {

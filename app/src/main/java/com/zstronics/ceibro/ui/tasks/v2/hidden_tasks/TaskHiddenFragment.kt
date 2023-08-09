@@ -76,7 +76,8 @@ class TaskHiddenFragment :
         changeSelectedUserState()
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            updateCount(it)
+            if (it != null)
+                updateCount(it)
         }
 
         viewModel.cancelledTasks.observe(viewLifecycleOwner) {

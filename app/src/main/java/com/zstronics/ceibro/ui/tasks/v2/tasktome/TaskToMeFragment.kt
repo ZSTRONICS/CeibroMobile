@@ -76,7 +76,8 @@ class TaskToMeFragment :
         changeSelectedUserState()
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            updateCount(it)
+            if (it != null)
+                updateCount(it)
         }
 
         viewModel.newTasks.observe(viewLifecycleOwner) {
