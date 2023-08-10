@@ -26,6 +26,8 @@ data class EventV2Response(
         val createdAt: String,
         @SerializedName("eventData")
         val eventData: List<EventData>?,
+        @SerializedName("invitedMembers")
+        val invitedMembers: List<EventData>?,
         @SerializedName("eventType")
         val eventType: String,
         @SerializedName("_id")

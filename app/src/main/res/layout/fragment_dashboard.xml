@@ -239,6 +239,18 @@
                     app:layout_constraintStart_toStartOf="@+id/toMeBtn"
                     app:layout_constraintTop_toTopOf="@+id/toMeBtn" />
 
+                <View
+                    android:id="@+id/toMeLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/appBlue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/toMeBtn"
+                    app:layout_constraintEnd_toEndOf="@+id/toMeBtn"
+                    app:layout_constraintStart_toStartOf="@+id/toMeBtn" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -285,6 +297,18 @@
                     app:layout_constraintStart_toStartOf="@+id/fromMeBtn"
                     app:layout_constraintTop_toTopOf="@+id/fromMeBtn" />
 
+                <View
+                    android:id="@+id/fromMeLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/appBlue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/fromMeBtn"
+                    app:layout_constraintEnd_toEndOf="@+id/fromMeBtn"
+                    app:layout_constraintStart_toStartOf="@+id/fromMeBtn" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -330,6 +354,19 @@
                     app:layout_constraintHorizontal_bias="0.63"
                     app:layout_constraintStart_toStartOf="@+id/hiddenBtn"
                     app:layout_constraintTop_toTopOf="@+id/hiddenBtn" />
+
+                <View
+                    android:id="@+id/hiddenLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/appBlue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/hiddenBtn"
+                    app:layout_constraintEnd_toEndOf="@+id/hiddenBtn"
+                    app:layout_constraintStart_toStartOf="@+id/hiddenBtn" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

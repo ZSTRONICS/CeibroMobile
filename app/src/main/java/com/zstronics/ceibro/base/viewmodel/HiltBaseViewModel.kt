@@ -984,6 +984,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 commentData = eventData.commentData,
                 createdAt = eventData.createdAt,
                 updatedAt = eventData.updatedAt,
+                invitedMembers = eventData.invitedMembers,
                 v = null
             )
             val taskEventList: MutableList<Events> = mutableListOf()
@@ -1422,6 +1423,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 commentData = eventData.commentData,
                 createdAt = eventData.createdAt,
                 updatedAt = eventData.updatedAt,
+                invitedMembers = eventData.invitedMembers,
                 v = null
             )
             val taskEventList: MutableList<Events> = mutableListOf()
@@ -1989,6 +1991,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 commentData = eventData.commentData,
                 createdAt = eventData.createdAt,
                 updatedAt = eventData.updatedAt,
+                invitedMembers = eventData.invitedMembers,
                 v = null
             )
             val taskEventList: MutableList<Events> = mutableListOf()

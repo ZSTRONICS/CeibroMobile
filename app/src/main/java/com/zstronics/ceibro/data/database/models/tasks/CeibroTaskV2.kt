@@ -178,6 +178,8 @@ data class Events(
     val createdAt: String,
     @SerializedName("eventData")
     val eventData: List<EventData>?,
+    @SerializedName("invitedMembers")
+    val invitedMembers: List<EventData>?,
     @SerializedName("commentData")
     val commentData: CommentData?,
     @SerializedName("eventType")
@@ -221,7 +223,7 @@ data class CommentData(
     @SerializedName("isFileAttached")
     val isFileAttached: Boolean,
     @SerializedName("message")
-    val message: String,
+    val message: String?,
     @SerializedName("taskId")
     val taskId: String?
 ) : Parcelable

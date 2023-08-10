@@ -29,28 +29,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/backBtn"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginStart="@dimen/_11sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/topicHeading"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/topicHeading"
-                app:srcCompat="@drawable/icon_back"
-                app:tint="@color/appBlue" />
-
             <TextView
                 android:id="@+id/topicHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginStart="@dimen/_11sdp"
+                android:layout_marginTop="@dimen/_9sdp"
+                android:layout_marginEnd="@dimen/_11sdp"
+                android:layout_marginBottom="@dimen/_9sdp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="1"
@@ -59,8 +45,7 @@
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -68,39 +53,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottomLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topicHeader">
-
-            <SearchView
-                android:id="@+id/topicSearchBar"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:iconifiedByDefault="false"
-                android:closeIcon="@drawable/icon_close_round_grey"
-                android:elevation="0dp"
-                android:queryBackground="@android:color/transparent"
-                android:queryHint="Start typing"
-                android:searchIcon="@drawable/icon_search"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:theme="@style/AppSearchView" />
-
-            <View
-                android:id="@+id/view5"
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginStart="@dimen/_11sdp"
-                android:layout_marginEnd="@dimen/_11sdp"
-                android:background="@color/appGrey3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topicSearchBar" />
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -111,7 +67,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view5">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/parentLayout"
@@ -174,23 +130,94 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/saveTopicBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginBottom="@dimen/_7sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:background="@drawable/signin_button_back"
-            android:fontFamily="@font/inter_regular"
-            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-            android:text="@string/save_and_use"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:paddingStart="@dimen/_9sdp"
-            android:paddingEnd="@dimen/_9sdp"
-            android:visibility="gone"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/backBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="@dimen/_7sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topicSearchBar"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:background="@color/appGrey3"
+                app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
+                app:layout_constraintEnd_toStartOf="@+id/topicSearchBar"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="@+id/topicSearchBar" />
+
+            <SearchView
+                android:id="@+id/topicSearchBar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_1sdp"
+                android:closeIcon="@drawable/icon_close_round_grey"
+                android:elevation="0dp"
+                android:paddingStart="-1dp"
+                android:paddingEnd="-4dp"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Start typing"
+                android:searchIcon="@null"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@+id/saveTopicBtn"
+                app:layout_constraintStart_toEndOf="@+id/view6"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/AppSearchView" />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginStart="@dimen/_9sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_9sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:background="@color/appGrey3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topicSearchBar" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/saveTopicBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="39dp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_regular"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_9sdp"
+                android:paddingEnd="@dimen/_9sdp"
+                android:text="@string/save_and_use"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topicSearchBar" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
