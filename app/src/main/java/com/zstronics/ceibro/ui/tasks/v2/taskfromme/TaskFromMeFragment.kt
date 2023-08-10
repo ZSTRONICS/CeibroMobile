@@ -265,6 +265,10 @@ class TaskFromMeFragment :
 
     private fun changeSelectedUserState() {
         if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
+            mViewDataBinding.unreadStateText.elevation = 15F
+            mViewDataBinding.ongoingStateText.elevation = 0F
+            mViewDataBinding.doneStateText.elevation = 0F
+
             mViewDataBinding.unreadStateText.background =
                 resources.getDrawable(R.drawable.status_new_filled_new)
             mViewDataBinding.ongoingStateText.background =
@@ -273,6 +277,10 @@ class TaskFromMeFragment :
                 resources.getDrawable(R.drawable.status_done_outline_new)
         }
         if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
+            mViewDataBinding.unreadStateText.elevation = 0F
+            mViewDataBinding.ongoingStateText.elevation = 15F
+            mViewDataBinding.doneStateText.elevation = 0F
+
             mViewDataBinding.unreadStateText.background =
                 resources.getDrawable(R.drawable.status_new_outline_new)
             mViewDataBinding.ongoingStateText.background =
@@ -281,6 +289,10 @@ class TaskFromMeFragment :
                 resources.getDrawable(R.drawable.status_done_outline_new)
         }
         if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
+            mViewDataBinding.unreadStateText.elevation = 0F
+            mViewDataBinding.ongoingStateText.elevation = 0F
+            mViewDataBinding.doneStateText.elevation = 15F
+
             mViewDataBinding.unreadStateText.background =
                 resources.getDrawable(R.drawable.status_new_outline_new)
             mViewDataBinding.ongoingStateText.background =

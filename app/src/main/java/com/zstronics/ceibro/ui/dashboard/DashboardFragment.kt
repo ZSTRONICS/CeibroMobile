@@ -89,6 +89,9 @@ class DashboardFragment :
         viewState.hiddenSelected.value = false
         viewState.locationSelected.value = false
         viewState.projectsSelected.value = false
+        mViewDataBinding.toMeLine.visibility = View.GONE
+        mViewDataBinding.fromMeLine.visibility = View.GONE
+        mViewDataBinding.hiddenLine.visibility = View.GONE
 
         when (btnID) {
             R.id.toMeBtn -> {
@@ -99,6 +102,7 @@ class DashboardFragment :
                 childFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, taskToMeFragmentInstance!!)
                     .commit()
+                mViewDataBinding.toMeLine.visibility = View.VISIBLE
             }
 
             R.id.fromMeBtn -> {
@@ -113,6 +117,7 @@ class DashboardFragment :
                 childFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, taskFromMeFragmentInstance!!)
                     .commit()
+                mViewDataBinding.fromMeLine.visibility = View.VISIBLE
             }
 
             R.id.hiddenBtn -> {
@@ -123,6 +128,7 @@ class DashboardFragment :
                 childFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, taskHiddenFragmentInstance!!)
                     .commit()
+                mViewDataBinding.hiddenLine.visibility = View.VISIBLE
             }
 
             R.id.locationBtn -> {

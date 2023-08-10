@@ -61,6 +61,7 @@ class EventsRVAdapter @Inject constructor() :
             binding.onlyImagesRV.visibility = View.GONE
             binding.imagesWithCommentRV.visibility = View.GONE
             binding.forwardedToNames.visibility = View.GONE
+            binding.invitedNumbers.visibility = View.GONE
 
             binding.eventName.text = ""
             binding.eventBy.text = "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
@@ -75,11 +76,10 @@ class EventsRVAdapter @Inject constructor() :
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
-                    binding.forwardedToNames.visibility = View.VISIBLE
 
                     binding.eventName.text = context.resources.getString(R.string.forwarded_by)
 
-                    var forwardedToUsers = "To: "
+                    var forwardedToUsers = ""
                     if (!item.eventData.isNullOrEmpty()) {
                         forwardedToUsers += item.eventData.map {
                             if (it.firstName.isNullOrEmpty()) {
@@ -95,11 +95,29 @@ class EventsRVAdapter @Inject constructor() :
                             .toString().removeSurrounding("[", "]").removeSuffix(";")
                             .replace(",", "")
                     }
-                    binding.forwardedToNames.text = forwardedToUsers
+                    if (forwardedToUsers.isNotEmpty()) {
+                        binding.forwardedToNames.text = "To: $forwardedToUsers"
+                        binding.forwardedToNames.visibility = View.VISIBLE
+                    }
+
+                    var invitedUsers = ""
+                    if (!item.invitedMembers.isNullOrEmpty()) {
+                        invitedUsers += item.invitedMembers.map {
+                            if (it.firstName.isNullOrEmpty())
+                                " ${it.phoneNumber} ;"
+                            else
+                                " ${it.firstName} ${it.surName} ;"
+                        }.toString().removeSurrounding("[", "]").removeSuffix(";").replace(",", "")
+                    }
+                    if (invitedUsers.isNotEmpty()) {
+                        binding.invitedNumbers.text = "Invited: $invitedUsers"
+                        binding.invitedNumbers.visibility = View.VISIBLE
+                    }
+
 
                     if (item.commentData != null) {
-                        if (item.commentData.message.isNotEmpty()) {
-                            binding.onlyComment.text = item.commentData.message
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
                             binding.onlyComment.visibility = View.VISIBLE
                         } else {
                             binding.onlyComment.visibility = View.GONE
@@ -127,8 +145,8 @@ class EventsRVAdapter @Inject constructor() :
                     binding.forwardedToNames.text = invitedUsers
 
                     if (item.commentData != null) {
-                        if (item.commentData.message.isNotEmpty()) {
-                            binding.onlyComment.text = item.commentData.message
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
                             binding.onlyComment.visibility = View.VISIBLE
                         } else {
                             binding.onlyComment.visibility = View.GONE
@@ -146,8 +164,8 @@ class EventsRVAdapter @Inject constructor() :
 
                     if (item.commentData != null) {
 
-                        if (item.commentData.message.isNotEmpty()) {
-                            binding.onlyComment.text = item.commentData.message
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
                             binding.onlyComment.visibility = View.VISIBLE
                         } else {
                             binding.onlyComment.visibility = View.GONE
@@ -169,6 +187,17 @@ class EventsRVAdapter @Inject constructor() :
                     binding.onlyComment.text = context.resources.getString(R.string.task_has_been_canceled)
                     binding.onlyComment.visibility = View.VISIBLE
                 }
+                TaskDetailEvents.UnCancelTask.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.filesRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.GONE
+
+                    binding.eventName.text = context.resources.getString(R.string.un_canceled_by)
+                    binding.onlyComment.text = context.resources.getString(R.string.task_has_been_un_canceled)
+                    binding.onlyComment.visibility = View.VISIBLE
+                }
                 TaskDetailEvents.DoneTask.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
@@ -179,8 +208,8 @@ class EventsRVAdapter @Inject constructor() :
                     binding.eventName.text = context.resources.getString(R.string.done_by)
                     if (item.commentData != null) {
 
-                        if (item.commentData.message.isNotEmpty()) {
-                            binding.onlyComment.text = item.commentData.message
+                        if (!item.commentData.message.isNullOrEmpty()) {
+                            binding.onlyComment.text = item.commentData.message.trim()
                             binding.onlyComment.visibility = View.VISIBLE
                         } else {
                             binding.onlyComment.text = context.resources.getString(R.string.task_has_been_closed)

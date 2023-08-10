@@ -208,6 +208,10 @@ class TaskHiddenFragment :
 
     private fun changeSelectedUserState() {
         if (viewModel.selectedState.equals(TaskStatus.CANCELED.name.lowercase(), true)) {
+            mViewDataBinding.cancelledStateText.elevation = 15F
+            mViewDataBinding.ongoingStateText.elevation = 0F
+            mViewDataBinding.doneStateText.elevation = 0F
+
             mViewDataBinding.cancelledStateText.background =
                 resources.getDrawable(R.drawable.status_cancelled_fill)
             mViewDataBinding.ongoingStateText.background =
@@ -216,6 +220,10 @@ class TaskHiddenFragment :
                 resources.getDrawable(R.drawable.status_done_outline_new)
         }
         if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
+            mViewDataBinding.cancelledStateText.elevation = 0F
+            mViewDataBinding.ongoingStateText.elevation = 15F
+            mViewDataBinding.doneStateText.elevation = 0F
+
             mViewDataBinding.cancelledStateText.background =
                 resources.getDrawable(R.drawable.status_cancelled_outline)
             mViewDataBinding.ongoingStateText.background =
@@ -224,6 +232,10 @@ class TaskHiddenFragment :
                 resources.getDrawable(R.drawable.status_done_outline_new)
         }
         if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
+            mViewDataBinding.cancelledStateText.elevation = 0F
+            mViewDataBinding.ongoingStateText.elevation = 0F
+            mViewDataBinding.doneStateText.elevation = 15F
+
             mViewDataBinding.cancelledStateText.background =
                 resources.getDrawable(R.drawable.status_cancelled_outline)
             mViewDataBinding.ongoingStateText.background =

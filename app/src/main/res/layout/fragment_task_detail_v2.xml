@@ -561,7 +561,7 @@
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_forward"
-                android:drawableTint="@drawable/bottom_nav_color"
+                android:drawableTint="@color/appBlue"
                 android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -569,7 +569,7 @@
                 android:paddingEnd="@dimen/_3sdp"
                 android:text="@string/forward_heading"
                 android:textAllCaps="false"
-                android:textColor="@drawable/bottom_nav_text_color"
+                android:textColor="@color/appBlue"
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
