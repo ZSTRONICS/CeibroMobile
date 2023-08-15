@@ -214,6 +214,7 @@ class NewTaskV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mViewDataBinding.newTaskParentScroll.isSmoothScrollingEnabled = true
         mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
         mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
@@ -251,6 +252,12 @@ class NewTaskV2Fragment :
 
         mViewDataBinding.newTaskDoneReqSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             viewState.isDoneReqAllowed.value = isChecked
+            if (isChecked) {
+                val handler = Handler()
+                handler.postDelayed(Runnable {
+                    mViewDataBinding.newTaskParentScroll.fullScroll(View.FOCUS_DOWN)
+                }, 40)
+            }
         }
         val handler = Handler()
         handler.postDelayed(Runnable {

@@ -137,7 +137,7 @@ class TaskDetailV2Fragment :
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
             if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(TaskStatus.CANCELED.name, true) ||
-                (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(TaskStatus.NEW.name, true)
+                (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(TaskStatus.NEW.name, true))
             ) {
                 mViewDataBinding.doneBtn.isEnabled = false
                 mViewDataBinding.doneBtn.isClickable = false
@@ -163,6 +163,7 @@ class TaskDetailV2Fragment :
                 }
             }
 
+            mViewDataBinding.detailViewHeading.text = item.taskUID
 
             var state = ""
             state = if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {

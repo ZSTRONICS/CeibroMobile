@@ -33,6 +33,12 @@ data class CeibroTaskV2(
     val id: String,
     @SerializedName("isCanceled")
     val isCanceled: Boolean,
+    @SerializedName("isAssignedToMe")
+    val isAssignedToMe: Boolean,
+    @SerializedName("isCreator")
+    val isCreator: Boolean,
+    @SerializedName("isHiddenByMe")
+    val isHiddenByMe: Boolean,
     @SerializedName("invitedNumbers")
     val invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")

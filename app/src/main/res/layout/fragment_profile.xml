@@ -12,6 +12,7 @@
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.profile.ProfileVM" />
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -177,7 +178,7 @@
 
                 <TextView
                     android:id="@+id/userProfileCompany"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_20sdp"
@@ -187,12 +188,33 @@
                     android:gravity="center"
                     android:maxLines="2"
                     android:padding="2dp"
+                    android:visibility="@{viewModel.sessionManager.Companion.user.companyName.isEmpty() ? View.GONE: View.VISIBLE, default = gone}"
                     android:text='@{viewModel.sessionManager.Companion.user.companyName}'
                     android:textColor="@color/black"
                     android:textSize="14.5sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/userProfileEmail" />
+
+                <TextView
+                    android:id="@+id/userProfileJob"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:drawablePadding="16dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:padding="2dp"
+                    android:visibility="@{viewModel.sessionManager.Companion.user.jobTitle.isEmpty() ? View.GONE: View.VISIBLE, default = gone}"
+                    android:text='@{viewModel.sessionManager.Companion.user.jobTitle}'
+                    android:textColor="@color/black"
+                    android:textSize="14.5sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/userProfileCompany" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
