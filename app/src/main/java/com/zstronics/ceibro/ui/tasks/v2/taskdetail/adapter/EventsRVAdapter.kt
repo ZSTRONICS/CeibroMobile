@@ -64,7 +64,8 @@ class EventsRVAdapter @Inject constructor() :
             binding.invitedNumbers.visibility = View.GONE
 
             binding.eventName.text = ""
-            binding.eventBy.text = "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
+            binding.eventBy.text =
+                "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
             binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustom(
                 utcTime = item.createdAt,
                 inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
@@ -125,15 +126,16 @@ class EventsRVAdapter @Inject constructor() :
                     }
 
                 }
+
                 TaskDetailEvents.InvitedUser.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
-                    binding.forwardedToNames.visibility = View.VISIBLE
+                    binding.forwardedToNames.visibility = View.GONE
 
                     binding.eventName.text = context.resources.getString(R.string.invited_by)
 
-                    var invitedUsers = "To: "
+                    var invitedUsers = ""
                     if (!item.eventData.isNullOrEmpty()) {
                         invitedUsers += item.eventData.map {
                             if (it.firstName.isNullOrEmpty())
@@ -142,7 +144,10 @@ class EventsRVAdapter @Inject constructor() :
                                 " ${it.firstName} ${it.surName} ;"
                         }.toString().removeSurrounding("[", "]").removeSuffix(";").replace(",", "")
                     }
-                    binding.forwardedToNames.text = invitedUsers
+                    if (invitedUsers.isNotEmpty()) {
+                        binding.invitedNumbers.text = "Invited: $invitedUsers"
+                        binding.invitedNumbers.visibility = View.VISIBLE
+                    }
 
                     if (item.commentData != null) {
                         if (!item.commentData.message.isNullOrEmpty()) {
@@ -153,6 +158,7 @@ class EventsRVAdapter @Inject constructor() :
                         }
                     }
                 }
+
                 TaskDetailEvents.Comment.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
@@ -176,6 +182,7 @@ class EventsRVAdapter @Inject constructor() :
                         }
                     }
                 }
+
                 TaskDetailEvents.CancelTask.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
@@ -184,9 +191,11 @@ class EventsRVAdapter @Inject constructor() :
                     binding.forwardedToNames.visibility = View.GONE
 
                     binding.eventName.text = context.resources.getString(R.string.canceled_by)
-                    binding.onlyComment.text = context.resources.getString(R.string.task_has_been_canceled)
+                    binding.onlyComment.text =
+                        context.resources.getString(R.string.task_has_been_canceled)
                     binding.onlyComment.visibility = View.VISIBLE
                 }
+
                 TaskDetailEvents.UnCancelTask.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
@@ -195,9 +204,21 @@ class EventsRVAdapter @Inject constructor() :
                     binding.forwardedToNames.visibility = View.GONE
 
                     binding.eventName.text = context.resources.getString(R.string.un_canceled_by)
-                    binding.onlyComment.text = context.resources.getString(R.string.task_has_been_un_canceled)
+                    binding.onlyComment.text =
+                        context.resources.getString(R.string.task_has_been_un_canceled)
                     binding.onlyComment.visibility = View.VISIBLE
                 }
+
+                TaskDetailEvents.JoinedTask.eventValue -> {
+                    binding.onlyComment.visibility = View.GONE
+                    binding.onlyImagesRV.visibility = View.GONE
+                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.filesRV.visibility = View.GONE
+                    binding.forwardedToNames.visibility = View.GONE
+
+                    binding.eventName.text = context.resources.getString(R.string.joined_by)
+                }
+
                 TaskDetailEvents.DoneTask.eventValue -> {
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
@@ -212,7 +233,8 @@ class EventsRVAdapter @Inject constructor() :
                             binding.onlyComment.text = item.commentData.message.trim()
                             binding.onlyComment.visibility = View.VISIBLE
                         } else {
-                            binding.onlyComment.text = context.resources.getString(R.string.task_has_been_closed)
+                            binding.onlyComment.text =
+                                context.resources.getString(R.string.task_has_been_closed)
                             binding.onlyComment.visibility = View.VISIBLE
                         }
 
@@ -220,7 +242,8 @@ class EventsRVAdapter @Inject constructor() :
                             separateFiles(item.commentData.files)
                         }
                     } else {
-                        binding.onlyComment.text = context.resources.getString(R.string.task_has_been_closed)
+                        binding.onlyComment.text =
+                            context.resources.getString(R.string.task_has_been_closed)
                         binding.onlyComment.visibility = View.VISIBLE
                     }
 //                    binding.root.setBackgroundColor(context.resources.getColor(R.color.appMidGreen))
@@ -256,7 +279,8 @@ class EventsRVAdapter @Inject constructor() :
                 onlyImageAdapter.setList(onlyImage)
                 onlyImageAdapter.openImageClickListener =
                     { view: View, position: Int, fileUrl: String ->
-                        val fileUrls: ArrayList<String> = onlyImage.map { it.fileUrl } as ArrayList<String>
+                        val fileUrls: ArrayList<String> =
+                            onlyImage.map { it.fileUrl } as ArrayList<String>
                         openEventImageClickListener?.invoke(view, position, fileUrls)
                     }
                 binding.onlyImagesRV.visibility = View.VISIBLE
@@ -267,7 +291,8 @@ class EventsRVAdapter @Inject constructor() :
                 imageWithCommentAdapter.setList(imagesWithComment)
                 imageWithCommentAdapter.openImageClickListener =
                     { view: View, position: Int, fileUrl: String ->
-                        val fileUrls: ArrayList<String> = imagesWithComment.map { it.fileUrl } as ArrayList<String>
+                        val fileUrls: ArrayList<String> =
+                            imagesWithComment.map { it.fileUrl } as ArrayList<String>
                         openEventImageClickListener?.invoke(view, position, fileUrls)
                     }
                 binding.imagesWithCommentRV.visibility = View.VISIBLE

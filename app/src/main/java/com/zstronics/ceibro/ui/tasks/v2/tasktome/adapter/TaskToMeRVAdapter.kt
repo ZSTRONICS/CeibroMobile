@@ -69,6 +69,17 @@ class TaskToMeRVAdapter @Inject constructor() :
                 true
             }
 
+//            if (state.equals(TaskStatus.NEW.name.lowercase(), true)) {
+//                binding.taskId.background =
+//                    context.getDrawable(R.drawable.task_card_uid_new)
+//            } else if (state.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
+//                binding.taskId.background =
+//                    context.getDrawable(R.drawable.task_card_uid_ongoing)
+//            } else if (state.equals(TaskStatus.DONE.name.lowercase(), true)) {
+//                binding.taskId.background =
+//                    context.getDrawable(R.drawable.task_card_uid_done)
+//            }
+
             binding.taskCardParentLayout.background = null
             binding.taskCanceledText.visibility = View.GONE
             //Use following two lines if a task is cancelled
