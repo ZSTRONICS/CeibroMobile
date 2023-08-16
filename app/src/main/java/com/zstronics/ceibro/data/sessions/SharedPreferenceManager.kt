@@ -13,6 +13,7 @@ import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -120,6 +121,20 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         editor.apply()
     }
 
+    fun saveCompleteTask(KEY_NAME: String, newTaskToSave: NewTaskToSave) {
+        //For storing complete data object in shared preferences
+        val gson = Gson()
+        val json = gson.toJson(newTaskToSave)
+        val editor: SharedPreferences.Editor = sharedPref.edit()
+        editor.putString(KEY_NAME, json)
+        editor.commit()
+        editor.apply()
+    }
+    fun getCompleteTask(KEY_NAME: String): NewTaskToSave? {
+        val gson = Gson()
+        val json = sharedPref.getString(KEY_NAME, "")
+        return gson.fromJson(json, NewTaskToSave::class.java)
+    }
 
     fun getValueString(KEY_NAME: String): String? {
         return sharedPref.getString(KEY_NAME, null)

@@ -3,6 +3,9 @@ package com.zstronics.ceibro.data.repos.task.models.v2
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 
 @Keep
 data class NewTaskV2Request(
@@ -24,3 +27,12 @@ data class NewTaskV2Request(
         @SerializedName("state") val state: String = "new",
     )
 }
+
+@Keep
+data class NewTaskToSave(
+    @SerializedName("topic") val topic: TopicsResponse.TopicData?,
+    @SerializedName("project") val project: AllProjectsResponseV2.ProjectsV2?,
+    @SerializedName("selectedContacts") val selectedContacts: List<AllCeibroConnections.CeibroConnection>?,
+    @SerializedName("dueDate") val dueDate: String?,
+    @SerializedName("selfAssigned") val selfAssigned: Boolean?
+)

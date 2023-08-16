@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask
 
 import android.content.Context
+import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -10,6 +11,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -34,6 +36,54 @@ class NewTaskV2VM @Inject constructor(
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
 
     var taskId = ""
+
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+        val oldCreatedTask = sessionManager.getSavedNewTaskData()
+        if (oldCreatedTask != null) {
+            if (oldCreatedTask.topic != null) {
+                viewState.selectedTopic.value = oldCreatedTask.topic
+                viewState.taskTitle.value = oldCreatedTask.topic.topic
+            }
+
+            var assigneeMembers = ""
+            if (oldCreatedTask.selfAssigned != null) {
+                if (oldCreatedTask.selfAssigned) {
+                    assigneeMembers += if (oldCreatedTask.selectedContacts.isNullOrEmpty()) {
+                        "Me"
+                    } else {
+                        "Me; "
+                    }
+                }
+                viewState.selfAssigned.value = oldCreatedTask.selfAssigned
+            }
+            if (!oldCreatedTask.selectedContacts.isNullOrEmpty()) {
+                var index = 0
+                val selectedContactList = oldCreatedTask.selectedContacts
+                for (item in selectedContactList) {
+                    assigneeMembers += if (index == selectedContactList.size - 1) {
+                        "${item.contactFirstName} ${item.contactSurName}"
+                    } else {
+                        "${item.contactFirstName} ${item.contactSurName}; "
+                    }
+                    index++
+                }
+                viewState.selectedContacts.value = selectedContactList.toMutableList()
+
+                viewState.assignToText.value = assigneeMembers
+            }
+
+            if (oldCreatedTask.project != null) {
+                viewState.selectedProject.value = oldCreatedTask.project
+                viewState.projectText.value = oldCreatedTask.project.title
+            }
+
+            if (!oldCreatedTask.dueDate.isNullOrEmpty()) {
+                viewState.dueDate.value = oldCreatedTask.dueDate
+            }
+        }
+    }
+
 
     fun createNewTask(
         context: Context,
@@ -63,7 +113,7 @@ class NewTaskV2VM @Inject constructor(
                     )
                 }
             }
-            
+
             val invitedNumbers = viewState.selectedContacts.value?.filter { !it.isCeiborUser }
                 ?.map { it.phoneNumber } ?: listOf()
             val projectId = viewState.selectedProject.value?.id ?: ""
@@ -82,9 +132,18 @@ class NewTaskV2VM @Inject constructor(
                 hasPendingFilesToUpload = list.isNotEmpty()
             )
 
+            val newTaskToSave = NewTaskToSave(
+                topic = viewState.selectedTopic.value,
+                project = viewState.selectedProject.value,
+                selectedContacts = viewState.selectedContacts.value?.toList(),
+                dueDate = viewState.dueDate.value,
+                selfAssigned = viewState.selfAssigned.value
+            )
+            sessionManager.saveNewTaskData(newTaskToSave)
+
             launch {
                 loading(true)
-                taskRepository.newTaskV2(newTaskRequest) { isSuccess, task,errorMessage ->
+                taskRepository.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
                     if (isSuccess) {
                         updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
 

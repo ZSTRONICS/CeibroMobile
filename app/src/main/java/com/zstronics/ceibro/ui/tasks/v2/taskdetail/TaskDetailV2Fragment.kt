@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -11,6 +13,7 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
@@ -21,6 +24,7 @@ import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAda
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -306,6 +310,16 @@ class TaskDetailV2Fragment :
             mViewDataBinding.filesCount.text = "${it.size} file(s)"
         }
         mViewDataBinding.filesRV.adapter = filesAdapter
+        filesAdapter.fileClickListener = { _: View, position: Int, data: TaskFiles ->
+            val bundle = Bundle()
+            bundle.putParcelable("taskFile", data)
+            navigate(R.id.fileViewerFragment, bundle)
+//            val pdfUrl = data.fileUrl             // This following code downloads the file
+//            val intent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+//                .addCategory(Intent.CATEGORY_BROWSABLE)
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//            context?.startActivity(intent)
+        }
 
 
         viewModel.taskEvents.observe(viewLifecycleOwner) {

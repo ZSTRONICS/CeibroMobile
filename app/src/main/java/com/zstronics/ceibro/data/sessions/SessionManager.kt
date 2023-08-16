@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 
 class SessionManager constructor(
     val sharedPreferenceManager: SharedPreferenceManager
@@ -34,6 +35,7 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_PASS)
         sharedPreferenceManager.removeValue(KEY_IS_TO_ME_UNREAD)
         sharedPreferenceManager.removeValue(KEY_SYNCED_CONTACTS)
+        sharedPreferenceManager.removeValue(KEY_SAVED_TASK)
         _user.postValue(
             user.value?.copy(
                 phoneNumber = "",
@@ -80,6 +82,13 @@ class SessionManager constructor(
 
     fun isHiddenUnread(): Boolean {
         return sharedPreferenceManager.getValueBoolean(KEY_IS_HIDDEN_UNREAD, false)
+    }
+
+    fun saveNewTaskData(newTaskToSave: NewTaskToSave) {
+        sharedPreferenceManager.saveCompleteTask(KEY_SAVED_TASK, newTaskToSave)
+    }
+    fun getSavedNewTaskData(): NewTaskToSave? {
+        return sharedPreferenceManager.getCompleteTask(KEY_SAVED_TASK)
     }
 
     fun getUser(): LiveData<User?> {

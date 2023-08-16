@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class FilesRVAdapter @Inject constructor() :
     RecyclerView.Adapter<FilesRVAdapter.FilesViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: TaskFiles) -> Unit)? =
+    var fileClickListener: ((view: View, position: Int, data: TaskFiles) -> Unit)? =
         null
     var listItems: MutableList<TaskFiles> = mutableListOf()
 
@@ -45,8 +45,8 @@ class FilesRVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TaskFiles) {
-            binding.clearIcon.setOnClickListener {
-//                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+            binding.root.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
 
             val context = binding.uploadImg.context
