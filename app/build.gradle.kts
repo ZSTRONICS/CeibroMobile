@@ -85,4 +85,5 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.1.1")
     implementation("androidx.paging:paging-runtime:3.1.1")
     implementation("androidx.paging:paging-common:3.1.1")
+    implementation("androidx.webkit:webkit:1.7.0")
 }

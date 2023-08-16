@@ -1,21 +1,25 @@
 package com.zstronics.ceibro.ui.dataloading
 
 import android.content.Context
+import androidx.work.WorkManager
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.contacts.compareContactsAndUpdateList
 import com.zstronics.ceibro.ui.contacts.findDeletedContacts
 import com.zstronics.ceibro.ui.contacts.findNewContacts
@@ -27,11 +31,14 @@ import javax.inject.Inject
 class CeibroDataLoadingVM @Inject constructor(
     override val viewState: CeibroDataLoadingState,
     val sessionManager: SessionManager,
+    private val taskRepository: TaskRepository,
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource,
     private val remoteTask: TaskRemoteDataSource,
     private val taskDao: TaskV2Dao,
+    private val topicsV2Dao: TopicsV2Dao,
+    private val projectsV2Dao: ProjectsV2Dao,
     private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<ICeibroDataLoading.State>(), ICeibroDataLoading.ViewModel {
@@ -219,5 +226,21 @@ class CeibroDataLoadingVM @Inject constructor(
                 callBack.invoke()
             }
         }
+    }
+
+
+    fun endUserSession(context: Context) {
+        launch {
+            taskRepository.eraseTaskTable()
+            taskRepository.eraseSubTaskTable()
+            taskDao.deleteAllData()
+            topicsV2Dao.deleteAllData()
+            projectsV2Dao.deleteAll()
+            connectionsV2Dao.deleteAll()
+        }
+        sessionManager.endUserSession()
+        // Cancel all periodic work with the tag "contactSync"
+        WorkManager.getInstance(context)
+            .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
     }
 }

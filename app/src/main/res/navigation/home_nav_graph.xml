@@ -304,6 +304,9 @@
         <action
             android:id="@+id/action_MyConnectionV2Fragment_to_myConnectionV2ProfileFragment"
             app:destination="@id/myConnectionV2ProfileFragment" />
+        <action
+            android:id="@+id/action_MyConnectionV2Fragment_to_manualContactsSelectionFragment"
+            app:destination="@id/manualContactsSelectionFragment" />
     </fragment>
     <fragment
         android:id="@+id/myConnectionV2ProfileFragment"
@@ -375,6 +378,9 @@
         <action
             android:id="@+id/action_taskDetailV2Fragment_to_forwardTaskFragment"
             app:destination="@id/forwardTaskFragment" />
+        <action
+            android:id="@+id/action_taskDetailV2Fragment_to_fileViewerFragment"
+            app:destination="@id/fileViewerFragment" />
     </fragment>
     <fragment
         android:id="@+id/forwardFragment"
@@ -390,7 +396,14 @@
         android:id="@+id/taskHiddenFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment"
         android:label="TaskHiddenFragment"
-        tools:layout="@layout/fragment_task_hidden" />
+        tools:layout="@layout/fragment_task_hidden" >
+        <action
+            android:id="@+id/action_taskHiddenFragment_to_newTaskV2Fragment"
+            app:destination="@id/newTaskV2Fragment" />
+        <action
+            android:id="@+id/action_taskHiddenFragment_to_taskDetailV2Fragment"
+            app:destination="@id/taskDetailV2Fragment" />
+    </fragment>
     <fragment
         android:id="@+id/manualContactsSelectionFragment"
         android:name="com.zstronics.ceibro.ui.dashboard.manual_contact_selection.ManualContactsSelectionFragment"
@@ -410,4 +423,9 @@
         android:name="com.zstronics.ceibro.ui.dataloading.CeibroDataLoadingFragment"
         android:label="CeibroDataLoadingFragment"
         tools:layout="@layout/fragment_ceibro_data_loading"/>
+    <fragment
+        android:id="@+id/fileViewerFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.fileviewer.FileViewerFragment"
+        android:label="FileViewerFragment"
+        tools:layout="@layout/fragment_file_viewer"/>
 </navigation>
