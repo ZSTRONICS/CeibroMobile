@@ -29,6 +29,11 @@ class AssigneeVM @Inject constructor(
     val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         _allConnections
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
+    private var _recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+        MutableLiveData(mutableListOf())
+    val recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
+        _recentAllConnections
+    var recentOriginalConnections = listOf<AllCeibroConnections.CeibroConnection>()
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
@@ -54,22 +59,10 @@ class AssigneeVM @Inject constructor(
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
-        val userId = user?.id
+        loadRecentConnections()
         launch {
             val connectionsData = connectionsV2Dao.getAll()
-            if (connectionsData.isNotEmpty()) {
-                processConnectionsData(connectionsData, callBack)
-            } else {
-                when (val response = dashboardRepository.getAllConnectionsV2()) {
-                    is ApiResponse.Success -> {
-                        processConnectionsData(response.data.contacts, callBack)
-                    }
-                    is ApiResponse.Error -> {
-                        callBack.invoke()
-                        alert(response.error.message)
-                    }
-                }
-            }
+            processConnectionsData(connectionsData, callBack)
         }
     }
 
@@ -98,11 +91,46 @@ class AssigneeVM @Inject constructor(
         }
     }
 
+    private fun loadRecentConnections() {
+        launch {
+            when (val response = dashboardRepository.getRecentCeibroConnections()) {
+                is ApiResponse.Success -> {
+                    val newItemsList =
+                        response.data.recentContacts.distinctBy { it.id } // Your 10 items here
+
+                    val allContacts = newItemsList.groupDataByFirstLetter().toMutableList()
+                    val oldSelectedContacts = selectedContacts.value
+
+                    if (!oldSelectedContacts.isNullOrEmpty()) {
+                        oldSelectedContacts.forEach { oldContact ->
+                            val matchingContact = allContacts.find { it.id == oldContact.id }
+                            matchingContact?.isChecked = true
+                        }
+                        _recentAllConnections.postValue(allContacts)
+                        recentOriginalConnections = allContacts
+                    } else {
+                        if (allContacts.isNotEmpty()) {
+                            recentOriginalConnections = allContacts
+                            _recentAllConnections.value = allContacts
+                        }
+                    }
+                }
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
+    }
+
     fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
         originalConnections = allContacts
         _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
     }
 
+    fun updateRecentContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        recentOriginalConnections = allContacts
+        _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    }
 
     fun filterContacts(search: String) {
         if (search.isEmpty()) {
@@ -124,6 +152,27 @@ class AssigneeVM @Inject constructor(
             _allConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)
         else
             _allConnections.postValue(mutableListOf())
+    }
+
+    fun filterRecentContacts(search: String) {
+        if (search.isEmpty()) {
+            if (recentOriginalConnections.isNotEmpty()) {
+                _recentAllConnections.postValue(recentOriginalConnections as MutableList<AllCeibroConnections.CeibroConnection>?)
+            }
+            return
+        }
+        val filtered = recentOriginalConnections.filter {
+            (!it.contactFullName.isNullOrEmpty() && it.contactFullName.lowercase()
+                .contains(search, true)) ||
+                    (!it.contactFirstName.isNullOrEmpty() && it.contactFirstName.lowercase()
+                        .contains(search, true)) ||
+                    (!it.contactSurName.isNullOrEmpty() && it.contactSurName.lowercase()
+                        .contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _recentAllConnections.postValue(filtered as MutableList<AllCeibroConnections.CeibroConnection>?)
+        else
+            _recentAllConnections.postValue(mutableListOf())
     }
 
     fun List<AllCeibroConnections.CeibroConnection>.groupDataByFirstLetter(): List<AllCeibroConnections.CeibroConnection> {
