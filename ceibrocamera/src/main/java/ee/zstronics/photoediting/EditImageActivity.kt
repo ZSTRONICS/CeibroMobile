@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
@@ -455,30 +456,38 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mShapeBSFragment.shapeType = ShapeType.Arrow()
-                showBottomSheetDialogFragment(mShapeBSFragment)
+//                mShapeBSFragment.shapeType = ShapeType.Arrow()
+//                showBottomSheetDialogFragment(mShapeBSFragment)
+                onShapePicked(ShapeType.Arrow())
+                onColorChanged(Color.RED)
             }
             ToolType.RECTANGLE_SHAPE -> {
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mShapeBSFragment.shapeType = ShapeType.Rectangle
-                showBottomSheetDialogFragment(mShapeBSFragment)
+//                mShapeBSFragment.shapeType = ShapeType.Rectangle
+//                showBottomSheetDialogFragment(mShapeBSFragment)
+                onShapePicked(ShapeType.Rectangle)
+                onColorChanged(Color.RED)
             }
 
             ToolType.LINE -> {
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mShapeBSFragment.shapeType = ShapeType.Line
-                showBottomSheetDialogFragment(mShapeBSFragment)
+//                mShapeBSFragment.shapeType = ShapeType.Line
+//                showBottomSheetDialogFragment(mShapeBSFragment)
+                onShapePicked(ShapeType.Line)
+                onColorChanged(Color.RED)
             }
             ToolType.BRUSH -> {
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
                 mPhotoEditor.setShape(mShapeBuilder)
-                mShapeBSFragment.shapeType = ShapeType.Brush
-                showBottomSheetDialogFragment(mShapeBSFragment)
+//                mShapeBSFragment.shapeType = ShapeType.Brush
+//                showBottomSheetDialogFragment(mShapeBSFragment)
+                onShapePicked(ShapeType.Brush)
+                onColorChanged(Color.RED)
             }
 
         }
