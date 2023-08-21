@@ -74,11 +74,11 @@ class TaskFromMeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mViewDataBinding.taskFromMeSearchBar.setQuery(DashboardVM.searchedString, true)
         changeSelectedUserState()
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
                 updateCount(it)
-                viewModel.searchTasks(DashboardVM.searchedString)
             }
         }
 
@@ -117,7 +117,11 @@ class TaskFromMeFragment :
 
         viewModel.disabledUnreadState.observe(viewLifecycleOwner) {
             if (it) {
-                if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                if (viewModel.selectedState.equals(
+                        TaskStatus.UNREAD.name.lowercase(),
+                        true
+                    )
+                ) {  //if unread state was selected then we have to change it because it is disabled now
                     viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 }
                 mViewDataBinding.unreadStateText.isEnabled = false
@@ -254,7 +258,11 @@ class TaskFromMeFragment :
             }
 
         if (allTasks.unread.isEmpty()) {
-            if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+            if (viewModel.selectedState.equals(
+                    TaskStatus.UNREAD.name.lowercase(),
+                    true
+                )
+            ) {  //if unread state was selected then we have to change it because it is disabled now
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
             }
             mViewDataBinding.unreadStateText.isEnabled = false

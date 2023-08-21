@@ -75,11 +75,10 @@ class TaskToMeFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeSelectedUserState()
-
+        mViewDataBinding.taskToMeSearchBar.setQuery(DashboardVM.searchedString,true)
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
                 updateCount(it)
-                viewModel.searchTasks(DashboardVM.searchedString)
             }
         }
 

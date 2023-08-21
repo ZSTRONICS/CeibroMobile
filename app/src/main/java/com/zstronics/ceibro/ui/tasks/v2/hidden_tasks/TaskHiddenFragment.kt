@@ -74,12 +74,11 @@ class TaskHiddenFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mViewDataBinding.taskToMeSearchBar.setQuery(DashboardVM.searchedString,true)
         changeSelectedUserState()
-
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
                 updateCount(it)
-                viewModel.searchTasks(DashboardVM.searchedString)
             }
         }
 
