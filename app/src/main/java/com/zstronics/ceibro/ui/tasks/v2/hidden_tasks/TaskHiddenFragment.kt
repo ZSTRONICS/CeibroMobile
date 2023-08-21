@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
+import com.zstronics.ceibro.ui.dashboard.DashboardVM
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -76,8 +77,10 @@ class TaskHiddenFragment :
         changeSelectedUserState()
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            if (it != null)
+            if (it != null) {
                 updateCount(it)
+                viewModel.searchTasks(DashboardVM.searchedString)
+            }
         }
 
         viewModel.cancelledTasks.observe(viewLifecycleOwner) {
@@ -132,6 +135,7 @@ class TaskHiddenFragment :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
+                    DashboardVM.searchedString = query
                     viewModel.searchTasks(query)
                 }
                 return true
@@ -139,6 +143,7 @@ class TaskHiddenFragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
+                    DashboardVM.searchedString = newText
                     viewModel.searchTasks(newText)
                 }
                 return true

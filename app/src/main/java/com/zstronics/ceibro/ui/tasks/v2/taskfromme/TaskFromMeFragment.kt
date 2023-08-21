@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
+import com.zstronics.ceibro.ui.dashboard.DashboardVM
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -74,10 +75,11 @@ class TaskFromMeFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         changeSelectedUserState()
-
         viewModel.allTasks.observe(viewLifecycleOwner) {
-            if (it != null)
+            if (it != null) {
                 updateCount(it)
+                viewModel.searchTasks(DashboardVM.searchedString)
+            }
         }
 
         viewModel.unreadTasks.observe(viewLifecycleOwner) {
@@ -154,6 +156,7 @@ class TaskFromMeFragment :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
+                    DashboardVM.searchedString = query
                     viewModel.searchTasks(query)
                 }
                 return true
@@ -161,6 +164,7 @@ class TaskFromMeFragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
+                    DashboardVM.searchedString = newText
                     viewModel.searchTasks(newText)
                 }
                 return true

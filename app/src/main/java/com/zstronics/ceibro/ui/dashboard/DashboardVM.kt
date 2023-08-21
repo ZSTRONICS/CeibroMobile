@@ -18,7 +18,6 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
-import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
@@ -33,13 +32,15 @@ import com.zstronics.ceibro.data.repos.projects.member.MemberAddedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectCreatedSocketResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketSubTaskCreatedResponse
+import com.zstronics.ceibro.data.repos.task.models.SocketTaskSubtaskUpdateResponse
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.*
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
@@ -852,4 +853,7 @@ class DashboardVM @Inject constructor(
 //            }
 //        }
 //    }
+    companion object{
+    var searchedString = ""
+    }
 }
