@@ -572,67 +572,149 @@
                     app:thumbTint="@color/white"
                     app:track="@drawable/switch_ios_track" />
 
-                <androidx.cardview.widget.CardView
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/doneRequirementLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:visibility="@{viewState.isDoneReqAllowed ? View.VISIBLE : View.GONE, default = visible}"
-                    app:cardBackgroundColor="@color/appGrey1"
-                    app:cardCornerRadius="7dp"
-                    app:cardElevation="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDoneReqSwitch"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDoneReqSwitch"
                     app:layout_constraintTop_toBottomOf="@+id/newTaskDoneReqSwitch"
                     app:layout_constraintVertical_bias="0.0">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/doneRequirementLayout1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:cardBackgroundColor="@color/appGrey1"
+                        app:cardCornerRadius="7dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <CheckBox
-                            android:id="@+id/imageCheckbox"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <CheckBox
+                                android:id="@+id/imageCheckbox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_8sdp"
+                                android:layout_marginTop="@dimen/_6sdp"
+                                android:layout_marginEnd="@dimen/_8sdp"
+                                android:fontFamily="@font/inter_regular"
+                                android:minHeight="0dp"
+                                android:paddingStart="@dimen/_7sdp"
+                                android:paddingEnd="@dimen/_7sdp"
+                                android:text="@string/image_heading"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <CheckBox
+                                android:id="@+id/commentCheckbox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/_8sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:layout_marginEnd="@dimen/_8sdp"
+                                android:layout_marginBottom="@dimen/_6sdp"
+                                android:fontFamily="@font/inter_regular"
+                                android:minHeight="0dp"
+                                android:paddingStart="@dimen/_7sdp"
+                                android:paddingEnd="@dimen/_7sdp"
+                                android:text="@string/comment_heading"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/imageCheckbox" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/newTaskInfoLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/doneRequirementLayout1">
+
+                        <TextView
+                            android:id="@+id/newTaskDescHeadingEstonia"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginTop="@dimen/_6sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
-                            android:fontFamily="@font/inter_regular"
-                            android:minHeight="0dp"
-                            android:paddingStart="@dimen/_7sdp"
-                            android:paddingEnd="@dimen/_7sdp"
-                            android:text="@string/image_heading"
-                            android:textColor="@color/black"
-                            android:textSize="14sp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_semibold"
+                            android:maxLines="2"
+                            android:text="@string/done_desc_heading_estonia"
+                            android:textColor="@color/appBlue"
+                            android:textSize="16sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <CheckBox
-                            android:id="@+id/commentCheckbox"
+                        <TextView
+                            android:id="@+id/newTaskDescDetailEstonia"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_8sdp"
-                            android:layout_marginTop="@dimen/_3sdp"
-                            android:layout_marginEnd="@dimen/_8sdp"
-                            android:layout_marginBottom="@dimen/_6sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/inter_regular"
-                            android:minHeight="0dp"
-                            android:paddingStart="@dimen/_7sdp"
-                            android:paddingEnd="@dimen/_7sdp"
-                            android:text="@string/comment_heading"
+                            android:maxLines="9"
+                            android:text="@string/done_desc_detail_estonia"
                             android:textColor="@color/black"
                             android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/imageCheckbox" />
+                            app:layout_constraintTop_toBottomOf="@+id/newTaskDescHeadingEstonia" />
+
+                        <TextView
+                            android:id="@+id/newTaskDescHeadingEnglish"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_semibold"
+                            android:maxLines="2"
+                            android:text="@string/done_desc_heading_english"
+                            android:textColor="@color/appBlue"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/newTaskDescDetailEstonia" />
+
+                        <TextView
+                            android:id="@+id/newTaskDescDetailEnglish"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_regular"
+                            android:maxLines="15"
+                            android:text="@string/done_desc_detail_english"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/newTaskDescHeadingEnglish" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.cardview.widget.CardView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
@@ -738,15 +820,16 @@
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_location"
-                android:drawableTint="@color/appBlue"
+                android:drawableTint="@color/appGrey2"
                 android:fontFamily="@font/inter_medium"
+                android:enabled="false"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
                 android:paddingEnd="@dimen/_3sdp"
                 android:text="@string/location_heading"
                 android:textAllCaps="false"
-                android:textColor="@color/appBlue"
+                android:textColor="@color/appGrey2"
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.appcompat.widget.AppCompatButton

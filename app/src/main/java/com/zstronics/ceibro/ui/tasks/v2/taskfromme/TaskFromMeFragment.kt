@@ -40,9 +40,13 @@ class TaskFromMeFragment :
                 val unreadTask = viewModel.unreadTasks.value
                 if (!unreadTask.isNullOrEmpty()) {
                     adapter.setList(unreadTask)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
                 }
+                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
             }
             R.id.ongoingStateText -> {
@@ -50,8 +54,14 @@ class TaskFromMeFragment :
                 val ongoingTask = viewModel.ongoingTasks.value
                 if (!ongoingTask.isNullOrEmpty()) {
                     adapter.setList(ongoingTask)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 }
                 changeSelectedUserState()
             }
@@ -60,8 +70,14 @@ class TaskFromMeFragment :
                 val doneTask = viewModel.doneTasks.value
                 if (!doneTask.isNullOrEmpty()) {
                     adapter.setList(doneTask)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -86,9 +102,13 @@ class TaskFromMeFragment :
             if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
                 }
+                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
             }
         }
@@ -97,8 +117,14 @@ class TaskFromMeFragment :
             if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 }
                 changeSelectedUserState()
             }
@@ -108,8 +134,14 @@ class TaskFromMeFragment :
             if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
