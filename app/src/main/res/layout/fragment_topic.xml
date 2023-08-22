@@ -59,6 +59,7 @@
             app:layout_constraintTop_toBottomOf="@+id/topicHeader">
 
             <androidx.core.widget.NestedScrollView
+                android:id="@+id/parentScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:contentDescription="@string/appbar_scrolling_view_behavior"
@@ -78,6 +79,7 @@
                         android:id="@+id/recentTopicLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -118,12 +120,84 @@
                         android:nestedScrollingEnabled="false"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_2sdp"
+                        android:visibility="gone"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/recentTopicLayout"
                         tools:itemCount="3"
                         tools:listitem="@layout/layout_item_topic_header" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/topicInfoLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:padding="@dimen/_11sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/topicDescHeadingEstonia"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_semibold"
+                            android:maxLines="2"
+                            android:text="@string/topic_desc_heading_estonia"
+                            android:textColor="@color/appBlue"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/topicDescDetailEstonia"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/inter_regular"
+                            android:maxLines="8"
+                            android:text="@string/topic_desc_detail_estonia"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/topicDescHeadingEstonia" />
+
+                        <TextView
+                            android:id="@+id/topicDescHeadingEnglish"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:layout_marginTop="@dimen/_7sdp"
+                            android:fontFamily="@font/inter_semibold"
+                            android:maxLines="2"
+                            android:text="@string/topic_desc_heading_english"
+                            android:textColor="@color/appBlue"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/topicDescDetailEstonia" />
+
+                        <TextView
+                            android:id="@+id/topicDescDetailEnglish"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/inter_regular"
+                            android:maxLines="8"
+                            android:text="@string/topic_desc_detail_english"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/topicDescHeadingEnglish" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>

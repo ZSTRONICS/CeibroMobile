@@ -234,7 +234,7 @@
                     android:layout_height="0dp"
                     android:paddingStart="1dp"
                     android:paddingEnd="1dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -243,6 +243,219 @@
                     tools:itemCount="10"
                     tools:listitem="@layout/layout_task_box_v2" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/hiddenOngoingInfoLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:padding="@dimen/_11sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/hiddenOngoingDescHeadingEstonia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="2"
+                        android:text="@string/hidden_ongoing_desc_heading_estonia"
+                        android:textColor="@color/appBlue"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/hiddenOngoingDescDetailEstonia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="12"
+                        android:text="@string/hidden_ongoing_desc_detail_estonia"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescHeadingEstonia" />
+
+                    <TextView
+                        android:id="@+id/hiddenOngoingDescHeadingEnglish"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="2"
+                        android:text="@string/hidden_ongoing_desc_heading_english"
+                        android:textColor="@color/appBlue"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescDetailEstonia" />
+
+                    <TextView
+                        android:id="@+id/hiddenOngoingDescDetailEnglish"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="11"
+                        android:text="@string/hidden_ongoing_desc_detail_english"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescHeadingEnglish" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/hiddenDoneInfoLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:padding="@dimen/_11sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/hiddenDoneDescHeadingEstonia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="2"
+                        android:text="@string/hidden_done_desc_heading_estonia"
+                        android:textColor="@color/appBlue"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/hiddenDoneDescDetailEstonia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="10"
+                        android:text="@string/hidden_done_desc_detail_estonia"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenDoneDescHeadingEstonia" />
+
+                    <TextView
+                        android:id="@+id/hiddenDoneDescHeadingEnglish"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="2"
+                        android:text="@string/hidden_done_desc_heading_english"
+                        android:textColor="@color/appBlue"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenDoneDescDetailEstonia" />
+
+                    <TextView
+                        android:id="@+id/hiddenDoneDescDetailEnglish"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="8"
+                        android:text="@string/hidden_done_desc_detail_english"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenDoneDescHeadingEnglish" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/hiddenCanceledInfoLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:padding="@dimen/_11sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/hiddenCanceledDescHeadingEstonia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="2"
+                        android:text="@string/hidden_canceled_desc_heading_estonia"
+                        android:textColor="@color/appBlue"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/hiddenCanceledDescDetailEstonia"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="8"
+                        android:text="@string/hidden_canceled_desc_detail_estonia"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenCanceledDescHeadingEstonia" />
+
+                    <TextView
+                        android:id="@+id/hiddenCanceledDescHeadingEnglish"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="2"
+                        android:text="@string/hidden_canceled_desc_heading_english"
+                        android:textColor="@color/appBlue"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenCanceledDescDetailEstonia" />
+
+                    <TextView
+                        android:id="@+id/hiddenCanceledDescDetailEnglish"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="8"
+                        android:text="@string/hidden_canceled_desc_detail_english"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/hiddenCanceledDescHeadingEnglish" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 

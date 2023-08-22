@@ -40,8 +40,16 @@ class TaskHiddenFragment :
                 val cancelledTasks = viewModel.cancelledTasks.value
                 if (!cancelledTasks.isNullOrEmpty()) {
                     adapter.setList(cancelledTasks)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 }
                 changeSelectedUserState()
             }
@@ -50,8 +58,16 @@ class TaskHiddenFragment :
                 val ongoingTask = viewModel.ongoingTasks.value
                 if (!ongoingTask.isNullOrEmpty()) {
                     adapter.setList(ongoingTask)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 }
                 changeSelectedUserState()
             }
@@ -60,8 +76,16 @@ class TaskHiddenFragment :
                 val doneTask = viewModel.doneTasks.value
                 if (!doneTask.isNullOrEmpty()) {
                     adapter.setList(doneTask)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -86,9 +110,18 @@ class TaskHiddenFragment :
             if (viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 }
+                changeSelectedUserState()
             }
         }
 
@@ -96,9 +129,18 @@ class TaskHiddenFragment :
             if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 }
+                changeSelectedUserState()
             }
         }
 
@@ -106,9 +148,18 @@ class TaskHiddenFragment :
             if (viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
+                    mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
+                    mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenDoneInfoLayout.visibility = View.VISIBLE
                 }
+                changeSelectedUserState()
             }
         }
 

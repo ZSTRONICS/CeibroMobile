@@ -60,6 +60,8 @@ class TopicFragment :
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.saveTopicBtn.visibility = View.GONE
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
+        mViewDataBinding.allTopicsRV.visibility = View.GONE
+        mViewDataBinding.topicInfoLayout.visibility = View.GONE
 
         mViewDataBinding.recentTopicRV.isNestedScrollingEnabled = false
         mViewDataBinding.allTopicsRV.isNestedScrollingEnabled = false
@@ -68,8 +70,13 @@ class TopicFragment :
 
 
         viewModel.allTopics.observe(viewLifecycleOwner) {
-            if (it != null) {
+            if (!it.isNullOrEmpty()) {
                 viewModel.groupDataByFirstLetter(it)
+                mViewDataBinding.allTopicsRV.visibility = View.VISIBLE
+                mViewDataBinding.topicInfoLayout.visibility = View.GONE
+            } else {
+                mViewDataBinding.allTopicsRV.visibility = View.GONE
+                mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
             }
         }
         viewModel.allTopicsGrouped.observe(viewLifecycleOwner) {
@@ -80,9 +87,11 @@ class TopicFragment :
         viewModel.recentTopics.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 mViewDataBinding.recentTopicLayout.visibility = View.VISIBLE
+                mViewDataBinding.topicInfoLayout.visibility = View.GONE
                 recentTopicAdapter.setList(it)
             } else {
                 mViewDataBinding.recentTopicLayout.visibility = View.GONE
+                mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
             }
         }
 
