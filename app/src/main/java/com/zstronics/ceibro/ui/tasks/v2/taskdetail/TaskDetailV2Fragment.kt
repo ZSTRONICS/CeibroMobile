@@ -278,8 +278,12 @@ class TaskDetailV2Fragment :
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
         onlyImageAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
-                val fileUrls: ArrayList<String> = viewModel.onlyImages.value?.map { it.fileUrl } as ArrayList<String>
-                viewModel.openImageViewer(requireContext(), fileUrls, position)
+//                val fileUrls: ArrayList<String> = viewModel.onlyImages.value?.map { it.fileUrl } as ArrayList<String>
+//                viewModel.openImageViewer(requireContext(), fileUrls, position)
+                val bundle = Bundle()
+                bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
+                bundle.putInt("position", position)
+                navigate(R.id.imageViewerFragment, bundle)
             }
 
 
@@ -295,8 +299,12 @@ class TaskDetailV2Fragment :
         mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
-                val fileUrls: ArrayList<String> = viewModel.imagesWithComments.value?.map { it.fileUrl } as ArrayList<String>
-                viewModel.openImageViewer(requireContext(), fileUrls, position)
+//                val fileUrls: ArrayList<String> = viewModel.imagesWithComments.value?.map { it.fileUrl } as ArrayList<String>
+//                viewModel.openImageViewer(requireContext(), fileUrls, position)
+                val bundle = Bundle()
+                bundle.putParcelableArray("images", viewModel.imagesWithComments.value?.toTypedArray())
+                bundle.putInt("position", position)
+                navigate(R.id.imageViewerFragment, bundle)
             }
 
         viewModel.documents.observe(viewLifecycleOwner) {
@@ -333,8 +341,12 @@ class TaskDetailV2Fragment :
         }
         mViewDataBinding.eventsRV.adapter = eventsAdapter
         eventsAdapter.openEventImageClickListener =
-            { _: View, position: Int, fileUrls: ArrayList<String> ->
-                viewModel.openImageViewer(requireContext(), fileUrls, position)
+            { _: View, position: Int, imageFiles: List<TaskFiles> ->
+//                viewModel.openImageViewer(requireContext(), fileUrls, position)
+                val bundle = Bundle()
+                bundle.putParcelableArray("images", imageFiles.toTypedArray())
+                bundle.putInt("position", position)
+                navigate(R.id.imageViewerFragment, bundle)
             }
         val layoutManager = LinearLayoutManager(context)
         layoutManager.isAutoMeasureEnabled = false      //to show all content in RV

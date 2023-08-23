@@ -11,6 +11,7 @@
     <color name="grey">#7D7E80</color>
     <color name="transparent">#00000000</color>
     <color name="semiBlack">#40000000</color>
+    <color name="almostBlack">#80000000</color>
     <color name="iconGrey">#605C5C</color>
 
 

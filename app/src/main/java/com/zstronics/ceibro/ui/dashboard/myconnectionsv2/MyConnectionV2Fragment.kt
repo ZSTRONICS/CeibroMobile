@@ -49,6 +49,17 @@ class MyConnectionV2Fragment :
             R.id.closeBtn -> {
                 navigateBack()
             }
+            R.id.connectionDescAutoSyncBtn -> {
+                viewModel.syncContactsEnabled {
+                    viewModel.sessionManager.updateAutoSync(true)
+                    viewState.isAutoSyncEnabled.value = true
+                    startOneTimeContactSyncWorker(requireContext())
+                }
+                toast("Contacts sync enabled")
+            }
+            R.id.connectionDescManualSelectionBtn -> {
+                navigate(R.id.manualContactsSelectionFragment)
+            }
         }
     }
 
@@ -57,13 +68,24 @@ class MyConnectionV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mViewDataBinding.connectionRV.visibility = View.GONE
+        mViewDataBinding.connectionInfoLayout.visibility = View.GONE
         mViewDataBinding.connectionRV.adapter = adapter
         mViewDataBinding.connectionRV.layoutManager?.isItemPrefetchEnabled = true
         mViewDataBinding.connectionRV.setRecycledViewPool(RecyclerView.RecycledViewPool())
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
-            if (it != null) {
+            if (!it.isNullOrEmpty()) {
                 adapter.setList(it)
+                mViewDataBinding.connectionRV.visibility = View.VISIBLE
+                mViewDataBinding.searchBar.visibility = View.VISIBLE
+                mViewDataBinding.connectionInfoLayout.visibility = View.GONE
+            } else {
+                mViewDataBinding.connectionRV.visibility = View.GONE
+                if (viewState.isAutoSyncEnabled.value == false && viewModel.originalConnections.isEmpty()) {
+                    mViewDataBinding.searchBar.visibility = View.GONE
+                    mViewDataBinding.connectionInfoLayout.visibility = View.VISIBLE
+                }
             }
         }
         adapter.itemClickListener =

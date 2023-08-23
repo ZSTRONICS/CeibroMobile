@@ -148,9 +148,9 @@ data class TaskFiles(
     @SerializedName("uploadedBy")
     val uploadedBy: TaskMemberDetail,
     @SerializedName("__v")
-    val v: Int,
+    val v: Int?,
     @SerializedName("version")
-    val version: Int
+    val version: Int?
 ) : Parcelable
 
 
