@@ -35,7 +35,7 @@ class TopicVM @Inject constructor(
     var originalRecentTopics = listOf<TopicsResponse.TopicData>()
 
 
-    fun getAllTopics(callBack: () -> Unit) {
+    fun getAllTopics(callBack: (allTopics: TopicsResponse?) -> Unit) {
         launch {
 //            val topicsData = topicsV2Dao.getTopicsData()
 //            if (topicsData != null) {
@@ -60,23 +60,27 @@ class TopicVM @Inject constructor(
 
                     if (allTopic1?.isNotEmpty() == true) {
                         originalAllTopics = allTopic1
-                        _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
                     }
                     if (recentTopic1?.isNotEmpty() == true) {
-                            originalRecentTopics = recentTopic1
-                            _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
-                        }
-                        callBack.invoke()
-                    } else {
-                        callBack.invoke()
-                        alert(error)
+                        originalRecentTopics = recentTopic1
                     }
+
+                    _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+                    _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
+                    callBack.invoke(allTopics)
+                } else {
+                    callBack.invoke(null)
+                    alert(error)
                 }
+            }
 //            }
         }
     }
 
-    fun saveTopic(topic: String, callBack: (isSuccess: Boolean, newTopic: TopicsResponse.TopicData?) -> Unit) {
+    fun saveTopic(
+        topic: String,
+        callBack: (isSuccess: Boolean, newTopic: TopicsResponse.TopicData?) -> Unit
+    ) {
         val request = NewTopicCreateRequest(
             topic = topic
         )

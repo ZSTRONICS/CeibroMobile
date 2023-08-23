@@ -57,7 +57,7 @@ class AllTopicsAdapter @Inject constructor() :
             val context = binding.menuBtn.context
 
             binding.topicName.text = item.topic.capitalize(Locale.ROOT)
-            binding.menuBtn.visibility = View.VISIBLE
+            binding.menuBtn.visibility = View.GONE
         }
     }
 }
