@@ -60,7 +60,7 @@ class TopicFragment :
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.saveTopicBtn.visibility = View.GONE
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
-        mViewDataBinding.allTopicsRV.visibility = View.GONE
+        mViewDataBinding.allTopicsRV.visibility = View.VISIBLE
         mViewDataBinding.topicInfoLayout.visibility = View.GONE
 
         mViewDataBinding.recentTopicRV.isNestedScrollingEnabled = false
@@ -73,10 +73,13 @@ class TopicFragment :
             if (!it.isNullOrEmpty()) {
                 viewModel.groupDataByFirstLetter(it)
                 mViewDataBinding.allTopicsRV.visibility = View.VISIBLE
-                mViewDataBinding.topicInfoLayout.visibility = View.GONE
-            } else {
+            }
+            if (it.isNullOrEmpty() && viewModel.recentTopics.value.isNullOrEmpty()) {
                 mViewDataBinding.allTopicsRV.visibility = View.GONE
+                mViewDataBinding.recentTopicLayout.visibility = View.GONE
                 mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.topicInfoLayout.visibility = View.GONE
             }
         }
         viewModel.allTopicsGrouped.observe(viewLifecycleOwner) {
@@ -86,12 +89,15 @@ class TopicFragment :
         }
         viewModel.recentTopics.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                mViewDataBinding.recentTopicLayout.visibility = View.VISIBLE
-                mViewDataBinding.topicInfoLayout.visibility = View.GONE
                 recentTopicAdapter.setList(it)
-            } else {
+                mViewDataBinding.recentTopicLayout.visibility = View.VISIBLE
+            }
+            if (it.isNullOrEmpty() && viewModel.allTopics.value.isNullOrEmpty()) {
+                mViewDataBinding.allTopicsRV.visibility = View.GONE
                 mViewDataBinding.recentTopicLayout.visibility = View.GONE
                 mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.topicInfoLayout.visibility = View.GONE
             }
         }
 
@@ -143,13 +149,14 @@ class TopicFragment :
     }
 
     private fun loadTopics(skeletonVisible: Boolean) {
+        mViewDataBinding.topicInfoLayout.visibility = View.GONE
         if (skeletonVisible) {
             mViewDataBinding.allTopicsRV.loadSkeleton(R.layout.layout_invitations_box) {
                 itemCount(10)
                 color(R.color.appLightGrey)
             }
 
-            viewModel.getAllTopics {
+            viewModel.getAllTopics { allTopics ->
                 mViewDataBinding.allTopicsRV.hideSkeleton()
                 val searchQuery = mViewDataBinding.topicSearchBar.query.toString()
                 if (searchQuery.isNotEmpty()) {
@@ -161,9 +168,49 @@ class TopicFragment :
                             View.GONE
                         }
                 }
+//                if (allTopics?.allTopics.isNullOrEmpty() && allTopics?.recentTopics.isNullOrEmpty()) {
+//                    mViewDataBinding.allTopicsRV.visibility = View.GONE
+//                    mViewDataBinding.recentTopicLayout.visibility = View.GONE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+//                } else {
+////                    mViewDataBinding.allTopicsRV.visibility = View.GONE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.GONE
+//                }
+//                if (!allTopics?.recentTopics.isNullOrEmpty()) {
+//                    mViewDataBinding.recentTopicLayout.visibility = View.VISIBLE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.GONE
+//                } else {
+//                    mViewDataBinding.recentTopicLayout.visibility = View.GONE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+//                }
             }
         } else {
-            viewModel.getAllTopics { }
+            viewModel.getAllTopics { allTopics ->
+                val searchQuery = mViewDataBinding.topicSearchBar.query.toString()
+                if (searchQuery.isNotEmpty()) {
+                    viewModel.filterTopics(searchQuery)
+                    mViewDataBinding.saveTopicBtn.visibility =
+                        if (searchQuery.isNotEmpty()) {
+                            View.VISIBLE
+                        } else {
+                            View.GONE
+                        }
+                }
+//                if (!allTopics?.allTopics.isNullOrEmpty()) {
+//                    mViewDataBinding.allTopicsRV.visibility = View.VISIBLE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.GONE
+//                } else {
+//                    mViewDataBinding.allTopicsRV.visibility = View.GONE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+//                }
+//                if (!allTopics?.recentTopics.isNullOrEmpty()) {
+//                    mViewDataBinding.recentTopicLayout.visibility = View.VISIBLE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.GONE
+//                } else {
+//                    mViewDataBinding.recentTopicLayout.visibility = View.GONE
+//                    mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+//                }
+            }
         }
     }
 
