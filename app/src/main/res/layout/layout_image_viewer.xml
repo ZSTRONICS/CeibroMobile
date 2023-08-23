@@ -12,23 +12,41 @@
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/appGrey3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/black">
 
         <com.jsibbold.zoomage.ZoomageView
             android:id="@+id/fullImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:src="@drawable/new_background"
-            app:zoomage_autoCenter="true"
+            app:zoomage_autoCenter="false"
             app:zoomage_zoomable="true"
             app:zoomage_translatable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.zstronics.ceibro.base.ScrollableTextView
+            android:id="@+id/imageComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/almostBlack"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter_regular"
+            android:maxLines="4"
+            android:minLines="1"
+            android:visibility="visible"
+            android:layout_marginBottom="@dimen/_9sdp"
+            android:text="@string/comment_text_here"
+            android:textSize="@dimen/_12sdp"
+            android:padding="@dimen/_4sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

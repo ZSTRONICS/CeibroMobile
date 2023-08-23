@@ -109,6 +109,7 @@
             android:queryHint="@string/enter_contact_name"
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black"
+            android:visibility="gone"
             android:iconifiedByDefault="false"
             android:background="@drawable/input_field_rectangle"
             app:layout_constraintEnd_toEndOf="parent"
@@ -123,6 +124,7 @@
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
             android:paddingBottom="2dp"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -130,6 +132,151 @@
             app:layout_constraintTop_toBottomOf="@id/searchBar"
             tools:itemCount="10"
             tools:listitem="@layout/layout_item_connection_header" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/connectionInfoLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:elevation="2dp"
+            android:padding="@dimen/_11sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/connectionHeader">
+
+            <TextView
+                android:id="@+id/connectionDescHeadingEstonia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:fontFamily="@font/inter_semibold"
+                android:maxLines="2"
+                android:text="@string/connection_desc_heading_estonia"
+                android:textColor="@color/appBlue"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/connectionDescDetailEstonia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="5"
+                android:text="@string/connection_desc_detail_estonia"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescHeadingEstonia" />
+
+            <TextView
+                android:id="@+id/connectionDescHeadingEnglish"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:fontFamily="@font/inter_semibold"
+                android:maxLines="3"
+                android:text="@string/connection_desc_heading_english"
+                android:textColor="@color/appBlue"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescDetailEstonia" />
+
+            <TextView
+                android:id="@+id/connectionDescDetailEnglish"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="4"
+                android:text="@string/connection_desc_detail_english"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescHeadingEnglish" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/connectionDescAutoSyncBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:text="@string/enable_auto_sync_text"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescDetailEnglish"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/connectionDescDetailEstonia1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="3"
+                android:text="@string/connection_desc_detail_estonia1"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescAutoSyncBtn" />
+
+            <TextView
+                android:id="@+id/connectionDescDetailEnglish1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="3"
+                android:text="@string/connection_desc_detail_english1"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescDetailEstonia1" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/connectionDescManualSelectionBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:text="Select contacts from your contact list"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectionDescDetailEnglish1"
+                tools:ignore="TouchTargetSizeCheck" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

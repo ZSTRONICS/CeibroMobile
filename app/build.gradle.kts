@@ -86,4 +86,5 @@ dependencies {
     implementation("androidx.paging:paging-runtime:3.1.1")
     implementation("androidx.paging:paging-common:3.1.1")
     implementation("androidx.webkit:webkit:1.7.0")
+    implementation("com.jsibbold:zoomage:1.3.1")
 }

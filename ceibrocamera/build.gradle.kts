@@ -56,6 +56,7 @@ dependencies {
     implementation("androidx.camera:camera-view:1.2.2")
     implementation("androidx.camera:camera-extensions:1.2.2")
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation("com.jsibbold:zoomage:1.3.1")
     implementation(DependenciesManager.thirdPartyImplementation)
     implementation(NetworkDependencies.GLIDE)
     implementation(project(mapOf("path" to ":permissionx")))

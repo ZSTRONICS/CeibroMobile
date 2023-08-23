@@ -430,6 +430,7 @@
     <string name="comment_is_required_to_mark_task_as_done">Comment is required to mark task as done</string>
     <string name="image_is_required_to_mark_task_as_done">Image is required to mark task as done</string>
     <string name="enable_auto_sync">Enable Auto Sync</string>
+    <string name="enable_auto_sync_text">Enable auto sync</string>
     <string name="select_contacts">Select Contacts</string>
     <string name="heading_refresh">Refresh</string>
     <string name="disable_auto_sync">Disable Auto Sync</string>
@@ -475,4 +476,11 @@
     <string name="hidden_canceled_desc_detail_estonia">Loend tühistatud ülesannetest. Siin näed nii sinu poolt loodud ja tühistatud kui sulle määratud ja määraja poolt tühistatud tööülesandeid. Ceibro lisab kõik tühistatud ülesanded automaatselt siia.</string>
     <string name="hidden_canceled_desc_heading_english">What is the Hidden - Canceled state for task?</string>
     <string name="hidden_canceled_desc_detail_english">The list of tasks that you have created and cancelled and tasks that have been assigned to you and cancelled by the task owner.</string>
+    <string name="connection_desc_heading_estonia">Sa ei ole veel lisanud kontakte oma telefonist.</string>
+    <string name="connection_desc_detail_estonia">Vajuta "Enable auto-sync", et sünkroniseerida oma telefoni kontaktid oma Ceibro kontaktidega.</string>
+    <string name="connection_desc_heading_english">Seems like you haven\'t added any contacts from your phone.</string>
+    <string name="connection_desc_detail_english">Enable auto-sync to synchronize all your contacts to your Ceibro.</string>
+    <string name="connection_desc_detail_estonia1">Või vali ise kontaktid oma telefonist, keda soovid Ceibro kontaktidesse lisada.</string>
+    <string name="connection_desc_detail_english1">Or select contacts manually to add to your Ceibro.</string>
+    <string name="comment_text_here">Comment text here</string>
 </resources>

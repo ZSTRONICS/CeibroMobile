@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
+import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskEventsBinding
@@ -17,7 +19,7 @@ class EventsRVAdapter @Inject constructor() :
     RecyclerView.Adapter<EventsRVAdapter.EventsViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: Events) -> Unit)? =
         null
-    var openEventImageClickListener: ((view: View, position: Int, fileUrl: ArrayList<String>) -> Unit)? =
+    var openEventImageClickListener: ((view: View, position: Int, imageFiles: List<TaskFiles>) -> Unit)? =
         null
     var listItems: MutableList<Events> = mutableListOf()
 
@@ -274,26 +276,72 @@ class EventsRVAdapter @Inject constructor() :
             }
 
             if (onlyImage.isNotEmpty()) {
+                val onlyImagesFiles = onlyImage.map {
+                    TaskFiles(
+                        access = listOf(),
+                        comment = it.comment,
+                        createdAt = "",
+                        fileName = it.fileName,
+                        fileTag = it.fileTag,
+                        fileType = AttachmentTags.ImageWithComment.tagValue,
+                        fileUrl = it.fileUrl,
+                        hasComment = it.hasComment,
+                        id = it.id,
+                        moduleId = it.moduleId,
+                        moduleType = it.moduleType,
+                        updatedAt = "",
+                        uploadStatus = it.uploadStatus,
+                        uploadedBy = TaskMemberDetail(
+                            firstName = "",
+                            surName = "",
+                            profilePic = "",
+                            id = ""
+                        ),
+                        v = 0,
+                        version = 0
+                    )
+                }
                 val onlyImageAdapter = EventsOnlyImageRVAdapter()
                 binding.onlyImagesRV.adapter = onlyImageAdapter
                 onlyImageAdapter.setList(onlyImage)
                 onlyImageAdapter.openImageClickListener =
                     { view: View, position: Int, fileUrl: String ->
-                        val fileUrls: ArrayList<String> =
-                            onlyImage.map { it.fileUrl } as ArrayList<String>
-                        openEventImageClickListener?.invoke(view, position, fileUrls)
+                        openEventImageClickListener?.invoke(view, position, onlyImagesFiles)
                     }
                 binding.onlyImagesRV.visibility = View.VISIBLE
             }
             if (imagesWithComment.isNotEmpty()) {
+                val imagesWithCommentFiles = imagesWithComment.map {
+                    TaskFiles(
+                        access = listOf(),
+                        comment = it.comment,
+                        createdAt = "",
+                        fileName = it.fileName,
+                        fileTag = it.fileTag,
+                        fileType = AttachmentTags.ImageWithComment.tagValue,
+                        fileUrl = it.fileUrl,
+                        hasComment = it.hasComment,
+                        id = it.id,
+                        moduleId = it.moduleId,
+                        moduleType = it.moduleType,
+                        updatedAt = "",
+                        uploadStatus = it.uploadStatus,
+                        uploadedBy = TaskMemberDetail(
+                            firstName = "",
+                            surName = "",
+                            profilePic = "",
+                            id = ""
+                        ),
+                        v = 0,
+                        version = 0
+                    )
+                }
                 val imageWithCommentAdapter = EventsImageWithCommentRVAdapter()
                 binding.imagesWithCommentRV.adapter = imageWithCommentAdapter
                 imageWithCommentAdapter.setList(imagesWithComment)
                 imageWithCommentAdapter.openImageClickListener =
                     { view: View, position: Int, fileUrl: String ->
-                        val fileUrls: ArrayList<String> =
-                            imagesWithComment.map { it.fileUrl } as ArrayList<String>
-                        openEventImageClickListener?.invoke(view, position, fileUrls)
+                        openEventImageClickListener?.invoke(view, position, imagesWithCommentFiles)
                     }
                 binding.imagesWithCommentRV.visibility = View.VISIBLE
             }
