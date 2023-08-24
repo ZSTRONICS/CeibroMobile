@@ -90,7 +90,6 @@ class TaskFromMeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewDataBinding.taskFromMeSearchBar.setQuery(DashboardVM.searchedString, true)
         changeSelectedUserState()
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -192,7 +191,6 @@ class TaskFromMeFragment :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    DashboardVM.searchedString = query
                     viewModel.searchTasks(query)
                 }
                 return true
@@ -200,7 +198,6 @@ class TaskFromMeFragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    DashboardVM.searchedString = newText
                     viewModel.searchTasks(newText)
                 }
                 return true

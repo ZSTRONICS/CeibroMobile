@@ -853,7 +853,4 @@ class DashboardVM @Inject constructor(
 //            }
 //        }
 //    }
-    companion object{
-    var searchedString = ""
-    }
 }
