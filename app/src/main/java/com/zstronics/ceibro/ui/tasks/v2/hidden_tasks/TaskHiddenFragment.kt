@@ -187,6 +187,7 @@ class TaskHiddenFragment :
     private fun loadTasks(skeletonVisible: Boolean) {
         viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
             mViewDataBinding.taskRV.hideSkeleton()
+            preSearch()
         }
     }
 
@@ -196,7 +197,6 @@ class TaskHiddenFragment :
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isHiddenUnread.value = false
         viewModel.saveHiddenUnread(false)
-        preSearch()
     }
 
     private fun preSearch() {

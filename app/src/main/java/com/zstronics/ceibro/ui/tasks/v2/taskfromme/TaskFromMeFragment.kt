@@ -48,6 +48,7 @@ class TaskFromMeFragment :
                 mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
@@ -64,6 +65,7 @@ class TaskFromMeFragment :
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
@@ -80,6 +82,7 @@ class TaskFromMeFragment :
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
         }
     }
@@ -220,10 +223,7 @@ class TaskFromMeFragment :
     private fun loadTasks(skeletonVisible: Boolean) {
         viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
             mViewDataBinding.taskRV.hideSkeleton()
-//                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
-//                if (searchQuery.isNotEmpty()) {
-//                    viewModel.searchProject(searchQuery)
-//                }
+            preSearch()
         }
     }
 
@@ -233,7 +233,6 @@ class TaskFromMeFragment :
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isFromMeUnread.value = false
         viewModel.saveFromMeUnread(false)
-        preSearch()
     }
 
 

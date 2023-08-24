@@ -195,10 +195,7 @@ class TaskToMeFragment :
     private fun loadTasks(skeletonVisible: Boolean) {
         viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
             mViewDataBinding.taskRV.hideSkeleton()
-//                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
-//                if (searchQuery.isNotEmpty()) {
-//                    viewModel.searchProject(searchQuery)
-//                }
+            preSearch()
         }
     }
 
@@ -209,7 +206,6 @@ class TaskToMeFragment :
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.value = false
         viewModel.saveToMeUnread(false)
-        preSearch()
     }
 
     private fun preSearch() {
