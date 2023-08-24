@@ -185,7 +185,18 @@ class TaskFromMeFragment :
                     viewModel.showCancelTaskDialog(requireContext(), data) { }
                 }
             }
+    }
 
+    private fun preSearch() {
+        SearchDataSingleton.searchString.value?.let { searchedString ->
+            mViewDataBinding.taskFromMeSearchBar.setQuery(searchedString, true)
+            mViewDataBinding.taskFromMeSearchBar.clearFocus()
+
+            // Post a delayed task to trigger the search after UI update
+            mViewDataBinding.taskFromMeSearchBar.post {
+                viewModel.searchTasks(searchedString)
+            }
+        }
 
         mViewDataBinding.taskFromMeSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
@@ -204,19 +215,6 @@ class TaskFromMeFragment :
                 return true
             }
         })
-
-    }
-
-    private fun preSearch() {
-        SearchDataSingleton.searchString.value?.let { searchedString ->
-            mViewDataBinding.taskFromMeSearchBar.setQuery(searchedString, true)
-            mViewDataBinding.taskFromMeSearchBar.clearFocus()
-
-            // Post a delayed task to trigger the search after UI update
-            mViewDataBinding.taskFromMeSearchBar.post {
-                viewModel.searchTasks(searchedString)
-            }
-        }
     }
 
     private fun loadTasks(skeletonVisible: Boolean) {

@@ -189,8 +189,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.AppCompatEditText
+        <android.widget.SearchView
             android:id="@+id/taskToMeSearchBar"
             android:layout_width="0dp"
             android:layout_height="48dp"
@@ -199,11 +198,11 @@
             android:layout_marginEnd="@dimen/_11sdp"
             android:background="@drawable/search_view_bottom_border"
             android:elevation="0dp"
-            android:hint="Start typing for search"
             android:iconifiedByDefault="false"
-            android:paddingStart="@dimen/_10sdp"
-            android:paddingEnd="@dimen/_10sdp"
+            android:paddingStart="-15dp"
+            android:paddingEnd="-15dp"
             android:queryBackground="@android:color/transparent"
+            android:queryHint="Start typing for search"
             android:searchIcon="@null"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"

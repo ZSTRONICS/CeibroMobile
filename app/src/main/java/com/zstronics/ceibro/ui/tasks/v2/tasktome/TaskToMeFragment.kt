@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
@@ -189,22 +190,6 @@ class TaskToMeFragment :
                     viewModel.showHideTaskDialog(requireContext(), data)
                 }
             }
-
-        mViewDataBinding.taskToMeSearchBar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                SearchDataSingleton.searchString.value = s.toString()
-                viewModel.searchTasks(s.toString())
-            }
-
-        })
     }
 
     private fun loadTasks(skeletonVisible: Boolean) {
@@ -229,13 +214,32 @@ class TaskToMeFragment :
 
     private fun preSearch() {
         SearchDataSingleton.searchString.value?.let { searchedString ->
-            mViewDataBinding.taskToMeSearchBar.setText(searchedString)
+            mViewDataBinding.taskToMeSearchBar.setQuery(searchedString, true)
+            mViewDataBinding.taskToMeSearchBar.clearFocus()
 
             // Post a delayed task to trigger the search after UI update
             mViewDataBinding.taskToMeSearchBar.post {
                 viewModel.searchTasks(searchedString)
             }
         }
+
+        mViewDataBinding.taskToMeSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.searchTasks(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    SearchDataSingleton.searchString.value = newText
+                    viewModel.searchTasks(newText)
+                }
+                return true
+            }
+        })
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
