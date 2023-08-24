@@ -100,6 +100,7 @@ class MyConnectionV2Fragment :
                 mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
                 mViewDataBinding.connectionLogoBackground.visibility = View.GONE
             } else {
+                adapter.setList(listOf())
                 if (!contactsPermissionGranted) {
                     mViewDataBinding.connectionRV.visibility = View.GONE
                     mViewDataBinding.searchBar.visibility = View.GONE
