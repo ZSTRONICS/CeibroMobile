@@ -100,21 +100,25 @@ class MyConnectionV2Fragment :
                 mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
                 mViewDataBinding.connectionLogoBackground.visibility = View.GONE
             } else {
-                mViewDataBinding.connectionRV.visibility = View.GONE
-                mViewDataBinding.searchBar.visibility = View.GONE
                 if (!contactsPermissionGranted) {
+                    mViewDataBinding.connectionRV.visibility = View.GONE
+                    mViewDataBinding.searchBar.visibility = View.GONE
                     mViewDataBinding.connectionInfoNoContactPermission.visibility = View.VISIBLE
                     mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
                     mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
                     mViewDataBinding.connectionLogoBackground.visibility = View.VISIBLE
                 }
                 if (viewState.isAutoSyncEnabled.value == false && viewModel.originalConnections.isEmpty() && contactsPermissionGranted) {
+                    mViewDataBinding.connectionRV.visibility = View.GONE
+                    mViewDataBinding.searchBar.visibility = View.GONE
                     mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
                     mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.VISIBLE
                     mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
                     mViewDataBinding.connectionLogoBackground.visibility = View.VISIBLE
                 }
                 if (viewState.isAutoSyncEnabled.value == true && viewModel.originalConnections.isEmpty() && contactsPermissionGranted) {
+                    mViewDataBinding.connectionRV.visibility = View.GONE
+                    mViewDataBinding.searchBar.visibility = View.GONE
                     mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
                     mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
                     mViewDataBinding.connectionInfoNoContactFound.visibility = View.VISIBLE

@@ -18,6 +18,9 @@ object SocketHandler {
     const val CHAT_EVENT_REQ_OVER_SOCKET = "CHAT_EVENT_REQ_OVER_SOCKET"
     const val CEIBRO_LIVE_EVENT_BY_USER = "CEIBRO_LIVE_EVENT_BY_USER"
     const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
+    const val CEIBRO_HEARTBEAT = "heartbeat"
+    const val CEIBRO_HEARTBEAT_ACK = "heartbeatAck"
+    const val CEIBRO_EVENT_ACK = "eventAck"
     var hbCounter = 0
     var handler = android.os.Handler()
     var delayMillis: Long = 10000 // 10 seconds
@@ -57,7 +60,8 @@ object SocketHandler {
 //            options.transports = arrayOf( Polling.NAME )
             options.reconnectionAttempts = Integer.MAX_VALUE
             options.timeout = 10000
-            options.auth = mapOf("token" to CookiesManager.jwtToken) // Use auth instead of query
+            options.auth = mapOf("token" to CookiesManager.jwtToken) // Use auth for token instead of query
+            options.query = "secureUUID=${CookiesManager.secureUUID}"
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)
 
@@ -89,7 +93,7 @@ object SocketHandler {
             }
 
             mSocket?.on(
-                "heartbeatAck"
+                CEIBRO_HEARTBEAT_ACK
             ) {
 //                hbCounter -= 1
             }
@@ -104,7 +108,7 @@ object SocketHandler {
     fun sendHeartbeat() {
         if (mSocket != null) {
             if (mSocket?.connected() == true) {
-                mSocket?.emit("heartbeat")
+                mSocket?.emit(CEIBRO_HEARTBEAT)
 //                hbCounter += 1
 ////                println("Heartbeat Sent $hbCounter")
 //                if (hbCounter == 6) {
@@ -165,8 +169,9 @@ object SocketHandler {
         mSocket?.io()?.off(CHAT_EVENT_REQ_OVER_SOCKET)
         mSocket?.io()?.off(CEIBRO_LIVE_EVENT_BY_USER)
         mSocket?.io()?.off(CEIBRO_LIVE_EVENT_BY_SERVER)
-        mSocket?.io()?.off("heartbeat")
-        mSocket?.io()?.off("heartbeatAck")
+        mSocket?.io()?.off(CEIBRO_HEARTBEAT)
+        mSocket?.io()?.off(CEIBRO_HEARTBEAT_ACK)
+        mSocket?.io()?.off(CEIBRO_EVENT_ACK)
         handler.removeCallbacks(runnable)
 //        EventBus.getDefault().unregister(this)
     }
@@ -174,6 +179,11 @@ object SocketHandler {
     @Synchronized
     fun sendChatRequest(body: String) {
         mSocket?.emit(CHAT_EVENT_REQ_OVER_SOCKET, body)
+    }
+
+    @Synchronized
+    fun sendEventAck(uuid: String) {
+        mSocket?.emit(CEIBRO_EVENT_ACK, uuid)
     }
 
     @Synchronized

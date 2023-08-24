@@ -87,6 +87,7 @@ class DashboardVM @Inject constructor(
                 object : TypeToken<SocketEventTypeResponse>() {}.type
             )
             launch {
+                SocketHandler.sendEventAck(socketData.uuid)
                 if (socketData.module == "task") {
                     when (socketData.eventType) {
                         SocketHandler.TaskEvent.TASK_CREATED.name -> {
@@ -287,7 +288,8 @@ class DashboardVM @Inject constructor(
                             }
                         }
                     }
-                } else if (socketData.module == "SubTaskComments") {
+                }
+                else if (socketData.module == "SubTaskComments") {
                     if (socketData.eventType == SocketHandler.TaskEvent.SUBTASK_NEW_COMMENT.name) {
                         val newComment =
                             gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
@@ -314,7 +316,8 @@ class DashboardVM @Inject constructor(
                             )
                         )
                     }
-                } else if (socketData.module == "project") {
+                }
+                else if (socketData.module == "project") {
                     when (socketData.eventType) {
                         SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
                             val newProject =
@@ -496,7 +499,8 @@ class DashboardVM @Inject constructor(
                             )
                         }
                     }
-                } else if (socketData.module == "user") {
+                }
+                else if (socketData.module == "user") {
                     when (socketData.eventType) {
                         SocketHandler.UserEvent.USER_INFO_UPDATED.name -> {
                             val updatedUser =
