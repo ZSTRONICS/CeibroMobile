@@ -12,7 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
-import com.zstronics.ceibro.ui.dashboard.DashboardVM
+import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -198,6 +198,7 @@ class TaskFromMeFragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
+                    SearchDataSingleton.searchString.value = newText
                     viewModel.searchTasks(newText)
                 }
                 return true
@@ -206,6 +207,17 @@ class TaskFromMeFragment :
 
     }
 
+    private fun preSearch() {
+        SearchDataSingleton.searchString.value?.let { searchedString ->
+            mViewDataBinding.taskFromMeSearchBar.setQuery(searchedString, true)
+            mViewDataBinding.taskFromMeSearchBar.clearFocus()
+
+            // Post a delayed task to trigger the search after UI update
+            mViewDataBinding.taskFromMeSearchBar.post {
+                viewModel.searchTasks(searchedString)
+            }
+        }
+    }
 
     private fun loadTasks(skeletonVisible: Boolean) {
         viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
@@ -223,6 +235,7 @@ class TaskFromMeFragment :
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isFromMeUnread.value = false
         viewModel.saveFromMeUnread(false)
+        preSearch()
     }
 
 

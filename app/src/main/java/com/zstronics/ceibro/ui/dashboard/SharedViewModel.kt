@@ -7,4 +7,5 @@ class SharedViewModel : ViewModel() {
     val isToMeUnread = MutableLiveData<Boolean>()
     val isFromMeUnread = MutableLiveData<Boolean>()
     val isHiddenUnread = MutableLiveData<Boolean>()
+    val searchString: MutableLiveData<String> = MutableLiveData("")
 }

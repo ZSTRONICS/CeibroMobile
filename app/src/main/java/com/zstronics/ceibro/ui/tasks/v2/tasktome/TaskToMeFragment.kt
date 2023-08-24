@@ -1,8 +1,9 @@
 package com.zstronics.ceibro.ui.tasks.v2.tasktome
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
@@ -12,7 +13,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
-import com.zstronics.ceibro.ui.dashboard.DashboardVM
+import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -48,6 +49,7 @@ class TaskToMeFragment :
                 mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
@@ -64,6 +66,7 @@ class TaskToMeFragment :
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
@@ -80,6 +83,7 @@ class TaskToMeFragment :
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
         }
     }
@@ -148,7 +152,11 @@ class TaskToMeFragment :
 
         viewModel.disabledNewState.observe(viewLifecycleOwner) {
             if (it) {
-                if (viewModel.selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                if (viewModel.selectedState.equals(
+                        TaskStatus.NEW.name.lowercase(),
+                        true
+                    )
+                ) {  //if new state was selected then we have to change it because it is disabled now
                     viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 }
                 mViewDataBinding.newStateText.isEnabled = false
@@ -182,24 +190,21 @@ class TaskToMeFragment :
                 }
             }
 
+        mViewDataBinding.taskToMeSearchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
-        mViewDataBinding.taskToMeSearchBar.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    viewModel.searchTasks(query)
-                }
-                return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    viewModel.searchTasks(newText)
-                }
-                return true
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
             }
+
+            override fun afterTextChanged(s: Editable?) {
+                SearchDataSingleton.searchString.value = s.toString()
+                viewModel.searchTasks(s.toString())
+            }
+
         })
-
     }
 
     private fun loadTasks(skeletonVisible: Boolean) {
@@ -219,6 +224,18 @@ class TaskToMeFragment :
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.value = false
         viewModel.saveToMeUnread(false)
+        preSearch()
+    }
+
+    private fun preSearch() {
+        SearchDataSingleton.searchString.value?.let { searchedString ->
+            mViewDataBinding.taskToMeSearchBar.setText(searchedString)
+
+            // Post a delayed task to trigger the search after UI update
+            mViewDataBinding.taskToMeSearchBar.post {
+                viewModel.searchTasks(searchedString)
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -283,7 +300,11 @@ class TaskToMeFragment :
             }
 
         if (allTasks.new.isEmpty()) {
-            if (viewModel.selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+            if (viewModel.selectedState.equals(
+                    TaskStatus.NEW.name.lowercase(),
+                    true
+                )
+            ) {  //if new state was selected then we have to change it because it is disabled now
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
             }
             mViewDataBinding.newStateText.isEnabled = false
