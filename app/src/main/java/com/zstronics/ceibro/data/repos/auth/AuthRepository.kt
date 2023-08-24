@@ -19,6 +19,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.greenrobot.eventbus.EventBus
 import retrofit2.http.Body
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(

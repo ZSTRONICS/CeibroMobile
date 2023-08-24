@@ -6,4 +6,5 @@ object CookiesManager {
     var jwtToken: String? = null
     var isLoggedIn: Boolean = false
     var tokens: Tokens? = null
+    var secureUUID: String? = null
 }

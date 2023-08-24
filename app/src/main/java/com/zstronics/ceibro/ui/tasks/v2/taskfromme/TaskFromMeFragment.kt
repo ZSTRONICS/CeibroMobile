@@ -41,9 +41,11 @@ class TaskFromMeFragment :
                 if (!unreadTask.isNullOrEmpty()) {
                     adapter.setList(unreadTask)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
                 mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
@@ -58,11 +60,13 @@ class TaskFromMeFragment :
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
                 preSearch()
@@ -75,11 +79,13 @@ class TaskFromMeFragment :
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
                 preSearch()
@@ -105,9 +111,11 @@ class TaskFromMeFragment :
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
                 mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
@@ -121,13 +129,14 @@ class TaskFromMeFragment :
                     adapter.setList(it)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
-                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
-                    mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
+                mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
             }
         }
@@ -137,14 +146,15 @@ class TaskFromMeFragment :
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
-                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
-                    mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
+                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
             }
         }

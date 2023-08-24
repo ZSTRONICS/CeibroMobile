@@ -14,16 +14,18 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 class SessionManager constructor(
     val sharedPreferenceManager: SharedPreferenceManager
 ) {
-    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean) {
+    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean, secureUUID: String) {
         sharedPreferenceManager.saveBoolean(
             KEY_IS_USER_LOGGED_IN,
             rememberMe
         )
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokens.access.token
+        CookiesManager.secureUUID = secureUUID
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)
+        sharedPreferenceManager.saveString(KEY_SECURE_UUID, secureUUID)
 
         _user.postValue(user)
     }
@@ -33,6 +35,7 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_USER)
         sharedPreferenceManager.removeValue(KEY_TOKEN)
         sharedPreferenceManager.removeValue(KEY_PASS)
+        sharedPreferenceManager.removeValue(KEY_SECURE_UUID)
         sharedPreferenceManager.removeValue(KEY_IS_TO_ME_UNREAD)
         sharedPreferenceManager.removeValue(KEY_SYNCED_CONTACTS)
         sharedPreferenceManager.removeValue(KEY_SAVED_TASK)
@@ -47,6 +50,7 @@ class SessionManager constructor(
         )
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
+        CookiesManager.secureUUID = ""
         OneSignal.removeExternalUserId()
         OneSignal.disablePush(true)
         OneSignal.pauseInAppMessages(true)
@@ -87,6 +91,7 @@ class SessionManager constructor(
     fun saveNewTaskData(newTaskToSave: NewTaskToSave) {
         sharedPreferenceManager.saveCompleteTask(KEY_SAVED_TASK, newTaskToSave)
     }
+
     fun getSavedNewTaskData(): NewTaskToSave? {
         return sharedPreferenceManager.getCompleteTask(KEY_SAVED_TASK)
     }
@@ -134,8 +139,10 @@ class SessionManager constructor(
 
     private fun setToken() {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
+        val secureUUID = sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokenPref?.access?.token
+        CookiesManager.secureUUID = secureUUID
     }
 
     private fun getTokens(): Tokens? {
@@ -144,9 +151,8 @@ class SessionManager constructor(
     }
 
 
-    fun getPass(): String {
-        val pass = sharedPreferenceManager.getValueString(KEY_PASS) ?: ""
-        return pass
+    fun getSecureUUID(): String {
+        return sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
     }
 
     fun isUserLoggedIn(): Boolean {

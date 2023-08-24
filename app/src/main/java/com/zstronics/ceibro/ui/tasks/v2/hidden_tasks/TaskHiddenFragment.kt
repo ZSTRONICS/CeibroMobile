@@ -44,12 +44,14 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
                 preSearch()
@@ -63,12 +65,14 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
                 preSearch()
@@ -82,12 +86,14 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
                 preSearch()
@@ -116,12 +122,14 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -135,12 +143,14 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -154,12 +164,14 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }

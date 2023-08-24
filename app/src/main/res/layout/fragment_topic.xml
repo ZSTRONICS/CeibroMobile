@@ -50,7 +50,19 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/topicLogoBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ceibro_logo_dim_background"
+            android:padding="@dimen/_35sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout5"
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topicHeader" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/bottomLayout"
@@ -132,8 +144,8 @@
                         android:id="@+id/topicInfoLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
                         android:padding="@dimen/_11sdp"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -156,8 +168,8 @@
                             android:id="@+id/topicDescDetailEstonia"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
                             android:layout_marginTop="@dimen/_5sdp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/inter_regular"
                             android:maxLines="8"
                             android:text="@string/topic_desc_detail_estonia"
@@ -171,8 +183,8 @@
                             android:id="@+id/topicDescHeadingEnglish"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
                             android:layout_marginTop="@dimen/_7sdp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/inter_semibold"
                             android:maxLines="2"
                             android:text="@string/topic_desc_heading_english"
@@ -186,8 +198,8 @@
                             android:id="@+id/topicDescDetailEnglish"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
                             android:layout_marginTop="@dimen/_5sdp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/inter_regular"
                             android:maxLines="8"
                             android:text="@string/topic_desc_detail_english"

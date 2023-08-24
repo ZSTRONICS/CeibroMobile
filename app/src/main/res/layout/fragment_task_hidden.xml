@@ -209,6 +209,17 @@
             app:layout_constraintTop_toBottomOf="@+id/taskToMeStatusLayout"
             app:theme="@style/AppSearchView" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/hiddenLogoBackground"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="@dimen/_35sdp"
+            android:src="@drawable/ceibro_logo_dim_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskToMeSearchBar" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"

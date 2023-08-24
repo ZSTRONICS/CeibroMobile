@@ -8,5 +8,7 @@ data class SocketEventTypeResponse(
     @SerializedName("module")
     val module: String,
     @SerializedName("eventType")
-    val eventType: String
+    val eventType: String,
+    @SerializedName("uuid")
+    val uuid: String
 )

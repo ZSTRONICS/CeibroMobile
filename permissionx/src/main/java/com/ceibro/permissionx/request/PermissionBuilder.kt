@@ -537,7 +537,7 @@ class PermissionBuilder(
      *
      * @param permissions Permissions which are necessary.
      */
-    private fun forwardToSettings(permissions: List<String>) {
+    fun forwardToSettings(permissions: List<String>) {
         forwardPermissions.clear()
         forwardPermissions.addAll(permissions)
         invisibleFragment.forwardToSettings()

@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -21,6 +22,7 @@ import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
+import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -37,6 +39,7 @@ class MyConnectionV2Fragment :
     override val layoutResId: Int = R.layout.fragment_connections_v2
     override fun toolBarVisibility(): Boolean = false
     var runUIOnce = false
+    var contactsPermissionGranted = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.optionMenuIV -> {
@@ -60,6 +63,14 @@ class MyConnectionV2Fragment :
             R.id.connectionDescManualSelectionBtn -> {
                 navigate(R.id.manualContactsSelectionFragment)
             }
+            R.id.connectionDescGrantContactPermissionBtn -> {
+                goToPermissionSettings(Manifest.permission.READ_CONTACTS, immutableListOf(Manifest.permission.READ_CONTACTS))
+                runUIOnce = false
+            }
+            R.id.connectionDescSaveContactBtn -> {
+                val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
+                addContactResultLauncher.launch(intent)
+            }
         }
     }
 
@@ -68,8 +79,13 @@ class MyConnectionV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        contactsPermissionGranted = isPermissionGranted(Manifest.permission.READ_CONTACTS)
+
+        mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
+        mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
+        mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
+        mViewDataBinding.connectionLogoBackground.visibility = View.GONE
         mViewDataBinding.connectionRV.visibility = View.GONE
-        mViewDataBinding.connectionInfoLayout.visibility = View.GONE
         mViewDataBinding.connectionRV.adapter = adapter
         mViewDataBinding.connectionRV.layoutManager?.isItemPrefetchEnabled = true
         mViewDataBinding.connectionRV.setRecycledViewPool(RecyclerView.RecycledViewPool())
@@ -79,12 +95,34 @@ class MyConnectionV2Fragment :
                 adapter.setList(it)
                 mViewDataBinding.connectionRV.visibility = View.VISIBLE
                 mViewDataBinding.searchBar.visibility = View.VISIBLE
-                mViewDataBinding.connectionInfoLayout.visibility = View.GONE
+                mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
+                mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
+                mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
+                mViewDataBinding.connectionLogoBackground.visibility = View.GONE
             } else {
-                mViewDataBinding.connectionRV.visibility = View.GONE
-                if (viewState.isAutoSyncEnabled.value == false && viewModel.originalConnections.isEmpty()) {
+                if (!contactsPermissionGranted) {
+                    mViewDataBinding.connectionRV.visibility = View.GONE
                     mViewDataBinding.searchBar.visibility = View.GONE
-                    mViewDataBinding.connectionInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.connectionInfoNoContactPermission.visibility = View.VISIBLE
+                    mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
+                    mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
+                    mViewDataBinding.connectionLogoBackground.visibility = View.VISIBLE
+                }
+                if (viewState.isAutoSyncEnabled.value == false && viewModel.originalConnections.isEmpty() && contactsPermissionGranted) {
+                    mViewDataBinding.connectionRV.visibility = View.GONE
+                    mViewDataBinding.searchBar.visibility = View.GONE
+                    mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
+                    mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.VISIBLE
+                    mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
+                    mViewDataBinding.connectionLogoBackground.visibility = View.VISIBLE
+                }
+                if (viewState.isAutoSyncEnabled.value == true && viewModel.originalConnections.isEmpty() && contactsPermissionGranted) {
+                    mViewDataBinding.connectionRV.visibility = View.GONE
+                    mViewDataBinding.searchBar.visibility = View.GONE
+                    mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
+                    mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
+                    mViewDataBinding.connectionInfoNoContactFound.visibility = View.VISIBLE
+                    mViewDataBinding.connectionLogoBackground.visibility = View.VISIBLE
                 }
             }
         }
@@ -115,12 +153,15 @@ class MyConnectionV2Fragment :
 
     override fun onResume() {
         super.onResume()
+        contactsPermissionGranted = isPermissionGranted(Manifest.permission.READ_CONTACTS)
+        mViewDataBinding.searchBar.setQuery("", true)
         if (!runUIOnce) {
             loadConnections(true)
             runUIOnce = true
         }
-        mViewDataBinding.searchBar.setQuery("", true)
-        startOneTimeContactSyncWorker(requireContext())
+        if (isPermissionGranted(Manifest.permission.READ_CONTACTS)) {
+            startOneTimeContactSyncWorker(requireContext())
+        }
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {
