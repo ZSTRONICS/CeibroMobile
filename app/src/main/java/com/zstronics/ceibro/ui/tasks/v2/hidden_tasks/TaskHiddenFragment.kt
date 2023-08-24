@@ -12,7 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
-import com.zstronics.ceibro.ui.dashboard.DashboardVM
+import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -54,6 +54,7 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
@@ -74,6 +75,7 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
@@ -94,6 +96,7 @@ class TaskHiddenFragment :
                     mViewDataBinding.hiddenLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
         }
     }
@@ -190,7 +193,34 @@ class TaskHiddenFragment :
                     viewModel.showUnHideTaskDialog(requireContext(), data)
                 }
             }
+    }
 
+
+    private fun loadTasks(skeletonVisible: Boolean) {
+        viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
+            mViewDataBinding.taskRV.hideSkeleton()
+            preSearch()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadTasks(true)
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.isHiddenUnread.value = false
+        viewModel.saveHiddenUnread(false)
+    }
+
+    private fun preSearch() {
+        SearchDataSingleton.searchString.value?.let { searchedString ->
+            mViewDataBinding.taskToMeSearchBar.setQuery(searchedString, true)
+            mViewDataBinding.taskToMeSearchBar.clearFocus()
+
+            // Post a delayed task to trigger the search after UI update
+            mViewDataBinding.taskToMeSearchBar.post {
+                viewModel.searchTasks(searchedString)
+            }
+        }
 
         mViewDataBinding.taskToMeSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
@@ -203,27 +233,12 @@ class TaskHiddenFragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
+                    SearchDataSingleton.searchString.value = newText
                     viewModel.searchTasks(newText)
                 }
                 return true
             }
         })
-
-    }
-
-
-    private fun loadTasks(skeletonVisible: Boolean) {
-        viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
-            mViewDataBinding.taskRV.hideSkeleton()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadTasks(true)
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        sharedViewModel.isHiddenUnread.value = false
-        viewModel.saveHiddenUnread(false)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

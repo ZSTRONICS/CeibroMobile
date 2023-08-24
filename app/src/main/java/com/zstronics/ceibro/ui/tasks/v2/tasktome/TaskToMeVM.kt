@@ -51,6 +51,7 @@ class TaskToMeVM @Inject constructor(
     private val _allTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
     val allTasks: MutableLiveData<TaskV2Response.AllTasks> = _allTasks
     var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
+    val localSearchQuery: MutableLiveData<String> = MutableLiveData("")
 
     init {
         selectedState = TaskStatus.NEW.name.lowercase()
@@ -75,7 +76,11 @@ class TaskToMeVM @Inject constructor(
                 }
                 if (newTask.isEmpty()) {
                     disabledNewState.value = true
-                    if (selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                    if (selectedState.equals(
+                            TaskStatus.NEW.name.lowercase(),
+                            true
+                        )
+                    ) {  //if new state was selected then we have to change it because it is disabled now
                         selectedState = TaskStatus.ONGOING.name.lowercase()
                     }
                 } else {
@@ -121,7 +126,11 @@ class TaskToMeVM @Inject constructor(
                         }
                         if (newTask.isEmpty()) {
                             disabledNewState.value = true
-                            if (selectedState.equals(TaskStatus.NEW.name.lowercase(), true)) {  //if new state was selected then we have to change it because it is disabled now
+                            if (selectedState.equals(
+                                    TaskStatus.NEW.name.lowercase(),
+                                    true
+                                )
+                            ) {  //if new state was selected then we have to change it because it is disabled now
                                 selectedState = TaskStatus.ONGOING.name.lowercase()
                             }
                         } else {
@@ -239,7 +248,6 @@ class TaskToMeVM @Inject constructor(
             _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
         }
     }
-
 
 
     fun showHideTaskDialog(context: Context, taskData: CeibroTaskV2) {

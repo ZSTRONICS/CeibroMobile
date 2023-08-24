@@ -8,6 +8,7 @@ import android.os.Handler
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -153,7 +154,7 @@ class DashboardFragment :
 
         viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
-
+        SearchDataSingleton.searchString = MutableLiveData("")
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.observe(viewLifecycleOwner) { isUnread ->
             if (isUnread) {

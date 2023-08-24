@@ -12,7 +12,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
-import com.zstronics.ceibro.ui.dashboard.DashboardVM
+import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -50,6 +50,7 @@ class TaskFromMeFragment :
                 mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.ongoingStateText -> {
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
@@ -68,6 +69,7 @@ class TaskFromMeFragment :
                     mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
             R.id.doneStateText -> {
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
@@ -86,6 +88,7 @@ class TaskFromMeFragment :
                     mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
+                preSearch()
             }
         }
     }
@@ -195,7 +198,18 @@ class TaskFromMeFragment :
                     viewModel.showCancelTaskDialog(requireContext(), data) { }
                 }
             }
+    }
 
+    private fun preSearch() {
+        SearchDataSingleton.searchString.value?.let { searchedString ->
+            mViewDataBinding.taskFromMeSearchBar.setQuery(searchedString, true)
+            mViewDataBinding.taskFromMeSearchBar.clearFocus()
+
+            // Post a delayed task to trigger the search after UI update
+            mViewDataBinding.taskFromMeSearchBar.post {
+                viewModel.searchTasks(searchedString)
+            }
+        }
 
         mViewDataBinding.taskFromMeSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
@@ -208,22 +222,18 @@ class TaskFromMeFragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
+                    SearchDataSingleton.searchString.value = newText
                     viewModel.searchTasks(newText)
                 }
                 return true
             }
         })
-
     }
-
 
     private fun loadTasks(skeletonVisible: Boolean) {
         viewModel.loadAllTasks(skeletonVisible, mViewDataBinding.taskRV) {
             mViewDataBinding.taskRV.hideSkeleton()
-//                val searchQuery = mViewDataBinding.projectSearchBar.query.toString()
-//                if (searchQuery.isNotEmpty()) {
-//                    viewModel.searchProject(searchQuery)
-//                }
+            preSearch()
         }
     }
 
