@@ -62,6 +62,7 @@ class TopicFragment :
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
         mViewDataBinding.allTopicsRV.visibility = View.VISIBLE
         mViewDataBinding.topicInfoLayout.visibility = View.GONE
+        mViewDataBinding.topicLogoBackground.visibility = View.GONE
 
         mViewDataBinding.recentTopicRV.isNestedScrollingEnabled = false
         mViewDataBinding.allTopicsRV.isNestedScrollingEnabled = false
@@ -78,8 +79,10 @@ class TopicFragment :
                 mViewDataBinding.allTopicsRV.visibility = View.GONE
                 mViewDataBinding.recentTopicLayout.visibility = View.GONE
                 mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+                mViewDataBinding.topicLogoBackground.visibility = View.VISIBLE
             } else {
                 mViewDataBinding.topicInfoLayout.visibility = View.GONE
+                mViewDataBinding.topicLogoBackground.visibility = View.GONE
             }
         }
         viewModel.allTopicsGrouped.observe(viewLifecycleOwner) {
@@ -96,8 +99,10 @@ class TopicFragment :
                 mViewDataBinding.allTopicsRV.visibility = View.GONE
                 mViewDataBinding.recentTopicLayout.visibility = View.GONE
                 mViewDataBinding.topicInfoLayout.visibility = View.VISIBLE
+                mViewDataBinding.topicLogoBackground.visibility = View.VISIBLE
             } else {
                 mViewDataBinding.topicInfoLayout.visibility = View.GONE
+                mViewDataBinding.topicLogoBackground.visibility = View.GONE
             }
         }
 
@@ -150,6 +155,7 @@ class TopicFragment :
 
     private fun loadTopics(skeletonVisible: Boolean) {
         mViewDataBinding.topicInfoLayout.visibility = View.GONE
+        mViewDataBinding.topicLogoBackground.visibility = View.GONE
         if (skeletonVisible) {
             mViewDataBinding.allTopicsRV.loadSkeleton(R.layout.layout_invitations_box) {
                 itemCount(10)

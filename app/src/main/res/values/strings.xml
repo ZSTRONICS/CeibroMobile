@@ -483,4 +483,14 @@
     <string name="connection_desc_detail_estonia1">Või vali ise kontaktid oma telefonist, keda soovid Ceibro kontaktidesse lisada.</string>
     <string name="connection_desc_detail_english1">Or select contacts manually to add to your Ceibro.</string>
     <string name="comment_text_here">Comment text here</string>
+    <string name="grant_contacts_permission">Grant contacts permission</string>
+    <string name="save_contact_on_your_phone">Save contact on your phone</string>
+    <string name="connection_desc_no_permission_heading_estonia">Näib, et te pole oma kontaktidele luba andnud.</string>
+    <string name="connection_desc_no_permission_detail_estonia">Andke seadetes kontaktidele luba, et lugeda ja sünkroonida kõiki oma kontakte automaatselt või käsitsi.</string>
+    <string name="connection_desc_no_permission_heading_english">Seems like you haven\'t granted permission to your contacts.</string>
+    <string name="connection_desc_no_permission_detail_english">Allow contacts permission in settings, to read and synchronize all your contacts automatically or manually.</string>
+    <string name="connection_desc_no_contact_heading_estonia">Näib, et teie telefoni kontaktide loendis pole ühtegi kontakti.</string>
+    <string name="connection_desc_no_contact_detail_estonia">Salvesta enda telefoni vähemalt üks kontakt ja ceibro sünkroonib selle siia nimekirja. </string>
+    <string name="connection_desc_no_contact_heading_english">Seems like you don\'t have any contacts in your phone contact list. </string>
+    <string name="connection_desc_no_contact_detail_english">Save at least one contact on your phone and ceibro will sync it to this list.</string>
 </resources>

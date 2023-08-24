@@ -333,6 +333,14 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             }
     }
 
+    fun isPermissionGranted(permission: String): Boolean {
+        return PermissionX.isGranted(context, permission)
+    }
+
+    fun goToPermissionSettings(permission: String, permissionsList: List<String>) {
+        PermissionX.init(this).permissions(permission).forwardToSettings(permissionsList)
+    }
+
     fun pickAttachment(allowMultiple: Boolean = false) {
         checkPermission(
             immutableListOf(

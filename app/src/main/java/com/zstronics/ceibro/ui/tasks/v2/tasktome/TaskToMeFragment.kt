@@ -41,9 +41,11 @@ class TaskToMeFragment :
                 if (!newTask.isNullOrEmpty()) {
                     adapter.setList(newTask)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.VISIBLE
                 }
                 mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
@@ -57,11 +59,13 @@ class TaskToMeFragment :
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -73,11 +77,13 @@ class TaskToMeFragment :
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -102,9 +108,11 @@ class TaskToMeFragment :
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.VISIBLE
                 }
                 mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                 mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
@@ -119,11 +127,13 @@ class TaskToMeFragment :
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
@@ -136,11 +146,13 @@ class TaskToMeFragment :
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.GONE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.GONE
                 } else {
                     adapter.setList(listOf())
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.toMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.toMeDoneInfoLayout.visibility = View.VISIBLE
+                    mViewDataBinding.toMeLogoBackground.visibility = View.VISIBLE
                 }
                 changeSelectedUserState()
             }
