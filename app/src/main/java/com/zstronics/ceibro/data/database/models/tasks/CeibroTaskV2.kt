@@ -4,6 +4,7 @@ package com.zstronics.ceibro.data.database.models.tasks
 import android.os.Parcelable
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.utils.DateUtils
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -56,14 +57,20 @@ data class CeibroTaskV2(
     @SerializedName("topic")
     val topic: Topic?,
     @SerializedName("updatedAt")
-    val updatedAt: String,
+    var updatedAt: String,
     @SerializedName("__v")
     val v: Int,
     @SerializedName("files")
     var files: List<TaskFiles>,
     @SerializedName("events")
     var events: List<Events>
-) : Parcelable
+) : Parcelable {
+    fun updateUpdatedAt() {
+        this.apply {
+            this.updatedAt = DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+        }
+    }
+}
 
 @Parcelize
 @Keep

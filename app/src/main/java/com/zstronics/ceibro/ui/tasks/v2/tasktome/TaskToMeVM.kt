@@ -62,9 +62,9 @@ class TaskToMeVM @Inject constructor(
             val taskLocalData = taskDao.getTasks("to-me")
             if (taskLocalData != null) {
                 val allTasks = taskLocalData.allTasks
-                val newTask = allTasks.new
-                val ongoingTask = allTasks.ongoing
-                val doneTask = allTasks.done
+                val newTask = allTasks.new.sortedByDescending { it.updatedAt }
+                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }
+                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }
 
                 if (firstStartOfFragment) {
                     selectedState = if (newTask.isNotEmpty()) {

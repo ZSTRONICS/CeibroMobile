@@ -55,9 +55,9 @@ class TaskHiddenVM @Inject constructor(
             val taskLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
             if (taskLocalData != null) {
                 val allTasks = taskLocalData.allTasks
-                val canceled = allTasks.canceled
-                val ongoingTask = allTasks.ongoing
-                val doneTask = allTasks.done
+                val canceled = allTasks.canceled.sortedByDescending { it.updatedAt }
+                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }
+                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }
                 _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
                 _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
                 _cancelledTasks.postValue(canceled as MutableList<CeibroTaskV2>?)

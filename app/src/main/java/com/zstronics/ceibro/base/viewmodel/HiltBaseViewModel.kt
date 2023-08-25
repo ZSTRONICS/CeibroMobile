@@ -185,6 +185,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         }
         launch {
             if (task != null) {
+                /// Update record updated_at
+                task.updateUpdatedAt()
                 val taskFromMe = task.creator.id == userId
                 val taskToMe = !task.assignedToState.none { it.userId == userId }
 
@@ -262,6 +264,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         }
         launch {
             if (task != null) {
+                /// Update record updated_at
+                task.updateUpdatedAt()
                 val taskFromMe = task.creator.id == userId
                 val taskToMe = !task.assignedToState.none { it.userId == userId }
                 val myState = task.assignedToState.find { it.userId == userId }?.state
@@ -533,6 +537,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         if (taskHiddenLocalData != null) {
                             val canceledTask =
                                 taskHiddenLocalData.allTasks.canceled.find { it.id == taskSeen.taskId }
+                            /// Update record updated_at
+                            canceledTask?.updateUpdatedAt()
                             if (canceledTask != null) {
                                 val allCancelTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -584,6 +590,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask =
                             taskFromMeLocalData.allTasks.done.find { it.id == taskSeen.taskId }
                         if (unreadTask != null) {
+                            /// Update record updated_at
+                            unreadTask.updateUpdatedAt()
                             val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             val taskIndex = allTaskList.indexOf(unreadTask)
 
@@ -640,6 +648,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(unreadTask))
 
                         } else if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -695,6 +705,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(ongoingTask))
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -770,6 +782,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask =
                             taskToMeLocalData.allTasks.done.find { it.id == taskSeen.taskId }
                         if (newTask != null) {
+                            /// Update record updated_at
+                            newTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                             val taskIndex = allTaskList.indexOf(newTask)
 
@@ -829,6 +843,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(newTask))
                         } else if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -889,6 +905,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(ongoingTask))
 
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -1004,6 +1022,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
 
                         if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allOngoingTaskList =
                                 taskHiddenLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
@@ -1068,6 +1088,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             updatedTask = ongoingTask
 
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
                             val taskIndex = allDoneTaskList.indexOf(doneTask)
 
@@ -1157,6 +1179,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val canceledTask =
                             taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                         if (canceledTask != null) {
+                            /// Update record updated_at
+                            canceledTask.updateUpdatedAt()
                             val allCancelTaskList =
                                 taskHiddenLocalData.allTasks.canceled.toMutableList()
                             val taskIndex = allCancelTaskList.indexOf(canceledTask)
@@ -1207,6 +1231,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskID }
 
                         if (newTask != null) {
+                            /// Update record updated_at
+                            newTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                             val taskIndex = allTaskList.indexOf(newTask)
 
@@ -1234,6 +1260,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sharedViewModel?.isToMeUnread?.postValue(true)
                             sessionManager.saveToMeUnread(true)
                         } else if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -1261,6 +1289,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sharedViewModel?.isToMeUnread?.postValue(true)
                             sessionManager.saveToMeUnread(true)
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -1307,6 +1337,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == taskID }
 
                         if (unreadTask != null) {
+                            /// Update record updated_at
+                            unreadTask.updateUpdatedAt()
                             val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             val taskIndex = allTaskList.indexOf(unreadTask)
 
@@ -1334,6 +1366,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
                         } else if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -1361,6 +1395,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -1398,6 +1434,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
             }
         }
+        /// Update record updated_at
+        updatedTask?.updateUpdatedAt()
         return updatedTask
     }
 
@@ -1441,6 +1479,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
 
                         if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allOngoingTaskList =
                                 taskHiddenLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
@@ -1477,6 +1517,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val canceledTask =
                                 taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                             if (canceledTask != null) {
+                                /// Update record updated_at
+                                canceledTask.updateUpdatedAt()
                                 val canceledTaskIndex =
                                     allCanceledTaskList.indexOf(canceledTask)
                                 allCanceledTaskList[canceledTaskIndex] = ongoingTask
@@ -1494,6 +1536,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             }
 
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
                             val taskIndex = allDoneTaskList.indexOf(doneTask)
 
@@ -1529,6 +1573,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val canceledTask =
                                 taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                             if (canceledTask != null) {
+                                /// Update record updated_at
+                                canceledTask.updateUpdatedAt()
                                 val canceledTaskIndex =
                                     allCanceledTaskList.indexOf(canceledTask)
                                 allCanceledTaskList[canceledTaskIndex] = doneTask
@@ -1564,6 +1610,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val canceledTask =
                             taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                         if (canceledTask != null) {
+                            /// Update record updated_at
+                            canceledTask.updateUpdatedAt()
                             val allCancelTaskList =
                                 taskHiddenLocalData.allTasks.canceled.toMutableList()
                             val taskIndex = allCancelTaskList.indexOf(canceledTask)
@@ -1610,6 +1658,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                         if (taskHiddenLocalData != null) {
                             if (newTask != null) {
+                                /// Update record updated_at
+                                newTask.updateUpdatedAt()
                                 val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 val taskIndex = allTaskList.indexOf(newTask)
 
@@ -1645,6 +1695,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val canceledTask =
                                     taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                                 if (canceledTask != null) {
+                                    /// Update record updated_at
+                                    canceledTask.updateUpdatedAt()
                                     val canceledTaskIndex =
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = newTask
@@ -1662,6 +1714,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
                             } else if (ongoingTask != null) {
+                                /// Update record updated_at
+                                ongoingTask.updateUpdatedAt()
                                 val allTaskList =
                                     taskToMeLocalData.allTasks.ongoing.toMutableList()
                                 val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -1698,6 +1752,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val canceledTask =
                                     taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                                 if (canceledTask != null) {
+                                    /// Update record updated_at
+                                    canceledTask.updateUpdatedAt()
                                     val canceledTaskIndex =
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = ongoingTask
@@ -1715,6 +1771,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
                             } else if (doneTask != null) {
+                                /// Update record updated_at
+                                doneTask.updateUpdatedAt()
                                 val allTaskList =
                                     taskToMeLocalData.allTasks.done.toMutableList()
                                 val taskIndex = allTaskList.indexOf(doneTask)
@@ -1751,6 +1809,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val canceledTask =
                                     taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                                 if (canceledTask != null) {
+                                    /// Update record updated_at
+                                    canceledTask.updateUpdatedAt()
                                     val canceledTaskIndex =
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = doneTask
@@ -1792,6 +1852,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                         if (taskHiddenLocalData != null) {
                             if (unreadTask != null) {
+                                /// Update record updated_at
+                                unreadTask.updateUpdatedAt()
                                 val allTaskList =
                                     taskFromMeLocalData.allTasks.unread.toMutableList()
                                 val taskIndex = allTaskList.indexOf(unreadTask)
@@ -1828,6 +1890,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val canceledTask =
                                     taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                                 if (canceledTask != null) {
+                                    /// Update record updated_at
+                                    canceledTask.updateUpdatedAt()
                                     val canceledTaskIndex =
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = unreadTask
@@ -1845,6 +1909,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
                             } else if (ongoingTask != null) {
+                                /// Update record updated_at
+                                ongoingTask.updateUpdatedAt()
                                 val allTaskList =
                                     taskFromMeLocalData.allTasks.ongoing.toMutableList()
                                 val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -1881,6 +1947,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val canceledTask =
                                     taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                                 if (canceledTask != null) {
+                                    /// Update record updated_at
+                                    canceledTask.updateUpdatedAt()
                                     val canceledTaskIndex =
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = ongoingTask
@@ -1898,6 +1966,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
 
                             } else if (doneTask != null) {
+                                /// Update record updated_at
+                                doneTask.updateUpdatedAt()
                                 val allTaskList =
                                     taskFromMeLocalData.allTasks.done.toMutableList()
                                 val taskIndex = allTaskList.indexOf(doneTask)
@@ -1934,6 +2004,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val canceledTask =
                                     taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                                 if (canceledTask != null) {
+                                    /// Update record updated_at
+                                    canceledTask.updateUpdatedAt()
                                     val canceledTaskIndex =
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = doneTask
@@ -2011,6 +2083,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
 
                         if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allOngoingTaskList =
                                 taskHiddenLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
@@ -2049,6 +2123,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     val allDoneToMeTaskList =
                                         taskToMeLocalData.allTasks.done.toMutableList()
                                     if (doneTaskToMe != null) {
+                                        /// Update record updated_at
+                                        doneTaskToMe.updateUpdatedAt()
                                         val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                         allDoneToMeTaskList[index] = ongoingTask
                                         taskToMeLocalData.allTasks.done =
@@ -2069,6 +2145,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     val allDoneFromMeTaskList =
                                         taskFromMeLocalData.allTasks.done.toMutableList()
                                     if (doneTaskFromMe != null) {
+                                        /// Update record updated_at
+                                        doneTaskFromMe.updateUpdatedAt()
                                         val index =
                                             allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                         allDoneFromMeTaskList[index] = ongoingTask
@@ -2083,6 +2161,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             updatedTask = ongoingTask
 
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
                             val taskIndex = allDoneTaskList.indexOf(doneTask)
 
@@ -2120,6 +2200,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     val allDoneToMeTaskList =
                                         taskToMeLocalData.allTasks.done.toMutableList()
                                     if (doneTaskToMe != null) {
+                                        /// Update record updated_at
+                                        doneTaskToMe.updateUpdatedAt()
                                         val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                         allDoneToMeTaskList[index] = doneTask
                                         taskToMeLocalData.allTasks.done =
@@ -2140,6 +2222,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     val allDoneFromMeTaskList =
                                         taskFromMeLocalData.allTasks.done.toMutableList()
                                     if (doneTaskFromMe != null) {
+                                        /// Update record updated_at
+                                        doneTaskFromMe.updateUpdatedAt()
                                         val index =
                                             allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                         allDoneFromMeTaskList[index] = doneTask
@@ -2188,6 +2272,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
 
                         if (newTask != null) {
+                            /// Update record updated_at
+                            newTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                             val taskIndex = allTaskList.indexOf(newTask)
 
@@ -2223,6 +2309,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val allDoneToMeTaskList =
                                 taskToMeLocalData.allTasks.done.toMutableList()
                             if (doneTaskToMe != null) {
+                                /// Update record updated_at
+                                doneTaskToMe.updateUpdatedAt()
                                 val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                 allDoneToMeTaskList[index] = newTask
                                 taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
@@ -2235,6 +2323,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sessionManager.saveToMeUnread(true)
 
                         } else if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList =
                                 taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -2271,6 +2361,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val allDoneToMeTaskList =
                                 taskToMeLocalData.allTasks.done.toMutableList()
                             if (doneTaskToMe != null) {
+                                /// Update record updated_at
+                                doneTaskToMe.updateUpdatedAt()
                                 val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                 allDoneToMeTaskList[index] = ongoingTask
                                 taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
@@ -2283,6 +2375,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sessionManager.saveToMeUnread(true)
 
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList =
                                 taskToMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
@@ -2340,6 +2434,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
 
                         if (unreadTask != null) {
+                            /// Update record updated_at
+                            unreadTask.updateUpdatedAt()
                             val allTaskList =
                                 taskFromMeLocalData.allTasks.unread.toMutableList()
                             val taskIndex = allTaskList.indexOf(unreadTask)
@@ -2376,6 +2472,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val allDoneFromMeTaskList =
                                 taskFromMeLocalData.allTasks.done.toMutableList()
                             if (doneTaskFromMe != null) {
+                                /// Update record updated_at
+                                doneTaskFromMe.updateUpdatedAt()
                                 val index =
                                     allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                 allDoneFromMeTaskList[index] = unreadTask
@@ -2391,6 +2489,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sessionManager.saveFromMeUnread(true)
 
                         } else if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList =
                                 taskFromMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -2427,6 +2527,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val allDoneFromMeTaskList =
                                 taskFromMeLocalData.allTasks.done.toMutableList()
                             if (doneTaskFromMe != null) {
+                                /// Update record updated_at
+                                doneTaskFromMe.updateUpdatedAt()
                                 val index =
                                     allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                 allDoneFromMeTaskList[index] = ongoingTask
@@ -2442,6 +2544,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sessionManager.saveFromMeUnread(true)
 
                         } else if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList =
                                 taskFromMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
@@ -2506,6 +2610,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                     if (taskHiddenLocalData != null) {
                         if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -2520,6 +2626,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val hiddenOngoingTask =
                                 taskHiddenLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
                             if (hiddenOngoingTask != null) {
+                                /// Update record updated_at
+                                hiddenOngoingTask.updateUpdatedAt()
                                 val ongoingTaskIndex = allOngoingTaskList.indexOf(hiddenOngoingTask)
                                 allOngoingTaskList[ongoingTaskIndex] = ongoingTask
                                 taskHiddenLocalData.allTasks.ongoing =
@@ -2531,6 +2639,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             }
                         }
                         if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -2545,6 +2655,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val hiddenDoneTask =
                                 taskHiddenLocalData.allTasks.done.find { it.id == hideData.taskId }
                             if (hiddenDoneTask != null) {
+                                /// Update record updated_at
+                                hiddenDoneTask.updateUpdatedAt()
                                 val doneTaskIndex = allDoneTaskList.indexOf(hiddenDoneTask)
                                 allDoneTaskList[doneTaskIndex] = doneTask
                                 taskHiddenLocalData.allTasks.done =
@@ -2574,6 +2686,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         taskHiddenLocalData.allTasks.done.find { it.id == hideData.taskId }
 
                     if (ongoingTask != null) {
+                        /// Update record updated_at
+                        ongoingTask.updateUpdatedAt()
                         val allTaskList = taskHiddenLocalData.allTasks.ongoing.toMutableList()
                         val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -2584,6 +2698,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             allTaskList.toList()
                     }
                     if (doneTask != null) {
+                        /// Update record updated_at
+                        doneTask.updateUpdatedAt()
                         val allTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
                         val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -2619,6 +2735,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                     if (taskToMeLocalData != null) {
                         if (ongoingTask != null) {
+                            /// Update record updated_at
+                            ongoingTask.updateUpdatedAt()
                             val allTaskList = taskHiddenLocalData.allTasks.ongoing.toMutableList()
                             val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -2633,6 +2751,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val toMeOngoingTask =
                                 taskToMeLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
                             if (toMeOngoingTask != null) {
+                                /// Update record updated_at
+                                toMeOngoingTask.updateUpdatedAt()
                                 val ongoingTaskIndex = allOngoingTaskList.indexOf(toMeOngoingTask)
                                 allOngoingTaskList[ongoingTaskIndex] = ongoingTask
                                 taskToMeLocalData.allTasks.ongoing =
@@ -2644,6 +2764,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             }
                         }
                         if (doneTask != null) {
+                            /// Update record updated_at
+                            doneTask.updateUpdatedAt()
                             val allTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
                             val taskIndex = allTaskList.indexOf(doneTask)
 
@@ -2658,6 +2780,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             val toMeDoneTask =
                                 taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
                             if (toMeDoneTask != null) {
+                                /// Update record updated_at
+                                toMeDoneTask.updateUpdatedAt()
                                 val doneTaskIndex = allDoneTaskList.indexOf(toMeDoneTask)
                                 allDoneTaskList[doneTaskIndex] = doneTask
                                 taskToMeLocalData.allTasks.done =
@@ -2686,6 +2810,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     val doneTask = taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
 
                     if (ongoingTask != null) {
+                        /// Update record updated_at
+                        ongoingTask.updateUpdatedAt()
                         val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                         val taskIndex = allTaskList.indexOf(ongoingTask)
 
@@ -2696,6 +2822,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             allTaskList.toList()
                     }
                     if (doneTask != null) {
+                        /// Update record updated_at
+                        doneTask.updateUpdatedAt()
                         val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                         val taskIndex = allTaskList.indexOf(doneTask)
 
