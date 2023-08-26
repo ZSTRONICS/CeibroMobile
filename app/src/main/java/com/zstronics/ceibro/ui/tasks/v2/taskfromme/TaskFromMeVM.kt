@@ -62,9 +62,10 @@ class TaskFromMeVM @Inject constructor(
             val taskLocalData = taskDao.getTasks("from-me")
             if (taskLocalData != null) {
                 val allTasks = taskLocalData.allTasks
-                val unreadTask = allTasks.unread.sortedByDescending { it.updatedAt }
-                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }
-                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }
+                val unreadTask = allTasks.unread.sortedByDescending { it.updatedAt }.toMutableList()
+                val ongoingTask =
+                    allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
 
                 if (firstStartOfFragment) {
                     selectedState = if (unreadTask.isNotEmpty()) {
@@ -76,7 +77,11 @@ class TaskFromMeVM @Inject constructor(
                 }
                 if (unreadTask.isEmpty()) {
                     disabledUnreadState.value = true
-                    if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                    if (selectedState.equals(
+                            TaskStatus.UNREAD.name.lowercase(),
+                            true
+                        )
+                    ) {  //if unread state was selected then we have to change it because it is disabled now
                         selectedState = TaskStatus.ONGOING.name.lowercase()
                     }
                 } else {
@@ -84,9 +89,9 @@ class TaskFromMeVM @Inject constructor(
                 }
 
                 _allTasks.postValue(allTasks)
-                _unreadTasks.postValue(unreadTask as MutableList<CeibroTaskV2>?)
-                _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                _unreadTasks.postValue(unreadTask)
+                _ongoingTasks.postValue(ongoingTask)
+                _doneTasks.postValue(doneTask)
 
                 originalUnreadTasks = unreadTask
                 originalOngoingTasks = ongoingTask
@@ -109,9 +114,15 @@ class TaskFromMeVM @Inject constructor(
                                 allTasks = response.data.allTasks
                             )
                         )
-                        val unreadTask = response.data.allTasks.unread
-                        val ongoingTask = response.data.allTasks.ongoing
-                        val doneTask = response.data.allTasks.done
+                        val unreadTask =
+                            response.data.allTasks.unread.sortedByDescending { it.updatedAt }
+                                .toMutableList()
+                        val ongoingTask =
+                            response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }
+                                .toMutableList()
+                        val doneTask =
+                            response.data.allTasks.done.sortedByDescending { it.updatedAt }
+                                .toMutableList()
                         val allTasks = response.data.allTasks
 
                         if (firstStartOfFragment) {
@@ -124,7 +135,11 @@ class TaskFromMeVM @Inject constructor(
                         }
                         if (unreadTask.isEmpty()) {
                             disabledUnreadState.value = true
-                            if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {  //if unread state was selected then we have to change it because it is disabled now
+                            if (selectedState.equals(
+                                    TaskStatus.UNREAD.name.lowercase(),
+                                    true
+                                )
+                            ) {  //if unread state was selected then we have to change it because it is disabled now
                                 selectedState = TaskStatus.ONGOING.name.lowercase()
                             }
                         } else {
@@ -132,9 +147,9 @@ class TaskFromMeVM @Inject constructor(
                         }
 
                         _allTasks.postValue(allTasks)
-                        _unreadTasks.postValue(unreadTask as MutableList<CeibroTaskV2>?)
-                        _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                        _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                        _unreadTasks.postValue(unreadTask)
+                        _ongoingTasks.postValue(ongoingTask)
+                        _doneTasks.postValue(doneTask)
 
                         originalUnreadTasks = unreadTask
                         originalOngoingTasks = ongoingTask
@@ -189,8 +204,8 @@ class TaskFromMeVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _unreadTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _unreadTasks.postValue(filteredTasks)
         } else if (selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
@@ -214,8 +229,8 @@ class TaskFromMeVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _ongoingTasks.postValue(filteredTasks)
         } else if (selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
@@ -239,8 +254,8 @@ class TaskFromMeVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _doneTasks.postValue(filteredTasks)
         }
     }
 
@@ -269,7 +284,6 @@ class TaskFromMeVM @Inject constructor(
             alertDialog.dismiss()
         }
     }
-
 
 
     private fun cancelTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {

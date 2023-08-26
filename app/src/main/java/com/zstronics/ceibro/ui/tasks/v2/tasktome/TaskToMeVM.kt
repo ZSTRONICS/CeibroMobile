@@ -62,9 +62,9 @@ class TaskToMeVM @Inject constructor(
             val taskLocalData = taskDao.getTasks("to-me")
             if (taskLocalData != null) {
                 val allTasks = taskLocalData.allTasks
-                val newTask = allTasks.new.sortedByDescending { it.updatedAt }
-                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }
-                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }
+                val newTask = allTasks.new.sortedByDescending { it.updatedAt }.toMutableList()
+                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
 
                 if (firstStartOfFragment) {
                     selectedState = if (newTask.isNotEmpty()) {
@@ -87,9 +87,9 @@ class TaskToMeVM @Inject constructor(
                     disabledNewState.value = false
                 }
                 _allTasks.postValue(allTasks)
-                _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
-                _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                _newTasks.postValue(newTask)
+                _ongoingTasks.postValue(ongoingTask)
+                _doneTasks.postValue(doneTask)
 
                 originalNewTasks = newTask
                 originalOngoingTasks = ongoingTask
@@ -111,9 +111,9 @@ class TaskToMeVM @Inject constructor(
                                 allTasks = response.data.allTasks
                             )
                         )
-                        val newTask = response.data.allTasks.new
-                        val ongoingTask = response.data.allTasks.ongoing
-                        val doneTask = response.data.allTasks.done
+                        val newTask = response.data.allTasks.new.sortedByDescending { it.updatedAt }.toMutableList()
+                        val ongoingTask = response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                        val doneTask = response.data.allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
                         val allTasks = response.data.allTasks
 
                         if (firstStartOfFragment) {
@@ -137,9 +137,9 @@ class TaskToMeVM @Inject constructor(
                             disabledNewState.value = false
                         }
                         _allTasks.postValue(allTasks)
-                        _newTasks.postValue(newTask as MutableList<CeibroTaskV2>?)
-                        _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                        _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                        _newTasks.postValue(newTask)
+                        _ongoingTasks.postValue(ongoingTask)
+                        _doneTasks.postValue(doneTask)
 
                         originalNewTasks = newTask
                         originalOngoingTasks = ongoingTask
@@ -194,8 +194,8 @@ class TaskToMeVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _newTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _newTasks.postValue(filteredTasks)
         } else if (selectedState.equals("ongoing", true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
@@ -219,8 +219,8 @@ class TaskToMeVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _ongoingTasks.postValue(filteredTasks)
         } else if (selectedState.equals("done", true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
@@ -244,8 +244,8 @@ class TaskToMeVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _doneTasks.postValue(filteredTasks)
         }
     }
 

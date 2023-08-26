@@ -55,12 +55,12 @@ class TaskHiddenVM @Inject constructor(
             val taskLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
             if (taskLocalData != null) {
                 val allTasks = taskLocalData.allTasks
-                val canceled = allTasks.canceled.sortedByDescending { it.updatedAt }
-                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }
-                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }
-                _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
-                _cancelledTasks.postValue(canceled as MutableList<CeibroTaskV2>?)
+                val canceled = allTasks.canceled.sortedByDescending { it.updatedAt }.toMutableList()
+                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
+                _ongoingTasks.postValue(ongoingTask)
+                _doneTasks.postValue(doneTask)
+                _cancelledTasks.postValue(canceled)
                 _allTasks.postValue(allTasks)
 
                 originalCancelledTasks = canceled
@@ -83,13 +83,13 @@ class TaskHiddenVM @Inject constructor(
                                 allTasks = response.data.allTasks
                             )
                         )
-                        val ongoingTask = response.data.allTasks.ongoing
-                        val doneTask = response.data.allTasks.done
+                        val ongoingTask = response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                        val doneTask = response.data.allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
                         val allTasks = response.data.allTasks
-                        val canceled = response.data.allTasks.canceled
-                        _cancelledTasks.postValue(canceled as MutableList<CeibroTaskV2>?)
-                        _ongoingTasks.postValue(ongoingTask as MutableList<CeibroTaskV2>?)
-                        _doneTasks.postValue(doneTask as MutableList<CeibroTaskV2>?)
+                        val canceled = response.data.allTasks.canceled.sortedByDescending { it.updatedAt }.toMutableList()
+                        _cancelledTasks.postValue(canceled)
+                        _ongoingTasks.postValue(ongoingTask)
+                        _doneTasks.postValue(doneTask)
                         _allTasks.postValue(allTasks)
 
                         originalCancelledTasks = canceled
@@ -145,8 +145,8 @@ class TaskHiddenVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _cancelledTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _cancelledTasks.postValue(filteredTasks)
         } else if (selectedState.equals("ongoing", true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
@@ -170,8 +170,8 @@ class TaskHiddenVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _ongoingTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _ongoingTasks.postValue(filteredTasks)
         } else if (selectedState.equals("done", true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
@@ -195,8 +195,8 @@ class TaskHiddenVM @Inject constructor(
                                     true
                                 ) == true
                             }
-                }
-            _doneTasks.postValue(filteredTasks as MutableList<CeibroTaskV2>?)
+                }.toMutableList()
+            _doneTasks.postValue(filteredTasks)
         }
     }
 
