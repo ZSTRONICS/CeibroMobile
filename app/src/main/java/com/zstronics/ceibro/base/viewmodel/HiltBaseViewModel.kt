@@ -226,10 +226,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val oldListMutableList = oldList.toMutableList()
                         val index = oldList.indexOfFirst { it.id == task.id }
                         if (index >= 0) {
-                            oldListMutableList[index] = task
-                        } else {
-                            newList.addAll(oldList)
+                            oldListMutableList.removeAt(index)
                         }
+                        newList.addAll(oldListMutableList)
                     }
                     taskLocalData?.allTasks?.new = newList.toList()
                     taskDao.insertTaskData(
