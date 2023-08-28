@@ -193,14 +193,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 if (taskFromMe) {
                     val taskLocalData =
                         taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
-                    val unreadList = taskLocalData?.allTasks?.unread?.toMutableList()
-                        ?: mutableListOf()
-
-                    val index = unreadList.indexOfFirst { it.id == task.id }
-                    if (index != -1) {
-                        unreadList[index] = task
-                    } else {
-                        unreadList.add(0, task)
+                    val unreadList = mutableListOf(task)
+                    taskLocalData?.allTasks?.unread?.let { oldList ->
+                        val oldListMutableList = oldList.toMutableList()
+                        val index = oldList.indexOfFirst { it.id == task.id }
+                        if (index >= 0) {
+                            oldListMutableList.removeAt(index)
+                        }
+                        unreadList.addAll(oldListMutableList)
                     }
 
                     taskLocalData?.allTasks?.unread = unreadList.toList()
