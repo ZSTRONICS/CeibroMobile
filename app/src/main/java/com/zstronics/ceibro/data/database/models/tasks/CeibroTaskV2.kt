@@ -113,7 +113,7 @@ data class AssignedToState(
     @SerializedName("phoneNumber")
     val phoneNumber: String,
     @SerializedName("profilePic")
-    val profilePic: String,
+    val profilePic: String?,
     @SerializedName("state")
     var state: String,
     @SerializedName("surName")
