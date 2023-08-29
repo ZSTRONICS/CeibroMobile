@@ -90,6 +90,9 @@ class DashboardVM @Inject constructor(
                 SocketHandler.sendEventAck(socketData.uuid)
                 if (socketData.module == "task") {
                     when (socketData.eventType) {
+                        SocketHandler.TaskEvent.JOINED_TASK.name -> {
+                            /// {"module":"task","eventType":"JOINED_TASK","uuid":"80084b7a-7e2e-4c7c-9fe5-347c8db36953","data":{"_id":"64ee0b0ac26c3e737a47be8b","taskId":"64ee0a6dc26c3e737a47b9af","taskData":{"creator":"64ec814e6cdad89cecedd514","seenBy":[],"hiddenBy":[],"creatorState":"ongoing"},"eventType":"joinedTask","initiator":{"_id":"64ee0aa9c26c3e737a47be4d","firstName":"Kaif","surName":"Baqar","profilePic":""},"invitedMembers":[],"eventData":[],"commentData":null,"eventSeenBy":[],"createdAt":"2023-08-29T15:13:14.402Z","updatedAt":"2023-08-29T15:13:14.402Z","newTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":false,"creatorState":"ongoing"},"oldTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":true,"creatorState":"ongoing"}}}
+                        }
                         SocketHandler.TaskEvent.TASK_CREATED.name -> {
                             val taskCreatedData = gson.fromJson<SocketTaskV2CreatedResponse>(
                                 arguments,

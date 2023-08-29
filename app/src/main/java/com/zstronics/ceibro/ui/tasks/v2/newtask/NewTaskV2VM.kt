@@ -6,6 +6,7 @@ import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
@@ -18,6 +19,7 @@ import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
+import okhttp3.internal.filterList
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -26,7 +28,8 @@ class NewTaskV2VM @Inject constructor(
     override val viewState: NewTaskV2State,
     private val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
-    private val taskDao: TaskV2Dao
+    private val taskDao: TaskV2Dao,
+    private val connectionsV2Dao: ConnectionsV2Dao
 ) : HiltBaseViewModel<INewTaskV2.State>(), INewTaskV2.ViewModel {
     val user = sessionManager.getUser().value
     val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
@@ -97,51 +100,54 @@ class NewTaskV2VM @Inject constructor(
         } else if (viewState.assignToText.value.toString() == "") {
             alert("Assignee is required")
         } else {
-            val assignedToCeibroUsers =
-                (viewState.selectedContacts.value?.filter { it.isCeiborUser }
-                    ?.map {
-                        NewTaskV2Request.AssignedToStateNewRequest(
-                            it.phoneNumber, it.userCeibroData?.id.toString()
-                        )
-                    } ?: listOf()) as ArrayList<NewTaskV2Request.AssignedToStateNewRequest>
-            if (viewState.selfAssigned.value == true) {
-                if (user != null) {
-                    assignedToCeibroUsers.add(
-                        NewTaskV2Request.AssignedToStateNewRequest(
-                            user.phoneNumber, user.id
-                        )
-                    )
-                }
-            }
-
-            val invitedNumbers = viewState.selectedContacts.value?.filter { !it.isCeiborUser }
-                ?.map { it.phoneNumber } ?: listOf()
-            val projectId = viewState.selectedProject.value?.id ?: ""
-            val list = getCombinedList()
-
-            val newTaskRequest = NewTaskV2Request(
-                topic = viewState.selectedTopic.value?.id.toString(),
-                project = projectId,
-                assignedToState = assignedToCeibroUsers,
-                dueDate = viewState.dueDate.value.toString(),
-                creator = user?.id.toString(),
-                description = viewState.description.value.toString(),
-                doneImageRequired = doneImageRequired,
-                doneCommentsRequired = doneCommentsRequired,
-                invitedNumbers = invitedNumbers,
-                hasPendingFilesToUpload = list.isNotEmpty()
-            )
-
-            val newTaskToSave = NewTaskToSave(
-                topic = viewState.selectedTopic.value,
-                project = viewState.selectedProject.value,
-                selectedContacts = viewState.selectedContacts.value?.toList(),
-                dueDate = viewState.dueDate.value,
-                selfAssigned = viewState.selfAssigned.value
-            )
-            sessionManager.saveNewTaskData(newTaskToSave)
-
             launch {
+                val selectedIds= viewState.selectedContacts.value?.map { it.id }
+                val selectedContacts = connectionsV2Dao.getByIds(selectedIds)
+
+                val assignedToCeibroUsers =
+                    (selectedContacts.filter { it.isCeiborUser }
+                        .map {
+                            NewTaskV2Request.AssignedToStateNewRequest(
+                                it.phoneNumber, it.userCeibroData?.id.toString()
+                            )
+                        } ?: listOf()) as ArrayList<NewTaskV2Request.AssignedToStateNewRequest>
+                if (viewState.selfAssigned.value == true) {
+                    if (user != null) {
+                        assignedToCeibroUsers.add(
+                            NewTaskV2Request.AssignedToStateNewRequest(
+                                user.phoneNumber, user.id
+                            )
+                        )
+                    }
+                }
+
+                val invitedNumbers = selectedContacts.filter { !it.isCeiborUser }
+                    .map { it.phoneNumber } ?: listOf()
+                val projectId = viewState.selectedProject.value?.id ?: ""
+                val list = getCombinedList()
+
+                val newTaskRequest = NewTaskV2Request(
+                    topic = viewState.selectedTopic.value?.id.toString(),
+                    project = projectId,
+                    assignedToState = assignedToCeibroUsers,
+                    dueDate = viewState.dueDate.value.toString(),
+                    creator = user?.id.toString(),
+                    description = viewState.description.value.toString(),
+                    doneImageRequired = doneImageRequired,
+                    doneCommentsRequired = doneCommentsRequired,
+                    invitedNumbers = invitedNumbers,
+                    hasPendingFilesToUpload = list.isNotEmpty()
+                )
+
+                val newTaskToSave = NewTaskToSave(
+                    topic = viewState.selectedTopic.value,
+                    project = viewState.selectedProject.value,
+                    selectedContacts = selectedContacts,
+                    dueDate = viewState.dueDate.value,
+                    selfAssigned = viewState.selfAssigned.value
+                )
+                sessionManager.saveNewTaskData(newTaskToSave)
+
                 loading(true)
                 taskRepository.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
                     if (isSuccess) {

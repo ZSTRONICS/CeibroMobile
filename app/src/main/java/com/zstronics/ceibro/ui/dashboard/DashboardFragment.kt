@@ -141,19 +141,13 @@ class DashboardFragment :
             }
         }
     }
-
+    private var socketEventsInitiated = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.updateRootUnread(requireActivity())
-
-        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
-            println("Heartbeat, Dashboard")
-            SocketHandler.setSocket()
-            SocketHandler.establishConnection()
+        if (!socketEventsInitiated) {
+            socketEventsInitiating()
         }
-
-        viewModel.handleSocketEvents()
-        handleFileUploaderSocketEvents()
         SearchDataSingleton.searchString = MutableLiveData("")
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.observe(viewLifecycleOwner) { isUnread ->
@@ -204,6 +198,17 @@ class DashboardFragment :
         handler.postDelayed({
             changeSelectedTab(R.id.toMeBtn, false)
         }, 100)
+    }
+    private fun socketEventsInitiating(){
+        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+            println("Heartbeat, Dashboard")
+            SocketHandler.setSocket()
+            SocketHandler.establishConnection()
+        }
+
+        viewModel.handleSocketEvents()
+        handleFileUploaderSocketEvents()
+        socketEventsInitiated = true
     }
 
     private fun handleFileUploaderSocketEvents() {

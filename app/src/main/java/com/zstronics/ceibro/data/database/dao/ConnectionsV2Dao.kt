@@ -18,6 +18,8 @@ interface ConnectionsV2Dao {
 
     @Query("SELECT * FROM connections_v2")
     suspend fun getAll(): List<AllCeibroConnections.CeibroConnection>
+    @Query("SELECT * FROM connections_v2 WHERE id IN (:ids)")
+    suspend fun getByIds(ids: List<String>?): List<AllCeibroConnections.CeibroConnection>
 
 //    @Query("SELECT * FROM connections_v2")
 //    fun getPagedConnections(): PagingSource<Int, AllCeibroConnections.CeibroConnection>
