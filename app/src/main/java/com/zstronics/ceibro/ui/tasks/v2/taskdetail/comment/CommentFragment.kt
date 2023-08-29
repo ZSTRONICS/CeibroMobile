@@ -125,12 +125,16 @@ class CommentFragment :
             }
 
             R.id.nextBtn -> {
-                if (viewModel.actionToPerform.value.equals(TaskDetailEvents.Comment.eventValue, true)) {
+                if (viewModel.actionToPerform.value.equals(
+                        TaskDetailEvents.Comment.eventValue,
+                        true
+                    )
+                ) {
                     viewModel.uploadComment(
                         requireContext()
-                    ) {
+                    ) { eventData ->
                         val bundle = Bundle()
-                        bundle.putParcelable("taskData", viewModel.taskData)
+                        bundle.putParcelable("eventData", eventData)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
                 } else if (viewModel.actionToPerform.value.equals(
@@ -192,14 +196,16 @@ class CommentFragment :
         viewModel.actionToPerform.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 if (it.equals(TaskDetailEvents.Comment.eventValue, true)) {
-                    mViewDataBinding.commentHeading.text = resources.getString(R.string.reply_heading)
+                    mViewDataBinding.commentHeading.text =
+                        resources.getString(R.string.reply_heading)
                     mViewDataBinding.commentRequiredHeading.visibility = View.GONE
                     mViewDataBinding.imageRequiredHeading.visibility = View.GONE
                     mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
 
                 } else if (it.equals(TaskDetailEvents.DoneTask.eventValue, true)
                 ) {
-                    mViewDataBinding.commentHeading.text = resources.getString(R.string.done_requirements_heading)
+                    mViewDataBinding.commentHeading.text =
+                        resources.getString(R.string.done_requirements_heading)
                     if (viewModel.taskData != null) {
                         if (viewModel.taskData?.doneCommentsRequired == true) {
                             mViewDataBinding.commentRequiredHeading.visibility = View.VISIBLE
@@ -214,7 +220,11 @@ class CommentFragment :
         }
 
         viewState.comment.observe(viewLifecycleOwner) {
-            if (viewModel.actionToPerform.value.equals(TaskDetailEvents.DoneTask.eventValue, true)) {
+            if (viewModel.actionToPerform.value.equals(
+                    TaskDetailEvents.DoneTask.eventValue,
+                    true
+                )
+            ) {
                 if (!it.isNullOrEmpty()) {
                     mViewDataBinding.commentRequiredHeading.visibility = View.GONE
                 } else {
@@ -228,7 +238,11 @@ class CommentFragment :
         }
 
         viewModel.listOfImages.observe(viewLifecycleOwner) {
-            if (viewModel.actionToPerform.value.equals(TaskDetailEvents.DoneTask.eventValue, true)) {
+            if (viewModel.actionToPerform.value.equals(
+                    TaskDetailEvents.DoneTask.eventValue,
+                    true
+                )
+            ) {
                 if (!it.isNullOrEmpty()) {
                     mViewDataBinding.imageRequiredHeading.visibility = View.GONE
                     mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
@@ -312,8 +326,6 @@ class CommentFragment :
         }, 300)
 
     }
-
-
 
 
     private val ceibroImagesPickerLauncher =
