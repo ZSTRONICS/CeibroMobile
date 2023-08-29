@@ -90,14 +90,21 @@ object DateUtils {
         val utcDate: Date = inputFormat.parse(utcTime) ?: return ""
 
         val calendarNow = Calendar.getInstance()
-        val calendarOfUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        calendarOfUTC.time = utcDate
+//        val calendarOfUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+//        calendarOfUTC.time = utcDate
 
         val timeFormatted = outputFormat.format(utcDate)
 
-        if (isSameDay(calendarNow, calendarOfUTC)) {
+        val utcDateFormatted = SimpleDateFormat(SERVER_DATE_FULL_FORMAT, Locale.getDefault())
+        utcDateFormatted.timeZone = TimeZone.getDefault()
+
+        val utcDateFormattedToDeviceDateTime = utcDateFormatted.format(utcDate)
+        val calendarFromFormattedTime = Calendar.getInstance()
+        calendarFromFormattedTime.time = utcDateFormatted.parse(utcDateFormattedToDeviceDateTime) ?: Date()
+
+        if (isSameDay(calendarNow, calendarFromFormattedTime)) {
             return "Today $timeFormatted"
-        } else if (isYesterday(calendarNow, calendarOfUTC)) {
+        } else if (isYesterday(calendarNow, calendarFromFormattedTime)) {
             return "Yesterday $timeFormatted"
         } else {
             val customFormat = SimpleDateFormat(SHORT_DATE_MON_YEAR_WITH_TIME, Locale.getDefault())
