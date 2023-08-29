@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.socket
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
@@ -13,7 +14,6 @@ import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 
 object LocalEvents {
-    class RefreshTasksEvent
     data class SubTaskCreatedEvent(val taskId: String)
     data class NewSubTaskComment(val newComment: SubTaskComments, val commentId: String)
     data class UploadFilesToServer(
@@ -106,7 +106,9 @@ object LocalEvents {
 
     class LogoutUserEvent
     object UpdateConnections
+    class RefreshTasksEvent
     data class TaskForwardEvent(val task: CeibroTaskV2?)
+    data class TaskEvent(val events: Events)
 
     class InitSocketEventCallBack
 

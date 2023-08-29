@@ -7,8 +7,6 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
-import com.google.gson.Gson
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
@@ -25,7 +23,6 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ee.zstronics.ceibro.camera.AttachmentTypes
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -34,10 +31,10 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskDetailV2VM @Inject constructor(
     override val viewState: TaskDetailV2State,
-    private val sessionManager: SessionManager,
+    val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
     val dashboardRepository: IDashboardRepository,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
     val user = sessionManager.getUser().value
 
@@ -117,7 +114,7 @@ class TaskDetailV2VM @Inject constructor(
     }
 
 
-    private fun taskSeen(
+    fun taskSeen(
         taskId: String,
         onBack: (taskSeenData: TaskSeenResponse.TaskSeen) -> Unit,
     ) {
@@ -162,6 +159,7 @@ class TaskDetailV2VM @Inject constructor(
                     taskData = updateTaskDoneInLocal(commentData, taskDao, user?.id, sessionManager)
                     isSuccess = true
                 }
+
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                 }
@@ -195,6 +193,8 @@ class TaskDetailV2VM @Inject constructor(
             }
         }
     }
+
+    fun isSameTask(newEvent: Events, taskId: String) = newEvent.taskId == taskId
 
     override fun onCleared() {
         super.onCleared()

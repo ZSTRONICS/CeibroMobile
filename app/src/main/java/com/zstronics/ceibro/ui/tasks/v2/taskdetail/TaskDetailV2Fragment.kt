@@ -1,8 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -13,10 +12,13 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
@@ -24,7 +26,9 @@ import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAda
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
-import ee.zstronics.ceibro.camera.PickedImages
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,6 +44,7 @@ class TaskDetailV2Fragment :
     val FORWARD_TASK_REQUEST_CODE = 104
     val COMMENT_REQUEST_CODE = 106
     val DONE_REQUEST_CODE = 107
+    val localAddedComment = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> navigateBack()
@@ -50,6 +55,7 @@ class TaskDetailV2Fragment :
                 bundle.putString("action", TaskDetailEvents.Comment.eventValue)
                 navigateForResult(R.id.commentFragment, COMMENT_REQUEST_CODE, bundle)
             }
+
             R.id.doneBtn -> {
                 if (viewModel.taskDetail.value?.doneCommentsRequired == true || viewModel.taskDetail.value?.doneImageRequired == true) {
                     val bundle = Bundle()
@@ -64,6 +70,7 @@ class TaskDetailV2Fragment :
                     }
                 }
             }
+
             R.id.taskForwardBtn -> {
                 val assignTo = viewModel.taskDetail.value?.assignedToState?.map { it.phoneNumber }
                 val invited = viewModel.taskDetail.value?.invitedNumbers?.map { it.phoneNumber }
@@ -83,6 +90,7 @@ class TaskDetailV2Fragment :
                 bundle.putParcelable("taskDetail", viewModel.taskDetail.value)
                 navigateForResult(R.id.forwardTaskFragment, FORWARD_TASK_REQUEST_CODE, bundle)
             }
+
             R.id.taskTitleBar -> {
                 if (mViewDataBinding.taskDescriptionImageLayout.visibility == View.VISIBLE) {
                     mViewDataBinding.taskDescriptionImageLayout.visibility = View.GONE
@@ -138,10 +146,16 @@ class TaskDetailV2Fragment :
         mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
         mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
-
+        mViewDataBinding.bodyScroll.isSmoothScrollingEnabled = true
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
-            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(TaskStatus.CANCELED.name, true) ||
-                (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(TaskStatus.NEW.name, true))
+            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(
+                    TaskStatus.CANCELED.name,
+                    true
+                ) ||
+                (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
+                    TaskStatus.NEW.name,
+                    true
+                ))
             ) {
                 mViewDataBinding.doneBtn.isEnabled = false
                 mViewDataBinding.doneBtn.isClickable = false
@@ -157,7 +171,11 @@ class TaskDetailV2Fragment :
                 mViewDataBinding.taskForwardBtn.isClickable = true
                 mViewDataBinding.taskForwardBtn.alpha = 1f
             }
-            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(
+                    TaskStatus.CANCELED.name,
+                    true
+                )
+            ) {
                 mViewDataBinding.doneRequirementBadge.visibility = View.GONE
             } else {
                 if (item.doneCommentsRequired || item.doneImageRequired) {
@@ -170,13 +188,18 @@ class TaskDetailV2Fragment :
             mViewDataBinding.detailViewHeading.text = item.taskUID
 
             var state = ""
-            state = if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
-                item.creatorState
-            } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
-                item.creatorState
-            } else {
-                item.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""
-            }
+            state =
+                if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
+                    item.creatorState
+                } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(
+                        TaskStatus.CANCELED.name,
+                        true
+                    )
+                ) {
+                    item.creatorState
+                } else {
+                    item.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""
+                }
             val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
                 TaskStatus.NEW.name -> Pair(
                     R.drawable.status_new_filled_more_corners,
@@ -302,7 +325,10 @@ class TaskDetailV2Fragment :
 //                val fileUrls: ArrayList<String> = viewModel.imagesWithComments.value?.map { it.fileUrl } as ArrayList<String>
 //                viewModel.openImageViewer(requireContext(), fileUrls, position)
                 val bundle = Bundle()
-                bundle.putParcelableArray("images", viewModel.imagesWithComments.value?.toTypedArray())
+                bundle.putParcelableArray(
+                    "images",
+                    viewModel.imagesWithComments.value?.toTypedArray()
+                )
                 bundle.putInt("position", position)
                 navigate(R.id.imageViewerFragment, bundle)
             }
@@ -359,7 +385,8 @@ class TaskDetailV2Fragment :
             _rootState = viewModel.rootState,
             _selectedState = viewModel.selectedState,
             _userId = viewModel.user?.id ?: "",
-            _taskDetail = viewModel.taskDetail.value)
+            _taskDetail = viewModel.taskDetail.value
+        )
 //        sheet.dialog?.window?.setSoftInputMode(
 //            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
 //                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
@@ -381,9 +408,22 @@ class TaskDetailV2Fragment :
                 }
 
                 COMMENT_REQUEST_CODE -> {
-                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
-                    if (updatedTask != null) {
-                        viewModel._taskDetail.postValue(updatedTask)
+                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
+                    if (eventData != null) {
+                        val taskEvent = Events(
+                            id = eventData.id,
+                            taskId = eventData.taskId,
+                            eventType = eventData.eventType,
+                            initiator = eventData.initiator,
+                            eventData = eventData.eventData,
+                            commentData = eventData.commentData,
+                            createdAt = eventData.createdAt,
+                            updatedAt = eventData.updatedAt,
+                            invitedMembers = eventData.invitedMembers,
+                            v = null
+                        )
+                        onTaskEvent(LocalEvents.TaskEvent(taskEvent))
+                        viewModel.updateTaskCommentInLocal(eventData, viewModel.taskDao, viewModel.user?.id, viewModel.sessionManager)
                     }
                 }
 
@@ -397,4 +437,44 @@ class TaskDetailV2Fragment :
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskEvent(
+        event: LocalEvents.TaskEvent?
+    ) {
+        val newEvent = event?.events
+        val taskDetail = viewModel.taskDetail.value
+        if (taskDetail != null && newEvent != null && viewModel.isSameTask(
+                newEvent,
+                taskDetail.id
+            )
+        ) {
+            val taskEvents = taskDetail.events.toMutableList()
+            val eventExist = taskEvents.find { newEvent.id == it.id }
+            if (eventExist == null) {  /// event not existed
+                taskEvents.add(newEvent)
+                taskDetail.seenBy = listOf()
+                taskDetail.events = taskEvents
+                viewModel._taskDetail.postValue(taskDetail)
+                viewModel.taskSeen(taskDetail.id) { }
+            }
+            scrollToBottom()
+        }
+    }
+
+
+    private fun scrollToBottom() {
+        mViewDataBinding.bodyScroll.postDelayed({
+            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
+        }, 250)
+    }
 }

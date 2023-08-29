@@ -51,7 +51,7 @@ class CommentVM @Inject constructor(
 
     fun uploadComment(
         context: Context,
-        onBack: () -> Unit
+        onBack: (eventData: EventV2Response.Data?) -> Unit
     ) {
         val list = getCombinedList()
         if (viewState.comment.value.toString() == "" && list.isEmpty()) {
@@ -136,15 +136,15 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
+//                taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
 
-                val handler = Handler()
-                handler.postDelayed(Runnable {
+//                val handler = Handler()
+//                handler.postDelayed(Runnable {
                     loading(false, "")
                     if (isSuccess) {
-                        onBack()
+                        onBack(eventData)
                     }
-                }, 50)
+//                }, 40)
 
             }
         }
@@ -267,6 +267,7 @@ class CommentVM @Inject constructor(
         }
         return combinedList
     }
+
     private fun getCombinedImagesList(): ArrayList<PickedImages> {
         val listOfImages = listOfImages.value
 //        val documents = documents.value

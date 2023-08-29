@@ -1164,7 +1164,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             )
                         }
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
 
@@ -1212,7 +1212,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             sharedViewModel?.isHiddenUnread?.value = true
                             sessionManager.saveHiddenUnread(true)
                             // send task data for ui update
-                            EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                            EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                             EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                         }
                     }
@@ -1322,7 +1322,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             taskToMeLocalData
                         )
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
@@ -1427,7 +1427,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             taskFromMeLocalData
                         )
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                        EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
