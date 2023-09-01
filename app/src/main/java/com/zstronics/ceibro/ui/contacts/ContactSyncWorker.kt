@@ -49,72 +49,88 @@ class ContactSyncWorker @AssistedInject constructor(
 
         println("PhoneNumber-SyncWorkerRunning")
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
-        val user = sessionManager.getUser().value
+        if (sessionManager.isUserLoggedIn()) {
 
-        val room = providesAppDatabase(context)
-        val roomContacts = room.getConnectionsV2Dao().getAll()
+            val user = sessionManager.getUser().value
 
-        val phoneContacts = getLocalContacts(context)
+            val room = providesAppDatabase(context)
+            val roomContacts = room.getConnectionsV2Dao().getAll()
 
-        val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
+            val phoneContacts = getLocalContacts(context)
 
-        val contacts = if (user?.autoContactSync == true) {
-            phoneContacts
-        } else {
-            manualContacts
-        }
+            val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
 
-        val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
+            val contacts = if (user?.autoContactSync == true) {
+                phoneContacts
+            } else {
+                manualContacts
+            }
 
-        val updatedContacts =
-            compareContactsAndUpdateList(roomContacts, contacts)
+            val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
 
-        val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
-        updatedAndNewContacts.addAll(updatedContacts)
+            val updatedContacts =
+                compareContactsAndUpdateList(roomContacts, contacts)
+
+            val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+            updatedAndNewContacts.addAll(updatedContacts)
 
 //        if (user?.autoContactSync == true) {
-        val newContacts = findNewContacts(roomContacts, contacts)
-        updatedAndNewContacts.addAll(newContacts)
+            val newContacts = findNewContacts(roomContacts, contacts)
+            updatedAndNewContacts.addAll(newContacts)
 //        }
 
-        // Delete contacts API call
-        if (deletedContacts.isNotEmpty()) {
+            // Delete contacts API call
+            if (deletedContacts.isNotEmpty()) {
 
-            val isDeleteAll = deletedContacts.size == roomContacts.size
+                val isDeleteAll = deletedContacts.size == roomContacts.size
 
-            val contactsToDelete: List<SyncContactsRequest.CeibroContactLight> =
-                if (isDeleteAll) emptyList()
-                else deletedContacts
+                val contactsToDelete: List<SyncContactsRequest.CeibroContactLight> =
+                    if (isDeleteAll) emptyList()
+                    else deletedContacts
 
-            val request = SyncContactsRequest(contacts = contactsToDelete)
-            when (val response = dashboardRepository.syncDeletedContacts(isDeleteAll, request)) {
-                is ApiResponse.Success -> {
-                    updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
-                    Result.success()
-                }
+                val request = SyncContactsRequest(contacts = contactsToDelete)
+                when (val response =
+                    dashboardRepository.syncDeletedContacts(isDeleteAll, request)) {
+                    is ApiResponse.Success -> {
+                        updateLocalContacts(
+                            dashboardRepository,
+                            room,
+                            user?.id ?: "",
+                            sessionManager
+                        )
+                        Result.success()
+                    }
 
-                is ApiResponse.Error -> {
-                    Result.failure()
+                    is ApiResponse.Error -> {
+                        Result.failure()
+                    }
                 }
             }
-        }
 
-        if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
-            val request = SyncContactsRequest(contacts = updatedAndNewContacts)
-            when (val response =
-                dashboardRepository.syncContacts( request)) {
-                is ApiResponse.Success -> {
+            if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
+                val request = SyncContactsRequest(contacts = updatedAndNewContacts)
+                when (val response =
+                    dashboardRepository.syncContacts(request)) {
+                    is ApiResponse.Success -> {
+                        updateLocalContacts(
+                            dashboardRepository,
+                            room,
+                            user?.id ?: "",
+                            sessionManager
+                        )
+                        Result.success()
+                    }
+
+                    is ApiResponse.Error -> {
+                        Result.failure()
+                    }
+                }
+            } else {
+                if (sessionManager.isLoggedIn())
                     updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
-                    Result.success()
-                }
-
-                is ApiResponse.Error -> {
-                    Result.failure()
-                }
+                Result.success()
             }
         } else {
-            if (sessionManager.isLoggedIn())
-                updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
             Result.success()
         }
     }
