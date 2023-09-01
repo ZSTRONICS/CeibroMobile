@@ -19,11 +19,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
-import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
-import com.zstronics.ceibro.ui.contacts.compareContactsAndUpdateList
-import com.zstronics.ceibro.ui.contacts.findDeletedContacts
-import com.zstronics.ceibro.ui.contacts.findNewContacts
-import com.zstronics.ceibro.ui.contacts.toLightContacts
+import com.zstronics.ceibro.ui.contacts.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -66,7 +62,8 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
-
+        }
+        launch {
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.FromMe.tagValue)) {
                 is ApiResponse.Success -> {
                     taskDao.insertTaskData(
@@ -84,7 +81,8 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
-
+        }
+        launch {
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
                 is ApiResponse.Success -> {
                     taskDao.insertTaskData(
@@ -102,6 +100,7 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
+        }
 
 //            when (val response = remoteTask.getAllTopics()) {
 //                is ApiResponse.Success -> {
@@ -115,7 +114,7 @@ class CeibroDataLoadingVM @Inject constructor(
 //                is ApiResponse.Error -> {
 //                }
 //            }
-
+        launch {
             when (val response = projectRepository.getProjectsV2()) {
                 is ApiResponse.Success -> {
                     val data = response.data.projects
@@ -130,6 +129,8 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
+        }
+        launch {
             when (val response = dashboardRepository.getAllConnectionsV2()) {
                 is ApiResponse.Success -> {
                     connectionsV2Dao.insertAll(response.data.contacts)
@@ -141,7 +142,8 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
-
+        }
+        launch {
             /*Contacts sync */
             val user = sessionManager.getUser().value
 
@@ -181,7 +183,7 @@ class CeibroDataLoadingVM @Inject constructor(
                 when (val response =
                     dashboardRepository.syncDeletedContacts(isDeleteAll, request)) {
                     is ApiResponse.Success -> {
-                        updateLocalContacts( callBack)
+                        updateLocalContacts(callBack)
                     }
 
                     is ApiResponse.Error -> {
@@ -189,7 +191,7 @@ class CeibroDataLoadingVM @Inject constructor(
                         callBack.invoke()
                     }
                 }
-            }else{
+            } else {
                 apiSucceedCount++
                 callBack.invoke()
             }
