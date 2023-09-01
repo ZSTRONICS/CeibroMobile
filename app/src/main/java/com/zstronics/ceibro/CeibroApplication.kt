@@ -3,12 +3,14 @@ package com.zstronics.ceibro
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.HiltAndroidApp
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -37,6 +39,17 @@ open class CeibroApplication : Application() {
         // OneSignal Initialization
         OneSignal.initWithContext(this)
         OneSignal.setAppId(BuildConfig.ONE_SIGNAL_ID)
+        val customExecutor = Executors.newSingleThreadExecutor { runnable ->
+            val thread = Thread(runnable)
+            thread.priority = android.os.Process.THREAD_PRIORITY_BACKGROUND
+            thread
+        }
+
+        val workManagerConfiguration = Configuration.Builder()
+            .setExecutor(customExecutor)
+            .build()
+
+        WorkManager.initialize(applicationContext, workManagerConfiguration)
     }
 
     companion object {
