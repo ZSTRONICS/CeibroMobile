@@ -89,7 +89,7 @@ object SocketHandler {
                 hbCounter = 0
                 handler.postDelayed(runnable, delayMillis)
                 println("Heartbeat, Socket on Connect")
-
+                EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
             }
 
             mSocket?.on(
