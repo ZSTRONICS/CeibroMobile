@@ -471,6 +471,53 @@ class TaskDetailV2Fragment :
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskForwardEvent(event: LocalEvents.TaskForwardEvent?) {
+        val task = event?.task
+        if (task != null) {
+            viewModel.taskDetail.value?.let { taskDetail ->
+                if (task.id == taskDetail.id) {
+                    task.let { it1 ->
+                        viewModel._taskDetail.postValue(it1)
+                        val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
+                        if (seenByMe == null) {
+                            println("TaskSeen-CalledOnTaskForwardReceived: ${it1.id}")
+                            viewModel.taskSeen(it1.id) { }
+                        }
+                    }
+                    scrollToBottom()
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskDoneEvent(event: LocalEvents.TaskDoneEvent?) {
+        val task = event?.task
+        val taskEvent = event?.taskEvent
+        if (task != null) {
+            viewModel.taskDetail.value?.let { taskDetail ->
+                if (task.id == taskDetail.id) {
+                    task.let { it1 ->
+                        val oldAllEvents = taskDetail.events
+                        /// check is event is already added in the list
+                        val foundEvent =
+                            oldAllEvents.find { it.id == taskEvent?.id }
+                        if (foundEvent == null) {
+                            viewModel._taskDetail.postValue(it1)
+                            val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
+                            if (seenByMe == null) {
+                                println("TaskSeen-CalledOnTaskDoneReceived: ${it1.id}")
+                                viewModel.taskSeen(it1.id) { }
+                            }
+                            scrollToBottom()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun scrollToBottom() {
         mViewDataBinding.bodyScroll.postDelayed({

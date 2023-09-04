@@ -48,6 +48,7 @@ class AssigneeFragment :
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
                 startActivity(intent)
             }
+
             R.id.doneBtn -> {
                 val selectedContactList = viewModel.selectedContacts.value
                 val selfAssigned = viewState.isSelfAssigned.value
@@ -80,6 +81,10 @@ class AssigneeFragment :
         mViewDataBinding.allContactsRV.layoutManager?.isItemPrefetchEnabled = true
         mViewDataBinding.allContactsRV.setRecycledViewPool(RecyclerView.RecycledViewPool())
         mViewDataBinding.recentConnectionsRV.adapter = recentAdapter
+
+        mViewDataBinding.allContactsRV.isNestedScrollingEnabled = false
+        mViewDataBinding.recentConnectionsRV.isNestedScrollingEnabled = false
+        mViewDataBinding.selectedContactsRV.isNestedScrollingEnabled = false
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -116,6 +121,7 @@ class AssigneeFragment :
         }
         viewModel.selectedContacts.observe(viewLifecycleOwner) {
             if (it != null) {
+
                 chipAdapter.setList(it)
             }
         }
@@ -125,7 +131,7 @@ class AssigneeFragment :
                 val recentContacts = viewModel.recentOriginalConnections.toMutableList()
                 val selectedOnes = viewModel.selectedContacts.value?.toMutableList()
                 data.isChecked = false
-
+                /// Update All Contacts List
                 if (allContacts.isNotEmpty()) {
                     val commonItem = allContacts.find { item1 ->
                         item1.id == data.id
@@ -139,12 +145,14 @@ class AssigneeFragment :
                     }
 
                     val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
-                    if (searchQuery.isNotEmpty()) {
-                        searchedContacts = true
+                    searchedContacts = searchQuery.isNotEmpty()
+                    viewModel.updateContacts(allContacts, searchedContacts)
+                    if (searchedContacts) {
+                        viewModel.filterContacts(searchQuery)
                     }
-                    viewModel.updateContacts(allContacts)
                 }
 
+                /// Update Recent Contacts List
                 if (recentContacts.isNotEmpty()) {
                     val commonItem = recentContacts.find { item1 ->
                         item1.id == data.id
@@ -154,14 +162,15 @@ class AssigneeFragment :
                         recentContacts.set(
                             index,
                             data
-                        )            //set is used for updating the specific item
+                        )//set is used for updating the specific item
                     }
 
                     val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
-                    if (searchQuery.isNotEmpty()) {
-                        searchedContacts = true
+                    searchedContacts = searchQuery.isNotEmpty()
+                    viewModel.updateRecentContacts(recentContacts, searchedContacts)
+                    if (searchedContacts) {
+                        viewModel.filterRecentContacts(searchQuery)
                     }
-                    viewModel.updateRecentContacts(recentContacts)
                 }
 
                 //selected contacts also updated so that exact list be sent back on done
@@ -217,7 +226,8 @@ class AssigneeFragment :
                         )
                     )
 
-                    val currentContactList: ArrayList<AllCeibroConnections.CeibroConnection> = arrayListOf()
+                    val currentContactList: ArrayList<AllCeibroConnections.CeibroConnection> =
+                        arrayListOf()
                     currentContactList.add(userContact)
                     val selectedContacts = viewModel.selectedContacts.value?.toMutableList()
                     if (selectedContacts.isNullOrEmpty()) {
@@ -285,17 +295,20 @@ class AssigneeFragment :
             if (!oldSelected.isNullOrEmpty()) {
                 val tappedItem = selectedContacts.find { it.id == contact.id }
                 if (tappedItem != null) {       //if not null then this contact has recently came and it means tapped item needs to be added
-                    selectedContacts.addAll(oldSelected)
+                    oldSelected.add(contact)
                 } else {
                     //if NULL then this contact has to be removed from selected contact list and then update list
                     oldSelected.removeIf { it.id == contact.id }
-                    selectedContacts.addAll(oldSelected)
                 }
-                val distinctList = selectedContacts.toList().distinct().toMutableList()
+                selectedContacts.clear()
+                selectedContacts.addAll(oldSelected)
+                val distinctList = selectedContacts.toMutableList()
                 viewModel.selectedContacts.postValue(distinctList)
             } else {
                 viewModel.selectedContacts.postValue(selectedContacts.toList().toMutableList())
             }
+            val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+            searchedContacts = searchQuery.isNotEmpty()
 
             val recentAllConnections = viewModel.recentAllConnections.value
             val existedInRecent = recentAllConnections?.find { it.id == contact.id }
@@ -303,21 +316,25 @@ class AssigneeFragment :
                 existedInRecent.isChecked = contact.isChecked
                 val index = recentAllConnections.indexOf(existedInRecent)
                 recentAllConnections[index] = existedInRecent
-                viewModel.updateRecentContacts(recentAllConnections)
+                viewModel.updateRecentContacts(
+                    recentAllConnections.distinct().toMutableList(),
+                    searchedContacts
+                )
+                if (searchedContacts) {
+                    viewModel.filterRecentContacts(searchQuery)
+                }
             }
 
             val allContacts = viewModel.originalConnections.toMutableList()
             if (allContacts.isNotEmpty() && selectedContacts.isNotEmpty()) {
-                for (selectedItem in selectedContacts) {
-                    val index = allContacts.indexOfFirst { it.id == selectedItem.id }
-                    if (index != -1) {
-                        allContacts[index] = selectedItem
-                    }
+                val index = allContacts.indexOfFirst { it.id == contact.id }
+                if (index != -1) {
+                    allContacts[index] = contact
                 }
-
-                val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
-                searchedContacts = searchQuery.isNotEmpty()
-                viewModel.updateContacts(allContacts)
+                viewModel.updateContacts(allContacts.distinct().toMutableList(), searchedContacts)
+                if (searchedContacts) {
+                    viewModel.filterContacts(searchQuery)
+                }
             }
         }
 
@@ -333,41 +350,51 @@ class AssigneeFragment :
             if (!oldSelected.isNullOrEmpty()) {
                 val tappedItem = selectedContacts.find { it.id == contact.id }
                 if (tappedItem != null) {       //if not null then this contact has recently came and it means tapped item needs to be added
-                    selectedContacts.addAll(oldSelected)
+                    oldSelected.add(contact)
                 } else {
                     //if NULL then this contact has to be removed from selected contact list and then update list
                     oldSelected.removeIf { it.id == contact.id }
-                    selectedContacts.addAll(oldSelected)
                 }
-                val distinctList = selectedContacts.toList().distinct().toMutableList()
+                selectedContacts.clear()
+                selectedContacts.addAll(oldSelected)
+                val distinctList = selectedContacts.toMutableList()
                 viewModel.selectedContacts.postValue(distinctList)
             } else {
                 viewModel.selectedContacts.postValue(selectedContacts.toList().toMutableList())
             }
 
-            val recentAllConnections = viewModel.originalConnections.toMutableList()
-            val existedInRecent = recentAllConnections.find { it.id == contact.id }
+            val originalConnections = viewModel.originalConnections.toMutableList()
+            val existedInRecent = originalConnections.find { it.id == contact.id }
             if (existedInRecent != null) {
                 existedInRecent.isChecked = contact.isChecked
-                val index = recentAllConnections.indexOf(existedInRecent)
-                recentAllConnections[index] = existedInRecent
-                viewModel.updateContacts(recentAllConnections)
+                val index = originalConnections.indexOf(existedInRecent)
+                originalConnections[index] = existedInRecent
+                val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
+                searchedContacts = searchQuery.isNotEmpty()
+                viewModel.updateContacts(originalConnections, searchedContacts)
+                if (searchedContacts) {
+                    viewModel.filterContacts(searchQuery)
+                }
             }
 
             val allContacts = viewModel.recentOriginalConnections.toMutableList()
             if (allContacts.isNotEmpty() && selectedContacts.isNotEmpty()) {
-                for (selectedItem in selectedContacts) {
-                    val index = allContacts.indexOfFirst { it.id == selectedItem.id }
-                    if (index != -1) {
-                        allContacts[index] = selectedItem
-                    }
+                val index = allContacts.indexOfFirst { it.id == contact.id }
+                if (index != -1) {
+                    allContacts[index] = contact
                 }
-
                 val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
                 searchedContacts = searchQuery.isNotEmpty()
-                viewModel.updateRecentContacts(allContacts)
+                viewModel.updateRecentContacts(
+                    allContacts.distinct().toMutableList(),
+                    searchedContacts
+                )
+                if (searchedContacts) {
+                    viewModel.filterRecentContacts(searchQuery)
+                }
             }
         }
+
     override fun onResume() {
         super.onResume()
         val handler = Handler()

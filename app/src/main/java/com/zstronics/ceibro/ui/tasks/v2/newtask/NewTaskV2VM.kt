@@ -72,9 +72,8 @@ class NewTaskV2VM @Inject constructor(
                     index++
                 }
                 viewState.selectedContacts.value = selectedContactList.toMutableList()
-
-                viewState.assignToText.value = assigneeMembers
             }
+            viewState.assignToText.value = assigneeMembers
 
             if (oldCreatedTask.project != null) {
                 viewState.selectedProject.value = oldCreatedTask.project
@@ -101,8 +100,8 @@ class NewTaskV2VM @Inject constructor(
             alert("Assignee is required")
         } else {
             launch {
-                val selectedIds= viewState.selectedContacts.value?.map { it.id }
-                val selectedContacts = connectionsV2Dao.getByIds(selectedIds)
+                val selectedIds = viewState.selectedContacts.value?.map { it.id }
+                val selectedContacts = selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
 
                 val assignedToCeibroUsers =
                     (selectedContacts.filter { it.isCeiborUser }

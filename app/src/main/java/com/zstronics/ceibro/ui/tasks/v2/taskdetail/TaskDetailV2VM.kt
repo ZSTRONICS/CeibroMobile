@@ -21,11 +21,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,9 +54,9 @@ class TaskDetailV2VM @Inject constructor(
     var rootState = ""
     var selectedState = ""
 
-    init {
-        EventBus.getDefault().register(this)
-    }
+//    init {
+//        EventBus.getDefault().register(this)
+//    }
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -175,31 +172,16 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTaskForwardEvent(event: LocalEvents.TaskForwardEvent?) {
-        val task = event?.task
-        if (task != null) {
-            taskDetail.value?.let { taskDetail ->
-                if (task.id == taskDetail.id) {
-                    task.let { it1 ->
-                        _taskDetail.postValue(it1)
-                        val seenByMe = it1.seenBy.find { it == user?.id }
-                        if (seenByMe == null) {
-                            println("TaskSeen-CalledOnTaskForwardReceived: ${it1.id}")
-                            taskSeen(it1.id) { }
-                        }
-                    }
-                }
-            }
-        }
-    }
+
+
+
 
     fun isSameTask(newEvent: Events, taskId: String) = newEvent.taskId == taskId
 
-    override fun onCleared() {
-        super.onCleared()
-        EventBus.getDefault().unregister(this)
-    }
+//    override fun onCleared() {
+//        super.onCleared()
+//        EventBus.getDefault().unregister(this)
+//    }
 
 
     fun openImageViewer(context: Context, fileUrl: ArrayList<String>?, position: Int) {

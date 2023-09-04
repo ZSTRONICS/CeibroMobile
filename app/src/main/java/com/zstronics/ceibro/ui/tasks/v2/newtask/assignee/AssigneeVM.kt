@@ -122,14 +122,22 @@ class AssigneeVM @Inject constructor(
         }
     }
 
-    fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+    fun updateContacts(
+        allContacts: MutableList<AllCeibroConnections.CeibroConnection>,
+        searchedContacts: Boolean
+    ) {
         originalConnections = allContacts
-        _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+        if (!searchedContacts)
+            _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
     }
 
-    fun updateRecentContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+    fun updateRecentContacts(
+        allContacts: MutableList<AllCeibroConnections.CeibroConnection>,
+        searchedContacts: Boolean
+    ) {
         recentOriginalConnections = allContacts
-        _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+        if (!searchedContacts)
+            _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
     }
 
     fun filterContacts(search: String) {

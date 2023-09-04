@@ -206,7 +206,7 @@ class DashboardFragment :
             SocketHandler.establishConnection()
         }
 
-        viewModel.handleSocketEvents()
+//        viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
         socketEventsInitiated = true
     }
