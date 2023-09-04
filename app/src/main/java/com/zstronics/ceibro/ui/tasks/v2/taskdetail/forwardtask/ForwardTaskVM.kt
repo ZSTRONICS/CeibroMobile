@@ -108,7 +108,9 @@ class ForwardTaskVM @Inject constructor(
                             onBack(task)
                         }
                         loading(false, "")
-                        updateForwardTaskInLocal(task, taskDao, user?.id, sessionManager)
+                        launch {
+                            updateForwardTaskInLocal(task, taskDao, user?.id, sessionManager)
+                        }
                     } else {
                         loading(false, errorMsg)
                     }

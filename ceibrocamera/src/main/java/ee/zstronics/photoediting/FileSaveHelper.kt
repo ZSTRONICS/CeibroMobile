@@ -49,7 +49,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
         lifecycleOwner.lifecycle.addObserver(this)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+//    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun release() {
         executor?.shutdownNow()
     }
@@ -127,11 +127,11 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
     @SuppressLint("InlinedApi")
     fun notifyThatFileIsNowPubliclyAvailable(contentResolver: ContentResolver) {
         if (isSdkHigherThan28()) {
-            executor!!.submit {
+            executor?.submit {
                 val value = fileCreatedResult.value
                 if (value != null) {
-                    value.imageDetails!!.clear()
-                    value.imageDetails!!.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    value.imageDetails?.clear()
+                    value.imageDetails?.put(MediaStore.Images.Media.IS_PENDING, 0)
                     contentResolver.update(value.uri!!, value.imageDetails, null, null)
                 }
             }

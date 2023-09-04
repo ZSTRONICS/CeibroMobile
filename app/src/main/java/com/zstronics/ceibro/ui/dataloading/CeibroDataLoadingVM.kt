@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.dataloading
 
 import android.content.Context
+import android.util.Log
 import androidx.work.WorkManager
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -20,6 +21,7 @@ import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.contacts.*
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -44,6 +46,7 @@ class CeibroDataLoadingVM @Inject constructor(
 
     var apiSucceedCount = 0f
     fun loadAppData(context: Context, callBack: () -> Unit) {
+        Log.d("Data loading stared at ", DateUtils.getCurrentTimeStamp())
         launch {
             when (val response = remoteTask.getAllTasks(TaskRootStateTags.ToMe.tagValue)) {
                 is ApiResponse.Success -> {

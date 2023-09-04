@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
+import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
@@ -86,448 +87,451 @@ class DashboardVM @Inject constructor(
                 arguments,
                 object : TypeToken<SocketEventTypeResponse>() {}.type
             )
-            launch {
-                SocketHandler.sendEventAck(socketData.uuid)
-                if (socketData.module == "task") {
-                    when (socketData.eventType) {
-                        SocketHandler.TaskEvent.JOINED_TASK.name -> {
-                            /// {"module":"task","eventType":"JOINED_TASK","uuid":"80084b7a-7e2e-4c7c-9fe5-347c8db36953","data":{"_id":"64ee0b0ac26c3e737a47be8b","taskId":"64ee0a6dc26c3e737a47b9af","taskData":{"creator":"64ec814e6cdad89cecedd514","seenBy":[],"hiddenBy":[],"creatorState":"ongoing"},"eventType":"joinedTask","initiator":{"_id":"64ee0aa9c26c3e737a47be4d","firstName":"Kaif","surName":"Baqar","profilePic":""},"invitedMembers":[],"eventData":[],"commentData":null,"eventSeenBy":[],"createdAt":"2023-08-29T15:13:14.402Z","updatedAt":"2023-08-29T15:13:14.402Z","newTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":false,"creatorState":"ongoing"},"oldTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":true,"creatorState":"ongoing"}}}
-                        }
-                        SocketHandler.TaskEvent.TASK_CREATED.name -> {
-                            val taskCreatedData = gson.fromJson<SocketTaskV2CreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
+            SocketHandler.sendEventAck(socketData.uuid)
+            if (socketData.module == "task") {
+                when (socketData.eventType) {
+                    SocketHandler.TaskEvent.JOINED_TASK.name -> {
+                        /// {"module":"task","eventType":"JOINED_TASK","uuid":"80084b7a-7e2e-4c7c-9fe5-347c8db36953","data":{"_id":"64ee0b0ac26c3e737a47be8b","taskId":"64ee0a6dc26c3e737a47b9af","taskData":{"creator":"64ec814e6cdad89cecedd514","seenBy":[],"hiddenBy":[],"creatorState":"ongoing"},"eventType":"joinedTask","initiator":{"_id":"64ee0aa9c26c3e737a47be4d","firstName":"Kaif","surName":"Baqar","profilePic":""},"invitedMembers":[],"eventData":[],"commentData":null,"eventSeenBy":[],"createdAt":"2023-08-29T15:13:14.402Z","updatedAt":"2023-08-29T15:13:14.402Z","newTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":false,"creatorState":"ongoing"},"oldTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":true,"creatorState":"ongoing"}}}
+                    }
+
+                    SocketHandler.TaskEvent.TASK_CREATED.name -> {
+                        val taskCreatedData = gson.fromJson<SocketTaskV2CreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
+                        )
+                        Log.d("TASK_CREATED", taskCreatedData.data?.taskUID.toString())
+                        updateCreatedTaskInLocal(
+                            taskCreatedData.data,
+                            taskDao,
+                            userId,
+                            sessionManager
+                        )
+
+                        val notificationTitle: String =
+                            if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
+                                "" else taskCreatedData.data?.topic?.topic.toString()
+
+                        EventBus.getDefault().post(
+                            LocalEvents.CreateSimpleNotification(
+                                moduleId = taskCreatedData.data?.id ?: "",
+                                moduleName = socketData.module,
+                                notificationTitle =
+                                if (notificationTitle.isNotEmpty()) {
+                                    "New task created as \"$notificationTitle\""
+                                } else {
+                                    "New task created"
+                                },
+                                isOngoing = false,
+                                indeterminate = false,
+                                notificationIcon = R.drawable.app_logo
                             )
-                            updateCreatedTaskInLocal(
-                                taskCreatedData.data,
+                        )
+                    }
+
+                    SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
+                        val task = gson.fromJson<SocketTaskV2CreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
+                        ).data
+                        launch {
+                            updateForwardTaskInLocal(task, taskDao, userId, sessionManager)
+                        }
+                    }
+
+                    SocketHandler.TaskEvent.TASK_SEEN.name -> {
+                        val taskSeen = gson.fromJson<SocketTaskSeenV2Response>(
+                            arguments,
+                            object : TypeToken<SocketTaskSeenV2Response>() {}.type
+                        ).data
+                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
+                    }
+
+                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
+                        val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
+                            arguments,
+                            object : TypeToken<SocketNewTaskEventV2Response>() {}.type
+                        ).data
+                        Log.d("TASK_EVENT", commentData?.taskId.toString())
+
+                        if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
+                            updateTaskCommentInLocal(
+                                commentData,
                                 taskDao,
                                 userId,
                                 sessionManager
                             )
-
-                            val notificationTitle: String =
-                                if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
-                                    "" else taskCreatedData.data?.topic?.topic.toString()
-
-                            EventBus.getDefault().post(
-                                LocalEvents.CreateSimpleNotification(
-                                    moduleId = taskCreatedData.data?.id ?: "",
-                                    moduleName = socketData.module,
-                                    notificationTitle =
-                                    if (notificationTitle.isNotEmpty()) {
-                                        "New task created as \"$notificationTitle\""
-                                    } else {
-                                        "New task created"
-                                    },
-                                    isOngoing = false,
-                                    indeterminate = false,
-                                    notificationIcon = R.drawable.app_logo
-                                )
+                        }
+                        if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
+                            updateTaskCanceledInLocal(
+                                commentData,
+                                taskDao,
+                                userId,
+                                sessionManager
                             )
                         }
-
-                        SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
-                            val task = gson.fromJson<SocketTaskV2CreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
-                            ).data
-                            updateForwardTaskInLocal(task, taskDao, userId, sessionManager)
-                        }
-
-                        SocketHandler.TaskEvent.TASK_SEEN.name -> {
-                            val taskSeen = gson.fromJson<SocketTaskSeenV2Response>(
-                                arguments,
-                                object : TypeToken<SocketTaskSeenV2Response>() {}.type
-                            ).data
-                            updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
-                        }
-
-                        SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
-                            val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
-                                arguments,
-                                object : TypeToken<SocketNewTaskEventV2Response>() {}.type
-                            ).data
-                            if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
-                                updateTaskCommentInLocal(
-                                    commentData,
-                                    taskDao,
-                                    userId,
-                                    sessionManager
-                                )
-                            }
-                            if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
-                                updateTaskCanceledInLocal(
-                                    commentData,
-                                    taskDao,
-                                    userId,
-                                    sessionManager
-                                )
-                            }
-                            if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
-                                updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)
-                            }
-                        }
-
-                        SocketHandler.TaskEvent.TASK_HIDDEN.name, SocketHandler.TaskEvent.TASK_SHOWN.name -> {
-                            val hideData = gson.fromJson<SocketHideUnHideTaskResponse>(
-                                arguments,
-                                object : TypeToken<SocketHideUnHideTaskResponse>() {}.type
-                            ).data
-                            if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
-                                updateTaskHideInLocal(hideData, taskDao, userId)
-                            }
-                            if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
-                                updateTaskUnHideInLocal(hideData, taskDao, userId)
-                            }
-                        }
-
-                        SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
-                            val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketTaskCreatedResponse>() {}.type
-                            )
-                            // Need to check if task data object is null then don't do anything
-                            taskUpdatedData.data?._id?.let {
-                                //Following Code will run if the data object would not be null
-                                val taskCount =
-                                    localTask.getSingleTaskCount(taskUpdatedData.data._id)
-                                if (taskCount < 1) {
-                                    localTask.insertTask(taskUpdatedData.data)
-                                } else {
-                                    localTask.updateTask(taskUpdatedData.data)
-                                }
-                            }
-                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                        }
-
-                        SocketHandler.TaskEvent.SUB_TASK_CREATED.name -> {
-                            val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
-                            )
-                            subtask.data?.let { localSubTask.insertSubTask(it) }
-                            EventBus.getDefault()
-                                .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
-                        }
-
-                        SocketHandler.TaskEvent.SUB_TASK_UPDATE_PRIVATE.name -> {
-                            val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
-                            )
-                            // Need to check if subtask data object is null then don't do anything
-                            subtask.data?.id?.let {
-                                val subtaskCount =
-                                    localSubTask.getSingleSubTaskCount(subtask.data.id)
-                                if (subtaskCount < 1) {
-                                    localSubTask.insertSubTask(subtask.data)
-                                } else {
-                                    localSubTask.updateSubTask(subtask.data)
-                                }
-                            }
-                            EventBus.getDefault()
-                                .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
-                        }
-
-                        SocketHandler.TaskEvent.TASK_UPDATE_PUBLIC.name -> {
-                            val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketTaskCreatedResponse>() {}.type
-                            )
-                            // Need to check if task data object is null then don't do anything
-                            taskUpdatedData.data?._id?.let {
-                                //Following Code will run if the data object would not be null
-                                val taskCount =
-                                    localTask.getSingleTaskCount(taskUpdatedData.data._id)
-                                if (taskCount < 1) {
-                                    localTask.insertTask(taskUpdatedData.data)
-                                } else {
-                                    localTask.updateTask(taskUpdatedData.data)
-                                }
-                            }
-                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                        }
-
-                        SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
-                            val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
-                                arguments,
-                                object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
-                            )
-                            // Need to check if subtask data object is null then don't do anything
-                            subtask.data?.id?.let {
-                                val subtaskCount =
-                                    localSubTask.getSingleSubTaskCount(subtask.data.id)
-                                if (subtaskCount < 1) {
-                                    localSubTask.insertSubTask(subtask.data)
-                                } else {
-                                    localSubTask.updateSubTask(subtask.data)
-                                }
-                            }
-                            EventBus.getDefault()
-                                .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
-                        }
-
-                        SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {
-                            val taskSubtaskUpdateResponse =
-                                gson.fromJson<SocketTaskSubtaskUpdateResponse>(
-                                    arguments,
-                                    object : TypeToken<SocketTaskSubtaskUpdateResponse>() {}.type
-                                )
-                            val taskSubtaskUpdatedData = taskSubtaskUpdateResponse.data.results
-
-                            val subTasks = taskSubtaskUpdatedData.subtasks
-                            val task = taskSubtaskUpdatedData.task
-
-                            if (subTasks.isNotEmpty()) {
-                                val subTask = subTasks[0]
-                                localSubTask.updateSubTask(subTask)
-                                EventBus.getDefault()
-                                    .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
-                            }
-
-                            if (task != null) {
-                                localTask.updateTask(task)
-                                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                            }
+                        if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
+                            updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)
                         }
                     }
-                }
-                else if (socketData.module == "SubTaskComments") {
-                    if (socketData.eventType == SocketHandler.TaskEvent.SUBTASK_NEW_COMMENT.name) {
-                        val newComment =
-                            gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
+
+                    SocketHandler.TaskEvent.TASK_HIDDEN.name, SocketHandler.TaskEvent.TASK_SHOWN.name -> {
+                        val hideData = gson.fromJson<SocketHideUnHideTaskResponse>(
+                            arguments,
+                            object : TypeToken<SocketHideUnHideTaskResponse>() {}.type
+                        ).data
+                        if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
+                            updateTaskHideInLocal(hideData, taskDao, userId)
+                        }
+                        if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
+                            updateTaskUnHideInLocal(hideData, taskDao, userId)
+                        }
+                    }
+
+                    /*SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
+                        val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketTaskCreatedResponse>() {}.type
+                        )
+                        // Need to check if task data object is null then don't do anything
+                        taskUpdatedData.data?._id?.let {
+                            //Following Code will run if the data object would not be null
+                            val taskCount =
+                                localTask.getSingleTaskCount(taskUpdatedData.data._id)
+                            if (taskCount < 1) {
+                                localTask.insertTask(taskUpdatedData.data)
+                            } else {
+                                localTask.updateTask(taskUpdatedData.data)
+                            }
+                        }
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+
+                    SocketHandler.TaskEvent.SUB_TASK_CREATED.name -> {
+                        val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
+                        )
+                        subtask.data?.let { localSubTask.insertSubTask(it) }
+                        EventBus.getDefault()
+                            .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
+                    }
+
+                    SocketHandler.TaskEvent.SUB_TASK_UPDATE_PRIVATE.name -> {
+                        val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
+                        )
+                        // Need to check if subtask data object is null then don't do anything
+                        subtask.data?.id?.let {
+                            val subtaskCount =
+                                localSubTask.getSingleSubTaskCount(subtask.data.id)
+                            if (subtaskCount < 1) {
+                                localSubTask.insertSubTask(subtask.data)
+                            } else {
+                                localSubTask.updateSubTask(subtask.data)
+                            }
+                        }
+                        EventBus.getDefault()
+                            .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
+                    }
+
+                    SocketHandler.TaskEvent.TASK_UPDATE_PUBLIC.name -> {
+                        val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketTaskCreatedResponse>() {}.type
+                        )
+                        // Need to check if task data object is null then don't do anything
+                        taskUpdatedData.data?._id?.let {
+                            //Following Code will run if the data object would not be null
+                            val taskCount =
+                                localTask.getSingleTaskCount(taskUpdatedData.data._id)
+                            if (taskCount < 1) {
+                                localTask.insertTask(taskUpdatedData.data)
+                            } else {
+                                localTask.updateTask(taskUpdatedData.data)
+                            }
+                        }
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+
+                    SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
+                        val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
+                            arguments,
+                            object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
+                        )
+                        // Need to check if subtask data object is null then don't do anything
+                        subtask.data?.id?.let {
+                            val subtaskCount =
+                                localSubTask.getSingleSubTaskCount(subtask.data.id)
+                            if (subtaskCount < 1) {
+                                localSubTask.insertSubTask(subtask.data)
+                            } else {
+                                localSubTask.updateSubTask(subtask.data)
+                            }
+                        }
+                        EventBus.getDefault()
+                            .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
+                    }
+
+                    SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {
+                        val taskSubtaskUpdateResponse =
+                            gson.fromJson<SocketTaskSubtaskUpdateResponse>(
                                 arguments,
-                                object :
-                                    TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
-                            ).data
+                                object : TypeToken<SocketTaskSubtaskUpdateResponse>() {}.type
+                            )
+                        val taskSubtaskUpdatedData = taskSubtaskUpdateResponse.data.results
+
+                        val subTasks = taskSubtaskUpdatedData.subtasks
+                        val task = taskSubtaskUpdatedData.task
+
+                        if (subTasks.isNotEmpty()) {
+                            val subTask = subTasks[0]
+                            localSubTask.updateSubTask(subTask)
+                            EventBus.getDefault()
+                                .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
+                        }
+
+                        if (task != null) {
+                            localTask.updateTask(task)
+                            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                        }
+                    }*/
+                }
+            } else if (socketData.module == "SubTaskComments") {
+                if (socketData.eventType == SocketHandler.TaskEvent.SUBTASK_NEW_COMMENT.name) {
+                    val newComment =
+                        gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
+                            arguments,
+                            object :
+                                TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
+                        ).data
+                    launch {
                         localSubTask.addFilesUnderComment(
                             newComment.subTaskId,
                             newComment,
                             newComment.id
                         )
-                        EventBus.getDefault()
-                            .post(LocalEvents.NewSubTaskComment(newComment, newComment.id))
+                    }
+                    EventBus.getDefault()
+                        .post(LocalEvents.NewSubTaskComment(newComment, newComment.id))
+
+                    EventBus.getDefault().post(
+                        LocalEvents.CreateNotification(
+                            moduleName = socketData.module,
+                            moduleId = newComment.id,
+                            notificationTitle = "New Comment received",
+                            isOngoing = false,
+                            indeterminate = false,
+                            notificationIcon = R.drawable.icon_chat
+                        )
+                    )
+                }
+            } else if (socketData.module == "project") {
+                when (socketData.eventType) {
+                    SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
+                        val newProject =
+                            gson.fromJson<ProjectCreatedSocketResponse>(
+                                arguments,
+                                object : TypeToken<ProjectCreatedSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault().post(LocalEvents.ProjectCreatedEvent(newProject))
 
                         EventBus.getDefault().post(
                             LocalEvents.CreateNotification(
                                 moduleName = socketData.module,
-                                moduleId = newComment.id,
-                                notificationTitle = "New Comment received",
+                                moduleId = newProject.id,
+                                notificationTitle = "New Project Created as ${newProject.title}",
                                 isOngoing = false,
                                 indeterminate = false,
-                                notificationIcon = R.drawable.icon_chat
+                                notificationIcon = R.drawable.app_logo
                             )
                         )
                     }
-                }
-                else if (socketData.module == "project") {
-                    when (socketData.eventType) {
-                        SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
-                            val newProject =
-                                gson.fromJson<ProjectCreatedSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<ProjectCreatedSocketResponse>() {}.type
-                                ).data
 
-                            EventBus.getDefault().post(LocalEvents.ProjectCreatedEvent(newProject))
+                    SocketHandler.ProjectEvent.PROJECT_UPDATED.name -> {
+                        val updatedProject =
+                            gson.fromJson<ProjectCreatedSocketResponse>(
+                                arguments,
+                                object : TypeToken<ProjectCreatedSocketResponse>() {}.type
+                            ).data
 
-                            EventBus.getDefault().post(
-                                LocalEvents.CreateNotification(
-                                    moduleName = socketData.module,
-                                    moduleId = newProject.id,
-                                    notificationTitle = "New Project Created as ${newProject.title}",
-                                    isOngoing = false,
-                                    indeterminate = false,
-                                    notificationIcon = R.drawable.app_logo
-                                )
+                        EventBus.getDefault()
+                            .post(LocalEvents.ProjectCreatedEvent(updatedProject))
+
+                        EventBus.getDefault().post(
+                            LocalEvents.CreateNotification(
+                                moduleName = socketData.module,
+                                moduleId = updatedProject.id,
+                                notificationTitle = "${updatedProject.title} Updated",
+                                isOngoing = false,
+                                indeterminate = false,
+                                notificationIcon = R.drawable.app_logo
                             )
-                        }
+                        )
+                    }
 
-                        SocketHandler.ProjectEvent.PROJECT_UPDATED.name -> {
-                            val updatedProject =
-                                gson.fromJson<ProjectCreatedSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<ProjectCreatedSocketResponse>() {}.type
-                                ).data
+                    SocketHandler.ProjectEvent.REFRESH_PROJECTS.name -> {
 
-                            EventBus.getDefault()
-                                .post(LocalEvents.ProjectCreatedEvent(updatedProject))
+                        EventBus.getDefault().post(LocalEvents.ProjectRefreshEvent())
 
-                            EventBus.getDefault().post(
-                                LocalEvents.CreateNotification(
-                                    moduleName = socketData.module,
-                                    moduleId = updatedProject.id,
-                                    notificationTitle = "${updatedProject.title} Updated",
-                                    isOngoing = false,
-                                    indeterminate = false,
-                                    notificationIcon = R.drawable.app_logo
-                                )
-                            )
-                        }
+                    }
 
-                        SocketHandler.ProjectEvent.REFRESH_PROJECTS.name -> {
+                    SocketHandler.ProjectEvent.ROLE_CREATED.name -> {
+                        val newRole =
+                            gson.fromJson<RoleCreatedSocketResponse>(
+                                arguments,
+                                object : TypeToken<RoleCreatedSocketResponse>() {}.type
+                            ).data
 
-                            EventBus.getDefault().post(LocalEvents.ProjectRefreshEvent())
+                        EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(newRole))
+                    }
 
-                        }
-
-                        SocketHandler.ProjectEvent.ROLE_CREATED.name -> {
-                            val newRole =
+                    SocketHandler.ProjectEvent.ROLE_UPDATED.name -> {
+                        try {
+                            val updatedRole =
                                 gson.fromJson<RoleCreatedSocketResponse>(
                                     arguments,
                                     object : TypeToken<RoleCreatedSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(newRole))
-                        }
-
-                        SocketHandler.ProjectEvent.ROLE_UPDATED.name -> {
-                            try {
-                                val updatedRole =
-                                    gson.fromJson<RoleCreatedSocketResponse>(
-                                        arguments,
-                                        object : TypeToken<RoleCreatedSocketResponse>() {}.type
-                                    ).data
-
-                                EventBus.getDefault()
-                                    .post(LocalEvents.RoleCreatedEvent(updatedRole))
-                            } catch (e: Exception) {
-                                print("Some data error")
-                            }
-                        }
-
-                        SocketHandler.ProjectEvent.REFRESH_ROLES.name -> {
-                            val refreshRole =
-                                gson.fromJson<RoleRefreshSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<RoleRefreshSocketResponse>() {}.type
-                                ).data
-
                             EventBus.getDefault()
-                                .post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
+                                .post(LocalEvents.RoleCreatedEvent(updatedRole))
+                        } catch (e: Exception) {
+                            print("Some data error")
                         }
+                    }
 
-                        SocketHandler.ProjectEvent.PROJECT_GROUP_CREATED.name -> {
-                            val newGroup =
+                    SocketHandler.ProjectEvent.REFRESH_ROLES.name -> {
+                        val refreshRole =
+                            gson.fromJson<RoleRefreshSocketResponse>(
+                                arguments,
+                                object : TypeToken<RoleRefreshSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault()
+                            .post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
+                    }
+
+                    SocketHandler.ProjectEvent.PROJECT_GROUP_CREATED.name -> {
+                        val newGroup =
+                            gson.fromJson<GroupCreatedSocketResponse>(
+                                arguments,
+                                object : TypeToken<GroupCreatedSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
+                    }
+
+                    SocketHandler.ProjectEvent.PROJECT_GROUP_UPDATED.name -> {
+                        try {
+                            val updatedGroup =
                                 gson.fromJson<GroupCreatedSocketResponse>(
                                     arguments,
                                     object : TypeToken<GroupCreatedSocketResponse>() {}.type
                                 ).data
 
-                            EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
-                        }
-
-                        SocketHandler.ProjectEvent.PROJECT_GROUP_UPDATED.name -> {
-                            try {
-                                val updatedGroup =
-                                    gson.fromJson<GroupCreatedSocketResponse>(
-                                        arguments,
-                                        object : TypeToken<GroupCreatedSocketResponse>() {}.type
-                                    ).data
-
-                                EventBus.getDefault()
-                                    .post(LocalEvents.GroupCreatedEvent(updatedGroup))
-                            } catch (e: Exception) {
-                                print("Some data error")
-                            }
-                        }
-
-                        SocketHandler.ProjectEvent.REFRESH_PROJECT_GROUP.name -> {
-                            val refreshGroup =
-                                gson.fromJson<GroupRefreshSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<GroupRefreshSocketResponse>() {}.type
-                                ).data
-
                             EventBus.getDefault()
-                                .post(LocalEvents.GroupRefreshEvent(refreshGroup.projectId))
-                        }
-
-                        SocketHandler.ProjectEvent.PROJECT_MEMBERS_ADDED.name -> {
-                            val newMember =
-                                gson.fromJson<MemberAddedSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<MemberAddedSocketResponse>() {}.type
-                                ).data
-
-                            EventBus.getDefault()
-                                .post(LocalEvents.ProjectMemberAddedEvent(newMember))
-                        }
-
-                        SocketHandler.ProjectEvent.PROJECT_MEMBERS_UPDATED.name -> {
-                            val updatedMember =
-                                gson.fromJson<MemberUpdatedSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<MemberUpdatedSocketResponse>() {}.type
-                                ).data
-
-                            EventBus.getDefault()
-                                .post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
-                        }
-
-                        SocketHandler.ProjectEvent.REFRESH_PROJECT_MEMBERS.name -> {
-                            val refreshMember =
-                                gson.fromJson<MemberRefreshSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<MemberRefreshSocketResponse>() {}.type
-                                ).data
-
-                            EventBus.getDefault()
-                                .post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
-                        }
-
-                        SocketHandler.ProjectEvent.REFRESH_ROOT_DOCUMENTS.name -> {
-                            val refreshRootDoc =
-                                gson.fromJson<RefreshRootDocumentSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<RefreshRootDocumentSocketResponse>() {}.type
-                                ).data
-
-                            EventBus.getDefault()
-                                .post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
-                        }
-
-                        SocketHandler.ProjectEvent.REFRESH_FOLDER.name -> {
-                            val refreshFolder =
-                                gson.fromJson<RefreshFolderSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<RefreshFolderSocketResponse>() {}.type
-                                ).data
-
-                            EventBus.getDefault().post(
-                                LocalEvents.RefreshFolderEvent(
-                                    refreshFolder.projectId,
-                                    refreshFolder.folderId
-                                )
-                            )
+                                .post(LocalEvents.GroupCreatedEvent(updatedGroup))
+                        } catch (e: Exception) {
+                            print("Some data error")
                         }
                     }
+
+                    SocketHandler.ProjectEvent.REFRESH_PROJECT_GROUP.name -> {
+                        val refreshGroup =
+                            gson.fromJson<GroupRefreshSocketResponse>(
+                                arguments,
+                                object : TypeToken<GroupRefreshSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault()
+                            .post(LocalEvents.GroupRefreshEvent(refreshGroup.projectId))
+                    }
+
+                    SocketHandler.ProjectEvent.PROJECT_MEMBERS_ADDED.name -> {
+                        val newMember =
+                            gson.fromJson<MemberAddedSocketResponse>(
+                                arguments,
+                                object : TypeToken<MemberAddedSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault()
+                            .post(LocalEvents.ProjectMemberAddedEvent(newMember))
+                    }
+
+                    SocketHandler.ProjectEvent.PROJECT_MEMBERS_UPDATED.name -> {
+                        val updatedMember =
+                            gson.fromJson<MemberUpdatedSocketResponse>(
+                                arguments,
+                                object : TypeToken<MemberUpdatedSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault()
+                            .post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
+                    }
+
+                    SocketHandler.ProjectEvent.REFRESH_PROJECT_MEMBERS.name -> {
+                        val refreshMember =
+                            gson.fromJson<MemberRefreshSocketResponse>(
+                                arguments,
+                                object : TypeToken<MemberRefreshSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault()
+                            .post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
+                    }
+
+                    SocketHandler.ProjectEvent.REFRESH_ROOT_DOCUMENTS.name -> {
+                        val refreshRootDoc =
+                            gson.fromJson<RefreshRootDocumentSocketResponse>(
+                                arguments,
+                                object : TypeToken<RefreshRootDocumentSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault()
+                            .post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
+                    }
+
+                    SocketHandler.ProjectEvent.REFRESH_FOLDER.name -> {
+                        val refreshFolder =
+                            gson.fromJson<RefreshFolderSocketResponse>(
+                                arguments,
+                                object : TypeToken<RefreshFolderSocketResponse>() {}.type
+                            ).data
+
+                        EventBus.getDefault().post(
+                            LocalEvents.RefreshFolderEvent(
+                                refreshFolder.projectId,
+                                refreshFolder.folderId
+                            )
+                        )
+                    }
                 }
-                else if (socketData.module == "user") {
-                    when (socketData.eventType) {
-                        SocketHandler.UserEvent.USER_INFO_UPDATED.name -> {
-                            val updatedUser =
-                                gson.fromJson<UserUpdatedSocketResponse>(
-                                    arguments,
-                                    object : TypeToken<UserUpdatedSocketResponse>() {}.type
-                                ).data
+            } else if (socketData.module == "user") {
+                when (socketData.eventType) {
+                    SocketHandler.UserEvent.USER_INFO_UPDATED.name -> {
+                        val updatedUser =
+                            gson.fromJson<UserUpdatedSocketResponse>(
+                                arguments,
+                                object : TypeToken<UserUpdatedSocketResponse>() {}.type
+                            ).data
 
-                            sessionManager.updateUser(updatedUser)
-                            EventBus.getDefault().post(LocalEvents.UserDataUpdated())
-                        }
+                        sessionManager.updateUser(updatedUser)
+                        EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                    }
 
-                        SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {
+                    SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {
 //                            getProfile()
-                        }
+                    }
 
-                        SocketHandler.UserEvent.REFRESH_CONNECTIONS.name -> {
-                            getOverallConnectionCount()
-                            EventBus.getDefault().post(LocalEvents.ConnectionRefreshEvent())
-                        }
+                    SocketHandler.UserEvent.REFRESH_CONNECTIONS.name -> {
+                        getOverallConnectionCount()
+                        EventBus.getDefault().post(LocalEvents.ConnectionRefreshEvent())
+                    }
 
-                        SocketHandler.UserEvent.REFRESH_INVITATIONS.name -> {
-                            EventBus.getDefault().post(LocalEvents.InvitationRefreshEvent())
-                        }
+                    SocketHandler.UserEvent.REFRESH_INVITATIONS.name -> {
+                        EventBus.getDefault().post(LocalEvents.InvitationRefreshEvent())
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.dataloading
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
@@ -16,6 +17,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentCeibroDataLoadingBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -47,6 +49,7 @@ class CeibroDataLoadingFragment :
             )
             if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
                 isNavigated = true
+                Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
                 navigateToDashboard()
             }
         }
