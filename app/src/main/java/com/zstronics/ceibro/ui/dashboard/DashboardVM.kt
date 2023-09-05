@@ -2,12 +2,16 @@ package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.cancelAllToasts
+import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -52,6 +56,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 @HiltViewModel
 class DashboardVM @Inject constructor(
@@ -88,6 +93,10 @@ class DashboardVM @Inject constructor(
                 object : TypeToken<SocketEventTypeResponse>() {}.type
             )
             SocketHandler.sendEventAck(socketData.uuid)
+            if (BuildConfig.DEBUG) {
+                alert("Socket: ${socketData.eventType}")
+                println("Socket: ${socketData.eventType}")
+            }
             if (socketData.module == "task") {
                 when (socketData.eventType) {
                     SocketHandler.TaskEvent.JOINED_TASK.name -> {

@@ -37,6 +37,7 @@ class TaskDetailV2VM @Inject constructor(
 
     val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
     val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
+    val originalTask: MutableLiveData<CeibroTaskV2> = MutableLiveData()
 
     private val _onlyImages: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val onlyImages: MutableLiveData<ArrayList<TaskFiles>> = _onlyImages
@@ -70,7 +71,10 @@ class TaskDetailV2VM @Inject constructor(
         if (parentSelectedState != null) {
             selectedState = parentSelectedState
         }
-        taskData.let { _taskDetail.postValue(it) }
+        taskData.let {
+            _taskDetail.postValue(it)
+            originalTask.postValue(it)
+        }
         taskData?.id?.let { it1 ->
             val seenByMe = taskData.seenBy.find { it == user?.id }
             if (seenByMe == null) {

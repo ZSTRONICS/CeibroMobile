@@ -108,31 +108,37 @@ open class BaseActivity : AppCompatActivity() {
         }) { resultCode, data ->
             onPhotoEditedCallback(data?.data)
 
-            if (imageUri.toString().contains("content://media/")) {
-                try {
-                    val contentResolver = applicationContext.contentResolver
-                    val projection = arrayOf(MediaStore.Images.Media.DATA)
-                    val cursor = contentResolver.query(imageUri, projection, null, null, null)
-                    val filePath: String? = cursor?.use { cursor ->
-                        if (cursor.moveToFirst()) {
-                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
-                        } else {
-                            null
+            if (data?.data != null) {       //If null then it means no changes done in file so don't delete the file, issue fixed
+                if (imageUri.toString().contains("content://media/")) {
+                    try {
+                        val contentResolver = applicationContext.contentResolver
+                        val projection = arrayOf(MediaStore.Images.Media.DATA)
+                        val cursor = contentResolver.query(imageUri, projection, null, null, null)
+                        val filePath: String? = cursor?.use { cursor ->
+                            if (cursor.moveToFirst()) {
+                                cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                            } else {
+                                null
+                            }
                         }
+                        val fileToDelete = filePath?.let { File(it) }
+//                        println("ImagesURIInEditMode1: $fileToDelete")
+                        if (fileToDelete?.exists() == true) {
+                            val deleted = fileToDelete.delete()
+//                            println("ImagesURIInEditMode1: File Deleted")
+                        }
+                    } catch (_: Exception) {
                     }
-                    val fileToDelete = filePath?.let { File(it) }
-                    if (fileToDelete?.exists() == true) {
-                        val deleted = fileToDelete.delete()
+                } else {
+                    try {
+                        val oldFile = imageUri.toFile()
+//                        println("ImagesURIInEditMode2: $oldFile")
+                        if (oldFile.exists()) {
+                            val deleted = oldFile.delete()
+//                            println("ImagesURIInEditMode2: File Deleted")
+                        }
+                    } catch (_: Exception) {
                     }
-                } catch (_: Exception) {
-                }
-            } else {
-                try {
-                    val oldFile = imageUri.toFile()
-                    if (oldFile.exists()) {
-                        val deleted = oldFile.delete()
-                    }
-                } catch (_: Exception) {
                 }
             }
         }

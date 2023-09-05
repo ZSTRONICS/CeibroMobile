@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,6 +66,7 @@ class TaskDetailV2Fragment :
                 } else {
                     viewModel.doneTask(viewModel.taskDetail.value?.id ?: "") { task ->
                         if (task != null) {
+                            viewModel.originalTask.postValue(task)
                             viewModel._taskDetail.postValue(task)
                         }
                     }
@@ -403,6 +405,7 @@ class TaskDetailV2Fragment :
                 FORWARD_TASK_REQUEST_CODE -> {
                     val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
                     if (updatedTask != null) {
+                        viewModel.originalTask.postValue(updatedTask)
                         viewModel._taskDetail.postValue(updatedTask)
                     }
                 }
@@ -430,6 +433,7 @@ class TaskDetailV2Fragment :
                 DONE_REQUEST_CODE -> {
                     val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
                     if (updatedTask != null) {
+                        viewModel.originalTask.postValue(updatedTask)
                         viewModel._taskDetail.postValue(updatedTask)
                     }
                 }
@@ -464,10 +468,16 @@ class TaskDetailV2Fragment :
                 taskEvents.add(newEvent)
                 taskDetail.seenBy = listOf()
                 taskDetail.events = taskEvents
+//                val handler = Handler()
+//                handler.postDelayed(Runnable {
+//                    eventsAdapter.listItems.add(newEvent)
+//                    mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+//                }, 210)
+                viewModel.originalTask.postValue(taskDetail)
                 viewModel._taskDetail.postValue(taskDetail)
                 viewModel.taskSeen(taskDetail.id) { }
+                scrollToBottom()
             }
-            scrollToBottom()
         }
     }
 
@@ -478,6 +488,7 @@ class TaskDetailV2Fragment :
             viewModel.taskDetail.value?.let { taskDetail ->
                 if (task.id == taskDetail.id) {
                     task.let { it1 ->
+                        viewModel.originalTask.postValue(it1)
                         viewModel._taskDetail.postValue(it1)
                         val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
                         if (seenByMe == null) {
@@ -504,6 +515,7 @@ class TaskDetailV2Fragment :
                         val foundEvent =
                             oldAllEvents.find { it.id == taskEvent?.id }
                         if (foundEvent == null) {
+                            viewModel.originalTask.postValue(it1)
                             viewModel._taskDetail.postValue(it1)
                             val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
                             if (seenByMe == null) {
@@ -522,6 +534,6 @@ class TaskDetailV2Fragment :
     private fun scrollToBottom() {
         mViewDataBinding.bodyScroll.postDelayed({
             mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
-        }, 250)
+        }, 260)
     }
 }
