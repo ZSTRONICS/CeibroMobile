@@ -42,10 +42,12 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         val bundle = intent.extras
         val images = bundle?.getParcelableArrayList<PickedImages>("images")
+//        images?.map { println("ImagesURI: ${it.fileUri}") }
         listOfImages.value = images
 
 
         listOfImages.observe(this) {
+            it.map { println("ImagesURI: ${it.fileUri}") }
             fullImageAdapter.setList(it)
             smallImageAdapter.setList(it)
             try {
@@ -190,7 +192,7 @@ class CeibroImageViewerActivity : BaseActivity() {
         }
         binding.editInnerLayout.setOnClickListener {
             listOfImages.value?.let {
-                images?.get(lastSelectedPosition)?.fileUri?.let { uri ->
+                it[lastSelectedPosition].fileUri?.let { uri ->
                     startEditor(uri) { updatedUri ->
                         if (updatedUri != null) {
                             val updatedPickedImage = getPickedImage(updatedUri)

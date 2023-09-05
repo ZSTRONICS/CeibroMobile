@@ -47,7 +47,7 @@ data class CeibroTaskV2(
     @SerializedName("project")
     val project: ProjectOfTask?,
     @SerializedName("recentComments")
-    val recentComments: List<String>,
+    val recentComments: List<String>?,
     @SerializedName("rejectionComments")
     val rejectionComments: List<String>,
     @SerializedName("seenBy")
