@@ -3,9 +3,12 @@ package com.zstronics.ceibro.ui.dashboard
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -30,6 +33,7 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.enums.EventType
+import com.zstronics.ceibro.ui.profile.editprofile.ChangePasswordSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
@@ -62,6 +66,7 @@ class DashboardFragment :
 
             R.id.profileImg -> navigateToProfile()
             R.id.friendsReqBtn -> navigateToConnections()
+            R.id.feedbackBtn -> showFeedbackDialog()
             R.id.toMeBtn -> {
                 changeSelectedTab(R.id.toMeBtn, false)
             }
@@ -325,6 +330,22 @@ class DashboardFragment :
 
     private fun navigateToConnections() {
         navigate(R.id.MyConnectionV2Fragment)
+    }
+
+    private fun showFeedbackDialog() {
+        val sheet = FeedbackDialogSheet()
+        sheet.onEstonianFormBtn = {
+            val url = "https://forms.gle/DohcCaEzU6iY8bqy5"     //Estonian form link
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        }
+        sheet.onEnglishFormBtn = {
+            val url = "https://forms.gle/nvdQU7RbKofmPP3LA"     //English form link
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "FeedbackDialogSheet")
     }
 
     companion object {

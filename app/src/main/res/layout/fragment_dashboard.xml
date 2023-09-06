@@ -61,7 +61,7 @@
                 android:layout_height="43dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="9dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="@dimen/_14sdp"
                 android:layout_marginBottom="9dp"
                 android:shape="rectangle"
                 app:cardBackgroundColor="@color/black"
@@ -120,18 +120,32 @@
                 app:layout_constraintStart_toStartOf="@+id/notificationBtn" />
 
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/friendsReqBtn"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginEnd="25dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/_16sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="1.5dp"
+                android:padding="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
                 app:layout_constraintEnd_toStartOf="@+id/notificationBtn"
                 app:layout_constraintTop_toTopOf="@+id/profileIcon"
                 app:srcCompat="@drawable/icon_new_friends"
+                app:tint="@color/appBlue" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/feedbackBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
+                app:layout_constraintEnd_toStartOf="@+id/friendsReqBtn"
+                app:layout_constraintTop_toTopOf="@+id/profileIcon"
+                app:srcCompat="@drawable/icon_feedback"
                 app:tint="@color/appBlue" />
 
             <TextView
@@ -327,7 +341,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:drawableTop="@drawable/icon_canceled"
+                    android:drawableTop="@drawable/icon_visibility_off"
                     android:drawableTint="@drawable/bottom_nav_color"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"

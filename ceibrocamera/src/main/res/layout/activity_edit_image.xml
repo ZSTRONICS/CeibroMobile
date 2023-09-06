@@ -14,15 +14,16 @@
         android:layout_height="wrap_content"
         android:background="@color/black"
         android:orientation="horizontal"
-        android:padding="@dimen/_9sdp"
+        android:padding="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/upperClose"
-            android:layout_width="@dimen/_22sdp"
-            android:layout_height="@dimen/_22sdp"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:padding="3dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_cross"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -186,15 +187,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/black"
-        android:padding="@dimen/_13sdp"
+        android:padding="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgClose"
-            android:layout_width="@dimen/_22sdp"
-            android:layout_height="@dimen/_22sdp"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:padding="3dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_cross"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -203,8 +205,9 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgSave"
-            android:layout_width="@dimen/_22sdp"
-            android:layout_height="@dimen/_22sdp"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:padding="3dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_check"
             app:layout_constraintBottom_toBottomOf="parent"

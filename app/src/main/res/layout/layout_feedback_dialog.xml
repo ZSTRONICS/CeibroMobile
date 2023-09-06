@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/estonianText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textColor="@color/black"
+            android:fontFamily="@font/inter_regular"
+            android:text="@string/feedback_title_estonian"
+            android:textSize="16sp"
+            android:layout_marginTop="@dimen/_17sdp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/estonianFormBtn"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="42dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_38sdp"
+            android:layout_marginEnd="@dimen/_38sdp"
+            android:background="@drawable/signin_button_back"
+            android:layout_gravity="center"
+            android:fontFamily="@font/inter_medium"
+            android:text="@string/feedback_form_btn_estonian"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/englishText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textColor="@color/black"
+            android:fontFamily="@font/inter_regular"
+            android:text="@string/feedback_title_english"
+            android:textSize="16sp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/englishFormBtn"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="42dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@drawable/signin_button_back"
+            android:layout_gravity="center"
+            android:fontFamily="@font/inter_medium"
+            android:text="@string/feedback_form_btn_english"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/appGrey3"
+            android:layout_marginTop="@dimen/_18sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/cancelBtn"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/appBlue"
+                android:textSize="16sp"
+                android:textAllCaps="true"
+                android:text="@string/cancel_btn_text" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>
