@@ -309,37 +309,42 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
         if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
-            mSaveFileHelper.createFile(
-                fileName,
-                object : FileSaveHelper.OnFileCreateResult {
+            if (!mPhotoEditor.isCacheEmpty) {
+                mSaveFileHelper.createFile(
+                    fileName,
+                    object : FileSaveHelper.OnFileCreateResult {
 
-                    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
-                    override fun onFileCreateResult(
-                        created: Boolean,
-                        filePath: String?,
-                        error: String?,
-                        uri: Uri?
-                    ) {
-                        lifecycleScope.launch {
-                            if (created && filePath != null) {
-                                val saveSettings = SaveSettings.Builder()
-                                    .setClearViewsEnabled(true)
-                                    .setTransparencyEnabled(true)
-                                    .build()
-                                newUri = uri
-                                mPhotoEditor.saveAsFile(
-                                    filePath,
-                                    saveSettings,
-                                    this@EditImageActivity
-                                )
+                        @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+                        override fun onFileCreateResult(
+                            created: Boolean,
+                            filePath: String?,
+                            error: String?,
+                            uri: Uri?
+                        ) {
+                            lifecycleScope.launch {
+                                if (created && filePath != null) {
+                                    showLoading("Saving Image...")
+                                    val saveSettings = SaveSettings.Builder()
+                                        .setClearViewsEnabled(true)
+                                        .setTransparencyEnabled(true)
+                                        .build()
+                                    newUri = uri
+                                    mPhotoEditor.saveAsFile(
+                                        filePath,
+                                        saveSettings,
+                                        this@EditImageActivity
+                                    )
 
-                            } else {
-                                hideLoading()
-                                error?.let { showSnackbar(error) }
+                                } else {
+                                    hideLoading()
+                                    error?.let { showSnackbar(error) }
+                                }
                             }
                         }
-                    }
-                })
+                    })
+            } else {
+                onBackPressed()
+            }
         } else {
             requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
