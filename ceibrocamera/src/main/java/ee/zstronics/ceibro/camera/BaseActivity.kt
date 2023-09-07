@@ -109,6 +109,7 @@ open class BaseActivity : AppCompatActivity() {
             this.data = imageUri
             action = Intent.ACTION_EDIT
         }) { resultCode, data ->
+//            println("ImagesURIInEditMode0: ${data?.data}")
             if (data?.data != null) {       //If null then it means no changes done in file so don't delete the file, issue fixed
                 if (imageUri.toString().contains("content://media/")) {
                     try {

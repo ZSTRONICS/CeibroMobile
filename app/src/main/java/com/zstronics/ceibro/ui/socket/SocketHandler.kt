@@ -4,7 +4,9 @@ import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.data.base.CookiesManager
 import io.socket.client.IO
 import io.socket.client.Socket
+import io.socket.engineio.client.transports.Polling
 import org.greenrobot.eventbus.EventBus
+import org.json.JSONObject
 import java.net.URISyntaxException
 
 object SocketHandler {
@@ -57,11 +59,12 @@ object SocketHandler {
             val options = IO.Options()
 
             options.forceNew = true
-//            options.transports = arrayOf( Polling.NAME )
+            options.transports = arrayOf( "websocket" )
             options.reconnectionAttempts = Integer.MAX_VALUE
             options.timeout = 10000
             options.auth = mapOf("token" to CookiesManager.jwtToken) // Use auth for token instead of query
-            options.query = "secureUUID=${CookiesManager.secureUUID}"
+            options.query = "secureUUID=${CookiesManager.secureUUID}&deviceType=${CookiesManager.deviceType}"
+//            println("QueryOnSocket: ${options.query}")
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)
 

@@ -10,5 +10,5 @@ data class SocketEventTypeResponse(
     @SerializedName("eventType")
     val eventType: String,
     @SerializedName("uuid")
-    val uuid: String
+    val uuid: String?
 )

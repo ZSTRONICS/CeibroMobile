@@ -140,7 +140,8 @@
                         android:scrollbarStyle="insideInset"
                         android:scrollbars="none"
                         android:text="@={viewState.comment}"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        android:textColor="@color/black"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
