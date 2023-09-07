@@ -8,7 +8,9 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
+import android.view.Surface
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,6 +27,7 @@ import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+@ExperimentalZeroShutterLag
 class CeibroCameraActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroCameraBinding
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -71,13 +74,14 @@ class CeibroCameraActivity : BaseActivity() {
 
         // Button click listener to capture a photo
         binding.captureButton.setOnClickListener {
+            Log.d("Photo capture started  ", getCurrentTimeStamp())
+            capturePhoto()
             binding.captureButton.isEnabled = false
             binding.flipCameraButton.isEnabled = false
             binding.flashButton.isEnabled = false
             binding.toggleTorchButton.isEnabled = false
             val tint = ContextCompat.getColor(this, R.color.appGrey3)
             binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
-            capturePhoto()
         }
 
         binding.toggleTorchButton.setOnClickListener {
@@ -125,7 +129,7 @@ class CeibroCameraActivity : BaseActivity() {
         binding.flipCameraButton.isEnabled = true
         binding.flashButton.isEnabled = true
         binding.toggleTorchButton.isEnabled = true
-        
+
         val tint = ContextCompat.getColor(this, R.color.white)
         binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
 //        if (sourceName == CeibroImageViewerActivity::class.java.name) {
@@ -190,7 +194,8 @@ class CeibroCameraActivity : BaseActivity() {
                 .build()
             // Set up the image capture use case
             imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG)
+                .setTargetRotation(Surface.ROTATION_0)
                 .build()
 
             // Create a preview use case and bind it to the PreviewView
@@ -257,59 +262,39 @@ class CeibroCameraActivity : BaseActivity() {
     private fun capturePhoto() {
         val imageCapture = imageCapture
 
-        val flashMode =
-            if (isFlashEnabled) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF
-        imageCapture.flashMode = flashMode
-
-//        val imageCaptureBuilder = ImageCapture.Builder()
-//            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-//            .setFlashMode(if (flashMode) ImageCapture.FLASH_MODE_AUTO else ImageCapture.FLASH_MODE_OFF)
-
-//        val imageCapture = imageCaptureBuilder.build()
-        // Create a file to save the captured image in the internal storage directory
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val outputDirectory = File(applicationContext.filesDir, "photos")
         outputDirectory.mkdirs()
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val photoFile = File(outputDirectory, "IMG_$timeStamp.jpg")
 
         // Configure the output options for the image capture
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-        // Check if the camera is bound before capturing the photo
-        camera?.let { camera ->
-            imageCapture.takePicture(
-                outputOptions,
-                cameraExecutor,
-                object : ImageCapture.OnImageSavedCallback {
-                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                        val savedUri = outputFileResults.savedUri ?: Uri.fromFile(photoFile)
-                        if (sourceName == CeibroImageViewerActivity::class.java.name) {
-                            val intent = Intent(
-                                this@CeibroCameraActivity,
-                                CapturedPreviewActivity::class.java
-                            )
-                            intent.putExtra("capturedUri", savedUri)
-                            cameraPreviewLauncher.launch(intent)
-                        } else {
-                            val intent = Intent(
-                                this@CeibroCameraActivity,
-                                CeibroCapturedPreviewActivity::class.java
-                            )
-                            intent.putExtra("capturedUri", savedUri)
-                            cameraPreviewLauncherNoFinish.launch(intent)
-                        }
-                    }
-
-                    override fun onError(exception: ImageCaptureException) {
-                        Toast.makeText(
-                            this@CeibroCameraActivity,
-                            "Error capturing photo: ${exception.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+        imageCapture.takePicture(
+            outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    val savedUri = outputFileResults.savedUri ?: Uri.fromFile(photoFile)
+                    val intent = Intent(
+                        this@CeibroCameraActivity,
+                        if (sourceName == CeibroImageViewerActivity::class.java.name)
+                            CapturedPreviewActivity::class.java
+                        else
+                            CeibroCapturedPreviewActivity::class.java
+                    )
+                    intent.putExtra("capturedUri", savedUri)
+                    Log.d("Photo capture end", getCurrentTimeStamp())
+                    cameraPreviewLauncher.launch(intent)
                 }
-            )
-        }
+
+                override fun onError(exception: ImageCaptureException) {
+                    Toast.makeText(
+                        this@CeibroCameraActivity,
+                        "Error capturing photo: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        )
     }
 
     override fun onDestroy() {

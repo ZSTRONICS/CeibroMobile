@@ -14,6 +14,9 @@ import com.ceibro.permissionx.PermissionX
 import com.github.florent37.inlineactivityresult.kotlin.startForResult
 import ee.zstronics.photoediting.EditImageActivity
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 open class BaseActivity : AppCompatActivity() {
     fun checkPermission(permissionsList: List<String>, function: () -> Unit) {
@@ -202,5 +205,14 @@ open class BaseActivity : AppCompatActivity() {
                 init = init
             )
         }
+    }
+    fun getCurrentTimeStamp(): String {
+        val sdf = SimpleDateFormat(SERVER_DATE_FULL_FORMAT, Locale.getDefault())
+        sdf.timeZone = UTC
+        return sdf.format(Date())
+    }
+    companion object{
+        const val SERVER_DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS"//2015-11-28 10:17:18
+        val UTC: TimeZone = TimeZone.getTimeZone("UTC")
     }
 }
