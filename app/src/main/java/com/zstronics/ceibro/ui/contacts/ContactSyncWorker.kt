@@ -50,7 +50,7 @@ class ContactSyncWorker @AssistedInject constructor(
 
         println("PhoneNumber-SyncWorkerRunning")
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
-        if (sessionManager.isUserLoggedIn() && CookiesManager.jwtToken.isNotEmpty()) {
+        if (sessionManager.isUserLoggedIn() && CookiesManager.jwtToken != "") {
 
             val user = sessionManager.getUser().value
 
