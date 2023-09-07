@@ -92,7 +92,7 @@ class DashboardVM @Inject constructor(
                 arguments,
                 object : TypeToken<SocketEventTypeResponse>() {}.type
             )
-            SocketHandler.sendEventAck(socketData.uuid)
+            socketData.uuid?.let { SocketHandler.sendEventAck(it) }
             if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
                 println("Socket: ${socketData.eventType}")

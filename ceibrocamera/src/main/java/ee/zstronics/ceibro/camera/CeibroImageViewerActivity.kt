@@ -193,8 +193,10 @@ class CeibroImageViewerActivity : BaseActivity() {
         binding.editInnerLayout.setOnClickListener {
             listOfImages.value?.let {
                 it[lastSelectedPosition].fileUri?.let { uri ->
+//                    println("ImagesURIBeforeEdit: ${uri}")
                     startEditor(uri) { updatedUri ->
                         if (updatedUri != null) {
+//                            println("ImagesURIAfterEdit: ${updatedUri}")
                             val updatedPickedImage = getPickedImage(updatedUri)
                             val files = listOfImages.value
 

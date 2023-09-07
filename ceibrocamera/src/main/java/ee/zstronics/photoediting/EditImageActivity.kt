@@ -570,7 +570,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         showSnackbar("Image Saved Successfully")
         mSaveImageUri = Uri.parse(imagePath)
         mPhotoEditorView.source.setImageURI(newUri)
-        setResult(RESULT_OK, Intent().setData(mSaveImageUri))
+        setResult(RESULT_OK, Intent().setData(newUri))
         finish()
     }
 }

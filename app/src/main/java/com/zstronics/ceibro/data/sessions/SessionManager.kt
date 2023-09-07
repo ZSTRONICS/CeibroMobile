@@ -14,7 +14,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 class SessionManager constructor(
     val sharedPreferenceManager: SharedPreferenceManager
 ) {
-    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean, secureUUID: String) {
+    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean, secureUUID: String, deviceType: String) {
         sharedPreferenceManager.saveBoolean(
             KEY_IS_USER_LOGGED_IN,
             rememberMe
@@ -22,10 +22,12 @@ class SessionManager constructor(
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokens.access.token
         CookiesManager.secureUUID = secureUUID
+        CookiesManager.deviceType = deviceType
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)
         sharedPreferenceManager.saveString(KEY_SECURE_UUID, secureUUID)
+        sharedPreferenceManager.saveString(KEY_DEVICE_TYPE, deviceType)
 
         _user.postValue(user)
     }
@@ -51,6 +53,7 @@ class SessionManager constructor(
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
         CookiesManager.secureUUID = ""
+        CookiesManager.deviceType = ""
         OneSignal.removeExternalUserId()
         OneSignal.disablePush(true)
         OneSignal.pauseInAppMessages(true)
@@ -140,9 +143,11 @@ class SessionManager constructor(
     private fun setToken() {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         val secureUUID = sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
+        val deviceType = sharedPreferenceManager.getValueString(KEY_DEVICE_TYPE) ?: ""
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokenPref?.access?.token
         CookiesManager.secureUUID = secureUUID
+        CookiesManager.deviceType = deviceType
     }
 
     private fun getTokens(): Tokens? {

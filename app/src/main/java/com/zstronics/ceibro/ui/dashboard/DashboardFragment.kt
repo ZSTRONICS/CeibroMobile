@@ -58,6 +58,7 @@ class DashboardFragment :
     private var taskToMeFragmentInstance: TaskToMeFragment? = null
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
+    private var socketEventsInitiated = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
@@ -146,7 +147,7 @@ class DashboardFragment :
             }
         }
     }
-    private var socketEventsInitiated = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.updateRootUnread(requireActivity())
