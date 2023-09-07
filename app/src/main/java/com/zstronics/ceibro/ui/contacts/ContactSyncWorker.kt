@@ -10,6 +10,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.database.CeibroDatabase
@@ -49,7 +50,7 @@ class ContactSyncWorker @AssistedInject constructor(
 
         println("PhoneNumber-SyncWorkerRunning")
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
-        if (sessionManager.isUserLoggedIn()) {
+        if (sessionManager.isUserLoggedIn() && CookiesManager.jwtToken.isNotEmpty()) {
 
             val user = sessionManager.getUser().value
 
