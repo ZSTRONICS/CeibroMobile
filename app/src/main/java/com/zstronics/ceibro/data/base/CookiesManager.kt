@@ -7,4 +7,5 @@ object CookiesManager {
     var isLoggedIn: Boolean = false
     var tokens: Tokens? = null
     var secureUUID: String? = null
+    var deviceType: String? = null
 }

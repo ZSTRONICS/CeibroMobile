@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.login
 
+import android.os.Build
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
@@ -38,6 +39,12 @@ class LoginVM @Inject constructor(
         rememberMe: Boolean,
         onLoggedIn: () -> Unit
     ) {
+        val deviceInfo = StringBuilder()
+        val manufacturer = Build.MANUFACTURER
+        deviceInfo.append("$manufacturer ")
+        val model = Build.MODEL
+        deviceInfo.append("$model")
+        println("DeviceInfo: ${deviceInfo.toString()}")
 
         val request = LoginRequest(phoneNumber = phoneNumber, password = password)
         launch {
@@ -46,13 +53,15 @@ class LoginVM @Inject constructor(
 
                 is ApiResponse.Success -> {
                     val secureUUID = UUID.randomUUID()
+                    CookiesManager.deviceType = deviceInfo.toString()
                     CookiesManager.secureUUID = secureUUID.toString()
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,
                         "",
                         rememberMe,
-                        secureUUID.toString()
+                        secureUUID.toString(),
+                        deviceInfo.toString()
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)

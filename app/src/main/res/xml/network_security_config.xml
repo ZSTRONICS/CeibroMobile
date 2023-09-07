@@ -2,8 +2,9 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">backend.ceibro.ee</domain>          <!--   This is OLD AWS server url - for dev  -->
-        <domain includeSubdomains="true">dev.ceibro.ee</domain>          <!--   This is NEW AWS server url - for dev  -->
+        <domain includeSubdomains="true">dev.ceibro.ee</domain>          <!--   This is NEW AWS server url - for client  -->
         <domain includeSubdomains="true">72.255.39.130</domain>          <!--   This is NEW AWS server url - for dev  -->
-        <domain includeSubdomains="true">10.10.10.2</domain>          <!--   This is NEW AWS server url - for dev  -->
+        <domain includeSubdomains="true">10.10.10.2</domain>          <!--   This is NEW AWS server url - for local  -->
+        <domain includeSubdomains="true">10.10.10.200</domain>          <!--   This is NEW AWS server url - for local  -->
     </domain-config>
 </network-security-config>
