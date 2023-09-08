@@ -27,6 +27,7 @@ class CeibroImageViewerActivity : BaseActivity() {
     var newImagesAdded: Boolean = false
     var oldListIndexesSize: Int = 0         //this will be index count, considering from 0
 
+    @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =

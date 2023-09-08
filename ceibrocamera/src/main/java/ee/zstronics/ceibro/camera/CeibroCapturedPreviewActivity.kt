@@ -1,8 +1,11 @@
 package ee.zstronics.ceibro.camera
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroCapturedPreviewBinding
@@ -50,8 +53,11 @@ class CeibroCapturedPreviewActivity : BaseActivity() {
     }
 
     private fun reInitiateCamera() {
-        setResult(RESULT_CANCELED)
-        finish()
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            setResult(RESULT_CANCELED)
+            finish()
+        }, 60)
     }
 
     override fun onBackPressed() {
