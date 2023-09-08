@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.util.Size
 import android.view.Surface
@@ -39,6 +40,8 @@ class CeibroCameraActivity : BaseActivity() {
     private var isTorchOn: Boolean = false
     private var isFlashEnabled: Boolean = false
     var sourceName = ""
+    var whiteTint = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
@@ -124,19 +127,21 @@ class CeibroCameraActivity : BaseActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        binding.captureButton.isEnabled = true
-        binding.captureButton.isEnabled = true
-        binding.flipCameraButton.isEnabled = true
-        binding.flashButton.isEnabled = true
-        binding.toggleTorchButton.isEnabled = true
+        startCamera()
+        val torchIcon = R.drawable.ic_torch_off
+        binding.toggleTorchButton.setImageResource(torchIcon)
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            binding.captureButton.isEnabled = true
+            binding.captureButton.isEnabled = true
+            binding.flipCameraButton.isEnabled = true
+            binding.flashButton.isEnabled = true
+            binding.toggleTorchButton.isEnabled = true
 
-        val tint = ContextCompat.getColor(this, R.color.white)
-        binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
-//        if (sourceName == CeibroImageViewerActivity::class.java.name) {
-//            binding.imagesPicker.visibility = View.GONE
-//        } else {
-//            binding.imagesPicker.visibility = View.VISIBLE
-//        }
+            val tint = ContextCompat.getColor(this, R.color.white)
+            whiteTint = tint
+            binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
+        }, 270)
     }
 
     private val ceibroImageViewerLauncher =
@@ -172,30 +177,35 @@ class CeibroCameraActivity : BaseActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
+            try {
+                cameraProvider.unbindAll()
+            } catch (ex: Exception) {
+                Toast.makeText(this, "Error starting camera: ${ex.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
-            // Retrieve the default camera resolution and aspect ratio
-            val cameraManager = getSystemService(CAMERA_SERVICE) as CameraManager
-            val cameraIds = cameraManager.cameraIdList
-            val defaultCameraId = cameraIds.firstOrNull()
-            val characteristics = cameraManager.getCameraCharacteristics(defaultCameraId!!)
-            val sensorSize =
-                characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
-            val targetResolution = sensorSize?.let {
-                Size(it.width(), it.height())
-            }
-            val targetAspectRatio = sensorSize?.let {
-                it.width() / it.height()
-            }
+//            // Retrieve the default camera resolution and aspect ratio
+//            val cameraManager = getSystemService(CAMERA_SERVICE) as CameraManager
+//            val cameraIds = cameraManager.cameraIdList
+//            val defaultCameraId = cameraIds.firstOrNull()
+//            val characteristics = cameraManager.getCameraCharacteristics(defaultCameraId!!)
+//            val sensorSize =
+//                characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+//            val targetResolution = sensorSize?.let {
+//                Size(it.width(), it.height())
+//            }
+//            val targetAspectRatio = sensorSize?.let {
+//                it.width() / it.height()
+//            }
 
             // Set up the preview configuration
-            val preview = Preview.Builder()
 //                .setTargetResolution(targetResolution ?: Size(640, 480)) // Set desired resolution or aspect ratio (only one of them at a time in same config)
+            val preview = Preview.Builder()
                 .setTargetAspectRatio(RATIO_4_3)
                 .build()
             // Set up the image capture use case
             imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG)
-                .setTargetRotation(Surface.ROTATION_0)
+                .setTargetAspectRatio(RATIO_4_3)
                 .build()
 
             // Create a preview use case and bind it to the PreviewView
@@ -203,7 +213,7 @@ class CeibroCameraActivity : BaseActivity() {
 
             try {
                 // Unbind any previous use cases
-                cameraProvider.unbindAll()
+//                cameraProvider.unbindAll()
                 // Bind the camera to the lifecycle
                 camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
 
@@ -215,6 +225,9 @@ class CeibroCameraActivity : BaseActivity() {
     }
 
     private fun toggleTorch() {
+        if (isFlashEnabled) {
+            toggleFlash()
+        }
         if (camera?.cameraInfo?.hasFlashUnit() == true) {
             isTorchOn = !isTorchOn
             camera?.cameraControl?.enableTorch(isTorchOn)
@@ -261,6 +274,8 @@ class CeibroCameraActivity : BaseActivity() {
 
     private fun capturePhoto() {
         val imageCapture = imageCapture
+        if (isFlashEnabled)
+            imageCapture.flashMode = ImageCapture.FLASH_MODE_ON
 
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val outputDirectory = File(applicationContext.filesDir, "photos")
@@ -282,19 +297,38 @@ class CeibroCameraActivity : BaseActivity() {
                             CeibroCapturedPreviewActivity::class.java
                     )
                     intent.putExtra("capturedUri", savedUri)
-                    Log.d("Photo capture end", getCurrentTimeStamp())
-                    cameraPreviewLauncher.launch(intent)
+                    Log.d("capturing photo ended", getCurrentTimeStamp())
+                    if (sourceName == CeibroImageViewerActivity::class.java.name)
+                        cameraPreviewLauncher.launch(intent)
+                    else
+                        cameraPreviewLauncherNoFinish.launch(intent)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     Toast.makeText(
                         this@CeibroCameraActivity,
-                        "Error capturing photo: ${exception.message}",
+                        "Please wait for camera to launch properly",
                         Toast.LENGTH_SHORT
                     ).show()
+                    enableButtons()
+                    println("Error capturing photo: ${exception.message}")
                 }
             }
         )
+    }
+
+    fun enableButtons() {
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            binding.captureButton.isEnabled = true
+            binding.captureButton.isEnabled = true
+            binding.flipCameraButton.isEnabled = true
+            binding.flashButton.isEnabled = true
+            binding.toggleTorchButton.isEnabled = true
+
+            val tint = ContextCompat.getColor(this, R.color.white)
+            binding.captureButton.setColorFilter(tint, PorterDuff.Mode.SRC_IN)
+        }, 90)
     }
 
     override fun onDestroy() {
