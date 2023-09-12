@@ -152,6 +152,7 @@ class DashboardFragment :
         super.onViewCreated(view, savedInstanceState)
         viewModel.updateRootUnread(requireActivity())
         if (!socketEventsInitiated) {
+            changeSelectedTab(R.id.toMeBtn, false)
             socketEventsInitiating()
         }
         SearchDataSingleton.searchString = MutableLiveData("")
@@ -200,10 +201,10 @@ class DashboardFragment :
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        val handler = Handler()
-        handler.postDelayed({
-            changeSelectedTab(R.id.toMeBtn, false)
-        }, 100)
+//        val handler = Handler()
+//        handler.postDelayed({
+//            changeSelectedTab(R.id.toMeBtn, false)
+//        }, 150)
     }
     private fun socketEventsInitiating(){
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
