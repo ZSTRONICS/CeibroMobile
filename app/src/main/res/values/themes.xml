@@ -84,10 +84,11 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+<!--    This style is for loader displayed on API calls-->
     <style name="CustomDialog">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/semiBlack</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
