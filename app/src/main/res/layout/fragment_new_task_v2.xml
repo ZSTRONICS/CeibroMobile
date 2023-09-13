@@ -321,7 +321,8 @@
                     app:layout_constraintEnd_toEndOf="@+id/newTaskProjectField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskProjectField"
                     app:layout_constraintTop_toBottomOf="@+id/newTaskProjectField"
-                    app:startIconDrawable="@drawable/icon_calender_new">
+                    app:startIconDrawable="@drawable/icon_calender_new"
+                    app:startIconTint="@color/iconGrey">
 
                     <AutoCompleteTextView
                         android:id="@+id/newTaskDueDateText"
@@ -563,6 +564,7 @@
                     android:padding="1dp"
                     android:text="@string/done_requirements_heading"
                     android:textSize="14.5sp"
+                    android:textColor="@color/black"
                     android:theme="@style/SwitchThemeOverlay"
                     android:thumb="@drawable/switch_ios_thumb"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"

@@ -49,6 +49,7 @@
             android:fontFamily="@font/inter_medium"
             android:text="@string/app_data_sync_message"
             android:textSize="@dimen/_13sdp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -55,6 +55,7 @@ dependencies {
 //    implementation(DependenciesManager.workerDependencies)
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation(project(mapOf("path" to ":ceibrocamera")))
+    implementation("androidx.camera:camera-core:1.2.3")
 
     kapt(DependenciesManager.hiltKapt)
     kapt(DependenciesManager.networkKapt)
