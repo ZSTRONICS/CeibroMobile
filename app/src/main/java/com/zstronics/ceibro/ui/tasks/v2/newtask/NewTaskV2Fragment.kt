@@ -53,7 +53,7 @@ class NewTaskV2Fragment :
     private val PICK_FILE_REQUEST = 1
     private var isExpanded = true
     private val expandDuration = 100L
-
+    @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
         when (id) {
             R.id.nextBtn -> {

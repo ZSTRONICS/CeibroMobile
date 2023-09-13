@@ -13,7 +13,31 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialog</item>
+        <item name="popupMenuStyle">@style/MyPopupMenuStyle</item>
+        <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+
+        <item name="android:textColor">@color/black</item>       <!-- this keeps text color to black in simple text views-->
+        <item name="android:textColorHint">@color/appTextGrey</item>       <!-- this keeps hint color to grey in edit-text-->
+        <item name="android:textColorPrimary">@color/black</item>       <!-- this keeps text color to grey in edit-text-->
     </style>
+
+
+    <!--    DATE-PICKER CUSTOMIZATION-->
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+<!--        <item name="android:datePickerStyle">@style/MyDatePickerStyle</item>-->
+        <item name="colorAccent">@color/appBlue</item>
+        <item name="android:colorAccent">@color/appBlue</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyled</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyled</item>
+    </style>
+<!--    If you don't want this much control (customization), you don't need to override datePickerStyle. colorAccent controls most of the DatePicker's colors. So, overriding just colorAccent inside MyDatePickerDialogTheme will work-->
+    <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="android:headerBackground">@color/appBlue</item>
+    </style>
+    <style name="DialogButtonStyled" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/black</item> <!-- button text color -->
+    </style>
+
 
     <style name="SelectableTextTheme" parent="Theme.Ceibro">
         <item name="android:textIsSelectable">true</item>
@@ -25,6 +49,7 @@
 
     <style name="CustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
         <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheetDialog</item>
+        <item name="backgroundTint">@color/white</item>
     </style>
 
     <style name="CustomShapeAppearanceBottomSheetDialog" parent="">
@@ -33,6 +58,11 @@
         <item name="cornerSizeTopLeft">16dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+    <style name="MyPopupMenuStyle" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/white</item>
+        <item name="android:popupElevation">4dp</item>
     </style>
 
     <style name="CustomCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">

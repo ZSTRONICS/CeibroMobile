@@ -190,7 +190,7 @@ class MyConnectionV2Fragment :
     }
 
     private fun showPopupMenu(anchorView: View) {
-        val popupMenu = PopupMenu(requireContext(), anchorView)
+        val popupMenu = PopupMenu(requireActivity(), anchorView)    //requireActivity is done because theme styles work with activity context, not with application context
         popupMenu.inflate(if (viewModel.sessionManager.getUser().value?.autoContactSync == true) R.menu.sync_enabled_menu else R.menu.sync_disabled_menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
