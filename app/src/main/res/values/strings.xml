@@ -10,6 +10,11 @@
     <string name="error_message_last_name_validation">Invalid last name format</string>
     <string name="error_message_sur_name_validation">Enter valid  surname</string>
     <string name="error_message_name_validation">Name cannot be empty</string>
+    <string name="error_message_first_name_empty">First name cannot be empty</string>
+    <string name="error_message_first_name_alphabet_required">First name should start with an alphabet</string>
+    <string name="error_message_surname_name_empty">Surname cannot be empty</string>
+    <string name="error_message_surname_alphabet_required">Surname should start with an alphabet</string>
+    <string name="error_message_special_character_not_allowed_in_name">Special characters are not allowed in name</string>
     <string name="error_message_cpf_validation">Invalid CPF format</string>
     <string name="error_message_url_validation">Invalid url format</string>
     <string name="error_message_phone_validation">Invalid phone number</string>

@@ -48,12 +48,12 @@ class EditProfileFragment :
             }
             R.id.saveProfileBtn -> {
                 viewModel.updateProfile(
-                    viewState.userFirstName.value.toString(),
-                    viewState.userSurname.value.toString(),
+                    viewState.userFirstName.value.toString().trim(),
+                    viewState.userSurname.value.toString().trim(),
                     viewState.userEmail.value.toString(),
                     viewState.userPhoneNumber.value.toString(),
-                    viewState.userCompanyName.value.toString(),
-                    viewState.userJobTitle.value.toString()
+                    viewState.userCompanyName.value.toString().trim(),
+                    viewState.userJobTitle.value.toString().trim()
                 ) {
                     finish()
                 }
@@ -115,6 +115,9 @@ class EditProfileFragment :
             // This method is called to notify you that the text is about to change
         }
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            val firstName = viewState.userFirstName.value.toString().trim()
+            val surname = viewState.userSurname.value.toString().trim()
+
             mViewDataBinding.saveProfileBtn.isEnabled =
                 (viewState.userFirstName.value.toString() != viewModel.user?.firstName ||
                         viewState.userSurname.value.toString() != viewModel.user?.surName ||
@@ -122,19 +125,27 @@ class EditProfileFragment :
                         viewState.userPhoneNumber.value.toString() != viewModel.user?.phoneNumber ||
                         viewState.userCompanyName.value.toString() != viewModel.user?.companyName ||
                         viewState.userJobTitle.value.toString() != viewModel.user?.jobTitle) &&
-                        viewState.userFirstName.value.toString().isNotEmpty() &&
-                        viewState.userSurname.value.toString().isNotEmpty() &&
+                        (firstName.isNotEmpty() && isUserNameValid(firstName)) &&
+                        (surname.isNotEmpty() && isUserNameValid(surname)) &&
                         viewState.userEmail.value.toString().isEmail()
 
             mViewDataBinding.etNameField.error =
-                if (viewState.userFirstName.value.toString().isEmpty()) {
-                    resources.getString(R.string.error_message_name_validation)
+                if (firstName.isEmpty()) {
+                    resources.getString(R.string.error_message_first_name_empty)
+                } else if (!startsWithAlphabet(firstName)) {
+                    resources.getString(R.string.error_message_first_name_alphabet_required)
+                } else if (!isUserNameValid(firstName)) {
+                    resources.getString(R.string.error_message_special_character_not_allowed_in_name)
                 } else {
                     null
                 }
             mViewDataBinding.etSurnameField.error =
-                if (viewState.userSurname.value.toString().isEmpty()) {
-                    resources.getString(R.string.error_message_name_validation)
+                if (surname.isEmpty()) {
+                    resources.getString(R.string.error_message_surname_name_empty)
+                } else if (!startsWithAlphabet(surname)) {
+                    resources.getString(R.string.error_message_surname_alphabet_required)
+                } else if (!isUserNameValid(surname)) {
+                    resources.getString(R.string.error_message_special_character_not_allowed_in_name)
                 } else {
                     null
                 }
