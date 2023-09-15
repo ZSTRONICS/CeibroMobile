@@ -94,6 +94,7 @@
                 android:id="@+id/ccp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:ccpDialog_backgroundColor="@color/appDimBlue"
                 app:ccpDialog_initialScrollToSelection="true"
                 app:ccpDialog_keyboardAutoPopup="false"
                 app:ccpDialog_showCloseIcon="true"
