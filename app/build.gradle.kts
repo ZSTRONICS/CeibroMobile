@@ -79,4 +79,5 @@ dependencies {
     implementation("com.googlecode.libphonenumber:libphonenumber:8.12.30")
     implementation("com.hbb20:ccp:2.6.1")
     implementation("io.ak1.pix:piximagepicker:1.6.3")
+    implementation("com.github.ChristianSteffensen:AndroidPdfViewer:1.0.0")
 }

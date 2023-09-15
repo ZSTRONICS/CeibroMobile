@@ -16,6 +16,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentLoginBinding
+import com.zstronics.location.LocationActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,7 +32,8 @@ class LoginFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.signUpTextBtn -> {
-                navigate(R.id.registerFragment)
+//                navigate(R.id.registerFragment)
+                launchActivity<LocationActivity> {}
             }
             R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {
