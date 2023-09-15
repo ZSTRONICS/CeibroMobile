@@ -26,14 +26,19 @@ class SignUpFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.signupContinueBtn -> {
-                viewModel.doSignUp(viewState.firstName.value.toString(), viewState.surname.value.toString(), viewState.email.value.toString(),
-                    viewState.companyName.value.toString(), viewState.jobTitle.value.toString(), viewState.password.value.toString()) {
+                viewModel.doSignUp(
+                    viewState.firstName.value.toString().trim(),
+                    viewState.surname.value.toString().trim(),
+                    viewState.email.value.toString(),
+                    viewState.companyName.value.toString().trim(),
+                    viewState.jobTitle.value.toString().trim(),
+                    viewState.password.value.toString()
+                ) {
                     navigate(R.id.photoFragment)
                 }
             }
         }
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +47,10 @@ class SignUpFragment :
         mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.etPhone)
 
         val phoneNumberUtil = PhoneNumberUtil.getInstance()
-        val parsedNumber = phoneNumberUtil.parse(viewState.phoneNumber.value.toString(), viewState.phoneCode.value.toString())
+        val parsedNumber = phoneNumberUtil.parse(
+            viewState.phoneNumber.value.toString(),
+            viewState.phoneCode.value.toString()
+        )
 
         val countryCode = parsedNumber.countryCode
         val nationalSignificantNumber = parsedNumber.nationalNumber
@@ -63,13 +71,18 @@ class SignUpFragment :
         override fun afterTextChanged(s: Editable?) {
             // This method is called to notify you that the text has been changed and processed
         }
+
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             // This method is called to notify you that the text is about to change
         }
+
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            val firstName = viewState.firstName.value.toString().trim()
+            val surname = viewState.surname.value.toString().trim()
+
             mViewDataBinding.signupContinueBtn.isEnabled =
-                        viewState.firstName.value.toString().isNotEmpty() &&
-                        viewState.surname.value.toString().isNotEmpty() &&
+                (firstName.isNotEmpty() && isUserNameValid(firstName)) &&
+                        (surname.isNotEmpty() && isUserNameValid(surname)) &&
                         viewState.email.value.toString().isEmail() &&
                         validatePassword(viewState.password.value.toString()) &&
                         validatePassword(viewState.confirmPassword.value.toString()) &&
@@ -77,23 +90,31 @@ class SignUpFragment :
 
             if (mViewDataBinding.etNameField.isFocused) {
                 mViewDataBinding.etName.error =
-                    if (viewState.firstName.value.toString().isEmpty()) {
-                        resources.getString(R.string.error_message_name_validation)
+                    if (firstName.isEmpty()) {
+                        resources.getString(R.string.error_message_first_name_empty)
+                    } else if (!startsWithAlphabet(firstName)) {
+                        resources.getString(R.string.error_message_first_name_alphabet_required)
+                    } else if (!isUserNameValid(firstName)) {
+                        resources.getString(R.string.error_message_special_character_not_allowed_in_name)
                     } else {
                         null
                     }
-                if (viewState.firstName.value.toString().isNotEmpty()) {
+                if (firstName.isNotEmpty() && isUserNameValid(firstName)) {
                     mViewDataBinding.etName.isErrorEnabled = false
                 }
 
             } else if (mViewDataBinding.etSurnameField.isFocused) {
                 mViewDataBinding.etSurname.error =
-                    if (viewState.surname.value.toString().isEmpty()) {
-                        resources.getString(R.string.error_message_name_validation)
+                    if (surname.isEmpty()) {
+                        resources.getString(R.string.error_message_surname_name_empty)
+                    } else if (!startsWithAlphabet(surname)) {
+                        resources.getString(R.string.error_message_surname_alphabet_required)
+                    } else if (!isUserNameValid(surname)) {
+                        resources.getString(R.string.error_message_special_character_not_allowed_in_name)
                     } else {
                         null
                     }
-                if (viewState.surname.value.toString().isNotEmpty()) {
+                if (surname.isNotEmpty() && isUserNameValid(surname)) {
                     mViewDataBinding.etSurname.isErrorEnabled = false
                 }
 
@@ -138,7 +159,7 @@ class SignUpFragment :
         }
     }
 
-    private fun validateFields(fieldId: Int) {
+    /*private fun validateFields(fieldId: Int) {
         when (fieldId) {
             R.id.etNameField -> {
                 mViewDataBinding.etNameField.error =
@@ -199,7 +220,7 @@ class SignUpFragment :
                     validatePassword(viewState.password.value.toString()) &&
                     validatePassword(viewState.confirmPassword.value.toString()) &&
                     viewState.password.value.toString() == viewState.confirmPassword.value.toString()
-    }
+    }*/
 
     private fun validatePassword(password: String): Boolean {
         val regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,}\$"

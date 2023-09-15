@@ -449,15 +449,19 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             mimeType.startsWith("image") -> {
                 AttachmentTypes.Image
             }
+
             mimeType.startsWith("video") -> {
                 AttachmentTypes.Video
             }
+
             mimeType == "application/pdf" -> {
                 AttachmentTypes.Pdf
             }
+
             mimeType == "application/msword" || mimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
                 AttachmentTypes.Doc
             }
+
             else -> AttachmentTypes.Doc
         }
         viewModel.addUriToList(
@@ -695,6 +699,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             }
         }
     }
+
     // Helper function to check network connectivity
     private fun isNetworkConnected(context: Context): Boolean {
         val connectivityManager =
@@ -714,5 +719,17 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 R.id.ceibroDataLoadingFragment
             )
         }
+    }
+
+
+    fun isUserNameValid(name: String): Boolean {
+        val regex =
+            Regex("^[\\p{L}][\\p{L}0-9\\s]*\$") // "\p{L}" Allow alphabetical characters from various languages, making it a suitable pattern to accept all alphabet characters while excluding special characters and spaces
+        return regex.matches(name)
+    }
+
+    fun startsWithAlphabet(name: String): Boolean {
+        val regex = Regex("^[\\p{L}].*")
+        return name.isNotEmpty() && regex.matches(name)
     }
 }

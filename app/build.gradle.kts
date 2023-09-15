@@ -54,6 +54,7 @@ dependencies {
     implementation(DependenciesManager.hiltImplementation)
 //    implementation(DependenciesManager.workerDependencies)
     implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation(project(mapOf("path" to ":permissionx")))
     implementation(project(mapOf("path" to ":ceibrocamera")))
     implementation("androidx.camera:camera-core:1.2.3")
 
@@ -61,7 +62,6 @@ dependencies {
     kapt(DependenciesManager.networkKapt)
     testImplementation(DependenciesManager.testingImplementation)
     androidTestImplementation(DependenciesManager.androidTestImplementation)
-    implementation(project(mapOf("path" to ":permissionx")))
 
     // Room components
     implementation("android.arch.persistence.room:runtime:1.1.1")
