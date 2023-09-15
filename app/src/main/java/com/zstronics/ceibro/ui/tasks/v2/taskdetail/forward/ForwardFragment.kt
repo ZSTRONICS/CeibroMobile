@@ -68,9 +68,9 @@ class ForwardFragment :
         mViewDataBinding.recentConnectionsRV.adapter = recentAdapter
         mViewDataBinding.selectedContactsRV.adapter = chipAdapter
 
-        mViewDataBinding.allContactsRV.isNestedScrollingEnabled = false
-        mViewDataBinding.recentConnectionsRV.isNestedScrollingEnabled = false
-        mViewDataBinding.selectedContactsRV.isNestedScrollingEnabled = false
+//        mViewDataBinding.allContactsRV.isNestedScrollingEnabled = false
+//        mViewDataBinding.recentConnectionsRV.isNestedScrollingEnabled = false
+//        mViewDataBinding.selectedContactsRV.isNestedScrollingEnabled = false
 
         viewModel.allConnections.observe(viewLifecycleOwner) {
             if (it != null) {
