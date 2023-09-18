@@ -808,6 +808,7 @@ class DashboardVM @Inject constructor(
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
         }
+        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)
