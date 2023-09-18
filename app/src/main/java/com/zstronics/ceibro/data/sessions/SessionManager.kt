@@ -55,7 +55,6 @@ class SessionManager constructor(
                     profilePic = "", autoContactSync = false
                 )
             )
-            println("UserData: ${_user.value}")
         }, 450)
 
         CookiesManager.isLoggedIn = false
