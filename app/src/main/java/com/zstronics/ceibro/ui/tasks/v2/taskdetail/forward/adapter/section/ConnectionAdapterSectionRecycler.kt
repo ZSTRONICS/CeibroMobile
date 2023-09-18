@@ -78,10 +78,16 @@ class ConnectionAdapterSectionRecycler constructor(
     inner class ConnectionsSectionViewHolder constructor(private val binding: LayoutItemHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ConnectionsSectionHeader?) {
-            if (item?.childItems?.isEmpty() == true) {
+
+            if (item?.isDataLoading == true) {
+                binding.noConnections.visibility = View.GONE
+                binding.connectionsLoadingLayout.visibility = View.VISIBLE
+            } else if (item?.childItems?.isEmpty() == true) {
+                binding.connectionsLoadingLayout.visibility = View.GONE
                 binding.noConnections.visibility = View.VISIBLE
             } else {
                 binding.noConnections.visibility = View.GONE
+                binding.connectionsLoadingLayout.visibility = View.GONE
             }
             binding.headerTitle.text = item?.getSectionText()
         }

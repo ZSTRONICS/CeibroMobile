@@ -92,13 +92,15 @@ class ForwardFragment :
                     sectionList.add(
                         1, ConnectionsSectionHeader(
                             it,
-                            getString(R.string.all_connections)
+                            getString(R.string.all_connections),
+                            false
                         )
                     )
                     adapter.insertNewSection(
                         ConnectionsSectionHeader(
                             it,
-                            getString(R.string.all_connections)
+                            getString(R.string.all_connections),
+                            false
                         ), 1
                     )
                     adapter = adapter.apply {
@@ -120,12 +122,12 @@ class ForwardFragment :
                     sectionList.removeAt(0)
                     sectionList.add(
                         0,
-                        ConnectionsSectionHeader(it, getString(R.string.recent_connections))
+                        ConnectionsSectionHeader(it, getString(R.string.recent_connections), false)
                     )
                     adapter.insertNewSection(
                         ConnectionsSectionHeader(
                             it,
-                            getString(R.string.recent_connections)
+                            getString(R.string.recent_connections), false
                         ), 0
                     )
                     adapter = adapter.apply {

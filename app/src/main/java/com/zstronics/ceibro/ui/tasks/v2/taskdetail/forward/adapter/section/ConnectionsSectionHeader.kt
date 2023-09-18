@@ -4,12 +4,15 @@ import com.intrusoft.sectionedrecyclerview.Section
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 
 class ConnectionsSectionHeader constructor(
-    private val childList: MutableList<AllCeibroConnections.CeibroConnection>, private val sectionText: String
+    private val childList: MutableList<AllCeibroConnections.CeibroConnection>,
+    private val sectionText: String,
+    val isDataLoading: Boolean = true
 ) : Section<AllCeibroConnections.CeibroConnection> {
 
     override fun getChildItems(): MutableList<AllCeibroConnections.CeibroConnection> {
         return childList
     }
+
     fun getSectionText(): String {
         return sectionText
     }

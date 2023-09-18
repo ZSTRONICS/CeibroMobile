@@ -27,7 +27,7 @@ class ForwardVM @Inject constructor(
     var originalConnections = listOf<AllCeibroConnections.CeibroConnection>()
 
     private var _recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
-        MutableLiveData(mutableListOf())
+        MutableLiveData(null)
     val recentAllConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
         _recentAllConnections
     var recentOriginalConnections = listOf<AllCeibroConnections.CeibroConnection>()
@@ -109,7 +109,10 @@ class ForwardVM @Inject constructor(
                         }
                     }
                 }
+
                 is ApiResponse.Error -> {
+                    _recentAllConnections.postValue(mutableListOf())
+                    recentOriginalConnections = mutableListOf()
                     alert(response.error.message)
                 }
             }
