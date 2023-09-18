@@ -21,6 +21,7 @@ import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.contacts.*
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -243,6 +244,7 @@ class CeibroDataLoadingVM @Inject constructor(
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
         }
+        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)

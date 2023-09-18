@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -59,6 +60,7 @@ class SplashViewModel @Inject constructor(
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
         }
+        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)

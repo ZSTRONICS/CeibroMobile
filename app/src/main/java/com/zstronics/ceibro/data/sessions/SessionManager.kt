@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.sessions
 
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.onesignal.OneSignal
@@ -41,15 +42,22 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_IS_TO_ME_UNREAD)
         sharedPreferenceManager.removeValue(KEY_SYNCED_CONTACTS)
         sharedPreferenceManager.removeValue(KEY_SAVED_TASK)
-        _user.postValue(
-            user.value?.copy(
-                phoneNumber = "",
-                firstName = "",
-                surName = "",
-                companyName = "",
-                profilePic = "", autoContactSync = false
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            _user.postValue(
+                user.value?.copy(
+                    id = "",
+                    phoneNumber = "",
+                    firstName = "",
+                    surName = "",
+                    companyName = "",
+                    jobTitle = "",
+                    profilePic = "", autoContactSync = false
+                )
             )
-        )
+            println("UserData: ${_user.value}")
+        }, 450)
+
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
         CookiesManager.secureUUID = ""

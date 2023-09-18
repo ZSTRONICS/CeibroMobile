@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -102,6 +103,7 @@ class ProfileVM @Inject constructor(
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
         }
+        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)

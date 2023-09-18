@@ -8,6 +8,7 @@ import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.Executors
@@ -59,6 +60,7 @@ open class CeibroApplication : Application() {
 
     override fun onTerminate() {
         super.onTerminate()
+        SocketHandler.sendLogout()
         SocketHandler.closeConnectionAndRemoveObservers()
     }
 
