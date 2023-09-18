@@ -502,4 +502,8 @@
     <string name="feedback_form_btn_estonian">Eesti keele vorm</string>
     <string name="feedback_title_english">You can go to the feedback form here.</string>
     <string name="feedback_form_btn_english">English form</string>
+    <string name="no_connections">No Connections</string>
+    <string name="please_select_contacts_to_forward">Please select contacts to forward</string>
+    <string name="recent_connections">Recent Connections</string>
+    <string name="all_connections">All Connections</string>
 </resources>

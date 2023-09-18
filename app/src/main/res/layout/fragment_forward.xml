@@ -115,108 +115,19 @@
             tools:itemCount="3"
             tools:listitem="@layout/layout_item_assignee_chip" />
 
-        <ScrollView
-            android:id="@+id/parentScrollLayout"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allContactsRV"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:contentDescription="@string/appbar_scrolling_view_behavior"
-            android:descendantFocusability="beforeDescendants"
-            android:fillViewport="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:scrollbars="none"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recentConnectionsLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        android:id="@+id/recentTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/inter_semibold"
-                        android:gravity="start"
-                        android:maxLines="1"
-                        android:padding="@dimen/_10sdp"
-                        android:text="Recent Connections"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_13sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recentConnectionsRV"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recentTitle"
-                        tools:itemCount="3"
-                        tools:listitem="@layout/layout_item_assignee_selection" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/allConnectionsLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recentConnectionsLayout">
-
-                    <TextView
-                        android:id="@+id/allTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/inter_semibold"
-                        android:gravity="start"
-                        android:maxLines="1"
-                        android:padding="@dimen/_10sdp"
-                        android:text="All Connections"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_13sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/allContactsRV"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/allTitle"
-                        tools:itemCount="10"
-                        tools:listitem="@layout/layout_item_assignee_selection" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+            app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV"
+            tools:itemCount="10"
+            tools:listitem="@layout/layout_item_assignee_selection" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

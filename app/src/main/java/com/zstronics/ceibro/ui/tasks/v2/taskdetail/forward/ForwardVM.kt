@@ -117,13 +117,19 @@ class ForwardVM @Inject constructor(
     }
 
     fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
-        originalConnections = allContacts
         _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
     }
 
+    fun updateOriginalContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        originalConnections = allContacts
+    }
+
     fun updateRecentContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
-        recentOriginalConnections = allContacts
         _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    }
+
+    fun updateRecentOriginalContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        recentOriginalConnections = allContacts
     }
 
 

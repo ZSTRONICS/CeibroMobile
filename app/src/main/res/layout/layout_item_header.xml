@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
         <import type="android.view.View" />
     </data>
 
-    <TextView
-        android:id="@+id/headerTitle"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:fontFamily="@font/inter_semibold"
-        android:gravity="start"
-        android:maxLines="1"
-        android:padding="@dimen/_10sdp"
-        android:text="Header"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_13sdp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start"
+            android:maxLines="1"
+            android:padding="@dimen/_10sdp"
+            android:text="Header"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13sdp" />
+
+        <TextView
+            android:id="@+id/noConnections"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="@dimen/_10sdp"
+            android:text="@string/no_connections"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_10sdp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </layout>
