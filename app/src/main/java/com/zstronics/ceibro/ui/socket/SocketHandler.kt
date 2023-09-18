@@ -23,6 +23,7 @@ object SocketHandler {
     const val CEIBRO_HEARTBEAT = "heartbeat"
     const val CEIBRO_HEARTBEAT_ACK = "heartbeatAck"
     const val CEIBRO_EVENT_ACK = "eventAck"
+    const val CEIBRO_LOGOUT = "logout"
     var hbCounter = 0
     var handler = android.os.Handler()
     var delayMillis: Long = 10000 // 10 seconds
@@ -175,6 +176,7 @@ object SocketHandler {
         mSocket?.io()?.off(CEIBRO_HEARTBEAT)
         mSocket?.io()?.off(CEIBRO_HEARTBEAT_ACK)
         mSocket?.io()?.off(CEIBRO_EVENT_ACK)
+        mSocket?.io()?.off(CEIBRO_LOGOUT)
         handler.removeCallbacks(runnable)
 //        EventBus.getDefault().unregister(this)
     }
@@ -187,6 +189,11 @@ object SocketHandler {
     @Synchronized
     fun sendEventAck(uuid: String) {
         mSocket?.emit(CEIBRO_EVENT_ACK, uuid)
+    }
+
+    @Synchronized
+    fun sendLogout() {
+        mSocket?.emit(CEIBRO_LOGOUT)
     }
 
     @Synchronized
