@@ -183,8 +183,7 @@ abstract class BaseNavViewModelActivity<VB : ViewDataBinding, VS : IBase.State, 
                 //    if (navigationGraphId == 0) navigationGraphId = navController.graph.id
 //                navInflater
                 graph = navInflater.inflate(navigationGraphId).also {
-                    it.startDestination =
-                        (if (navigationGraphStartDestination != 0) navigationGraphStartDestination else it.startDestination)
+                    it.setStartDestination((if (navigationGraphStartDestination != 0) navigationGraphStartDestination else it.startDestinationId))
                     it.addExtras(extrasBundle.plus(startDestinationInput ?: Bundle()))
                 }
             }

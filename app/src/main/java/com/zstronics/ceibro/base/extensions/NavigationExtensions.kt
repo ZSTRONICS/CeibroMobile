@@ -29,7 +29,7 @@ import androidx.navigation.NavGraph
  * (according to the associated navigation graph).
  */
 val NavController.isOnStartDestination: Boolean
-    get() = (this.currentDestination?.id == this.graph.startDestination)
+    get() = (this.currentDestination?.id == this.graph.startDestinationId)
 
 
 /**

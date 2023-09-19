@@ -75,9 +75,9 @@
 
     object BuildPluginsVersions {
         const val KOTLIN = KotlinVersions.STANDARD_LIBRARY
-        const val BUILDGRADLE = "7.4.1"
+        const val BUILDGRADLE = "8.1.1"
         const val HILT = "2.38.1"
-        const val NAVIGATION = "2.3.5"
+        const val NAVIGATION = "2.7.2"
     }
 
     object HiltDaggerVersion {
