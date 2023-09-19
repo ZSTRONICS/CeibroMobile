@@ -23,14 +23,16 @@ internal class PhotoEditorImageViewListener(
     override fun onDown(e: MotionEvent) = viewState.currentSelectedView != null
 
     override fun onFling(
-        event1: MotionEvent,
-        event2: MotionEvent,
+        e1: MotionEvent?,
+        e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ): Boolean = viewState.currentSelectedView != null
 
     override fun onScroll(
-        event1: MotionEvent, event2: MotionEvent, distanceX: Float,
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        distanceX: Float,
         distanceY: Float
     ) = viewState.currentSelectedView != null
 

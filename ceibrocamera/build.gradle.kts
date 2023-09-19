@@ -7,11 +7,11 @@ plugins {
 
 android {
     namespace = "ee.zstronics.ceibro.camera"
-    compileSdk = 33
+    compileSdk = AppConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
-        minSdk = 24
-        targetSdk = 33
+        minSdk = AppConfig.MIN_SDK_VERSION
+        targetSdk = AppConfig.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -34,11 +34,14 @@ android {
         android.buildFeatures.dataBinding = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+    buildFeatures {
+        android.buildFeatures.buildConfig = true
     }
 }
 

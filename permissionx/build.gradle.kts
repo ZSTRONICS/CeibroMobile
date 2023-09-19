@@ -4,6 +4,7 @@ plugins {
 }
 version = AppConfig.VERSION_NAME
 android {
+    namespace="com.ceibro.permissionx"
     compileSdk = AppConfig.COMPILE_SDK_VERSION
     defaultConfig {
         minSdk = AppConfig.MIN_SDK_VERSION
@@ -12,17 +13,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     viewBinding {
         android.buildFeatures.viewBinding = true
     }
     buildFeatures {
         this.dataBinding = true
+        android.buildFeatures.buildConfig = true
     }
 }
 
