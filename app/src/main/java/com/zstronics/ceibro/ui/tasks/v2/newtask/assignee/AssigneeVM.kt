@@ -12,7 +12,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -112,32 +112,35 @@ class AssigneeVM @Inject constructor(
                         if (allContacts.isNotEmpty()) {
                             recentOriginalConnections = allContacts
                             _recentAllConnections.value = allContacts
+                        } else {
+                            _recentAllConnections.postValue(mutableListOf())
                         }
                     }
                 }
+
                 is ApiResponse.Error -> {
+                    _recentAllConnections.postValue(mutableListOf())
+                    recentOriginalConnections = mutableListOf()
                     alert(response.error.message)
                 }
             }
         }
     }
 
-    fun updateContacts(
-        allContacts: MutableList<AllCeibroConnections.CeibroConnection>,
-        searchedContacts: Boolean
-    ) {
-        originalConnections = allContacts
-        if (!searchedContacts)
-            _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    fun updateContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        _allConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
     }
 
-    fun updateRecentContacts(
-        allContacts: MutableList<AllCeibroConnections.CeibroConnection>,
-        searchedContacts: Boolean
-    ) {
+    fun updateOriginalContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        originalConnections = allContacts
+    }
+
+    fun updateRecentContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
+    }
+
+    fun updateRecentOriginalContacts(allContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
         recentOriginalConnections = allContacts
-        if (!searchedContacts)
-            _recentAllConnections.postValue(allContacts as MutableList<AllCeibroConnections.CeibroConnection>?)
     }
 
     fun filterContacts(search: String) {

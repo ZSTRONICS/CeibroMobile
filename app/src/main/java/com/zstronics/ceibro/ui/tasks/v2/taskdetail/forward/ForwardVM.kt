@@ -106,6 +106,8 @@ class ForwardVM @Inject constructor(
                         if (allContacts.isNotEmpty()) {
                             recentOriginalConnections = allContacts
                             _recentAllConnections.value = allContacts
+                        } else {
+                            _recentAllConnections.postValue(mutableListOf())
                         }
                     }
                 }

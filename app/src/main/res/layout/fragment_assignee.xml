@@ -116,124 +116,36 @@
             tools:itemCount="3"
             tools:listitem="@layout/layout_item_assignee_chip" />
 
-        <ScrollView
-            android:id="@+id/parentLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:contentDescription="@string/appbar_scrolling_view_behavior"
-            android:descendantFocusability="beforeDescendants"
-            android:fillViewport="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <CheckBox
+            android:id="@+id/selfAssignCheckBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:checked="@{viewState.isSelfAssigned}"
+            android:fontFamily="@font/inter_medium"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:text="@string/self_assign"
+            android:textColor="@color/appTextGrey"
+            android:textSize="14.5sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV">
+            app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <CheckBox
-                    android:id="@+id/selfAssignCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:checked="@{viewState.isSelfAssigned}"
-                    android:fontFamily="@font/inter_medium"
-                    android:paddingStart="@dimen/_5sdp"
-                    android:paddingEnd="@dimen/_5sdp"
-                    android:text="@string/self_assign"
-                    android:textColor="@color/appTextGrey"
-                    android:textSize="14.5sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/recentConnectionsLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/selfAssignCheckBox">
-
-                    <TextView
-                        android:id="@+id/headerTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/inter_semibold"
-                        android:gravity="start"
-                        android:maxLines="1"
-                        android:padding="@dimen/_10sdp"
-                        android:text="Recent Connections"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_13sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recentConnectionsRV"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/headerTitle"
-                        tools:itemCount="2"
-                        tools:listitem="@layout/layout_item_assignee_selection" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/allConnectionsLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recentConnectionsLayout">
-
-                    <TextView
-                        android:id="@+id/allConnectionText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/inter_semibold"
-                        android:gravity="start"
-                        android:maxLines="1"
-                        android:padding="@dimen/_10sdp"
-                        android:text="All Connections"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_13sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/allContactsRV"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/allConnectionText"
-                        tools:itemCount="8"
-                        tools:listitem="@layout/layout_item_assignee_selection" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allContactsRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selfAssignCheckBox"
+            tools:itemCount="8"
+            tools:listitem="@layout/layout_item_assignee_selection" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
