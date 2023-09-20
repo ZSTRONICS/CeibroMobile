@@ -96,7 +96,7 @@ class CeibroImageViewerActivity : BaseActivity() {
         }
 
         binding.confirmBtn.setOnClickListener {
-            val comment = binding.commentsField.text.toString()
+            val comment = binding.commentsField.text.toString().trim()
             val oldImages = listOfImages.value
             oldImages?.get(lastSelectedPosition)?.comment = comment
             listOfImages.postValue(oldImages)

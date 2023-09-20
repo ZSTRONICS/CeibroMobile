@@ -70,6 +70,10 @@ data class CeibroTaskV2(
             this.updatedAt = DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
         }
     }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
 }
 
 @Parcelize
