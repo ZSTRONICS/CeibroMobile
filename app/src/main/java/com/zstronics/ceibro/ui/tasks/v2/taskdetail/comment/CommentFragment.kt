@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
@@ -38,6 +37,7 @@ class CommentFragment :
     override val viewModel: CommentVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_comment
     override fun toolBarVisibility(): Boolean = false
+    @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -284,6 +284,9 @@ class CommentFragment :
             }
         }
         mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
+        imageWithCommentAdapter.textClickListener = { _: View, position: Int, data: PickedImages ->
+            showEditCommentDialog(data)
+        }
 
 
         viewModel.onlyImages.observe(viewLifecycleOwner) {
@@ -327,6 +330,22 @@ class CommentFragment :
 
     }
 
+    private fun showEditCommentDialog(data: PickedImages) {
+        val sheet = EditCommentDialogSheet(data)
+        sheet.updateCommentOnClick = { updatedComment ->
+            val allImagesWithComment = viewModel.imagesWithComments.value
+            val foundData = allImagesWithComment?.find { it.fileUri == data.fileUri }
+            if (foundData != null) {
+                val index = allImagesWithComment.indexOf(foundData)
+                foundData.comment = updatedComment
+                allImagesWithComment[index] = foundData
+                viewModel.imagesWithComments.postValue(allImagesWithComment)
+            }
+        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "EditCommentDialogSheet")
+    }
 
     private val ceibroImagesPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

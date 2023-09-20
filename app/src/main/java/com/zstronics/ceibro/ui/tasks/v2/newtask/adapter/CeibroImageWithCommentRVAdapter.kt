@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class CeibroImageWithCommentRVAdapter @Inject constructor() :
     RecyclerView.Adapter<CeibroImageWithCommentRVAdapter.CeibroImageWithCommentViewHolder>() {
-    var itemClickListener: ((view: View, position: Int) -> Unit)? =
+    var textClickListener: ((view: View, position: Int, data: PickedImages) -> Unit)? =
         null
     var listItems: MutableList<PickedImages> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
@@ -48,14 +48,8 @@ class CeibroImageWithCommentRVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: PickedImages) {
-            binding.root.setOnClickListener {
-//                itemClickListener?.invoke(it, adapterPosition)
-//                val previousSelectedPosition = selectedItemPosition
-//                selectedItemPosition = adapterPosition
-//
-//                // Notify adapter about the item selection changes
-//                notifyItemChanged(previousSelectedPosition)
-//                notifyItemChanged(selectedItemPosition)
+            binding.imgComment.setOnClickListener {
+                textClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
 
             val context = binding.smallImgView.context

@@ -4,5 +4,7 @@
     <dimen name="normal_margin">8dp</dimen>
     <dimen name="large_margin">16dp</dimen>
     <dimen name="top_tool_icon_width">50dp</dimen>
+    <dimen name="dialog_minimum_corner">3dp</dimen>
+    <dimen name="dialog_small_corner">7dp</dimen>
     <dimen name="dialog_medium_corner">10dp</dimen>
 </resources>
