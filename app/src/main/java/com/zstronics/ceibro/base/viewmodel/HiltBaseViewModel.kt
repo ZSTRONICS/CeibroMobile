@@ -186,7 +186,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         launch {
             if (task != null) {
                 /// Update record updated_at
-                task.updateUpdatedAt()
+//                task.updateUpdatedAt()
                 val taskFromMe = task.creator.id == userId
                 val taskToMe = !task.assignedToState.none { it.userId == userId }
 
@@ -264,7 +264,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         launch {
             if (task != null) {
                 /// Update record updated_at
-                task.updateUpdatedAt()
+//                task.updateUpdatedAt()
                 val taskFromMe = task.isCreator
                 val taskToMe = task.isAssignedToMe
                 val myState = task.assignedToState.find { it.userId == userId }?.state

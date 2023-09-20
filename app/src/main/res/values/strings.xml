@@ -241,6 +241,9 @@
     <string name="fast_heading">Fast</string>
     <string name="image_heading">Image</string>
     <string name="comment_heading">Comment</string>
+    <string name="original_comment_heading">Original comment</string>
+    <string name="keep_original_heading">Keep original</string>
+    <string name="updated_comment_heading">Updated comment</string>
     <string name="reply_heading">Reply</string>
     <string name="create_task_heading">Create task</string>
     <string name="new_heading">New</string>
