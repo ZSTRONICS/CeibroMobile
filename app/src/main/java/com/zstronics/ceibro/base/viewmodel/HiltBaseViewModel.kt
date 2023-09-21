@@ -1429,6 +1429,112 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         return updatedTask
     }
 
+    suspend fun updateTaskUnCanceledInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        userId: String?,
+        sessionManager: SessionManager
+    ) {
+        val updatedTask: CeibroTaskV2? = null
+        val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+            ViewModelProvider(it).get(SharedViewModel::class.java)
+        }
+
+        eventData?.let {
+            val taskID = eventData.taskId
+
+            val taskEvent = Events(
+                id = eventData.id,
+                taskId = eventData.taskId,
+                eventType = eventData.eventType,
+                initiator = eventData.initiator,
+                eventData = eventData.eventData,
+                commentData = eventData.commentData,
+                createdAt = eventData.createdAt,
+                updatedAt = eventData.updatedAt,
+                invitedMembers = eventData.invitedMembers,
+                v = null
+            )
+
+            val taskEventList: MutableList<Events> = mutableListOf()
+            taskEventList.add(taskEvent)
+
+            val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+            val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+            val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+
+            val removingTask = taskHiddenLocalData?.allTasks?.canceled?.find { it.id == taskID }
+
+
+            removingTask?.let { task ->
+
+                var oldEvents = task.events.toMutableList()
+                if (oldEvents.isNotEmpty()) {
+                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                        oldEvents[oldEventIndex] = taskEvent
+                        task.events = oldEvents.toList()
+                    } else {
+                        oldEvents.add(taskEvent)
+                        task.events = oldEvents.toList()
+                    }
+                } else {
+                    oldEvents = taskEventList
+                    task.events = oldEvents.toList()
+                }
+                task.hiddenBy = listOf()
+                task.seenBy = eventData.taskData.seenBy
+                task.creatorState = eventData.taskData.creatorState
+                task.updatedAt = eventData.updatedAt
+                val assignToList = task.assignedToState
+                assignToList.map {
+                    it.state = TaskStatus.NEW.name
+                }     //as creator state is canceled, so all assignee will be canceled
+                task.assignedToState = assignToList
+
+
+                val cancelledList = taskHiddenLocalData.allTasks.canceled.toMutableList()
+                val cancelIdFound = cancelledList.find { it.id == task.id }
+                cancelIdFound?.let {
+                    val index = cancelledList.indexOf(it)
+                    cancelledList.removeAt(index)
+                    taskHiddenLocalData.allTasks.canceled = cancelledList
+                    taskDao.insertTaskData(taskHiddenLocalData)
+                }
+
+
+                if (eventData.oldTaskData.isAssignedToMe) {
+
+                    val newTask = taskToMeLocalData?.allTasks?.new?.find { it.id == taskID }
+
+                    if (newTask == null) {
+
+                        taskToMeLocalData?.allTasks?.new?.toMutableList()?.add(0, task)
+
+                        taskToMeLocalData?.let { it1 -> taskDao.insertTaskData(it1) }
+                        sharedViewModel?.isToMeUnread?.postValue(true)
+                    }
+                }
+
+                if (task.isCreator) {
+                    val unreadTask = taskFromMeLocalData?.allTasks?.unread?.find { it.id == taskID }
+                    if (unreadTask == null) {
+                        taskToMeLocalData?.allTasks?.new?.toMutableList()?.add(0, task)
+                        taskFromMeLocalData?.let { it1 -> taskDao.insertTaskData(it1) }
+
+                        sharedViewModel?.isFromMeUnread?.postValue(true)
+
+                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
     fun updateTaskCanceledInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
@@ -2241,7 +2347,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             )
                         }
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask,taskEvent))
+                        EventBus.getDefault()
+                            .post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
 
@@ -2406,7 +2513,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         )
 
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask,taskEvent))
+                        EventBus.getDefault()
+                            .post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
@@ -2575,7 +2683,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         )
 
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask,taskEvent))
+                        EventBus.getDefault()
+                            .post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }

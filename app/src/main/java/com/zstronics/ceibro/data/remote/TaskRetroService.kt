@@ -151,6 +151,12 @@ interface TaskRetroService {
         @Path("taskId") taskId: String
     ): Response<EventV2Response>
 
+    @POST("v2/task/uncancel/{taskId}")
+    suspend fun unCancelTask(
+        @Path("taskId") taskId: String
+    ): Response<EventV2Response>
+
+
     @POST("v2/task/hide/{taskId}")
     suspend fun hideTask(
         @Path("taskId") taskId: String
