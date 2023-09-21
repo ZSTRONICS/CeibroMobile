@@ -26,14 +26,19 @@ abstract class BaseNetworkRepository : INetwork {
                 )
             )
         } catch (exception: Exception) {
-            if (exception.localizedMessage?.contains("Unable to resolve host") == true) {
+            if (exception.localizedMessage?.contains("Unable to resolve host", true) == true) {
                 return ApiResponse.Error(
                     ApiError(
                         getDefaultCode(), "Host error or No internet"
                     )
                 )
-            }
-            else {
+            } else if (exception.localizedMessage?.contains("IllegalStateException: Expected", true) == true) {
+                return ApiResponse.Error(
+                    ApiError(
+                        getDefaultCode(), "Data class conflict"
+                    )
+                )
+            } else {
                 return ApiResponse.Error(
                     ApiError(
                         getDefaultCode(),

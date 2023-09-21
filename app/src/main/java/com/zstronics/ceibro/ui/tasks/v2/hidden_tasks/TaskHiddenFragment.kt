@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -191,6 +192,13 @@ class TaskHiddenFragment :
                 //user cannot hide a task of new state
                 if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
                     viewModel.showUnHideTaskDialog(requireContext(), data)
+                }
+                else if (viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
+                    if (data.creator.id == viewModel.user?.id) {
+                        viewModel.showUnCancelTaskDialog(requireContext(), data)
+                    } else {
+                        shortToastNow("Only self-created tasks can be un-canceled")
+                    }
                 }
             }
     }
