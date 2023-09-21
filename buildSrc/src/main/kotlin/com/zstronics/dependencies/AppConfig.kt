@@ -5,7 +5,7 @@ object AppConfig {
     const val TARGET_SDK_VERSION = COMPILE_SDK_VERSION
 
     const val VERSION_CODE = 4
-    const val VERSION_NAME = "2.0.0"
+    const val VERSION_NAME = "2.0.1"
 
     const val VERSION_CODE_LIVE = 6
     const val VERSION_NAME_LIVE = "2.1.2"
