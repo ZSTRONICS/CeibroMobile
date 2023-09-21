@@ -5,9 +5,11 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
+import com.zstronics.ceibro.base.extensions.visible
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
@@ -52,6 +54,7 @@ class ProfileFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        populateVersionUI()
     }
 
     private fun navigateToEditProfile() {
@@ -79,5 +82,12 @@ class ProfileFragment :
         navigate(R.id.mainAdminFragment)
     }
 
+    private fun populateVersionUI() {
+        if (BuildConfig.DEBUG && BuildConfig.FLAVOR != "live") {
+            mViewDataBinding.versionTv.visible()
+            mViewDataBinding.versionTv.text =
+                "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE}) - ${BuildConfig.FLAVOR}Flavour"
+        }
+    }
 
 }

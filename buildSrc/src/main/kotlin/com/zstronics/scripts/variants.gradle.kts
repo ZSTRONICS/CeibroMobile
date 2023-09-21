@@ -98,6 +98,8 @@ android {
             localProperties.inputStream().use { properties.load(it) }
             try {
                 create(ProductFlavors.DEV) {
+                    versionCode = AppConfig.VERSION_CODE
+                    versionName = AppConfig.VERSION_NAME
                     dimension = FlavorDimensions.DEFAULT
                     applicationIdSuffix = ".${ProductFlavors.DEV}"
                     resValue("string","app_name", "Ceibro debug")
@@ -127,6 +129,8 @@ android {
                     }
                 }
                 create(ProductFlavors.EU_QA) {
+                    versionCode = AppConfig.VERSION_CODE
+                    versionName = AppConfig.VERSION_NAME
                     dimension = FlavorDimensions.DEFAULT
                     applicationIdSuffix = ".${ProductFlavors.EU_QA}"
                     resValue("string","app_name", "Ceibro EU QA")

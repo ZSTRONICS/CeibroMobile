@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -12,6 +11,7 @@
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.profile.ProfileVM" />
+
         <import type="android.view.View" />
     </data>
 
@@ -67,11 +67,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
                 android:layout_marginEnd="10dp"
-                android:maxLines="1"
+                android:layout_marginBottom="15dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
+                android:maxLines="1"
                 android:text="@string/profile_heading"
                 android:textColor="@color/black"
                 android:textSize="19sp"
@@ -188,10 +188,10 @@
                     android:gravity="center"
                     android:maxLines="2"
                     android:padding="2dp"
-                    android:visibility="@{viewModel.sessionManager.Companion.user.companyName.isEmpty() ? View.GONE: View.VISIBLE, default = gone}"
                     android:text='@{viewModel.sessionManager.Companion.user.companyName}'
                     android:textColor="@color/black"
                     android:textSize="14.5sp"
+                    android:visibility="@{viewModel.sessionManager.Companion.user.companyName.isEmpty() ? View.GONE: View.VISIBLE, default = gone}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/userProfileEmail" />
@@ -208,10 +208,10 @@
                     android:gravity="center"
                     android:maxLines="2"
                     android:padding="2dp"
-                    android:visibility="@{viewModel.sessionManager.Companion.user.jobTitle.isEmpty() ? View.GONE: View.VISIBLE, default = gone}"
                     android:text='@{viewModel.sessionManager.Companion.user.jobTitle}'
                     android:textColor="@color/black"
                     android:textSize="14.5sp"
+                    android:visibility="@{viewModel.sessionManager.Companion.user.jobTitle.isEmpty() ? View.GONE: View.VISIBLE, default = gone}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/userProfileCompany" />
@@ -324,12 +324,23 @@
             app:iconGravity="textStart"
             app:iconPadding="12dp"
             app:iconTint="@color/appBlue"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/versionTv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:strokeColor="@color/appBlue"
             app:strokeWidth="1dp" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/versionTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Build Version: 1.0.0"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
