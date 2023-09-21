@@ -226,6 +226,32 @@ class TaskHiddenVM @Inject constructor(
         }
     }
 
+    fun showUnCancelTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_un_cancel_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+//            unHideTask(taskData.id) { isSuccess ->
+//                alertDialog.dismiss()
+//            }
+            alert("In-progress")
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
 
 
     private fun unHideTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {

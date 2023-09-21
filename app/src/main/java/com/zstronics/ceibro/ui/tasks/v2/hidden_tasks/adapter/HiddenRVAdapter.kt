@@ -1,23 +1,19 @@
 package com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter
 
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
-import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
 import com.zstronics.ceibro.databinding.LayoutTaskBoxV2Binding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
-import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
 class HiddenRVAdapter @Inject constructor() :
@@ -74,27 +70,40 @@ class HiddenRVAdapter @Inject constructor() :
             binding.taskCanceledText.visibility = View.GONE
             //Use if a task is cancelled
             if (item.creatorState.equals(TaskStatus.CANCELED.name, true)) {
-                binding.taskCardParentLayout.background =
-                    context.resources.getDrawable(R.drawable.task_card_cancel_outline)
-                binding.taskCanceledText.visibility = View.VISIBLE
+                if (item.creator.id == currentUser?.id) {
+                    binding.taskCardParentLayout.background =
+                        context.resources.getDrawable(R.drawable.task_card_cancel_outline)
+                    binding.taskCanceledText.visibility = View.VISIBLE
+                    val greyColor = ContextCompat.getColor(context, R.color.appPaleRed)
+                    ViewCompat.setBackgroundTintList(binding.taskCanceledText, ColorStateList.valueOf(greyColor))
 
-                binding.taskFromHeading.text = context.resources.getString(R.string.to_heading)
-                binding.taskFromText.text =
-                    if (item.assignedToState.size == 1) {
-                        if (item.assignedToState[0].firstName.isEmpty()) {
-                            item.assignedToState[0].phoneNumber
+                    binding.taskFromHeading.text = context.resources.getString(R.string.to_heading)
+                    binding.taskFromText.text =
+                        if (item.assignedToState.size == 1) {
+                            if (item.assignedToState[0].firstName.isEmpty()) {
+                                item.assignedToState[0].phoneNumber
+                            } else {
+                                "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}"
+                            }
+                        } else if (item.assignedToState.size > 1) {
+                            if (item.assignedToState[0].firstName.isEmpty()) {
+                                "${item.assignedToState[0].phoneNumber}  +${item.assignedToState.size - 1}"
+                            } else {
+                                "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}  +${item.assignedToState.size - 1}"
+                            }
                         } else {
-                            "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}"
+                            "N/A"
                         }
-                    } else if (item.assignedToState.size > 1) {
-                        if (item.assignedToState[0].firstName.isEmpty()) {
-                            "${item.assignedToState[0].phoneNumber}  +${item.assignedToState.size - 1}"
-                        } else {
-                            "${item.assignedToState[0].firstName} ${item.assignedToState[0].surName}  +${item.assignedToState.size - 1}"
-                        }
-                    } else {
-                        "N/A"
-                    }
+                } else {        //else case will run when the cancelled task is shown for assignee, not a creator
+                    binding.taskCardParentLayout.background =
+                        context.resources.getDrawable(R.drawable.task_card_cancel_outline_grey)
+                    binding.taskCanceledText.visibility = View.VISIBLE
+                    val greyColor = ContextCompat.getColor(context, R.color.appGrey2)
+                    ViewCompat.setBackgroundTintList(binding.taskCanceledText, ColorStateList.valueOf(greyColor))
+
+                    binding.taskFromHeading.text = context.resources.getString(R.string.from_heading)
+                    binding.taskFromText.text = "${item.creator.firstName} ${item.creator.surName}"
+                }
             } else {
                 binding.taskFromHeading.text = context.resources.getString(R.string.from_heading)
                 binding.taskFromText.text = "${item.creator.firstName} ${item.creator.surName}"
