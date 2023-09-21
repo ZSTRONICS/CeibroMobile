@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.hidden_tasks
 
 import android.content.Context
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -56,7 +57,8 @@ class TaskHiddenVM @Inject constructor(
             if (taskLocalData != null) {
                 val allTasks = taskLocalData.allTasks
                 val canceled = allTasks.canceled.sortedByDescending { it.updatedAt }.toMutableList()
-                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                val ongoingTask =
+                    allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
                 val doneTask = allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
                 _ongoingTasks.postValue(ongoingTask)
                 _doneTasks.postValue(doneTask)
@@ -83,10 +85,16 @@ class TaskHiddenVM @Inject constructor(
                                 allTasks = response.data.allTasks
                             )
                         )
-                        val ongoingTask = response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
-                        val doneTask = response.data.allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
+                        val ongoingTask =
+                            response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }
+                                .toMutableList()
+                        val doneTask =
+                            response.data.allTasks.done.sortedByDescending { it.updatedAt }
+                                .toMutableList()
                         val allTasks = response.data.allTasks
-                        val canceled = response.data.allTasks.canceled.sortedByDescending { it.updatedAt }.toMutableList()
+                        val canceled =
+                            response.data.allTasks.canceled.sortedByDescending { it.updatedAt }
+                                .toMutableList()
                         _cancelledTasks.postValue(canceled)
                         _ongoingTasks.postValue(ongoingTask)
                         _doneTasks.postValue(doneTask)
@@ -102,6 +110,7 @@ class TaskHiddenVM @Inject constructor(
                         }
                         callBack.invoke()
                     }
+
                     is ApiResponse.Error -> {
                         alert(response.error.message)
                         if (skeletonVisible) {
@@ -241,10 +250,9 @@ class TaskHiddenVM @Inject constructor(
         alertDialog.show()
 
         yesBtn.setOnClickListener {
-//            unHideTask(taskData.id) { isSuccess ->
-//                alertDialog.dismiss()
-//            }
-            alert("In-progress now")
+            unCancelTask(taskData.id) {
+                alertDialog.dismiss()
+            }
         }
 
         noBtn.setOnClickListener {
@@ -252,7 +260,31 @@ class TaskHiddenVM @Inject constructor(
         }
     }
 
+    private fun unCancelTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.unCancelTask(taskId)) {
+                is ApiResponse.Success -> {
+                    updateTaskUnCanceledInLocal(
+                        response.data.data,
+                        taskDao,
+                        user?.id,
+                        sessionManager
+                    )
+                    val handler = Handler()
+                    handler.postDelayed({
+                        loading(false, "")
+                        callBack.invoke(true)
+                    }, 50)
+                }
 
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
+    }
 
     private fun unHideTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
         launch {
