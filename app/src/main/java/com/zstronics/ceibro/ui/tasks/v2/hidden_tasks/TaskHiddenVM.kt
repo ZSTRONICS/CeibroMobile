@@ -244,7 +244,7 @@ class TaskHiddenVM @Inject constructor(
 //            unHideTask(taskData.id) { isSuccess ->
 //                alertDialog.dismiss()
 //            }
-            alert("In-progress")
+            alert("In-progress now")
         }
 
         noBtn.setOnClickListener {
