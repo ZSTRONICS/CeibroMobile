@@ -1439,10 +1439,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
-
         eventData?.let {
             val taskID = eventData.taskId
-
             val taskEvent = Events(
                 id = eventData.id,
                 taskId = eventData.taskId,
@@ -1455,16 +1453,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 invitedMembers = eventData.invitedMembers,
                 v = null
             )
-
             val taskEventList: MutableList<Events> = mutableListOf()
             taskEventList.add(taskEvent)
 
-            val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
-            val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
             val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
-
             val removingTask = taskHiddenLocalData?.allTasks?.canceled?.find { it.id == taskID }
-
 
             removingTask?.let { task ->
 
@@ -1490,7 +1483,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 val assignToList = task.assignedToState
                 assignToList.map {
                     it.state = TaskStatus.NEW.name
-                }     //as creator state is canceled, so all assignee will be canceled
+                }
                 task.assignedToState = assignToList
 
 
@@ -1503,34 +1496,35 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     taskDao.insertTaskData(taskHiddenLocalData)
                 }
 
-
                 if (eventData.oldTaskData.isAssignedToMe) {
-
+                    val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
                     val newTask = taskToMeLocalData?.allTasks?.new?.find { it.id == taskID }
-
                     if (newTask == null) {
-
-                        taskToMeLocalData?.allTasks?.new?.toMutableList()?.add(0, task)
-
+                        val assignNew=taskToMeLocalData?.allTasks?.new?.toMutableList()
+                        assignNew?.add(0,removingTask)
+                        if (assignNew != null) {
+                            taskToMeLocalData.allTasks.new =assignNew
+                        }
                         taskToMeLocalData?.let { it1 -> taskDao.insertTaskData(it1) }
                         sharedViewModel?.isToMeUnread?.postValue(true)
                     }
                 }
 
                 if (task.isCreator) {
+                    val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
                     val unreadTask = taskFromMeLocalData?.allTasks?.unread?.find { it.id == taskID }
                     if (unreadTask == null) {
-                        taskToMeLocalData?.allTasks?.new?.toMutableList()?.add(0, task)
+                        val AssignUnRead=taskFromMeLocalData?.allTasks?.unread?.toMutableList();
+                        AssignUnRead?.add(0,removingTask)
+                        if (AssignUnRead != null) {
+                            taskFromMeLocalData.allTasks.unread=AssignUnRead
+                        }
                         taskFromMeLocalData?.let { it1 -> taskDao.insertTaskData(it1) }
-
                         sharedViewModel?.isFromMeUnread?.postValue(true)
-
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
-
             }
-
         }
 
     }
