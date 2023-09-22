@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section
 
+import android.Manifest
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.ceibro.permissionx.PermissionX
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
@@ -21,6 +24,7 @@ class ConnectionAdapterSectionRecycler constructor(
         context,
         sectionList
     ) {
+    var showContactPermissionToast=true
 
     var itemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
@@ -78,7 +82,15 @@ class ConnectionAdapterSectionRecycler constructor(
     inner class ConnectionsSectionViewHolder constructor(private val binding: LayoutItemHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ConnectionsSectionHeader?) {
+            binding.headerTitle.text = item?.getSectionText()
+            if (!isPermissionGranted(Manifest.permission.READ_CONTACTS)&&showContactPermissionToast) {
+                showContactPermissionToast=false
+                context.shortToastNow(context.getString(R.string.contacts_permission))
+            }
 
+            if (!showContactPermissionToast) {
+                return
+            }
             if (item?.isDataLoading == true) {
                 binding.noConnections.visibility = View.GONE
                 binding.connectionsLoadingLayout.visibility = View.VISIBLE
@@ -89,7 +101,7 @@ class ConnectionAdapterSectionRecycler constructor(
                 binding.noConnections.visibility = View.GONE
                 binding.connectionsLoadingLayout.visibility = View.GONE
             }
-            binding.headerTitle.text = item?.getSectionText()
+
         }
     }
 
@@ -189,5 +201,9 @@ class ConnectionAdapterSectionRecycler constructor(
                 }
             }
         }
+    }
+
+    fun isPermissionGranted(permission: String): Boolean {
+        return PermissionX.isGranted(context, permission)
     }
 }

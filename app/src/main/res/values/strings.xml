@@ -512,4 +512,5 @@
     <string name="recent_connections">Recent Connections</string>
     <string name="all_connections">All Connections</string>
     <string name="connections_loading">Connections loading</string>
+    <string name="contacts_permission">"Contacts permission not granted"</string>
 </resources>
