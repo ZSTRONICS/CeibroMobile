@@ -267,9 +267,7 @@ class TaskHiddenVM @Inject constructor(
                 is ApiResponse.Success -> {
                     updateTaskUnCanceledInLocal(
                         response.data.data,
-                        taskDao,
-                        user?.id,
-                        sessionManager
+                        taskDao
                     )
                     val handler = Handler()
                     handler.postDelayed({
