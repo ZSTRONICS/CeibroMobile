@@ -87,6 +87,10 @@ class ProfileFragment :
             mViewDataBinding.versionTv.visible()
             mViewDataBinding.versionTv.text =
                 "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE}) - ${BuildConfig.FLAVOR}Flavour"
+        } else {
+            mViewDataBinding.versionTv.visible()
+            mViewDataBinding.versionTv.text =
+                "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
         }
     }
 
