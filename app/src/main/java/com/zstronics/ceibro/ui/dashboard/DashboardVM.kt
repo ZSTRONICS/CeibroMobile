@@ -152,7 +152,8 @@ class DashboardVM @Inject constructor(
                         updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
                     }
 
-                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name -> {
+                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
+                    SocketHandler.TaskEvent.UN_CANCEL_TASK.name -> {
                         val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                             arguments,
                             object : TypeToken<SocketNewTaskEventV2Response>() {}.type
@@ -169,6 +170,14 @@ class DashboardVM @Inject constructor(
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
                             updateTaskCanceledInLocal(
+                                commentData,
+                                taskDao,
+                                userId,
+                                sessionManager
+                            )
+                        }
+                        if (socketData.eventType == SocketHandler.TaskEvent.UN_CANCEL_TASK.name) {
+                            updateTaskUnCanceledInLocal(
                                 commentData,
                                 taskDao,
                                 userId,
