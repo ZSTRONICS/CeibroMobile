@@ -31,6 +31,7 @@ class NavHostPresenterActivity :
 
     companion object {
         var activityInstance: NavHostPresenterActivity? = null
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {

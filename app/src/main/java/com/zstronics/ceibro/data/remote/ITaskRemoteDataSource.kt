@@ -26,6 +26,7 @@ interface ITaskRemoteDataSource {
     suspend fun forwardTask(taskId: String, forwardTaskV2Request: ForwardTaskV2Request): ApiResponse<NewTaskV2Response>
     suspend fun taskSeen(taskId: String): ApiResponse<TaskSeenResponse>
     suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response>
+    suspend fun unCancelTask(taskId: String): ApiResponse<EventV2Response>
     suspend fun hideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun unHideTask(taskId: String): ApiResponse<HideTaskResponse>
 }

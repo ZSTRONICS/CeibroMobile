@@ -1429,6 +1429,121 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         return updatedTask
     }
 
+    fun updateTaskUnCanceledInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        userId: String?,
+        sessionManager: SessionManager
+    ) {
+        val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+            ViewModelProvider(it).get(SharedViewModel::class.java)
+        }
+        eventData?.let {
+            val taskID = eventData.taskId
+            val taskEvent = Events(
+                id = eventData.id,
+                taskId = eventData.taskId,
+                eventType = eventData.eventType,
+                initiator = eventData.initiator,
+                eventData = eventData.eventData,
+                commentData = eventData.commentData,
+                createdAt = eventData.createdAt,
+                updatedAt = eventData.updatedAt,
+                invitedMembers = eventData.invitedMembers,
+                v = null
+            )
+            val taskEventList: MutableList<Events> = mutableListOf()
+            taskEventList.add(taskEvent)
+
+            launch {
+                val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+                val removingTask = taskHiddenLocalData?.allTasks?.canceled?.find { it.id == taskID }
+
+                removingTask?.let { task ->
+                    val cancelledList = taskHiddenLocalData.allTasks.canceled.toMutableList()
+                    val index = cancelledList.indexOf(removingTask)
+
+                    var oldEvents = task.events.toMutableList()
+                    if (oldEvents.isNotEmpty()) {
+                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                            oldEvents[oldEventIndex] = taskEvent
+                            task.events = oldEvents.toList()
+                        } else {
+                            oldEvents.add(taskEvent)
+                            task.events = oldEvents.toList()
+                        }
+                    } else {
+                        oldEvents = taskEventList
+                        task.events = oldEvents.toList()
+                    }
+                    task.hiddenBy = listOf()
+                    task.seenBy = eventData.taskData.seenBy
+                    task.creatorState = eventData.taskData.creatorState
+                    task.updatedAt = eventData.updatedAt
+                    val assignToList = task.assignedToState
+                    assignToList.map {
+                        it.state = TaskStatus.NEW.name
+                    }
+                    task.assignedToState = assignToList
+
+
+                    cancelledList.removeAt(index)
+                    taskHiddenLocalData.allTasks.canceled = cancelledList
+
+
+                    if (eventData.oldTaskData.isAssignedToMe) {
+                        val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+
+                        if (taskToMeLocalData != null) {
+                            val newTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                            val newTask = newTaskList.find { it.id == taskID }
+
+                            if (newTask == null) {
+                                newTaskList.add(0, task)
+                                taskToMeLocalData.allTasks.new = newTaskList
+                            } else {
+                                val newTaskIndex = newTaskList.indexOf(newTask)
+                                newTaskList[newTaskIndex] = task
+                                taskToMeLocalData.allTasks.new = newTaskList
+                            }
+                            taskDao.insertTaskData(taskToMeLocalData)
+                            sharedViewModel?.isToMeUnread?.postValue(true)
+                        }
+                    }
+
+                    if (task.isCreator) {
+                        val taskFromMeLocalData =
+                            taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+
+                        if (taskFromMeLocalData != null) {
+                            val unreadTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
+                            val unreadTask = unreadTaskList.find { it.id == taskID }
+
+                            if (unreadTask == null) {
+                                unreadTaskList.add(0, task)
+                                taskFromMeLocalData.allTasks.unread = unreadTaskList
+                            } else {
+                                val unreadTaskIndex = unreadTaskList.indexOf(unreadTask)
+                                unreadTaskList[unreadTaskIndex] = task
+                                taskFromMeLocalData.allTasks.unread = unreadTaskList
+                            }
+
+                            taskDao.insertTaskData(taskFromMeLocalData)
+                            sharedViewModel?.isFromMeUnread?.postValue(true)
+                        }
+                    }
+
+                    taskDao.insertTaskData(taskHiddenLocalData)
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    EventBus.getDefault().post(LocalEvents.TaskForwardEvent(task))
+                }
+            }
+        }
+
+    }
+
     fun updateTaskCanceledInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
@@ -2241,7 +2356,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             )
                         }
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask,taskEvent))
+                        EventBus.getDefault()
+                            .post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
 
@@ -2406,7 +2522,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         )
 
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask,taskEvent))
+                        EventBus.getDefault()
+                            .post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
@@ -2575,7 +2692,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         )
 
                         // send task data for ui update
-                        EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask,taskEvent))
+                        EventBus.getDefault()
+                            .post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
