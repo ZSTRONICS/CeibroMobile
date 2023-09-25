@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zstronics.ceibro.BuildConfig
@@ -15,6 +16,8 @@ import com.zstronics.ceibro.data.repos.dashboard.DashboardRepositoryService
 import com.zstronics.ceibro.data.repos.projects.ProjectRepositoryService
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserverImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -169,6 +172,18 @@ class NetworkModule {
 
     @Provides
     fun provideConnectionsV2Dao(database: CeibroDatabase) = database.getConnectionsV2Dao()
+
+    @Provides
+    fun provideConnectivityManager(
+        @ApplicationContext
+        context: Context
+    ): ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    @Provides
+    @Singleton
+    fun provideNetworkConnectivityObserver(connectivityManager: ConnectivityManager): NetworkConnectivityObserver =
+        NetworkConnectivityObserverImpl(connectivityManager)
 }
 
 const val timeoutRead = 30   //In seconds

@@ -514,4 +514,7 @@
     <string name="connections_loading">Connections loading</string>
     <string name="contacts_permission">"Contacts permission not granted"</string>
     <string name="choose_heading">Choose</string>
+    <string name="you_re_back_online">You\'re back online</string>
+    <string name="internet_is_not_connected">No Internet Connection</string>
+    <string name="close">Close</string>
 </resources>

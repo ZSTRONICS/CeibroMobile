@@ -92,4 +92,5 @@ dependencies {
     implementation("androidx.webkit:webkit:1.7.0")
     implementation("com.jsibbold:zoomage:1.3.1")
     implementation("com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1")
+    implementation("org.aviran.cookiebar2:cookiebar2:1.1.5")
 }
