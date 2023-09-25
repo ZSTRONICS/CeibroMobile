@@ -11,6 +11,7 @@ import io.ak1.pix.helpers.PixBus
 import io.ak1.pix.helpers.PixEventCallback
 import io.ak1.pix.helpers.setupScreen
 
+@Deprecated("New library integrated for image pick and camera capture, named as ImagePicker")
 class NavControllerSample : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var binding: FragmentPixiImagePickerBinding

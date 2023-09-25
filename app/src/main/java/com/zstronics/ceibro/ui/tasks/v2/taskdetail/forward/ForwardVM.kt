@@ -80,6 +80,8 @@ class ForwardVM @Inject constructor(
             if (allContacts.isNotEmpty()) {
                 originalConnections = allContacts
                 _allConnections.value = allContacts
+            } else {
+                _allConnections.postValue(mutableListOf())
             }
             callBack.invoke()
         }
@@ -105,7 +107,7 @@ class ForwardVM @Inject constructor(
                     } else {
                         if (allContacts.isNotEmpty()) {
                             recentOriginalConnections = allContacts
-                            _recentAllConnections.value = allContacts
+                            _recentAllConnections.postValue(allContacts)
                         } else {
                             _recentAllConnections.postValue(mutableListOf())
                         }

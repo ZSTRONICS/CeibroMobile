@@ -86,6 +86,8 @@ class AssigneeVM @Inject constructor(
             if (allContacts.isNotEmpty()) {
                 originalConnections = allContacts
                 _allConnections.value = allContacts
+            } else {
+                _allConnections.postValue(mutableListOf())
             }
             callBack.invoke()
         }

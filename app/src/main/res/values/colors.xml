@@ -46,4 +46,8 @@
     <color name="colorE">#c4c4c4</color>
     <color name="colorGrey">#DBDBE5</color>
 
+    <!--Following colors are for image picker editor used on profile picker-->
+    <color name="ucrop_color_toolbar">@color/white</color>
+    <color name="ucrop_color_statusbar">@color/appBlue</color>
+    <color name="ucrop_color_widget_active">@color/appGreen</color>
 </resources>

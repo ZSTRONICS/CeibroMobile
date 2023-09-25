@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.ui.profile.editprofile
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -9,8 +11,11 @@ import android.text.TextWatcher
 import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.github.drjacky.imagepicker.ImagePicker
+import com.github.drjacky.imagepicker.constant.ImageProvider
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -23,7 +28,9 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentEditProfileBinding
+import com.zstronics.ceibro.ui.dashboard.FeedbackDialogSheet
 import com.zstronics.ceibro.ui.pixiImagePicker.NavControllerSample
+import com.zstronics.ceibro.ui.profile.ImagePickerOrCaptureDialogSheet
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 
@@ -75,6 +82,8 @@ class EditProfileFragment :
     }
 
     private fun choosePhoto() {
+        /*
+        //This method is used to open whatsapp style image picker with camera but not applicable on android 13
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
             val intent = Intent(
                 requireContext(),
@@ -83,7 +92,58 @@ class EditProfileFragment :
             startActivityForResult(intent, NavControllerSample.PHOTO_PICK_RESULT_CODE)
         } else {
             pickPhoto()
+        }*/
+
+        val sheet = ImagePickerOrCaptureDialogSheet()
+        sheet.onCameraBtnClick = {
+            imagePickerOrCaptureLauncher.launch(
+                ImagePicker.with(requireActivity())
+                    .cropFreeStyle()
+                    .cropSquare()
+                    .setMultipleAllowed(false)
+                    .provider(ImageProvider.CAMERA)
+                    .createIntent()
+            )
         }
+        sheet.onGalleryBtnClick = {
+            imagePickerOrCaptureLauncher.launch(
+                ImagePicker.with(requireActivity())
+                    .cropFreeStyle()
+                    .cropSquare()
+                    .setMultipleAllowed(false)
+                    .provider(ImageProvider.GALLERY)
+                    .galleryMimeTypes(
+                        mimeTypes = arrayOf(
+                            "image/jpeg",
+                            "image/jpg",
+                            "image/png",
+                            "image/webp",
+                            "image/bmp"
+                        )
+                    )
+                    .createIntent()
+            )
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "ImagePickerOrCaptureDialogSheet")
+
+
+//        ImagePicker.with(requireActivity())
+//            .cropFreeStyle()
+//            .cropSquare()
+//            .setMultipleAllowed(false)
+//            .provider(ImageProvider.BOTH)
+//            .galleryMimeTypes(
+//                mimeTypes = arrayOf(
+//                    "image/jpeg",
+//                    "image/jpg",
+//                    "image/png",
+//                    "image/webp",
+//                    "image/bmp"
+//                )
+//            )
+//            .createIntentFromDialog { imagePickerOrCaptureLauncher.launch(it) }
+
     }
 
     private fun pickPhoto() {
@@ -91,6 +151,22 @@ class EditProfileFragment :
             viewModel.updateProfilePhoto(pickedImage.toString(), requireContext())
         }
     }
+
+    private val imagePickerOrCaptureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val uri = it.data?.data!!
+                println("imagePickerOrCaptureLauncher11: ${uri}")
+                viewModel.updateProfilePhoto(uri.toString(), requireContext())
+
+                // Use following, the uri to load the image. Only if you are not using crop feature:
+//                uri.let { galleryUri ->
+//                    context?.contentResolver?.takePersistableUriPermission(
+//                        uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                    )
+//                }
+            }
+        }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
