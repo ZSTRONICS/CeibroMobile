@@ -63,8 +63,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_marginEnd="@dimen/_14sdp"
                 android:layout_marginBottom="9dp"
-                android:shape="rectangle"
-                app:cardBackgroundColor="@color/black"
+                app:cardBackgroundColor="@color/appDisableButton"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -81,7 +80,7 @@
                     android:padding="0dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/profile_img"
-                    app:loadImageFromUrl="@{viewModel.sessionManager.Companion.user.profilePic}" />
+                    app:loadSmallImageFromUrl="@{viewModel.sessionManager.Companion.user.profilePic}" />
             </androidx.cardview.widget.CardView>
 
 
