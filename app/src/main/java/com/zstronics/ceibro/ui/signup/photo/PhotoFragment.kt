@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.signup.photo
 
+import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -29,15 +30,25 @@ class PhotoFragment :
                     choosePhoto()
                 } else {
                     viewModel.updatePhoto(requireContext()) {
-                        navigate(R.id.contactsSelectionFragment)
+                        if (isPermissionGranted(Manifest.permission.READ_CONTACTS)) {
+                            navigate(R.id.contactsSelectionFragment)
+                        } else {
+                            navigateToAppLoadingScreen()
+                        }
                     }
                 }
             }
+
             R.id.changePhotoTV -> {
                 choosePhoto()
             }
+
             R.id.skipBtn -> {
-                navigate(R.id.contactsSelectionFragment)
+                if (isPermissionGranted(Manifest.permission.READ_CONTACTS)) {
+                    navigate(R.id.contactsSelectionFragment)
+                } else {
+                    navigateToAppLoadingScreen()
+                }
             }
         }
     }

@@ -138,6 +138,7 @@
     <string name="message_camera_permission_denied">Camera and  Storage permissions are needed to capture image. Turning off any permission won\'t allow application run smoothly. Please turn on all requested permissions from Settings > Permissions.</string>
     <string name="common_text_permissions_denied">This app may not work correctly without the requested permissions.</string>
     <string name="screen_edit_profile_text_choose_file">Update Profile Photo</string>
+    <string name="files_access_denied">You don\'t have file access</string>
     <string name="chat_heading">Group Chat</string>
     <string name="title_heading">Title</string>
     <string name="enter_chat_title_description">Enter chat title</string>
@@ -511,4 +512,5 @@
     <string name="recent_connections">Recent Connections</string>
     <string name="all_connections">All Connections</string>
     <string name="connections_loading">Connections loading</string>
+    <string name="contacts_permission">"Contacts permission not granted"</string>
 </resources>

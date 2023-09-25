@@ -39,12 +39,19 @@ class EditProfileFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> finish()
-            R.id.userEditProfileImg -> checkPermission(
-                immutableListOf(
-                    Manifest.permission.CAMERA,
-                )
-            ) {
-                choosePhoto()
+            R.id.userEditProfileImg -> {
+//                checkPermission(
+//                    immutableListOf(
+//                        Manifest.permission.CAMERA,
+//                    )
+//                ) {
+//                    choosePhoto()
+//                }
+                if (isPermissionGranted(Manifest.permission.CAMERA)) {
+                    choosePhoto()
+                } else {
+                    shortToastNow(getString(R.string.files_access_denied))
+                }
             }
             R.id.saveProfileBtn -> {
                 viewModel.updateProfile(
