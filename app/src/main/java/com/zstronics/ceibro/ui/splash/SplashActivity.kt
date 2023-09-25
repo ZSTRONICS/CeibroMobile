@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.activity.viewModels
 import androidx.work.*
 import com.bumptech.glide.Glide
@@ -66,7 +67,7 @@ class SplashActivity :
     }
 
     private fun startSplashAnimation() {
-        handler = Handler()
+        handler = Handler(Looper.getMainLooper())
         runnable = object : Runnable {
             override fun run() {
                 if (count == 1) {
