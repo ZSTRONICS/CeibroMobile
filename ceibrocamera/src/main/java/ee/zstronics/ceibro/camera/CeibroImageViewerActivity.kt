@@ -4,7 +4,9 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,10 +14,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
 import ee.zstronics.ceibro.camera.databinding.ActivityCeibroImageViewerBinding
+import java.io.File
 
 class CeibroImageViewerActivity : BaseActivity() {
     lateinit var binding: ActivityCeibroImageViewerBinding
@@ -131,6 +136,7 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         binding.doneBtn.setOnClickListener {
             listOfImages.value?.let { listOfPickedImages ->
+                println("ImagesURIOnDone: ${listOfPickedImages}")
                 val newList = listOfPickedImages.map { it ->
                     it.apply {
                         this.file = FileUtils.getFile(
@@ -139,7 +145,7 @@ class CeibroImageViewerActivity : BaseActivity() {
                         )
                     }
                 } as ArrayList<PickedImages>
-
+                println("ImagesURIOnDoneNew: ${newList}")
                 val ceibroImagesIntent =
                     Intent()
                 val newBundle = Bundle()
@@ -197,8 +203,35 @@ class CeibroImageViewerActivity : BaseActivity() {
 //                    println("ImagesURIBeforeEdit: ${uri}")
                     startEditor(uri) { updatedUri ->
                         if (updatedUri != null) {
-//                            println("ImagesURIAfterEdit: ${updatedUri}")
-                            val updatedPickedImage = getPickedImage(updatedUri)
+                            var updatedPickedImage = getPickedImage(updatedUri)
+//                            println("ImagesURIAfterEdit1: ${updatedUri}")
+
+                            if (updatedUri.toString().contains("content://media/")) {
+                                try {
+                                    val contentResolver = applicationContext.contentResolver
+                                    val projection = arrayOf(MediaStore.Images.Media.DATA)
+                                    val cursor = contentResolver.query(
+                                        updatedUri,
+                                        projection,
+                                        null,
+                                        null,
+                                        null
+                                    )
+                                    val filePath: String? = cursor?.use { cursor1 ->
+                                        if (cursor1.moveToFirst()) {
+                                            cursor1.getString(cursor1.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                                        } else {
+                                            null
+                                        }
+                                    }
+                                    val file = filePath?.let { File(it) }
+                                    val uri1 = Uri.fromFile(file)
+                                    updatedPickedImage = getPickedImage(uri1)
+//                                    println("ImagesURIAfterEdit222: $updatedPickedImage")
+                                } catch (_: Exception) {
+                                }
+                            }
+
                             val files = listOfImages.value
 
                             if (files != null) {
@@ -206,7 +239,10 @@ class CeibroImageViewerActivity : BaseActivity() {
                                 updatedPickedImage.comment = singleFile.comment
 
                                 files.removeAt(lastSelectedPosition)
-                                files.add(lastSelectedPosition, updatedPickedImage)    //added after old file removal because file name and URI, everything is changed
+                                files.add(
+                                    lastSelectedPosition,
+                                    updatedPickedImage
+                                )    //added after old file removal because file name and URI, everything is changed
                             }
                             listOfImages.postValue(files)
                         }

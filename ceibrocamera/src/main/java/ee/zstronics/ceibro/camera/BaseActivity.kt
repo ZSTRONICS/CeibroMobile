@@ -14,6 +14,7 @@ import com.ceibro.permissionx.PermissionX
 import com.github.florent37.inlineactivityresult.kotlin.startForResult
 import ee.zstronics.photoediting.EditImageActivity
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -63,17 +64,42 @@ open class BaseActivity : AppCompatActivity() {
                     for (i in 0 until clipData.itemCount) {
                         val fileUri = clipData.getItemAt(i).uri
                         // Add the URI to the list
-                        pickedImages.add(getPickedImage(fileUri))
+                        val newUri = createFileUriFromContentUri(fileUri)
+                        pickedImages.add(getPickedImage(newUri))
                     }
                     onPickAttachmentsRef.invoke(pickedImages)
                 } else {
                     val fileUri = data.data
-                    pickedImages.add(getPickedImage(fileUri))
+                    val newUri = fileUri?.let { createFileUriFromContentUri(it) }
+                    pickedImages.add(getPickedImage(newUri))
                     onPickAttachmentsRef.invoke(pickedImages)
                 }
             }
         }
     }
+    //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
+    private fun createFileUriFromContentUri(contentUri: Uri): Uri? {
+        val outputPath = getExternalFilesDir(null)?.absolutePath
+        val filename = System.currentTimeMillis().toString() + ".jpg"
+
+        try {
+            val input = contentResolver.openInputStream(contentUri)
+            val destinationFile = File(outputPath, filename)
+            val output = FileOutputStream(destinationFile)
+
+            input?.use { input ->
+                output.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            return Uri.fromFile(destinationFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return contentUri
+    }
+
 
     fun getPickedImage(fileUri: Uri?): PickedImages {
         val mimeType = FileUtils.getMimeType(applicationContext, fileUri)

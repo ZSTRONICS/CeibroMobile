@@ -373,8 +373,9 @@ class CommentFragment :
                 if (clipData != null) {
                     for (i in 0 until clipData.itemCount) {
                         val fileUri = clipData.getItemAt(i).uri
-                        val selectedImgDetail = getPickedFileDetail(requireContext(), fileUri)
-
+                        val newUri = createFileUriFromContentUri(requireContext(), fileUri)
+                        val selectedImgDetail = getPickedFileDetail(requireContext(), newUri)
+//                        println("ImagesURIGalleryPick: $fileUri === $newUri ---- $selectedImgDetail")
                         if (oldImages?.contains(selectedImgDetail) == true) {
                             shortToastNow("You selected an already-added image")
                         } else {
@@ -383,9 +384,10 @@ class CommentFragment :
                     }
                 } else {
                     val fileUri = data.data
-                    fileUri.let {
-                        val selectedImgDetail = getPickedFileDetail(requireContext(), it)
-
+                    fileUri?.let {
+                        val newUri = createFileUriFromContentUri(requireContext(), it)
+                        val selectedImgDetail = getPickedFileDetail(requireContext(), newUri)
+//                        println("ImagesURIGalleryPick2: $fileUri === $newUri ---- $selectedImgDetail")
                         if (oldImages?.contains(selectedImgDetail) == true) {
                             shortToastNow("You selected an already-added image")
                         } else {
