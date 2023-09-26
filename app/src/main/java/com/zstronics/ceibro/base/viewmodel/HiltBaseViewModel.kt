@@ -12,6 +12,7 @@ import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
@@ -2700,6 +2701,566 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             }
         }
         return updatedTask
+    }
+
+    fun updateTaskJoinedInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        userId: String?,
+        sessionManager: SessionManager
+    ) {
+        launch {
+            var updatedTask: CeibroTaskV2? = null
+            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+                ViewModelProvider(it).get(SharedViewModel::class.java)
+            }
+
+            if (eventData != null) {
+                val taskID = eventData.taskId
+                val taskEvent = Events(
+                    id = eventData.id,
+                    taskId = eventData.taskId,
+                    eventType = eventData.eventType,
+                    initiator = eventData.initiator,
+                    eventData = eventData.eventData,
+                    commentData = eventData.commentData,
+                    createdAt = eventData.createdAt,
+                    updatedAt = eventData.updatedAt,
+                    invitedMembers = eventData.invitedMembers,
+                    v = null
+                )
+                val taskEventList: MutableList<Events> = mutableListOf()
+                taskEventList.add(taskEvent)
+                if (eventData.oldTaskData.isAssignedToMe) {
+                    val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                    taskToMeLocalData?.let {
+                        val ongoingTask =
+                            taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
+                        val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                        if (ongoingTask != null) {
+                            val index = taskToMeLocalData.allTasks.ongoing.indexOf(ongoingTask)
+
+                            var oldEvents = ongoingTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    ongoingTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                ongoingTask.events = oldEvents.toList()
+                            }
+                            ongoingTask.hiddenBy = listOf()
+                            ongoingTask.seenBy = eventData.taskData.seenBy
+                            ongoingTask.creatorState = eventData.taskData.creatorState
+                            ongoingTask.updatedAt = eventData.updatedAt
+                            val invited =
+                                ongoingTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                ongoingTask.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = ongoingTask.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            ongoingTask.assignedToState = assignToList
+
+                            val toUpdateOngoingList =
+                                taskToMeLocalData.allTasks.ongoing.toMutableList()
+                            toUpdateOngoingList[index] = ongoingTask
+                            taskToMeLocalData.allTasks.ongoing = toUpdateOngoingList
+                            updatedTask = ongoingTask
+                            // task to me ongoing task in done
+                        } else if (newTask != null) {
+                            val index = taskToMeLocalData.allTasks.new.indexOf(newTask)
+
+                            var oldEvents = newTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    newTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    newTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                newTask.events = oldEvents.toList()
+                            }
+                            newTask.hiddenBy = listOf()
+                            newTask.seenBy = eventData.taskData.seenBy
+                            newTask.creatorState = eventData.taskData.creatorState
+                            newTask.updatedAt = eventData.updatedAt
+                            val invited =
+                                newTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                newTask.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = newTask.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            newTask.assignedToState = assignToList
+
+                            val toUpdateNewList = taskToMeLocalData.allTasks.new.toMutableList()
+                            toUpdateNewList[index] = newTask
+                            taskToMeLocalData.allTasks.new = toUpdateNewList
+                            updatedTask = newTask
+                            // task to me new task in done
+                        } else if (doneTask != null) {
+                            val index = taskToMeLocalData.allTasks.done.indexOf(doneTask)
+
+                            var oldEvents = doneTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    doneTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    doneTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                doneTask.events = oldEvents.toList()
+                            }
+                            doneTask.hiddenBy = listOf()
+                            doneTask.seenBy = eventData.taskData.seenBy
+                            doneTask.creatorState = eventData.taskData.creatorState
+                            doneTask.updatedAt = eventData.updatedAt
+                            val invited =
+                                doneTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                doneTask.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = doneTask.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            doneTask.assignedToState = assignToList
+
+                            val toUpdateDoneList = taskToMeLocalData.allTasks.done.toMutableList()
+                            toUpdateDoneList[index] = doneTask
+                            taskToMeLocalData.allTasks.done = toUpdateDoneList
+                            updatedTask = doneTask
+                        }
+                        taskDao.insertTaskData(taskToMeLocalData)
+                    }
+                }
+
+                if (eventData.oldTaskData.isCreator) {
+                    val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+                    taskFromMeLocalData?.let {
+                        val unread = taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
+                        val ongoingTask =
+                            taskFromMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                        val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == taskID }
+
+                        if (unread != null) {
+                            val index = taskFromMeLocalData.allTasks.unread.indexOf(unread)
+
+                            var oldEvents = unread.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    unread.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    unread.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                unread.events = oldEvents.toList()
+                            }
+                            unread.hiddenBy = listOf()
+                            unread.seenBy = eventData.taskData.seenBy
+                            unread.creatorState = eventData.taskData.creatorState
+                            unread.updatedAt = eventData.updatedAt
+                            val invited =
+                                unread.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                unread.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = unread.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            unread.assignedToState = assignToList
+
+                            val toUpdateUnreadList =
+                                taskFromMeLocalData.allTasks.unread.toMutableList()
+                            toUpdateUnreadList[index] = unread
+                            taskFromMeLocalData.allTasks.unread = toUpdateUnreadList
+                            updatedTask = unread
+
+                        } else if (ongoingTask != null) {
+                            val index = taskFromMeLocalData.allTasks.ongoing.indexOf(ongoingTask)
+
+                            var oldEvents = ongoingTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    ongoingTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                ongoingTask.events = oldEvents.toList()
+                            }
+                            ongoingTask.hiddenBy = listOf()
+                            ongoingTask.seenBy = eventData.taskData.seenBy
+                            ongoingTask.creatorState = eventData.taskData.creatorState
+                            ongoingTask.updatedAt = eventData.updatedAt
+                            val invited =
+                                ongoingTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                ongoingTask.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = ongoingTask.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            ongoingTask.assignedToState = assignToList
+
+                            val toUpdateOngoingList =
+                                taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                            toUpdateOngoingList[index] = ongoingTask
+                            taskFromMeLocalData.allTasks.ongoing = toUpdateOngoingList
+                            updatedTask = ongoingTask
+
+                        } else if (doneTask != null) {
+                            val index = taskFromMeLocalData.allTasks.done.indexOf(doneTask)
+
+                            var oldEvents = doneTask.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    doneTask.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    doneTask.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                doneTask.events = oldEvents.toList()
+                            }
+                            doneTask.hiddenBy = listOf()
+                            doneTask.seenBy = eventData.taskData.seenBy
+                            doneTask.creatorState = eventData.taskData.creatorState
+                            doneTask.updatedAt = eventData.updatedAt
+                            val invited =
+                                doneTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                doneTask.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = doneTask.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            doneTask.assignedToState = assignToList
+
+                            val toUpdateDoneList = taskFromMeLocalData.allTasks.done.toMutableList()
+                            toUpdateDoneList[index] = doneTask
+                            taskFromMeLocalData.allTasks.done = toUpdateDoneList
+                            updatedTask = doneTask
+
+                        }
+                        taskDao.insertTaskData(taskFromMeLocalData)
+                    }
+                }
+
+                if (eventData.oldTaskData.isHiddenByMe) {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+                    taskHiddenLocalData?.let {
+                        val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+
+                        if (taskToMeLocalData != null) {
+                            val ongoingTask =
+                                taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
+                            val doneTask =
+                                taskHiddenLocalData.allTasks.done.find { it.id == taskID }
+
+                            if (ongoingTask != null) {
+                                val toUpdateOngoingList =
+                                    taskHiddenLocalData.allTasks.ongoing.toMutableList()
+                                val index = toUpdateOngoingList.indexOf(ongoingTask)
+
+                                var oldEvents = ongoingTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        ongoingTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        ongoingTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    ongoingTask.events = oldEvents.toList()
+                                }
+                                ongoingTask.hiddenBy = listOf()
+                                ongoingTask.seenBy = eventData.taskData.seenBy
+                                ongoingTask.creatorState = eventData.taskData.creatorState
+                                ongoingTask.updatedAt = eventData.updatedAt
+                                val invited =
+                                    ongoingTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                                if (invited != null) {
+                                    ongoingTask.invitedNumbers.toMutableList().remove(invited)
+                                }
+                                val assignee = AssignedToState(
+                                    firstName = eventData.initiator.firstName,
+                                    id = eventData.initiator.id,
+                                    phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                    profilePic = eventData.initiator.profilePic,
+                                    state = TaskStatus.NEW.name,
+                                    surName = eventData.initiator.surName,
+                                    userId = eventData.initiator.id
+                                )
+                                val assignToList = ongoingTask.assignedToState
+                                val findAssignee =
+                                    assignToList.find { it.userId == assignee.userId }
+                                if (findAssignee == null) {
+                                    assignToList.add(assignee)
+                                }
+                                ongoingTask.assignedToState = assignToList
+
+                                toUpdateOngoingList.removeAt(index)
+                                taskHiddenLocalData.allTasks.ongoing = toUpdateOngoingList
+
+                                if (eventData.oldTaskData.isAssignedToMe) {
+                                    val ongoingTaskToMe =
+                                        taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
+                                    val allOngoingToMeTaskList =
+                                        taskToMeLocalData.allTasks.ongoing.toMutableList()
+                                    if (ongoingTaskToMe != null) {
+                                        val index2 = allOngoingToMeTaskList.indexOf(ongoingTaskToMe)
+                                        allOngoingToMeTaskList[index2] = ongoingTask
+                                        taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
+                                    } else {
+                                        allOngoingToMeTaskList.add(0, ongoingTask)
+                                        taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
+                                    }
+                                    sharedViewModel?.isToMeUnread?.value = true
+                                    sessionManager.saveToMeUnread(true)
+                                }
+                                updatedTask = ongoingTask
+
+                            }
+                            else if (doneTask != null) {
+                                val toUpdateDoneList =
+                                    taskHiddenLocalData.allTasks.done.toMutableList()
+                                val index = taskHiddenLocalData.allTasks.done.indexOf(doneTask)
+
+                                var oldEvents = doneTask.events.toMutableList()
+                                if (oldEvents.isNotEmpty()) {
+                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                        oldEvents[oldEventIndex] = taskEvent
+                                        doneTask.events = oldEvents.toList()
+                                    } else {
+                                        oldEvents.add(taskEvent)
+                                        doneTask.events = oldEvents.toList()
+                                    }
+                                } else {
+                                    oldEvents = taskEventList
+                                    doneTask.events = oldEvents.toList()
+                                }
+                                doneTask.hiddenBy = listOf()
+                                doneTask.seenBy = eventData.taskData.seenBy
+                                doneTask.creatorState = eventData.taskData.creatorState
+                                doneTask.updatedAt = eventData.updatedAt
+                                val invited =
+                                    doneTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                                if (invited != null) {
+                                    doneTask.invitedNumbers.toMutableList().remove(invited)
+                                }
+                                val assignee = AssignedToState(
+                                    firstName = eventData.initiator.firstName,
+                                    id = eventData.initiator.id,
+                                    phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                    profilePic = eventData.initiator.profilePic,
+                                    state = TaskStatus.NEW.name,
+                                    surName = eventData.initiator.surName,
+                                    userId = eventData.initiator.id
+                                )
+                                val assignToList = doneTask.assignedToState
+                                val findAssignee =
+                                    assignToList.find { it.userId == assignee.userId }
+                                if (findAssignee == null) {
+                                    assignToList.add(assignee)
+                                }
+                                doneTask.assignedToState = assignToList
+
+                                toUpdateDoneList.removeAt(index)
+                                taskHiddenLocalData.allTasks.done = toUpdateDoneList.toList()
+
+                                if (eventData.oldTaskData.isAssignedToMe) {
+                                    val doneTaskToMe =
+                                        taskToMeLocalData.allTasks.done.find { it.id == taskID }
+                                    val allDoneToMeTaskList =
+                                        taskToMeLocalData.allTasks.done.toMutableList()
+                                    if (doneTaskToMe != null) {
+                                        val index2 = allDoneToMeTaskList.indexOf(doneTaskToMe)
+                                        allDoneToMeTaskList[index2] = doneTask
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList
+                                    } else {
+                                        allDoneToMeTaskList.add(0, doneTask)
+                                        taskToMeLocalData.allTasks.done = allDoneToMeTaskList
+                                    }
+                                    sharedViewModel?.isToMeUnread?.value = true
+                                    sessionManager.saveToMeUnread(true)
+                                }
+                                updatedTask = doneTask
+                            }
+
+                            taskDao.insertTaskData(taskToMeLocalData)
+                        }
+                        taskDao.insertTaskData(taskHiddenLocalData)
+                    }
+                }
+
+                if (eventData.oldTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                    val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
+                    taskHiddenLocalData?.let {
+                        val canceled =
+                            taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
+                        if (canceled != null) {
+                            val index = taskHiddenLocalData.allTasks.canceled.indexOf(canceled)
+                            var oldEvents = canceled.events.toMutableList()
+                            if (oldEvents.isNotEmpty()) {
+                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+                                    oldEvents[oldEventIndex] = taskEvent
+                                    canceled.events = oldEvents.toList()
+                                } else {
+                                    oldEvents.add(taskEvent)
+                                    canceled.events = oldEvents.toList()
+                                }
+                            } else {
+                                oldEvents = taskEventList
+                                canceled.events = oldEvents.toList()
+                            }
+                            canceled.hiddenBy = listOf()
+                            canceled.seenBy = eventData.taskData.seenBy
+                            canceled.creatorState = eventData.taskData.creatorState
+                            canceled.updatedAt = eventData.updatedAt
+                            val invited =
+                                canceled.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            if (invited != null) {
+                                canceled.invitedNumbers.toMutableList().remove(invited)
+                            }
+                            val assignee = AssignedToState(
+                                firstName = eventData.initiator.firstName,
+                                id = eventData.initiator.id,
+                                phoneNumber = eventData.initiator.phoneNumber ?: "",
+                                profilePic = eventData.initiator.profilePic,
+                                state = TaskStatus.NEW.name,
+                                surName = eventData.initiator.surName,
+                                userId = eventData.initiator.id
+                            )
+                            val assignToList = canceled.assignedToState
+                            val findAssignee = assignToList.find { it.userId == assignee.userId }
+                            if (findAssignee == null) {
+                                assignToList.add(assignee)
+                            }
+                            canceled.assignedToState = assignToList
+
+                            val toUpdateCancelledList =
+                                taskHiddenLocalData.allTasks.canceled.toMutableList()
+                            toUpdateCancelledList[index] = canceled
+                            taskHiddenLocalData.allTasks.canceled = toUpdateCancelledList
+                            updatedTask = canceled
+                        }
+
+                        taskDao.insertTaskData(taskHiddenLocalData)
+                    }
+                }
+
+                EventBus.getDefault().post(LocalEvents.TaskForwardEvent(updatedTask))
+                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+            }
+        }
     }
 
 
