@@ -57,6 +57,7 @@ import ee.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -396,6 +397,29 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 //            )
 //            return
 //        }
+
+    //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
+    fun createFileUriFromContentUri(context: Context, contentUri: Uri): Uri? {
+        val outputPath = context.getExternalFilesDir(null)?.absolutePath
+        val filename = System.currentTimeMillis().toString() + ".jpg"
+
+        try {
+            val input = context.contentResolver.openInputStream(contentUri)
+            val destinationFile = File(outputPath, filename)
+            val output = FileOutputStream(destinationFile)
+
+            input?.use { input ->
+                output.use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            return Uri.fromFile(destinationFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return contentUri
+    }
 
     private fun pickFiles(allowMultiple: Boolean = true) {
         requireActivity().openFilePicker(

@@ -295,7 +295,8 @@ class EventsRVAdapter @Inject constructor() :
                             firstName = "",
                             surName = "",
                             profilePic = "",
-                            id = ""
+                            id = "",
+                            phoneNumber = ""
                         ),
                         v = 0,
                         version = 0
@@ -330,7 +331,8 @@ class EventsRVAdapter @Inject constructor() :
                             firstName = "",
                             surName = "",
                             profilePic = "",
-                            id = ""
+                            id = "",
+                            phoneNumber = ""
                         ),
                         v = 0,
                         version = 0

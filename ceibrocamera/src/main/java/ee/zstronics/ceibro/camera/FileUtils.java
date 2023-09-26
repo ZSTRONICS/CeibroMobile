@@ -657,6 +657,16 @@ public class FileUtils {
                 File file = new File(path);
                 filename = file.getName();
             }
+        } else if (uri.toString().contains("content://")) {
+            // If the Uri is a content Uri, use the MediaStore to get the file name.
+            Cursor returnCursor = context.getContentResolver().query(uri, null, null, null, null);
+
+            if (returnCursor != null) {
+                int nameIndex = returnCursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+                returnCursor.moveToFirst();
+                filename = returnCursor.getString(nameIndex);
+                returnCursor.close();
+            }
         } else {
             Cursor returnCursor = context.getContentResolver().query(uri, null,
                     null, null, null);
