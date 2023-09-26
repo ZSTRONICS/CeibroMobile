@@ -39,6 +39,7 @@ class NavHostPresenterActivity :
 
     companion object {
         var activityInstance: NavHostPresenterActivity? = null
+        const val BANNER_HIDE_TIME: Long = 3000
     }
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -56,7 +57,7 @@ class NavHostPresenterActivity :
                             mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
                             mViewDataBinding.llInternetDisconnected.visibility = View.GONE
 
-                            delay(3000)
+                            delay(BANNER_HIDE_TIME)
                             // After the delay, hide the views
                             mViewDataBinding.llInternetConnected.visibility = View.GONE
                         }
@@ -79,9 +80,4 @@ class NavHostPresenterActivity :
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-
-    override fun onStop() {
-        super.onStop()
-
-    }
 }
