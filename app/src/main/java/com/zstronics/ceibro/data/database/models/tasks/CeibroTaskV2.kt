@@ -103,6 +103,7 @@ data class TaskMemberDetail(
     @SerializedName("firstName") val firstName: String,
     @SerializedName("surName") val surName: String,
     @SerializedName("profilePic") val profilePic: String?,
+    @SerializedName("phoneNumber") val phoneNumber: String?,
     @SerializedName("_id") val id: String,
 ) : Parcelable
 
