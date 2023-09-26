@@ -48,21 +48,23 @@ class NavHostPresenterActivity :
 
     override fun postExecutePendingBindings(savedInstanceState: Bundle?) {
         super.postExecutePendingBindings(savedInstanceState)
-        viewModel.viewModelScope.launch {
-            networkConnectivityObserver.observe().collect { connectionStatus ->
-                when (connectionStatus) {
-                    NetworkConnectivityObserver.Status.Available -> {
-                        mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
-                        mViewDataBinding.llInternetDisconnected.visibility = View.GONE
+        if (navigationGraphStartDestination != R.id.ceibroDataLoadingFragment) {
+            viewModel.viewModelScope.launch {
+                networkConnectivityObserver.observe().collect { connectionStatus ->
+                    when (connectionStatus) {
+                        NetworkConnectivityObserver.Status.Available -> {
+                            mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
+                            mViewDataBinding.llInternetDisconnected.visibility = View.GONE
 
-                        delay(3000)
-                        // After the delay, hide the views
-                        mViewDataBinding.llInternetConnected.visibility = View.GONE
-                    }
+                            delay(3000)
+                            // After the delay, hide the views
+                            mViewDataBinding.llInternetConnected.visibility = View.GONE
+                        }
 
-                    else -> {
-                        mViewDataBinding.llInternetConnected.visibility = View.GONE
-                        mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                        else -> {
+                            mViewDataBinding.llInternetConnected.visibility = View.GONE
+                            mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
