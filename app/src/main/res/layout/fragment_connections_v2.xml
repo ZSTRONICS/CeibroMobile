@@ -78,6 +78,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/contactsInfoBtn"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="6dp"
+                android:tooltipText="Filters"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintEnd_toStartOf="@+id/optionMenuIV"
+                app:layout_constraintTop_toTopOf="@+id/textView6"
+                app:srcCompat="@drawable/icon_info"
+                app:tint="@color/appBlue" />
+
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="0dp"
@@ -91,7 +107,7 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/addContactsBtn"
+                app:layout_constraintEnd_toStartOf="@+id/contactsInfoBtn"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/closeBtn"
                 app:layout_constraintTop_toTopOf="parent" />

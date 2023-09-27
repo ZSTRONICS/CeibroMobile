@@ -68,7 +68,7 @@ class SessionManager constructor(
 
     companion object {
         private var _user: MutableLiveData<User?> = MutableLiveData()
-        var user: LiveData<User?> = _user
+        var user: MutableLiveData<User?> = _user
         private var _projects: MutableLiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> =
             MutableLiveData()
         var projects: LiveData<MutableList<ProjectsWithMembersResponse.ProjectDetail>?> = _projects
@@ -121,7 +121,7 @@ class SessionManager constructor(
     fun setUser() {
         val userPref: User? = sharedPreferenceManager.getCompleteUserObj(KEY_USER)
         _user.postValue(userPref)
-        user = _user
+//        user = _user
     }
 
     fun setProject() {
@@ -138,7 +138,7 @@ class SessionManager constructor(
     fun updateUser(userObj: User) {
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, userObj)
         _user.postValue(userObj)
-        user = _user
+//        user = _user
     }
 
     fun updateTokens(tokens: Tokens) {
@@ -147,7 +147,7 @@ class SessionManager constructor(
         CookiesManager.jwtToken = tokens.access.token
     }
 
-    private fun setToken() {
+    fun setToken() {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         val secureUUID = sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
         val deviceType = sharedPreferenceManager.getValueString(KEY_DEVICE_TYPE) ?: ""
