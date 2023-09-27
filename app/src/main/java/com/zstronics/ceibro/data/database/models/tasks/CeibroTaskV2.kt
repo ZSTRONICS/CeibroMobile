@@ -41,7 +41,7 @@ data class CeibroTaskV2(
     @SerializedName("isHiddenByMe")
     val isHiddenByMe: Boolean,
     @SerializedName("invitedNumbers")
-    val invitedNumbers: List<InvitedNumbers>,
+    var invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
     val locations: List<String>,
     @SerializedName("project")
