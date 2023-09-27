@@ -308,6 +308,10 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
+        if (!hasStoragePermission && FileSaveHelper.isSdkLessThanOrEqualTo29()) {
+            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            return
+        }
         if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
             if (!mPhotoEditor.isCacheEmpty) {
                 mSaveFileHelper.createFile(
