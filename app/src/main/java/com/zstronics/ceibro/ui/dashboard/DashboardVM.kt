@@ -153,7 +153,7 @@ class DashboardVM @Inject constructor(
                     }
 
                     SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
-                    SocketHandler.TaskEvent.UN_CANCEL_TASK.name -> {
+                    SocketHandler.TaskEvent.UN_CANCEL_TASK.name,SocketHandler.TaskEvent.JOINED_TASK.name -> {
                         val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                             arguments,
                             object : TypeToken<SocketNewTaskEventV2Response>() {}.type
@@ -186,6 +186,9 @@ class DashboardVM @Inject constructor(
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
                             updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)
+                        }
+                        if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
+                            updateTaskJoinedInLocal(commentData, taskDao, userId, sessionManager)
                         }
                     }
 
