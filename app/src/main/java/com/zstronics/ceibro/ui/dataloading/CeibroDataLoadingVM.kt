@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseE
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.contacts.*
@@ -106,18 +107,24 @@ class CeibroDataLoadingVM @Inject constructor(
             }
         }
 
-//            when (val response = remoteTask.getAllTopics()) {
-//                is ApiResponse.Success -> {
-//                    topicsV2Dao.insertTopicData(
-//                        TopicsV2DatabaseEntity(
-//                            0,
-//                            topicsData = response.data
-//                        )
-//                    )
-//                }
-//                is ApiResponse.Error -> {
-//                }
-//            }
+        launch {
+            when (val response = remoteTask.getAllTopics()) {
+                is ApiResponse.Success -> {
+                    topicsV2Dao.insertTopicData(
+                        TopicsV2DatabaseEntity(
+                            0,
+                            topicsData = response.data
+                        )
+                    )
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+                is ApiResponse.Error -> {
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+            }
+        }
         launch {
             when (val response = projectRepository.getProjectsV2()) {
                 is ApiResponse.Success -> {

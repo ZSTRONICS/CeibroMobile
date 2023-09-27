@@ -2760,10 +2760,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.seenBy = eventData.taskData.seenBy
                             ongoingTask.creatorState = eventData.taskData.creatorState
                             ongoingTask.updatedAt = eventData.updatedAt
-                            val invited =
-                                ongoingTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = ongoingTask.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                ongoingTask.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                ongoingTask.invitedNumbers = invitedList
                             }
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,
@@ -2786,7 +2788,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             toUpdateOngoingList[index] = ongoingTask
                             taskToMeLocalData.allTasks.ongoing = toUpdateOngoingList
                             updatedTask = ongoingTask
-                            // task to me ongoing task in done
+
                         } else if (newTask != null) {
                             val index = taskToMeLocalData.allTasks.new.indexOf(newTask)
 
@@ -2809,10 +2811,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             newTask.seenBy = eventData.taskData.seenBy
                             newTask.creatorState = eventData.taskData.creatorState
                             newTask.updatedAt = eventData.updatedAt
-                            val invited =
-                                newTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = newTask.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                newTask.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                newTask.invitedNumbers = invitedList
                             }
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,
@@ -2834,7 +2838,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             toUpdateNewList[index] = newTask
                             taskToMeLocalData.allTasks.new = toUpdateNewList
                             updatedTask = newTask
-                            // task to me new task in done
+
                         } else if (doneTask != null) {
                             val index = taskToMeLocalData.allTasks.done.indexOf(doneTask)
 
@@ -2857,11 +2861,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.seenBy = eventData.taskData.seenBy
                             doneTask.creatorState = eventData.taskData.creatorState
                             doneTask.updatedAt = eventData.updatedAt
-                            val invited =
-                                doneTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = doneTask.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                doneTask.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                doneTask.invitedNumbers = invitedList
                             }
+
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,
                                 id = eventData.initiator.id,
@@ -2917,10 +2924,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             unread.seenBy = eventData.taskData.seenBy
                             unread.creatorState = eventData.taskData.creatorState
                             unread.updatedAt = eventData.updatedAt
-                            val invited =
-                                unread.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = unread.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                unread.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                unread.invitedNumbers = invitedList
                             }
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,
@@ -2966,10 +2975,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.seenBy = eventData.taskData.seenBy
                             ongoingTask.creatorState = eventData.taskData.creatorState
                             ongoingTask.updatedAt = eventData.updatedAt
-                            val invited =
-                                ongoingTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = ongoingTask.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                ongoingTask.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                ongoingTask.invitedNumbers = invitedList
                             }
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,
@@ -3015,10 +3026,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.seenBy = eventData.taskData.seenBy
                             doneTask.creatorState = eventData.taskData.creatorState
                             doneTask.updatedAt = eventData.updatedAt
-                            val invited =
-                                doneTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = doneTask.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                doneTask.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                doneTask.invitedNumbers = invitedList
                             }
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,
@@ -3081,10 +3094,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 ongoingTask.seenBy = eventData.taskData.seenBy
                                 ongoingTask.creatorState = eventData.taskData.creatorState
                                 ongoingTask.updatedAt = eventData.updatedAt
-                                val invited =
-                                    ongoingTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                                val invitedList = ongoingTask.invitedNumbers.toMutableList()
+                                val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                                 if (invited != null) {
-                                    ongoingTask.invitedNumbers.toMutableList().remove(invited)
+                                    invitedList.remove(invited)
+                                    ongoingTask.invitedNumbers = invitedList
                                 }
                                 val assignee = AssignedToState(
                                     firstName = eventData.initiator.firstName,
@@ -3149,10 +3164,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTask.seenBy = eventData.taskData.seenBy
                                 doneTask.creatorState = eventData.taskData.creatorState
                                 doneTask.updatedAt = eventData.updatedAt
-                                val invited =
-                                    doneTask.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                                val invitedList = doneTask.invitedNumbers.toMutableList()
+                                val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                                 if (invited != null) {
-                                    doneTask.invitedNumbers.toMutableList().remove(invited)
+                                    invitedList.remove(invited)
+                                    doneTask.invitedNumbers = invitedList
                                 }
                                 val assignee = AssignedToState(
                                     firstName = eventData.initiator.firstName,
@@ -3225,10 +3242,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             canceled.seenBy = eventData.taskData.seenBy
                             canceled.creatorState = eventData.taskData.creatorState
                             canceled.updatedAt = eventData.updatedAt
-                            val invited =
-                                canceled.invitedNumbers.find { it.phoneNumber == eventData.initiator.phoneNumber }
+
+                            val invitedList = canceled.invitedNumbers.toMutableList()
+                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
-                                canceled.invitedNumbers.toMutableList().remove(invited)
+                                invitedList.remove(invited)
+                                canceled.invitedNumbers = invitedList
                             }
                             val assignee = AssignedToState(
                                 firstName = eventData.initiator.firstName,

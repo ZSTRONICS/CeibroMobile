@@ -66,8 +66,11 @@ class EventsRVAdapter @Inject constructor() :
             binding.invitedNumbers.visibility = View.GONE
 
             binding.eventName.text = ""
-            binding.eventBy.text =
+            binding.eventBy.text = if(item.initiator.firstName.isEmpty() && item.initiator.surName.isEmpty()) {
+                "${item.initiator.phoneNumber}"
+            } else {
                 "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
+            }
             binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustom(
                 utcTime = item.createdAt,
                 inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC

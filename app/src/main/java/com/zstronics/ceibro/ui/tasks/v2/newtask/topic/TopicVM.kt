@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -37,24 +38,20 @@ class TopicVM @Inject constructor(
 
     fun getAllTopics(callBack: (allTopics: TopicsResponse?) -> Unit) {
         launch {
-//            val topicsData = topicsV2Dao.getTopicsData()
-//            if (topicsData != null) {
-//                val allTopics = topicsData.topicsData
-//                val allTopic1 = allTopics.allTopics
-//                val recentTopic1 = allTopics.recentTopics
-//
-//                if (allTopic1.isNotEmpty()) {
-//                    originalAllTopics = allTopic1
-//                    _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
-//                }
-//                if (recentTopic1.isNotEmpty()) {
-//                    originalRecentTopics = recentTopic1
-//                    _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
-//                }
-//                callBack.invoke()
-//            } else {
             taskRepository.getAllTopics { isSuccess, error, allTopics ->
                 if (isSuccess) {
+                    launch {
+                        allTopics?.let {
+                            TopicsV2DatabaseEntity(
+                                0,
+                                topicsData = it
+                            )
+                        }?.let {
+                            topicsV2Dao.insertTopicData(
+                                it
+                            )
+                        }
+                    }
                     val allTopic1 = allTopics?.allTopics
                     val recentTopic1 = allTopics?.recentTopics
 
@@ -69,11 +66,28 @@ class TopicVM @Inject constructor(
                     _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
                     callBack.invoke(allTopics)
                 } else {
-                    callBack.invoke(null)
-                    alert(error)
+                    launch {
+                        val topicsData = topicsV2Dao.getTopicsData()
+                        if (topicsData != null) {
+                            val allTopics1 = topicsData.topicsData
+                            val allTopic1 = allTopics1.allTopics
+                            val recentTopic1 = allTopics1.recentTopics
+
+                            if (allTopic1.isNotEmpty()) {
+                                originalAllTopics = allTopic1
+                                _allTopics.postValue(allTopic1 as MutableList<TopicsResponse.TopicData>?)
+                            }
+                            if (recentTopic1.isNotEmpty()) {
+                                originalRecentTopics = recentTopic1
+                                _recentTopics.postValue(recentTopic1 as MutableList<TopicsResponse.TopicData>?)
+                            }
+                            callBack.invoke(allTopics1)
+                        } else {
+                            callBack.invoke(null)
+                        }
+                    }
                 }
             }
-//            }
         }
     }
 

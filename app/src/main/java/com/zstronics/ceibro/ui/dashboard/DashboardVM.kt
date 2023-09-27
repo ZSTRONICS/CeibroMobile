@@ -47,6 +47,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
+import com.zstronics.ceibro.ui.contacts.toLightContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -96,9 +97,9 @@ class DashboardVM @Inject constructor(
             }
             if (socketData.module == "task") {
                 when (socketData.eventType) {
-                    SocketHandler.TaskEvent.JOINED_TASK.name -> {
-                        /// {"module":"task","eventType":"JOINED_TASK","uuid":"80084b7a-7e2e-4c7c-9fe5-347c8db36953","data":{"_id":"64ee0b0ac26c3e737a47be8b","taskId":"64ee0a6dc26c3e737a47b9af","taskData":{"creator":"64ec814e6cdad89cecedd514","seenBy":[],"hiddenBy":[],"creatorState":"ongoing"},"eventType":"joinedTask","initiator":{"_id":"64ee0aa9c26c3e737a47be4d","firstName":"Kaif","surName":"Baqar","profilePic":""},"invitedMembers":[],"eventData":[],"commentData":null,"eventSeenBy":[],"createdAt":"2023-08-29T15:13:14.402Z","updatedAt":"2023-08-29T15:13:14.402Z","newTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":false,"creatorState":"ongoing"},"oldTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":true,"creatorState":"ongoing"}}}
-                    }
+//                    SocketHandler.TaskEvent.JOINED_TASK.name -> {
+//                        /// {"module":"task","eventType":"JOINED_TASK","uuid":"80084b7a-7e2e-4c7c-9fe5-347c8db36953","data":{"_id":"64ee0b0ac26c3e737a47be8b","taskId":"64ee0a6dc26c3e737a47b9af","taskData":{"creator":"64ec814e6cdad89cecedd514","seenBy":[],"hiddenBy":[],"creatorState":"ongoing"},"eventType":"joinedTask","initiator":{"_id":"64ee0aa9c26c3e737a47be4d","firstName":"Kaif","surName":"Baqar","profilePic":""},"invitedMembers":[],"eventData":[],"commentData":null,"eventSeenBy":[],"createdAt":"2023-08-29T15:13:14.402Z","updatedAt":"2023-08-29T15:13:14.402Z","newTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":false,"creatorState":"ongoing"},"oldTaskData":{"userSubState":"ongoing","isCreator":true,"isAssignedToMe":true,"isHiddenByMe":false,"isSeenByMe":true,"creatorState":"ongoing"}}}
+//                    }
 
                     SocketHandler.TaskEvent.TASK_CREATED.name -> {
                         val taskCreatedData = gson.fromJson<SocketTaskV2CreatedResponse>(
@@ -153,7 +154,7 @@ class DashboardVM @Inject constructor(
                     }
 
                     SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
-                    SocketHandler.TaskEvent.UN_CANCEL_TASK.name,SocketHandler.TaskEvent.JOINED_TASK.name -> {
+                    SocketHandler.TaskEvent.UN_CANCEL_TASK.name, SocketHandler.TaskEvent.JOINED_TASK.name -> {
                         val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                             arguments,
                             object : TypeToken<SocketNewTaskEventV2Response>() {}.type
@@ -188,7 +189,10 @@ class DashboardVM @Inject constructor(
                             updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
+                            println("Socket: JOINED_TASK triggered ")
+                            println("Socket: JOINED_TASK:  $commentData")
                             updateTaskJoinedInLocal(commentData, taskDao, userId, sessionManager)
+                            updateContactsInDB()
                         }
                     }
 
@@ -866,21 +870,17 @@ class DashboardVM @Inject constructor(
         handleSocketEvents()
     }
 
-//    private fun loadConnectionsData() {
-//        launch {
-//            when (val response = dashboardRepository.getAllConnectionsV2(userId ?: "")) {
-//                is ApiResponse.Success -> {
-//                    connectionsV2Dao.insertAll(response.data.contacts)
-//                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
-//                    val handler = Handler()
-//                    handler.postDelayed(Runnable {
-//                        EventBus.getDefault().post(LocalEvents.ContactsSynced)
-//                    }, 50)
-//                }
-//
-//                is ApiResponse.Error -> {
-//                }
-//            }
-//        }
-//    }
+    private fun updateContactsInDB() {
+        launch {
+            when (val response = dashboardRepository.getAllConnectionsV2()) {
+                is ApiResponse.Success -> {
+                    println("Socket: JOINED_TASK: contacts  ${response.data.contacts.size}")
+                    connectionsV2Dao.insertAll(response.data.contacts)
+                    sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
+                }
+                is ApiResponse.Error -> {
+                }
+            }
+        }
+    }
 }
