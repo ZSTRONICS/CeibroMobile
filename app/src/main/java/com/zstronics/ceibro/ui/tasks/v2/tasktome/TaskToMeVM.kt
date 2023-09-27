@@ -282,7 +282,7 @@ class TaskToMeVM @Inject constructor(
             when (val response = remoteTask.hideTask(taskId)) {
                 is ApiResponse.Success -> {
                     val hideResponse = response.data
-                    updateTaskHideInLocal(hideResponse, taskDao, user?.id)
+                    updateTaskHideInLocal(hideResponse, taskDao)
                     loading(false, "")
                     callBack.invoke(true)
                 }

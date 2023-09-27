@@ -194,7 +194,7 @@ class CommentVM @Inject constructor(
 
                     val request = EventWithFileUploadV2Request(
                         files = attachmentUriList,
-                        message = viewState.comment.value.toString() ?: "",
+                        message = viewState.comment.value.toString(),
                         metadata = metadataString2
                     )
 
@@ -218,7 +218,7 @@ class CommentVM @Inject constructor(
 
                 } else {        //if list is empty, moving to else part
                     val request = EventCommentOnlyUploadV2Request(
-                        message = viewState.comment.value.toString() ?: ""
+                        message = viewState.comment.value.toString()
                     )
 
                     loading(true)
@@ -240,7 +240,7 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                taskData = updateTaskDoneInLocal(eventData, taskDao, user?.id, sessionManager)
+                taskData = updateTaskDoneInLocal(eventData, taskDao, sessionManager)
 
                 val handler = Handler()
                 handler.postDelayed(Runnable {

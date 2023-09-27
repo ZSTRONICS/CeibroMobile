@@ -5,7 +5,7 @@ import com.zstronics.ceibro.data.repos.task.models.*
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import retrofit2.Response
@@ -130,7 +130,7 @@ interface TaskRetroService {
     suspend fun saveTopic(@Body requestBody: NewTopicCreateRequest): Response<NewTopicResponse>
 
     @POST("v2/task")
-    suspend fun newTaskV2(@Body requestBody: NewTaskV2Request): Response<NewTaskV2Response>
+    suspend fun newTaskV2(@Body requestBody: NewTaskV2Entity): Response<NewTaskV2Response>
 
     @GET("v2/task/{rootState}")
     suspend fun getAllTasks(@Path("rootState") rootState: String): Response<TaskV2Response>

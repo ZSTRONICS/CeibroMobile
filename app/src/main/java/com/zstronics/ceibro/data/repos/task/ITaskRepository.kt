@@ -4,9 +4,24 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.AddMemberSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTopicResponse
+import com.zstronics.ceibro.data.repos.task.models.SubTaskRejections
+import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
+import com.zstronics.ceibro.data.repos.task.models.SubtaskStatusData
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 
 interface ITaskRepository {
@@ -19,7 +34,7 @@ interface ITaskRepository {
     )
 
     suspend fun newTaskV2(
-        newTask: NewTaskV2Request,
+        newTask: NewTaskV2Entity,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     )
 

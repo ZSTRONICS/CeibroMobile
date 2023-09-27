@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -426,7 +425,11 @@ class TaskDetailV2Fragment :
                             v = null
                         )
                         onTaskEvent(LocalEvents.TaskEvent(taskEvent))
-                        viewModel.updateTaskCommentInLocal(eventData, viewModel.taskDao, viewModel.user?.id, viewModel.sessionManager)
+                        viewModel.updateTaskCommentInLocal(
+                            eventData,
+                            viewModel.taskDao,
+                            viewModel.sessionManager
+                        )
                     }
                 }
 

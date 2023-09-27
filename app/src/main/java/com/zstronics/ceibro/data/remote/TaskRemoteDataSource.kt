@@ -3,11 +3,20 @@ package com.zstronics.ceibro.data.remote
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
-import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.NewTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTopicResponse
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.TasksResponse
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import javax.inject.Inject
@@ -30,7 +39,7 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun newTaskV2(newTask: NewTaskV2Request): ApiResponse<NewTaskV2Response> =
+    override suspend fun newTaskV2(newTask: NewTaskV2Entity): ApiResponse<NewTaskV2Response> =
         executeSafely(
             call =
             {

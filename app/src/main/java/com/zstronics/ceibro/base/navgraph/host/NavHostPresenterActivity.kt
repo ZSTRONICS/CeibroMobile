@@ -53,6 +53,10 @@ class NavHostPresenterActivity :
             viewModel.viewModelScope.launch {
                 networkConnectivityObserver.observe().collect { connectionStatus ->
                     when (connectionStatus) {
+                        NetworkConnectivityObserver.Status.Losing -> {
+                            // Do not remove this losing state from here
+                        }
+
                         NetworkConnectivityObserver.Status.Available -> {
                             mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
                             mViewDataBinding.llInternetDisconnected.visibility = View.GONE

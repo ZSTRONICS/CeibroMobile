@@ -3,6 +3,7 @@ package com.zstronics.ceibro.base.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.*
 import androidx.work.*
@@ -11,16 +12,19 @@ import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.state.UIState
+import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
+import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
@@ -31,6 +35,7 @@ import com.zstronics.ceibro.utils.FileUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
+import javax.inject.Inject
 
 
 abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
@@ -974,7 +979,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     fun updateTaskCommentInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
-        userId: String?,
         sessionManager: SessionManager
     ): CeibroTaskV2? {
         var updatedTask: CeibroTaskV2? = null
@@ -1432,9 +1436,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     fun updateTaskUnCanceledInLocal(
         eventData: EventV2Response.Data?,
-        taskDao: TaskV2Dao,
-        userId: String?,
-        sessionManager: SessionManager
+        taskDao: TaskV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -2150,7 +2152,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     fun updateTaskDoneInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
-        userId: String?,
         sessionManager: SessionManager
     ): CeibroTaskV2? {
         var updatedTask: CeibroTaskV2? = null
@@ -2366,7 +2367,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                 val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
                 val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
-                val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
 
                 if (eventData.oldTaskData.isAssignedToMe) {
                     if (taskToMeLocalData != null) {
@@ -2706,7 +2706,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     fun updateTaskJoinedInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
-        userId: String?,
         sessionManager: SessionManager
     ) {
         launch {
@@ -2762,7 +2761,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.updatedAt = eventData.updatedAt
 
                             val invitedList = ongoingTask.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 ongoingTask.invitedNumbers = invitedList
@@ -2813,7 +2813,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             newTask.updatedAt = eventData.updatedAt
 
                             val invitedList = newTask.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 newTask.invitedNumbers = invitedList
@@ -2863,7 +2864,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.updatedAt = eventData.updatedAt
 
                             val invitedList = doneTask.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 doneTask.invitedNumbers = invitedList
@@ -2926,7 +2928,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             unread.updatedAt = eventData.updatedAt
 
                             val invitedList = unread.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 unread.invitedNumbers = invitedList
@@ -2977,7 +2980,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.updatedAt = eventData.updatedAt
 
                             val invitedList = ongoingTask.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 ongoingTask.invitedNumbers = invitedList
@@ -3028,7 +3032,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.updatedAt = eventData.updatedAt
 
                             val invitedList = doneTask.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 doneTask.invitedNumbers = invitedList
@@ -3096,7 +3101,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 ongoingTask.updatedAt = eventData.updatedAt
 
                                 val invitedList = ongoingTask.invitedNumbers.toMutableList()
-                                val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                                val invited =
+                                    invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                                 if (invited != null) {
                                     invitedList.remove(invited)
                                     ongoingTask.invitedNumbers = invitedList
@@ -3139,8 +3145,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
                                 updatedTask = ongoingTask
 
-                            }
-                            else if (doneTask != null) {
+                            } else if (doneTask != null) {
                                 val toUpdateDoneList =
                                     taskHiddenLocalData.allTasks.done.toMutableList()
                                 val index = taskHiddenLocalData.allTasks.done.indexOf(doneTask)
@@ -3166,7 +3171,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTask.updatedAt = eventData.updatedAt
 
                                 val invitedList = doneTask.invitedNumbers.toMutableList()
-                                val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                                val invited =
+                                    invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                                 if (invited != null) {
                                     invitedList.remove(invited)
                                     doneTask.invitedNumbers = invitedList
@@ -3244,7 +3250,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             canceled.updatedAt = eventData.updatedAt
 
                             val invitedList = canceled.invitedNumbers.toMutableList()
-                            val invited = invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
+                            val invited =
+                                invitedList.find { it.phoneNumber == eventData.initiator.phoneNumber }
                             if (invited != null) {
                                 invitedList.remove(invited)
                                 canceled.invitedNumbers = invitedList
@@ -3283,7 +3290,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     }
 
 
-    fun updateTaskHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao, userId: String?) {
+    fun updateTaskHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao) {
         launch {
             val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
             val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
@@ -3407,7 +3414,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     }
 
-    fun updateTaskUnHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao, userId: String?) {
+    fun updateTaskUnHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao) {
         launch {
             val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
             val taskHiddenLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
@@ -3530,6 +3537,59 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         }
 
     }
+
+    @Inject
+    lateinit var draftNewTaskV2Internal: DraftNewTaskV2Dao
+
+    @Inject
+    lateinit var taskRepositoryInternal: ITaskRepository
+
+    @Inject
+    lateinit var taskDaoInternal: TaskV2Dao
+
+    @Inject
+    lateinit var sessionManagerInternal: SessionManager
+    suspend fun syncDraftTask() {
+        Log.d("SyncDraftTask", "syncDraftTask")
+        val user = sessionManagerInternal.getUser().value
+        val unsyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+
+        // Define a recursive function to process records one by one
+        suspend fun processNextRecord(records: List<NewTaskV2Entity>) {
+            if (records.isEmpty()) {
+                // All records have been processed, exit the recursion
+                return
+            }
+            val newTaskRequest = records.first()
+
+            taskRepositoryInternal.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
+                if (isSuccess) {
+                    launch {
+                        draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+                        updateCreatedTaskInLocal(
+                            task,
+                            taskDaoInternal,
+                            user?.id,
+                            sessionManagerInternal
+                        )
+                    }
+
+                    // Remove the processed record from the list
+                    val updatedRecords = records - newTaskRequest
+                    // Recursively process the next record
+                    launch {
+                        processNextRecord(updatedRecords)
+                    }
+                }
+            }
+        }
+
+        // Start the recursive processing
+        launch {
+            processNextRecord(unsyncedRecords)
+        }
+    }
+
 }
 
 

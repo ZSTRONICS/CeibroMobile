@@ -145,7 +145,6 @@ class NetworkModule {
 
     @Provides
     fun provideOkHttpClient(
-        @ApplicationContext appContext: Context,
         loggingInterceptor: HttpLoggingInterceptor,
         cookiesInterceptor: CookiesInterceptor,
         headerInterceptor: Interceptor,
@@ -172,6 +171,10 @@ class NetworkModule {
 
     @Provides
     fun provideConnectionsV2Dao(database: CeibroDatabase) = database.getConnectionsV2Dao()
+
+
+    @Provides
+    fun provideDraftNewTaskV2Dao(database: CeibroDatabase) = database.getDraftNewTaskV2Dao()
 
     @Provides
     fun provideConnectivityManager(

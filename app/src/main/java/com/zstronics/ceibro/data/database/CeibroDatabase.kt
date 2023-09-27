@@ -13,16 +13,34 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 
 @Database(
-    entities = [CeibroTask::class, AdvanceOptions::class, SubTaskStatusCount::class, TaskMember::class, AllSubtask::class, AssignedTo::class,
-        Viewer::class, SubTaskAdvanceOptions::class, SubTaskStateItem::class, SubTaskComments::class, TaskDataOfSubTask::class, SubTaskProject::class, FilesAttachments::class, RejectionComment::class,
-        TasksV2DatabaseEntity::class, TopicsV2DatabaseEntity::class, ProjectsV2DatabaseEntity::class, AllCeibroConnections.CeibroConnection::class],
-    version = 57,
+    entities = [
+        CeibroTask::class,
+        AdvanceOptions::class,
+        SubTaskStatusCount::class,
+        TaskMember::class,
+        AllSubtask::class,
+        AssignedTo::class,
+        Viewer::class,
+        SubTaskAdvanceOptions::class,
+        SubTaskStateItem::class,
+        SubTaskComments::class,
+        TaskDataOfSubTask::class,
+        SubTaskProject::class,
+        FilesAttachments::class,
+        RejectionComment::class,
+        TasksV2DatabaseEntity::class,
+        TopicsV2DatabaseEntity::class,
+        ProjectsV2DatabaseEntity::class,
+        AllCeibroConnections.CeibroConnection::class,
+        NewTaskV2Entity::class
+    ],
+    version = 58,
     exportSchema = false
 )
 @TypeConverters(
@@ -61,6 +79,7 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
     ProjectsV2ListTypeConverter::class,
     OwnerV2TypeConverter::class,
     UserCeibroDataTypeConverter::class,
+    AssignedToStateTypeConverter::class
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")
@@ -75,6 +94,7 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getTopicsV2Dao(): TopicsV2Dao
     abstract fun getProjectsV2Dao(): ProjectsV2Dao
     abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
+    abstract fun getDraftNewTaskV2Dao(): DraftNewTaskV2Dao
 
     companion object {
         const val DB_NAME = "ceibro_app.db"

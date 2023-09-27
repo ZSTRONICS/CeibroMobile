@@ -9,9 +9,26 @@ import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.AddMemberSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
+import com.zstronics.ceibro.data.repos.task.models.NewTopicResponse
+import com.zstronics.ceibro.data.repos.task.models.SubTaskByTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.SubTaskEditDetailRequest
+import com.zstronics.ceibro.data.repos.task.models.SubTaskRejections
+import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
+import com.zstronics.ceibro.data.repos.task.models.SubtaskStatusData
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
+import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import javax.inject.Inject
 
@@ -63,7 +80,7 @@ class TaskRepository @Inject constructor(
     }
 
     override suspend fun newTaskV2(
-        newTask: NewTaskV2Request,
+        newTask: NewTaskV2Entity,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     ) {
         when (val response = remoteTask.newTaskV2(newTask)) {
@@ -169,7 +186,7 @@ class TaskRepository @Inject constructor(
                 localTask.deleteTaskById(taskId)
                 localSubTask.deleteSubtaskByTaskId(taskId)
 
-                callBack(true, response.data.message)
+                callBack(true, responseObj)
             }
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
@@ -380,7 +397,7 @@ class TaskRepository @Inject constructor(
 
                 localSubTask.deleteSubtaskById(subtaskId)
 
-                callBack(true, response.data.message)
+                callBack(true, responseObj)
             }
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
@@ -530,7 +547,7 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 val responseObj = response.data
 
-                callBack(true, "", response.data)
+                callBack(true, "", responseObj)
             }
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, null)

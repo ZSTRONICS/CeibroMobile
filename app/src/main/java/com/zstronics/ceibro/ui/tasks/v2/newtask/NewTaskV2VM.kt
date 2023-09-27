@@ -7,19 +7,22 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
-import okhttp3.internal.filterList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -29,7 +32,9 @@ class NewTaskV2VM @Inject constructor(
     private val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
     private val taskDao: TaskV2Dao,
-    private val connectionsV2Dao: ConnectionsV2Dao
+    private val connectionsV2Dao: ConnectionsV2Dao,
+    private val draftNewTaskV2Dao: DraftNewTaskV2Dao,
+    private var networkConnectivityObserver: NetworkConnectivityObserver
 ) : HiltBaseViewModel<INewTaskV2.State>(), INewTaskV2.ViewModel {
     val user = sessionManager.getUser().value
     val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
@@ -101,19 +106,20 @@ class NewTaskV2VM @Inject constructor(
         } else {
             launch {
                 val selectedIds = viewState.selectedContacts.value?.map { it.id }
-                val selectedContacts = selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
+                val selectedContacts =
+                    selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
 
                 val assignedToCeibroUsers =
-                    (selectedContacts.filter { it.isCeiborUser }
+                    selectedContacts.filter { it.isCeiborUser }
                         .map {
-                            NewTaskV2Request.AssignedToStateNewRequest(
+                            NewTaskV2Entity.AssignedToStateNewEntity(
                                 it.phoneNumber, it.userCeibroData?.id.toString()
                             )
-                        } ?: listOf()) as ArrayList<NewTaskV2Request.AssignedToStateNewRequest>
+                        } as ArrayList<NewTaskV2Entity.AssignedToStateNewEntity>
                 if (viewState.selfAssigned.value == true) {
                     if (user != null) {
                         assignedToCeibroUsers.add(
-                            NewTaskV2Request.AssignedToStateNewRequest(
+                            NewTaskV2Entity.AssignedToStateNewEntity(
                                 user.phoneNumber, user.id
                             )
                         )
@@ -121,11 +127,11 @@ class NewTaskV2VM @Inject constructor(
                 }
 
                 val invitedNumbers = selectedContacts.filter { !it.isCeiborUser }
-                    .map { it.phoneNumber } ?: listOf()
+                    .map { it.phoneNumber }
                 val projectId = viewState.selectedProject.value?.id ?: ""
                 val list = getCombinedList()
 
-                val newTaskRequest = NewTaskV2Request(
+                val newTaskRequest = NewTaskV2Entity(
                     topic = viewState.selectedTopic.value?.id.toString(),
                     project = projectId,
                     assignedToState = assignedToCeibroUsers,
@@ -146,14 +152,17 @@ class NewTaskV2VM @Inject constructor(
                     selfAssigned = viewState.selfAssigned.value
                 )
                 sessionManager.saveNewTaskData(newTaskToSave)
-
+                if (networkConnectivityObserver.isNetworkAvailable().not()) {
+                    saveDataInLocal(newTaskRequest, list, onBack)
+                    return@launch
+                }
                 loading(true)
                 taskRepository.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
                     if (isSuccess) {
                         updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
 
                         if (list.isNotEmpty()) {
-                            task?.id?.let { uploadTaskFiles(context, list, it) }
+                            task?.id?.let { uploadTaskFiles(list, it) }
                         }
                         val handler = Handler()
                         handler.postDelayed({
@@ -164,6 +173,22 @@ class NewTaskV2VM @Inject constructor(
                         loading(false, errorMessage)
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun saveDataInLocal(
+        newTaskRequest: NewTaskV2Entity,
+        list: java.util.ArrayList<PickedImages>,
+        onBack: () -> Unit
+    ) {
+        // Use the IO dispatcher for database operations
+        withContext(Dispatchers.IO) {
+            // Insert or replace the data into the database
+            draftNewTaskV2Dao.upsert(newTaskRequest)
+            // Invoke the callback on the appropriate thread (in this case, the main thread)
+            withContext(Dispatchers.Main) {
+                onBack()
             }
         }
     }
@@ -182,7 +207,6 @@ class NewTaskV2VM @Inject constructor(
     }
 
     private fun uploadTaskFiles(
-        context: Context,
         list: ArrayList<PickedImages>,
         taskId: String
     ) {

@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.base
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.activity.BaseActivity
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.interfaces.CanHandleOnClick
@@ -14,6 +16,10 @@ import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 abstract class BaseBindingViewModelFragment<VB : ViewDataBinding, VS : IBase.State, VM : HiltBaseViewModel<VS>> :
     BaseViewModelFragment<VS, VM>(), CanHandleOnClick {
@@ -21,6 +27,8 @@ abstract class BaseBindingViewModelFragment<VB : ViewDataBinding, VS : IBase.Sta
     lateinit var mViewDataBinding: VB
         private set
 
+    @Inject
+    lateinit var networkConnectivityObserver: NetworkConnectivityObserver
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,7 +56,30 @@ abstract class BaseBindingViewModelFragment<VB : ViewDataBinding, VS : IBase.Sta
             postInit()
         }
         performDataBinding(savedInstanceState)
+    }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        startObservingInternetConnection()
+    }
+
+    private fun startObservingInternetConnection() {
+        if (CeibroApplication.isNetworkObserverRegistered) return
+        CeibroApplication.isNetworkObserverRegistered = true
+        viewModel.viewModelScope.launch {
+            networkConnectivityObserver.observe()
+                .distinctUntilChanged()
+                .collect { connectionStatus ->
+                    when (connectionStatus) {
+                        NetworkConnectivityObserver.Status.Available -> {
+                            viewModel.syncDraftTask()
+                        }
+
+                        else -> {
+                        }
+                    }
+                }
+        }
     }
 
     override fun performDataBinding(savedInstanceState: Bundle?) {

@@ -51,6 +51,7 @@ open class CeibroApplication : Application() {
     companion object {
         var ceibroApplication: CeibroApplication? = null
             private set
+        var isNetworkObserverRegistered = false
     }
 
     override fun onTerminate() {

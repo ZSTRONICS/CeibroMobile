@@ -22,7 +22,6 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -157,7 +156,7 @@ class TaskDetailV2VM @Inject constructor(
             )) {
                 is ApiResponse.Success -> {
                     val commentData = response.data.data
-                    taskData = updateTaskDoneInLocal(commentData, taskDao, user?.id, sessionManager)
+                    taskData = updateTaskDoneInLocal(commentData, taskDao, sessionManager)
                     isSuccess = true
                 }
 

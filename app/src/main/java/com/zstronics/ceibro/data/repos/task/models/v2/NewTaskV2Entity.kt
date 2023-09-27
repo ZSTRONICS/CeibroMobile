@@ -2,26 +2,36 @@ package com.zstronics.ceibro.data.repos.task.models.v2
 
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.data.database.TableNamesV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 
+// We will use this request as a DB table as well.
+@Entity(tableName = TableNamesV2.DraftNewTask)
 @Keep
-data class NewTaskV2Request(
+data class NewTaskV2Entity(
     @SerializedName("topic") val topic: String,
     @SerializedName("project") val project: String,
-    @SerializedName("assignedToState") val assignedToState: List<AssignedToStateNewRequest>,
+    @SerializedName("assignedToState") val assignedToState: List<AssignedToStateNewEntity>,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("creator") val creator: String,
     @SerializedName("description") val description: String,
     @SerializedName("doneImageRequired") val doneImageRequired: Boolean,
     @SerializedName("doneCommentsRequired") val doneCommentsRequired: Boolean,
     @SerializedName("invitedNumbers") val invitedNumbers: List<String>,
-    @SerializedName("hasPendingFilesToUpload") val hasPendingFilesToUpload: Boolean
+    @SerializedName("hasPendingFilesToUpload") val hasPendingFilesToUpload: Boolean,
+
+    /// RoomDB specific rows
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "task_id") @Transient val taskId: Int = 0
 ) {
     @Keep
-    data class AssignedToStateNewRequest(
+    data class AssignedToStateNewEntity(
         @SerializedName("phoneNumber") val phoneNumber: String,
         @SerializedName("userId") val userId: String,
         @SerializedName("state") val state: String = "new",

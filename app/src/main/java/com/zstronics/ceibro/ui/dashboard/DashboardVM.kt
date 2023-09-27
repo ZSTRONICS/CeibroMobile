@@ -165,7 +165,6 @@ class DashboardVM @Inject constructor(
                             updateTaskCommentInLocal(
                                 commentData,
                                 taskDao,
-                                userId,
                                 sessionManager
                             )
                         }
@@ -180,18 +179,16 @@ class DashboardVM @Inject constructor(
                         if (socketData.eventType == SocketHandler.TaskEvent.UN_CANCEL_TASK.name) {
                             updateTaskUnCanceledInLocal(
                                 commentData,
-                                taskDao,
-                                userId,
-                                sessionManager
+                                taskDao
                             )
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
-                            updateTaskDoneInLocal(commentData, taskDao, userId, sessionManager)
+                            updateTaskDoneInLocal(commentData, taskDao, sessionManager)
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
                             println("Socket: JOINED_TASK triggered ")
                             println("Socket: JOINED_TASK:  $commentData")
-                            updateTaskJoinedInLocal(commentData, taskDao, userId, sessionManager)
+                            updateTaskJoinedInLocal(commentData, taskDao, sessionManager)
                             updateContactsInDB()
                         }
                     }
@@ -202,10 +199,10 @@ class DashboardVM @Inject constructor(
                             object : TypeToken<SocketHideUnHideTaskResponse>() {}.type
                         ).data
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
-                            updateTaskHideInLocal(hideData, taskDao, userId)
+                            updateTaskHideInLocal(hideData, taskDao)
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
-                            updateTaskUnHideInLocal(hideData, taskDao, userId)
+                            updateTaskUnHideInLocal(hideData, taskDao)
                         }
                     }
 
