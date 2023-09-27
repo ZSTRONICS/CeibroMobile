@@ -13,12 +13,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2Binding
+import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskInfoBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -54,7 +57,7 @@ class MyConnectionV2Fragment :
             }
             R.id.connectionDescAutoSyncBtn -> {
                 viewModel.syncContactsEnabled {
-                    viewModel.sessionManager.updateAutoSync(true)
+//                    viewModel.sessionManager.updateAutoSync(true)
                     viewState.isAutoSyncEnabled.value = true
                     startOneTimeContactSyncWorker(requireContext())
                 }
@@ -71,6 +74,9 @@ class MyConnectionV2Fragment :
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
                 addContactResultLauncher.launch(intent)
             }
+            R.id.contactsInfoBtn -> {
+                showContactsInfoBottomSheet()
+            }
         }
     }
 
@@ -80,7 +86,9 @@ class MyConnectionV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         contactsPermissionGranted = isPermissionGranted(Manifest.permission.READ_CONTACTS)
-
+        if (BuildConfig.DEBUG) {
+            mViewDataBinding.contactsInfoBtn.visibility = View.VISIBLE
+        }
         mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
         mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
         mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
@@ -156,13 +164,24 @@ class MyConnectionV2Fragment :
         super.onResume()
         contactsPermissionGranted = isPermissionGranted(Manifest.permission.READ_CONTACTS)
         mViewDataBinding.searchBar.setQuery("", true)
+        if (viewModel.user == null) {
+            viewModel.sessionManager.setUser()
+            viewModel.sessionManager.setToken()
+            println("PhoneNumber-MyConnectionV2VM- on start user and token updated because of null")
+            viewModel.user = viewModel.sessionManager.getUser().value
+        }
         if (!runUIOnce) {
             loadConnections(true)
             runUIOnce = true
         }
         if (isPermissionGranted(Manifest.permission.READ_CONTACTS)) {
+            viewState.contactsPermission = "Granted"
             startOneTimeContactSyncWorker(requireContext())
+        } else {
+            viewState.contactsPermission = "Not granted"
         }
+        val contacts = getLocalContacts(viewModel.resProvider.context)
+        viewState.localContactsSize = contacts.size
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {
@@ -191,7 +210,7 @@ class MyConnectionV2Fragment :
 
     private fun showPopupMenu(anchorView: View) {
         val popupMenu = PopupMenu(requireActivity(), anchorView)    //requireActivity is done because theme styles work with activity context, not with application context
-        popupMenu.inflate(if (viewModel.sessionManager.getUser().value?.autoContactSync == true) R.menu.sync_enabled_menu else R.menu.sync_disabled_menu)
+        popupMenu.inflate(if (viewState.isAutoSyncEnabled.value == true) R.menu.sync_enabled_menu else R.menu.sync_disabled_menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.disableSync -> {
@@ -207,10 +226,10 @@ class MyConnectionV2Fragment :
 //                    builder.setNegativeButton("Deny") { dialog, which -> }
 //                    builder.show()
                     viewModel.syncContactsDisable {
-                        viewModel.sessionManager.updateAutoSync(false)
+//                        viewModel.sessionManager.updateAutoSync(false)
                         viewState.isAutoSyncEnabled.value = false
+                        toast("Contacts sync disabled")
                     }
-                    toast("Contacts sync disabled")
                     true
                 }
                 R.id.enableSync -> {
@@ -226,11 +245,11 @@ class MyConnectionV2Fragment :
 //                    builder.setNegativeButton("Deny") { dialog, which -> }
 //                    builder.show()
                     viewModel.syncContactsEnabled {
-                        viewModel.sessionManager.updateAutoSync(true)
+//                        viewModel.sessionManager.updateAutoSync(true)
                         viewState.isAutoSyncEnabled.value = true
                         startOneTimeContactSyncWorker(requireContext())
+                        toast("Contacts sync enabled")
                     }
-                    toast("Contacts sync enabled")
                     true
                 }
                 R.id.selectContacts -> {
@@ -252,6 +271,24 @@ class MyConnectionV2Fragment :
             }
         }
         popupMenu.show()
+    }
+
+    private fun showContactsInfoBottomSheet() {
+        val sheet = ContactsInfoBottomSheet(
+            _deviceInfo = viewState.deviceInfo,
+            _contactsPermission = viewState.contactsPermission,
+            _autoSync = viewState.isAutoSyncEnabled.value ?: false,
+            _localPhoneContactsSize = viewState.localContactsSize,
+            _syncedContactsSizeInDB = viewState.dbContactsSize,
+            _syncedContactsSizeInList = viewModel.allConnections.value?.size ?: -1
+        )
+//        sheet.dialog?.window?.setSoftInputMode(
+//            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+//                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+//        );
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "ContactsInfoBottomSheet")
     }
 
 

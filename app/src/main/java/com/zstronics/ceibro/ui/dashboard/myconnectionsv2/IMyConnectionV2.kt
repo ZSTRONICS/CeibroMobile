@@ -7,6 +7,10 @@ interface IMyConnectionV2 {
     interface State : IBase.State {
         var isAutoSyncEnabled: MutableLiveData<Boolean>
         var searchName: MutableLiveData<String>
+        var deviceInfo: String
+        var contactsPermission: String
+        var localContactsSize: Int
+        var dbContactsSize: Int
     }
 
     interface ViewModel : IBase.ViewModel<State> {

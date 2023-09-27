@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 
+import android.os.Build
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -11,6 +12,7 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.resourses.IResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,10 +20,10 @@ class MyConnectionV2VM @Inject constructor(
     override val viewState: MyConnectionV2State,
     val sessionManager: SessionManager,
     val dashboardRepository: IDashboardRepository,
-    private val resProvider: IResourceProvider,
+    val resProvider: IResourceProvider,
     private val connectionsV2Dao: ConnectionsV2Dao
 ) : HiltBaseViewModel<IMyConnectionV2.State>(), IMyConnectionV2.ViewModel {
-    val user = sessionManager.getUser().value
+    var user = sessionManager.getUser().value
     private var _allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
         MutableLiveData()
     val allConnections: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>?> =
@@ -31,13 +33,21 @@ class MyConnectionV2VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         viewState.isAutoSyncEnabled.postValue(user?.autoContactSync)
+
+        val deviceInfo = StringBuilder()
+        val manufacturer = Build.MANUFACTURER
+        deviceInfo.append("$manufacturer ")
+        val model = Build.MODEL
+        deviceInfo.append("$model")
+        viewState.deviceInfo = deviceInfo.toString()
     }
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
         val userId = user?.id
-        println("PhoneNumber-MyConnectionV2VM-SyncEnable: true, for: $user")
+        println("PhoneNumber-MyConnectionV2VM- getConnections for: $user")
         launch {
             val connectionsData = connectionsV2Dao.getAll()
+            viewState.dbContactsSize = connectionsData.size
             val contacts = connectionsData.groupDataByFirstLetter().toMutableList()
             originalConnections = contacts
             _allConnections.postValue(contacts)
@@ -48,28 +58,24 @@ class MyConnectionV2VM @Inject constructor(
     fun syncContactsEnabled(
         onSuccess: () -> Unit
     ) {
-        val phone = user?.phoneNumber
+        val phone = sessionManager.getUser().value?.phoneNumber
 //        val phone = "+923120619435"
         launch {
             // Handle the API response
             println("PhoneNumber-MyConnectionV2VM-SyncEnable: true, for: $phone")
+            loading(true)
             when (val response =
                 dashboardRepository.syncContactsEnabled(phone ?: "", enabled = true)) {
                 is ApiResponse.Success -> {
-                    val contacts = getLocalContacts(resProvider.context)
                     val userObj = sessionManager.getUserObj()
                     userObj?.autoContactSync = true
                     userObj?.let { sessionManager.updateUser(userObj = it) }
-//                    if (contacts.isNotEmpty()) {
-//                        syncContacts(contacts) {
-//                            onSuccess.invoke()
-//                        }
-//                    } else {
+
+                    loading(false, "")
                     onSuccess.invoke()
-//                    }
                 }
                 is ApiResponse.Error -> {
-                    alert(response.error.message)
+                    loading(false, response.error.message)
                 }
             }
         }
@@ -78,15 +84,22 @@ class MyConnectionV2VM @Inject constructor(
     fun syncContactsDisable(
         onSuccess: () -> Unit
     ) {
-        val phone = user?.phoneNumber
+        val phone = sessionManager.getUser().value?.phoneNumber
         launch {
+            println("PhoneNumber-MyConnectionV2VM-SyncEnable: false, for: $phone")
+            loading(true)
             when (val response =
                 dashboardRepository.syncContactsEnabled(phone ?: "", enabled = false)) {
                 is ApiResponse.Success -> {
+                    val userObj = sessionManager.getUserObj()
+                    userObj?.autoContactSync = false
+                    userObj?.let { sessionManager.updateUser(userObj = it) }
+
+                    loading(false, "")
                     onSuccess.invoke()
                 }
                 is ApiResponse.Error -> {
-                    alert(response.error.message)
+                    loading(false, response.error.message)
                 }
             }
         }

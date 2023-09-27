@@ -7,4 +7,8 @@ import javax.inject.Inject
 class MyConnectionV2State @Inject constructor() : BaseState(), IMyConnectionV2.State {
     override var isAutoSyncEnabled: MutableLiveData<Boolean> = MutableLiveData(false)
     override var searchName: MutableLiveData<String> = MutableLiveData()
+    override var deviceInfo: String = ""
+    override var contactsPermission: String = ""
+    override var localContactsSize: Int = -1
+    override var dbContactsSize: Int = -1
 }

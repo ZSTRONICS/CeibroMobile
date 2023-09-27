@@ -384,7 +384,8 @@ class NewTaskV2Fragment :
                 if (clipData != null) {
                     for (i in 0 until clipData.itemCount) {
                         val fileUri = clipData.getItemAt(i).uri
-                        val selectedImgDetail = getPickedFileDetail(requireContext(), fileUri)
+                        val newUri = createFileUriFromContentUri(requireContext(), fileUri)
+                        val selectedImgDetail = getPickedFileDetail(requireContext(), newUri)
 
                         if (oldImages?.contains(selectedImgDetail) == true) {
                             shortToastNow("You selected an already-added image")
@@ -394,8 +395,9 @@ class NewTaskV2Fragment :
                     }
                 } else {
                     val fileUri = data.data
-                    fileUri.let {
-                        val selectedImgDetail = getPickedFileDetail(requireContext(), it)
+                    fileUri?.let {
+                        val newUri = createFileUriFromContentUri(requireContext(), it)
+                        val selectedImgDetail = getPickedFileDetail(requireContext(), newUri)
 
                         if (oldImages?.contains(selectedImgDetail) == true) {
                             shortToastNow("You selected an already-added image")
