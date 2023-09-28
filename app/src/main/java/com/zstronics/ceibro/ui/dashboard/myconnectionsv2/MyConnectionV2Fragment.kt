@@ -48,13 +48,16 @@ class MyConnectionV2Fragment :
             R.id.optionMenuIV -> {
                 showPopupMenu(mViewDataBinding.optionMenuIV)
             }
+
             R.id.addContactsBtn -> {
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
                 addContactResultLauncher.launch(intent)
             }
+
             R.id.closeBtn -> {
                 navigateBack()
             }
+
             R.id.connectionDescAutoSyncBtn -> {
                 viewModel.syncContactsEnabled {
 //                    viewModel.sessionManager.updateAutoSync(true)
@@ -63,17 +66,24 @@ class MyConnectionV2Fragment :
                 }
                 toast("Contacts sync enabled")
             }
+
             R.id.connectionDescManualSelectionBtn -> {
                 navigate(R.id.manualContactsSelectionFragment)
             }
+
             R.id.connectionDescGrantContactPermissionBtn -> {
-                goToPermissionSettings(Manifest.permission.READ_CONTACTS, immutableListOf(Manifest.permission.READ_CONTACTS))
+                goToPermissionSettings(
+                    Manifest.permission.READ_CONTACTS,
+                    immutableListOf(Manifest.permission.READ_CONTACTS)
+                )
                 runUIOnce = false
             }
+
             R.id.connectionDescSaveContactBtn -> {
                 val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
                 addContactResultLauncher.launch(intent)
             }
+
             R.id.contactsInfoBtn -> {
                 showContactsInfoBottomSheet()
             }
@@ -86,9 +96,9 @@ class MyConnectionV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         contactsPermissionGranted = isPermissionGranted(Manifest.permission.READ_CONTACTS)
-        if (BuildConfig.DEBUG) {
-            mViewDataBinding.contactsInfoBtn.visibility = View.VISIBLE
-        }
+//        if (BuildConfig.DEBUG) {
+        mViewDataBinding.contactsInfoBtn.visibility = View.VISIBLE
+//        }
         mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
         mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
         mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
@@ -121,7 +131,8 @@ class MyConnectionV2Fragment :
                     mViewDataBinding.connectionRV.visibility = View.GONE
                     mViewDataBinding.searchBar.visibility = View.GONE
                     mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
-                    mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.VISIBLE
+                    mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility =
+                        View.VISIBLE
                     mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
                     mViewDataBinding.connectionLogoBackground.visibility = View.VISIBLE
                 }
@@ -209,7 +220,10 @@ class MyConnectionV2Fragment :
     }
 
     private fun showPopupMenu(anchorView: View) {
-        val popupMenu = PopupMenu(requireActivity(), anchorView)    //requireActivity is done because theme styles work with activity context, not with application context
+        val popupMenu = PopupMenu(
+            requireActivity(),
+            anchorView
+        )    //requireActivity is done because theme styles work with activity context, not with application context
         popupMenu.inflate(if (viewState.isAutoSyncEnabled.value == true) R.menu.sync_enabled_menu else R.menu.sync_disabled_menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -232,6 +246,7 @@ class MyConnectionV2Fragment :
                     }
                     true
                 }
+
                 R.id.enableSync -> {
 //                    val builder = MaterialAlertDialogBuilder(requireContext())
 //                    builder.setMessage(resources.getString(R.string.sync_contacts_statement))
@@ -252,19 +267,23 @@ class MyConnectionV2Fragment :
                     }
                     true
                 }
+
                 R.id.selectContacts -> {
                     navigate(R.id.manualContactsSelectionFragment)
                     true
                 }
+
                 R.id.refreshSync -> {
                     startOneTimeContactSyncWorker(requireContext())
                     true
                 }
+
                 R.id.addContactsBtn -> {
                     val intent = Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI)
                     addContactResultLauncher.launch(intent)
                     true
                 }
+
                 else -> {
                     true
                 }
