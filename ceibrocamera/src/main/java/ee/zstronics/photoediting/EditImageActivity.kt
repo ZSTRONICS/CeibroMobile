@@ -83,6 +83,13 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
         super.onCreate(savedInstanceState)
         makeFullScreen()
         setContentView(R.layout.activity_edit_image)
+        val hasStoragePermission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!hasStoragePermission && FileSaveHelper.isSdkLessThanOrEqualTo29()) {
+            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
 
         initViews()
         mWonderFont = Typeface.createFromAsset(assets, "beyond_wonderland.ttf")
@@ -308,10 +315,6 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
-        if (!hasStoragePermission && FileSaveHelper.isSdkLessThanOrEqualTo29()) {
-            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            return
-        }
         if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
             if (!mPhotoEditor.isCacheEmpty) {
                 mSaveFileHelper.createFile(

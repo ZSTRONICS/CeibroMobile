@@ -307,6 +307,7 @@ class TaskDetailV2Fragment :
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
                 bundle.putInt("position", position)
+                bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
             }
 
@@ -331,6 +332,7 @@ class TaskDetailV2Fragment :
                     viewModel.imagesWithComments.value?.toTypedArray()
                 )
                 bundle.putInt("position", position)
+                bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
             }
 
@@ -373,6 +375,7 @@ class TaskDetailV2Fragment :
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", imageFiles.toTypedArray())
                 bundle.putInt("position", position)
+                bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
             }
         val layoutManager = LinearLayoutManager(context)
