@@ -64,7 +64,6 @@ class NewTaskV2Fragment :
                     doneCommentsRequired = mViewDataBinding.commentCheckbox.isChecked
                 }
                 viewModel.createNewTask(
-                    requireContext(),
                     doneImageRequired = doneImageRequired,
                     doneCommentsRequired = doneCommentsRequired
                 ) {
