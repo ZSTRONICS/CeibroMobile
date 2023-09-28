@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.imageviewer
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
@@ -31,15 +32,36 @@ class ImageViewerFragment :
     @Inject
     lateinit var imagePagerAdapter: ImagePagerAdapter
 
+    @Inject
+    lateinit var localImagePagerAdapter: LocalImagePagerAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mViewDataBinding.viewPager.adapter = imagePagerAdapter
+        mViewDataBinding.localViewPager.adapter = localImagePagerAdapter
 
         viewModel.images.observe(viewLifecycleOwner) {
             if (it != null) {
+                mViewDataBinding.localViewPager.visibility = View.GONE
+                mViewDataBinding.viewPager.visibility = View.VISIBLE
                 imagePagerAdapter.setList(it)
-                mViewDataBinding.viewPager.setCurrentItem(viewModel.imagePosition, true)
+                val handler = Handler()
+                handler.postDelayed(Runnable {
+                    mViewDataBinding.viewPager.setCurrentItem(viewModel.imagePosition, true)
+                }, 50)
+            }
+        }
+
+        viewModel.localImages.observe(viewLifecycleOwner) {
+            if (it != null) {
+                mViewDataBinding.viewPager.visibility = View.GONE
+                mViewDataBinding.localViewPager.visibility = View.VISIBLE
+                localImagePagerAdapter.setList(it)
+                val handler = Handler()
+                handler.postDelayed(Runnable {
+                    mViewDataBinding.localViewPager.setCurrentItem(viewModel.imagePosition, true)
+                }, 50)
             }
         }
     }

@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -27,11 +28,17 @@ import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.EditCommentDialogSheet
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.format
+import id.zelory.compressor.constraint.quality
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -305,6 +312,17 @@ class NewTaskV2Fragment :
             }
         }
         mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
+        imageWithCommentAdapter.textClickListener = { _: View, position: Int, data: PickedImages ->
+            showEditCommentDialog(data)
+        }
+        imageWithCommentAdapter.openImageClickListener =
+            { _: View, position: Int, data: PickedImages ->
+                val bundle = Bundle()
+                bundle.putParcelableArray("images", viewModel.imagesWithComments.value?.toTypedArray())
+                bundle.putInt("position", position)
+                bundle.putBoolean("fromServerUrl", false)
+                navigate(R.id.imageViewerFragment, bundle)
+            }
 
 
         viewModel.onlyImages.observe(viewLifecycleOwner) {
@@ -318,7 +336,14 @@ class NewTaskV2Fragment :
             }
         }
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
-
+        onlyImageAdapter.openImageClickListener =
+            { _: View, position: Int, fileUri: String ->
+                val bundle = Bundle()
+                bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
+                bundle.putInt("position", position)
+                bundle.putBoolean("fromServerUrl", false)
+                navigate(R.id.imageViewerFragment, bundle)
+            }
 
         viewModel.documents.observe(viewLifecycleOwner) {
             filesAdapter.setList(it)
@@ -369,6 +394,22 @@ class NewTaskV2Fragment :
             }
         }
 
+    private fun showEditCommentDialog(data: PickedImages) {
+        val sheet = EditCommentDialogSheet(data)
+        sheet.updateCommentOnClick = { updatedComment ->
+            val allImagesWithComment = viewModel.imagesWithComments.value
+            val foundData = allImagesWithComment?.find { it.fileUri == data.fileUri }
+            if (foundData != null) {
+                val index = allImagesWithComment.indexOf(foundData)
+                foundData.comment = updatedComment
+                allImagesWithComment[index] = foundData
+                viewModel.imagesWithComments.postValue(allImagesWithComment)
+            }
+        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "EditCommentDialogSheet")
+    }
 
     private fun chooseImages(mimeTypes: Array<String>) {
         requireActivity().openFilePicker(
@@ -380,30 +421,62 @@ class NewTaskV2Fragment :
 
             if (resultCode == RESULT_OK && data != null) {
                 val clipData = data.clipData
-                if (clipData != null) {
-                    for (i in 0 until clipData.itemCount) {
-                        val fileUri = clipData.getItemAt(i).uri
-                        val newUri = createFileUriFromContentUri(requireContext(), fileUri)
-                        val selectedImgDetail = getPickedFileDetail(requireContext(), newUri)
+                GlobalScope.launch {
+                    viewModel.loading(true)
+                    if (clipData != null) {
+                        for (i in 0 until clipData.itemCount) {
+                            val fileUri = clipData.getItemAt(i).uri
+                            val newUri = createFileUriFromContentUri(requireContext(), fileUri)
+                            val file = FileUtils.getFile(requireContext(), newUri)
 
-                        if (oldImages?.contains(selectedImgDetail) == true) {
-                            shortToastNow("You selected an already-added image")
-                        } else {
-                            pickedImage.add(selectedImgDetail)
+                            val compressedImageFile =
+                                Compressor.compress(requireContext(), file) {
+                                    quality(80)
+                                    format(Bitmap.CompressFormat.JPEG)
+                                }
+                            val compressedImageUri = Uri.fromFile(compressedImageFile)
+
+                            if (compressedImageUri != null) {
+                                val selectedImgDetail =
+                                    getPickedFileDetail(requireContext(), compressedImageUri)
+
+                                if (oldImages?.contains(selectedImgDetail) == true) {
+                                    shortToastNow("You selected an already-added image")
+                                } else {
+                                    pickedImage.add(selectedImgDetail)
+                                }
+                            }
+                        }
+                    } else {
+                        val fileUri = data.data
+                        fileUri?.let {
+                            val newUri = createFileUriFromContentUri(requireContext(), it)
+                            val file = FileUtils.getFile(requireContext(), newUri)
+
+                            val compressedImageFile =
+                                Compressor.compress(requireContext(), file) {
+                                    quality(80)
+                                    format(Bitmap.CompressFormat.JPEG)
+                                }
+                            val compressedImageUri = Uri.fromFile(compressedImageFile)
+
+                            if (compressedImageUri != null) {
+                                val selectedImgDetail =
+                                    getPickedFileDetail(requireContext(), compressedImageUri)
+
+                                if (oldImages?.contains(selectedImgDetail) == true) {
+                                    shortToastNow("You selected an already-added image")
+                                } else {
+                                    pickedImage.add(selectedImgDetail)
+                                }
+                            }
                         }
                     }
-                } else {
-                    val fileUri = data.data
-                    fileUri?.let {
-                        val newUri = createFileUriFromContentUri(requireContext(), it)
-                        val selectedImgDetail = getPickedFileDetail(requireContext(), newUri)
 
-                        if (oldImages?.contains(selectedImgDetail) == true) {
-                            shortToastNow("You selected an already-added image")
-                        } else {
-                            pickedImage.add(selectedImgDetail)
-                        }
-                    }
+                    val allOldImages = viewModel.listOfImages.value
+                    allOldImages?.addAll(pickedImage)
+                    viewModel.listOfImages.postValue(allOldImages)
+                    viewModel.loading(false, "")
                 }
             }
 
