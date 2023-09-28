@@ -11,6 +11,8 @@ import javax.inject.Inject
 
 class CeibroOnlyImageRVAdapter @Inject constructor() :
     RecyclerView.Adapter<CeibroOnlyImageRVAdapter.CeibroOnlyImageViewHolder>() {
+    var openImageClickListener: ((view: View, position: Int, fileUrl: String) -> Unit)? =
+        null
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
     var listItems: MutableList<PickedImages> = mutableListOf()
@@ -48,7 +50,7 @@ class CeibroOnlyImageRVAdapter @Inject constructor() :
 
         fun bind(item: PickedImages) {
             binding.root.setOnClickListener {
-
+                openImageClickListener?.invoke(it, position, item.fileUri.toString())
             }
 
             val context = binding.smallImgView.context

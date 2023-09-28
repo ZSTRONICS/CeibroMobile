@@ -56,7 +56,6 @@ class SplashActivity :
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.ACCESS_MEDIA_LOCATION,
                     Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_IMAGES,
                     Manifest.permission.READ_CONTACTS,
                 )
             ) { deniedList ->

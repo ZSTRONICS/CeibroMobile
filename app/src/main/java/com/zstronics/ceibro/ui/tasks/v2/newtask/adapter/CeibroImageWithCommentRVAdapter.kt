@@ -12,6 +12,8 @@ import javax.inject.Inject
 
 class CeibroImageWithCommentRVAdapter @Inject constructor() :
     RecyclerView.Adapter<CeibroImageWithCommentRVAdapter.CeibroImageWithCommentViewHolder>() {
+    var openImageClickListener: ((view: View, position: Int, data: PickedImages) -> Unit)? =
+        null
     var textClickListener: ((view: View, position: Int, data: PickedImages) -> Unit)? =
         null
     var listItems: MutableList<PickedImages> = mutableListOf()
@@ -50,6 +52,9 @@ class CeibroImageWithCommentRVAdapter @Inject constructor() :
         fun bind(item: PickedImages) {
             binding.imgComment.setOnClickListener {
                 textClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+            binding.smallImgView.setOnClickListener {
+                openImageClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
 
             val context = binding.smallImgView.context
