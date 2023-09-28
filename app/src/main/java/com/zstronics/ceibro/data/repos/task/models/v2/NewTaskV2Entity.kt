@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.database.TableNamesV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import ee.zstronics.ceibro.camera.AttachmentTypes
 
 // We will use this request as a DB table as well.
 @Entity(tableName = TableNamesV2.DraftNewTask)
@@ -28,7 +29,8 @@ data class NewTaskV2Entity(
 
     /// RoomDB specific rows
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "task_id") @Transient val taskId: Int = 0
+    @ColumnInfo(name = "task_id") @Transient val taskId: Int = 0,
+    @ColumnInfo(name = "files_data") @Transient var filesData: List<LocalFilesToStore>? = null
 ) {
     @Keep
     data class AssignedToStateNewEntity(
@@ -45,4 +47,13 @@ data class NewTaskToSave(
     @SerializedName("selectedContacts") val selectedContacts: List<AllCeibroConnections.CeibroConnection>?,
     @SerializedName("dueDate") val dueDate: String?,
     @SerializedName("selfAssigned") val selfAssigned: Boolean?
+)
+
+data class LocalFilesToStore(
+    var fileUri: String,
+    var comment: String = "",
+    val fileName: String = "",
+    val fileSizeReadAble: String = "",
+    val editingApplied: Boolean = false,
+    val attachmentType: AttachmentTypes,
 )

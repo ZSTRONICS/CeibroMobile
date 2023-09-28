@@ -2,13 +2,10 @@ package com.zstronics.ceibro.ui.dashboard
 
 import android.app.Activity
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
-import android.view.WindowManager
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -33,7 +30,6 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.enums.EventType
-import com.zstronics.ceibro.ui.profile.editprofile.ChangePasswordSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
@@ -199,14 +195,7 @@ class DashboardFragment :
     }
 
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-//        val handler = Handler()
-//        handler.postDelayed({
-//            changeSelectedTab(R.id.toMeBtn, false)
-//        }, 150)
-    }
-    private fun socketEventsInitiating(){
+    private fun socketEventsInitiating() {
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
             println("Heartbeat, Dashboard")
             SocketHandler.setSocket()
@@ -215,6 +204,9 @@ class DashboardFragment :
 
 //        viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
+        viewModel.launch {
+            viewModel.syncDraftTask(requireContext())
+        }
         socketEventsInitiated = true
     }
 

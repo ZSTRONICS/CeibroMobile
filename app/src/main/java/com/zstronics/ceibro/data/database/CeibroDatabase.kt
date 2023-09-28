@@ -40,7 +40,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 58,
+    version = 59,
     exportSchema = false
 )
 @TypeConverters(
@@ -79,7 +79,9 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     ProjectsV2ListTypeConverter::class,
     OwnerV2TypeConverter::class,
     UserCeibroDataTypeConverter::class,
-    AssignedToStateTypeConverter::class
+    AssignedToStateTypeConverter::class,
+    LocalFilesToStoreTypeConverter::class,
+    AttachmentTypesConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")

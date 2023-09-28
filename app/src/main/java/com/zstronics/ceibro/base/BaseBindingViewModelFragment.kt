@@ -72,7 +72,7 @@ abstract class BaseBindingViewModelFragment<VB : ViewDataBinding, VS : IBase.Sta
                 .collect { connectionStatus ->
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Available -> {
-                            viewModel.syncDraftTask()
+                            viewModel.syncDraftTask(requireContext())
                         }
 
                         else -> {

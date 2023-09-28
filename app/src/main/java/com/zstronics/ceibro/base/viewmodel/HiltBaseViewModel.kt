@@ -7,23 +7,31 @@ import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.*
 import androidx.work.*
+import com.google.gson.Gson
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.state.UIState
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
+import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
+import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -32,6 +40,8 @@ import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.FileUtils
+import ee.zstronics.ceibro.camera.AttachmentTypes
+import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -3549,10 +3559,78 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     @Inject
     lateinit var sessionManagerInternal: SessionManager
-    suspend fun syncDraftTask() {
+
+    @Inject
+    lateinit var dashboardRepositoryInternal: IDashboardRepository
+    suspend fun syncDraftTask(context: Context) {
         Log.d("SyncDraftTask", "syncDraftTask")
         val user = sessionManagerInternal.getUser().value
         val unsyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+
+        suspend fun uploadDraftTaskFiles(
+            listOfLocalFiles: List<LocalFilesToStore>,
+            taskId: String
+        ) {
+            val list: List<PickedImages> = listOfLocalFiles.map {
+                PickedImages(
+                    fileUri = Uri.parse(it.fileUri),
+                    comment = it.comment,
+                    fileName = it.fileName,
+                    fileSizeReadAble = it.fileSizeReadAble,
+                    editingApplied = it.editingApplied,
+                    attachmentType = it.attachmentType,
+                    file = FileUtils.getFile(context, Uri.parse(it.fileUri))
+                )
+            }
+
+            val attachmentUriList = list.map {
+                it.file
+            }
+            val metaData = list.map { file ->
+                var tag = ""
+                if (file.attachmentType == AttachmentTypes.Image) {
+                    tag = if (file.comment.isNotEmpty()) {
+                        AttachmentTags.ImageWithComment.tagValue
+                    } else {
+                        AttachmentTags.Image.tagValue
+                    }
+                } else if (file.attachmentType == AttachmentTypes.Pdf || file.attachmentType == AttachmentTypes.Doc) {
+                    tag = AttachmentTags.File.tagValue
+                }
+
+                AttachmentUploadV2Request.AttachmentMetaData(
+                    fileName = file.fileName,
+                    orignalFileName = file.fileName,
+                    tag = tag,
+                    comment = file.comment.trim()
+                )
+            }
+            val metadataString = Gson().toJson(metaData)
+            val metadataString2 =
+                Gson().toJson(metadataString)     //again passing to make the json to convert into json string with slashes
+
+            val request = AttachmentUploadV2Request(
+                moduleId = taskId,
+                moduleName = AttachmentModules.Task.name,
+                files = attachmentUriList,
+                metadata = metadataString2
+            )
+
+            when (val response = dashboardRepositoryInternal.uploadFiles(request)) {
+                is ApiResponse.Success -> {
+                    saveFilesInDB(
+                        request.moduleName,
+                        request.moduleId,
+                        response.data.uploadData,
+                        taskDaoInternal
+                    )
+                }
+
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+        }
 
         // Define a recursive function to process records one by one
         suspend fun processNextRecord(records: List<NewTaskV2Entity>) {
@@ -3572,12 +3650,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             user?.id,
                             sessionManagerInternal
                         )
-                    }
-
-                    // Remove the processed record from the list
-                    val updatedRecords = records - newTaskRequest
-                    // Recursively process the next record
-                    launch {
+                        newTaskRequest.filesData?.let { filesData ->
+                            task?.id?.let { uploadDraftTaskFiles(filesData, it) }
+                        }
+                        // Remove the processed record from the list
+                        val updatedRecords = records - newTaskRequest
+                        // Recursively process the next record
                         processNextRecord(updatedRecords)
                     }
                 }
@@ -3587,6 +3665,127 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         // Start the recursive processing
         launch {
             processNextRecord(unsyncedRecords)
+        }
+    }
+
+    fun saveFilesInDB(
+        moduleName: String,
+        moduleId: String,
+        uploadedFiles: List<TaskFiles>,
+        taskDao: TaskV2Dao
+    ) {
+        if (moduleName.equals(AttachmentModules.Task.name, true)) {
+            launch {
+                val taskToMeLocalData = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData = taskDao.getTasks(TaskRootStateTags.FromMe.tagValue)
+
+                if (taskToMeLocalData != null) {
+                    val newTask = taskToMeLocalData.allTasks.new.find { it.id == moduleId }
+                    val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == moduleId }
+                    val ongoingTask = taskToMeLocalData.allTasks.ongoing.find { it.id == moduleId }
+                    val doneTask = taskToMeLocalData.allTasks.done.find { it.id == moduleId }
+
+                    if (newTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
+                        val taskIndex = allTaskList.indexOf(newTask)
+
+                        val oldFiles = newTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        newTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = newTask
+                        taskToMeLocalData.allTasks.new = allTaskList.toList()
+                    } else if (unreadTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
+                        val taskIndex = allTaskList.indexOf(unreadTask)
+
+                        val oldFiles = unreadTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        unreadTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = unreadTask
+                        taskToMeLocalData.allTasks.unread = allTaskList.toList()
+                    } else if (ongoingTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
+                        val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                        val oldFiles = ongoingTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        ongoingTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = ongoingTask
+                        taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                    } else if (doneTask != null) {
+                        val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
+                        val taskIndex = allTaskList.indexOf(doneTask)
+
+                        val oldFiles = doneTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        doneTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = doneTask
+                        taskToMeLocalData.allTasks.done = allTaskList.toList()
+                    }
+
+                    taskDao.insertTaskData(
+                        taskToMeLocalData
+                    )
+                }
+
+                if (taskFromMeLocalData != null) {
+                    val newTask = taskFromMeLocalData.allTasks.new.find { it.id == moduleId }
+                    val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == moduleId }
+                    val ongoingTask =
+                        taskFromMeLocalData.allTasks.ongoing.find { it.id == moduleId }
+                    val doneTask = taskFromMeLocalData.allTasks.done.find { it.id == moduleId }
+
+                    if (newTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.new.toMutableList()
+                        val taskIndex = allTaskList.indexOf(newTask)
+
+                        val oldFiles = newTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        newTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = newTask
+                        taskFromMeLocalData.allTasks.new = allTaskList.toList()
+                    } else if (unreadTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
+                        val taskIndex = allTaskList.indexOf(unreadTask)
+
+                        val oldFiles = unreadTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        unreadTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = unreadTask
+                        taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                    } else if (ongoingTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
+                        val taskIndex = allTaskList.indexOf(ongoingTask)
+
+                        val oldFiles = ongoingTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        ongoingTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = ongoingTask
+                        taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                    } else if (doneTask != null) {
+                        val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
+                        val taskIndex = allTaskList.indexOf(doneTask)
+
+                        val oldFiles = doneTask.files
+                        val combinedFiles = oldFiles + uploadedFiles
+                        doneTask.files = combinedFiles
+
+                        allTaskList[taskIndex] = doneTask
+                        taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                    }
+
+                    taskDao.insertTaskData(
+                        taskFromMeLocalData
+                    )
+                }
+            }
         }
     }
 

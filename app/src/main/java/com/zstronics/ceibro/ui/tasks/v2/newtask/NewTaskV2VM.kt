@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +12,7 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -93,7 +93,6 @@ class NewTaskV2VM @Inject constructor(
 
 
     fun createNewTask(
-        context: Context,
         doneImageRequired: Boolean,
         doneCommentsRequired: Boolean,
         onBack: () -> Unit,
@@ -182,6 +181,19 @@ class NewTaskV2VM @Inject constructor(
         list: java.util.ArrayList<PickedImages>,
         onBack: () -> Unit
     ) {
+        val localFilesData = list.map {
+            LocalFilesToStore(
+                fileUri = it.fileUri.toString(),
+                comment = it.comment,
+                fileName = it.fileName,
+                fileSizeReadAble = it.fileSizeReadAble,
+                editingApplied = it.editingApplied,
+                attachmentType = it.attachmentType
+            )
+        }
+        newTaskRequest.apply {
+            this.filesData = localFilesData
+        }
         // Use the IO dispatcher for database operations
         withContext(Dispatchers.IO) {
             // Insert or replace the data into the database
