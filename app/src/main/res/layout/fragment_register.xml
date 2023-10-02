@@ -82,8 +82,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginEnd="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
                     android:fontFamily="@font/inter_bold"
                     android:text="@string/get_started_heading"
                     android:textColor="@color/black"
@@ -152,7 +152,8 @@
                         android:ems="10"
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/phone_number_heading"
-                        android:inputType="phone"
+                        android:inputType="numberSigned"
+                        android:maxLength="20"
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
                         android:textColor="@color/black"
@@ -163,7 +164,6 @@
                         app:layout_constraintStart_toEndOf="@+id/ccp"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
                 <androidx.appcompat.widget.AppCompatButton
