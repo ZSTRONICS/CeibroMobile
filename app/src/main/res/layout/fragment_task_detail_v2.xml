@@ -442,15 +442,15 @@
                     android:id="@+id/eventsLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_11sdp"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/filesLayout">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginStart="@dimen/_11sdp"
+                        android:layout_marginEnd="@dimen/_11sdp"
                         android:id="@+id/eventsHeaderLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -490,19 +490,20 @@
                         android:id="@+id/eventsRVBottomLine"
                         android:layout_width="0dp"
                         android:layout_height="0.9dp"
-                        android:layout_marginTop="@dimen/_4sdp"
                         android:alpha="0.6"
+                        android:visibility="invisible"
                         android:background="@color/appGrey3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/eventsHeaderLayout" />
 
                     <com.zstronics.ceibro.base.WrapContentHeightRecyclerView
+                        android:layout_marginStart="@dimen/_7sdp"
+                        android:layout_marginEnd="@dimen/_7sdp"
                         android:id="@+id/eventsRV"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/_2sdp"
                         android:nestedScrollingEnabled="false"
                         android:orientation="vertical"
                         android:visibility="visible"

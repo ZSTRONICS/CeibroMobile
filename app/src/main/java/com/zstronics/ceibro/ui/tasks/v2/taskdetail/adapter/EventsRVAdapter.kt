@@ -22,6 +22,7 @@ class EventsRVAdapter @Inject constructor() :
     var openEventImageClickListener: ((view: View, position: Int, imageFiles: List<TaskFiles>) -> Unit)? =
         null
     var listItems: MutableList<Events> = mutableListOf()
+    var loggedInUserId: String = ""
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -44,7 +45,8 @@ class EventsRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<Events>) {
+    fun setList(list: List<Events>, userId: String) {
+        loggedInUserId = userId
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -66,11 +68,12 @@ class EventsRVAdapter @Inject constructor() :
             binding.invitedNumbers.visibility = View.GONE
 
             binding.eventName.text = ""
-            binding.eventBy.text = if(item.initiator.firstName.isEmpty() && item.initiator.surName.isEmpty()) {
-                "${item.initiator.phoneNumber}"
-            } else {
-                "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
-            }
+            binding.eventBy.text =
+                if (item.initiator.firstName.isEmpty() && item.initiator.surName.isEmpty()) {
+                    "${item.initiator.phoneNumber}"
+                } else {
+                    "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
+                }
             binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustom(
                 utcTime = item.createdAt,
                 inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
@@ -83,7 +86,12 @@ class EventsRVAdapter @Inject constructor() :
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
 
-                    binding.eventName.text = context.resources.getString(R.string.forwarded_by)
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
+
 
                     var forwardedToUsers = ""
                     if (!item.eventData.isNullOrEmpty()) {
@@ -133,6 +141,11 @@ class EventsRVAdapter @Inject constructor() :
                 }
 
                 TaskDetailEvents.InvitedUser.eventValue -> {
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -173,6 +186,14 @@ class EventsRVAdapter @Inject constructor() :
 
                     binding.eventName.text = context.resources.getString(R.string.comment_by)
 
+                    binding.eventName.visibility = View.GONE
+
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
+
                     if (item.commentData != null) {
 
                         if (!item.commentData.message.isNullOrEmpty()) {
@@ -189,6 +210,11 @@ class EventsRVAdapter @Inject constructor() :
                 }
 
                 TaskDetailEvents.CancelTask.eventValue -> {
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -202,6 +228,11 @@ class EventsRVAdapter @Inject constructor() :
                 }
 
                 TaskDetailEvents.UnCancelTask.eventValue -> {
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -215,6 +246,11 @@ class EventsRVAdapter @Inject constructor() :
                 }
 
                 TaskDetailEvents.JoinedTask.eventValue -> {
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -225,6 +261,11 @@ class EventsRVAdapter @Inject constructor() :
                 }
 
                 TaskDetailEvents.DoneTask.eventValue -> {
+                    if (item.initiator.id == loggedInUserId) {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                    } else {
+                        binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                    }
                     binding.onlyComment.visibility = View.GONE
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
