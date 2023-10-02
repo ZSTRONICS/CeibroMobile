@@ -4,7 +4,20 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.onesignal.OneSignal
-import com.zstronics.ceibro.base.*
+import com.zstronics.ceibro.base.KEY_DATA_SYNC_UPDATED_AT
+import com.zstronics.ceibro.base.KEY_DEVICE_TYPE
+import com.zstronics.ceibro.base.KEY_IS_FIRST_TIME_LAUNCH
+import com.zstronics.ceibro.base.KEY_IS_FROM_ME_UNREAD
+import com.zstronics.ceibro.base.KEY_IS_HIDDEN_UNREAD
+import com.zstronics.ceibro.base.KEY_IS_TO_ME_UNREAD
+import com.zstronics.ceibro.base.KEY_IS_USER_LOGGED_IN
+import com.zstronics.ceibro.base.KEY_PASS
+import com.zstronics.ceibro.base.KEY_PROJECT
+import com.zstronics.ceibro.base.KEY_SAVED_TASK
+import com.zstronics.ceibro.base.KEY_SECURE_UUID
+import com.zstronics.ceibro.base.KEY_SYNCED_CONTACTS
+import com.zstronics.ceibro.base.KEY_TOKEN
+import com.zstronics.ceibro.base.KEY_USER
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
@@ -15,7 +28,14 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 class SessionManager constructor(
     val sharedPreferenceManager: SharedPreferenceManager
 ) {
-    fun startUserSession(user: User, tokens: Tokens, pass: String, rememberMe: Boolean, secureUUID: String, deviceType: String) {
+    fun startUserSession(
+        user: User,
+        tokens: Tokens,
+        pass: String,
+        rememberMe: Boolean,
+        secureUUID: String,
+        deviceType: String
+    ) {
         sharedPreferenceManager.saveBoolean(
             KEY_IS_USER_LOGGED_IN,
             rememberMe
@@ -221,5 +241,13 @@ class SessionManager constructor(
 
     fun setNotFirstTimeLaunch() {
         sharedPreferenceManager.saveBoolean(KEY_IS_FIRST_TIME_LAUNCH, false)
+    }
+
+    fun getUpdatedAtTimeStamp(): String {
+        return sharedPreferenceManager.getValueString(KEY_DATA_SYNC_UPDATED_AT) ?: ""
+    }
+
+    fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String) {
+        sharedPreferenceManager.saveString(KEY_DATA_SYNC_UPDATED_AT, updatedAtTimeStamp)
     }
 }

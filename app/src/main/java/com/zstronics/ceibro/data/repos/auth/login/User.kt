@@ -43,4 +43,6 @@ data class User(
     val workEmail: String?,
     @SerializedName("autoContactSync")
     var autoContactSync: Boolean,
+    @SerializedName("createdAt")
+    val createdAt: String,
 ) : BaseResponse()

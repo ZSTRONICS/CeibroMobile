@@ -32,7 +32,7 @@ class CeibroDataLoadingFragment :
     override val viewModel: CeibroDataLoadingVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_ceibro_data_loading
     override fun toolBarVisibility(): Boolean = false
-    private val API_CALL_COUNT = 8
+    private val API_CALL_COUNT = 6
     var isNavigated = false
     override fun onClick(id: Int) {
     }
