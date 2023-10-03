@@ -39,8 +39,7 @@ object ImageBinding {
 
         Glide.with(context)
             .load(imageUrl)
-            .apply(requestOptions)
-            .transition(DrawableTransitionOptions.withCrossFade())
+            .placeholder(R.drawable.profile_img)
             .into(imageView)
     }
 
