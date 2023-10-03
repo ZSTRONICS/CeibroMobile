@@ -148,8 +148,8 @@ class DashboardFragment :
         super.onViewCreated(view, savedInstanceState)
         viewModel.updateRootUnread(requireActivity())
         if (!socketEventsInitiated) {
-            changeSelectedTab(R.id.toMeBtn, false)
             socketEventsInitiating()
+            changeSelectedTab(R.id.toMeBtn, false)
         }
         SearchDataSingleton.searchString = MutableLiveData("")
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)

@@ -2,6 +2,8 @@ package com.zstronics.ceibro.ui.dataloading
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -49,8 +51,11 @@ class CeibroDataLoadingFragment :
             )
             if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
                 isNavigated = true
-                Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
-                navigateToDashboard()
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
+                    navigateToDashboard()
+                }, 100)
             }
         }
     }

@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntitySingle
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 
@@ -35,12 +36,13 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         FilesAttachments::class,
         RejectionComment::class,
         TasksV2DatabaseEntity::class,
+        TasksV2DatabaseEntitySingle::class,
         TopicsV2DatabaseEntity::class,
         ProjectsV2DatabaseEntity::class,
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 59,
+    version = 63,
     exportSchema = false
 )
 @TypeConverters(
@@ -63,6 +65,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     FilesAttachmentsTypeConverter::class,
     /// v2
     CeibroTaskV2TypeConverter::class,
+    CeibroSingleTaskEntityV2TypeConverter::class,
     AssignedToStateListTypeConverter::class,
     TaskMemberDetailTypeConverter::class,
     ProjectOfTaskTypeConverter::class,
