@@ -91,7 +91,7 @@ class EventsRVAdapter @Inject constructor() :
                     } else {
                         binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
                     }
-
+                    binding.eventName.visibility = View.GONE
 
                     var forwardedToUsers = ""
                     if (!item.eventData.isNullOrEmpty()) {
