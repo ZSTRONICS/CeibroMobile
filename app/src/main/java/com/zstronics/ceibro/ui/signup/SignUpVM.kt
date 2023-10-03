@@ -78,6 +78,9 @@ class SignUpVM @Inject constructor(
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
                     OneSignal.pauseInAppMessages(false)
+                    if (sessionManager.getUpdatedAtTimeStamp().isEmpty()) {
+                        sessionManager.saveUpdatedAtTimeStamp(response.data.user.createdAt)
+                    }
                     loading(false, "Profile setup complete")
                     onSignedUp.invoke()
                 }

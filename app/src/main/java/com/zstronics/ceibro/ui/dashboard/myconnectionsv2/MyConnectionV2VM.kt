@@ -3,6 +3,9 @@ package com.zstronics.ceibro.ui.dashboard.myconnectionsv2
 import android.os.Build
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
+import com.zstronics.ceibro.base.KEY_TOKEN_VALID
+import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao

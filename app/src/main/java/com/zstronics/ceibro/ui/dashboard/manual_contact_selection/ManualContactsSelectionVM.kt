@@ -37,7 +37,7 @@ class ManualContactsSelectionVM @Inject constructor(
 
     private fun loadContacts() {
         launch(Dispatcher.LongOperation) {
-            val contacts = getLocalContacts(resProvider.context)
+            val contacts = getLocalContacts(resProvider.context, sessionManager)
             val preSelectedContacts = connectionsV2Dao.getAll().toLightContacts()
             // Loop through each contact in viewModel.contacts
             contacts.forEach { contact ->

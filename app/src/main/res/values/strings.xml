@@ -524,4 +524,7 @@
     <string name="auto_sync_status">Auto-sync status</string>
     <string name="synced_contacts_count_in_db">Synced contacts count in DB</string>
     <string name="synced_contacts_count_in_list">Synced contacts available in list</string>
+    <string name="is_token_valid">Is token valid</string>
+    <string name="is_contacts_cursor_valid">Is contacts cursor valid</string>
+    <string name="contacts_sync_count">Last contact sync count</string>
 </resources>

@@ -89,7 +89,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="start"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:text="Device name and model"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -281,6 +281,120 @@
                 android:gravity="start"
                 android:maxLines="2"
                 android:text="50"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tokensLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listPhoneContactsLayout">
+
+            <TextView
+                android:id="@+id/tokensHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/is_token_valid"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/tokenValidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="2"
+                android:text="false"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cursorLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tokensLayout">
+
+            <TextView
+                android:id="@+id/cursorHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/is_contacts_cursor_valid"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/cursorValidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="2"
+                android:text="false"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/updatedContactsLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cursorLayout">
+
+            <TextView
+                android:id="@+id/updatedContactsHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/contacts_sync_count"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/updatedContactsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="2"
+                android:text="-5"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
         </LinearLayout>
