@@ -7,7 +7,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
-import com.zstronics.ceibro.data.database.dao.TaskDaoHelper
+import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
@@ -63,12 +63,12 @@ class CeibroDataLoadingVM @Inject constructor(
                     sessionManager.saveUpdatedAtTimeStamp(response.data.allTasks.latestUpdatedAt)
 
                     // START => Update TO ME into database
-                    val toMeLocal = TaskDaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val toMeLocal = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
 //                    val toMeLocal = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
                     val toMeRemote = response.data.allTasks.toMe
                     // insert data on first time
-                    if (TaskDaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, toMeLocal)) {
-                        TaskDaoHelper(taskDao).insertTaskData(
+                    if (TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, toMeLocal)) {
+                        TaskV2DaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.ToMe.tagValue,
                                 allTasks = toMeRemote
@@ -80,7 +80,7 @@ class CeibroDataLoadingVM @Inject constructor(
                         toMeLocal.allTasks.ongoing.addAll(toMeRemote.ongoing)
                         toMeLocal.allTasks.done.addAll(toMeRemote.done)
 
-                        TaskDaoHelper(taskDao).insertTaskData(
+                        TaskV2DaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.ToMe.tagValue,
                                 allTasks = toMeRemote
@@ -91,11 +91,11 @@ class CeibroDataLoadingVM @Inject constructor(
 
 
                     // START => Update FROM ME into database
-                    val fromMeLocal = TaskDaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val fromMeLocal = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
                     val fromMeRemote = response.data.allTasks.fromMe
                     // insert data on first time
-                    if (TaskDaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, fromMeLocal)) {
-                        TaskDaoHelper(taskDao).insertTaskData(
+                    if (TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, fromMeLocal)) {
+                        TaskV2DaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.FromMe.tagValue,
                                 allTasks = fromMeRemote
@@ -107,7 +107,7 @@ class CeibroDataLoadingVM @Inject constructor(
                         fromMeLocal.allTasks.ongoing.addAll(fromMeRemote.ongoing)
                         fromMeLocal.allTasks.done.addAll(fromMeRemote.done)
 
-                        TaskDaoHelper(taskDao).insertTaskData(
+                        TaskV2DaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.FromMe.tagValue,
                                 allTasks = fromMeLocal.allTasks
@@ -117,11 +117,11 @@ class CeibroDataLoadingVM @Inject constructor(
                     // END => Update FROM ME into database
 
                     // START => Update HIDDEN into database
-                    val hiddenLocal = TaskDaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val hiddenLocal = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
                     val hiddenRemote = response.data.allTasks.hidden
                     // insert data on first time
-                    if (TaskDaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, hiddenLocal)) {
-                        TaskDaoHelper(taskDao).insertTaskData(
+                    if (TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, hiddenLocal)) {
+                        TaskV2DaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.Hidden.tagValue,
                                 allTasks = hiddenRemote
@@ -132,7 +132,7 @@ class CeibroDataLoadingVM @Inject constructor(
                         hiddenLocal.allTasks.done.addAll(hiddenRemote.done)
                         hiddenLocal.allTasks.canceled.addAll(hiddenRemote.canceled)
 
-                        TaskDaoHelper(taskDao).insertTaskData(
+                        TaskV2DaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.Hidden.tagValue,
                                 allTasks = hiddenLocal.allTasks
