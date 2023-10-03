@@ -36,7 +36,6 @@
                 android:id="@+id/imageView5"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginStart="12dp"
                 android:padding="2dp"
                 app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
                 app:layout_constraintEnd_toStartOf="@+id/view2"
@@ -49,8 +48,10 @@
                 android:id="@+id/view2"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.45"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -123,7 +124,7 @@
                 android:id="@+id/friendsReqBtn"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="4dp"
@@ -137,7 +138,7 @@
                 android:id="@+id/feedbackBtn"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginEnd="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="4dp"
@@ -146,6 +147,19 @@
                 app:layout_constraintTop_toTopOf="@+id/profileIcon"
                 app:srcCompat="@drawable/icon_feedback"
                 app:tint="@color/appBlue" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/sync"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingTop="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
+                app:layout_constraintEnd_toStartOf="@+id/feedbackBtn"
+                app:layout_constraintTop_toTopOf="@+id/profileIcon"
+               />
 
             <TextView
                 android:id="@+id/friendsReqCount"
