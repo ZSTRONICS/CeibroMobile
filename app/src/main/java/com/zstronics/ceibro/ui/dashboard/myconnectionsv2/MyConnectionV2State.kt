@@ -11,4 +11,7 @@ class MyConnectionV2State @Inject constructor() : BaseState(), IMyConnectionV2.S
     override var contactsPermission: String = ""
     override var localContactsSize: Int = -1
     override var dbContactsSize: Int = -1
+    override var isCursorValid: Boolean = false
+    override var isValidSession: Boolean = false
+    override var newUpdatedContactListSize: Int = -1
 }

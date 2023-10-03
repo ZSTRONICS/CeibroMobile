@@ -13,8 +13,10 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.BR
-import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
+import com.zstronics.ceibro.base.KEY_TOKEN_VALID
+import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -191,8 +193,16 @@ class MyConnectionV2Fragment :
         } else {
             viewState.contactsPermission = "Not granted"
         }
-        val contacts = getLocalContacts(viewModel.resProvider.context)
+        val contacts = getLocalContacts(viewModel.resProvider.context, viewModel.sessionManager)
         viewState.localContactsSize = contacts.size
+
+        val isTokenValid = viewModel.sessionManager.getBooleanValue(KEY_TOKEN_VALID)
+        val isContactsCursorValid = viewModel.sessionManager.getBooleanValue(KEY_CONTACTS_CURSOR)
+        val updatedAndNewContactsSize = viewModel.sessionManager.getIntegerValue(KEY_updatedAndNewContacts)
+
+        viewState.isValidSession = isTokenValid
+        viewState.isCursorValid = isContactsCursorValid
+        viewState.newUpdatedContactListSize = updatedAndNewContactsSize
     }
 
     private fun loadConnections(skeletonVisible: Boolean) {
@@ -293,13 +303,23 @@ class MyConnectionV2Fragment :
     }
 
     private fun showContactsInfoBottomSheet() {
+        val isTokenValid = viewModel.sessionManager.getBooleanValue(KEY_TOKEN_VALID)
+        val isContactsCursorValid = viewModel.sessionManager.getBooleanValue(KEY_CONTACTS_CURSOR)
+        val updatedAndNewContactsSize = viewModel.sessionManager.getIntegerValue(KEY_updatedAndNewContacts)
+        viewState.isValidSession = isTokenValid
+        viewState.isCursorValid = isContactsCursorValid
+        viewState.newUpdatedContactListSize = updatedAndNewContactsSize
+
         val sheet = ContactsInfoBottomSheet(
             _deviceInfo = viewState.deviceInfo,
             _contactsPermission = viewState.contactsPermission,
             _autoSync = viewState.isAutoSyncEnabled.value ?: false,
             _localPhoneContactsSize = viewState.localContactsSize,
             _syncedContactsSizeInDB = viewState.dbContactsSize,
-            _syncedContactsSizeInList = viewModel.allConnections.value?.size ?: -1
+            _syncedContactsSizeInList = viewModel.allConnections.value?.size ?: -1,
+            _isTokenValid = viewState.isValidSession,
+            _isContactsCursorValid = viewState.isCursorValid,
+            _updatedAndNewContactsSize = viewState.newUpdatedContactListSize
         )
 //        sheet.dialog?.window?.setSoftInputMode(
 //            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or

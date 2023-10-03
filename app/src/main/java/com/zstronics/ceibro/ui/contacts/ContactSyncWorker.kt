@@ -9,6 +9,9 @@ import androidx.room.RoomDatabase
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.zstronics.ceibro.BuildConfig
+import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
+import com.zstronics.ceibro.base.KEY_TOKEN_VALID
+import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
@@ -51,6 +54,8 @@ class ContactSyncWorker @AssistedInject constructor(
         println("PhoneNumber-SyncWorkerRunning")
         val sessionManager = getSessionManager(SharedPreferenceManager(context))
         sessionManager.isUserLoggedIn()
+        sessionManager.saveBooleanValue(KEY_TOKEN_VALID, !CookiesManager.jwtToken.isNullOrEmpty())
+
         if (!CookiesManager.jwtToken.isNullOrEmpty()) {
 
             val user = sessionManager.getUser().value
@@ -58,7 +63,7 @@ class ContactSyncWorker @AssistedInject constructor(
             val room = providesAppDatabase(context)
             val roomContacts = room.getConnectionsV2Dao().getAll()
 
-            val phoneContacts = getLocalContacts(context)
+            val phoneContacts = getLocalContacts(context, sessionManager)
 
             val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
 
@@ -73,8 +78,15 @@ class ContactSyncWorker @AssistedInject constructor(
             val updatedContacts =
                 compareContactsAndUpdateList(roomContacts, contacts)
 
-            val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+            var updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
             updatedAndNewContacts.addAll(updatedContacts)
+
+            if (user?.autoContactSync == false && phoneContacts.size > 0) {
+                val updatedContacts2 =
+                    compareContactsAndUpdateList(roomContacts, phoneContacts)
+                updatedAndNewContacts.addAll(updatedContacts2)
+            }
+
 
 //        if (user?.autoContactSync == true) {
             val newContacts = findNewContacts(roomContacts, contacts)
@@ -109,7 +121,11 @@ class ContactSyncWorker @AssistedInject constructor(
                 }
             }
 
+            updatedAndNewContacts = updatedAndNewContacts.filter { it.phoneNumber != user?.phoneNumber }.toMutableList()
+
+
             if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
+                sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, updatedAndNewContacts.size)
                 val request = SyncContactsRequest(contacts = updatedAndNewContacts)
                 when (val response =
                     dashboardRepository.syncContacts(request)) {
@@ -128,6 +144,7 @@ class ContactSyncWorker @AssistedInject constructor(
                     }
                 }
             } else {
+                sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, -1)
                 if (sessionManager.isLoggedIn())
                     updateLocalContacts(dashboardRepository, room, user?.id ?: "", sessionManager)
                 Result.success()

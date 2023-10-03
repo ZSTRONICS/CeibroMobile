@@ -8,12 +8,14 @@ import android.provider.ContactsContract
 import androidx.core.content.ContextCompat
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
+import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.utils.getDefaultCountryCode
 
-fun getLocalContacts(context: Context) = fetchContacts(context)
+fun getLocalContacts(context: Context, sessionManager: SessionManager) = fetchContacts(context, sessionManager)
 
-private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.CeibroContactLight> {
+private fun fetchContacts(context: Context, sessionManager: SessionManager): MutableList<SyncContactsRequest.CeibroContactLight> {
     if (ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_CONTACTS
@@ -34,6 +36,7 @@ private fun fetchContacts(context: Context): MutableList<SyncContactsRequest.Cei
             generateSelection(), null,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY + " ASC"
         )
+        sessionManager.saveBooleanValue(KEY_CONTACTS_CURSOR, cursor!=null)
 
         if (cursor != null) {
             cursor.moveToFirst()

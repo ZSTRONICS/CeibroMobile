@@ -21,16 +21,18 @@ import com.zstronics.ceibro.databinding.FragmentTaskInfoBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 
-class ContactsInfoBottomSheet(_deviceInfo: String, _contactsPermission: String, _autoSync: Boolean, _localPhoneContactsSize: Int, _syncedContactsSizeInDB: Int, _syncedContactsSizeInList: Int) : BottomSheetDialogFragment() {
+class ContactsInfoBottomSheet(_deviceInfo: String, _contactsPermission: String, _autoSync: Boolean, _localPhoneContactsSize: Int, _syncedContactsSizeInDB: Int,
+                              _syncedContactsSizeInList: Int, _isTokenValid: Boolean, _isContactsCursorValid: Boolean, _updatedAndNewContactsSize: Int) : BottomSheetDialogFragment() {
     lateinit var binding: FragmentContactsInfoBinding
-    var onChangePassword: ((oldPassword: String, newPassword: String) -> Unit)? = null
-    var onChangePasswordDismiss: (() -> Unit)? = null
     val deviceInfo = _deviceInfo
     val contactsPermission = _contactsPermission
     val autoSync = _autoSync
     val localPhoneContactsSize = _localPhoneContactsSize
     val syncedContactsSizeInDB = _syncedContactsSizeInDB
     val syncedContactsSizeInList = _syncedContactsSizeInList
+    val isTokenValid = _isTokenValid
+    val isContactsCursorValid = _isContactsCursorValid
+    val updatedAndNewContactsSize = _updatedAndNewContactsSize
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +59,9 @@ class ContactsInfoBottomSheet(_deviceInfo: String, _contactsPermission: String, 
         binding.localPhoneContactsSize.text = "$localPhoneContactsSize"
         binding.dbPhoneContactsSize.text = "$syncedContactsSizeInDB"
         binding.listPhoneContactsSize.text = "$syncedContactsSizeInList"
+        binding.tokenValidity.text = "$isTokenValid"
+        binding.cursorValidity.text = "$isContactsCursorValid"
+        binding.updatedContactsCount.text = "$updatedAndNewContactsSize"
 
 
         binding.closeBtn.setOnClick {
