@@ -10,7 +10,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class TaskDaoHelper constructor(_taskDao: TaskV2Dao) {
+class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
     val taskDao: TaskV2Dao = _taskDao
 
     suspend fun getTasks(rootState: String): TasksV2DatabaseEntity {
