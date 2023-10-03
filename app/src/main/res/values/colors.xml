@@ -25,11 +25,13 @@
     <color name="appMidGreen">#55BCB3</color>
     <color name="appPaleGreen">#E6FFF4</color>
     <color name="appPaleBlue">#E6F5FF</color>
+    <color name="appLightBlue">#D3E9F9</color>
     <color name="appMidBlue">#CFECFF</color>
     <color name="appBlue">#0076C8</color>
     <color name="appPurple">#B555BC</color>
     <color name="appShadedBlue">#800076C8</color>
     <color name="appDimBlue">#F8FCFF</color>
+    <color name="appGrey0">#EAEAEA</color>
     <color name="appGrey1">#F4F4F4</color>
     <color name="appGrey2">#E2E4E5</color>
     <color name="appGrey3">#818181</color>
