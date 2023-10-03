@@ -9,10 +9,8 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.resourses.IResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,7 +36,9 @@ class MyConnectionV2VM @Inject constructor(
         val manufacturer = Build.MANUFACTURER
         deviceInfo.append("$manufacturer ")
         val model = Build.MODEL
-        deviceInfo.append("$model")
+        deviceInfo.append("$model \n")
+        val version = Build.VERSION.SDK_INT
+        deviceInfo.append("Android version :$version")
         viewState.deviceInfo = deviceInfo.toString()
     }
 

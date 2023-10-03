@@ -360,7 +360,11 @@ class TaskDetailV2Fragment :
 
 
         viewModel.taskEvents.observe(viewLifecycleOwner) {
-            eventsAdapter.setList(it)
+            viewModel.sessionManager.getUser().value?.id?.let { userId ->
+                eventsAdapter.setList(it,
+                    userId
+                )
+            }
             mViewDataBinding.eventsLayout.visibility =
                 if (it.isNotEmpty()) {
                     View.VISIBLE
