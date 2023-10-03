@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.TaskDaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
@@ -53,8 +54,8 @@ class TaskHiddenVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val taskLocalData = taskDao.getTasks(TaskRootStateTags.Hidden.tagValue)
-            if (taskLocalData != null) {
+            val taskLocalData = TaskDaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+            if (!TaskDaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskLocalData)) {
                 val allTasks = taskLocalData.allTasks
                 val canceled = allTasks.canceled.sortedByDescending { it.updatedAt }.toMutableList()
                 val ongoingTask =
@@ -79,7 +80,7 @@ class TaskHiddenVM @Inject constructor(
                 }
                 when (val response = remoteTask.getAllTasks(TaskRootStateTags.Hidden.tagValue)) {
                     is ApiResponse.Success -> {
-                        taskDao.insertTaskData(
+                        TaskDaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = TaskRootStateTags.Hidden.tagValue,
                                 allTasks = response.data.allTasks

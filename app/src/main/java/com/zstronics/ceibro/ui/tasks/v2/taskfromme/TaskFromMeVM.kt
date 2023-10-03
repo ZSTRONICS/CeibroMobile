@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.TaskDaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -59,8 +61,8 @@ class TaskFromMeVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val taskLocalData = taskDao.getTasks("from-me")
-            if (taskLocalData != null) {
+            val taskLocalData = TaskDaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+            if (!TaskDaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskLocalData)) {
                 val allTasks = taskLocalData.allTasks
                 val unreadTask = allTasks.unread.sortedByDescending { it.updatedAt }.toMutableList()
                 val ongoingTask =
@@ -108,7 +110,7 @@ class TaskFromMeVM @Inject constructor(
                 when (val response = remoteTask.getAllTasks("from-me")) {
                     is ApiResponse.Success -> {
 
-                        taskDao.insertTaskData(
+                        TaskDaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = "from-me",
                                 allTasks = response.data.allTasks

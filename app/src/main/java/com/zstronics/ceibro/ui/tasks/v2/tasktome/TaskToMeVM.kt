@@ -9,11 +9,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.TaskDaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -22,6 +25,8 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,12 +63,24 @@ class TaskToMeVM @Inject constructor(
     }
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
+        if (skeletonVisible) {
+            taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
+                itemCount(5)
+                color(R.color.appGrey3)
+            }
+        }
         launch {
-            val taskLocalData = taskDao.getTasks("to-me")
-            if (taskLocalData != null) {
+            val taskLocalData = TaskDaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+            if (!TaskDaoHelper(taskDao).isTaskListEmpty(
+                    TaskRootStateTags.ToMe.tagValue,
+                    taskLocalData
+                )
+            ) {
+
                 val allTasks = taskLocalData.allTasks
                 val newTask = allTasks.new.sortedByDescending { it.updatedAt }.toMutableList()
-                val ongoingTask = allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
+                val ongoingTask =
+                    allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
                 val doneTask = allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
 
                 if (firstStartOfFragment) {
@@ -96,7 +113,9 @@ class TaskToMeVM @Inject constructor(
                 originalDoneTasks = doneTask
                 allOriginalTasks.postValue(allTasks)
                 callBack.invoke()
+
             } else {
+
                 if (skeletonVisible) {
                     taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
                         itemCount(5)
@@ -105,15 +124,21 @@ class TaskToMeVM @Inject constructor(
                 }
                 when (val response = remoteTask.getAllTasks("to-me")) {
                     is ApiResponse.Success -> {
-                        taskDao.insertTaskData(
+                        TaskDaoHelper(taskDao).insertTaskData(
                             TasksV2DatabaseEntity(
                                 rootState = "to-me",
                                 allTasks = response.data.allTasks
                             )
                         )
-                        val newTask = response.data.allTasks.new.sortedByDescending { it.updatedAt }.toMutableList()
-                        val ongoingTask = response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
-                        val doneTask = response.data.allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
+                        val newTask =
+                            response.data.allTasks.new.sortedByDescending { it.updatedAt }
+                                .toMutableList()
+                        val ongoingTask =
+                            response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }
+                                .toMutableList()
+                        val doneTask =
+                            response.data.allTasks.done.sortedByDescending { it.updatedAt }
+                                .toMutableList()
                         val allTasks = response.data.allTasks
 
                         if (firstStartOfFragment) {
@@ -151,6 +176,7 @@ class TaskToMeVM @Inject constructor(
                         }
                         callBack.invoke()
                     }
+
                     is ApiResponse.Error -> {
                         alert(response.error.message)
                         if (skeletonVisible) {
@@ -159,8 +185,13 @@ class TaskToMeVM @Inject constructor(
                         callBack.invoke()
                     }
                 }
+
+            }
+            if (skeletonVisible) {
+                taskRV.hideSkeleton()
             }
         }
+
     }
 
     fun searchTasks(query: String) {
