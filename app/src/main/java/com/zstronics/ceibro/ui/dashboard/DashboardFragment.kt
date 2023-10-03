@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -30,12 +31,14 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.enums.EventType
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -192,6 +195,36 @@ class DashboardFragment :
             }
         }
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
+
+
+        setConnectivityIcon()
+
+
+    }
+
+    private fun setConnectivityIcon() {
+        lifecycleScope.launch {
+            networkConnectivityObserver.observe().collect { connectionStatus ->
+                when (connectionStatus) {
+                    NetworkConnectivityObserver.Status.Losing -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                    }
+
+                    NetworkConnectivityObserver.Status.Available -> {
+
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+                    }
+
+                    NetworkConnectivityObserver.Status.Lost -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+
+                    else -> {
+                        //mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+                }
+            }
+        }
     }
 
 
