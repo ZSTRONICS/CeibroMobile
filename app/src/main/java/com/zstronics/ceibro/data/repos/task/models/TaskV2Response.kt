@@ -22,15 +22,15 @@ data class TaskV2Response(
     @Keep
     data class AllTasks(
         @SerializedName("done")
-        var done: List<CeibroTaskV2>,
+        var done: MutableList<CeibroTaskV2>,
         @SerializedName("new")
-        var new: List<CeibroTaskV2>,
+        var new: MutableList<CeibroTaskV2>,
         @SerializedName("ongoing")
-        var ongoing: List<CeibroTaskV2>,
+        var ongoing: MutableList<CeibroTaskV2>,
         @SerializedName("unread")
-        var unread: List<CeibroTaskV2>,
+        var unread: MutableList<CeibroTaskV2>,
         @SerializedName("canceled")
-        var canceled: List<CeibroTaskV2> = listOf()
+        var canceled: MutableList<CeibroTaskV2> = mutableListOf()
     ) : BaseResponse(), Parcelable
 }
 

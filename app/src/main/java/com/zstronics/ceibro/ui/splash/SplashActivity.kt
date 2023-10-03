@@ -116,6 +116,13 @@ class SplashActivity :
     }
 
     private fun navigateToCeibroDataLoading() {
+        if (sessionManager.getUpdatedAtTimeStamp().isEmpty()) {
+            viewModel.sessionManager.getUserObj()?.createdAt?.let {
+                sessionManager.saveUpdatedAtTimeStamp(
+                    it
+                )
+            }
+        }
         launchActivity<NavHostPresenterActivity>(
             options = Bundle(),
             clearPrevious = true

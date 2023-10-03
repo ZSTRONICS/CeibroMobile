@@ -219,15 +219,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         unreadList.addAll(oldListMutableList)
                     }
 
-                    taskLocalData?.allTasks?.unread = unreadList.toList()
+                    taskLocalData?.allTasks?.unread = unreadList
                     taskDao.insertTaskData(
                         taskLocalData ?: TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.FromMe.tagValue,
                             allTasks = TaskV2Response.AllTasks(
-                                new = listOf(),
-                                unread = unreadList.toList(),
-                                ongoing = listOf(),
-                                done = listOf()
+                                new = mutableListOf(),
+                                unread = unreadList,
+                                ongoing = mutableListOf(),
+                                done = mutableListOf()
                             )
                         )
                     )
@@ -246,15 +246,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         }
                         newList.addAll(oldListMutableList)
                     }
-                    taskLocalData?.allTasks?.new = newList.toList()
+                    taskLocalData?.allTasks?.new = newList
                     taskDao.insertTaskData(
                         taskLocalData ?: TasksV2DatabaseEntity(
                             rootState = TaskRootStateTags.ToMe.tagValue,
                             allTasks = TaskV2Response.AllTasks(
-                                unread = listOf(),
-                                new = newList.toList(),
-                                ongoing = listOf(),
-                                done = listOf()
+                                unread = mutableListOf(),
+                                new = newList,
+                                ongoing = mutableListOf(),
+                                done = mutableListOf()
                             )
                         )
                     )
@@ -300,7 +300,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
 
                         allOngoingTaskList.removeAt(taskIndex)
-                        taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+                        taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
                         if (taskToMeLocalData != null) {
                             val ongoingTaskToMe =
@@ -322,7 +322,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val taskIndex = allDoneTaskList.indexOf(doneTask)
 
                         allDoneTaskList.removeAt(taskIndex)
-                        taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+                        taskHiddenLocalData.allTasks.done = allDoneTaskList
 
                         if (taskToMeLocalData != null) {
                             val doneTaskToMe =
@@ -366,7 +366,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                             allCancelTaskList[taskIndex] = task
                             taskHiddenLocalData.allTasks.canceled =
-                                allCancelTaskList.toList()
+                                allCancelTaskList
 
                             sharedViewModel?.isHiddenUnread?.value = true
                             sessionManager.saveHiddenUnread(true)
@@ -402,10 +402,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val ongoingList =
                                     taskFromMeLocalData.allTasks.ongoing.toMutableList()
                                 ongoingList.add(0, task)
-                                taskFromMeLocalData.allTasks.ongoing = ongoingList.toList()
+                                taskFromMeLocalData.allTasks.ongoing = ongoingList
                             } else {
                                 unreadList[unreadTaskIndex] = task
-                                taskFromMeLocalData.allTasks.unread = unreadList.toList()
+                                taskFromMeLocalData.allTasks.unread = unreadList
                             }
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
@@ -419,10 +419,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val doneList =
                                     taskFromMeLocalData.allTasks.done.toMutableList()
                                 doneList.add(0, task)
-                                taskFromMeLocalData.allTasks.done = doneList.toList()
+                                taskFromMeLocalData.allTasks.done = doneList
                             } else {
                                 ongoingList[ongoingTaskIndex] = task
-                                taskFromMeLocalData.allTasks.ongoing = ongoingList.toList()
+                                taskFromMeLocalData.allTasks.ongoing = ongoingList
                             }
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
@@ -430,7 +430,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         } else if (doneTaskIndex >= 0) {
                             val doneList = taskFromMeLocalData.allTasks.done.toMutableList()
                             doneList[doneTaskIndex] = task
-                            taskFromMeLocalData.allTasks.done = doneList.toList()
+                            taskFromMeLocalData.allTasks.done = doneList
 
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
@@ -458,25 +458,25 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             if (myState.equals(TaskStatus.ONGOING.name, true)) {
                                 val newTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 newTaskList.removeAt(newTaskIndex)
-                                taskToMeLocalData.allTasks.new = newTaskList.toList()
+                                taskToMeLocalData.allTasks.new = newTaskList
 
                                 val ongoingTaskList =
                                     taskToMeLocalData.allTasks.ongoing.toMutableList()
                                 ongoingTaskList.add(0, task)
-                                taskToMeLocalData.allTasks.ongoing = ongoingTaskList.toList()
+                                taskToMeLocalData.allTasks.ongoing = ongoingTaskList
 
                             } else if (myState.equals(TaskStatus.DONE.name, true)) {
                                 val newTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 newTaskList.removeAt(newTaskIndex)
-                                taskToMeLocalData.allTasks.new = newTaskList.toList()
+                                taskToMeLocalData.allTasks.new = newTaskList
 
                                 val doneTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                                 doneTaskList.add(0, task)
-                                taskToMeLocalData.allTasks.done = doneTaskList.toList()
+                                taskToMeLocalData.allTasks.done = doneTaskList
                             } else {
                                 val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 allTaskList[newTaskIndex] = task
-                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+                                taskToMeLocalData.allTasks.new = allTaskList
                             }
                             sharedViewModel?.isToMeUnread?.value = true
                             sessionManager.saveToMeUnread(true)
@@ -486,15 +486,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val ongoingTaskList =
                                     taskToMeLocalData.allTasks.ongoing.toMutableList()
                                 ongoingTaskList.removeAt(ongoingTaskIndex)
-                                taskToMeLocalData.allTasks.ongoing = ongoingTaskList.toList()
+                                taskToMeLocalData.allTasks.ongoing = ongoingTaskList
 
                                 val doneTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                                 doneTaskList.add(0, task)
-                                taskToMeLocalData.allTasks.done = doneTaskList.toList()
+                                taskToMeLocalData.allTasks.done = doneTaskList
                             } else {
                                 val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                                 allTaskList[ongoingTaskIndex] = task
-                                taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                taskToMeLocalData.allTasks.ongoing = allTaskList
                             }
                             sharedViewModel?.isToMeUnread?.value = true
                             sessionManager.saveToMeUnread(true)
@@ -502,14 +502,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         } else if (doneTaskIndex >= 0) {
                             val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                             allTaskList[doneTaskIndex] = task
-                            taskToMeLocalData.allTasks.done = allTaskList.toList()
+                            taskToMeLocalData.allTasks.done = allTaskList
                             sharedViewModel?.isToMeUnread?.value = true
                             sessionManager.saveToMeUnread(true)
                         } else {
                             if (myState.equals(TaskStatus.NEW.name, true)) {
                                 val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 allTaskList.add(0, task)
-                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+                                taskToMeLocalData.allTasks.new = allTaskList
 
                                 sharedViewModel?.isToMeUnread?.value = true
                                 sessionManager.saveToMeUnread(true)
@@ -565,12 +565,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                                     allCancelTaskList[taskIndex] = canceledTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCancelTaskList.toList()
+                                        allCancelTaskList
 
                                 } else {
                                     allCancelTaskList[taskIndex] = canceledTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCancelTaskList.toList()
+                                        allCancelTaskList
                                 }
 
                                 taskDao.insertTaskData(
@@ -623,9 +623,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.unread = allTaskList
                                     taskFromMeLocalData.allTasks.ongoing =
-                                        newAllOngoingTaskList.toList()
+                                        newAllOngoingTaskList
 
                                 } else if (taskSeen.creatorState.equals(
                                         TaskStatus.DONE.name,
@@ -640,16 +640,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskFromMeLocalData.allTasks.unread = allTaskList.toList()
-                                    taskFromMeLocalData.allTasks.done = newAllDoneTaskList.toList()
+                                    taskFromMeLocalData.allTasks.unread = allTaskList
+                                    taskFromMeLocalData.allTasks.done = newAllDoneTaskList
 
                                 } else {
                                     allTaskList[taskIndex] = unreadTask
-                                    taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.unread = allTaskList
                                 }
                             } else {
                                 allTaskList[taskIndex] = unreadTask
-                                taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                                taskFromMeLocalData.allTasks.unread = allTaskList
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(unreadTask))
 
@@ -681,9 +681,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.ongoing = allTaskList
                                     taskFromMeLocalData.allTasks.unread =
-                                        newAllUnreadTaskList.toList()
+                                        newAllUnreadTaskList
 
                                 } else if (taskSeen.creatorState.equals(
                                         TaskStatus.DONE.name,
@@ -698,16 +698,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
-                                    taskFromMeLocalData.allTasks.done = newAllDoneTaskList.toList()
+                                    taskFromMeLocalData.allTasks.ongoing = allTaskList
+                                    taskFromMeLocalData.allTasks.done = newAllDoneTaskList
 
                                 } else {
                                     allTaskList[taskIndex] = ongoingTask
-                                    taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.ongoing = allTaskList
                                 }
                             } else {
                                 allTaskList[taskIndex] = ongoingTask
-                                taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                taskFromMeLocalData.allTasks.ongoing = allTaskList
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(ongoingTask))
                         } else if (doneTask != null) {
@@ -738,9 +738,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.done = allTaskList
                                     taskFromMeLocalData.allTasks.unread =
-                                        newAllUnreadTaskList.toList()
+                                        newAllUnreadTaskList
 
                                 } else if (taskSeen.creatorState.equals(
                                         TaskStatus.ONGOING.name,
@@ -755,17 +755,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.done = allTaskList
                                     taskFromMeLocalData.allTasks.ongoing =
-                                        newAllOngoingTaskList.toList()
+                                        newAllOngoingTaskList
 
                                 } else {
                                     allTaskList[taskIndex] = doneTask
-                                    taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                                    taskFromMeLocalData.allTasks.done = allTaskList
                                 }
                             } else {
                                 allTaskList[taskIndex] = doneTask
-                                taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                                taskFromMeLocalData.allTasks.done = allTaskList
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(doneTask))
                         }
@@ -819,9 +819,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskToMeLocalData.allTasks.new = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.new = allTaskList
                                     taskToMeLocalData.allTasks.ongoing =
-                                        newAllOngoingTaskList.toList()
+                                        newAllOngoingTaskList
 
                                 } else if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
                                         TaskStatus.DONE.name,
@@ -836,16 +836,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskToMeLocalData.allTasks.new = allTaskList.toList()
-                                    taskToMeLocalData.allTasks.done = newAllDoneTaskList.toList()
+                                    taskToMeLocalData.allTasks.new = allTaskList
+                                    taskToMeLocalData.allTasks.done = newAllDoneTaskList
 
                                 } else {
                                     allTaskList[taskIndex] = newTask
-                                    taskToMeLocalData.allTasks.new = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.new = allTaskList
                                 }
                             } else {
                                 allTaskList[taskIndex] = newTask
-                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+                                taskToMeLocalData.allTasks.new = allTaskList
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(newTask))
                         } else if (ongoingTask != null) {
@@ -880,9 +880,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.ongoing = allTaskList
                                     taskToMeLocalData.allTasks.unread =
-                                        newAllUnreadTaskList.toList()
+                                        newAllUnreadTaskList
 
                                 } else if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
                                         TaskStatus.DONE.name,
@@ -897,16 +897,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllDoneTaskList.addAll(allDoneTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
-                                    taskToMeLocalData.allTasks.done = newAllDoneTaskList.toList()
+                                    taskToMeLocalData.allTasks.ongoing = allTaskList
+                                    taskToMeLocalData.allTasks.done = newAllDoneTaskList
 
                                 } else {
                                     allTaskList[taskIndex] = ongoingTask
-                                    taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.ongoing = allTaskList
                                 }
                             } else {
                                 allTaskList[taskIndex] = ongoingTask
-                                taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                taskToMeLocalData.allTasks.ongoing = allTaskList
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(ongoingTask))
 
@@ -942,9 +942,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllUnreadTaskList.addAll(allUnreadTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskToMeLocalData.allTasks.done = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.done = allTaskList
                                     taskToMeLocalData.allTasks.unread =
-                                        newAllUnreadTaskList.toList()
+                                        newAllUnreadTaskList
 
                                 } else if (taskSeen.state.userId == userId && taskSeen.state.state.equals(
                                         TaskStatus.ONGOING.name,
@@ -959,17 +959,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     newAllOngoingTaskList.addAll(allOngoingTaskList)
 
                                     allTaskList.removeAt(taskIndex)
-                                    taskToMeLocalData.allTasks.done = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.done = allTaskList
                                     taskToMeLocalData.allTasks.ongoing =
-                                        newAllOngoingTaskList.toList()
+                                        newAllOngoingTaskList
 
                                 } else {
                                     allTaskList[taskIndex] = doneTask
-                                    taskToMeLocalData.allTasks.done = allTaskList.toList()
+                                    taskToMeLocalData.allTasks.done = allTaskList
                                 }
                             } else {
                                 allTaskList[taskIndex] = doneTask
-                                taskToMeLocalData.allTasks.done = allTaskList.toList()
+                                taskToMeLocalData.allTasks.done = allTaskList
                             }
                             EventBus.getDefault().post(LocalEvents.TaskForwardEvent(doneTask))
                         }
@@ -1039,20 +1039,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
 
                             allOngoingTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
                                 if (taskToMeLocalData != null) {
@@ -1104,20 +1104,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
 
                             allDoneTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
                                 if (taskToMeLocalData != null) {
@@ -1196,20 +1196,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    canceledTask.events = oldEvents.toList()
+                                    canceledTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    canceledTask.events = oldEvents.toList()
+                                    canceledTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                canceledTask.events = oldEvents.toList()
+                                canceledTask.events = oldEvents
                             }
                             canceledTask.hiddenBy = listOf()
                             canceledTask.seenBy = eventData.taskData.seenBy
 
                             allCancelTaskList[taskIndex] = canceledTask
-                            taskHiddenLocalData.allTasks.canceled = allCancelTaskList.toList()
+                            taskHiddenLocalData.allTasks.canceled = allCancelTaskList
 
                             updatedTask = canceledTask
                             taskDao.insertTaskData(
@@ -1247,20 +1247,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                newTask.events = oldEvents.toList()
+                                newTask.events = oldEvents
                             }
                             newTask.hiddenBy = listOf()
                             newTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = newTask
-                            taskToMeLocalData.allTasks.new = allTaskList.toList()
+                            taskToMeLocalData.allTasks.new = allTaskList
                             updatedTask = newTask
                             sharedViewModel?.isToMeUnread?.postValue(true)
                             sessionManager.saveToMeUnread(true)
@@ -1276,20 +1276,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = ongoingTask
-                            taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                            taskToMeLocalData.allTasks.ongoing = allTaskList
                             updatedTask = ongoingTask
                             sharedViewModel?.isToMeUnread?.postValue(true)
                             sessionManager.saveToMeUnread(true)
@@ -1305,20 +1305,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = doneTask
-                            taskToMeLocalData.allTasks.done = allTaskList.toList()
+                            taskToMeLocalData.allTasks.done = allTaskList
                             updatedTask = doneTask
                             sharedViewModel?.isToMeUnread?.postValue(true)
                             sessionManager.saveToMeUnread(true)
@@ -1353,20 +1353,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    unreadTask.events = oldEvents.toList()
+                                    unreadTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    unreadTask.events = oldEvents.toList()
+                                    unreadTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                unreadTask.events = oldEvents.toList()
+                                unreadTask.events = oldEvents
                             }
                             unreadTask.hiddenBy = listOf()
                             unreadTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = unreadTask
-                            taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                            taskFromMeLocalData.allTasks.unread = allTaskList
                             updatedTask = unreadTask
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
@@ -1382,20 +1382,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = ongoingTask
-                            taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                            taskFromMeLocalData.allTasks.ongoing = allTaskList
                             updatedTask = ongoingTask
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
@@ -1411,20 +1411,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
 
                             allTaskList[taskIndex] = doneTask
-                            taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                            taskFromMeLocalData.allTasks.done = allTaskList
                             updatedTask = doneTask
                             sharedViewModel?.isFromMeUnread?.value = true
                             sessionManager.saveFromMeUnread(true)
@@ -1482,14 +1482,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         if (oldOnlyEvent != null) {     //means event already exist, so replace it
                             val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                             oldEvents[oldEventIndex] = taskEvent
-                            task.events = oldEvents.toList()
+                            task.events = oldEvents
                         } else {
                             oldEvents.add(taskEvent)
-                            task.events = oldEvents.toList()
+                            task.events = oldEvents
                         }
                     } else {
                         oldEvents = taskEventList
-                        task.events = oldEvents.toList()
+                        task.events = oldEvents
                     }
                     task.hiddenBy = listOf()
                     task.seenBy = eventData.taskData.seenBy
@@ -1609,14 +1609,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
@@ -1628,7 +1628,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.assignedToState = assignToList
 
                             allOngoingTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
                             val allCanceledTaskList =
                                 taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -1641,11 +1641,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     allCanceledTaskList.indexOf(canceledTask)
                                 allCanceledTaskList[canceledTaskIndex] = ongoingTask
                                 taskHiddenLocalData.allTasks.canceled =
-                                    allCanceledTaskList.toList()
+                                    allCanceledTaskList
                             } else {
                                 allCanceledTaskList.add(0, ongoingTask)
                                 taskHiddenLocalData.allTasks.canceled =
-                                    allCanceledTaskList.toList()
+                                    allCanceledTaskList
                             }
                             updatedTask = ongoingTask
                             if (ongoingTask.creator.id != userId) {
@@ -1665,14 +1665,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
@@ -1684,7 +1684,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.assignedToState = assignToList
 
                             allDoneTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList
 
                             val allCanceledTaskList =
                                 taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -1697,11 +1697,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     allCanceledTaskList.indexOf(canceledTask)
                                 allCanceledTaskList[canceledTaskIndex] = doneTask
                                 taskHiddenLocalData.allTasks.canceled =
-                                    allCanceledTaskList.toList()
+                                    allCanceledTaskList
                             } else {
                                 allCanceledTaskList.add(0, doneTask)
                                 taskHiddenLocalData.allTasks.canceled =
-                                    allCanceledTaskList.toList()
+                                    allCanceledTaskList
                             }
                             updatedTask = doneTask
                             if (doneTask.creator.id != userId) {
@@ -1744,7 +1744,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             canceledTask.assignedToState = assignToList
 
                             allCancelTaskList[taskIndex] = canceledTask
-                            taskHiddenLocalData.allTasks.canceled = allCancelTaskList.toList()
+                            taskHiddenLocalData.allTasks.canceled = allCancelTaskList
 
                             updatedTask = canceledTask
                             taskDao.insertTaskData(
@@ -1787,14 +1787,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        newTask.events = oldEvents.toList()
+                                        newTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        newTask.events = oldEvents.toList()
+                                        newTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 }
                                 newTask.hiddenBy = listOf()
                                 newTask.seenBy = eventData.taskData.seenBy
@@ -1806,7 +1806,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 newTask.assignedToState = assignToList
 
                                 allTaskList.removeAt(taskIndex)
-                                taskToMeLocalData.allTasks.new = allTaskList.toList()
+                                taskToMeLocalData.allTasks.new = allTaskList
 
                                 val allCanceledTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -1819,11 +1819,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = newTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 } else {
                                     allCanceledTaskList.add(0, newTask)
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 }
                                 updatedTask = newTask
                                 if (newTask.creator.id != userId) {
@@ -1844,14 +1844,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents.toList()
+                                        ongoingTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents.toList()
+                                        ongoingTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
@@ -1863,7 +1863,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 ongoingTask.assignedToState = assignToList
 
                                 allTaskList.removeAt(taskIndex)
-                                taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                taskToMeLocalData.allTasks.ongoing = allTaskList
 
                                 val allCanceledTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -1876,11 +1876,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = ongoingTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 } else {
                                     allCanceledTaskList.add(0, ongoingTask)
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 }
                                 updatedTask = ongoingTask
                                 if (ongoingTask.creator.id != userId) {
@@ -1901,14 +1901,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents.toList()
+                                        doneTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents.toList()
+                                        doneTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
@@ -1920,7 +1920,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTask.assignedToState = assignToList
 
                                 allTaskList.removeAt(taskIndex)
-                                taskToMeLocalData.allTasks.done = allTaskList.toList()
+                                taskToMeLocalData.allTasks.done = allTaskList
 
                                 val allCanceledTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -1933,11 +1933,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = doneTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 } else {
                                     allCanceledTaskList.add(0, doneTask)
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 }
                                 updatedTask = doneTask
                                 if (doneTask.creator.id != userId) {
@@ -1982,14 +1982,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        unreadTask.events = oldEvents.toList()
+                                        unreadTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        unreadTask.events = oldEvents.toList()
+                                        unreadTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    unreadTask.events = oldEvents.toList()
+                                    unreadTask.events = oldEvents
                                 }
                                 unreadTask.hiddenBy = listOf()
                                 unreadTask.seenBy = eventData.taskData.seenBy
@@ -2001,7 +2001,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 unreadTask.assignedToState = assignToList
 
                                 allTaskList.removeAt(taskIndex)
-                                taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                                taskFromMeLocalData.allTasks.unread = allTaskList
 
                                 val allCanceledTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -2014,11 +2014,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = unreadTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 } else {
                                     allCanceledTaskList.add(0, unreadTask)
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 }
                                 updatedTask = unreadTask
                                 if (unreadTask.creator.id != userId) {
@@ -2039,14 +2039,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents.toList()
+                                        ongoingTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents.toList()
+                                        ongoingTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
@@ -2058,7 +2058,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 ongoingTask.assignedToState = assignToList
 
                                 allTaskList.removeAt(taskIndex)
-                                taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                                taskFromMeLocalData.allTasks.ongoing = allTaskList
 
                                 val allCanceledTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -2071,11 +2071,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = ongoingTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 } else {
                                     allCanceledTaskList.add(0, ongoingTask)
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 }
                                 updatedTask = ongoingTask
                                 if (ongoingTask.creator.id != userId) {
@@ -2096,14 +2096,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents.toList()
+                                        doneTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents.toList()
+                                        doneTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
@@ -2115,7 +2115,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTask.assignedToState = assignToList
 
                                 allTaskList.removeAt(taskIndex)
-                                taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                                taskFromMeLocalData.allTasks.done = allTaskList
 
                                 val allCanceledTaskList =
                                     taskHiddenLocalData.allTasks.canceled.toMutableList()
@@ -2128,11 +2128,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         allCanceledTaskList.indexOf(canceledTask)
                                     allCanceledTaskList[canceledTaskIndex] = doneTask
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 } else {
                                     allCanceledTaskList.add(0, doneTask)
                                     taskHiddenLocalData.allTasks.canceled =
-                                        allCanceledTaskList.toList()
+                                        allCanceledTaskList
                                 }
                                 updatedTask = doneTask
                                 if (doneTask.creator.id != userId) {
@@ -2211,14 +2211,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
@@ -2230,7 +2230,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.assignedToState = assignToList
 
                             allOngoingTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList.toList()
+                            taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
                                 if (taskToMeLocalData != null) {
@@ -2244,11 +2244,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                         allDoneToMeTaskList[index] = ongoingTask
                                         taskToMeLocalData.allTasks.done =
-                                            allDoneToMeTaskList.toList()
+                                            allDoneToMeTaskList
                                     } else {
                                         allDoneToMeTaskList.add(0, ongoingTask)
                                         taskToMeLocalData.allTasks.done =
-                                            allDoneToMeTaskList.toList()
+                                            allDoneToMeTaskList
                                     }
                                     sharedViewModel?.isToMeUnread?.postValue(true)
                                     sessionManager.saveToMeUnread(true)
@@ -2267,7 +2267,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                             allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                         allDoneFromMeTaskList[index] = ongoingTask
                                         taskFromMeLocalData.allTasks.done =
-                                            allDoneFromMeTaskList.toList()
+                                            allDoneFromMeTaskList
 
                                         sharedViewModel?.isFromMeUnread?.postValue(true)
                                         sessionManager.saveFromMeUnread(true)
@@ -2288,14 +2288,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
@@ -2307,7 +2307,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.assignedToState = assignToList
 
                             allDoneTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.done = allDoneTaskList.toList()
+                            taskHiddenLocalData.allTasks.done = allDoneTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
                                 if (taskToMeLocalData != null) {
@@ -2321,11 +2321,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                         val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                         allDoneToMeTaskList[index] = doneTask
                                         taskToMeLocalData.allTasks.done =
-                                            allDoneToMeTaskList.toList()
+                                            allDoneToMeTaskList
                                     } else {
                                         allDoneToMeTaskList.add(0, doneTask)
                                         taskToMeLocalData.allTasks.done =
-                                            allDoneToMeTaskList.toList()
+                                            allDoneToMeTaskList
                                     }
                                     sharedViewModel?.isToMeUnread?.postValue(true)
                                     sessionManager.saveToMeUnread(true)
@@ -2344,7 +2344,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                             allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                         allDoneFromMeTaskList[index] = doneTask
                                         taskFromMeLocalData.allTasks.done =
-                                            allDoneFromMeTaskList.toList()
+                                            allDoneFromMeTaskList
 
                                         sharedViewModel?.isFromMeUnread?.postValue(true)
                                         sessionManager.saveFromMeUnread(true)
@@ -2398,14 +2398,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                newTask.events = oldEvents.toList()
+                                newTask.events = oldEvents
                             }
                             newTask.hiddenBy = listOf()
                             newTask.seenBy = eventData.taskData.seenBy
@@ -2417,7 +2417,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             newTask.assignedToState = assignToList
 
                             allTaskList.removeAt(taskIndex)
-                            taskToMeLocalData.allTasks.new = allTaskList.toList()
+                            taskToMeLocalData.allTasks.new = allTaskList
 
                             val doneTaskToMe =
                                 taskToMeLocalData.allTasks.done.find { it.id == taskID }
@@ -2428,10 +2428,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTaskToMe.updateUpdatedAt()
                                 val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                 allDoneToMeTaskList[index] = newTask
-                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList
                             } else {
                                 allDoneToMeTaskList.add(0, newTask)
-                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList
                             }
                             updatedTask = newTask
                             sharedViewModel?.isToMeUnread?.postValue(true)
@@ -2450,14 +2450,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
@@ -2469,7 +2469,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.assignedToState = assignToList
 
                             allTaskList.removeAt(taskIndex)
-                            taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                            taskToMeLocalData.allTasks.ongoing = allTaskList
 
                             val doneTaskToMe =
                                 taskToMeLocalData.allTasks.done.find { it.id == taskID }
@@ -2480,10 +2480,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTaskToMe.updateUpdatedAt()
                                 val index = allDoneToMeTaskList.indexOf(doneTaskToMe)
                                 allDoneToMeTaskList[index] = ongoingTask
-                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList
                             } else {
                                 allDoneToMeTaskList.add(0, ongoingTask)
-                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList.toList()
+                                taskToMeLocalData.allTasks.done = allDoneToMeTaskList
                             }
                             updatedTask = ongoingTask
                             sharedViewModel?.isToMeUnread?.postValue(true)
@@ -2502,14 +2502,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
@@ -2521,7 +2521,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.assignedToState = assignToList
 
                             allTaskList[taskIndex] = doneTask
-                            taskToMeLocalData.allTasks.done = allTaskList.toList()
+                            taskToMeLocalData.allTasks.done = allTaskList
 
                             updatedTask = doneTask
                             sharedViewModel?.isToMeUnread?.postValue(true)
@@ -2562,14 +2562,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    unreadTask.events = oldEvents.toList()
+                                    unreadTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    unreadTask.events = oldEvents.toList()
+                                    unreadTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                unreadTask.events = oldEvents.toList()
+                                unreadTask.events = oldEvents
                             }
                             unreadTask.hiddenBy = listOf()
                             unreadTask.seenBy = eventData.taskData.seenBy
@@ -2581,7 +2581,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             unreadTask.assignedToState = assignToList
 
                             allTaskList.removeAt(taskIndex)
-                            taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                            taskFromMeLocalData.allTasks.unread = allTaskList
 
                             val doneTaskFromMe =
                                 taskFromMeLocalData.allTasks.done.find { it.id == taskID }
@@ -2594,11 +2594,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                 allDoneFromMeTaskList[index] = unreadTask
                                 taskFromMeLocalData.allTasks.done =
-                                    allDoneFromMeTaskList.toList()
+                                    allDoneFromMeTaskList
                             } else {
                                 allDoneFromMeTaskList.add(0, unreadTask)
                                 taskFromMeLocalData.allTasks.done =
-                                    allDoneFromMeTaskList.toList()
+                                    allDoneFromMeTaskList
                             }
                             updatedTask = unreadTask
                             sharedViewModel?.isFromMeUnread?.postValue(true)
@@ -2617,14 +2617,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
@@ -2636,7 +2636,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.assignedToState = assignToList
 
                             allTaskList.removeAt(taskIndex)
-                            taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                            taskFromMeLocalData.allTasks.ongoing = allTaskList
 
                             val doneTaskFromMe =
                                 taskFromMeLocalData.allTasks.done.find { it.id == taskID }
@@ -2649,11 +2649,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     allDoneFromMeTaskList.indexOf(doneTaskFromMe)
                                 allDoneFromMeTaskList[index] = ongoingTask
                                 taskFromMeLocalData.allTasks.done =
-                                    allDoneFromMeTaskList.toList()
+                                    allDoneFromMeTaskList
                             } else {
                                 allDoneFromMeTaskList.add(0, ongoingTask)
                                 taskFromMeLocalData.allTasks.done =
-                                    allDoneFromMeTaskList.toList()
+                                    allDoneFromMeTaskList
                             }
                             updatedTask = ongoingTask
                             sharedViewModel?.isFromMeUnread?.postValue(true)
@@ -2672,14 +2672,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
@@ -2691,7 +2691,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.assignedToState = assignToList
 
                             allTaskList[taskIndex] = doneTask
-                            taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                            taskFromMeLocalData.allTasks.done = allTaskList
 
                             updatedTask = doneTask
                             sharedViewModel?.isFromMeUnread?.postValue(true)
@@ -2756,14 +2756,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
@@ -2808,14 +2808,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    newTask.events = oldEvents.toList()
+                                    newTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                newTask.events = oldEvents.toList()
+                                newTask.events = oldEvents
                             }
                             newTask.hiddenBy = listOf()
                             newTask.seenBy = eventData.taskData.seenBy
@@ -2859,14 +2859,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
@@ -2923,14 +2923,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    unread.events = oldEvents.toList()
+                                    unread.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    unread.events = oldEvents.toList()
+                                    unread.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                unread.events = oldEvents.toList()
+                                unread.events = oldEvents
                             }
                             unread.hiddenBy = listOf()
                             unread.seenBy = eventData.taskData.seenBy
@@ -2975,14 +2975,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                ongoingTask.events = oldEvents.toList()
+                                ongoingTask.events = oldEvents
                             }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
@@ -3027,14 +3027,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                doneTask.events = oldEvents.toList()
+                                doneTask.events = oldEvents
                             }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
@@ -3096,14 +3096,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents.toList()
+                                        ongoingTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents.toList()
+                                        ongoingTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents.toList()
+                                    ongoingTask.events = oldEvents
                                 }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
@@ -3166,14 +3166,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                     if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                         val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                         oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents.toList()
+                                        doneTask.events = oldEvents
                                     } else {
                                         oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents.toList()
+                                        doneTask.events = oldEvents
                                     }
                                 } else {
                                     oldEvents = taskEventList
-                                    doneTask.events = oldEvents.toList()
+                                    doneTask.events = oldEvents
                                 }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
@@ -3205,7 +3205,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 doneTask.assignedToState = assignToList
 
                                 toUpdateDoneList.removeAt(index)
-                                taskHiddenLocalData.allTasks.done = toUpdateDoneList.toList()
+                                taskHiddenLocalData.allTasks.done = toUpdateDoneList
 
                                 if (eventData.oldTaskData.isAssignedToMe) {
                                     val doneTaskToMe =
@@ -3245,14 +3245,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 if (oldOnlyEvent != null) {     //means event already exist, so replace it
                                     val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
                                     oldEvents[oldEventIndex] = taskEvent
-                                    canceled.events = oldEvents.toList()
+                                    canceled.events = oldEvents
                                 } else {
                                     oldEvents.add(taskEvent)
-                                    canceled.events = oldEvents.toList()
+                                    canceled.events = oldEvents
                                 }
                             } else {
                                 oldEvents = taskEventList
-                                canceled.events = oldEvents.toList()
+                                canceled.events = oldEvents
                             }
                             canceled.hiddenBy = listOf()
                             canceled.seenBy = eventData.taskData.seenBy
@@ -3321,7 +3321,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.hiddenBy = hideData.hiddenBy
 
                             allTaskList.removeAt(taskIndex)
-                            taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                            taskToMeLocalData.allTasks.ongoing = allTaskList
 
 
                             val allOngoingTaskList =
@@ -3334,11 +3334,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val ongoingTaskIndex = allOngoingTaskList.indexOf(hiddenOngoingTask)
                                 allOngoingTaskList[ongoingTaskIndex] = ongoingTask
                                 taskHiddenLocalData.allTasks.ongoing =
-                                    allOngoingTaskList.toList()
+                                    allOngoingTaskList
                             } else {
                                 allOngoingTaskList.add(0, ongoingTask)
                                 taskHiddenLocalData.allTasks.ongoing =
-                                    allOngoingTaskList.toList()
+                                    allOngoingTaskList
                             }
                         }
                         if (doneTask != null) {
@@ -3350,7 +3350,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.hiddenBy = hideData.hiddenBy
 
                             allTaskList.removeAt(taskIndex)
-                            taskToMeLocalData.allTasks.done = allTaskList.toList()
+                            taskToMeLocalData.allTasks.done = allTaskList
 
 
                             val allDoneTaskList =
@@ -3363,11 +3363,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val doneTaskIndex = allDoneTaskList.indexOf(hiddenDoneTask)
                                 allDoneTaskList[doneTaskIndex] = doneTask
                                 taskHiddenLocalData.allTasks.done =
-                                    allDoneTaskList.toList()
+                                    allDoneTaskList
                             } else {
                                 allDoneTaskList.add(0, doneTask)
                                 taskHiddenLocalData.allTasks.done =
-                                    allDoneTaskList.toList()
+                                    allDoneTaskList
                             }
                         }
 
@@ -3398,7 +3398,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                         allTaskList[taskIndex] = ongoingTask
                         taskHiddenLocalData.allTasks.ongoing =
-                            allTaskList.toList()
+                            allTaskList
                     }
                     if (doneTask != null) {
                         /// Update record updated_at
@@ -3410,7 +3410,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                         allTaskList[taskIndex] = doneTask
                         taskHiddenLocalData.allTasks.done =
-                            allTaskList.toList()
+                            allTaskList
                     }
 
                     taskDao.insertTaskData(
@@ -3446,7 +3446,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             ongoingTask.hiddenBy = hideData.hiddenBy
 
                             allTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.ongoing = allTaskList.toList()
+                            taskHiddenLocalData.allTasks.ongoing = allTaskList
 
 
                             val allOngoingTaskList =
@@ -3459,11 +3459,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val ongoingTaskIndex = allOngoingTaskList.indexOf(toMeOngoingTask)
                                 allOngoingTaskList[ongoingTaskIndex] = ongoingTask
                                 taskToMeLocalData.allTasks.ongoing =
-                                    allOngoingTaskList.toList()
+                                    allOngoingTaskList
                             } else {
                                 allOngoingTaskList.add(0, ongoingTask)
                                 taskToMeLocalData.allTasks.ongoing =
-                                    allOngoingTaskList.toList()
+                                    allOngoingTaskList
                             }
                         }
                         if (doneTask != null) {
@@ -3475,7 +3475,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             doneTask.hiddenBy = hideData.hiddenBy
 
                             allTaskList.removeAt(taskIndex)
-                            taskHiddenLocalData.allTasks.done = allTaskList.toList()
+                            taskHiddenLocalData.allTasks.done = allTaskList
 
 
                             val allDoneTaskList =
@@ -3488,11 +3488,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 val doneTaskIndex = allDoneTaskList.indexOf(toMeDoneTask)
                                 allDoneTaskList[doneTaskIndex] = doneTask
                                 taskToMeLocalData.allTasks.done =
-                                    allDoneTaskList.toList()
+                                    allDoneTaskList
                             } else {
                                 allDoneTaskList.add(0, doneTask)
                                 taskToMeLocalData.allTasks.done =
-                                    allDoneTaskList.toList()
+                                    allDoneTaskList
                             }
                         }
 
@@ -3522,7 +3522,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                         allTaskList[taskIndex] = ongoingTask
                         taskToMeLocalData.allTasks.ongoing =
-                            allTaskList.toList()
+                            allTaskList
                     }
                     if (doneTask != null) {
                         /// Update record updated_at
@@ -3534,7 +3534,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                         allTaskList[taskIndex] = doneTask
                         taskToMeLocalData.allTasks.done =
-                            allTaskList.toList()
+                            allTaskList
                     }
 
                     taskDao.insertTaskData(
@@ -3694,7 +3694,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         newTask.files = combinedFiles
 
                         allTaskList[taskIndex] = newTask
-                        taskToMeLocalData.allTasks.new = allTaskList.toList()
+                        taskToMeLocalData.allTasks.new = allTaskList
                     } else if (unreadTask != null) {
                         val allTaskList = taskToMeLocalData.allTasks.unread.toMutableList()
                         val taskIndex = allTaskList.indexOf(unreadTask)
@@ -3704,7 +3704,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         unreadTask.files = combinedFiles
 
                         allTaskList[taskIndex] = unreadTask
-                        taskToMeLocalData.allTasks.unread = allTaskList.toList()
+                        taskToMeLocalData.allTasks.unread = allTaskList
                     } else if (ongoingTask != null) {
                         val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                         val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -3714,7 +3714,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         ongoingTask.files = combinedFiles
 
                         allTaskList[taskIndex] = ongoingTask
-                        taskToMeLocalData.allTasks.ongoing = allTaskList.toList()
+                        taskToMeLocalData.allTasks.ongoing = allTaskList
                     } else if (doneTask != null) {
                         val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                         val taskIndex = allTaskList.indexOf(doneTask)
@@ -3724,7 +3724,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         doneTask.files = combinedFiles
 
                         allTaskList[taskIndex] = doneTask
-                        taskToMeLocalData.allTasks.done = allTaskList.toList()
+                        taskToMeLocalData.allTasks.done = allTaskList
                     }
 
                     taskDao.insertTaskData(
@@ -3748,7 +3748,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         newTask.files = combinedFiles
 
                         allTaskList[taskIndex] = newTask
-                        taskFromMeLocalData.allTasks.new = allTaskList.toList()
+                        taskFromMeLocalData.allTasks.new = allTaskList
                     } else if (unreadTask != null) {
                         val allTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                         val taskIndex = allTaskList.indexOf(unreadTask)
@@ -3758,7 +3758,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         unreadTask.files = combinedFiles
 
                         allTaskList[taskIndex] = unreadTask
-                        taskFromMeLocalData.allTasks.unread = allTaskList.toList()
+                        taskFromMeLocalData.allTasks.unread = allTaskList
                     } else if (ongoingTask != null) {
                         val allTaskList = taskFromMeLocalData.allTasks.ongoing.toMutableList()
                         val taskIndex = allTaskList.indexOf(ongoingTask)
@@ -3768,7 +3768,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         ongoingTask.files = combinedFiles
 
                         allTaskList[taskIndex] = ongoingTask
-                        taskFromMeLocalData.allTasks.ongoing = allTaskList.toList()
+                        taskFromMeLocalData.allTasks.ongoing = allTaskList
                     } else if (doneTask != null) {
                         val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
                         val taskIndex = allTaskList.indexOf(doneTask)
@@ -3778,7 +3778,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         doneTask.files = combinedFiles
 
                         allTaskList[taskIndex] = doneTask
-                        taskFromMeLocalData.allTasks.done = allTaskList.toList()
+                        taskFromMeLocalData.allTasks.done = allTaskList
                     }
 
                     taskDao.insertTaskData(

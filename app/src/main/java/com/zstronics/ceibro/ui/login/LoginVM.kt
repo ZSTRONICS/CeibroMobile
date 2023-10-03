@@ -67,6 +67,9 @@ class LoginVM @Inject constructor(
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
                     OneSignal.pauseInAppMessages(false)
                     loading(false, "Login successful")
+                    if (sessionManager.getUpdatedAtTimeStamp().isEmpty()) {
+                        sessionManager.saveUpdatedAtTimeStamp(response.data.user.createdAt)
+                    }
                     if (response.data.user.autoContactSync) {
                         onLoggedIn.invoke()
                     } else {
