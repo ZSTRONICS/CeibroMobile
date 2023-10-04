@@ -30,19 +30,53 @@ fun compareContactsAndUpdateList(
     return updatedContacts
 }
 
+fun compareExistingAndNewContacts(
+    roomContacts: List<AllCeibroConnections.CeibroConnection>,
+    phoneContacts: List<SyncContactsRequest.CeibroContactLight>
+): List<SyncContactsRequest.CeibroContactLight> {
+    // Convert room contacts to a map with phoneNumber as the key
+    val roomContactsMap = roomContacts.associateBy { it.phoneNumber }
+
+    // Prepare a list to store updated contacts
+    val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+
+    // Iterate through phone contacts and compare with room contacts
+    for (phoneContact in phoneContacts) {
+        val roomContact = roomContactsMap[phoneContact.phoneNumber]
+        if (roomContact != null) {
+            println("UpdateRoomContacts: $phoneContact -> $roomContact")
+            // Contact exists in the room, check for updates
+            if (phoneContact.contactFirstName != roomContact.contactFirstName ||
+                phoneContact.contactSurName != roomContact.contactSurName
+            ) {
+                println("UpdateRoomContacts: Name updated")
+                // If any of the contact details have changed, add to the list of updated contacts
+                updatedAndNewContacts.add(phoneContact)
+            }
+            //in else case, room contact and phone contact are same, so it is skipped
+        }
+        else {
+            //add new contact that does not exist in room
+            updatedAndNewContacts.add(phoneContact)
+        }
+    }
+
+    return updatedAndNewContacts
+}
+
 fun findDeletedContacts(
     roomContacts: List<AllCeibroConnections.CeibroConnection>,
     phoneContacts: List<SyncContactsRequest.CeibroContactLight>
 ): List<AllCeibroConnections.CeibroConnection> {
     // Convert room contacts to a set with phoneNumber as the key
-    val roomContactsSet = roomContacts.map { it.phoneNumber }.toSet()
+    val phoneContactMap = phoneContacts.associateBy { it.phoneNumber }
 
     // Prepare a list to store deleted contacts
     val deletedContacts = mutableListOf<AllCeibroConnections.CeibroConnection>()
 
     // Iterate through phone contacts and compare with room contacts
     for (roomContact in roomContacts) {
-        val foundContact = phoneContacts.find { it.phoneNumber == roomContact.phoneNumber }
+        val foundContact = phoneContactMap[roomContact.phoneNumber]
         if (foundContact == null) {
             deletedContacts.add(roomContact)
         }
