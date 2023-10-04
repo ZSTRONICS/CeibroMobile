@@ -58,6 +58,7 @@ class DashboardFragment :
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
     private var socketEventsInitiated = false
+    private var appStartWithInternet = true
     private var connectivityStatus = "Available"
     override fun onClick(id: Int) {
         when (id) {
@@ -236,16 +237,18 @@ class DashboardFragment :
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
-                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+                        if (SocketHandler.getSocket()?.connected() == false) {
                             println("Heartbeat, Internet observer")
-                            if (SocketHandler.getSocket() == null) {
+                            if (SocketHandler.getSocket() == null || !appStartWithInternet) {
+                                println("Heartbeat, Internet observer Socket == null")
                                 SocketHandler.setActivityContext(requireActivity())
                                 SocketHandler.setSocket()
+                                appStartWithInternet = true
                             }
                             SocketHandler.establishConnection()
                         }
                         connectivityStatus = "Available"
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+//                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
                     }
 
                     NetworkConnectivityObserver.Status.Lost -> {
@@ -270,6 +273,9 @@ class DashboardFragment :
             SocketHandler.setActivityContext(requireActivity())
             SocketHandler.setSocket()
             SocketHandler.establishConnection()
+        }
+        if (networkConnectivityObserver.isNetworkAvailable().not()) {
+            appStartWithInternet = false
         }
 
 //        viewModel.handleSocketEvents()
