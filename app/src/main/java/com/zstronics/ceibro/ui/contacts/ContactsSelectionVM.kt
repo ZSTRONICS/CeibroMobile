@@ -37,7 +37,7 @@ class ContactsSelectionVM @Inject constructor(
 
     fun loadContacts() {
         launch(Dispatcher.LongOperation) {
-            val contacts = getLocalContacts(resProvider.context)
+            val contacts = getLocalContacts(resProvider.context, sessionManager)
             originalContacts = contacts
             _contacts.postValue(contacts)
         }

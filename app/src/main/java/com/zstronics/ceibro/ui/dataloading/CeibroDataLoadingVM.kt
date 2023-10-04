@@ -3,8 +3,11 @@ package com.zstronics.ceibro.ui.dataloading
 import android.content.Context
 import android.util.Log
 import androidx.work.WorkManager
+import com.zstronics.ceibro.base.KEY_TOKEN_VALID
+import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
@@ -205,10 +208,11 @@ class CeibroDataLoadingVM @Inject constructor(
         launch {
             /*Contacts sync */
             val user = sessionManager.getUser().value
+            sessionManager.saveBooleanValue(KEY_TOKEN_VALID, !CookiesManager.jwtToken.isNullOrEmpty())
 
             val roomContacts = connectionsV2Dao.getAll()
 
-            val phoneContacts = getLocalContacts(context)
+            val phoneContacts = getLocalContacts(context, sessionManager)
 
             val manualContacts = sessionManager.getSyncedContacts() ?: emptyList()
 
@@ -223,8 +227,14 @@ class CeibroDataLoadingVM @Inject constructor(
             val updatedContacts =
                 compareContactsAndUpdateList(roomContacts, contacts)
 
-            val updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+            var updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
             updatedAndNewContacts.addAll(updatedContacts)
+
+            if (user?.autoContactSync == false && phoneContacts.size > 0) {
+                val updatedContacts2 =
+                    compareContactsAndUpdateList(roomContacts, phoneContacts)
+                updatedAndNewContacts.addAll(updatedContacts2)
+            }
 
             val newContacts = findNewContacts(roomContacts, contacts)
             updatedAndNewContacts.addAll(newContacts)
@@ -255,7 +265,10 @@ class CeibroDataLoadingVM @Inject constructor(
                 callBack.invoke()
             }
 
+            updatedAndNewContacts = updatedAndNewContacts.filter { it.phoneNumber != user?.phoneNumber }.toMutableList()
+
             if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
+                sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, updatedAndNewContacts.size)
                 val request = SyncContactsRequest(contacts = updatedAndNewContacts)
                 when (val response =
                     dashboardRepository.syncContacts(request)) {
@@ -269,6 +282,7 @@ class CeibroDataLoadingVM @Inject constructor(
                     }
                 }
             } else {
+                sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, -1)
                 updateLocalContacts(callBack)
             }
         }

@@ -11,6 +11,9 @@ interface IMyConnectionV2 {
         var contactsPermission: String
         var localContactsSize: Int
         var dbContactsSize: Int
+        var isCursorValid: Boolean
+        var isValidSession: Boolean
+        var newUpdatedContactListSize: Int
     }
 
     interface ViewModel : IBase.ViewModel<State> {

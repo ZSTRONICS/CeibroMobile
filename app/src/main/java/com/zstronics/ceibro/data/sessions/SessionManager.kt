@@ -250,4 +250,21 @@ class SessionManager constructor(
     fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String) {
         sharedPreferenceManager.saveString(KEY_DATA_SYNC_UPDATED_AT, updatedAtTimeStamp)
     }
+
+    fun getBooleanValue(key: String): Boolean {
+        return sharedPreferenceManager.getValueBoolean(key, false)
+    }
+
+    fun saveBooleanValue(key: String, value: Boolean) {
+        sharedPreferenceManager.saveBoolean(key, value)
+    }
+
+    fun getIntegerValue(key: String): Int {
+        return sharedPreferenceManager.getValueInt(key) ?: -5
+    }
+
+    fun saveIntegerValue(key: String, value: Int) {
+        sharedPreferenceManager.saveInt(key, value)
+    }
+
 }
