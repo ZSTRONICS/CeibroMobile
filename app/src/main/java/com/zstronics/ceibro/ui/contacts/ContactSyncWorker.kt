@@ -75,10 +75,10 @@ class ContactSyncWorker @AssistedInject constructor(
 
             val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
 
-            val updatedContacts =
-                compareContactsAndUpdateList(roomContacts, contacts)
-
             var updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+
+            val updatedContacts =
+                compareExistingAndNewContacts(roomContacts, contacts)
             updatedAndNewContacts.addAll(updatedContacts)
 
             if (user?.autoContactSync == false && phoneContacts.size > 0) {
@@ -87,14 +87,12 @@ class ContactSyncWorker @AssistedInject constructor(
                 updatedAndNewContacts.addAll(updatedContacts2)
             }
 
+//            val newContacts = findNewContacts(roomContacts, contacts)
+//            updatedAndNewContacts.addAll(newContacts)
 
-//        if (user?.autoContactSync == true) {
-            val newContacts = findNewContacts(roomContacts, contacts)
-            updatedAndNewContacts.addAll(newContacts)
-//        }
 
             // Delete contacts API call
-            if (deletedContacts.isNotEmpty()) {
+            if (sessionManager.isLoggedIn() && deletedContacts.isNotEmpty()) {
 
                 val isDeleteAll = deletedContacts.size == roomContacts.size
 
