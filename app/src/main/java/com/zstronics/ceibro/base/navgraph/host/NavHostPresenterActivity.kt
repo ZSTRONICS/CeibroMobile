@@ -51,6 +51,8 @@ class NavHostPresenterActivity :
         super.postExecutePendingBindings(savedInstanceState)
         if (navigationGraphStartDestination != R.id.ceibroDataLoadingFragment) {
             viewModel.viewModelScope.launch {
+
+
                 networkConnectivityObserver.observe().collect { connectionStatus ->
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {

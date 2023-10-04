@@ -10,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -30,12 +31,14 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.enums.EventType
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -55,6 +58,7 @@ class DashboardFragment :
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
     private var socketEventsInitiated = false
+    private var connectivityStatus = "Available"
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
@@ -174,6 +178,30 @@ class DashboardFragment :
                 mViewDataBinding.hiddenUnreadBadge.visibility = View.GONE
             }
         }
+        sharedViewModel.isConnectedToServer.observe(viewLifecycleOwner) { isConnected ->
+            if (isConnected) {
+                when (connectivityStatus) {
+                    "Available" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+                    }
+
+                    "Lost" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+
+                    "Losing" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                    }
+
+                    "Unavailable" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+                }
+            } else {
+                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+            }
+        }
+
 
         SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
             val navHostFragment =
@@ -192,12 +220,46 @@ class DashboardFragment :
             }
         }
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
+
+
+        setConnectivityIcon()
+
+
+    }
+
+    private fun setConnectivityIcon() {
+        lifecycleScope.launch {
+            networkConnectivityObserver.observe().collect { connectionStatus ->
+                println("Heartbeat, $connectionStatus")
+                when (connectionStatus) {
+
+                    NetworkConnectivityObserver.Status.Losing -> {
+                        connectivityStatus = "Losing"
+                          mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                    }
+                    NetworkConnectivityObserver.Status.Available -> {
+                        connectivityStatus = "Available"
+                            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+                    }
+                    NetworkConnectivityObserver.Status.Lost -> {
+                        connectivityStatus = "Lost"
+                          mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+                    NetworkConnectivityObserver.Status.Unavailable -> {
+                        connectivityStatus = "Unavailable"
+                            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+
+                }
+            }
+        }
     }
 
 
     private fun socketEventsInitiating() {
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
             println("Heartbeat, Dashboard")
+            SocketHandler.setActivityContext(requireActivity())
             SocketHandler.setSocket()
             SocketHandler.establishConnection()
         }
