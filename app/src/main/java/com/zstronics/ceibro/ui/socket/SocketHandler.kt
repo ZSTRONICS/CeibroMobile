@@ -69,6 +69,7 @@ object SocketHandler {
 
             options.forceNew = true
             options.transports = arrayOf("websocket")
+            options.reconnection = true
             options.reconnectionAttempts = Integer.MAX_VALUE
             options.timeout = 10000
             options.auth =
@@ -85,8 +86,6 @@ object SocketHandler {
                 Socket.EVENT_DISCONNECT
             ) {
                 println("Heartbeat, Socket Disconnected")
-//                handler.removeCallbacks(runnable)
-
                 if (sharedViewModel != null) {
                     sharedViewModel.isConnectedToServer.postValue(false)
                 }

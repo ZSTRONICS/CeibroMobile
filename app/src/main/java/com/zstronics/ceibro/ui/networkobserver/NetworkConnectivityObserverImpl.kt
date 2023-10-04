@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.debounce
 internal class NetworkConnectivityObserverImpl(
     private val connectivityManager: ConnectivityManager
 ) : NetworkConnectivityObserver {
-    var appFirstRun = true
     private val networkStatus = MutableStateFlow(
-        NetworkConnectivityObserver.Status.Losing
+        NetworkConnectivityObserver.Status.Lost
     )
 
     @OptIn(FlowPreview::class)
@@ -25,9 +24,7 @@ internal class NetworkConnectivityObserverImpl(
             ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
-                if (appFirstRun.not())
-                    updateStatus(NetworkConnectivityObserver.Status.Available)
-                appFirstRun = false
+                updateStatus(NetworkConnectivityObserver.Status.Available)
             }
 
             override fun onLosing(network: Network, maxMsToLive: Int) {

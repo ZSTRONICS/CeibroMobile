@@ -1,17 +1,15 @@
 package com.zstronics.ceibro.ui.splash
 
 import android.Manifest
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.viewModels
-import androidx.work.*
 import com.bumptech.glide.Glide
 import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.activity.BaseBindingViewModelActivity
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -20,14 +18,12 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.ActivitySplashBinding
-import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -68,6 +64,7 @@ class SplashActivity :
     }
 
     private fun startSplashAnimation() {
+        sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, true)
         handler = Handler(Looper.getMainLooper())
         runnable = object : Runnable {
             override fun run() {
