@@ -27,6 +27,7 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.contacts.compareContactsAndUpdateList
+import com.zstronics.ceibro.ui.contacts.compareExistingAndNewContacts
 import com.zstronics.ceibro.ui.contacts.findDeletedContacts
 import com.zstronics.ceibro.ui.contacts.findNewContacts
 import com.zstronics.ceibro.ui.contacts.toLightContacts
@@ -205,7 +206,7 @@ class CeibroDataLoadingVM @Inject constructor(
                 }
             }
         }
-        launch {
+        GlobalScope.launch {
             /*Contacts sync */
             val user = sessionManager.getUser().value
             sessionManager.saveBooleanValue(KEY_TOKEN_VALID, !CookiesManager.jwtToken.isNullOrEmpty())
@@ -222,12 +223,12 @@ class CeibroDataLoadingVM @Inject constructor(
                 manualContacts
             }
 
-            val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()
-
-            val updatedContacts =
-                compareContactsAndUpdateList(roomContacts, contacts)
+            val deletedContacts = findDeletedContacts(roomContacts, contacts).toLightContacts()     //ok
 
             var updatedAndNewContacts = mutableListOf<SyncContactsRequest.CeibroContactLight>()
+
+            val updatedContacts =
+                compareExistingAndNewContacts(roomContacts, contacts)
             updatedAndNewContacts.addAll(updatedContacts)
 
             if (user?.autoContactSync == false && phoneContacts.size > 0) {
@@ -236,11 +237,11 @@ class CeibroDataLoadingVM @Inject constructor(
                 updatedAndNewContacts.addAll(updatedContacts2)
             }
 
-            val newContacts = findNewContacts(roomContacts, contacts)
-            updatedAndNewContacts.addAll(newContacts)
+//            val newContacts = findNewContacts(roomContacts, contacts)
+//            updatedAndNewContacts.addAll(newContacts)
 
             // Delete contacts API call
-            if (deletedContacts.isNotEmpty()) {
+            if (sessionManager.isLoggedIn() && deletedContacts.isNotEmpty()) {
 
                 val isDeleteAll = deletedContacts.size == roomContacts.size
 
@@ -267,23 +268,28 @@ class CeibroDataLoadingVM @Inject constructor(
 
             updatedAndNewContacts = updatedAndNewContacts.filter { it.phoneNumber != user?.phoneNumber }.toMutableList()
 
-            if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
-                sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, updatedAndNewContacts.size)
-                val request = SyncContactsRequest(contacts = updatedAndNewContacts)
-                when (val response =
-                    dashboardRepository.syncContacts(request)) {
-                    is ApiResponse.Success -> {
-                        updateLocalContacts(callBack)
-                    }
+            launch {
+                if (sessionManager.isLoggedIn() && updatedAndNewContacts.isNotEmpty()) {
+                    sessionManager.saveIntegerValue(
+                        KEY_updatedAndNewContacts,
+                        updatedAndNewContacts.size
+                    )
+                    val request = SyncContactsRequest(contacts = updatedAndNewContacts)
+                    when (val response =
+                        dashboardRepository.syncContacts(request)) {
+                        is ApiResponse.Success -> {
+                            updateLocalContacts(callBack)
+                        }
 
-                    is ApiResponse.Error -> {
-                        apiSucceedCount++
-                        callBack.invoke()
+                        is ApiResponse.Error -> {
+                            apiSucceedCount++
+                            callBack.invoke()
+                        }
                     }
+                } else {
+                    sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, -1)
+                    updateLocalContacts(callBack)
                 }
-            } else {
-                sessionManager.saveIntegerValue(KEY_updatedAndNewContacts, -1)
-                updateLocalContacts(callBack)
             }
         }
     }
