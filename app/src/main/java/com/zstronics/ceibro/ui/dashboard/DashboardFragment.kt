@@ -222,9 +222,6 @@ class DashboardFragment :
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
 
 
-        setConnectivityIcon()
-
-
     }
 
     private fun setConnectivityIcon() {
@@ -235,19 +232,30 @@ class DashboardFragment :
 
                     NetworkConnectivityObserver.Status.Losing -> {
                         connectivityStatus = "Losing"
-                          mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
                     }
+
                     NetworkConnectivityObserver.Status.Available -> {
+                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+                            println("Heartbeat, Internet observer")
+                            if (SocketHandler.getSocket() == null) {
+                                SocketHandler.setActivityContext(requireActivity())
+                                SocketHandler.setSocket()
+                            }
+                            SocketHandler.establishConnection()
+                        }
                         connectivityStatus = "Available"
-                            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
                     }
+
                     NetworkConnectivityObserver.Status.Lost -> {
                         connectivityStatus = "Lost"
-                          mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
                     }
+
                     NetworkConnectivityObserver.Status.Unavailable -> {
                         connectivityStatus = "Unavailable"
-                            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
                     }
 
                 }
@@ -269,6 +277,7 @@ class DashboardFragment :
         viewModel.launch {
             viewModel.syncDraftTask(requireContext())
         }
+        setConnectivityIcon()
         socketEventsInitiated = true
     }
 

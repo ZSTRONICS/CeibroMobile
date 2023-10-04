@@ -8,6 +8,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
+import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.databinding.ActivityNavhostPresenterBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +30,7 @@ class NavHostPresenterActivity :
         get() = intent?.getIntExtra(NAVIGATION_Graph_START_DESTINATION_ID, 0) ?: 0
     override val viewModel: NavHostPresenterVM by viewModels()
     override val layoutResId: Int = R.layout.activity_navhost_presenter
+    var appFirstRun = true
 
     @Inject
     lateinit var networkConnectivityObserver: NetworkConnectivityObserver
@@ -54,21 +58,30 @@ class NavHostPresenterActivity :
 
 
                 networkConnectivityObserver.observe().collect { connectionStatus ->
+                    val sessionManager = getSessionManager(SharedPreferenceManager(applicationContext))
+                    val isAppFirstRun = sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {
                             // Do not remove this losing state from here
+                            if (isAppFirstRun)
+                                sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
                         }
 
                         NetworkConnectivityObserver.Status.Available -> {
-                            mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
-                            mViewDataBinding.llInternetDisconnected.visibility = View.GONE
+                            if (isAppFirstRun.not()) {
+                                mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
+                                mViewDataBinding.llInternetDisconnected.visibility = View.GONE
 
-                            delay(BANNER_HIDE_TIME)
-                            // After the delay, hide the views
-                            mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                delay(BANNER_HIDE_TIME)
+                                // After the delay, hide the views
+                                mViewDataBinding.llInternetConnected.visibility = View.GONE
+                            }
+                            sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
                         }
 
                         else -> {
+                            if (isAppFirstRun)
+                                sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
                             mViewDataBinding.llInternetConnected.visibility = View.GONE
                             mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
                         }
@@ -80,6 +93,10 @@ class NavHostPresenterActivity :
             mViewDataBinding.llInternetDisconnected.visibility = View.GONE
         }
     }
+
+    private fun getSessionManager(
+        sharedPreferenceManager: SharedPreferenceManager
+    ) = SessionManager(sharedPreferenceManager)
 
     override fun onClick(id: Int) {
     }
