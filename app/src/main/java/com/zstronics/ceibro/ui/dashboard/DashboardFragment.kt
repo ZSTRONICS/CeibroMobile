@@ -58,6 +58,7 @@ class DashboardFragment :
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
     private var socketEventsInitiated = false
+    private var connectivityStatus = "Available"
     override fun onClick(id: Int) {
         when (id) {
             R.id.createNewTaskBtn -> {
@@ -177,6 +178,30 @@ class DashboardFragment :
                 mViewDataBinding.hiddenUnreadBadge.visibility = View.GONE
             }
         }
+        sharedViewModel.isConnectedToServer.observe(viewLifecycleOwner) { isConnected ->
+            if (isConnected) {
+                when (connectivityStatus) {
+                    "Available" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+                    }
+
+                    "Lost" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+
+                    "Losing" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                    }
+
+                    "Unavailable" -> {
+                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+                }
+            } else {
+                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+            }
+        }
+
 
         SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
             val navHostFragment =
@@ -205,23 +230,26 @@ class DashboardFragment :
     private fun setConnectivityIcon() {
         lifecycleScope.launch {
             networkConnectivityObserver.observe().collect { connectionStatus ->
+                println("Heartbeat, $connectionStatus")
                 when (connectionStatus) {
+
                     NetworkConnectivityObserver.Status.Losing -> {
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                        connectivityStatus = "Losing"
+                          mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
                     }
-
                     NetworkConnectivityObserver.Status.Available -> {
-
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+                        connectivityStatus = "Available"
+                            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
                     }
-
                     NetworkConnectivityObserver.Status.Lost -> {
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                        connectivityStatus = "Lost"
+                          mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                    }
+                    NetworkConnectivityObserver.Status.Unavailable -> {
+                        connectivityStatus = "Unavailable"
+                            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
                     }
 
-                    else -> {
-                        //mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
-                    }
                 }
             }
         }
@@ -231,6 +259,7 @@ class DashboardFragment :
     private fun socketEventsInitiating() {
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
             println("Heartbeat, Dashboard")
+            SocketHandler.setActivityContext(requireActivity())
             SocketHandler.setSocket()
             SocketHandler.establishConnection()
         }
