@@ -1,11 +1,14 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.NotificationManager
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -151,6 +154,14 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showCloseAppDialog()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
         if (!socketEventsInitiated) {
             socketEventsInitiating()
@@ -507,5 +518,20 @@ class DashboardFragment :
                 }
             }
         }
+    }
+
+
+    private fun showCloseAppDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.close_app))
+            .setMessage(getString(R.string.are_you_sure_you_want_to_close_the_app))
+            .setPositiveButton(getString(R.string.yes)) { dialog: DialogInterface, _: Int ->
+                finishActivity()
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.no)) { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }
