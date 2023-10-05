@@ -30,7 +30,6 @@ class NavHostPresenterActivity :
         get() = intent?.getIntExtra(NAVIGATION_Graph_START_DESTINATION_ID, 0) ?: 0
     override val viewModel: NavHostPresenterVM by viewModels()
     override val layoutResId: Int = R.layout.activity_navhost_presenter
-    var appFirstRun = true
 
     @Inject
     lateinit var networkConnectivityObserver: NetworkConnectivityObserver
@@ -53,35 +52,45 @@ class NavHostPresenterActivity :
 
     override fun postExecutePendingBindings(savedInstanceState: Bundle?) {
         super.postExecutePendingBindings(savedInstanceState)
-        if (navigationGraphStartDestination != R.id.ceibroDataLoadingFragment) {
+        if (navigationGraphStartDestination == R.id.ceibroDataLoadingFragment || navigationGraphStartDestination == R.id.loginFragment) {
+            //Do nothing
+        } else {
             viewModel.viewModelScope.launch {
-
-
                 networkConnectivityObserver.observe().collect { connectionStatus ->
-                    val sessionManager = getSessionManager(SharedPreferenceManager(applicationContext))
-                    val isAppFirstRun = sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
+                    val sessionManager =
+                        getSessionManager(SharedPreferenceManager(applicationContext))
+                    val isAppFirstRun =
+                        sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {
                             // Do not remove this losing state from here
                             if (isAppFirstRun)
-                                sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
+                                sessionManager.saveBooleanValue(
+                                    KEY_APP_FIRST_RUN_FOR_INTERNET,
+                                    false
+                                )
                         }
 
                         NetworkConnectivityObserver.Status.Available -> {
                             if (isAppFirstRun.not()) {
-                                mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
-                                mViewDataBinding.llInternetDisconnected.visibility = View.GONE
+                                if (navigationGraphStartDestination != R.id.editProfileFragment || mViewDataBinding.llInternetDisconnected.visibility == View.VISIBLE) {
+                                    mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
+                                    mViewDataBinding.llInternetDisconnected.visibility = View.GONE
 
-                                delay(BANNER_HIDE_TIME)
-                                // After the delay, hide the views
-                                mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                    delay(BANNER_HIDE_TIME)
+                                    // After the delay, hide the views
+                                    mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                }
                             }
                             sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
                         }
 
                         else -> {
                             if (isAppFirstRun)
-                                sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
+                                sessionManager.saveBooleanValue(
+                                    KEY_APP_FIRST_RUN_FOR_INTERNET,
+                                    false
+                                )
                             mViewDataBinding.llInternetConnected.visibility = View.GONE
                             mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
                         }

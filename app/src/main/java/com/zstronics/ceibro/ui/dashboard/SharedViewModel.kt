@@ -9,4 +9,5 @@ class SharedViewModel : ViewModel() {
     val isHiddenUnread = MutableLiveData<Boolean>()
     val searchString: MutableLiveData<String> = MutableLiveData("")
     val isConnectedToServer: MutableLiveData<Boolean> = MutableLiveData(false)
+    val socketOnceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
 }

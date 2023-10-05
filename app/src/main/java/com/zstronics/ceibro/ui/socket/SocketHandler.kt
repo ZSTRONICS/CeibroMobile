@@ -114,6 +114,7 @@ object SocketHandler {
 
                 if (sharedViewModel != null) {
                     sharedViewModel.isConnectedToServer.postValue(true)
+                    sharedViewModel.socketOnceConnected.postValue(true)
                 }
                 //EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
             }
@@ -186,7 +187,7 @@ object SocketHandler {
     @Synchronized
     fun closeConnectionAndRemoveObservers() {
         offAllEventOObservers()
-        mSocket?.disconnect()
+        disconnectSocket()
     }
 
     @Synchronized

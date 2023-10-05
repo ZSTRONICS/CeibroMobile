@@ -181,7 +181,7 @@ class DashboardFragment :
         }
         sharedViewModel.isConnectedToServer.observe(viewLifecycleOwner) { isConnected ->
             if (isConnected) {
-                when (connectivityStatus) {
+                /*when (connectivityStatus) {
                     "Available" -> {
                         mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
                     }
@@ -197,9 +197,10 @@ class DashboardFragment :
                     "Unavailable" -> {
                         mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
                     }
-                }
+                }*/
+                changeSyncIcon(networkConnectivityObserver.isNetworkAvailable(), isConnected)
             } else {
-                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                changeSyncIcon(networkConnectivityObserver.isNetworkAvailable(), isConnected)
             }
         }
 
@@ -225,7 +226,16 @@ class DashboardFragment :
 
     }
 
+    private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?) {
+        if (networkAvailable && socketConnected == true) {
+            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+        } else {
+            mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+        }
+    }
+
     private fun setConnectivityIcon() {
+        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         lifecycleScope.launch {
             networkConnectivityObserver.observe().collect { connectionStatus ->
                 println("Heartbeat, $connectionStatus")
@@ -233,13 +243,14 @@ class DashboardFragment :
 
                     NetworkConnectivityObserver.Status.Losing -> {
                         connectivityStatus = "Losing"
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+//                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+                        changeSyncIcon(false, SocketHandler.getSocket()?.connected())
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
                         if (SocketHandler.getSocket()?.connected() == false) {
                             println("Heartbeat, Internet observer")
-                            if (SocketHandler.getSocket() == null || !appStartWithInternet) {
+                            if (SocketHandler.getSocket() == null || !appStartWithInternet || sharedViewModel.socketOnceConnected.value == false) {
                                 println("Heartbeat, Internet observer Socket == null")
                                 SocketHandler.setActivityContext(requireActivity())
                                 SocketHandler.setSocket()
@@ -248,17 +259,20 @@ class DashboardFragment :
                             SocketHandler.establishConnection()
                         }
                         connectivityStatus = "Available"
+                        changeSyncIcon(true, SocketHandler.getSocket()?.connected())
 //                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
                     }
 
                     NetworkConnectivityObserver.Status.Lost -> {
                         connectivityStatus = "Lost"
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+//                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                        changeSyncIcon(false, SocketHandler.getSocket()?.connected())
                     }
 
                     NetworkConnectivityObserver.Status.Unavailable -> {
                         connectivityStatus = "Unavailable"
-                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+//                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+                        changeSyncIcon(false, SocketHandler.getSocket()?.connected())
                     }
 
                 }
