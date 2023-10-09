@@ -17,6 +17,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
 import com.zstronics.ceibro.base.KEY_TOKEN_VALID
 import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -65,8 +66,8 @@ class MyConnectionV2Fragment :
 //                    viewModel.sessionManager.updateAutoSync(true)
                     viewState.isAutoSyncEnabled.value = true
                     startOneTimeContactSyncWorker(requireContext())
+                    toast("Contacts sync enabled")
                 }
-                toast("Contacts sync enabled")
             }
 
             R.id.connectionDescManualSelectionBtn -> {
@@ -357,6 +358,7 @@ class MyConnectionV2Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onGetAllContactsFromAPI(event: LocalEvents.UpdateConnections) {
+//        shortToastNow("Update contacts called")
         loadConnections(false)
     }
 }

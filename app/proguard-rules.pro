@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep specific workers
+-keep class com.zstronics.ceibro.ui.contacts.ContactSyncWorker {
+    *;
+}
+-keep class com.zstronics.ceibro.ui.dataloading.** {
+    *;
+}
+-keep class com.zstronics.ceibro.extensions.ContactExtentionsKt {
+    *;
+}
