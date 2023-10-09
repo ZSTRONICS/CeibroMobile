@@ -106,7 +106,7 @@
                     android:layout_width="@dimen/_120sdp"
                     android:layout_height="@dimen/_122sdp"
                     android:layout_marginTop="@dimen/_12sdp"
-                    app:cardBackgroundColor="@color/colorGrey"
+                    app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="6dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
