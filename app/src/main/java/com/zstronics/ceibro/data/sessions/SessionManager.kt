@@ -267,4 +267,12 @@ class SessionManager constructor(
         sharedPreferenceManager.saveInt(key, value)
     }
 
+    fun getStringValue(key: String): String {
+        return sharedPreferenceManager.getValueString(key) ?: ""
+    }
+
+    fun saveStringValue(key: String, value: String) {
+        sharedPreferenceManager.saveString(key, value)
+    }
+
 }

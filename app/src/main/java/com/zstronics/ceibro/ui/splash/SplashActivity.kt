@@ -10,6 +10,7 @@ import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
+import com.zstronics.ceibro.base.KEY_User_Last_Login_Time
 import com.zstronics.ceibro.base.activity.BaseBindingViewModelActivity
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -19,6 +20,7 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.ActivitySplashBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
@@ -64,6 +66,11 @@ class SplashActivity :
     }
 
     private fun startSplashAnimation() {
+
+        val lastSessionTime = sessionManager.getStringValue(KEY_User_Last_Login_Time)
+        val currentUTCTime =
+            DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+
         sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, true)
         handler = Handler(Looper.getMainLooper())
         runnable = object : Runnable {
@@ -71,10 +78,23 @@ class SplashActivity :
                 if (count == 1) {
                     handler.removeCallbacks(this)
 
-                    if (viewModel.sessionManager.isUserLoggedIn())
-                        navigateToCeibroDataLoading()
-                    else
-                        navigateToLoginScreen()
+                    if (viewModel.sessionManager.isUserLoggedIn()) {
+                        if (lastSessionTime.isNotEmpty() && DateUtils.isMoreThan30DaysApart(
+                                lastSessionTime, currentUTCTime
+                            )
+                        ) {
+                            navigateToLoginScreen()
+                            Thread {
+                                this.let {
+                                    Glide.get(this@SplashActivity).clearDiskCache()
+                                }
+                            }.start()
+
+                        } else {
+                            sessionManager.saveStringValue(KEY_User_Last_Login_Time, currentUTCTime)
+                            navigateToCeibroDataLoading()
+                        }
+                    } else navigateToLoginScreen()
 
                 } else {
                     count++
@@ -101,13 +121,11 @@ class SplashActivity :
     private fun navigateToLoginScreen() {
         viewModel.endUserSession(applicationContext)
         launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
+            options = Bundle(), clearPrevious = true
         ) {
             putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
             putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.loginFragment
+                NAVIGATION_Graph_START_DESTINATION_ID, R.id.loginFragment
             )
         }
     }
@@ -121,13 +139,11 @@ class SplashActivity :
             }
         }
         launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
+            options = Bundle(), clearPrevious = true
         ) {
             putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
             putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.ceibroDataLoadingFragment
+                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
             )
         }
     }
@@ -139,13 +155,11 @@ class SplashActivity :
         viewModel.endUserSession(applicationContext)
         shortToastNow("Session expired, please login")
         launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
+            options = Bundle(), clearPrevious = true
         ) {
             putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
             putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.loginFragment
+                NAVIGATION_Graph_START_DESTINATION_ID, R.id.loginFragment
             )
         }
         Thread { this.let { Glide.get(it).clearDiskCache() } }.start()
@@ -162,8 +176,7 @@ class SplashActivity :
     }
 
     private fun checkPermission(
-        permissionsList: List<String>,
-        function: (deniedList: List<String>) -> Unit
+        permissionsList: List<String>, function: (deniedList: List<String>) -> Unit
     ) {
         PermissionX.init(this).permissions(
             permissionsList

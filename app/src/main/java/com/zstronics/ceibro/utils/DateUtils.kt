@@ -19,7 +19,8 @@ object DateUtils {
     const val FORMAT_LONG_INPUT_ERROR = "dd  yy HH:mm:ss"//02  21 13:35:48
     const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm"//2015-11-28 10:17:18
     const val SERVER_DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"//2015-11-28 10:17:18
-    const val SERVER_DATE_FULL_FORMAT_IN_UTC = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //2023-08-08T06:47:14.018Z
+    const val SERVER_DATE_FULL_FORMAT_IN_UTC =
+        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" //2023-08-08T06:47:14.018Z
     const val LEAN_PLUM_EVENT_FORMAT = "yyyy-MM-dd HH:mm:ss"//2015-11-28 10:17:18
     const val FORMAT_MON_YEAR = "MMMM yyyy"
     const val FORMAT_DATE_MON_YEAR = "EEEE dd MMM "
@@ -78,8 +79,7 @@ object DateUtils {
 
 
     fun formatCreationUTCTimeToCustom(
-        utcTime: String,
-        inputFormatter: String? = SERVER_DATE_FULL_FORMAT_IN_UTC
+        utcTime: String, inputFormatter: String? = SERVER_DATE_FULL_FORMAT_IN_UTC
     ): String {
         val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
         inputFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -100,7 +100,8 @@ object DateUtils {
 
         val utcDateFormattedToDeviceDateTime = utcDateFormatted.format(utcDate)
         val calendarFromFormattedTime = Calendar.getInstance()
-        calendarFromFormattedTime.time = utcDateFormatted.parse(utcDateFormattedToDeviceDateTime) ?: Date()
+        calendarFromFormattedTime.time =
+            utcDateFormatted.parse(utcDateFormattedToDeviceDateTime) ?: Date()
 
         if (isSameDay(calendarNow, calendarFromFormattedTime)) {
             return "Today $timeFormatted"
@@ -113,9 +114,11 @@ object DateUtils {
     }
 
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(
+            Calendar.DAY_OF_YEAR
+        )
     }
+
     private fun isYesterday(cal1: Calendar, cal2: Calendar): Boolean {
         cal1.add(Calendar.DAY_OF_YEAR, -1)
         return isSameDay(cal1, cal2)
@@ -153,9 +156,7 @@ object DateUtils {
                 formatter.timeZone = outTimeZone
                 result = formatter.format(
                     stringToDate(
-                        dateStr = it,
-                        format = inputFormatter,
-                        timeZone = inputTimeZone
+                        dateStr = it, format = inputFormatter, timeZone = inputTimeZone
                     )!!
                 )
             } catch (e: Exception) {
@@ -182,9 +183,7 @@ object DateUtils {
     }
 
     fun dateToString(
-        date: Date?,
-        format: String = DEFAULT_DATE_FORMAT,
-        isApplyTimeZone: Boolean = true
+        date: Date?, format: String = DEFAULT_DATE_FORMAT, isApplyTimeZone: Boolean = true
     ): String {
         return try {
             SimpleDateFormat(format, Locale.getDefault()).format(date)
@@ -252,6 +251,7 @@ object DateUtils {
         sdf.timeZone = UTC
         return sdf.format(Date())
     }
+
     private fun getCurrentTimeInMillis(): Long {
         return System.currentTimeMillis()
     }
@@ -259,8 +259,11 @@ object DateUtils {
     fun getStringTimeSpan(oldDateString: String, format: String): CharSequence? {
         val msgTimeInMillis = stringDateToMillis(oldDateString, format)
         val currentTime = getCurrentTimeInMillis()
-        val time =
-            msgTimeInMillis?.let { DateUtils.getRelativeTimeSpanString(it, currentTime, android.text.format.DateUtils.MINUTE_IN_MILLIS) }
+        val time = msgTimeInMillis?.let {
+            DateUtils.getRelativeTimeSpanString(
+                it, currentTime, android.text.format.DateUtils.MINUTE_IN_MILLIS
+            )
+        }
 
         return time
     }
@@ -294,8 +297,7 @@ object DateUtils {
     }
 
     fun reformatToLocalString(
-        date: Date?,
-        outputFormatter: String
+        date: Date?, outputFormatter: String
     ): String {
         return try {
             SimpleDateFormat(outputFormatter, Locale.getDefault()).format(date)
@@ -378,8 +380,7 @@ object DateUtils {
     }
 
     fun getStartAndEndOfMonthAndDay(
-        currentDate: Date,
-        format: String = FORMATE_MONTH_DAY
+        currentDate: Date, format: String = FORMATE_MONTH_DAY
     ): String {
         val calendar = Calendar.getInstance()
         calendar.time = currentDate
@@ -458,8 +459,7 @@ object DateUtils {
         val calendar2 = Calendar.getInstance()
         calendar2.time = date2
         val sameYear = calendar1[Calendar.YEAR] == calendar2[Calendar.YEAR]
-        val sameMonth =
-            calendar1[Calendar.MONTH] == calendar2[Calendar.MONTH]
+        val sameMonth = calendar1[Calendar.MONTH] == calendar2[Calendar.MONTH]
         return sameMonth && sameYear
     }
 
@@ -477,8 +477,7 @@ object DateUtils {
         c1.add(Calendar.DAY_OF_YEAR, 1) // yesterday
         val c2 = Calendar.getInstance()
         c2.time = date ?: Date()
-        return (c1[Calendar.YEAR] == c2[Calendar.YEAR]
-                && c1[Calendar.DAY_OF_YEAR] == c2[Calendar.DAY_OF_YEAR])
+        return (c1[Calendar.YEAR] == c2[Calendar.YEAR] && c1[Calendar.DAY_OF_YEAR] == c2[Calendar.DAY_OF_YEAR])
     }
 
     fun isTomorrow(date: Date?, timeZone: TimeZone) =
@@ -490,8 +489,7 @@ object DateUtils {
         c1.add(Calendar.DAY_OF_YEAR, -1) // yesterday
         val c2 = Calendar.getInstance()
         c2.time = date ?: Date()
-        return (c1[Calendar.YEAR] == c2[Calendar.YEAR]
-                && c1[Calendar.DAY_OF_YEAR] == c2[Calendar.DAY_OF_YEAR])
+        return (c1[Calendar.YEAR] == c2[Calendar.YEAR] && c1[Calendar.DAY_OF_YEAR] == c2[Calendar.DAY_OF_YEAR])
     }
 
     fun isYesterday(date: Date?, timeZone: TimeZone) =
@@ -503,8 +501,7 @@ object DateUtils {
         } ?: false
 
     fun afterDay(timeZone: TimeZone) = dateToString(
-        nextDay(Date(), 1),
-        DEFAULT_DATE_FORMAT, timeZone
+        nextDay(Date(), 1), DEFAULT_DATE_FORMAT, timeZone
     )
 
     fun befoDay(timeZone: TimeZone) = befoDay(DEFAULT_DATE_FORMAT, timeZone)
@@ -521,16 +518,14 @@ object DateUtils {
     fun befoDay(format: String, timeZone: TimeZone): String? {
         return dateToString(
             nextDay(
-                Date(),
-                -1
+                Date(), -1
             ), format, timeZone
         )
     }
 
     fun isCurrentTimeNotBetween(fromDate: Date?, toDate: Date?): Boolean {
         val now = Calendar.getInstance().time
-        if (fromDate != null && toDate != null)
-            return !now.after(fromDate) && now.before(toDate)
+        if (fromDate != null && toDate != null) return !now.after(fromDate) && now.before(toDate)
         return false
     }
 
@@ -545,4 +540,26 @@ object DateUtils {
 
     fun dateToMonthAndYear(date: Date?): CharSequence =
         android.text.format.DateFormat.format(FORMAT_MON_YEAR, date)
+
+
+    fun isMoreThan30DaysApart(lastTime: String, currentTime: String): Boolean {
+        val sdf = SimpleDateFormat(SERVER_DATE_FULL_FORMAT_IN_UTC, Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        try {
+            val lastDate = sdf.parse(lastTime.trim())
+            val currentDate = sdf.parse(currentTime.trim())
+
+            return if (lastDate != null && currentDate != null) {
+                val differenceMillis = currentDate.time - lastDate.time
+                val differenceDays = differenceMillis / (24 * 60 * 60 * 1000)
+
+                differenceDays > 30
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+    }
 }

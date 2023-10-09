@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.login
 
 import android.os.Build
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.base.KEY_User_Last_Login_Time
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -14,6 +15,7 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.resourses.IResourceProvider
 import com.zstronics.ceibro.ui.contacts.toLightContacts
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -66,7 +68,10 @@ class LoginVM @Inject constructor(
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
                     OneSignal.pauseInAppMessages(false)
-                    loading(false, "Login successful")
+
+                    val currentUTCTime =
+                        DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+                    sessionManager.saveStringValue(KEY_User_Last_Login_Time, currentUTCTime)
                     if (sessionManager.getUpdatedAtTimeStamp().isEmpty()) {
                         sessionManager.saveUpdatedAtTimeStamp(response.data.user.createdAt)
                     }
@@ -75,7 +80,9 @@ class LoginVM @Inject constructor(
                     } else {
                         getSavedContactsToStoreInSharePreference(onLoggedIn)
                     }
+                    loading(false, "Login successful")
                 }
+
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                 }
