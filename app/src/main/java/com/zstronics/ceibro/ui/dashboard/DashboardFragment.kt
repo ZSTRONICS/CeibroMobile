@@ -152,6 +152,25 @@ class DashboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.updateRootUnread(requireActivity())
+        when (connectivityStatus) {     // this needs to be here to check internet last state, because if user navigate from dashboard to any other screen
+                                        // then comes back to this UI, then this object will keep the sync icon state visible to other users
+            "Available" -> {
+                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
+            }
+
+            "Lost" -> {
+                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+            }
+
+            "Losing" -> {
+                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
+            }
+
+            "Unavailable" -> {
+                mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
+            }
+        }
+
         if (!socketEventsInitiated) {
             socketEventsInitiating()
             changeSelectedTab(R.id.toMeBtn, false)
@@ -198,9 +217,9 @@ class DashboardFragment :
                         mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
                     }
                 }*/
-                changeSyncIcon(networkConnectivityObserver.isNetworkAvailable(), isConnected)
+//                changeSyncIcon(networkConnectivityObserver.isNetworkAvailable(), isConnected)
             } else {
-                changeSyncIcon(networkConnectivityObserver.isNetworkAvailable(), isConnected)
+//                changeSyncIcon(networkConnectivityObserver.isNetworkAvailable(), isConnected)
             }
         }
 
@@ -227,7 +246,7 @@ class DashboardFragment :
     }
 
     private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?) {
-        if (networkAvailable && socketConnected == true) {
+        if (networkAvailable) {
             mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
         } else {
             mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)

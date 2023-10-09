@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.base.validator.binding
 
+import android.graphics.drawable.Drawable
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -8,8 +9,12 @@ import androidx.databinding.BindingAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.R
 
 
@@ -68,6 +73,27 @@ object ImageBinding {
         Glide.with(context)
             .load(imageUrl)
             .apply(requestOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+            })
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
     }
