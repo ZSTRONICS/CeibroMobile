@@ -64,7 +64,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_marginEnd="@dimen/_14sdp"
                 android:layout_marginBottom="9dp"
-                app:cardBackgroundColor="@color/appDisableButton"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
