@@ -527,4 +527,8 @@
     <string name="is_token_valid">Is token valid</string>
     <string name="is_contacts_cursor_valid">Is contacts cursor valid</string>
     <string name="contacts_sync_count">Last contact sync count</string>
+    <string name="close_app">Close App</string>
+    <string name="are_you_sure_you_want_to_close_the_app">Are you sure you want to close the app?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
