@@ -20,6 +20,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroService) :
@@ -48,7 +50,70 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun forwardTask(taskId: String, forwardTaskV2Request: ForwardTaskV2Request): ApiResponse<NewTaskV2Response> =
+    override suspend fun newTaskV2WithFiles(
+        hasFiles: Boolean,
+        dueDate: RequestBody,
+        topic: RequestBody,
+        project: RequestBody,
+        assignedToState: RequestBody,
+        creator: RequestBody,
+        description: RequestBody,
+        doneImageRequired: RequestBody,
+        doneCommentsRequired: RequestBody,
+        invitedNumbers: RequestBody,
+        files: List<MultipartBody.Part>?,
+        metadata: RequestBody
+    ): ApiResponse<NewTaskV2Response> {
+        return executeSafely(call = {
+            service.newTaskV2WithFiles(
+                hasFiles = hasFiles,
+                dueDate = dueDate,
+                topic = topic,
+                project = project,
+                assignedToState = assignedToState,
+                creator = creator,
+                description = description,
+                doneImageRequired = doneImageRequired,
+                doneCommentsRequired = doneCommentsRequired,
+                invitedNumbers = invitedNumbers,
+                files = files,
+                metadata = metadata
+            )
+        })
+    }
+
+    override suspend fun newTaskV2WithoutFiles(
+        hasFiles: Boolean,
+        dueDate: RequestBody,
+        topic: RequestBody,
+        project: RequestBody,
+        assignedToState: RequestBody,
+        creator: RequestBody,
+        description: RequestBody,
+        doneImageRequired: RequestBody,
+        doneCommentsRequired: RequestBody,
+        invitedNumbers: RequestBody
+    ): ApiResponse<NewTaskV2Response> {
+        return executeSafely(call = {
+            service.newTaskV2WithoutFiles(
+                hasFiles = hasFiles,
+                dueDate = dueDate,
+                topic = topic,
+                project = project,
+                assignedToState = assignedToState,
+                creator = creator,
+                description = description,
+                doneImageRequired = doneImageRequired,
+                doneCommentsRequired = doneCommentsRequired,
+                invitedNumbers = invitedNumbers
+            )
+        })
+    }
+
+    override suspend fun forwardTask(
+        taskId: String,
+        forwardTaskV2Request: ForwardTaskV2Request
+    ): ApiResponse<NewTaskV2Response> =
         executeSafely(
             call =
             {
@@ -83,7 +148,10 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun updateTaskNoStateNoAdvanceOptions(taskId:String, updateTask: UpdateTaskRequestNoAdvanceOptions): ApiResponse<NewTaskResponse> =
+    override suspend fun updateTaskNoStateNoAdvanceOptions(
+        taskId: String,
+        updateTask: UpdateTaskRequestNoAdvanceOptions
+    ): ApiResponse<NewTaskResponse> =
         executeSafely(
             call =
             {
@@ -91,16 +159,13 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun deleteTask(taskId:String): ApiResponse<GenericResponse> =
+    override suspend fun deleteTask(taskId: String): ApiResponse<GenericResponse> =
         executeSafely(
             call =
             {
                 service.deleteTask(taskId)
             }
         )
-
-
-
 
 
     override suspend fun getAllTopics(): ApiResponse<TopicsResponse> =
@@ -143,7 +208,7 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override  suspend fun unCancelTask(taskId: String): ApiResponse<EventV2Response> =
+    override suspend fun unCancelTask(taskId: String): ApiResponse<EventV2Response> =
         executeSafely(
             call =
             {

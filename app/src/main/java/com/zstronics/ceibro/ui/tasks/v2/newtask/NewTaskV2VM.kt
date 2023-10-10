@@ -155,23 +155,40 @@ class NewTaskV2VM @Inject constructor(
                     saveDataInLocal(newTaskRequest, list, onBack)
                     return@launch
                 }
-                loading(true)
-                taskRepository.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
-                    if (isSuccess) {
-                        updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
 
-                        if (list.isNotEmpty()) {
-                            task?.id?.let { uploadTaskFiles(list, it) }
+                if (list.isNotEmpty()) {
+                    loading(true,"Creating task with files")
+                    taskRepository.newTaskV2WithFiles(
+                        newTaskRequest,
+                        list
+                    ) { isSuccess, task, errorMessage ->
+                        if (isSuccess) {
+                            updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
+                            val handler = Handler()
+                            handler.postDelayed({
+                                onBack()
+                                loading(false, "")
+                            }, 50)
+                        } else {
+                            loading(false, errorMessage)
                         }
-                        val handler = Handler()
-                        handler.postDelayed({
-                            onBack()
-                            loading(false, "")
-                        }, 50)
-                    } else {
-                        loading(false, errorMessage)
+                    }
+                } else {
+                    loading(true)
+                    taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
+                        if (isSuccess) {
+                            updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
+                            val handler = Handler()
+                            handler.postDelayed({
+                                onBack()
+                                loading(false, "")
+                            }, 50)
+                        } else {
+                            loading(false, errorMessage)
+                        }
                     }
                 }
+
             }
         }
     }

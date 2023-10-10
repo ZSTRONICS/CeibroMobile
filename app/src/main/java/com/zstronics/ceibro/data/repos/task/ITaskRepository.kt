@@ -23,6 +23,7 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOpt
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import ee.zstronics.ceibro.camera.PickedImages
 
 interface ITaskRepository {
     suspend fun tasks(): List<CeibroTask>
@@ -34,6 +35,15 @@ interface ITaskRepository {
     )
 
     suspend fun newTaskV2(
+        newTask: NewTaskV2Entity,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
+    )
+    suspend fun newTaskV2WithFiles(
+        newTask: NewTaskV2Entity,
+        list: ArrayList<PickedImages>,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
+    )
+    suspend fun newTaskV2WithoutFiles(
         newTask: NewTaskV2Entity,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     )

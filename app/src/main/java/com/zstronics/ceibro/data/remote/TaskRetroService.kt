@@ -9,6 +9,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -132,6 +134,38 @@ interface TaskRetroService {
 
     @POST("v2/task")
     suspend fun newTaskV2(@Body requestBody: NewTaskV2Entity): Response<NewTaskV2Response>
+
+    @Multipart
+    @POST("v2/task/files")
+    suspend fun newTaskV2WithFiles(
+        @Query("hasFiles") hasFiles: Boolean,
+        @Part("dueDate") dueDate: RequestBody,
+        @Part("topic") topic: RequestBody,
+        @Part("project") project: RequestBody,
+        @Part("assignedToState") assignedToState: RequestBody,
+        @Part("creator") creator: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("doneImageRequired") doneImageRequired: RequestBody,
+        @Part("doneCommentsRequired") doneCommentsRequired: RequestBody,
+        @Part("invitedNumbers") invitedNumbers: RequestBody,
+        @Part files: List<MultipartBody.Part>?,
+        @Part("metadata") metadata: RequestBody
+    ): Response<NewTaskV2Response>
+
+    @Multipart
+    @POST("v2/task/files")
+    suspend fun newTaskV2WithoutFiles(
+        @Query("hasFiles") hasFiles: Boolean,
+        @Part("dueDate") dueDate: RequestBody,
+        @Part("topic") topic: RequestBody,
+        @Part("project") project: RequestBody,
+        @Part("assignedToState") assignedToState: RequestBody,
+        @Part("creator") creator: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("doneImageRequired") doneImageRequired: RequestBody,
+        @Part("doneCommentsRequired") doneCommentsRequired: RequestBody,
+        @Part("invitedNumbers") invitedNumbers: RequestBody
+    ): Response<NewTaskV2Response>
 
     @GET("v2/task/{rootState}")
     suspend fun getAllTasks(@Path("rootState") rootState: String): Response<TaskV2Response>
