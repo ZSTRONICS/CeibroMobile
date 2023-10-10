@@ -15,8 +15,8 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -287,10 +287,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 val myState = task.assignedToState.find { it.userId == userId }?.state
 
                 //first check hidden and move task from hidden
-                val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
-                val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskHiddenLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                val taskToMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
 
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.Hidden.tagValue,
+                        taskHiddenLocalData
+                    )
+                ) {
                     val ongoingTask =
                         taskHiddenLocalData.allTasks.ongoing.find { it.id == task.id }
                     val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == task.id }
@@ -303,7 +309,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         allOngoingTaskList.removeAt(taskIndex)
                         taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.ToMe.tagValue,
+                                taskToMeLocalData
+                            )
+                        ) {
                             val ongoingTaskToMe =
                                 taskToMeLocalData.allTasks.ongoing.find { it.id == task.id }
                             val allOngoingToMeTaskList =
@@ -325,7 +335,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         allDoneTaskList.removeAt(taskIndex)
                         taskHiddenLocalData.allTasks.done = allDoneTaskList
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.ToMe.tagValue,
+                                taskToMeLocalData
+                            )
+                        ) {
                             val doneTaskToMe =
                                 taskToMeLocalData.allTasks.done.find { it.id == task.id }
                             val allDoneToMeTaskList =
@@ -344,9 +358,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     TaskV2DaoHelper(taskDao).insertTaskData(
                         taskHiddenLocalData
                     )
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            taskToMeLocalData
-                        )
+                    TaskV2DaoHelper(taskDao).insertTaskData(
+                        taskToMeLocalData
+                    )
 
                     // send task data for ui update
                     EventBus.getDefault().post(LocalEvents.TaskForwardEvent(task))
@@ -356,7 +370,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 if (task.creatorState.equals(TaskStatus.CANCELED.name, true)) {
                     // it means task must be in hidden rootState and child state will be canceled. search an update the task only
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         val canceledTask =
                             taskHiddenLocalData.allTasks.canceled.find { it.id == task.id }
                         if (canceledTask != null) {
@@ -383,9 +401,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (taskFromMe) {
-                    val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val taskFromMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.FromMe.tagValue,
+                            taskFromMeLocalData
+                        )
+                    ) {
                         val unreadTaskIndex =
                             taskFromMeLocalData.allTasks.unread.indexOfFirst { it.id == task.id }
                         val ongoingTaskIndex =
@@ -446,7 +469,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                 if (taskToMe) {
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.ToMe.tagValue,
+                            taskToMeLocalData
+                        )
+                    ) {
                         val newTaskIndex =
                             taskToMeLocalData.allTasks.new.indexOfFirst { it.id == task.id }
                         val ongoingTaskIndex =
@@ -540,7 +567,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val taskHiddenLocalData =
                             TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.Hidden.tagValue,
+                                taskHiddenLocalData
+                            )
+                        ) {
                             val canceledTask =
                                 taskHiddenLocalData.allTasks.canceled.find { it.id == taskSeen.taskId }
                             /// Update record updated_at
@@ -586,9 +617,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (taskSeen.isCreator) {
-                    val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val taskFromMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.FromMe.tagValue,
+                            taskFromMeLocalData
+                        )
+                    ) {
                         val unreadTask =
                             taskFromMeLocalData.allTasks.unread.find { it.id == taskSeen.taskId }
                         val ongoingTask =
@@ -778,9 +814,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (taskSeen.isAssignedToMe) {
-                    val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val taskToMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.ToMe.tagValue,
+                            taskToMeLocalData
+                        )
+                    ) {
                         val newTask =
                             taskToMeLocalData.allTasks.new.find { it.id == taskSeen.taskId }
                         val ongoingTask =
@@ -1017,11 +1058,18 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             if (hiddenByCurrentUser) {
                 //it means task must be searched from hidden rootState and child states[ongoing and done] and then move the task to another root state from hidden
                 launch {
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
-                    val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                    val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskToMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val taskFromMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         val ongoingTask =
                             taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
                         val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
@@ -1055,7 +1103,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.ToMe.tagValue,
+                                        taskToMeLocalData
+                                    )
+                                ) {
                                     val ongoingTaskToMe =
                                         taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
                                     val allOngoingToMeTaskList =
@@ -1073,7 +1125,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
                             }
                             if (eventData.oldTaskData.isCreator) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.FromMe.tagValue,
+                                        taskFromMeLocalData
+                                    )
+                                ) {
                                     val ongoingTaskFromMe =
                                         taskFromMeLocalData.allTasks.ongoing.find { it.id == taskID }
                                     val allOngoingFromMeTaskList =
@@ -1120,7 +1176,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             taskHiddenLocalData.allTasks.done = allDoneTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.ToMe.tagValue,
+                                        taskToMeLocalData
+                                    )
+                                ) {
                                     val doneTaskToMe =
                                         taskToMeLocalData.allTasks.done.find { it.id == taskID }
                                     val allDoneToMeTaskList =
@@ -1138,7 +1198,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
                             }
                             if (eventData.oldTaskData.isCreator) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.FromMe.tagValue,
+                                        taskFromMeLocalData
+                                    )
+                                ) {
                                     val doneTaskFromMe =
                                         taskFromMeLocalData.allTasks.done.find { it.id == taskID }
                                     val allDoneFromMeTaskList =
@@ -1159,13 +1223,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         TaskV2DaoHelper(taskDao).insertTaskData(
                             taskHiddenLocalData
                         )
-                            TaskV2DaoHelper(taskDao).insertTaskData(
-                                taskToMeLocalData
-                            )
+                        TaskV2DaoHelper(taskDao).insertTaskData(
+                            taskToMeLocalData
+                        )
 
-                            TaskV2DaoHelper(taskDao).insertTaskData(
-                                taskFromMeLocalData
-                            )
+                        TaskV2DaoHelper(taskDao).insertTaskData(
+                            taskFromMeLocalData
+                        )
 
                         // send task data for ui update
                         EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
@@ -1176,9 +1240,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             } else if (eventData.oldTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
                 // it means task must be in hidden rootState and child state will be canceled. search an update the task only
                 launch {
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         val canceledTask =
                             taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                         if (canceledTask != null) {
@@ -1223,11 +1292,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
             }
             launch {
-                val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                val taskToMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
                 if (eventData.oldTaskData.isAssignedToMe) {
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.ToMe.tagValue,
+                            taskToMeLocalData
+                        )
+                    ) {
                         val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
                         val ongoingTask =
                             taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
@@ -1332,7 +1407,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (eventData.oldTaskData.isCreator) {
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.FromMe.tagValue,
+                            taskFromMeLocalData
+                        )
+                    ) {
                         val unreadTask =
                             taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
                         val ongoingTask =
@@ -1467,7 +1546,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             taskEventList.add(taskEvent)
 
             launch {
-                val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                val taskHiddenLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
                 val removingTask = taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
 
                 removingTask?.let { task ->
@@ -1505,9 +1585,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
 
                     if (eventData.oldTaskData.isAssignedToMe) {
-                        val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                        val taskToMeLocalData =
+                            TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.ToMe.tagValue,
+                                taskToMeLocalData
+                            )
+                        ) {
                             val newTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                             val newTask = newTaskList.find { it.id == taskID }
 
@@ -1528,7 +1613,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val taskFromMeLocalData =
                             TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.FromMe.tagValue,
+                                taskFromMeLocalData
+                            )
+                        ) {
                             val unreadTaskList = taskFromMeLocalData.allTasks.unread.toMutableList()
                             val unreadTask = unreadTaskList.find { it.id == taskID }
 
@@ -1587,9 +1676,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             if (hiddenByCurrentUser) {
                 //it means task must be searched from hidden rootState and child states[ongoing and done] and then move the task to another root state from hidden
                 launch {
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         val ongoingTask =
                             taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
                         val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
@@ -1720,9 +1814,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             } else if (eventData.oldTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
                 // it means task must be in hidden rootState and child state will be canceled. search and update the task only
                 launch {
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         val canceledTask =
                             taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                         if (canceledTask != null) {
@@ -1761,18 +1860,29 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
             }
             launch {
-                val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
-                val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                val taskToMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                val taskHiddenLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
                 if (eventData.oldTaskData.isAssignedToMe) {
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.ToMe.tagValue,
+                            taskToMeLocalData
+                        )
+                    ) {
                         val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
                         val ongoingTask =
                             taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
                         val doneTask = taskToMeLocalData.allTasks.done.find { it.id == taskID }
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.Hidden.tagValue,
+                                taskHiddenLocalData
+                            )
+                        ) {
                             if (newTask != null) {
                                 /// Update record updated_at
                                 newTask.updateUpdatedAt()
@@ -1958,7 +2068,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (eventData.oldTaskData.isCreator) {
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.FromMe.tagValue,
+                            taskFromMeLocalData
+                        )
+                    ) {
                         val unreadTask =
                             taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
                         val ongoingTask =
@@ -1966,7 +2080,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         val doneTask =
                             taskFromMeLocalData.allTasks.done.find { it.id == taskID }
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.Hidden.tagValue,
+                                taskHiddenLocalData
+                            )
+                        ) {
                             if (unreadTask != null) {
                                 /// Update record updated_at
                                 unreadTask.updateUpdatedAt()
@@ -2187,11 +2305,18 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 val hiddenByCurrentUser = eventData.oldTaskData.isHiddenByMe
                 if (hiddenByCurrentUser) {
                     //it means task must be searched from hidden rootState and child states[ongoing and done] and then move the task to another root state from hidden
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
-                    val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                    val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskToMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val taskFromMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         val ongoingTask =
                             taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
                         val doneTask = taskHiddenLocalData.allTasks.done.find { it.id == taskID }
@@ -2231,7 +2356,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             taskHiddenLocalData.allTasks.ongoing = allOngoingTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.ToMe.tagValue,
+                                        taskToMeLocalData
+                                    )
+                                ) {
                                     val doneTaskToMe =
                                         taskToMeLocalData.allTasks.done.find { it.id == taskID }
                                     val allDoneToMeTaskList =
@@ -2253,7 +2382,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
                             }
                             if (eventData.oldTaskData.isCreator) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.FromMe.tagValue,
+                                        taskFromMeLocalData
+                                    )
+                                ) {
                                     val doneTaskFromMe =
                                         taskFromMeLocalData.allTasks.done.find { it.id == taskID }
                                     val allDoneFromMeTaskList =
@@ -2308,7 +2441,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                             taskHiddenLocalData.allTasks.done = allDoneTaskList
 
                             if (eventData.oldTaskData.isAssignedToMe) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.ToMe.tagValue,
+                                        taskToMeLocalData
+                                    )
+                                ) {
                                     val doneTaskToMe =
                                         taskToMeLocalData.allTasks.done.find { it.id == taskID }
                                     val allDoneToMeTaskList =
@@ -2330,7 +2467,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                                 }
                             }
                             if (eventData.oldTaskData.isCreator) {
-                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                        TaskRootStateTags.FromMe.tagValue,
+                                        taskFromMeLocalData
+                                    )
+                                ) {
                                     val doneTaskFromMe =
                                         taskFromMeLocalData.allTasks.done.find { it.id == taskID }
                                     val allDoneFromMeTaskList =
@@ -2355,13 +2496,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         TaskV2DaoHelper(taskDao).insertTaskData(
                             taskHiddenLocalData
                         )
-                            TaskV2DaoHelper(taskDao).insertTaskData(
-                                taskToMeLocalData
-                            )
+                        TaskV2DaoHelper(taskDao).insertTaskData(
+                            taskToMeLocalData
+                        )
 
-                            TaskV2DaoHelper(taskDao).insertTaskData(
-                                taskFromMeLocalData
-                            )
+                        TaskV2DaoHelper(taskDao).insertTaskData(
+                            taskFromMeLocalData
+                        )
 
                         // send task data for ui update
                         EventBus.getDefault()
@@ -2371,11 +2512,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                 }
 
-                val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                val taskToMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
                 if (eventData.oldTaskData.isAssignedToMe) {
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.ToMe.tagValue,
+                            taskToMeLocalData
+                        )
+                    ) {
                         val newTask = taskToMeLocalData.allTasks.new.find { it.id == taskID }
                         val ongoingTask =
                             taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
@@ -2536,7 +2683,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (eventData.oldTaskData.isCreator) {
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.FromMe.tagValue,
+                            taskFromMeLocalData
+                        )
+                    ) {
                         val unreadTask =
                             taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
                         val ongoingTask =
@@ -2737,7 +2888,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 val taskEventList: MutableList<Events> = mutableListOf()
                 taskEventList.add(taskEvent)
                 if (eventData.oldTaskData.isAssignedToMe) {
-                    val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val taskToMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
                     taskToMeLocalData?.let {
                         val ongoingTask =
                             taskToMeLocalData.allTasks.ongoing.find { it.id == taskID }
@@ -2903,7 +3055,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (eventData.oldTaskData.isCreator) {
-                    val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val taskFromMeLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
                     taskFromMeLocalData?.let {
                         val unread = taskFromMeLocalData.allTasks.unread.find { it.id == taskID }
                         val ongoingTask =
@@ -3071,11 +3224,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (eventData.oldTaskData.isHiddenByMe) {
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
                     taskHiddenLocalData?.let {
-                        val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                        val taskToMeLocalData =
+                            TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
 
-                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                        if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                                TaskRootStateTags.ToMe.tagValue,
+                                taskToMeLocalData
+                            )
+                        ) {
                             val ongoingTask =
                                 taskHiddenLocalData.allTasks.ongoing.find { it.id == taskID }
                             val doneTask =
@@ -3229,7 +3388,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 }
 
                 if (eventData.oldTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
-                    val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+                    val taskHiddenLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
                     taskHiddenLocalData?.let {
                         val canceled =
                             taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
@@ -3298,16 +3458,26 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     fun updateTaskHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao) {
         launch {
-            val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-            val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+            val taskToMeLocalData =
+                TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+            val taskHiddenLocalData =
+                TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
             if (hideData != null) {
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.ToMe.tagValue,
+                        taskToMeLocalData
+                    )
+                ) {
                     val ongoingTask =
                         taskToMeLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
                     val doneTask = taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.Hidden.tagValue,
+                            taskHiddenLocalData
+                        )
+                    ) {
                         if (ongoingTask != null) {
                             /// Update record updated_at
                             ongoingTask.updateUpdatedAt()
@@ -3378,7 +3548,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     }
                 }
 
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.Hidden.tagValue,
+                        taskHiddenLocalData
+                    )
+                ) {
                     val ongoingTask =
                         taskHiddenLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
                     val doneTask =
@@ -3422,17 +3596,27 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     fun updateTaskUnHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao) {
         launch {
-            val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-            val taskHiddenLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+            val taskToMeLocalData =
+                TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+            val taskHiddenLocalData =
+                TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
 
             if (hideData != null) {
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskHiddenLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.Hidden.tagValue,
+                        taskHiddenLocalData
+                    )
+                ) {
                     val ongoingTask =
                         taskHiddenLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
                     val doneTask =
                         taskHiddenLocalData.allTasks.done.find { it.id == hideData.taskId }
 
-                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                    if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                            TaskRootStateTags.ToMe.tagValue,
+                            taskToMeLocalData
+                        )
+                    ) {
                         if (ongoingTask != null) {
                             /// Update record updated_at
                             ongoingTask.updateUpdatedAt()
@@ -3503,7 +3687,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     }
                 }
 
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.ToMe.tagValue,
+                        taskToMeLocalData
+                    )
+                ) {
                     val ongoingTask =
                         taskToMeLocalData.allTasks.ongoing.find { it.id == hideData.taskId }
                     val doneTask = taskToMeLocalData.allTasks.done.find { it.id == hideData.taskId }
@@ -3635,27 +3823,90 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                 return
             }
             val newTaskRequest = records.first()
+            var list: ArrayList<PickedImages> = arrayListOf()
 
-            taskRepositoryInternal.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
-                if (isSuccess) {
-                    launch {
-                        draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
-                        updateCreatedTaskInLocal(
-                            task,
-                            taskDaoInternal,
-                            user?.id,
-                            sessionManagerInternal
-                        )
-                        newTaskRequest.filesData?.let { filesData ->
-                            task?.id?.let { uploadDraftTaskFiles(filesData, it) }
+            newTaskRequest.filesData?.let { filesData ->
+                list = filesData.map {
+                    PickedImages(
+                        fileUri = Uri.parse(it.fileUri),
+                        comment = it.comment,
+                        fileName = it.fileName,
+                        fileSizeReadAble = it.fileSizeReadAble,
+                        editingApplied = it.editingApplied,
+                        attachmentType = it.attachmentType,
+                        file = FileUtils.getFile(context, Uri.parse(it.fileUri))
+                    )
+                } as ArrayList<PickedImages>
+            }
+
+            if (list.isNotEmpty()) {
+                taskRepositoryInternal.newTaskV2WithFiles(
+                    newTaskRequest,
+                    list
+                ) { isSuccess, task, errorMessage ->
+                    if (isSuccess) {
+                        launch {
+                            draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+
+                            updateCreatedTaskInLocal(
+                                task,
+                                taskDaoInternal,
+                                user?.id,
+                                sessionManagerInternal
+                            )
+                            // Remove the processed record from the list
+                            val updatedRecords = records - newTaskRequest
+                            // Recursively process the next record
+                            processNextRecord(updatedRecords)
                         }
-                        // Remove the processed record from the list
-                        val updatedRecords = records - newTaskRequest
-                        // Recursively process the next record
-                        processNextRecord(updatedRecords)
+                    } else {
+                        //alert(errorMessage)
+                    }
+                }
+            } else {
+                taskRepositoryInternal.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
+                    if (isSuccess) {
+                        launch {
+                            draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+
+                            updateCreatedTaskInLocal(
+                                task,
+                                taskDaoInternal,
+                                user?.id,
+                                sessionManagerInternal
+                            )
+                            // Remove the processed record from the list
+                            val updatedRecords = records - newTaskRequest
+                            // Recursively process the next record
+                            processNextRecord(updatedRecords)
+                        }
+                    } else {
+                        //alert(errorMessage)
                     }
                 }
             }
+
+
+//            taskRepositoryInternal.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
+//                if (isSuccess) {
+//                    launch {
+//                        draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+//                        updateCreatedTaskInLocal(
+//                            task,
+//                            taskDaoInternal,
+//                            user?.id,
+//                            sessionManagerInternal
+//                        )
+//                        newTaskRequest.filesData?.let { filesData ->
+//                            task?.id?.let { uploadDraftTaskFiles(filesData, it) }
+//                        }
+//                        // Remove the processed record from the list
+//                        val updatedRecords = records - newTaskRequest
+//                        // Recursively process the next record
+//                        processNextRecord(updatedRecords)
+//                    }
+//                }
+//            }
         }
 
         // Start the recursive processing
@@ -3672,10 +3923,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
     ) {
         if (moduleName.equals(AttachmentModules.Task.name, true)) {
             launch {
-                val taskToMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                val taskFromMeLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                val taskToMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                val taskFromMeLocalData =
+                    TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
 
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.ToMe.tagValue, taskToMeLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.ToMe.tagValue,
+                        taskToMeLocalData
+                    )
+                ) {
                     val newTask = taskToMeLocalData.allTasks.new.find { it.id == moduleId }
                     val unreadTask = taskToMeLocalData.allTasks.unread.find { it.id == moduleId }
                     val ongoingTask = taskToMeLocalData.allTasks.ongoing.find { it.id == moduleId }
@@ -3728,7 +3985,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     )
                 }
 
-                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskFromMeLocalData)) {
+                if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
+                        TaskRootStateTags.FromMe.tagValue,
+                        taskFromMeLocalData
+                    )
+                ) {
                     val newTask = taskFromMeLocalData.allTasks.new.find { it.id == moduleId }
                     val unreadTask = taskFromMeLocalData.allTasks.unread.find { it.id == moduleId }
                     val ongoingTask =

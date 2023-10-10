@@ -19,6 +19,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.Part
+import retrofit2.http.Query
 
 interface ITaskRemoteDataSource {
     suspend fun tasks(state: String = "all", noPaginate: Boolean = true): ApiResponse<TasksResponse>
@@ -42,6 +46,34 @@ interface ITaskRemoteDataSource {
     suspend fun syncAllTask(updatedAtTimeStamp: String): ApiResponse<AllTasksV2Response>
 
     suspend fun newTaskV2(newTask: NewTaskV2Entity): ApiResponse<NewTaskV2Response>
+    suspend fun newTaskV2WithFiles(
+        hasFiles: Boolean,
+        dueDate: RequestBody,
+        topic: RequestBody,
+        project: RequestBody,
+        assignedToState: RequestBody,
+        creator: RequestBody,
+        description: RequestBody,
+        doneImageRequired: RequestBody,
+        doneCommentsRequired: RequestBody,
+        invitedNumbers: RequestBody,
+        files: List<MultipartBody.Part>?,
+        metadata: RequestBody
+    ): ApiResponse<NewTaskV2Response>
+
+    suspend fun newTaskV2WithoutFiles(
+        hasFiles: Boolean,
+        dueDate: RequestBody,
+        topic: RequestBody,
+        project: RequestBody,
+        assignedToState: RequestBody,
+        creator: RequestBody,
+        description: RequestBody,
+        doneImageRequired: RequestBody,
+        doneCommentsRequired: RequestBody,
+        invitedNumbers: RequestBody
+    ): ApiResponse<NewTaskV2Response>
+
     suspend fun forwardTask(
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request

@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.repos.task
 
+import com.google.gson.Gson
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
@@ -9,6 +10,8 @@ import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
+import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.AddMemberSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
@@ -30,6 +33,12 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOpt
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import ee.zstronics.ceibro.camera.AttachmentTypes
+import ee.zstronics.ceibro.camera.PickedImages
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class TaskRepository @Inject constructor(
@@ -51,6 +60,7 @@ class TaskRepository @Inject constructor(
                     localTask.insertAllTasks(tasks)
                     return tasks
                 }
+
                 else -> emptyList()
             }
         } else {
@@ -73,6 +83,7 @@ class TaskRepository @Inject constructor(
                 response.data.newTask?.let { localTask.insertTask(it) }
                 callBack(true, "")
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -87,6 +98,132 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 callBack(true, response.data.newTask, "")
             }
+
+            is ApiResponse.Error -> {
+                callBack(false, null, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun newTaskV2WithFiles(
+        newTask: NewTaskV2Entity,
+        list: ArrayList<PickedImages>,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
+    ) {
+
+        val assignedToStateString = Gson().toJson(newTask.assignedToState)
+        val assignedToStateString2 = Gson().toJson(assignedToStateString)
+
+        val invitedNumbersString = Gson().toJson(newTask.invitedNumbers)
+        val invitedNumbersString2 = Gson().toJson(invitedNumbersString)
+
+        val dueDate = newTask.dueDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        val topic = newTask.topic.toRequestBody("text/plain".toMediaTypeOrNull())
+        val project = newTask.project.toRequestBody("text/plain".toMediaTypeOrNull())
+        val assignedToState = assignedToStateString2.toRequestBody("text/plain".toMediaTypeOrNull())
+        val creator = newTask.creator.toRequestBody("text/plain".toMediaTypeOrNull())
+        val description = newTask.description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val doneImageRequired =
+            newTask.doneImageRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val doneCommentsRequired =
+            newTask.doneCommentsRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val invitedNumbers = invitedNumbersString2.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val parts = list.map { file ->
+            val reqFile =
+                file.file.asRequestBody(("image/" + file.file.extension).toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("files", file.file.name, reqFile)
+        }
+        val metaData = list.map { file ->
+            var tag = ""
+            if (file.attachmentType == AttachmentTypes.Image) {
+                tag = if (file.comment.isNotEmpty()) {
+                    AttachmentTags.ImageWithComment.tagValue
+                } else {
+                    AttachmentTags.Image.tagValue
+                }
+            } else if (file.attachmentType == AttachmentTypes.Pdf || file.attachmentType == AttachmentTypes.Doc) {
+                tag = AttachmentTags.File.tagValue
+            }
+
+            AttachmentUploadV2Request.AttachmentMetaData(
+                fileName = file.fileName,
+                orignalFileName = file.fileName,
+                tag = tag,
+                comment = file.comment.trim()
+            )
+        }
+        val metadataString = Gson().toJson(metaData)
+        val metadataString2 = Gson().toJson(metadataString)
+
+        val metadataString2RequestBody =
+            metadataString2.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        when (val response = remoteTask.newTaskV2WithFiles(
+            hasFiles = true,
+            dueDate = dueDate,
+            topic = topic,
+            project = project,
+            assignedToState = assignedToState,
+            creator = creator,
+            description = description,
+            doneImageRequired = doneImageRequired,
+            doneCommentsRequired = doneCommentsRequired,
+            invitedNumbers = invitedNumbers,
+            files = parts,
+            metadata = metadataString2RequestBody
+        )) {
+            is ApiResponse.Success -> {
+                callBack(true, response.data.newTask, "")
+            }
+
+            is ApiResponse.Error -> {
+                callBack(false, null, response.error.message)
+            }
+        }
+    }
+
+    override suspend fun newTaskV2WithoutFiles(
+        newTask: NewTaskV2Entity,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
+    ) {
+        val assignedToStateString = Gson().toJson(newTask.assignedToState)
+        val assignedToStateString2 = Gson().toJson(assignedToStateString)
+
+        val invitedNumbersString = Gson().toJson(newTask.invitedNumbers)
+        val invitedNumbersString2 = Gson().toJson(invitedNumbersString)
+
+
+        val dueDate = newTask.dueDate.toRequestBody("text/plain".toMediaTypeOrNull())
+        val topic = newTask.topic.toRequestBody("text/plain".toMediaTypeOrNull())
+        val project = newTask.project.toRequestBody("text/plain".toMediaTypeOrNull())
+        val assignedToState = assignedToStateString2.toRequestBody("text/plain".toMediaTypeOrNull())
+        val creator = newTask.creator.toRequestBody("text/plain".toMediaTypeOrNull())
+        val description = newTask.description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val doneImageRequired =
+            newTask.doneImageRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val doneCommentsRequired =
+            newTask.doneCommentsRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val invitedNumbers = invitedNumbersString2.toRequestBody("text/plain".toMediaTypeOrNull())
+
+
+
+        when (val response = remoteTask.newTaskV2WithoutFiles(
+            hasFiles = false,
+            dueDate = dueDate,
+            topic = topic,
+            project = project,
+            assignedToState = assignedToState,
+            creator = creator,
+            description = description,
+            doneImageRequired = doneImageRequired,
+            doneCommentsRequired = doneCommentsRequired,
+            invitedNumbers = invitedNumbers
+        )) {
+            is ApiResponse.Success -> {
+                callBack(true, response.data.newTask, "")
+            }
+
             is ApiResponse.Error -> {
                 callBack(false, null, response.error.message)
             }
@@ -102,6 +239,7 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 callBack(true, response.data.newTask, "")
             }
+
             is ApiResponse.Error -> {
                 callBack(false, null, response.error.message)
             }
@@ -116,6 +254,7 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 callBack(true, response.data.taskSeen)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, null)
             }
@@ -131,6 +270,7 @@ class TaskRepository @Inject constructor(
                 response.data.newTask?.let { localTask.insertTask(it) }
                 callBack(true, "", response.data.newTask)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, null)
             }
@@ -150,6 +290,7 @@ class TaskRepository @Inject constructor(
                 }
                 callBack(true, "")
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -169,6 +310,7 @@ class TaskRepository @Inject constructor(
                 }
                 callBack(true, "")
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -188,6 +330,7 @@ class TaskRepository @Inject constructor(
 
                 callBack(true, responseObj)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -205,6 +348,7 @@ class TaskRepository @Inject constructor(
                     localSubTask.insertAllSubTasks(subTasks)
                     return subTasks
                 }
+
                 else -> emptyList()
             }
         } else {
@@ -221,6 +365,7 @@ class TaskRepository @Inject constructor(
                 val subTaskStatuses = response.data.result
                 callBack(true, "", subTaskStatuses)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, emptyList())
             }
@@ -236,6 +381,7 @@ class TaskRepository @Inject constructor(
                     localSubTask.insertAllSubTasks(subTasks)
                     return subTasks
                 }
+
                 else -> emptyList()
             }
         } else {
@@ -252,6 +398,7 @@ class TaskRepository @Inject constructor(
                 response.data.newSubtask?.let { localSubTask.insertSubTask(it) }
                 callBack(true, "", response.data.newSubtask)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, null)
             }
@@ -268,6 +415,7 @@ class TaskRepository @Inject constructor(
                 response.data.newSubtask?.let { localSubTask.updateSubTask(it) }
                 callBack(true, "")
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -284,6 +432,7 @@ class TaskRepository @Inject constructor(
                 response.data.newSubtask?.let { localSubTask.updateSubTask(it) }
                 callBack(true, "")
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -307,6 +456,7 @@ class TaskRepository @Inject constructor(
 
                 callBack(true, "", changedSubTask)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, changedSubTask)
             }
@@ -344,6 +494,7 @@ class TaskRepository @Inject constructor(
 
                 callBack(true, "", changedSubTask)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, changedSubTask)
             }
@@ -381,6 +532,7 @@ class TaskRepository @Inject constructor(
 
                 callBack(true, "", changedSubTask)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, changedSubTask)
             }
@@ -399,6 +551,7 @@ class TaskRepository @Inject constructor(
 
                 callBack(true, responseObj)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message)
             }
@@ -413,6 +566,7 @@ class TaskRepository @Inject constructor(
                 val subTasks = response.data.allSubtasks
                 localSubTask.insertAllSubTasks(subTasks)
             }
+
             else -> {}
         }
     }
@@ -423,6 +577,7 @@ class TaskRepository @Inject constructor(
                 val tasks = response.data.allTasks
                 localTask.insertAllTasks(tasks)
             }
+
             else -> {}
         }
     }
@@ -481,6 +636,7 @@ class TaskRepository @Inject constructor(
                 }
                 return Triple(true, taskDeleted, subTaskDeleted)
             }
+
             else -> return Triple(false, false, false)
         }
     }
@@ -494,6 +650,7 @@ class TaskRepository @Inject constructor(
                 localSubTask.addComment(request.subTaskId, response.data.result)
                 callBack(true, "", response.data.result)
             }
+
             is ApiResponse.Error -> callBack(false, response.error.message, null)
         }
     }
@@ -507,6 +664,7 @@ class TaskRepository @Inject constructor(
                 val rejections = response.data.result
                 callBack(true, "", rejections)
             }
+
             is ApiResponse.Error -> callBack(false, response.error.message, emptyList())
         }
     }
@@ -519,6 +677,7 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 callBack(true, "", response.data.result)
             }
+
             is ApiResponse.Error -> callBack(false, response.error.message, arrayListOf())
         }
     }
@@ -533,6 +692,7 @@ class TaskRepository @Inject constructor(
             is ApiResponse.Success -> {
                 callBack(true, "", response.data)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, null)
             }
@@ -549,6 +709,7 @@ class TaskRepository @Inject constructor(
 
                 callBack(true, "", responseObj)
             }
+
             is ApiResponse.Error -> {
                 callBack(false, response.error.message, null)
             }
