@@ -1,13 +1,19 @@
 package com.zstronics.ceibro.base.viewmodel
 
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.annotation.CallSuper
+import androidx.core.app.NotificationCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.work.*
 import com.google.gson.Gson
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
@@ -146,6 +152,44 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     fun createNotification(notification: LocalEvents.CreateNotification?) {
         _notificationEvent.postValue(notification)
+    }
+
+
+    private val indeterminateNotificationID = 1
+
+    fun createIndeterminateNotificationForFileUpload(
+        activity: FragmentActivity,
+        channelId: String,
+        channelName: String,
+        notificationTitle: String,
+        isOngoing: Boolean = true,
+        indeterminate: Boolean = true,
+        notificationIcon: Int = R.drawable.icon_upload
+    ): Pair<NotificationManager, NotificationCompat.Builder> {
+        // Create a notification channel (for Android O and above)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+            val notificationManager = activity.getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // Create a notification builder
+        val builder = NotificationCompat.Builder(activity, channelId)
+            .setSmallIcon(notificationIcon)
+            .setContentTitle(notificationTitle)
+            .setOngoing(isOngoing)
+            .setProgress(0, 0, indeterminate)
+
+        // Show the notification
+        val notificationManager = activity.getSystemService(NotificationManager::class.java)
+        notificationManager.notify(indeterminateNotificationID, builder.build())
+        return Pair(notificationManager, builder)
+    }
+
+    fun hideIndeterminateNotificationForFileUpload(activity: FragmentActivity) {
+        val notificationManager = activity.getSystemService(NotificationManager::class.java)
+        notificationManager.cancel(indeterminateNotificationID) // Remove the notification with ID
     }
 
     fun addUriToList(data: SubtaskAttachment) {

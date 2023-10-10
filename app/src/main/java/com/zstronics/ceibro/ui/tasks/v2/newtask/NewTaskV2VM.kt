@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask
 
 import android.os.Bundle
 import android.os.Handler
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -95,6 +96,7 @@ class NewTaskV2VM @Inject constructor(
     fun createNewTask(
         doneImageRequired: Boolean,
         doneCommentsRequired: Boolean,
+        activity: FragmentActivity,
         onBack: () -> Unit,
     ) {
 
@@ -157,7 +159,13 @@ class NewTaskV2VM @Inject constructor(
                 }
 
                 if (list.isNotEmpty()) {
-                    loading(true,"Creating task with files")
+                    loading(true, "Creating task with files")
+                    createIndeterminateNotificationForFileUpload(
+                        activity = activity,
+                        channelId = "file_upload_channel",
+                        channelName = "File Upload Progress",
+                        notificationTitle = "Uploading Files"
+                    )
                     taskRepository.newTaskV2WithFiles(
                         newTaskRequest,
                         list
@@ -168,8 +176,10 @@ class NewTaskV2VM @Inject constructor(
                             handler.postDelayed({
                                 onBack()
                                 loading(false, "")
+                                hideIndeterminateNotificationForFileUpload(activity)
                             }, 50)
                         } else {
+                            hideIndeterminateNotificationForFileUpload(activity)
                             loading(false, errorMessage)
                         }
                     }
