@@ -44,7 +44,9 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
+import com.zstronics.ceibro.ui.dashboard.TaskEventsList
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.FileUtils
 import ee.zstronics.ceibro.camera.AttachmentTypes
@@ -1573,7 +1575,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
         eventData?.let {
+            val isExists = TaskEventsList.isExists(
+                SocketHandler.TaskEvent.UN_CANCEL_TASK.name,
+                eventData.taskId,
+                true
+            )
+            if (isExists) {
+                return
+            }
             val taskID = eventData.taskId
+
             val taskEvent = Events(
                 id = eventData.id,
                 taskId = eventData.taskId,
@@ -1682,6 +1693,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     TaskV2DaoHelper(taskDao).insertTaskData(taskHiddenLocalData)
                     EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     EventBus.getDefault().post(LocalEvents.TaskForwardEvent(task))
+
+                    TaskEventsList.removeEvent(SocketHandler.TaskEvent.UN_CANCEL_TASK.name, taskID)
                 }
             }
         }
@@ -1700,7 +1713,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         }
 
         if (eventData != null) {
+
+            val isExists = TaskEventsList.isExists(
+                SocketHandler.TaskEvent.CANCELED_TASK.name,
+                eventData.taskId,
+                true
+            )
+            if (isExists) {
+                return null
+            }
             val taskID = eventData.taskId
+
             val taskEvent = Events(
                 id = eventData.id,
                 taskId = eventData.taskId,
@@ -2315,7 +2338,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     }
                 }
             }
+            TaskEventsList.removeEvent(SocketHandler.TaskEvent.CANCELED_TASK.name, taskID)
         }
+
         return updatedTask
     }
 
@@ -2330,6 +2355,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
         }
         launch {
             if (eventData != null) {
+
+                val isExists = TaskEventsList.isExists(
+                    SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId,
+                    true
+                )
+                if (isExists) {
+
+                    return@launch
+                }
                 val taskID = eventData.taskId
                 val taskEvent = Events(
                     id = eventData.id,
@@ -2899,6 +2933,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
                 }
+                TaskEventsList.removeEvent(SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId)
             }
         }
         return updatedTask
@@ -3502,6 +3537,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
     fun updateTaskHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao) {
         launch {
+
+            hideData?.taskId?.let {
+                val isExists = TaskEventsList.isExists(
+                    SocketHandler.TaskEvent.TASK_HIDDEN.name, it,
+                    true
+                )
+                if (isExists) {
+                    return@launch
+                }
+            }
             val taskToMeLocalData =
                 TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
             val taskHiddenLocalData =
@@ -3634,12 +3679,26 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
                     EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                 }
             }
+            hideData?.taskId?.let {
+                TaskEventsList.removeEvent(SocketHandler.TaskEvent.TASK_HIDDEN.name, it)
+            }
         }
 
     }
 
     fun updateTaskUnHideInLocal(hideData: HideTaskResponse?, taskDao: TaskV2Dao) {
         launch {
+
+            hideData?.taskId?.let {
+                val isExists = TaskEventsList.isExists(
+                    SocketHandler.TaskEvent.TASK_SHOWN.name, it,
+                    true
+                )
+                if (isExists) {
+                    return@launch
+                }
+            }
+
             val taskToMeLocalData =
                 TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
             val taskHiddenLocalData =
@@ -3771,6 +3830,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(),
 
                     EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                 }
+            }
+
+            hideData?.taskId?.let {
+                TaskEventsList.removeEvent(
+                    SocketHandler.TaskEvent.TASK_SHOWN.name, it
+                )
             }
         }
 
