@@ -13,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
 import com.zstronics.ceibro.base.KEY_TOKEN_VALID
@@ -99,9 +100,9 @@ class MyConnectionV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         contactsPermissionGranted = isPermissionGranted(Manifest.permission.READ_CONTACTS)
-//        if (BuildConfig.DEBUG) {
-        mViewDataBinding.contactsInfoBtn.visibility = View.VISIBLE
-//        }
+        if (BuildConfig.DEBUG) {
+            mViewDataBinding.contactsInfoBtn.visibility = View.VISIBLE
+        }
         mViewDataBinding.connectionInfoNoContactPermission.visibility = View.GONE
         mViewDataBinding.connectionInfoOnDisabledAutoSyncLayout.visibility = View.GONE
         mViewDataBinding.connectionInfoNoContactFound.visibility = View.GONE
@@ -199,7 +200,8 @@ class MyConnectionV2Fragment :
 
         val isTokenValid = viewModel.sessionManager.getBooleanValue(KEY_TOKEN_VALID)
         val isContactsCursorValid = viewModel.sessionManager.getBooleanValue(KEY_CONTACTS_CURSOR)
-        val updatedAndNewContactsSize = viewModel.sessionManager.getIntegerValue(KEY_updatedAndNewContacts)
+        val updatedAndNewContactsSize =
+            viewModel.sessionManager.getIntegerValue(KEY_updatedAndNewContacts)
 
         viewState.isValidSession = isTokenValid
         viewState.isCursorValid = isContactsCursorValid
@@ -306,7 +308,8 @@ class MyConnectionV2Fragment :
     private fun showContactsInfoBottomSheet() {
         val isTokenValid = viewModel.sessionManager.getBooleanValue(KEY_TOKEN_VALID)
         val isContactsCursorValid = viewModel.sessionManager.getBooleanValue(KEY_CONTACTS_CURSOR)
-        val updatedAndNewContactsSize = viewModel.sessionManager.getIntegerValue(KEY_updatedAndNewContacts)
+        val updatedAndNewContactsSize =
+            viewModel.sessionManager.getIntegerValue(KEY_updatedAndNewContacts)
         viewState.isValidSession = isTokenValid
         viewState.isCursorValid = isContactsCursorValid
         viewState.newUpdatedContactListSize = updatedAndNewContactsSize

@@ -72,7 +72,8 @@ class NewTaskV2Fragment :
                 }
                 viewModel.createNewTask(
                     doneImageRequired = doneImageRequired,
-                    doneCommentsRequired = doneCommentsRequired
+                    doneCommentsRequired = doneCommentsRequired,
+                    requireActivity()
                 ) {
                     val bundle = Bundle()
                     bundle.putBoolean("createdNewTask", true)
