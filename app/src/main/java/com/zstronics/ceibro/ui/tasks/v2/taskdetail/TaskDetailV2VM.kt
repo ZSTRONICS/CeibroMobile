@@ -123,7 +123,7 @@ class TaskDetailV2VM @Inject constructor(
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
                     if (taskSeenData != null) {
-                        updateGenericTaskSeenInLocal(taskSeenData, taskDao, user?.id)
+                        updateGenericTaskSeenInLocal(taskSeenData, taskDao, user?.id, sessionManager)
                         onBack(taskSeenData)
                     }
 

@@ -154,14 +154,14 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                showCloseAppDialog()
-            }
-        }
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+//
+//        val callback = object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                showCloseAppDialog()
+//            }
+//        }
+//
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
         when (connectivityStatus) {     // this needs to be here to check internet last state, because if user navigate from dashboard to any other screen
                                         // then comes back to this UI, then this object will keep the sync icon state visible to other users
@@ -415,7 +415,9 @@ class DashboardFragment :
                         }
                     }
                 }
-            } else if (socketData.module == "SubTaskComments") {
+            }
+
+            else if (socketData.module == "SubTaskComments") {
                 if (socketData.eventType == SocketHandler.TaskEvent.COMMENT_WITH_FILES.name) {
                     val commentWithFile =
                         gson.fromJson<CommentsFilesUploadedSocketEventResponse>(

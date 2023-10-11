@@ -214,7 +214,7 @@ class TaskToMeFragment :
 
     override fun onResume() {
         super.onResume()
-        loadTasks(true)
+        loadTasks(false)
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.value = false
         viewModel.saveToMeUnread(false)

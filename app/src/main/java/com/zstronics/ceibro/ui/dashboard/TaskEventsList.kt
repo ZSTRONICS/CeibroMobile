@@ -1,22 +1,25 @@
 package com.zstronics.ceibro.ui.dashboard
 
 object TaskEventsList {
-
-    val list = mutableListOf<Pair<String, String>>()
+    val keyValueMap = HashMap<String, Boolean>()
 
     private fun addEvent(eventType: String, value: String) {
-        list.add(eventType to value)
+        if (!keyValueMap.contains(eventType + '_' + value)) {
+            keyValueMap[eventType + '_' + value] = true
+        }
     }
 
     fun removeEvent(eventType: String, value: String) {
-        list.remove(eventType to value)
+        if (keyValueMap.contains(eventType + '_' + value)) {
+            keyValueMap.remove(eventType + '_' + value)
+        }
     }
 
     fun isExists(eventType: String, value: String, upsert: Boolean = false): Boolean {
-        val found = list.filter { it.first == eventType && it.second == value }
-        if (found.isEmpty() && upsert) {
+        val found  = keyValueMap.contains(eventType + '_' + value)
+        if (!found && upsert) {
             addEvent(eventType, value)
         }
-        return found.isNotEmpty()
+        return found
     }
 }

@@ -35,7 +35,13 @@ data class TaskSeenResponse(
         @SerializedName("stateChanged")
         val stateChanged: Boolean,
         @SerializedName("eventInitiator")
-        val eventInitiator: String
+        val eventInitiator: String,
+        @SerializedName("updatedAt")
+        val updatedAt: String,
+        @SerializedName("newTaskData")
+        val newTaskData: EventV2Response.Data.TaskStatesData,
+        @SerializedName("oldTaskData")
+        val oldTaskData: EventV2Response.Data.TaskStatesData
     ) : Parcelable
 
 }

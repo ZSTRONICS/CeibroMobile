@@ -435,6 +435,7 @@ class TaskDetailV2Fragment :
                         viewModel.updateTaskCommentInLocal(
                             eventData,
                             viewModel.taskDao,
+                            viewModel.user?.id,
                             viewModel.sessionManager
                         )
                     }

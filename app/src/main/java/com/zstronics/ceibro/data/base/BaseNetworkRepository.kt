@@ -42,7 +42,7 @@ abstract class BaseNetworkRepository : INetwork {
                 return ApiResponse.Error(
                     ApiError(
                         getDefaultCode(),
-                        "No response from server"
+                        exception.localizedMessage
                     )
                 )
             }
