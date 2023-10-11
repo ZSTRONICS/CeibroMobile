@@ -49,7 +49,6 @@ class TaskToMeVM @Inject constructor(
     private val _doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _doneTasks
     var originalDoneTasks: MutableList<CeibroTaskV2> = mutableListOf()
-
     private val _allTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
     val allTasks: MutableLiveData<TaskV2Response.AllTasks> = _allTasks
     var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
@@ -310,7 +309,7 @@ class TaskToMeVM @Inject constructor(
             when (val response = remoteTask.hideTask(taskId)) {
                 is ApiResponse.Success -> {
                     val hideResponse = response.data
-                    updateTaskHideInLocal(hideResponse, taskDao)
+                    updateTaskHideInLocal(hideResponse, taskDao,sessionManager)
                     loading(false, "")
                     callBack.invoke(true)
                 }

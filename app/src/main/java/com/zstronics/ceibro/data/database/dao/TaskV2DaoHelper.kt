@@ -24,7 +24,7 @@ class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
                 canceled = mutableListOf()
             )
         )
-        val job = GlobalScope.launch {
+        GlobalScope.launch {
             when (rootState) {
                 TaskRootStateTags.ToMe.tagValue -> {
                     val newTask = taskDao.getTasksByState(rootState, TaskStatus.NEW.name)
@@ -81,8 +81,7 @@ class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
                     )
                 }
             }
-        }
-        job.join()
+        }.join()
         return entity
     }
 

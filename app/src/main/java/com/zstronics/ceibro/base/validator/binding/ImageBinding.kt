@@ -29,6 +29,7 @@ object ImageBinding {
         imageView: AppCompatImageView,
         imageUrl: String?,
     ) {
+
         val context = imageView.context
 
         val circularProgressDrawable = CircularProgressDrawable(context)
@@ -44,8 +45,48 @@ object ImageBinding {
 
         Glide.with(context)
             .load(imageUrl)
-            .placeholder(R.drawable.profile_img)
+            .apply(requestOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+            })
+            .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
+
+//        val context = imageView.context
+//
+//        val circularProgressDrawable = CircularProgressDrawable(context)
+//        circularProgressDrawable.strokeWidth = 5f
+//        circularProgressDrawable.centerRadius = 30f
+//        circularProgressDrawable.start()
+//
+//        val requestOptions = RequestOptions()
+//            .placeholder(circularProgressDrawable)
+//            .error(R.drawable.profile_img)
+//            .skipMemoryCache(true)
+//            .centerCrop()
+//
+//        Glide.with(context)
+//            .load(imageUrl)
+//            .placeholder(R.drawable.profile_img)
+//            .into(imageView)
     }
 
     @JvmStatic

@@ -142,7 +142,7 @@ class DashboardVM @Inject constructor(
                             arguments,
                             object : TypeToken<SocketTaskSeenV2Response>() {}.type
                         ).data
-                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId)
+                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId, sessionManager)
                     }
 
                     SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
@@ -157,25 +157,33 @@ class DashboardVM @Inject constructor(
                             updateTaskCommentInLocal(
                                 commentData,
                                 taskDao,
-                                sessionManager
-                            )
-                        }
-                        if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
-                            updateTaskCanceledInLocal(
-                                commentData,
-                                taskDao,
                                 userId,
                                 sessionManager
                             )
                         }
+                        if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
+                            if (commentData != null) {
+                                updateTaskCanceledInLocal(
+                                    commentData,
+                                    taskDao,
+                                    userId,
+                                    sessionManager
+                                )
+                            }
+                        }
                         if (socketData.eventType == SocketHandler.TaskEvent.UN_CANCEL_TASK.name) {
-                            updateTaskUnCanceledInLocal(
-                                commentData,
-                                taskDao
-                            )
+                            if (commentData != null) {
+                                updateTaskUnCanceledInLocal(
+                                    commentData,
+                                    taskDao,
+                                    sessionManager
+                                )
+                            }
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
-                            updateTaskDoneInLocal(commentData, taskDao, sessionManager)
+                            if (commentData != null) {
+                                updateTaskDoneInLocal(commentData, taskDao, sessionManager)
+                            }
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
                             println("Socket: JOINED_TASK triggered ")
@@ -191,10 +199,14 @@ class DashboardVM @Inject constructor(
                             object : TypeToken<SocketHideUnHideTaskResponse>() {}.type
                         ).data
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
-                            updateTaskHideInLocal(hideData, taskDao)
+                            if (hideData != null) {
+                                updateTaskHideInLocal(hideData, taskDao, sessionManager)
+                            }
                         }
                         if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
-                            updateTaskUnHideInLocal(hideData, taskDao)
+                            if (hideData != null) {
+                                updateTaskUnHideInLocal(hideData, taskDao, sessionManager)
+                            }
                         }
                     }
 
@@ -710,6 +722,7 @@ class DashboardVM @Inject constructor(
                     connectionsV2Dao.insertAll(response.data.contacts)
                     sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
                 }
+
                 is ApiResponse.Error -> {
                 }
             }

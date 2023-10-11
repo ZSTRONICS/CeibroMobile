@@ -268,7 +268,8 @@ class TaskHiddenVM @Inject constructor(
                 is ApiResponse.Success -> {
                     updateTaskUnCanceledInLocal(
                         response.data.data,
-                        taskDao
+                        taskDao,
+                        sessionManager
                     )
                     val handler = Handler()
                     handler.postDelayed({
@@ -291,7 +292,7 @@ class TaskHiddenVM @Inject constructor(
             when (val response = remoteTask.unHideTask(taskId)) {
                 is ApiResponse.Success -> {
                     val unHideResponse = response.data
-                    updateTaskUnHideInLocal(unHideResponse, taskDao)
+                    updateTaskUnHideInLocal(unHideResponse, taskDao, sessionManager)
                     loading(false, "")
                     callBack.invoke(true)
                 }

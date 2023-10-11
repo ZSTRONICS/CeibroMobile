@@ -247,8 +247,10 @@ class SessionManager constructor(
         return sharedPreferenceManager.getValueString(KEY_DATA_SYNC_UPDATED_AT) ?: ""
     }
 
-    fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String) {
-        sharedPreferenceManager.saveString(KEY_DATA_SYNC_UPDATED_AT, updatedAtTimeStamp)
+    fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String?) {
+        if (!updatedAtTimeStamp.isNullOrEmpty()) {
+            sharedPreferenceManager.saveString(KEY_DATA_SYNC_UPDATED_AT, updatedAtTimeStamp)
+        }
     }
 
     fun getBooleanValue(key: String): Boolean {

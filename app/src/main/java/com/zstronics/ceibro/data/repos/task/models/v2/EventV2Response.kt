@@ -43,7 +43,9 @@ data class EventV2Response(
         @SerializedName("oldTaskData")
         val oldTaskData: TaskStatesData,
         @SerializedName("updatedAt")
-        val updatedAt: String
+        val updatedAt: String,
+        @SerializedName("taskUpdatedAt")
+        val taskUpdatedAt: String
     ) : Parcelable {
 
         @Parcelize
