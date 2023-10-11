@@ -230,6 +230,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         removeAllFiles()
     }
 
+
     fun updateCreatedTaskInLocal(
         task: CeibroTaskV2?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
     ) {
