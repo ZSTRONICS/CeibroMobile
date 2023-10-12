@@ -128,6 +128,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         handleOnClick(id)
     }
 
+    private var draftRecordCallBack: ((Int) -> Unit)? = null
+    override fun setCallback(callback: (Int) -> Unit) {
+        this.draftRecordCallBack = callback
+    }
+
     /**
      * Override this method in your [ViewModel]
      * you can manage your owen onclick logic by overriding this method
@@ -153,6 +158,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     fun createNotification(notification: LocalEvents.CreateNotification?) {
         _notificationEvent.postValue(notification)
     }
+
+    val _draftRecordObserver = MutableLiveData<Int>()
 
 
     private val indeterminateNotificationID = 1
@@ -3848,8 +3855,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             )
                             // Remove the processed record from the list
                             val updatedRecords = records - newTaskRequest
+
+                            draftRecordCallBack?.invoke(updatedRecords.size)
+                            _draftRecordObserver.postValue(updatedRecords.size)
                             // Recursively process the next record
                             processNextRecord(updatedRecords)
+
+
                         }
                     } else {
                         //alert(errorMessage)
@@ -3866,6 +3878,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             )
                             // Remove the processed record from the list
                             val updatedRecords = records - newTaskRequest
+                            draftRecordCallBack?.invoke(updatedRecords.size)
+                            _draftRecordObserver.postValue(updatedRecords.size)
+
                             // Recursively process the next record
                             processNextRecord(updatedRecords)
                         }

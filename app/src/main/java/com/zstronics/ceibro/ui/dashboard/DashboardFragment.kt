@@ -8,7 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.activity.OnBackPressedCallback
+import androidx.annotation.MainThread
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -41,6 +41,7 @@ import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -152,6 +153,25 @@ class DashboardFragment :
         }
     }
 
+    @MainThread
+    private fun updateDraftRecord(unSyncedTasks: Int) {
+        if (unSyncedTasks > 0) {
+            mViewDataBinding.draftTaskCount.visibility = View.VISIBLE
+            if (unSyncedTasks > 99) {
+                mViewDataBinding.draftTaskCount.post {
+                    mViewDataBinding.draftTaskCount.text = "99+"
+                }
+            } else {
+                mViewDataBinding.draftTaskCount.post {
+                    mViewDataBinding.draftTaskCount.text = unSyncedTasks.toString()
+                }
+            }
+        } else {
+            mViewDataBinding.draftTaskCount.visibility = View.GONE
+        }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //
@@ -163,8 +183,25 @@ class DashboardFragment :
 //
 //        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
+        val coroutineScope = viewLifecycleOwner.lifecycleScope
+        coroutineScope.launch(Dispatchers.IO) {
+            val unSyncedTasks = viewModel.getDraftTasks()
+            updateDraftRecord(unSyncedTasks.size)
+        }
+
+//        viewModel.setCallback {
+//            updateDraftRecord(it)
+//        }
+
+      /*  viewModel._draftRecordObserver.observe(viewLifecycleOwner) {
+            if (it != -1) {
+                updateDraftRecord(it)
+            }
+        }
+*/
+
         when (connectivityStatus) {     // this needs to be here to check internet last state, because if user navigate from dashboard to any other screen
-                                        // then comes back to this UI, then this object will keep the sync icon state visible to other users
+            // then comes back to this UI, then this object will keep the sync icon state visible to other users
             "Available" -> {
                 mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
             }
@@ -415,9 +452,7 @@ class DashboardFragment :
                         }
                     }
                 }
-            }
-
-            else if (socketData.module == "SubTaskComments") {
+            } else if (socketData.module == "SubTaskComments") {
                 if (socketData.eventType == SocketHandler.TaskEvent.COMMENT_WITH_FILES.name) {
                     val commentWithFile =
                         gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
@@ -499,7 +534,6 @@ class DashboardFragment :
         }
         Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCreateSimpleNotification(event: LocalEvents.CreateSimpleNotification?) {
