@@ -116,6 +116,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     fun getString(keyID: Int, appContext: Context): String = appContext.getString(keyID)
 
+    companion object{
+        val syncDraftRecords=MutableLiveData<Int>()
+    }
 
     override val clickEvent: SingleClickEvent? = SingleClickEvent()
 
@@ -3751,6 +3754,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     @Inject
     lateinit var dashboardRepositoryInternal: IDashboardRepository
     suspend fun syncDraftTask(context: Context) {
+
+
         Log.d("SyncDraftTask", "syncDraftTask")
         val user = sessionManagerInternal.getUser().value
         val unsyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
@@ -3859,6 +3864,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             draftRecordCallBack?.invoke(updatedRecords.size)
                             _draftRecordObserver.postValue(updatedRecords.size)
                             // Recursively process the next record
+
+
+                            syncDraftRecords.postValue(updatedRecords.size)
+                          //  sharedViewModel.syncedRecord.postValue(updatedRecords.size)
                             processNextRecord(updatedRecords)
 
 
@@ -3882,6 +3891,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             _draftRecordObserver.postValue(updatedRecords.size)
 
                             // Recursively process the next record
+                            syncDraftRecords.postValue(updatedRecords.size)
                             processNextRecord(updatedRecords)
                         }
                     } else {

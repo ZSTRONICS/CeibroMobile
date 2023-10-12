@@ -160,7 +160,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/feedbackBtn"
                 app:layout_constraintTop_toTopOf="@+id/profileIcon" />
             <TextView
-                android:id="@+id/draftTaskCount"
+                android:id="@+id/draftTaskCounter"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:backgroundTint="@color/appGrey2"
@@ -172,6 +172,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 android:visibility="gone"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:outlineProvider="none"
                 android:outlineSpotShadowColor="@color/white"
                 android:text="0"

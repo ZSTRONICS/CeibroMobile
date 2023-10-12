@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_4sdp"
+        android:paddingEnd="@dimen/_4sdp"
+        android:paddingTop="@dimen/_3sdp"
+        android:paddingBottom="@dimen/_3sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/taskCardParentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/taskCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginBottom="7dp"
+                app:cardCornerRadius="9dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/taskCardLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="1dp"
+                    android:background="@drawable/task_card_outline">
+
+                    <LinearLayout
+                        android:id="@+id/taskToLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:gravity="start"
+                        android:orientation="horizontal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/taskToHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_bold"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:text="@string/to_heading"
+                            android:textColor="@color/appTextGrey"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/taskToText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_medium"
+                            android:gravity="start"
+                            android:layout_marginStart="@dimen/_3sdp"
+                            android:maxLines="1"
+
+                            android:textColor="@color/appTextGrey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/taskProjectLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_9sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:gravity="start"
+                        android:visibility="visible"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/taskToLayout"
+                        app:layout_constraintTop_toTopOf="@+id/taskToLayout">
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/taskTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:textSize="16.5sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/taskToLayout"
+                        app:layout_constraintVertical_bias="0.0" />
+
+
+
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/taskCardHeaderLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="1dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/task_card_less_corner_outline"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/taskCard"
+                app:layout_constraintEnd_toEndOf="@+id/taskCard"
+                app:layout_constraintStart_toStartOf="@+id/taskCard"
+                app:layout_constraintTop_toTopOf="@+id/taskCard">
+
+                <TextView
+                    android:id="@+id/taskId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/task_card_less_corner_outline"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:maxLength="9"
+                    android:paddingStart="7dp"
+                    android:paddingTop="2.5dp"
+                    android:paddingEnd="7dp"
+                    android:paddingBottom="2.5dp"
+                    android:visibility="gone"
+                    android:textColor="@color/black"
+                    android:textSize="11.5sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/taskDueDateLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:gravity="center|start"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toStartOf="@+id/taskCanceledText"
+                    app:layout_constraintBottom_toBottomOf="@+id/taskId"
+                    app:layout_constraintStart_toEndOf="@+id/taskId"
+                    app:layout_constraintTop_toTopOf="@+id/taskId">
+
+
+                    <TextView
+                        android:id="@+id/taskDueDateHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLength="16"
+                        android:maxLines="1"
+                        android:text="@string/due_date_heading"
+                        android:textColor="@color/black"
+                        android:textSize="11.5sp" />
+
+                    <TextView
+                        android:id="@+id/taskDueDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:ellipsize="end"
+                        android:text="dsfsa"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLength="25"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:textSize="11.5sp" />
+                    <TextView
+                        android:id="@+id/files"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:ellipsize="end"
+                        android:text="filesfdsjh"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLength="25"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/taskTickMark"
+                    android:layout_width="21dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="1dp"
+                    android:src="@drawable/icon_done_all"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/taskId"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/taskId"
+                    app:tint="@color/appGrey3" />
+
+                <TextView
+                    android:id="@+id/taskCanceledText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:background="@drawable/input_field_bottom_corner"
+                    android:backgroundTint="@color/appPaleRed"
+                    android:fontFamily="@font/inter_medium"
+                    android:paddingStart="9dp"
+                    android:paddingTop="1dp"
+                    android:paddingEnd="9dp"
+                    android:paddingBottom="3dp"
+                    android:text="@string/canceled"
+                    android:textColor="@color/appBlue"
+                    android:textSize="11.5sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/taskId"
+                    app:layout_constraintEnd_toStartOf="@+id/taskTickMark"
+                    app:layout_constraintTop_toTopOf="@+id/taskId" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -27,12 +27,17 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.AllFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
+import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
+import com.zstronics.ceibro.ui.dashboard.BottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -64,7 +69,9 @@ class DashboardFragment :
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
+
     override fun onClick(id: Int) {
+
         when (id) {
             R.id.createNewTaskBtn -> {
                 navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
@@ -91,6 +98,16 @@ class DashboardFragment :
 
             R.id.projectsBtn -> {
                 changeSelectedTab(R.id.projectsBtn, false)
+            }
+
+            R.id.draftTaskCounter -> {
+                showUnSyncTaskBottomSheet()
+            }
+
+            R.id.sync -> {
+                if (mViewDataBinding.draftTaskCounter.visibility == View.VISIBLE) {
+                    showUnSyncTaskBottomSheet()
+                }
             }
         }
     }
@@ -150,24 +167,80 @@ class DashboardFragment :
             R.id.projectsBtn -> {
                 viewState.projectsSelected.value = true
             }
+
+
         }
     }
+
+    private fun showUnSyncTaskBottomSheet() {
+
+        val coroutineScope = viewLifecycleOwner.lifecycleScope
+        coroutineScope.launch(Dispatchers.Main) {
+            val topic: TopicsV2DatabaseEntity? = viewModel.getTopicList()
+            val contactsFromDatabase: List<AllCeibroConnections.CeibroConnection> =
+                viewModel.getContactsList()
+            val list = viewModel.getDraftTasks()
+
+
+            val offlineTaskData = ArrayList<LocalTaskDetail>()
+
+            list.forEach { item ->
+
+                val contactList = mutableListOf<String>() // Create a new contactList for each item
+
+                if (item.assignedToState.isNotEmpty()) {
+                    item.assignedToState.forEach {
+
+                        contactsFromDatabase.forEach { contact ->
+                            if (contact.phoneNumber == it.phoneNumber) {
+                                contactList.add(contact.contactFullName ?: it.phoneNumber)
+                            }
+                        }
+                    }
+                }
+
+                if (item.invitedNumbers.isNotEmpty()) {
+                    item.invitedNumbers.forEach {
+                        contactsFromDatabase.forEach { contact ->
+                            if (contact.phoneNumber == it) {
+                                contactList.add(contact.contactFullName ?: it)
+                            }
+                        }
+                    }
+                }
+
+                var topicName = topic?.topicsData?.recentTopics?.find { it.id == item.topic }?.topic
+                if (topicName.isNullOrEmpty()) {
+                    topicName = topic?.topicsData?.allTopics?.find { it.id == item.topic }?.topic
+                }
+
+                offlineTaskData.add(LocalTaskDetail(topicName, contactList, item.dueDate,item.filesData?.size?:0))
+            }
+
+            val sheet = UnSyncTaskBottomSheet(offlineTaskData)
+            sheet.isCancelable = true
+            sheet.show(childFragmentManager, "UnSyncTaskBottomSheet")
+        }
+
+
+    }
+
 
     @MainThread
     private fun updateDraftRecord(unSyncedTasks: Int) {
         if (unSyncedTasks > 0) {
-            mViewDataBinding.draftTaskCount.visibility = View.VISIBLE
+            mViewDataBinding.draftTaskCounter.visibility = View.VISIBLE
             if (unSyncedTasks > 99) {
-                mViewDataBinding.draftTaskCount.post {
-                    mViewDataBinding.draftTaskCount.text = "99+"
+                mViewDataBinding.draftTaskCounter.post {
+                    mViewDataBinding.draftTaskCounter.text = "99+"
                 }
             } else {
-                mViewDataBinding.draftTaskCount.post {
-                    mViewDataBinding.draftTaskCount.text = unSyncedTasks.toString()
+                mViewDataBinding.draftTaskCounter.post {
+                    mViewDataBinding.draftTaskCounter.text = unSyncedTasks.toString()
                 }
             }
         } else {
-            mViewDataBinding.draftTaskCount.visibility = View.GONE
+            mViewDataBinding.draftTaskCounter.visibility = View.GONE
         }
     }
 
@@ -189,16 +262,12 @@ class DashboardFragment :
             updateDraftRecord(unSyncedTasks.size)
         }
 
-//        viewModel.setCallback {
-//            updateDraftRecord(it)
-//        }
 
-      /*  viewModel._draftRecordObserver.observe(viewLifecycleOwner) {
-            if (it != -1) {
-                updateDraftRecord(it)
-            }
+
+        HiltBaseViewModel.syncDraftRecords.observe(viewLifecycleOwner) {
+            updateDraftRecord(it)
         }
-*/
+
 
         when (connectivityStatus) {     // this needs to be here to check internet last state, because if user navigate from dashboard to any other screen
             // then comes back to this UI, then this object will keep the sync icon state visible to other users
@@ -362,6 +431,7 @@ class DashboardFragment :
 //        viewModel.handleSocketEvents()
         handleFileUploaderSocketEvents()
         viewModel.launch {
+
             viewModel.syncDraftTask(requireContext())
         }
         setConnectivityIcon()

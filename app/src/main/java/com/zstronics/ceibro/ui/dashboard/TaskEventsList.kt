@@ -16,7 +16,7 @@ object TaskEventsList {
     }
 
     fun isExists(eventType: String, value: String, upsert: Boolean = false): Boolean {
-        val found  = keyValueMap.contains(eventType + '_' + value)
+        val found = keyValueMap.contains(eventType + '_' + value)
         if (!found && upsert) {
             addEvent(eventType, value)
         }
