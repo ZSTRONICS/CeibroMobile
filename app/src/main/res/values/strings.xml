@@ -531,4 +531,6 @@
     <string name="are_you_sure_you_want_to_close_the_app">Are you sure you want to close the app?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="logout">Logout</string>
+    <string name="if_you_log_out_while_in_offline_mode_all_the_tasks_created_offline_will_be_deleted">If you log out while in offline mode, all the tasks created offline will be deleted.</string>
 </resources>

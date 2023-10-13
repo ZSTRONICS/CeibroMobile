@@ -1,8 +1,11 @@
 package com.zstronics.ceibro.ui.profile
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.BuildConfig
@@ -16,6 +19,8 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -35,18 +40,30 @@ class ProfileFragment :
             R.id.editProfileBtn -> navigateToEditProfile()
             107 -> navigateToAdminsPanel()
             R.id.logoutBtn -> {
-                viewModel.endUserSession(requireContext())
-                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                    options = Bundle(),
-                    clearPrevious = true
-                ) {
-                    putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
-                    putExtra(
-                        NAVIGATION_Graph_START_DESTINATION_ID,
-                        R.id.loginFragment
-                    )
+                val coroutineScope = viewLifecycleOwner.lifecycleScope
+                coroutineScope.launch(Dispatchers.Main) {
+                    val unSyncedTasks = viewModel.getDraftTasks()
+                    if (unSyncedTasks.isNotEmpty()) {
+                        showLogoutDialog()
+                    } else {
+                        viewModel.endUserSession(requireContext())
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = Bundle(),
+                            clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.loginFragment
+                            )
+                        }
+                        val threadScope = viewLifecycleOwner.lifecycleScope
+                        threadScope.launch(Dispatchers.IO) {
+                            Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
+                        }
+
+                    }
                 }
-                Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
             }
         }
     }
@@ -94,4 +111,30 @@ class ProfileFragment :
         }
     }
 
+    private fun showLogoutDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.logout))
+            .setMessage(getString(R.string.if_you_log_out_while_in_offline_mode_all_the_tasks_created_offline_will_be_deleted))
+            .setPositiveButton(getString(R.string.yes)) { dialog: DialogInterface, _: Int ->
+                viewModel.endUserSession(requireContext())
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = Bundle(),
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, R.navigation.onboarding_nav_graph)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        R.id.loginFragment
+                    )
+                }
+                val threadScope = viewLifecycleOwner.lifecycleScope
+                threadScope.launch(Dispatchers.IO) {
+                    Thread { activity?.let { Glide.get(it).clearDiskCache() } }.start()
+                }
+            }
+            .setNegativeButton(getString(R.string.no)) { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 }

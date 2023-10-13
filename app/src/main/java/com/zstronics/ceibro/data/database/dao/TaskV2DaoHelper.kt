@@ -27,9 +27,20 @@ class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
         GlobalScope.launch {
             when (rootState) {
                 TaskRootStateTags.ToMe.tagValue -> {
-                    val newTask = taskDao.getTasksByState(rootState, TaskStatus.NEW.name)
-                    val ongoingTask = taskDao.getTasksByState(rootState, TaskStatus.ONGOING.name)
-                    val doneTask = taskDao.getTasksByState(rootState, TaskStatus.DONE.name)
+                    var newTask: TasksV2DatabaseEntitySingle? = null
+                    var ongoingTask: TasksV2DatabaseEntitySingle? = null
+                    var doneTask: TasksV2DatabaseEntitySingle? = null
+
+                    GlobalScope.launch {
+                        newTask = taskDao.getTasksByState(rootState, TaskStatus.NEW.name)
+                    }.join()
+                    GlobalScope.launch {
+                        ongoingTask = taskDao.getTasksByState(rootState, TaskStatus.ONGOING.name)
+                    }.join()
+                    GlobalScope.launch {
+                        doneTask = taskDao.getTasksByState(rootState, TaskStatus.DONE.name)
+                    }.join()
+
 
                     val allTasksList = TaskV2Response.AllTasks(
                         new = newTask?.task?.data ?: mutableListOf(),
@@ -45,9 +56,21 @@ class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
                 }
 
                 TaskRootStateTags.FromMe.tagValue -> {
-                    val unreadTask = taskDao.getTasksByState(rootState, TaskStatus.UNREAD.name)
-                    val ongoingTask = taskDao.getTasksByState(rootState, TaskStatus.ONGOING.name)
-                    val doneTask = taskDao.getTasksByState(rootState, TaskStatus.DONE.name)
+
+                    var unreadTask: TasksV2DatabaseEntitySingle? = null
+                    var ongoingTask: TasksV2DatabaseEntitySingle? = null
+                    var doneTask: TasksV2DatabaseEntitySingle? = null
+
+                    GlobalScope.launch {
+                        unreadTask = taskDao.getTasksByState(rootState, TaskStatus.UNREAD.name)
+                    }.join()
+                    GlobalScope.launch {
+                        ongoingTask = taskDao.getTasksByState(rootState, TaskStatus.ONGOING.name)
+                    }.join()
+                    GlobalScope.launch {
+                        doneTask = taskDao.getTasksByState(rootState, TaskStatus.DONE.name)
+                    }.join()
+
 
                     val allTasksList = TaskV2Response.AllTasks(
                         new = mutableListOf(),
@@ -63,9 +86,22 @@ class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
                 }
 
                 TaskRootStateTags.Hidden.tagValue -> {
-                    val canceledTask = taskDao.getTasksByState(rootState, TaskStatus.CANCELED.name)
-                    val ongoingTask = taskDao.getTasksByState(rootState, TaskStatus.ONGOING.name)
-                    val doneTask = taskDao.getTasksByState(rootState, TaskStatus.DONE.name)
+
+                    var canceledTask: TasksV2DatabaseEntitySingle? = null
+                    var ongoingTask: TasksV2DatabaseEntitySingle? = null
+                    var doneTask: TasksV2DatabaseEntitySingle? = null
+
+
+                    GlobalScope.launch {
+                        canceledTask = taskDao.getTasksByState(rootState, TaskStatus.CANCELED.name)
+                    }.join()
+                    GlobalScope.launch {
+                        ongoingTask = taskDao.getTasksByState(rootState, TaskStatus.ONGOING.name)
+                    }.join()
+                    GlobalScope.launch {
+                        doneTask = taskDao.getTasksByState(rootState, TaskStatus.DONE.name)
+                    }.join()
+
 
                     val allTasksList = TaskV2Response.AllTasks(
                         new = mutableListOf(),

@@ -16,6 +16,7 @@ import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -48,6 +49,10 @@ class ProfileVM @Inject constructor(
     override fun showMenuPopup(v: View) {
         val popUpWindowObj = popUpMenu(v)
         popUpWindowObj.showAsDropDown(v.findViewById(R.id.profileMenuBtn), 0, 35)
+    }
+
+    suspend fun getDraftTasks(): List<NewTaskV2Entity> {
+        return draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
     }
 
     override fun popUpMenu(v: View): PopupWindow {
@@ -102,6 +107,8 @@ class ProfileVM @Inject constructor(
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
+            draftNewTaskV2Internal.deleteAllData()
+
         }
         SocketHandler.sendLogout()
         sessionManager.endUserSession()
