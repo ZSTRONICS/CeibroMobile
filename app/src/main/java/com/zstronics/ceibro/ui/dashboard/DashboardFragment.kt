@@ -29,6 +29,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
+import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.AllFilesUploadedSocketEventResponse
@@ -101,12 +102,12 @@ class DashboardFragment :
             }
 
             R.id.draftTaskCounter -> {
-                showUnSyncTaskBottomSheet()
+                showUnSyncTaskBottomSheet(viewModel.sessionManager.getUser().value)
             }
 
             R.id.sync -> {
                 if (mViewDataBinding.draftTaskCounter.visibility == View.VISIBLE) {
-                    showUnSyncTaskBottomSheet()
+                    showUnSyncTaskBottomSheet(viewModel.sessionManager.getUser().value)
                 }
             }
         }
@@ -172,7 +173,7 @@ class DashboardFragment :
         }
     }
 
-    private fun showUnSyncTaskBottomSheet() {
+    private fun showUnSyncTaskBottomSheet(user: User?) {
 
         val coroutineScope = viewLifecycleOwner.lifecycleScope
         coroutineScope.launch(Dispatchers.Main) {
@@ -190,6 +191,14 @@ class DashboardFragment :
 
                 if (item.assignedToState.isNotEmpty()) {
                     item.assignedToState.forEach {
+
+
+                        user?.let { user ->
+                            if (it.phoneNumber == user.phoneNumber) {
+                                contactList.add(user.firstName)
+                            }
+                        }
+
 
                         contactsFromDatabase.forEach { contact ->
                             if (contact.phoneNumber == it.phoneNumber) {
@@ -214,7 +223,14 @@ class DashboardFragment :
                     topicName = topic?.topicsData?.allTopics?.find { it.id == item.topic }?.topic
                 }
 
-                offlineTaskData.add(LocalTaskDetail(topicName, contactList, item.dueDate,item.filesData?.size?:0))
+                offlineTaskData.add(
+                    LocalTaskDetail(
+                        topicName,
+                        contactList,
+                        item.dueDate,
+                        item.filesData?.size ?: 0
+                    )
+                )
             }
 
             val sheet = UnSyncTaskBottomSheet(offlineTaskData)
@@ -244,6 +260,14 @@ class DashboardFragment :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val coroutineScope = viewLifecycleOwner.lifecycleScope
+        coroutineScope.launch(Dispatchers.IO) {
+            val unSyncedTasks = viewModel.getDraftTasks()
+            updateDraftRecord(unSyncedTasks.size)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -256,11 +280,6 @@ class DashboardFragment :
 //
 //        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
-        val coroutineScope = viewLifecycleOwner.lifecycleScope
-        coroutineScope.launch(Dispatchers.IO) {
-            val unSyncedTasks = viewModel.getDraftTasks()
-            updateDraftRecord(unSyncedTasks.size)
-        }
 
 
 

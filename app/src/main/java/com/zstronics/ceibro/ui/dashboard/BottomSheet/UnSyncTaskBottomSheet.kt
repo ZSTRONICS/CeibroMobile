@@ -43,7 +43,7 @@ class UnSyncTaskBottomSheet(private val draftTasks: ArrayList<LocalTaskDetail>) 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = UnSyncTasksAdapter()
+
         binding.taskRV.adapter = adapter
         draftTasks.let {
             if (draftTasks.isNotEmpty()) {

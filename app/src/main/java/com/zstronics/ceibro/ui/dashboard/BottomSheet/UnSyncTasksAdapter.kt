@@ -55,7 +55,7 @@ class UnSyncTasksAdapter @Inject constructor() :
 
             item.assignee?.let {
                 binding.taskToText.text = if (item.assignee.size > 1) {
-                    "${item.assignee[0]}, +1"
+                    "${item.assignee[0]}, +${item.assignee.size - 1}"
                 } else (if (item.assignee.size == 1) {
                     item.assignee[0]
                 } else {
