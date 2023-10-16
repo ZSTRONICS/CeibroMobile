@@ -116,8 +116,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     fun getString(keyID: Int, appContext: Context): String = appContext.getString(keyID)
 
-    companion object{
-        val syncDraftRecords=MutableLiveData<Int>()
+    companion object {
+        val syncDraftRecords = MutableLiveData<Int>()
     }
 
     override val clickEvent: SingleClickEvent? = SingleClickEvent()
@@ -286,7 +286,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 )
                             )
                         )
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                        //   EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
 
                     if (task.isAssignedToMe) {
@@ -317,9 +317,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         sharedViewModel?.isToMeUnread?.value = true
                         sessionManager.saveToMeUnread(true)
 
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
-
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     if (task.creator.id == userId) {
                         TaskEventsList.removeEvent(
                             SocketHandler.TaskEvent.TASK_CREATED.name,
@@ -3867,7 +3866,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
 
                             syncDraftRecords.postValue(updatedRecords.size)
-                          //  sharedViewModel.syncedRecord.postValue(updatedRecords.size)
+                            //  sharedViewModel.syncedRecord.postValue(updatedRecords.size)
                             processNextRecord(updatedRecords)
 
 

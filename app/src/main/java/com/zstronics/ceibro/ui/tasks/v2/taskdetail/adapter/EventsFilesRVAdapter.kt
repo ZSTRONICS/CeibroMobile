@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
-import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
 import javax.inject.Inject
 
@@ -14,6 +13,10 @@ class EventsFilesRVAdapter @Inject constructor() :
     var itemClickListener: ((view: View, position: Int, data: EventFiles) -> Unit)? =
         null
     var listItems: MutableList<EventFiles> = mutableListOf()
+
+
+    var fileClickListener: ((view: View, position: Int, data: EventFiles) -> Unit)? =
+        null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -46,6 +49,21 @@ class EventsFilesRVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: EventFiles) {
+
+            binding.root.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+            binding.mainLayout.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+
+            binding.fileName.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+            binding.fileSize.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+
             binding.clearIcon.setOnClickListener {
 //                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
             }

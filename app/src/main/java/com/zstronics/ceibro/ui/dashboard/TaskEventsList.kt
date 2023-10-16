@@ -1,7 +1,7 @@
 package com.zstronics.ceibro.ui.dashboard
 
 object TaskEventsList {
-    val keyValueMap = HashMap<String, Boolean>()
+    private val keyValueMap = HashMap<String, Boolean>()
 
     private fun addEvent(eventType: String, value: String) {
         if (!keyValueMap.contains(eventType + '_' + value)) {

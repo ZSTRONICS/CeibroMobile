@@ -12,6 +12,7 @@ import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -361,7 +362,8 @@ class TaskDetailV2Fragment :
 
         viewModel.taskEvents.observe(viewLifecycleOwner) {
             viewModel.sessionManager.getUser().value?.id?.let { userId ->
-                eventsAdapter.setList(it,
+                eventsAdapter.setList(
+                    it,
                     userId
                 )
             }
@@ -373,6 +375,14 @@ class TaskDetailV2Fragment :
                 }
         }
         mViewDataBinding.eventsRV.adapter = eventsAdapter
+        eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
+
+            val bundle = Bundle()
+            bundle.putParcelable("eventFile", data)
+            navigate(R.id.fileViewerFragment, bundle)
+        }
+
+
         eventsAdapter.openEventImageClickListener =
             { _: View, position: Int, imageFiles: List<TaskFiles> ->
 //                viewModel.openImageViewer(requireContext(), fileUrls, position)
