@@ -96,7 +96,7 @@ class ChangePhoneNumberVerifyOtpSheet constructor() : BottomSheetDialogFragment(
     }
 
     private fun validatePassword(password: String): Boolean {
-        val regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,}\$"
+        val regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}\$"
         return password.length in 8..35
     }
 
