@@ -377,6 +377,7 @@ class TaskDetailV2Fragment :
         mViewDataBinding.eventsRV.adapter = eventsAdapter
         eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
 
+
             val bundle = Bundle()
             bundle.putParcelable("eventFile", data)
             navigate(R.id.fileViewerFragment, bundle)
@@ -448,6 +449,7 @@ class TaskDetailV2Fragment :
                             viewModel.user?.id,
                             viewModel.sessionManager
                         )
+                        scrollToBottomWithDelay()
                     }
                 }
 
@@ -556,5 +558,11 @@ class TaskDetailV2Fragment :
         mViewDataBinding.bodyScroll.postDelayed({
             mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
         }, 260)
+    }
+
+    private fun scrollToBottomWithDelay() {
+        mViewDataBinding.bodyScroll.postDelayed({
+            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
+        }, 1500)
     }
 }
