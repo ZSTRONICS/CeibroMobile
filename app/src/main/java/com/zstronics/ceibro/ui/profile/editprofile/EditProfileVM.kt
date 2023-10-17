@@ -80,6 +80,7 @@ class EditProfileVM @Inject constructor(
             when (val response = repository.updateProfileCall(request)) {
 
                 is ApiResponse.Success -> {
+                    println("user data on upadation:${response.data}")
                     sessionManager.updateUser(response.data.user)
                     loading(false, "Profile Updated successfully")
                     onProfileUpdated.invoke()
