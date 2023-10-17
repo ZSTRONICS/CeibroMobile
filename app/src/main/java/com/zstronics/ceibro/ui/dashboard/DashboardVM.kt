@@ -87,13 +87,14 @@ class DashboardVM @Inject constructor(
 
         val topic: TopicsV2DatabaseEntity? = topicsV2Dao.getTopicsData()
 
-      return topic
+        return topic
 
     }
 
 
     suspend fun getContactsList(): List<AllCeibroConnections.CeibroConnection> {
-        val contactsFromDatabase: List<AllCeibroConnections.CeibroConnection> = connectionsV2Dao.getAll()
+        val contactsFromDatabase: List<AllCeibroConnections.CeibroConnection> =
+            connectionsV2Dao.getAll()
 
         return contactsFromDatabase
 
@@ -561,15 +562,24 @@ class DashboardVM @Inject constructor(
                 }
             } else if (socketData.module == "user") {
                 when (socketData.eventType) {
-                    SocketHandler.UserEvent.USER_INFO_UPDATED.name -> {
+                    SocketHandler.UserEvent.USER_INFO_UPDATED.name, SocketHandler.UserEvent.USER_UPDATED.name -> {
+
                         val updatedUser =
                             gson.fromJson<UserUpdatedSocketResponse>(
                                 arguments,
                                 object : TypeToken<UserUpdatedSocketResponse>() {}.type
                             ).data
+                        if (updatedUser.id == sessionManager.getUserId()) {
 
-                        sessionManager.updateUser(updatedUser)
-                        EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                            println(" user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")
+                            sessionManager.updateUser(updatedUser)
+                            EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                        } else {
+                            println("Invalid user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")
+
+                        }
+
+
                     }
 
                     SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {
