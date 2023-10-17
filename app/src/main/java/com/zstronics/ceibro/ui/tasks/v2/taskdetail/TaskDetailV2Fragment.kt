@@ -36,6 +36,7 @@ import javax.inject.Inject
 class TaskDetailV2Fragment :
     BaseNavViewModelFragment<FragmentTaskDetailV2Binding, ITaskDetailV2.State, TaskDetailV2VM>(),
     BackNavigationResultListener {
+    var isScrollingWithDelay=false
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -373,6 +374,10 @@ class TaskDetailV2Fragment :
                 } else {
                     View.GONE
                 }
+            if (isScrollingWithDelay){
+                isScrollingWithDelay=false
+                scrollToBottomWithDelay()
+            }
         }
         mViewDataBinding.eventsRV.adapter = eventsAdapter
         eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
@@ -442,14 +447,15 @@ class TaskDetailV2Fragment :
                             invitedMembers = eventData.invitedMembers,
                             v = null
                         )
-                        onTaskEvent(LocalEvents.TaskEvent(taskEvent))
+                       // onTaskEvent(LocalEvents.TaskEvent(taskEvent))
                         viewModel.updateTaskCommentInLocal(
                             eventData,
                             viewModel.taskDao,
                             viewModel.user?.id,
                             viewModel.sessionManager
                         )
-                        scrollToBottomWithDelay()
+                        isScrollingWithDelay=true
+                      //  scrollToBottomWithDelay()
                     }
                 }
 
@@ -561,6 +567,7 @@ class TaskDetailV2Fragment :
     }
 
     private fun scrollToBottomWithDelay() {
+        isScrollingWithDelay=true
         mViewDataBinding.bodyScroll.postDelayed({
             mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
         }, 1500)
