@@ -245,6 +245,7 @@ class DashboardFragment :
     @MainThread
     private fun updateDraftRecord(unSyncedTasks: Int) {
         if (unSyncedTasks > 0) {
+            mViewDataBinding.sync.visibility = View.VISIBLE
             mViewDataBinding.draftTaskCounter.visibility = View.VISIBLE
             if (unSyncedTasks > 99) {
                 mViewDataBinding.draftTaskCounter.post {
@@ -256,6 +257,7 @@ class DashboardFragment :
                 }
             }
         } else {
+            mViewDataBinding.sync.visibility = View.GONE
             mViewDataBinding.draftTaskCounter.visibility = View.GONE
         }
     }
@@ -381,10 +383,16 @@ class DashboardFragment :
 
     }
 
-    private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?) {
+    private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?, size: Int) {
         if (networkAvailable) {
+            if (size>0){
+                mViewDataBinding.sync.visibility=View.VISIBLE
+            }else{
+                mViewDataBinding.sync.visibility=View.GONE
+            }
             mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
         } else {
+            mViewDataBinding.sync.visibility=View.VISIBLE
             mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
         }
     }
@@ -399,7 +407,7 @@ class DashboardFragment :
                     NetworkConnectivityObserver.Status.Losing -> {
                         connectivityStatus = "Losing"
 //                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
-                        changeSyncIcon(false, SocketHandler.getSocket()?.connected())
+                        changeSyncIcon(false, SocketHandler.getSocket()?.connected(),viewModel.getDraftTasks().size)
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
@@ -414,20 +422,32 @@ class DashboardFragment :
                             SocketHandler.establishConnection()
                         }
                         connectivityStatus = "Available"
-                        changeSyncIcon(true, SocketHandler.getSocket()?.connected())
+                        changeSyncIcon(
+                            true,
+                            SocketHandler.getSocket()?.connected(),
+                            viewModel.getDraftTasks().size
+                        )
 //                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
                     }
 
                     NetworkConnectivityObserver.Status.Lost -> {
                         connectivityStatus = "Lost"
 //                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
-                        changeSyncIcon(false, SocketHandler.getSocket()?.connected())
+                        changeSyncIcon(
+                            false,
+                            SocketHandler.getSocket()?.connected(),
+                            viewModel.getDraftTasks().size
+                        )
                     }
 
                     NetworkConnectivityObserver.Status.Unavailable -> {
                         connectivityStatus = "Unavailable"
 //                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
-                        changeSyncIcon(false, SocketHandler.getSocket()?.connected())
+                        changeSyncIcon(
+                            false,
+                            SocketHandler.getSocket()?.connected(),
+                            viewModel.getDraftTasks().size
+                        )
                     }
 
                 }
