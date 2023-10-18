@@ -4,6 +4,7 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.task.models.AddMemberSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.NewTaskRequest
@@ -20,8 +21,11 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import ee.zstronics.ceibro.camera.PickedImages
 
@@ -38,11 +42,24 @@ interface ITaskRepository {
         newTask: NewTaskV2Entity,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     )
+
+    suspend fun syncEvents(
+        taskID: String,
+        list: SyncTasksBody,
+        callBack: (isSuccess: Boolean, events: List<Events>, message: String) -> Unit
+    )
+
+    suspend fun getTaskWithUpdatedTimeStamp(
+        timeStamp: String,
+        callBack: (isSuccess: Boolean, events: AllTasksResponse?, message: String) -> Unit
+    )
+
     suspend fun newTaskV2WithFiles(
         newTask: NewTaskV2Entity,
         list: ArrayList<PickedImages>,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     )
+
     suspend fun newTaskV2WithoutFiles(
         newTask: NewTaskV2Entity,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
@@ -155,12 +172,12 @@ interface ITaskRepository {
     )
 
 
-
     //New APIs for Task
 
     suspend fun getAllTopics(
         callBack: (isSuccess: Boolean, message: String, data: TopicsResponse?) -> Unit
     )
+
     suspend fun saveTopic(
         requestBody: NewTopicCreateRequest,
         callBack: (isSuccess: Boolean, message: String, data: NewTopicResponse?) -> Unit

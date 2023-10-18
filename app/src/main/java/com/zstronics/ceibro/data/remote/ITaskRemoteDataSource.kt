@@ -12,17 +12,18 @@ import com.zstronics.ceibro.data.repos.task.models.TasksResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Part
-import retrofit2.http.Query
 
 interface ITaskRemoteDataSource {
     suspend fun tasks(state: String = "all", noPaginate: Boolean = true): ApiResponse<TasksResponse>
@@ -38,12 +39,17 @@ interface ITaskRemoteDataSource {
         updateTask: UpdateTaskRequestNoAdvanceOptions
     ): ApiResponse<NewTaskResponse>
 
+     suspend fun syncEvents(
+        taskId: String,
+       list: SyncTasksBody
+    ): ApiResponse<SyncTasksResponse>
     suspend fun deleteTask(taskId: String): ApiResponse<GenericResponse>
 
     suspend fun getAllTopics(): ApiResponse<TopicsResponse>
     suspend fun saveTopic(requestBody: NewTopicCreateRequest): ApiResponse<NewTopicResponse>
     suspend fun getAllTasks(rootState: String): ApiResponse<TaskV2Response>
     suspend fun syncAllTask(updatedAtTimeStamp: String): ApiResponse<AllTasksV2Response>
+    suspend fun getTaskWithUpdatedTimeStamp(updatedAtTimeStamp: String): ApiResponse<AllTasksResponse>
 
     suspend fun newTaskV2(newTask: NewTaskV2Entity): ApiResponse<NewTaskV2Response>
     suspend fun newTaskV2WithFiles(

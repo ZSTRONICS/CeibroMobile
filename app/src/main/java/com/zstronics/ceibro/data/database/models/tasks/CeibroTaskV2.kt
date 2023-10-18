@@ -61,13 +61,14 @@ data class CeibroTaskV2(
     @SerializedName("__v")
     val v: Int,
     @SerializedName("files")
-    var files: List<TaskFiles>,
+    var files: List<TaskFiles> = emptyList(),
     @SerializedName("events")
-    var events: List<Events>
+    var events: List<Events> = emptyList()
 ) : Parcelable {
     fun updateUpdatedAt() {
         this.apply {
-            this.updatedAt = DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+            this.updatedAt =
+                DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
         }
     }
 

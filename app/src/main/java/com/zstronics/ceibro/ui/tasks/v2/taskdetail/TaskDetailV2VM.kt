@@ -17,6 +17,7 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -118,12 +119,20 @@ class TaskDetailV2VM @Inject constructor(
         taskId: String,
         onBack: (taskSeenData: TaskSeenResponse.TaskSeen) -> Unit,
     ) {
+
+
+
         launch {
             //loading(true)
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
                     if (taskSeenData != null) {
-                        updateGenericTaskSeenInLocal(taskSeenData, taskDao, user?.id, sessionManager)
+                        updateGenericTaskSeenInLocal(
+                            taskSeenData,
+                            taskDao,
+                            user?.id,
+                            sessionManager
+                        )
                         onBack(taskSeenData)
                     }
 
@@ -134,6 +143,27 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
+   suspend fun syncEvents(
+       taskId: String,
+       events: List<Events>?,
+    ) {
+        launch {
+            val eventsIds = ArrayList<String>()
+            eventsIds.clear()
+            events?.forEach {
+                eventsIds.add(it.id)
+            }
+            val syncTasksBody = SyncTasksBody(eventsIds)
+            taskRepository.syncEvents(taskId, syncTasksBody) { isSuccess, taskEvents, message ->
+                if (isSuccess) {
+
+
+                } else {
+
+                }
+            }
+        }
+    }
 
     fun doneTask(
         taskId: String,
@@ -176,9 +206,6 @@ class TaskDetailV2VM @Inject constructor(
     }
 
 
-
-
-
     fun isSameTask(newEvent: Events, taskId: String) = newEvent.taskId == taskId
 
 //    override fun onCleared() {
@@ -206,6 +233,23 @@ class TaskDetailV2VM @Inject constructor(
                 context.startActivity(fullImageIntent)
             } else {
                 // Handle other file types
+            }
+        }
+    }
+    fun getTaskWithUpdatedTimeStamp(
+        timeStamp: String,
+        onLoggedIn: () -> Unit
+    ) {
+
+        launch {
+            loading(true)
+
+            taskRepository.getTaskWithUpdatedTimeStamp(timeStamp) { isSuccess, taskEvents, message ->
+                if (isSuccess) {
+
+                } else {
+
+                }
             }
         }
     }

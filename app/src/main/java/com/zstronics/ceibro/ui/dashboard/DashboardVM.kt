@@ -218,7 +218,9 @@ class DashboardVM @Inject constructor(
                             println("Socket: JOINED_TASK triggered ")
                             println("Socket: JOINED_TASK:  $commentData")
                             updateTaskJoinedInLocal(commentData, taskDao, sessionManager)
-                            updateContactsInDB()
+                            updateContactsInDB {
+
+                            }
                         }
                     }
 
@@ -576,6 +578,11 @@ class DashboardVM @Inject constructor(
                             EventBus.getDefault().post(LocalEvents.UserDataUpdated())
                         } else {
                             println("Invalid user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")
+                            updateContactsInDB {
+                                if (it) {
+                                    EventBus.getDefault().post(LocalEvents.UpdateConnections)
+                                }
+                            }
 
                         }
 
@@ -752,18 +759,21 @@ class DashboardVM @Inject constructor(
         handleSocketEvents()
     }
 
-    private fun updateContactsInDB() {
+    private fun updateContactsInDB(callback: (result: Boolean) -> Unit) {
         launch {
             when (val response = dashboardRepository.getAllConnectionsV2()) {
                 is ApiResponse.Success -> {
                     println("Socket: JOINED_TASK: contacts  ${response.data.contacts.size}")
                     connectionsV2Dao.insertAll(response.data.contacts)
                     sessionManager.saveSyncedContacts(response.data.contacts.toLightContacts())
+                    callback.invoke(true)
                 }
 
                 is ApiResponse.Error -> {
+                    callback.invoke(false)
                 }
             }
         }
     }
+
 }

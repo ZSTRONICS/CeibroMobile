@@ -162,8 +162,8 @@ class SessionManager constructor(
             _user.postValue(userObj)
         }
 
-     /*   sharedPreferenceManager.saveCompleteUserObj(KEY_USER, userObj)
-        _user.postValue(userObj)*/
+        /*   sharedPreferenceManager.saveCompleteUserObj(KEY_USER, userObj)
+           _user.postValue(userObj)*/
 //        user = _user
     }
 
@@ -250,7 +250,7 @@ class SessionManager constructor(
     }
 
     fun getUpdatedAtTimeStamp(): String {
-        return sharedPreferenceManager.getValueString(KEY_DATA_SYNC_UPDATED_AT) ?: ""
+        return sharedPreferenceManager.getValueString(KEY_DATA_SYNC_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
     }
 
     fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String?) {

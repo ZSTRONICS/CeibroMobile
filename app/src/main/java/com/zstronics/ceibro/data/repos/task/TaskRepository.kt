@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.database.models.subtask.AllSubtask
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
 import com.zstronics.ceibro.data.local.TaskLocalDataSource
 import com.zstronics.ceibro.data.remote.SubTaskRemoteDataSource
@@ -23,6 +24,7 @@ import com.zstronics.ceibro.data.repos.task.models.SubTaskEditDetailRequest
 import com.zstronics.ceibro.data.repos.task.models.SubTaskRejections
 import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
 import com.zstronics.ceibro.data.repos.task.models.SubtaskStatusData
+import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
@@ -30,8 +32,11 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
@@ -70,6 +75,39 @@ class TaskRepository @Inject constructor(
 
     override suspend fun getTaskById(taskId: String): CeibroTask {
         return localTask.getTaskById(taskId)
+    }
+
+    override suspend fun syncEvents(
+        newTask: String,
+        list: SyncTasksBody,
+        callBack: (isSuccess: Boolean, events: List<Events>, message: String) -> Unit
+    ) {
+        when (val response = remoteTask.syncEvents(newTask,list)) {
+            is ApiResponse.Success -> {
+
+                callBack(true, response.data.events?: emptyList(),"")
+            }
+
+            is ApiResponse.Error -> {
+                callBack(false, emptyList(), response.error.message)
+            }
+        }
+    }
+
+    override suspend fun getTaskWithUpdatedTimeStamp(
+        timeStamp: String,
+        callBack: (isSuccess: Boolean, response: AllTasksResponse?, message: String) -> Unit
+    ) {
+        when (val response = remoteTask.getTaskWithUpdatedTimeStamp(timeStamp)) {
+            is ApiResponse.Success -> {
+
+                callBack(true, response.data,"")
+            }
+
+            is ApiResponse.Error -> {
+                callBack(false, null, response.error.message)
+            }
+        }
     }
 
     override suspend fun eraseTaskTable() = localTask.eraseTaskTable()
@@ -604,6 +642,7 @@ class TaskRepository @Inject constructor(
             response
         )
     }
+
 
     private suspend fun processStatusResponse(
         subTaskId: String,
