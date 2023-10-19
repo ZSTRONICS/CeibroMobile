@@ -80,8 +80,26 @@ class EditProfileVM @Inject constructor(
             when (val response = repository.updateProfileCall(request)) {
 
                 is ApiResponse.Success -> {
-                    println("user data on upadation:${response.data}")
-                    sessionManager.updateUser(response.data.user)
+
+                    if (response.data.user.id == sessionManager.getUserId()) {
+                        val oldUser = sessionManager.getUser().value
+
+                        oldUser?.let {
+                            it.firstName = response.data.user.firstName
+                            it.surName = response.data.user.firstName
+                            it.email = response.data.user.email
+                            it.phoneNumber = response.data.user.phoneNumber
+                            it.profilePic = response.data.user.profilePic
+                            it.jobTitle = response.data.user.jobTitle
+                            it.companyName = response.data.user.companyName
+                        }
+                        println(" user id!!! ${response.data.user.id}==${sessionManager.getUserId()}")
+
+                        sessionManager.updateUser(oldUser)
+                        EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                    } else {
+                        println("Invalid user id!!! ${response.data.user.id}==${sessionManager.getUserId()}")
+                    }
                     loading(false, "Profile Updated successfully")
                     onProfileUpdated.invoke()
                 }
@@ -185,8 +203,8 @@ class EditProfileVM @Inject constructor(
             when (val response = repository.uploadProfilePictureV2(fileUri)) {
                 is ApiResponse.Success -> {
                     val userObj = sessionManager.getUserObj()
-                    if (response.data.profilePic != "") {
-                        userObj?.profilePic = response.data.profilePic
+                    if (response.data.user.profilePic != "") {
+                        userObj?.profilePic = response.data.user.profilePic
                     }
                     else {
                         userObj?.profilePic = fileUri

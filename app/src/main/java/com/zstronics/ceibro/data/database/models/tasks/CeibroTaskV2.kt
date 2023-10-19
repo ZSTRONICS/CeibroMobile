@@ -37,7 +37,7 @@ data class CeibroTaskV2(
     @SerializedName("isAssignedToMe")
     val isAssignedToMe: Boolean,
     @SerializedName("isCreator")
-    val isCreator: Boolean,
+    var isCreator: Boolean,
     @SerializedName("isHiddenByMe")
     val isHiddenByMe: Boolean,
     @SerializedName("invitedNumbers")

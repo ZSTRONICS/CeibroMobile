@@ -141,7 +141,6 @@ class SessionManager constructor(
     fun setUser() {
         val userPref: User? = sharedPreferenceManager.getCompleteUserObj(KEY_USER)
         _user.postValue(userPref)
-//        user = _user
     }
 
     fun setProject() {
@@ -159,12 +158,9 @@ class SessionManager constructor(
 
         userObj?.let {
             sharedPreferenceManager.saveCompleteUserObj(KEY_USER, it)
-            _user.postValue(userObj)
+            setUser()
         }
 
-        /*   sharedPreferenceManager.saveCompleteUserObj(KEY_USER, userObj)
-           _user.postValue(userObj)*/
-//        user = _user
     }
 
     fun updateTokens(tokens: Tokens) {
@@ -250,7 +246,8 @@ class SessionManager constructor(
     }
 
     fun getUpdatedAtTimeStamp(): String {
-        return sharedPreferenceManager.getValueString(KEY_DATA_SYNC_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
+        // return sharedPreferenceManager.getValueString(KEY_DATA_SYNC_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
+        return "2020-01-01T17:12:18.787Z"
     }
 
     fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String?) {

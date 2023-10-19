@@ -10,7 +10,7 @@ data class User(
     @SerializedName("companyLocation")
     val companyLocation: String?,
     @SerializedName("companyName")
-    val companyName: String?,
+    var companyName: String?,
     @SerializedName("companyPhone")
     val companyPhone: String?,
     @SerializedName("companyVat")
@@ -18,9 +18,9 @@ data class User(
     @SerializedName("currentlyRepresenting")
     val currentlyRepresenting: Boolean?,
     @SerializedName("email")
-    val email: String,
+    var email: String,
     @SerializedName("firstName")
-    val firstName: String,
+    var firstName: String,
     @SerializedName("_id")
     val id: String,
     @SerializedName("isEmailVerified")
@@ -30,15 +30,15 @@ data class User(
     @SerializedName("lockedUntil")
     val lockedUntil: String?,
     @SerializedName("phoneNumber")
-    val phoneNumber: String,
+    var phoneNumber: String,
     @SerializedName("profilePic")
     var profilePic: String,
     @SerializedName("role")
     val role: String?,
     @SerializedName("surName")
-    val surName: String,
+    var surName: String,
     @SerializedName("jobTitle")
-    val jobTitle: String,
+    var jobTitle: String,
     @SerializedName("workEmail")
     val workEmail: String?,
     @SerializedName("autoContactSync")

@@ -153,14 +153,15 @@ class TaskDetailV2Fragment :
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
         mViewDataBinding.bodyScroll.isSmoothScrollingEnabled = true
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
-            lifecycleScope.launch {
+         /*   lifecycleScope.launch {
                 viewModel.syncEvents(item.id,item.events)
             }
             lifecycleScope.launch {
                 viewModel.getTaskWithUpdatedTimeStamp(viewModel.sessionManagerInternal.getUpdatedAtTimeStamp(),{
 
                 })
-            }
+            }*/
+
             if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(
                     TaskStatus.CANCELED.name,
                     true

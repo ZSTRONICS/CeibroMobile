@@ -564,17 +564,29 @@ class DashboardVM @Inject constructor(
                 }
             } else if (socketData.module == "user") {
                 when (socketData.eventType) {
-                    SocketHandler.UserEvent.USER_INFO_UPDATED.name, SocketHandler.UserEvent.USER_UPDATED.name -> {
-
+                    SocketHandler.UserEvent.USER_UPDATED.name -> {
                         val updatedUser =
                             gson.fromJson<UserUpdatedSocketResponse>(
                                 arguments,
                                 object : TypeToken<UserUpdatedSocketResponse>() {}.type
                             ).data
-                        if (updatedUser.id == sessionManager.getUserId()) {
 
+
+                        if (updatedUser.id == sessionManager.getUserId()) {
+                            val oldUser = sessionManager.getUser().value
+
+                            oldUser?.let {
+                                it.firstName = updatedUser.firstName
+                                it.surName = updatedUser.firstName
+                                it.email = updatedUser.email
+                                it.phoneNumber = updatedUser.phoneNumber
+                                it.profilePic = updatedUser.profilePic
+                                it.jobTitle = updatedUser.jobTitle
+                                it.companyName = updatedUser.companyName
+                            }
                             println(" user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")
-                            sessionManager.updateUser(updatedUser)
+
+                            sessionManager.updateUser(oldUser)
                             EventBus.getDefault().post(LocalEvents.UserDataUpdated())
                         } else {
                             println("Invalid user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")

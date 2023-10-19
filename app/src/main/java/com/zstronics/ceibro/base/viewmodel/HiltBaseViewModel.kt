@@ -247,88 +247,62 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
+
+        if (task == null) {
+            return;
+        }
+        println("NEW TASK CREATED: ${task.isCreator} ${task.creator.id} ${userId}")
+        if (task.creator.id != userId) {
+            return;
+        } else {
+            task.isCreator = true;
+        }
+
+        println("NEW TASK CREATED: ${task.isCreator} ${task.creator.id} ${userId}")
         launch {
-            if (task != null) {
-                val isExists = if (task.creator.id != userId) {
-                    false
-                } else {
-                    TaskEventsList.isExists(
-                        SocketHandler.TaskEvent.TASK_CREATED.name, task.id, true
-                    )
+                sessionManager.saveUpdatedAtTimeStamp(task.updatedAt)
+                if (task.isCreator) {
+                    val taskLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val unreadList = mutableListOf(task)
+                    taskLocalData.allTasks.unread.let { oldList ->
+                        val oldListMutableList = oldList.toMutableList()
+                        val index = oldList.indexOfFirst { it.id == task.id }
+                        if (index >= 0) {
+                            oldListMutableList.removeAt(index)
+                        }
+                        unreadList.addAll(oldListMutableList)
+                    }
+
+                    taskLocalData.allTasks.unread = unreadList
+                    TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskLocalData, "unread")
+                    //   EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                 }
 
-                if (!isExists) {
-                    sessionManager.saveUpdatedAtTimeStamp(task.updatedAt)
-
-
-                    if (task.isCreator) {
-                        val taskLocalData =
-                            TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
-                        val unreadList = mutableListOf(task)
-                        taskLocalData.allTasks.unread.let { oldList ->
-                            val oldListMutableList = oldList.toMutableList()
-                            val index = oldList.indexOfFirst { it.id == task.id }
-                            if (index >= 0) {
-                                oldListMutableList.removeAt(index)
-                            }
-                            unreadList.addAll(oldListMutableList)
+                if (task.isAssignedToMe) {
+                    val taskLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val newList = mutableListOf(task)
+                    taskLocalData.allTasks.new.let { oldList ->
+                        val oldListMutableList = oldList.toMutableList()
+                        val index = oldList.indexOfFirst { it.id == task.id }
+                        if (index >= 0) {
+                            oldListMutableList.removeAt(index)
                         }
-
-                        taskLocalData.allTasks.unread = unreadList
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            taskLocalData ?: TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.FromMe.tagValue,
-                                allTasks = TaskV2Response.AllTasks(
-                                    new = mutableListOf(),
-                                    unread = unreadList,
-                                    ongoing = mutableListOf(),
-                                    done = mutableListOf()
-                                )
-                            )
-                        )
-                        //   EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                        newList.addAll(oldListMutableList)
                     }
+                    taskLocalData.allTasks.new = newList
+                    TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskLocalData, "new")
 
-                    if (task.isAssignedToMe) {
-                        val taskLocalData =
-                            TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                        val newList = mutableListOf(task)
-                        taskLocalData.allTasks.new.let { oldList ->
-                            val oldListMutableList = oldList.toMutableList()
-                            val index = oldList.indexOfFirst { it.id == task.id }
-                            if (index >= 0) {
-                                oldListMutableList.removeAt(index)
-                            }
-                            newList.addAll(oldListMutableList)
-                        }
-                        taskLocalData.allTasks.new = newList
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            taskLocalData ?: TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.ToMe.tagValue,
-                                allTasks = TaskV2Response.AllTasks(
-                                    unread = mutableListOf(),
-                                    new = newList,
-                                    ongoing = mutableListOf(),
-                                    done = mutableListOf()
-                                )
-                            )
-                        )
+                    sharedViewModel?.isToMeUnread?.value = true
+                    sessionManager.saveToMeUnread(true)
 
-                        sharedViewModel?.isToMeUnread?.value = true
-                        sessionManager.saveToMeUnread(true)
-
-                    }
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                    if (task.creator.id == userId) {
-                        TaskEventsList.removeEvent(
-                            SocketHandler.TaskEvent.TASK_CREATED.name,
-                            task.id
-                        )
-                    }
                 }
-            }
+                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+
         }
     }
+
 
     suspend fun updateForwardTaskInLocal(
         task: CeibroTaskV2?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
@@ -1935,7 +1909,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             }
 
                         }
-                    } else if (eventData.oldTaskData.creatorState.equals(
+                    }
+
+                    else if (eventData.oldTaskData.creatorState.equals(
                             TaskStatus.CANCELED.name,
                             true
                         )
