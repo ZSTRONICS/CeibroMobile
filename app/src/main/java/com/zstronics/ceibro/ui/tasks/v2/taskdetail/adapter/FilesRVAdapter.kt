@@ -48,6 +48,16 @@ class FilesRVAdapter @Inject constructor() :
             binding.root.setOnClickListener {
                 fileClickListener?.invoke(it, absoluteAdapterPosition, item)
             }
+            binding.mainLayout.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+
+            binding.fileName.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+            binding.fileSize.setOnClickListener {
+                fileClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
 
             val context = binding.uploadImg.context
 

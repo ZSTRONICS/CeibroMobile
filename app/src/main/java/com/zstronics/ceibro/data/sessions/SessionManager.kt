@@ -155,9 +155,15 @@ class SessionManager constructor(
         _projects.postValue(projectList)
     }
 
-    fun updateUser(userObj: User) {
-        sharedPreferenceManager.saveCompleteUserObj(KEY_USER, userObj)
-        _user.postValue(userObj)
+    fun updateUser(userObj: User?) {
+
+        userObj?.let {
+            sharedPreferenceManager.saveCompleteUserObj(KEY_USER, it)
+            _user.postValue(userObj)
+        }
+
+     /*   sharedPreferenceManager.saveCompleteUserObj(KEY_USER, userObj)
+        _user.postValue(userObj)*/
 //        user = _user
     }
 

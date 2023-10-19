@@ -22,6 +22,7 @@ import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshFolderSocketResponse
 import com.zstronics.ceibro.data.repos.projects.documents.RefreshRootDocumentSocketResponse
@@ -36,6 +37,8 @@ import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
+import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
@@ -75,6 +78,29 @@ class DashboardVM @Inject constructor(
         EventBus.getDefault().register(this)
     }
 
+
+    suspend fun getDraftTasks(): List<NewTaskV2Entity> {
+        return draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+    }
+
+    suspend fun getTopicList(): TopicsV2DatabaseEntity? {
+
+        val topic: TopicsV2DatabaseEntity? = topicsV2Dao.getTopicsData()
+
+        return topic
+
+    }
+
+
+    suspend fun getContactsList(): List<AllCeibroConnections.CeibroConnection> {
+        val contactsFromDatabase: List<AllCeibroConnections.CeibroConnection> =
+            connectionsV2Dao.getAll()
+
+        return contactsFromDatabase
+
+    }
+
+
     override fun handleSocketEvents() {
 
         SocketHandler.getSocket()?.on(SocketHandler.CEIBRO_LIVE_EVENT_BY_SERVER) { args ->
@@ -94,6 +120,7 @@ class DashboardVM @Inject constructor(
 
 
                     SocketHandler.TaskEvent.TASK_CREATED.name -> {
+
                         val taskCreatedData = gson.fromJson<SocketTaskV2CreatedResponse>(
                             arguments,
                             object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
@@ -110,6 +137,7 @@ class DashboardVM @Inject constructor(
                             if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
                                 "" else taskCreatedData.data?.topic?.topic.toString()
 
+
                         EventBus.getDefault().post(
                             LocalEvents.CreateSimpleNotification(
                                 moduleId = taskCreatedData.data?.id ?: "",
@@ -125,6 +153,7 @@ class DashboardVM @Inject constructor(
                                 notificationIcon = R.drawable.app_logo
                             )
                         )
+
                     }
 
                     SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
@@ -533,15 +562,24 @@ class DashboardVM @Inject constructor(
                 }
             } else if (socketData.module == "user") {
                 when (socketData.eventType) {
-                    SocketHandler.UserEvent.USER_INFO_UPDATED.name -> {
+                    SocketHandler.UserEvent.USER_INFO_UPDATED.name, SocketHandler.UserEvent.USER_UPDATED.name -> {
+
                         val updatedUser =
                             gson.fromJson<UserUpdatedSocketResponse>(
                                 arguments,
                                 object : TypeToken<UserUpdatedSocketResponse>() {}.type
                             ).data
+                        if (updatedUser.id == sessionManager.getUserId()) {
 
-                        sessionManager.updateUser(updatedUser)
-                        EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                            println(" user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")
+                            sessionManager.updateUser(updatedUser)
+                            EventBus.getDefault().post(LocalEvents.UserDataUpdated())
+                        } else {
+                            println("Invalid user id!!! ${updatedUser.id}==${sessionManager.getUserId()}")
+
+                        }
+
+
                     }
 
                     SocketHandler.UserEvent.REFRESH_ALL_USERS.name -> {

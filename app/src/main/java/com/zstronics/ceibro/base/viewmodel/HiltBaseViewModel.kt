@@ -116,6 +116,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     fun getString(keyID: Int, appContext: Context): String = appContext.getString(keyID)
 
+    companion object {
+        val syncDraftRecords = MutableLiveData<Int>()
+    }
 
     override val clickEvent: SingleClickEvent? = SingleClickEvent()
 
@@ -126,6 +129,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     override fun handlePressOnView(id: Int) {
         clickEvent?.setValue(id)
         handleOnClick(id)
+    }
+
+    private var draftRecordCallBack: ((Int) -> Unit)? = null
+    override fun setCallback(callback: (Int) -> Unit) {
+        this.draftRecordCallBack = callback
     }
 
     /**
@@ -153,6 +161,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     fun createNotification(notification: LocalEvents.CreateNotification?) {
         _notificationEvent.postValue(notification)
     }
+
+    val _draftRecordObserver = MutableLiveData<Int>()
 
 
     private val indeterminateNotificationID = 1
@@ -276,7 +286,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 )
                             )
                         )
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                        //   EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
 
                     if (task.isAssignedToMe) {
@@ -307,9 +317,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         sharedViewModel?.isToMeUnread?.value = true
                         sessionManager.saveToMeUnread(true)
 
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     }
-
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
                     if (task.creator.id == userId) {
                         TaskEventsList.removeEvent(
                             SocketHandler.TaskEvent.TASK_CREATED.name,
@@ -3744,6 +3753,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     @Inject
     lateinit var dashboardRepositoryInternal: IDashboardRepository
     suspend fun syncDraftTask(context: Context) {
+
+
         Log.d("SyncDraftTask", "syncDraftTask")
         val user = sessionManagerInternal.getUser().value
         val unsyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
@@ -3848,8 +3859,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             )
                             // Remove the processed record from the list
                             val updatedRecords = records - newTaskRequest
+
+                            draftRecordCallBack?.invoke(updatedRecords.size)
+                            _draftRecordObserver.postValue(updatedRecords.size)
                             // Recursively process the next record
+
+
+                            syncDraftRecords.postValue(updatedRecords.size)
+                            //  sharedViewModel.syncedRecord.postValue(updatedRecords.size)
                             processNextRecord(updatedRecords)
+
+
                         }
                     } else {
                         //alert(errorMessage)
@@ -3866,7 +3886,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             )
                             // Remove the processed record from the list
                             val updatedRecords = records - newTaskRequest
+                            draftRecordCallBack?.invoke(updatedRecords.size)
+                            _draftRecordObserver.postValue(updatedRecords.size)
+
                             // Recursively process the next record
+                            syncDraftRecords.postValue(updatedRecords.size)
                             processNextRecord(updatedRecords)
                         }
                     } else {

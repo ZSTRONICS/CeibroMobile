@@ -21,6 +21,9 @@ class EventsRVAdapter @Inject constructor() :
         null
     var openEventImageClickListener: ((view: View, position: Int, imageFiles: List<TaskFiles>) -> Unit)? =
         null
+
+    var fileClickListener: ((view: View, position: Int, data: EventFiles) -> Unit)? =
+        null
     var listItems: MutableList<Events> = mutableListOf()
     var loggedInUserId: String = ""
 
@@ -393,6 +396,12 @@ class EventsRVAdapter @Inject constructor() :
             }
             if (document.isNotEmpty()) {
                 val filesAdapter = EventsFilesRVAdapter()
+
+                filesAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
+
+                    fileClickListener?.invoke(view, position, data)
+
+                }
                 binding.filesRV.adapter = filesAdapter
                 filesAdapter.setList(document)
                 binding.filesRV.visibility = View.VISIBLE

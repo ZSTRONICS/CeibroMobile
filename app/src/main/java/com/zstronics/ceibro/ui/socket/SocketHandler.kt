@@ -49,7 +49,7 @@ object SocketHandler {
     }
 
     enum class UserEvent {
-        USER_INFO_UPDATED, REFRESH_ALL_USERS, REFRESH_CONNECTIONS, REFRESH_INVITATIONS
+        USER_UPDATED,USER_INFO_UPDATED, REFRESH_ALL_USERS, REFRESH_CONNECTIONS, REFRESH_INVITATIONS
     }
 
     enum class FileAttachmentEvents {

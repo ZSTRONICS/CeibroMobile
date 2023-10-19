@@ -52,6 +52,7 @@ interface IBase {
         fun loading(isLoading: Boolean, message: String = "")
         fun alert(message: String = "")
         fun getBundleResult(): Pair<String?, Bundle?>? = null
+        fun setCallback(callback: (Int) -> Unit)
     }
 
     interface State : LifecycleObserver {
