@@ -577,7 +577,7 @@ class DashboardVM @Inject constructor(
 
                             oldUser?.let {
                                 it.firstName = updatedUser.firstName
-                                it.surName = updatedUser.firstName
+                                it.surName = updatedUser.surName
                                 it.email = updatedUser.email
                                 it.phoneNumber = updatedUser.phoneNumber
                                 it.profilePic = updatedUser.profilePic
