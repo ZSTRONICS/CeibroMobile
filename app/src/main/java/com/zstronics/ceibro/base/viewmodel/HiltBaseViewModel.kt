@@ -248,7 +248,52 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
 
-        if (task == null) {
+        task?.let {
+            launch {
+                sessionManager.saveUpdatedAtTimeStamp(task.updatedAt)
+                if (task.isCreator) {
+                    val taskLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
+                    val unreadList = mutableListOf(task)
+                    taskLocalData.allTasks.unread.let { oldList ->
+                        val oldListMutableList = oldList.toMutableList()
+                        val index = oldList.indexOfFirst { it.id == task.id }
+                        if (index >= 0) {
+                            oldListMutableList.removeAt(index)
+                        }
+                        unreadList.addAll(oldListMutableList)
+                    }
+
+                    taskLocalData.allTasks.unread = unreadList
+                    TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskLocalData, "unread")
+                    //   EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                }
+
+                if (task.isAssignedToMe) {
+                    val taskLocalData =
+                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+                    val newList = mutableListOf(task)
+                    taskLocalData.allTasks.new.let { oldList ->
+                        val oldListMutableList = oldList.toMutableList()
+                        val index = oldList.indexOfFirst { it.id == task.id }
+                        if (index >= 0) {
+                            oldListMutableList.removeAt(index)
+                        }
+                        newList.addAll(oldListMutableList)
+                    }
+                    taskLocalData.allTasks.new = newList
+                    TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskLocalData, "new")
+
+                    sharedViewModel?.isToMeUnread?.value = true
+                    sessionManager.saveToMeUnread(true)
+
+                }
+                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+
+            }
+        }
+
+        /*   if (task == null) {
             return;
         }
         println("NEW TASK CREATED: ${task.isCreator} ${task.creator.id} ${userId}")
@@ -301,6 +346,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
 
         }
+    }*/
     }
 
 
