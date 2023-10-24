@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.data.database.dao
 
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.SingleTaskEntity
 import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
@@ -7,10 +9,8 @@ import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntitySingle
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
     val taskDao: TaskV2Dao = _taskDao
@@ -97,6 +97,148 @@ class TaskV2DaoHelper constructor(_taskDao: TaskV2Dao) {
         }
     }
 
+
+//    fun checkAndPushEventToTask(task: CeibroTaskV2, event: Events): CeibroTaskV2 {
+//        var oldEvents = task.events.toMutableList();
+//        if (oldEvents.isNotEmpty()) {
+//            val oldEventIndex = oldEvents.indexOf(event)
+//            if (oldEventIndex != -1) {     //means event already exist, so replace it
+//                oldEvents[oldEventIndex] = event
+//                task.events = oldEvents
+//            } else {
+//                oldEvents.add(event)
+//                task.events = oldEvents
+//            }
+//        } else {
+//            val taskEventList: MutableList<Events> = mutableListOf()
+//            taskEventList.add(event)
+//            task.events = taskEventList
+//        }
+//        return task;
+//    }
+
+//    fun checkAndPushEventToTaskArray(taskList: MutableList<CeibroTaskV2>, event: Events): MutableList<CeibroTaskV2> {
+//        var isTaskExists = taskList.find { it.id == event.taskId }
+//        if (isTaskExists != null) {
+//            val taskIndex = taskList.indexOf(isTaskExists)
+//            val updatedTask = checkAndPushEventToTask(isTaskExists, event);
+//            taskList[taskIndex] = updatedTask;
+//        }
+//        return taskList;
+//    }
+
+//    suspend fun upsertEventInTaskList(rootState: String, subState: String, event: Events) {
+//
+//        when (rootState) {
+//            TaskRootStateTags.ToMe.tagValue -> {
+//                when (subState) {
+//                    "new" -> {
+//                        println("TaskListInsert -> To-Me = New ${task.allTasks.new.size}")
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.NEW.name,
+//                                task = SingleTaskEntity(task.allTasks.new)
+//                            )
+//                        )
+//                    }
+//
+//                    "ongoing" -> {
+//                        println("TaskListInsert -> To-Me = ongoing ${task.allTasks.ongoing.size}")
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.ONGOING.name,
+//                                task = SingleTaskEntity(task.allTasks.ongoing)
+//                            )
+//                        )
+//                    }
+//
+//                    "done" -> {
+//                        println("TaskListInsert -> To-Me = DONE ${task.allTasks.done.size}")
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.DONE.name,
+//                                task = SingleTaskEntity(task.allTasks.done)
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//
+//            TaskRootStateTags.FromMe.tagValue -> {
+//                when (subState) {
+//                    "unread" -> {
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.UNREAD.name,
+//                                task = SingleTaskEntity(task.allTasks.unread)
+//                            )
+//                        )
+//                    }
+//
+//                    "ongoing" -> {
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.ONGOING.name,
+//                                task = SingleTaskEntity(task.allTasks.ongoing)
+//                            )
+//                        )
+//                    }
+//
+//                    "done" -> {
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.DONE.name,
+//                                task = SingleTaskEntity(task.allTasks.done)
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//
+//            TaskRootStateTags.Hidden.tagValue -> {
+//                when (subState) {
+//                    "ongoing" -> {
+//
+//                        val taskHiddenLocalData = getTasks(TaskRootStateTags.Hidden.tagValue)
+//
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.ONGOING.name,
+//                                task = SingleTaskEntity(task.allTasks.ongoing)
+//                            )
+//                        )
+//                    }
+//
+//                    "done" -> {
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.DONE.name,
+//                                task = SingleTaskEntity(task.allTasks.done)
+//                            )
+//                        )
+//                    }
+//
+//                    "canceled" -> {
+//                        taskDao.insertTaskDataWithState(
+//                            TasksV2DatabaseEntitySingle(
+//                                rootState = task.rootState,
+//                                subState = TaskStatus.CANCELED.name,
+//                                task = SingleTaskEntity(task.allTasks.canceled)
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 //    suspend fun getTasks(rootState: String): TasksV2DatabaseEntity {
 //        var entity: TasksV2DatabaseEntity = TasksV2DatabaseEntity(

@@ -39,9 +39,11 @@ object LocalEvents {
         val moduleId: String,
         val moduleName: String,
         val notificationTitle: String,
+        val notificationDescription: String,
         val isOngoing: Boolean,
         val indeterminate: Boolean,
-        val notificationIcon: Int = R.drawable.app_logo
+        val notificationIcon: Int = R.drawable.app_logo,
+        val isTaskCreated: Boolean,
     )
 
     data class ApplyFilterOnTask(

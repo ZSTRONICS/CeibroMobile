@@ -1148,25 +1148,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
+
     fun updateTaskCommentInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
         userId: String?,
         sessionManager: SessionManager
-    ): CeibroTaskV2? {
+    ) {
         var updatedTask: CeibroTaskV2? = null
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
 
         if (eventData != null) {
-            val isExists = if (eventData.initiator.id != userId) {
-                false
-            } else {
-                TaskEventsList.isExists(
-                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.taskId, true
+            val isExists = TaskEventsList.isExists(
+                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
                 )
-            }
 
             if (!isExists) {
                 launch {
@@ -1275,7 +1272,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     }
                                     updatedTask = ongoingTask
 
-                                } else if (doneTask != null) {
+                                }
+                                else if (doneTask != null) {
                                     val allDoneTaskList =
                                         taskHiddenLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allDoneTaskList.indexOf(doneTask)
@@ -1629,7 +1627,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 }
             }
         }
-        return updatedTask
+//        return updatedTask
     }
 
     fun updateTaskUnCanceledInLocal(

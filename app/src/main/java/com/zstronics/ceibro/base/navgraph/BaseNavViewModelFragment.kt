@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -533,10 +534,12 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         return Pair(notificationManager, builder)
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_add, menu)
     }
+
 
     fun startEditor(imageUri: Uri, onPhotoEditedCallback: (updatedUri: Uri?) -> Unit) {
         launchActivityForResult<EditImageActivity>(init = {
