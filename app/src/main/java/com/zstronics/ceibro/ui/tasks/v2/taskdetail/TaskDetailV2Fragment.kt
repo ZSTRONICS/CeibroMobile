@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -27,6 +28,7 @@ import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAda
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -36,7 +38,7 @@ import javax.inject.Inject
 class TaskDetailV2Fragment :
     BaseNavViewModelFragment<FragmentTaskDetailV2Binding, ITaskDetailV2.State, TaskDetailV2VM>(),
     BackNavigationResultListener {
-    var isScrollingWithDelay=false
+    var isScrollingWithDelay = false
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -151,6 +153,15 @@ class TaskDetailV2Fragment :
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
         mViewDataBinding.bodyScroll.isSmoothScrollingEnabled = true
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
+         /*   lifecycleScope.launch {
+                viewModel.syncEvents(item.id,item.events)
+            }
+            lifecycleScope.launch {
+                viewModel.getTaskWithUpdatedTimeStamp(viewModel.sessionManagerInternal.getUpdatedAtTimeStamp(),{
+
+                })
+            }*/
+
             if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(
                     TaskStatus.CANCELED.name,
                     true
@@ -374,8 +385,8 @@ class TaskDetailV2Fragment :
                 } else {
                     View.GONE
                 }
-            if (isScrollingWithDelay){
-                isScrollingWithDelay=false
+            if (isScrollingWithDelay) {
+                isScrollingWithDelay = false
                 scrollToBottomWithDelay()
             }
         }
@@ -401,6 +412,8 @@ class TaskDetailV2Fragment :
         val layoutManager = LinearLayoutManager(context)
         layoutManager.isAutoMeasureEnabled = false      //to show all content in RV
         mViewDataBinding.eventsRV.layoutManager = layoutManager
+
+
     }
 
 
@@ -447,15 +460,15 @@ class TaskDetailV2Fragment :
                             invitedMembers = eventData.invitedMembers,
                             v = null
                         )
-                       // onTaskEvent(LocalEvents.TaskEvent(taskEvent))
+                        // onTaskEvent(LocalEvents.TaskEvent(taskEvent))
                         viewModel.updateTaskCommentInLocal(
                             eventData,
                             viewModel.taskDao,
                             viewModel.user?.id,
                             viewModel.sessionManager
                         )
-                        isScrollingWithDelay=true
-                      //  scrollToBottomWithDelay()
+                        isScrollingWithDelay = true
+                        //  scrollToBottomWithDelay()
                     }
                 }
 
@@ -567,7 +580,7 @@ class TaskDetailV2Fragment :
     }
 
     private fun scrollToBottomWithDelay() {
-        isScrollingWithDelay=true
+        isScrollingWithDelay = true
         mViewDataBinding.bodyScroll.postDelayed({
             mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
         }, 1500)

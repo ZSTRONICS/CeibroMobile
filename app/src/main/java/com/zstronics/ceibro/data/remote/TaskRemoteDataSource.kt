@@ -13,12 +13,15 @@ import com.zstronics.ceibro.data.repos.task.models.TasksResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -148,6 +151,17 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
+    override suspend fun syncEvents(
+        taskId: String,
+        list: SyncTasksBody
+    ): ApiResponse<SyncTasksResponse> =
+        executeSafely(
+            call =
+            {
+                service.syncEvents(taskId, list)
+            }
+        )
+
     override suspend fun updateTaskNoStateNoAdvanceOptions(
         taskId: String,
         updateTask: UpdateTaskRequestNoAdvanceOptions
@@ -199,6 +213,18 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
                 service.syncAllTask(updatedAtTimeStamp)
             }
         )
+
+    override suspend fun getTaskWithUpdatedTimeStamp(updatedAtTimeStamp: String): ApiResponse<AllTasksResponse> =
+        executeSafely(
+            call =
+            {
+                service.getTaskWithUpdatedTimeStamp(updatedAtTimeStamp)
+            }
+        )
+
+
+
+
 
     override suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response> =
         executeSafely(

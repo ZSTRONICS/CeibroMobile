@@ -12,6 +12,8 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.resourses.IResourceProvider
 import com.zstronics.ceibro.ui.contacts.toLightContacts
@@ -25,6 +27,7 @@ class LoginVM @Inject constructor(
     override val viewState: LoginState,
     override var validator: Validator?,
     private val repository: IAuthRepository,
+    private val taskRepository: ITaskRepository,
     private val sessionManager: SessionManager,
     private val resourceProvider: IResourceProvider,
     private val connectionsV2Dao: ConnectionsV2Dao,
@@ -85,6 +88,25 @@ class LoginVM @Inject constructor(
 
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
+    override fun getTaskWithUpdatedTimeStamp(
+        timeStamp: String,
+        onLoggedIn: () -> Unit
+    ) {
+
+        launch {
+            loading(true)
+
+            taskRepository.getTaskWithUpdatedTimeStamp(timeStamp) { isSuccess, taskEvents, message ->
+                if (isSuccess) {
+
+                } else {
+
                 }
             }
         }

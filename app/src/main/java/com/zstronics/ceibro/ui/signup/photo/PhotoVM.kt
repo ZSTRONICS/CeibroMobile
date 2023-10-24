@@ -28,8 +28,8 @@ class PhotoVM @Inject constructor(
             when (val response = repository.uploadProfilePictureV2(fileUri)) {
                 is ApiResponse.Success -> {
                     val userObj = sessionManager.getUserObj()
-                    if (response.data.profilePic != "") {
-                        userObj?.profilePic = response.data.profilePic
+                    if (response.data.user.profilePic != "") {
+                        userObj?.profilePic = response.data.user.profilePic
                     }
                     else {
                         userObj?.profilePic = fileUri

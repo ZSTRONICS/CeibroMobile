@@ -7,6 +7,6 @@ import com.zstronics.ceibro.data.base.BaseResponse
 
 @Keep
 data class UserProfilePicUpdateResponse(
-    @SerializedName("profilePic")
-    var profilePic: String,
+    @SerializedName("user")
+    var user: User,
 ) : BaseResponse()

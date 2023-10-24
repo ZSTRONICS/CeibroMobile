@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.dashboard
 
+import com.zstronics.ceibro.ui.notificationhelper.NotificationHelper
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.NotificationManager
@@ -385,14 +386,14 @@ class DashboardFragment :
 
     private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?, size: Int) {
         if (networkAvailable) {
-            if (size>0){
-                mViewDataBinding.sync.visibility=View.VISIBLE
-            }else{
-                mViewDataBinding.sync.visibility=View.GONE
+            if (size > 0) {
+                mViewDataBinding.sync.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.sync.visibility = View.GONE
             }
             mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_good_connection)
         } else {
-            mViewDataBinding.sync.visibility=View.VISIBLE
+            mViewDataBinding.sync.visibility = View.VISIBLE
             mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_no_connection)
         }
     }
@@ -407,7 +408,11 @@ class DashboardFragment :
                     NetworkConnectivityObserver.Status.Losing -> {
                         connectivityStatus = "Losing"
 //                        mViewDataBinding.sync.setImageResource(R.drawable.icon_sync_poor_connection)
-                        changeSyncIcon(false, SocketHandler.getSocket()?.connected(),viewModel.getDraftTasks().size)
+                        changeSyncIcon(
+                            false,
+                            SocketHandler.getSocket()?.connected(),
+                            viewModel.getDraftTasks().size
+                        )
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
@@ -610,6 +615,7 @@ class DashboardFragment :
     }
 
     companion object {
+        var index = 0
         var selectedItem: Int = R.id.nav_home
         val CREATE_NEW_TASK_CODE = 1122
     }
@@ -647,14 +653,18 @@ class DashboardFragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCreateSimpleNotification(event: LocalEvents.CreateSimpleNotification?) {
         event?.let {
-            createNotification(
-                channelId = event.moduleId,
-                chanelName = event.moduleName,
-                notificationTitle = event.notificationTitle,
-                isOngoing = event.isOngoing,
-                indeterminate = event.indeterminate,
-                notificationIcon = event.notificationIcon
-            )
+            if (it.isTaskCreated) {
+                run {
+                    val notificationHelper = NotificationHelper.getInstance(requireContext())
+                    notificationHelper.createNotification(
+                        notificationId = index++,
+                        moduleName = event.moduleName,
+                        title = event.notificationTitle,
+                        message = event.notificationDescription,
+                        context = requireContext()
+                    )
+                }
+            }
         }
     }
 

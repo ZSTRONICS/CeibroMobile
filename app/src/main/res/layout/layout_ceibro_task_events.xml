@@ -117,7 +117,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/forwardedToNames" />
 
-            <TextView
+            <com.zstronics.ceibro.base.ScrollableTextView
                 android:id="@+id/onlyComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -125,11 +125,13 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="start"
-                android:maxLines="20"
+                android:maxLines="8"
                 android:text="Only comment will be shown here"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:visibility="visible"
+                android:scrollbarStyle="insideOverlay"
+                android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/invitedNumbers" />
