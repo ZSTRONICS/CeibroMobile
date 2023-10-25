@@ -1,8 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v2.tasktome
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
@@ -12,7 +10,6 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
 import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -269,10 +266,11 @@ class TaskToMeFragment :
         EventBus.getDefault().unregister(this)
     }
 
-    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
-        val newCount = allTasks.new.count { task -> viewModel.user?.id !in task.seenBy }
-        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
-        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
+    private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
+        val newTaskList = allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }
+        val newCount = allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val ongoingCount = allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val doneCount = allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
         mViewDataBinding.newStateCount.text =
             if (newCount > 99) {
                 "99+"
@@ -311,7 +309,7 @@ class TaskToMeFragment :
                 View.VISIBLE
             }
 
-        if (allTasks.new.isEmpty()) {
+        if (newTaskList.isEmpty()) {
             if (viewModel.selectedState.equals(
                     TaskStatus.NEW.name.lowercase(),
                     true

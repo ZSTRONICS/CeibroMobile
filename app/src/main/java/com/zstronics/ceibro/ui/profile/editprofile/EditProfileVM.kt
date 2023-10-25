@@ -248,7 +248,8 @@ class EditProfileVM @Inject constructor(
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
-            taskDao.deleteAllData()
+            taskDao.deleteAllTasksData()
+            taskDao.deleteAllEventsData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()

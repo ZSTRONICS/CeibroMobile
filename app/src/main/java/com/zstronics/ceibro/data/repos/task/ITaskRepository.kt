@@ -21,8 +21,7 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
@@ -49,9 +48,9 @@ interface ITaskRepository {
         callBack: (isSuccess: Boolean, events: List<Events>, message: String) -> Unit
     )
 
-    suspend fun getTaskWithUpdatedTimeStamp(
+    suspend fun getAllTaskWithEventsSeparately(
         timeStamp: String,
-        callBack: (isSuccess: Boolean, events: AllTasksResponse?, message: String) -> Unit
+        callBack: (isSuccess: Boolean, events: AllTasksV2NewResponse?, message: String) -> Unit
     )
 
     suspend fun newTaskV2WithFiles(

@@ -29,9 +29,9 @@ import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.contacts.compareContactsAndUpdateList
 import com.zstronics.ceibro.ui.contacts.compareExistingAndNewContacts
 import com.zstronics.ceibro.ui.contacts.findDeletedContacts
-import com.zstronics.ceibro.ui.contacts.findNewContacts
 import com.zstronics.ceibro.ui.contacts.toLightContacts
 import com.zstronics.ceibro.ui.socket.SocketHandler
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
@@ -58,15 +58,14 @@ class CeibroDataLoadingVM @Inject constructor(
     }
 
     var apiSucceedCount = 0f
-    fun loadAppData(context: Context, callBack: () -> Unit) {
+    suspend fun loadAppData(context: Context, callBack: () -> Unit) {
         Log.d("Data loading stared at ", DateUtils.getCurrentTimeStamp())
         GlobalScope.launch {
             val lastUpdatedAt = sessionManager.getUpdatedAtTimeStamp()
-            when (val response = remoteTask.syncAllTask(lastUpdatedAt)) {
+            when (val response = remoteTask.getAllTaskWithEventsSeparately(lastUpdatedAt)) {
                 is ApiResponse.Success -> {
-                    sessionManager.saveUpdatedAtTimeStamp(response.data.allTasks.latestUpdatedAt)
-
-                    // START => Update TO ME into database
+                    sessionManager.saveUpdatedAtTimeStamp(response.data.newData.latestUpdatedAt)
+                    /*// START => Update TO ME into database
                     val toMeLocal =
                         TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
 //                    val toMeLocal = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
@@ -167,7 +166,37 @@ class CeibroDataLoadingVM @Inject constructor(
                             )
                         )
                     }
-                    // END => Update FROM ME into database
+                    // END => Update FROM ME into database*/
+
+                    val allTasks = response.data.newData.allTasks
+                    val allEvents = response.data.newData.allEvents
+
+                    taskDao.insertMultipleTasks(allTasks)
+                    taskDao.insertMultipleEvents(allEvents)
+
+                    val toMeNewTask = allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeOngoingTask = allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeDoneTask = allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+
+                    val fromMeUnreadTask = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeOngoingTask = allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeDoneTask = allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+
+                    val hiddenCanceledTask = allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenOngoingTask = allTasks.filter { it.hiddenState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenDoneTask = allTasks.filter { it.hiddenState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+
+                    CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                    CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                    CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+
+                    CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                    CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                    CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+
+                    CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
                     apiSucceedCount++
                     callBack.invoke()
@@ -178,7 +207,7 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
-        }
+        }.join()
 
         launch {
             when (val response = remoteTask.getAllTopics()) {
@@ -344,7 +373,8 @@ class CeibroDataLoadingVM @Inject constructor(
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
-            taskDao.deleteAllData()
+            taskDao.deleteAllTasksData()
+            taskDao.deleteAllEventsData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
