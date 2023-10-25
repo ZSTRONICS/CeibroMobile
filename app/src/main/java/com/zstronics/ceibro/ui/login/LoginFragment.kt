@@ -7,14 +7,11 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,11 +30,13 @@ class LoginFragment :
             R.id.signUpTextBtn -> {
                 navigate(R.id.registerFragment)
             }
+
             R.id.forgotPasswordBtn -> navigate(R.id.forgotPasswordFragment)
             R.id.loginPasswordEye -> {
                 isPassShown = !isPassShown
                 showOrHidePassword(isPassShown)
             }
+
             R.id.loginBtn -> {
                 val phoneNumber =
                     mViewDataBinding.ccp.fullNumberWithPlus               //getting unformatted number with prefix "+" i.e "+923001234567"
@@ -93,6 +92,6 @@ class LoginFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.ccp.registerCarrierNumberEditText(mViewDataBinding.editTextPhone)
-//        OneSignal.promptForPushNotifications()
+        OneSignal.promptForPushNotifications()
     }
 }

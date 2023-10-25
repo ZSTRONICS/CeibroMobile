@@ -10,8 +10,8 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
@@ -29,7 +29,6 @@ import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.contacts.compareContactsAndUpdateList
 import com.zstronics.ceibro.ui.contacts.compareExistingAndNewContacts
 import com.zstronics.ceibro.ui.contacts.findDeletedContacts
-import com.zstronics.ceibro.ui.contacts.findNewContacts
 import com.zstronics.ceibro.ui.contacts.toLightContacts
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.DateUtils
@@ -348,6 +347,7 @@ class CeibroDataLoadingVM @Inject constructor(
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
+            draftNewTaskV2Internal.deleteAllData()
         }
         SocketHandler.sendLogout()
         sessionManager.endUserSession()

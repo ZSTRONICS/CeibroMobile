@@ -7,18 +7,24 @@ import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.ViewDataBinding
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDirections
+import androidx.navigation.Navigator
+import androidx.navigation.findNavController
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.EXTRA
+import com.zstronics.ceibro.base.EXTRA_FROM_NOTIFICATION
 import com.zstronics.ceibro.base.MvvmNavHostFragment
 import com.zstronics.ceibro.base.activity.BaseBindingViewModelActivity
-import com.zstronics.ceibro.base.interfaces.IBase
-import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
-import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.base.extensions.addExtras
 import com.zstronics.ceibro.base.extensions.bindView
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.plus
-import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.interfaces.IBase
+import com.zstronics.ceibro.base.interfaces.ManageToolBarListener
+import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+
 /**
  * A base BaseNavViewModel Activity with built-in support for Android X Navigation Concept and ViewModel.
  */
@@ -127,6 +133,7 @@ abstract class BaseNavViewModelActivity<VB : ViewDataBinding, VS : IBase.State, 
                 onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
 

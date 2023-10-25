@@ -135,7 +135,7 @@ class DashboardVM @Inject constructor(
                     val notificationTitle: String =
                         if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
                             "" else taskCreatedData.data?.topic?.topic.toString()
-
+/*
 
                     EventBus.getDefault().post(
                         LocalEvents.CreateSimpleNotification(
@@ -153,7 +153,7 @@ class DashboardVM @Inject constructor(
                             notificationIcon = R.drawable.app_logo,
                             isTaskCreated = true
                         )
-                    )
+                    )*/
 
                 }
 
@@ -352,8 +352,7 @@ class DashboardVM @Inject constructor(
                     }
                 }*/
             }
-        }
-        else if (socketData.module == "SubTaskComments") {
+        } else if (socketData.module == "SubTaskComments") {
             if (socketData.eventType == SocketHandler.TaskEvent.SUBTASK_NEW_COMMENT.name) {
                 val newComment =
                     gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
@@ -382,8 +381,7 @@ class DashboardVM @Inject constructor(
                     )
                 )
             }
-        }
-        else if (socketData.module == "project") {
+        } else if (socketData.module == "project") {
             when (socketData.eventType) {
                 SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
                     val newProject =
@@ -565,8 +563,7 @@ class DashboardVM @Inject constructor(
                     )
                 }
             }
-        }
-        else if (socketData.module == "user") {
+        } else if (socketData.module == "user") {
             when (socketData.eventType) {
                 SocketHandler.UserEvent.USER_UPDATED.name -> {
                     val updatedUser =
@@ -734,8 +731,8 @@ class DashboardVM @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         EventBus.getDefault().unregister(this)
-      //  executor.shutdown()
-    //    executor.awaitTermination(1, TimeUnit.MINUTES)
+        //  executor.shutdown()
+        //    executor.awaitTermination(1, TimeUnit.MINUTES)
     }
 
 
@@ -793,6 +790,7 @@ class DashboardVM @Inject constructor(
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
+            draftNewTaskV2Internal.deleteAllData()
         }
         SocketHandler.sendLogout()
         sessionManager.endUserSession()
