@@ -139,19 +139,17 @@ class NotificationHelper(context: Context) {
             val openIntent = PendingIntent.getActivity(
                 context, 0, intent, PendingIntent.FLAG_IMMUTABLE
             )
-            val titleWithCreatorName = task.creator + "\n" + title
-            val creatorName = task.creator
 
             val customNotificationLayout =
                 RemoteViews(context.packageName, R.layout.custom_notification_view)
-            customNotificationLayout.setTextViewText(R.id.firstLine, creatorName)
+            customNotificationLayout.setTextViewText(R.id.firstLine, task.creator)
             customNotificationLayout.setTextViewText(R.id.secondLine, title)
             customNotificationLayout.setTextViewText(R.id.largeText, message)
 
 
             val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
                 .setSmallIcon(R.drawable.app_logo)
-                .setContentTitle(creatorName)
+                .setContentTitle(task.creator)
                 .setContentText(title)
                 .setLargeIcon(decodeBase64ToBitmap(task.avatar))
                 .setCustomBigContentView(customNotificationLayout)

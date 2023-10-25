@@ -30,16 +30,13 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
         println("NotificationContent:body ${body}")
         println("NotificationContent:task ${task}")
 
-        val notificationTitle: String? =
-            if (task.topic.isNullOrEmpty())
-                "" else task.topic?.toString()
 
         val notificationHelper = NotificationHelper.getInstance(context)
         notificationHelper.createNotification(
             task,
             notificationId = DashboardFragment.index++,
             notificationType = type,
-            title = title,
+            title = task.topic,
             message = task.description,
             context = context
         )
