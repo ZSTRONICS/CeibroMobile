@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/firstLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name Line"
+        android:textColor="@color/black"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_bold"/>
+
+    <TextView
+        android:id="@+id/secondLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heading Line"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:fontFamily="@font/inter_bold"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <TextView
+        android:id="@+id/largeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your large text here..."
+        android:textColor="@color/appTextGrey"
+        android:maxLines="5"
+        android:fontFamily="@font/inter_regular"
+        android:ellipsize="end"
+        android:textSize="13.5sp" />
+</LinearLayout>
