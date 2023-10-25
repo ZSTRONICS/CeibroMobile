@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.data.base
 
+import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 
 object CookiesManager {
@@ -8,4 +10,13 @@ object CookiesManager {
     var tokens: Tokens? = null
     var secureUUID: String? = null
     var deviceType: String? = null
+    var toMeNewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var toMeOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var toMeDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var fromMeUnreadTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var fromMeOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var fromMeDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var hiddenCanceledTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var hiddenOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var hiddenDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
 }

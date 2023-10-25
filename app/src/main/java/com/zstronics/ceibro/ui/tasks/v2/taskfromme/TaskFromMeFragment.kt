@@ -10,7 +10,6 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
 import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -264,10 +263,12 @@ class TaskFromMeFragment :
         EventBus.getDefault().unregister(this)
     }
 
-    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
-        val unreadCount = allTasks.unread.count()
-        val ongoingCount = allTasks.ongoing.count { task -> viewModel.user?.id !in task.seenBy }
-        val doneCount = allTasks.done.count { task -> viewModel.user?.id !in task.seenBy }
+    private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
+        val unreadTaskList = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }
+        val unreadCount = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val ongoingCount = allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val doneCount = allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+
         mViewDataBinding.unreadStateCount.text =
             if (unreadCount > 99) {
                 "99+"
@@ -306,7 +307,7 @@ class TaskFromMeFragment :
                 View.VISIBLE
             }
 
-        if (allTasks.unread.isEmpty()) {
+        if (unreadTaskList.isEmpty()) {
             if (viewModel.selectedState.equals(
                     TaskStatus.UNREAD.name.lowercase(),
                     true

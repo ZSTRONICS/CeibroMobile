@@ -2,7 +2,7 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
@@ -182,7 +182,7 @@ interface TaskRetroService {
     suspend fun syncAllTask(@Path("updatedAtTimeStamp") updatedAtTimeStamp: String): Response<AllTasksV2Response>
 
     @GET("v2/task/syncTask/{updatedAtTimeStamp}")
-    suspend fun getTaskWithUpdatedTimeStamp(@Path("updatedAtTimeStamp") updatedAtTimeStamp: String): Response<AllTasksResponse>
+    suspend fun getAllTaskWithEventsSeparately(@Path("updatedAtTimeStamp") updatedAtTimeStamp: String): Response<AllTasksV2NewResponse>
 
     @POST("v2/task/forward/{taskId}")
     suspend fun forwardTask(

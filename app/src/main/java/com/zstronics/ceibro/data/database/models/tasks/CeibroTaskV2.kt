@@ -3,10 +3,17 @@ package com.zstronics.ceibro.data.database.models.tasks
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.data.database.TableNamesV2
 import com.zstronics.ceibro.utils.DateUtils
 import kotlinx.parcelize.Parcelize
 
+
+@Entity(tableName = TableNamesV2.TaskBasic, primaryKeys = ["id"])
 @Parcelize
 @Keep
 data class CeibroTaskV2(
@@ -34,22 +41,12 @@ data class CeibroTaskV2(
     val id: String,
     @SerializedName("isCanceled")
     val isCanceled: Boolean,
-    @SerializedName("isAssignedToMe")
-    val isAssignedToMe: Boolean,
-    @SerializedName("isCreator")
-    var isCreator: Boolean,
-    @SerializedName("isHiddenByMe")
-    val isHiddenByMe: Boolean,
     @SerializedName("invitedNumbers")
     var invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
     val locations: List<String>,
     @SerializedName("project")
     val project: ProjectOfTask?,
-    @SerializedName("recentComments")
-    val recentComments: List<String>?,
-    @SerializedName("rejectionComments")
-    val rejectionComments: List<String>,
     @SerializedName("seenBy")
     var seenBy: List<String>,
     @SerializedName("taskUID")
@@ -62,20 +59,68 @@ data class CeibroTaskV2(
     val v: Int,
     @SerializedName("files")
     var files: List<TaskFiles> = emptyList(),
-    @SerializedName("events")
-    var events: List<Events> = emptyList()
+    @SerializedName("rootState")
+    var rootState: String,
+    @SerializedName("userSubState")
+    var userSubState: String,
+    @SerializedName("isAssignedToMe")
+    val isAssignedToMe: Boolean,
+    @SerializedName("isCreator")
+    var isCreator: Boolean,
+    @SerializedName("isHiddenByMe")
+    var isHiddenByMe: Boolean,
+    @SerializedName("isSeenByMe")
+    var isSeenByMe: Boolean,
+    @SerializedName("fromMeState")
+    var fromMeState: String,
+    @SerializedName("toMeState")
+    var toMeState: String,
+    @SerializedName("hiddenState")
+    var hiddenState: String
 ) : Parcelable {
-    fun updateUpdatedAt() {
-        this.apply {
-            this.updatedAt =
-                DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
-        }
-    }
-
     override fun hashCode(): Int {
         return super.hashCode()
     }
 }
+
+
+@Entity(
+    tableName = TableNamesV2.TaskEvents, primaryKeys = ["id"],
+    foreignKeys = [
+        ForeignKey(
+            entity = CeibroTaskV2::class,
+            parentColumns = ["id"],
+            childColumns = ["taskId"],
+            onDelete = ForeignKey.NO_ACTION, // Define the behavior on delete
+            onUpdate = ForeignKey.NO_ACTION  // Define the behavior on update
+        )
+    ], indices = [Index(value = ["taskId"])]
+)
+@Parcelize
+@Keep
+data class Events(
+    @SerializedName("createdAt")
+    val createdAt: String,
+    @SerializedName("eventData")
+    val eventData: List<EventData>?,
+    @SerializedName("invitedMembers")
+    val invitedMembers: List<EventData>?,
+    @SerializedName("commentData")
+    val commentData: CommentData?,
+    @SerializedName("eventType")
+    val eventType: String,
+    @SerializedName("_id")
+    val id: String,
+    @SerializedName("initiator")
+    val initiator: TaskMemberDetail,
+    @SerializedName("taskId")
+    val taskId: String,
+    @SerializedName("updatedAt")
+    val updatedAt: String,
+    @SerializedName("eventSeenBy")
+    var eventSeenBy: List<String>? = emptyList()
+) : Parcelable
+
 
 @Parcelize
 @Keep
@@ -188,31 +233,6 @@ data class EventFiles(
     val moduleType: String,
     @SerializedName("uploadStatus")
     val uploadStatus: String
-) : Parcelable
-
-@Parcelize
-@Keep
-data class Events(
-    @SerializedName("createdAt")
-    val createdAt: String,
-    @SerializedName("eventData")
-    val eventData: List<EventData>?,
-    @SerializedName("invitedMembers")
-    val invitedMembers: List<EventData>?,
-    @SerializedName("commentData")
-    val commentData: CommentData?,
-    @SerializedName("eventType")
-    val eventType: String,
-    @SerializedName("_id")
-    val id: String,
-    @SerializedName("initiator")
-    val initiator: TaskMemberDetail,
-    @SerializedName("taskId")
-    val taskId: String,
-    @SerializedName("updatedAt")
-    val updatedAt: String,
-    @SerializedName("__v")
-    val v: Int?
 ) : Parcelable
 
 

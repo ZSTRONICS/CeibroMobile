@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -21,6 +22,7 @@ import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -48,13 +50,55 @@ class TaskHiddenVM @Inject constructor(
     val doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _doneTasks
     var originalDoneTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
-    private val _allTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
-    val allTasks: MutableLiveData<TaskV2Response.AllTasks> = _allTasks
-    var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
+    private val _allTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val allTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _allTasks
+    var allOriginalTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val taskLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
+            val allHiddenCanceledTasks = CookiesManager.hiddenCanceledTasks.value ?: mutableListOf()
+            val allHiddenOngoingTasks = CookiesManager.hiddenOngoingTasks.value ?: mutableListOf()
+            val allHiddenDoneTasks = CookiesManager.hiddenDoneTasks.value ?: mutableListOf()
+            val allHiddenTasks = mutableListOf<CeibroTaskV2>()
+            allHiddenTasks.addAll(allHiddenCanceledTasks)
+            allHiddenTasks.addAll(allHiddenOngoingTasks)
+            allHiddenTasks.addAll(allHiddenDoneTasks)
+
+            if (allHiddenTasks.isNotEmpty()) {
+                _cancelledTasks.postValue(allHiddenCanceledTasks)
+                _ongoingTasks.postValue(allHiddenOngoingTasks)
+                _doneTasks.postValue(allHiddenDoneTasks)
+                _allTasks.postValue(allHiddenTasks)
+
+                originalCancelledTasks = allHiddenCanceledTasks
+                originalOngoingTasks = allHiddenOngoingTasks
+                originalDoneTasks = allHiddenDoneTasks
+                allOriginalTasks.postValue(allHiddenTasks)
+                callBack.invoke()
+            } else {
+
+                val canceledTasks = taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase())
+                val ongoingTasks = taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
+                val doneTasks = taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase())
+                val allTasksList = mutableListOf<CeibroTaskV2>()
+                allTasksList.addAll(canceledTasks)
+                allTasksList.addAll(ongoingTasks)
+                allTasksList.addAll(doneTasks)
+
+                _cancelledTasks.postValue(canceledTasks.toMutableList())
+                _ongoingTasks.postValue(ongoingTasks.toMutableList())
+                _doneTasks.postValue(doneTasks.toMutableList())
+                _allTasks.postValue(allTasksList)
+
+                originalCancelledTasks = canceledTasks.toMutableList()
+                originalOngoingTasks = ongoingTasks.toMutableList()
+                originalDoneTasks = doneTasks.toMutableList()
+                allOriginalTasks.postValue(allTasksList)
+                callBack.invoke()
+            }
+
+
+            /*val taskLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
             if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.Hidden.tagValue, taskLocalData)) {
                 val allTasks = taskLocalData.allTasks
                 val canceled = allTasks.canceled.sortedByDescending { it.updatedAt }.toMutableList()
@@ -71,7 +115,8 @@ class TaskHiddenVM @Inject constructor(
                 originalDoneTasks = doneTask
                 allOriginalTasks.postValue(allTasks)
                 callBack.invoke()
-            } else {
+            }
+            else {
                 if (skeletonVisible) {
                     taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
                         itemCount(5)
@@ -120,7 +165,7 @@ class TaskHiddenVM @Inject constructor(
                         callBack.invoke()
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -143,17 +188,6 @@ class TaskHiddenVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _cancelledTasks.postValue(filteredTasks)
@@ -168,17 +202,6 @@ class TaskHiddenVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _ongoingTasks.postValue(filteredTasks)
@@ -193,18 +216,18 @@ class TaskHiddenVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
+//                            it.events.filter { events ->
+//                                events.eventType.equals(
+//                                    TaskDetailEvents.Comment.eventValue,
+//                                    true
+//                                )
+//                            }.any { filteredComments ->
+//                                filteredComments.commentData?.message?.contains(
+//                                    query,
+//                                    true
+//                                ) == true
+//                            }
                 }.toMutableList()
             _doneTasks.postValue(filteredTasks)
         }

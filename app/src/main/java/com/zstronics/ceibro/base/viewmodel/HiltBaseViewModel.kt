@@ -1177,8 +1177,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         commentData = eventData.commentData,
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
-                        invitedMembers = eventData.invitedMembers,
-                        v = null
+                        invitedMembers = eventData.invitedMembers
                     )
                     val taskEventList: MutableList<Events> = mutableListOf()
                     taskEventList.add(taskEvent)
@@ -1210,21 +1209,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskHiddenLocalData.allTasks.ongoing.toMutableList()
                                     val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
 
-                                    var oldEvents = ongoingTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            ongoingTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            ongoingTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        ongoingTask.events = oldEvents
-                                    }
+//                                    var oldEvents = ongoingTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            ongoingTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            ongoingTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        ongoingTask.events = oldEvents
+//                                    }
                                     ongoingTask.hiddenBy = listOf()
                                     ongoingTask.seenBy = eventData.taskData.seenBy
                                     ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -1278,21 +1277,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskHiddenLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allDoneTaskList.indexOf(doneTask)
 
-                                    var oldEvents = doneTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            doneTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            doneTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        doneTask.events = oldEvents
-                                    }
+//                                    var oldEvents = doneTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            doneTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            doneTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        doneTask.events = oldEvents
+//                                    }
                                     doneTask.hiddenBy = listOf()
                                     doneTask.seenBy = eventData.taskData.seenBy
                                     doneTask.updatedAt = eventData.taskUpdatedAt
@@ -1359,21 +1358,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskHiddenLocalData.allTasks.canceled.toMutableList()
                                     val taskIndex = allCancelTaskList.indexOf(canceledTask)
 
-                                    var oldEvents = canceledTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            canceledTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            canceledTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        canceledTask.events = oldEvents
-                                    }
+//                                    var oldEvents = canceledTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            canceledTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            canceledTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        canceledTask.events = oldEvents
+//                                    }
                                     canceledTask.hiddenBy = listOf()
                                     canceledTask.seenBy = eventData.taskData.seenBy
                                     canceledTask.updatedAt = eventData.taskUpdatedAt
@@ -1405,21 +1404,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                     val taskIndex = allTaskList.indexOf(newTask)
 
-                                    var oldEvents = newTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            newTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            newTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        newTask.events = oldEvents
-                                    }
+//                                    var oldEvents = newTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            newTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            newTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        newTask.events = oldEvents
+//                                    }
                                     newTask.hiddenBy = listOf()
                                     newTask.seenBy = eventData.taskData.seenBy
                                     newTask.updatedAt = eventData.taskUpdatedAt
@@ -1435,21 +1434,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskToMeLocalData.allTasks.ongoing.toMutableList()
                                     val taskIndex = allTaskList.indexOf(ongoingTask)
 
-                                    var oldEvents = ongoingTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            ongoingTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            ongoingTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        ongoingTask.events = oldEvents
-                                    }
+//                                    var oldEvents = ongoingTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            ongoingTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            ongoingTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        ongoingTask.events = oldEvents
+//                                    }
                                     ongoingTask.hiddenBy = listOf()
                                     ongoingTask.seenBy = eventData.taskData.seenBy
                                     ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -1466,21 +1465,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskToMeLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allTaskList.indexOf(doneTask)
 
-                                    var oldEvents = doneTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            doneTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            doneTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        doneTask.events = oldEvents
-                                    }
+//                                    var oldEvents = doneTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            doneTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            doneTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        doneTask.events = oldEvents
+//                                    }
                                     doneTask.hiddenBy = listOf()
                                     doneTask.seenBy = eventData.taskData.seenBy
                                     doneTask.updatedAt = eventData.taskUpdatedAt
@@ -1512,21 +1511,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskFromMeLocalData.allTasks.unread.toMutableList()
                                     val taskIndex = allTaskList.indexOf(unreadTask)
 
-                                    var oldEvents = unreadTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            unreadTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            unreadTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        unreadTask.events = oldEvents
-                                    }
+//                                    var oldEvents = unreadTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            unreadTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            unreadTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        unreadTask.events = oldEvents
+//                                    }
                                     unreadTask.hiddenBy = listOf()
                                     unreadTask.seenBy = eventData.taskData.seenBy
                                     unreadTask.updatedAt = eventData.taskUpdatedAt
@@ -1543,21 +1542,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskFromMeLocalData.allTasks.ongoing.toMutableList()
                                     val taskIndex = allTaskList.indexOf(ongoingTask)
 
-                                    var oldEvents = ongoingTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            ongoingTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            ongoingTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        ongoingTask.events = oldEvents
-                                    }
+//                                    var oldEvents = ongoingTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            ongoingTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            ongoingTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        ongoingTask.events = oldEvents
+//                                    }
                                     ongoingTask.hiddenBy = listOf()
                                     ongoingTask.seenBy = eventData.taskData.seenBy
                                     ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -1574,21 +1573,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskFromMeLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allTaskList.indexOf(doneTask)
 
-                                    var oldEvents = doneTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            doneTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            doneTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        doneTask.events = oldEvents
-                                    }
+//                                    var oldEvents = doneTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            doneTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            doneTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        doneTask.events = oldEvents
+//                                    }
                                     doneTask.hiddenBy = listOf()
                                     doneTask.seenBy = eventData.taskData.seenBy
                                     doneTask.updatedAt = eventData.taskUpdatedAt
@@ -1653,8 +1652,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     commentData = eventData.commentData,
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
-                    invitedMembers = eventData.invitedMembers,
-                    v = null
+                    invitedMembers = eventData.invitedMembers
                 )
                 val taskEventList: MutableList<Events> = mutableListOf()
                 taskEventList.add(taskEvent)
@@ -1676,21 +1674,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskHiddenLocalData.allTasks.canceled.toMutableList()
                         val index = cancelledList.indexOf(removingTask)
 
-                        var oldEvents = task.events.toMutableList()
-                        if (oldEvents.isNotEmpty()) {
-                            val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                            if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                oldEvents[oldEventIndex] = taskEvent
-                                task.events = oldEvents
-                            } else {
-                                oldEvents.add(taskEvent)
-                                task.events = oldEvents
-                            }
-                        } else {
-                            oldEvents = taskEventList
-                            task.events = oldEvents
-                        }
+//                        var oldEvents = task.events.toMutableList()
+//                        if (oldEvents.isNotEmpty()) {
+//                            val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                            if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                oldEvents[oldEventIndex] = taskEvent
+//                                task.events = oldEvents
+//                            } else {
+//                                oldEvents.add(taskEvent)
+//                                task.events = oldEvents
+//                            }
+//                        } else {
+//                            oldEvents = taskEventList
+//                            task.events = oldEvents
+//                        }
                         task.hiddenBy = listOf()
                         task.seenBy = eventData.taskData.seenBy
                         task.creatorState = eventData.taskData.creatorState
@@ -1783,8 +1781,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         commentData = eventData.commentData,
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
-                        invitedMembers = eventData.invitedMembers,
-                        v = null
+                        invitedMembers = eventData.invitedMembers
                     )
                     val taskEventList: MutableList<Events> = mutableListOf()
                     taskEventList.add(taskEvent)
@@ -1817,21 +1814,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskHiddenLocalData.allTasks.ongoing.toMutableList()
                                     val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
 
-                                    var oldEvents = ongoingTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            ongoingTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            ongoingTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        ongoingTask.events = oldEvents
-                                    }
+//                                    var oldEvents = ongoingTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            ongoingTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            ongoingTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        ongoingTask.events = oldEvents
+//                                    }
                                     ongoingTask.hiddenBy = listOf()
                                     ongoingTask.seenBy = eventData.taskData.seenBy
                                     ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -1869,21 +1866,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskHiddenLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allDoneTaskList.indexOf(doneTask)
 
-                                    var oldEvents = doneTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            doneTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            doneTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        doneTask.events = oldEvents
-                                    }
+//                                    var oldEvents = doneTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            doneTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            doneTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        doneTask.events = oldEvents
+//                                    }
                                     doneTask.hiddenBy = listOf()
                                     doneTask.seenBy = eventData.taskData.seenBy
                                     doneTask.updatedAt = eventData.taskUpdatedAt
@@ -1980,22 +1977,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskToMeLocalData.allTasks.new.toMutableList()
                                     val taskIndex = allTaskList.indexOf(newTask)
 
-                                    var oldEvents = newTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent =
-                                            oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            newTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            newTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        newTask.events = oldEvents
-                                    }
+//                                    var oldEvents = newTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent =
+//                                            oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            newTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            newTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        newTask.events = oldEvents
+//                                    }
                                     newTask.hiddenBy = listOf()
                                     newTask.seenBy = eventData.taskData.seenBy
                                     newTask.updatedAt = eventData.taskUpdatedAt
@@ -2035,22 +2032,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskToMeLocalData.allTasks.ongoing.toMutableList()
                                     val taskIndex = allTaskList.indexOf(ongoingTask)
 
-                                    var oldEvents = ongoingTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent =
-                                            oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            ongoingTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            ongoingTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        ongoingTask.events = oldEvents
-                                    }
+//                                    var oldEvents = ongoingTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent =
+//                                            oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            ongoingTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            ongoingTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        ongoingTask.events = oldEvents
+//                                    }
                                     ongoingTask.hiddenBy = listOf()
                                     ongoingTask.seenBy = eventData.taskData.seenBy
                                     ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -2089,22 +2086,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskToMeLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allTaskList.indexOf(doneTask)
 
-                                    var oldEvents = doneTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent =
-                                            oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            doneTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            doneTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        doneTask.events = oldEvents
-                                    }
+//                                    var oldEvents = doneTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent =
+//                                            oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            doneTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            doneTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        doneTask.events = oldEvents
+//                                    }
                                     doneTask.hiddenBy = listOf()
                                     doneTask.seenBy = eventData.taskData.seenBy
                                     doneTask.updatedAt = eventData.taskUpdatedAt
@@ -2159,22 +2156,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskFromMeLocalData.allTasks.unread.toMutableList()
                                     val taskIndex = allTaskList.indexOf(unreadTask)
 
-                                    var oldEvents = unreadTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent =
-                                            oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            unreadTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            unreadTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        unreadTask.events = oldEvents
-                                    }
+//                                    var oldEvents = unreadTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent =
+//                                            oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            unreadTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            unreadTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        unreadTask.events = oldEvents
+//                                    }
                                     unreadTask.hiddenBy = listOf()
                                     unreadTask.seenBy = eventData.taskData.seenBy
                                     unreadTask.updatedAt = eventData.taskUpdatedAt
@@ -2214,22 +2211,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskFromMeLocalData.allTasks.ongoing.toMutableList()
                                     val taskIndex = allTaskList.indexOf(ongoingTask)
 
-                                    var oldEvents = ongoingTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent =
-                                            oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            ongoingTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            ongoingTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        ongoingTask.events = oldEvents
-                                    }
+//                                    var oldEvents = ongoingTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent =
+//                                            oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            ongoingTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            ongoingTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        ongoingTask.events = oldEvents
+//                                    }
                                     ongoingTask.hiddenBy = listOf()
                                     ongoingTask.seenBy = eventData.taskData.seenBy
                                     ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -2269,22 +2266,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         taskFromMeLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allTaskList.indexOf(doneTask)
 
-                                    var oldEvents = doneTask.events.toMutableList()
-                                    if (oldEvents.isNotEmpty()) {
-                                        val oldOnlyEvent =
-                                            oldEvents.find { it.id == eventData.id }
-                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                            oldEvents[oldEventIndex] = taskEvent
-                                            doneTask.events = oldEvents
-                                        } else {
-                                            oldEvents.add(taskEvent)
-                                            doneTask.events = oldEvents
-                                        }
-                                    } else {
-                                        oldEvents = taskEventList
-                                        doneTask.events = oldEvents
-                                    }
+//                                    var oldEvents = doneTask.events.toMutableList()
+//                                    if (oldEvents.isNotEmpty()) {
+//                                        val oldOnlyEvent =
+//                                            oldEvents.find { it.id == eventData.id }
+//                                        if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                            val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                            oldEvents[oldEventIndex] = taskEvent
+//                                            doneTask.events = oldEvents
+//                                        } else {
+//                                            oldEvents.add(taskEvent)
+//                                            doneTask.events = oldEvents
+//                                        }
+//                                    } else {
+//                                        oldEvents = taskEventList
+//                                        doneTask.events = oldEvents
+//                                    }
                                     doneTask.hiddenBy = listOf()
                                     doneTask.seenBy = eventData.taskData.seenBy
                                     doneTask.updatedAt = eventData.taskUpdatedAt
@@ -2369,8 +2366,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         commentData = eventData.commentData,
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
-                        invitedMembers = eventData.invitedMembers,
-                        v = null
+                        invitedMembers = eventData.invitedMembers
                     )
                     val taskEventList: MutableList<Events> = mutableListOf()
                     taskEventList.add(taskEvent)
@@ -2401,21 +2397,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskHiddenLocalData.allTasks.ongoing.toMutableList()
                                 val taskIndex = allOngoingTaskList.indexOf(ongoingTask)
 
-                                var oldEvents = ongoingTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents
-                                }
+//                                var oldEvents = ongoingTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        ongoingTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        ongoingTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    ongoingTask.events = oldEvents
+//                                }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
                                 ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -2475,21 +2471,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskHiddenLocalData.allTasks.done.toMutableList()
                                 val taskIndex = allDoneTaskList.indexOf(doneTask)
 
-                                var oldEvents = doneTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    doneTask.events = oldEvents
-                                }
+//                                var oldEvents = doneTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        doneTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        doneTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    doneTask.events = oldEvents
+//                                }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
                                 doneTask.updatedAt = eventData.taskUpdatedAt
@@ -2562,21 +2558,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                 val taskIndex = allTaskList.indexOf(newTask)
 
-                                var oldEvents = newTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        newTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        newTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    newTask.events = oldEvents
-                                }
+//                                var oldEvents = newTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        newTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        newTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    newTask.events = oldEvents
+//                                }
                                 newTask.hiddenBy = listOf()
                                 newTask.seenBy = eventData.taskData.seenBy
                                 newTask.updatedAt = eventData.taskUpdatedAt
@@ -2610,21 +2606,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 val allTaskList = taskToMeLocalData.allTasks.ongoing.toMutableList()
                                 val taskIndex = allTaskList.indexOf(ongoingTask)
 
-                                var oldEvents = ongoingTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents
-                                }
+//                                var oldEvents = ongoingTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        ongoingTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        ongoingTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    ongoingTask.events = oldEvents
+//                                }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
                                 ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -2658,21 +2654,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                                 val taskIndex = allTaskList.indexOf(doneTask)
 
-                                var oldEvents = doneTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    doneTask.events = oldEvents
-                                }
+//                                var oldEvents = doneTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        doneTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        doneTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    doneTask.events = oldEvents
+//                                }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
                                 doneTask.updatedAt = eventData.taskUpdatedAt
@@ -2711,21 +2707,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskFromMeLocalData.allTasks.unread.toMutableList()
                                 val taskIndex = allTaskList.indexOf(unreadTask)
 
-                                var oldEvents = unreadTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        unreadTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        unreadTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    unreadTask.events = oldEvents
-                                }
+//                                var oldEvents = unreadTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        unreadTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        unreadTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    unreadTask.events = oldEvents
+//                                }
                                 unreadTask.hiddenBy = listOf()
                                 unreadTask.seenBy = eventData.taskData.seenBy
                                 unreadTask.updatedAt = eventData.taskUpdatedAt
@@ -2760,21 +2756,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskFromMeLocalData.allTasks.ongoing.toMutableList()
                                 val taskIndex = allTaskList.indexOf(ongoingTask)
 
-                                var oldEvents = ongoingTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents
-                                }
+//                                var oldEvents = ongoingTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        ongoingTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        ongoingTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    ongoingTask.events = oldEvents
+//                                }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
                                 ongoingTask.updatedAt = eventData.taskUpdatedAt
@@ -2808,21 +2804,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 val allTaskList = taskFromMeLocalData.allTasks.done.toMutableList()
                                 val taskIndex = allTaskList.indexOf(doneTask)
 
-                                var oldEvents = doneTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    doneTask.events = oldEvents
-                                }
+//                                var oldEvents = doneTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        doneTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        doneTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    doneTask.events = oldEvents
+//                                }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
                                 doneTask.updatedAt = eventData.taskUpdatedAt
@@ -2887,8 +2883,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     commentData = eventData.commentData,
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
-                    invitedMembers = eventData.invitedMembers,
-                    v = null
+                    invitedMembers = eventData.invitedMembers
                 )
                 val taskEventList: MutableList<Events> = mutableListOf()
                 taskEventList.add(taskEvent)
@@ -2905,21 +2900,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         if (ongoingTask != null) {
                             val index = taskToMeLocalData.allTasks.ongoing.indexOf(ongoingTask)
 
-                            var oldEvents = ongoingTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                ongoingTask.events = oldEvents
-                            }
+//                            var oldEvents = ongoingTask.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    ongoingTask.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    ongoingTask.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                ongoingTask.events = oldEvents
+//                            }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
                             ongoingTask.creatorState = eventData.taskData.creatorState
@@ -2957,21 +2952,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         } else if (newTask != null) {
                             val index = taskToMeLocalData.allTasks.new.indexOf(newTask)
 
-                            var oldEvents = newTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    newTask.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    newTask.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                newTask.events = oldEvents
-                            }
+//                            var oldEvents = newTask.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    newTask.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    newTask.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                newTask.events = oldEvents
+//                            }
                             newTask.hiddenBy = listOf()
                             newTask.seenBy = eventData.taskData.seenBy
                             newTask.creatorState = eventData.taskData.creatorState
@@ -3008,21 +3003,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         } else if (doneTask != null) {
                             val index = taskToMeLocalData.allTasks.done.indexOf(doneTask)
 
-                            var oldEvents = doneTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                doneTask.events = oldEvents
-                            }
+//                            var oldEvents = doneTask.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    doneTask.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    doneTask.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                doneTask.events = oldEvents
+//                            }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
                             doneTask.creatorState = eventData.taskData.creatorState
@@ -3073,21 +3068,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         if (unread != null) {
                             val index = taskFromMeLocalData.allTasks.unread.indexOf(unread)
 
-                            var oldEvents = unread.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    unread.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    unread.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                unread.events = oldEvents
-                            }
+//                            var oldEvents = unread.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    unread.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    unread.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                unread.events = oldEvents
+//                            }
                             unread.hiddenBy = listOf()
                             unread.seenBy = eventData.taskData.seenBy
                             unread.creatorState = eventData.taskData.creatorState
@@ -3125,21 +3120,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         } else if (ongoingTask != null) {
                             val index = taskFromMeLocalData.allTasks.ongoing.indexOf(ongoingTask)
 
-                            var oldEvents = ongoingTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    ongoingTask.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    ongoingTask.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                ongoingTask.events = oldEvents
-                            }
+//                            var oldEvents = ongoingTask.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    ongoingTask.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    ongoingTask.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                ongoingTask.events = oldEvents
+//                            }
                             ongoingTask.hiddenBy = listOf()
                             ongoingTask.seenBy = eventData.taskData.seenBy
                             ongoingTask.creatorState = eventData.taskData.creatorState
@@ -3177,21 +3172,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         } else if (doneTask != null) {
                             val index = taskFromMeLocalData.allTasks.done.indexOf(doneTask)
 
-                            var oldEvents = doneTask.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    doneTask.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    doneTask.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                doneTask.events = oldEvents
-                            }
+//                            var oldEvents = doneTask.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    doneTask.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    doneTask.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                doneTask.events = oldEvents
+//                            }
                             doneTask.hiddenBy = listOf()
                             doneTask.seenBy = eventData.taskData.seenBy
                             doneTask.creatorState = eventData.taskData.creatorState
@@ -3251,21 +3246,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskHiddenLocalData.allTasks.ongoing.toMutableList()
                                 val index = toUpdateOngoingList.indexOf(ongoingTask)
 
-                                var oldEvents = ongoingTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        ongoingTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        ongoingTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    ongoingTask.events = oldEvents
-                                }
+//                                var oldEvents = ongoingTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        ongoingTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        ongoingTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    ongoingTask.events = oldEvents
+//                                }
                                 ongoingTask.hiddenBy = listOf()
                                 ongoingTask.seenBy = eventData.taskData.seenBy
                                 ongoingTask.creatorState = eventData.taskData.creatorState
@@ -3321,21 +3316,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskHiddenLocalData.allTasks.done.toMutableList()
                                 val index = taskHiddenLocalData.allTasks.done.indexOf(doneTask)
 
-                                var oldEvents = doneTask.events.toMutableList()
-                                if (oldEvents.isNotEmpty()) {
-                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                        oldEvents[oldEventIndex] = taskEvent
-                                        doneTask.events = oldEvents
-                                    } else {
-                                        oldEvents.add(taskEvent)
-                                        doneTask.events = oldEvents
-                                    }
-                                } else {
-                                    oldEvents = taskEventList
-                                    doneTask.events = oldEvents
-                                }
+//                                var oldEvents = doneTask.events.toMutableList()
+//                                if (oldEvents.isNotEmpty()) {
+//                                    val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                    if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                        val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                        oldEvents[oldEventIndex] = taskEvent
+//                                        doneTask.events = oldEvents
+//                                    } else {
+//                                        oldEvents.add(taskEvent)
+//                                        doneTask.events = oldEvents
+//                                    }
+//                                } else {
+//                                    oldEvents = taskEventList
+//                                    doneTask.events = oldEvents
+//                                }
                                 doneTask.hiddenBy = listOf()
                                 doneTask.seenBy = eventData.taskData.seenBy
                                 doneTask.creatorState = eventData.taskData.creatorState
@@ -3401,21 +3396,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskHiddenLocalData.allTasks.canceled.find { it.id == taskID }
                         if (canceled != null) {
                             val index = taskHiddenLocalData.allTasks.canceled.indexOf(canceled)
-                            var oldEvents = canceled.events.toMutableList()
-                            if (oldEvents.isNotEmpty()) {
-                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
-                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
-                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
-                                    oldEvents[oldEventIndex] = taskEvent
-                                    canceled.events = oldEvents
-                                } else {
-                                    oldEvents.add(taskEvent)
-                                    canceled.events = oldEvents
-                                }
-                            } else {
-                                oldEvents = taskEventList
-                                canceled.events = oldEvents
-                            }
+//                            var oldEvents = canceled.events.toMutableList()
+//                            if (oldEvents.isNotEmpty()) {
+//                                val oldOnlyEvent = oldEvents.find { it.id == eventData.id }
+//                                if (oldOnlyEvent != null) {     //means event already exist, so replace it
+//                                    val oldEventIndex = oldEvents.indexOf(oldOnlyEvent)
+//                                    oldEvents[oldEventIndex] = taskEvent
+//                                    canceled.events = oldEvents
+//                                } else {
+//                                    oldEvents.add(taskEvent)
+//                                    canceled.events = oldEvents
+//                                }
+//                            } else {
+//                                oldEvents = taskEventList
+//                                canceled.events = oldEvents
+//                            }
                             canceled.hiddenBy = listOf()
                             canceled.seenBy = eventData.taskData.seenBy
                             canceled.creatorState = eventData.taskData.creatorState

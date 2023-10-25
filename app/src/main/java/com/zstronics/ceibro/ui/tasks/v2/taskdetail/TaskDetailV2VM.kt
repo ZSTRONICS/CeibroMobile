@@ -121,7 +121,6 @@ class TaskDetailV2VM @Inject constructor(
     ) {
 
 
-
         launch {
             //loading(true)
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
@@ -143,9 +142,9 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-   suspend fun syncEvents(
-       taskId: String,
-       events: List<Events>?,
+    suspend fun syncEvents(
+        taskId: String,
+        events: List<Events>?,
     ) {
         launch {
             val eventsIds = ArrayList<String>()
@@ -236,21 +235,23 @@ class TaskDetailV2VM @Inject constructor(
             }
         }
     }
-    fun getTaskWithUpdatedTimeStamp(
-        timeStamp: String,
-        onLoggedIn: () -> Unit
-    ) {
 
-        launch {
-            loading(true)
 
-            taskRepository.getTaskWithUpdatedTimeStamp(timeStamp) { isSuccess, taskEvents, message ->
-                if (isSuccess) {
-
-                } else {
-
-                }
-            }
-        }
-    }
+//    fun getTaskWithUpdatedTimeStamp(
+//        timeStamp: String,
+//        onLoggedIn: () -> Unit
+//    ) {
+//
+//        launch {
+//            loading(true)
+//
+//            taskRepository.getTaskWithUpdatedTimeStamp(timeStamp) { isSuccess, taskEvents, message ->
+//                if (isSuccess) {
+//
+//                } else {
+//
+//                }
+//            }
+//        }
+//    }
 }
