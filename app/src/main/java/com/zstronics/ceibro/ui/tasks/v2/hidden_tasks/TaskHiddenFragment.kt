@@ -11,7 +11,6 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
 import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -267,8 +266,8 @@ class TaskHiddenFragment :
         EventBus.getDefault().unregister(this)
     }
 
-    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
-        val canceledCount = allTasks.canceled.count { task -> viewModel.user?.id !in task.seenBy }
+    private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
+        val canceledCount = allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
         mViewDataBinding.cancelledStateCount.text =
             if (canceledCount > 99) {
                 "99+"

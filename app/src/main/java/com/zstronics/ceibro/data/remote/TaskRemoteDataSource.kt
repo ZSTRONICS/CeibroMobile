@@ -13,7 +13,7 @@ import com.zstronics.ceibro.data.repos.task.models.TasksResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
@@ -214,11 +214,11 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun getTaskWithUpdatedTimeStamp(updatedAtTimeStamp: String): ApiResponse<AllTasksResponse> =
+    override suspend fun getAllTaskWithEventsSeparately(updatedAtTimeStamp: String): ApiResponse<AllTasksV2NewResponse> =
         executeSafely(
             call =
             {
-                service.getTaskWithUpdatedTimeStamp(updatedAtTimeStamp)
+                service.getAllTaskWithEventsSeparately(updatedAtTimeStamp)
             }
         )
 

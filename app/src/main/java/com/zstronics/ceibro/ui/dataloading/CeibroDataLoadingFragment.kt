@@ -21,6 +21,8 @@ import com.zstronics.ceibro.databinding.FragmentCeibroDataLoadingBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -42,20 +44,22 @@ class CeibroDataLoadingFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startSplashAnimation()
-        viewModel.loadAppData(requireContext()) {
-            val progress = viewModel.apiSucceedCount.div(API_CALL_COUNT).times(
-                100
-            ).toInt()
-            mViewDataBinding.syncProgress.setProgress(
-                progress, true
-            )
-            if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
-                isNavigated = true
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed({
-                    Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
-                    navigateToDashboard()
-                }, 100)
+        GlobalScope.launch {
+            viewModel.loadAppData(requireContext()) {
+                val progress = viewModel.apiSucceedCount.div(API_CALL_COUNT).times(
+                    100
+                ).toInt()
+                mViewDataBinding.syncProgress.setProgress(
+                    progress, true
+                )
+                if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
+                    isNavigated = true
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed({
+                        Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())
+                        navigateToDashboard()
+                    }, 100)
+                }
             }
         }
     }

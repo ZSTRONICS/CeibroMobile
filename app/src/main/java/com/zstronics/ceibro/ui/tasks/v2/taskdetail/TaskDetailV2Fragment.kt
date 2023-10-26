@@ -294,12 +294,12 @@ class TaskDetailV2Fragment :
                 viewModel.separateFiles(item.files)
             }
 
-            if (item.events.isNotEmpty()) {
-                mViewDataBinding.eventsLayout.visibility = View.VISIBLE
-                viewModel.handleEvents(item.events)
-            } else {
-                mViewDataBinding.eventsLayout.visibility = View.GONE
-            }
+//            if (item.events.isNotEmpty()) {
+//                mViewDataBinding.eventsLayout.visibility = View.VISIBLE
+//                viewModel.handleEvents(item.events)
+//            } else {
+//                mViewDataBinding.eventsLayout.visibility = View.GONE
+//            }
         }
 
 
@@ -457,8 +457,7 @@ class TaskDetailV2Fragment :
                             commentData = eventData.commentData,
                             createdAt = eventData.createdAt,
                             updatedAt = eventData.updatedAt,
-                            invitedMembers = eventData.invitedMembers,
-                            v = null
+                            invitedMembers = eventData.invitedMembers
                         )
                         // onTaskEvent(LocalEvents.TaskEvent(taskEvent))
                         viewModel.updateTaskCommentInLocal(
@@ -504,22 +503,22 @@ class TaskDetailV2Fragment :
                 taskDetail.id
             )
         ) {
-            val taskEvents = taskDetail.events.toMutableList()
-            val eventExist = taskEvents.find { newEvent.id == it.id }
-            if (eventExist == null) {  /// event not existed
-                taskEvents.add(newEvent)
-                taskDetail.seenBy = listOf()
-                taskDetail.events = taskEvents
-//                val handler = Handler()
-//                handler.postDelayed(Runnable {
-//                    eventsAdapter.listItems.add(newEvent)
-//                    mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-//                }, 210)
-                viewModel.originalTask.postValue(taskDetail)
-                viewModel._taskDetail.postValue(taskDetail)
-                viewModel.taskSeen(taskDetail.id) { }
-                scrollToBottom()
-            }
+//            val taskEvents = taskDetail.events.toMutableList()
+//            val eventExist = taskEvents.find { newEvent.id == it.id }
+//            if (eventExist == null) {  /// event not existed
+//                taskEvents.add(newEvent)
+//                taskDetail.seenBy = listOf()
+//                taskDetail.events = taskEvents
+////                val handler = Handler()
+////                handler.postDelayed(Runnable {
+////                    eventsAdapter.listItems.add(newEvent)
+////                    mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+////                }, 210)
+//                viewModel.originalTask.postValue(taskDetail)
+//                viewModel._taskDetail.postValue(taskDetail)
+//                viewModel.taskSeen(taskDetail.id) { }
+//                scrollToBottom()
+//            }
         }
     }
 
@@ -552,18 +551,18 @@ class TaskDetailV2Fragment :
             viewModel.taskDetail.value?.let { taskDetail ->
                 if (task.id == taskDetail.id) {
                     task.let { it1 ->
-                        val oldAllEvents = taskDetail.events
-                        /// check is event is already added in the list
-                        val foundEvent =
-                            oldAllEvents.find { it.id == taskEvent?.id }
-                        if (foundEvent == null) {
+//                        val oldAllEvents = taskDetail.events
+//                        /// check is event is already added in the list
+//                        val foundEvent =
+//                            oldAllEvents.find { it.id == taskEvent?.id }
+//                        if (foundEvent == null) {
                             viewModel.originalTask.postValue(it1)
                             viewModel._taskDetail.postValue(it1)
                             val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
                             if (seenByMe == null) {
                                 println("TaskSeen-CalledOnTaskDoneReceived: ${it1.id}")
                                 viewModel.taskSeen(it1.id) { }
-                            }
+//                            }
                             scrollToBottom()
                         }
                     }

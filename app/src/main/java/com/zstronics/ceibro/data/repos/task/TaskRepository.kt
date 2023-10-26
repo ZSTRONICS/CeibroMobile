@@ -24,7 +24,6 @@ import com.zstronics.ceibro.data.repos.task.models.SubTaskEditDetailRequest
 import com.zstronics.ceibro.data.repos.task.models.SubTaskRejections
 import com.zstronics.ceibro.data.repos.task.models.SubtaskCommentRequest
 import com.zstronics.ceibro.data.repos.task.models.SubtaskStatusData
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
@@ -32,8 +31,7 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCommentRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
@@ -94,13 +92,12 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    override suspend fun getTaskWithUpdatedTimeStamp(
+    override suspend fun getAllTaskWithEventsSeparately(
         timeStamp: String,
-        callBack: (isSuccess: Boolean, response: AllTasksResponse?, message: String) -> Unit
+        callBack: (isSuccess: Boolean, response: AllTasksV2NewResponse?, message: String) -> Unit
     ) {
-        when (val response = remoteTask.getTaskWithUpdatedTimeStamp(timeStamp)) {
+        when (val response = remoteTask.getAllTaskWithEventsSeparately(timeStamp)) {
             is ApiResponse.Success -> {
-
                 callBack(true, response.data,"")
             }
 
