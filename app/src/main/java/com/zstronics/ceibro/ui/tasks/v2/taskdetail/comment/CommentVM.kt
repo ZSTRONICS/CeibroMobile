@@ -41,6 +41,7 @@ class CommentVM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
+
         val bundleTaskData: CeibroTaskV2? = bundle?.getParcelable("taskData")
         val action = bundle?.getString("action")
         if (bundleTaskData != null) {
@@ -140,10 +141,10 @@ class CommentVM @Inject constructor(
 
 //                val handler = Handler()
 //                handler.postDelayed(Runnable {
-                    loading(false, "")
-                    if (isSuccess) {
-                        onBack(eventData)
-                    }
+                loading(false, "")
+                if (isSuccess) {
+                    onBack(eventData)
+                }
 //                }, 40)
 
             }

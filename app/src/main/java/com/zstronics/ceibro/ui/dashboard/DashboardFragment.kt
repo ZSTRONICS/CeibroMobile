@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
@@ -311,6 +312,7 @@ class DashboardFragment :
         }
 
         if (!socketEventsInitiated) {
+            OneSignal.promptForPushNotifications()
             socketEventsInitiating()
             changeSelectedTab(R.id.toMeBtn, false)
         }
@@ -655,14 +657,14 @@ class DashboardFragment :
         event?.let {
             if (it.isTaskCreated) {
                 run {
-                    val notificationHelper = NotificationHelper.getInstance(requireContext())
+                    /*val notificationHelper = NotificationHelper.getInstance(requireContext())
                     notificationHelper.createNotification(
                         notificationId = index++,
-                        moduleName = event.moduleName,
+                        notificationType = event.moduleName,
                         title = event.notificationTitle,
                         message = event.notificationDescription,
                         context = requireContext()
-                    )
+                    )*/
                 }
             }
         }

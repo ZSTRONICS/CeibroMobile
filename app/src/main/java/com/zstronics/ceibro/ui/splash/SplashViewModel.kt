@@ -59,6 +59,7 @@ class SplashViewModel @Inject constructor(
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
+            draftNewTaskV2Internal.deleteAllData()
         }
         SocketHandler.sendLogout()
         sessionManager.endUserSession()

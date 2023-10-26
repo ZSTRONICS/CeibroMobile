@@ -5,6 +5,7 @@ const val FRAGMENT_CLASS = "fragment_class"
 const val SHOW_TOOLBAR = "_show_toolbar"
 const val HOME_AS_UP_INDICATOR = "_home_as_up_indicator"
 const val EXTRA = "_bundle_extras"
+const val EXTRA_FROM_NOTIFICATION = "_bundle_extras_notifications"
 const val TOOLBAR_TITLE = "toolbar_title"
 const val INDEX = "_index"
 

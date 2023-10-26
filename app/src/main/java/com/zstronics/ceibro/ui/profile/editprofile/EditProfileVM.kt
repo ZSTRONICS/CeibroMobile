@@ -111,7 +111,11 @@ class EditProfileVM @Inject constructor(
         }
     }
 
-    override fun changePassword(oldPassword: String, newPassword: String, onPasswordChanged: () -> Unit) {
+    override fun changePassword(
+        oldPassword: String,
+        newPassword: String,
+        onPasswordChanged: () -> Unit
+    ) {
         val request = ChangePasswordRequest(
             oldPassword = oldPassword,
             newPassword = newPassword
@@ -132,7 +136,12 @@ class EditProfileVM @Inject constructor(
         }
     }
 
-    override fun changePhoneNumber(newNumber: String, countryCode: String, password: String, onNumberChanged: () -> Unit) {
+    override fun changePhoneNumber(
+        newNumber: String,
+        countryCode: String,
+        password: String,
+        onNumberChanged: () -> Unit
+    ) {
         val request = ChangeNumberRequest(
             newNumber = newNumber,
             countryCode = countryCode,
@@ -154,7 +163,11 @@ class EditProfileVM @Inject constructor(
         }
     }
 
-    override fun changePhoneNumberVerifyOtp(newNumber: String, otp: String, onNumberVerified: () -> Unit) {
+    override fun changePhoneNumberVerifyOtp(
+        newNumber: String,
+        otp: String,
+        onNumberVerified: () -> Unit
+    ) {
         val request = ChangeNumberVerifyOtpRequest(
             newNumber = newNumber,
             otp = otp
@@ -186,6 +199,7 @@ class EditProfileVM @Inject constructor(
                     loading(false, response.data.message)
                     onOtpResend.invoke()
                 }
+
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                 }
@@ -205,14 +219,14 @@ class EditProfileVM @Inject constructor(
                     val userObj = sessionManager.getUserObj()
                     if (response.data.user.profilePic != "") {
                         userObj?.profilePic = response.data.user.profilePic
-                    }
-                    else {
+                    } else {
                         userObj?.profilePic = fileUri
                     }
                     userObj?.let { sessionManager.updateUser(userObj = it) }
                     viewState.userProfilePic.value = userObj?.profilePic
                     loading(false, "Profile pic updated")
                 }
+
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                 }
@@ -252,6 +266,7 @@ class EditProfileVM @Inject constructor(
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
+            draftNewTaskV2Internal.deleteAllData()
         }
         SocketHandler.sendLogout()
         sessionManager.endUserSession()
