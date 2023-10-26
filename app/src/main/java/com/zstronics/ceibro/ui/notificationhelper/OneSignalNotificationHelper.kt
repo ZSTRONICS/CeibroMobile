@@ -32,6 +32,7 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
 
 
         val notificationHelper = NotificationHelper.getInstance(context)
+        osNotificationReceivedEvent.complete(null)
         notificationHelper.createNotification(
             task,
             notificationId = DashboardFragment.index++,
@@ -40,6 +41,5 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
             message = task.description,
             context = context
         )
-        osNotificationReceivedEvent.complete(null)
     }
 }

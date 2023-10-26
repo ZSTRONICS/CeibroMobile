@@ -32,7 +32,6 @@ import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -138,9 +137,13 @@ class CommentFragment :
                     viewModel.uploadComment(
                         requireContext()
                     ) { eventData ->
-                        val bundle = Bundle()
-                        bundle.putParcelable("eventData", eventData)
-                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+                        if (viewModel.notificationTaskData!=null){
+                            shortToastNow("Commented successfully!")
+                        }else{
+                            val bundle = Bundle()
+                            bundle.putParcelable("eventData", eventData)
+                            navigateBackWithResult(Activity.RESULT_OK, bundle)
+                        }
                     }
                 } else if (viewModel.actionToPerform.value.equals(
                         TaskDetailEvents.DoneTask.eventValue,

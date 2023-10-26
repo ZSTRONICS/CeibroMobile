@@ -11,6 +11,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -55,6 +56,12 @@ class ForwardTaskVM @Inject constructor(
             oldSelectedContacts = selectedContact
         }
         taskData.let { _taskDetail.postValue(it) }
+
+
+        val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+        if (taskData2 != null) {
+            println("TaskData: forward $taskData2")
+        }
     }
 
 
