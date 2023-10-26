@@ -31,6 +31,8 @@ class Notifyme : AppCompatActivity() {
                     NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
                 )
             }
+        } else {
+            finish()
         }
 
     }

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -51,6 +52,9 @@ class CeibroDataLoadingFragment :
             )
             if (viewModel.apiSucceedCount >= API_CALL_COUNT && !isNavigated) {
                 isNavigated = true
+//                viewModel.sessionManager.getUserObj()?.id?.let { OneSignal.setExternalUserId(it) }
+//                OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
+//                OneSignal.pauseInAppMessages(false)
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
                     Log.d("Data loading end at ", DateUtils.getCurrentTimeStamp())

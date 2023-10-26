@@ -10,6 +10,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
@@ -36,6 +37,8 @@ class CommentVM @Inject constructor(
         MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
     var taskData: CeibroTaskV2? = null
+    var notificationTaskData: NotificationTaskData? = null
+    var taskId: String = ""
     var actionToPerform: MutableLiveData<String> = MutableLiveData("")
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -46,8 +49,18 @@ class CommentVM @Inject constructor(
         val action = bundle?.getString("action")
         if (bundleTaskData != null) {
             taskData = bundleTaskData
+            taskId = bundleTaskData.id
         }
         action?.let { actionToPerform.value = it }
+
+
+        val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+        if (taskData2 != null) {
+            println("TaskData:comment $taskData2")
+            actionToPerform.value = TaskDetailEvents.Comment.eventValue
+            notificationTaskData = taskData2
+            taskId = taskData2.taskId
+        }
     }
 
     fun uploadComment(
@@ -98,7 +111,7 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithFilesV2(
                         event = TaskDetailEvents.Comment.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = true,
                         eventWithFileUploadV2Request = request
                     )) {
@@ -121,7 +134,7 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithoutFilesV2(
                         event = TaskDetailEvents.Comment.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = false,
                         eventCommentOnlyUploadV2Request = request
                     )) {
@@ -202,7 +215,7 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithFilesV2(
                         event = TaskDetailEvents.DoneTask.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = true,
                         eventWithFileUploadV2Request = request
                     )) {
@@ -225,7 +238,7 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithoutFilesV2(
                         event = TaskDetailEvents.DoneTask.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = false,
                         eventCommentOnlyUploadV2Request = request
                     )) {
