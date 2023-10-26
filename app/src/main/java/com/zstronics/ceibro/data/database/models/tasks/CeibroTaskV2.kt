@@ -76,7 +76,9 @@ data class CeibroTaskV2(
     @SerializedName("toMeState")
     var toMeState: String,
     @SerializedName("hiddenState")
-    var hiddenState: String
+    var hiddenState: String,
+    @SerializedName("eventsCount")
+    var eventsCount: Int
 ) : Parcelable {
     override fun hashCode(): Int {
         return super.hashCode()

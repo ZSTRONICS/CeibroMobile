@@ -22,6 +22,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -49,8 +50,8 @@ class TaskDetailV2VM @Inject constructor(
     private val _documents: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<TaskFiles>> = _documents
 
-    private val _taskEvents: MutableLiveData<ArrayList<Events>> = MutableLiveData()
-    val taskEvents: MutableLiveData<ArrayList<Events>> = _taskEvents
+    private val _taskEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
+    val taskEvents: MutableLiveData<MutableList<Events>> = _taskEvents
 
     var rootState = ""
     var selectedState = ""
@@ -71,14 +72,14 @@ class TaskDetailV2VM @Inject constructor(
         if (parentSelectedState != null) {
             selectedState = parentSelectedState
         }
-        taskData.let {
-            _taskDetail.postValue(it)
-            originalTask.postValue(it)
-        }
-        taskData?.id?.let { it1 ->
-            val seenByMe = taskData.seenBy.find { it == user?.id }
+        taskData?.let { task ->
+            getAllEvents(task.id)
+            _taskDetail.postValue(task)
+            originalTask.postValue(task)
+
+            val seenByMe = task.seenBy.find { it == user?.id }
             if (seenByMe == null) {
-                taskSeen(it1) { }
+                taskSeen(task.id) { }
             }
         }
     }
@@ -110,8 +111,11 @@ class TaskDetailV2VM @Inject constructor(
         _documents.postValue(document)
     }
 
-    fun handleEvents(events: List<Events>) {
-        _taskEvents.postValue(ArrayList(events))
+    private fun getAllEvents(taskId: String) {
+        launch {
+            val taskEvents = taskDao.getEventsOfTask(taskId)
+            _taskEvents.postValue(taskEvents.toMutableList())
+        }
     }
 
 

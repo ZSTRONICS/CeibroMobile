@@ -20,6 +20,7 @@ import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
@@ -248,10 +249,90 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
 
-        task?.let {
+        task?.let { newTask ->
             launch {
-                sessionManager.saveUpdatedAtTimeStamp(task.updatedAt)
-                if (task.isCreator) {
+                sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
+                taskDao.insertTaskData(newTask)
+
+                if (newTask.isCreator) {
+                    when (newTask.fromMeState) {
+                        TaskStatus.UNREAD.name.lowercase() -> {
+                            val allFromMeUnreadTasks = CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+                            val foundTask = allFromMeUnreadTasks.find { it.id == newTask.id }
+                            if (foundTask != null) {
+                                val index = allFromMeUnreadTasks.indexOf(foundTask)
+                                allFromMeUnreadTasks.removeAt(index)
+                            }
+                            allFromMeUnreadTasks.add(newTask)
+                            val unreadTasks = allFromMeUnreadTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                        }
+                        TaskStatus.ONGOING.name.lowercase() -> {
+                            val allFromMeOngoingTasks = CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+                            val foundTask = allFromMeOngoingTasks.find { it.id == newTask.id }
+                            if (foundTask != null) {
+                                val index = allFromMeOngoingTasks.indexOf(foundTask)
+                                allFromMeOngoingTasks.removeAt(index)
+                            }
+                            allFromMeOngoingTasks.add(newTask)
+                            val ongoingTasks = allFromMeOngoingTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                        }
+                        TaskStatus.DONE.name.lowercase() -> {
+                            val allFromMeDoneTasks = CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+                            val foundTask = allFromMeDoneTasks.find { it.id == newTask.id }
+                            if (foundTask != null) {
+                                val index = allFromMeDoneTasks.indexOf(foundTask)
+                                allFromMeDoneTasks.removeAt(index)
+                            }
+                            allFromMeDoneTasks.add(newTask)
+                            val doneTasks = allFromMeDoneTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            CookiesManager.fromMeDoneTasks.postValue(doneTasks)
+                        }
+                    }
+                }
+
+                if (newTask.isAssignedToMe) {
+                    when (newTask.toMeState) {
+                        TaskStatus.NEW.name.lowercase() -> {
+                            val allToMeNewTasks = CookiesManager.toMeNewTasks.value ?: mutableListOf()
+                            val foundTask = allToMeNewTasks.find { it.id == newTask.id }
+                            if (foundTask != null) {
+                                val index = allToMeNewTasks.indexOf(foundTask)
+                                allToMeNewTasks.removeAt(index)
+                            }
+                            allToMeNewTasks.add(newTask)
+                            val newTasks = allToMeNewTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            CookiesManager.toMeNewTasks.postValue(newTasks)
+                        }
+                        TaskStatus.ONGOING.name.lowercase() -> {
+                            val allToMeOngoingTasks = CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
+                            val foundTask = allToMeOngoingTasks.find { it.id == newTask.id }
+                            if (foundTask != null) {
+                                val index = allToMeOngoingTasks.indexOf(foundTask)
+                                allToMeOngoingTasks.removeAt(index)
+                            }
+                            allToMeOngoingTasks.add(newTask)
+                            val ongoingTasks = allToMeOngoingTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                        }
+                        TaskStatus.DONE.name.lowercase() -> {
+                            val allToMeDoneTasks = CookiesManager.toMeDoneTasks.value ?: mutableListOf()
+                            val foundTask = allToMeDoneTasks.find { it.id == newTask.id }
+                            if (foundTask != null) {
+                                val index = allToMeDoneTasks.indexOf(foundTask)
+                                allToMeDoneTasks.removeAt(index)
+                            }
+                            allToMeDoneTasks.add(newTask)
+                            val doneTasks = allToMeDoneTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            CookiesManager.toMeDoneTasks.postValue(doneTasks)
+                        }
+                    }
+                    sharedViewModel?.isToMeUnread?.value = true
+                    sessionManager.saveToMeUnread(true)
+                }
+
+                /*if (task.isCreator) {
                     val taskLocalData =
                         TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
                     val unreadList = mutableListOf(task)
@@ -287,7 +368,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     sharedViewModel?.isToMeUnread?.value = true
                     sessionManager.saveToMeUnread(true)
 
-                }
+                }*/
                 EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
 
             }
@@ -329,7 +410,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     ) {
                         val ongoingTaskIndex =
                             taskHiddenLocalData.allTasks.ongoing.indexOfFirst { it.id == task.id }
-                        val doneTaskIndex = taskHiddenLocalData.allTasks.done.indexOfFirst { it.id == task.id }
+                        val doneTaskIndex =
+                            taskHiddenLocalData.allTasks.done.indexOfFirst { it.id == task.id }
 
                         if (ongoingTaskIndex != -1) {
                             val allOngoingTaskList =
@@ -350,10 +432,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 allOngoingToMeTaskList.add(0, task)
                                 taskToMeLocalData.allTasks.ongoing = allOngoingToMeTaskList
                             }
-                            taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskHiddenLocalData, "ongoing")
-                            taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "ongoing")
-                        }
-                        else if (doneTaskIndex != -1) {
+                            taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                taskHiddenLocalData,
+                                "ongoing"
+                            )
+                            taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                taskToMeLocalData,
+                                "ongoing"
+                            )
+                        } else if (doneTaskIndex != -1) {
                             val allDoneTaskList = taskHiddenLocalData.allTasks.done.toMutableList()
 
                             allDoneTaskList.removeAt(doneTaskIndex)
@@ -371,7 +458,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 allDoneToMeTaskList.add(0, task)
                                 taskToMeLocalData.allTasks.done = allDoneToMeTaskList
                             }
-                            taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskHiddenLocalData, "done")
+                            taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                taskHiddenLocalData,
+                                "done"
+                            )
                             taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "done")
                         }
                     }
@@ -393,7 +483,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 allCancelTaskList[taskIndex] = task
                                 taskHiddenLocalData.allTasks.canceled = allCancelTaskList
 
-                                TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskHiddenLocalData, "canceled")
+                                TaskV2DaoHelper(taskDao).insertTaskDataUpdated(
+                                    taskHiddenLocalData,
+                                    "canceled"
+                                )
                                 sharedViewModel?.isHiddenUnread?.value = true
                                 sessionManager.saveHiddenUnread(true)
                             }
@@ -436,8 +529,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     unreadList[unreadTaskIndex] = task
                                     taskFromMeLocalData.allTasks.unread = unreadList
                                 }
-                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskFromMeLocalData, "unread")
-                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskFromMeLocalData, "ongoing")
+                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                    taskFromMeLocalData,
+                                    "unread"
+                                )
+                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                    taskFromMeLocalData,
+                                    "ongoing"
+                                )
                                 sharedViewModel?.isFromMeUnread?.value = true
                                 sessionManager.saveFromMeUnread(true)
 
@@ -466,13 +565,22 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 }
                                 sharedViewModel?.isFromMeUnread?.value = true
                                 sessionManager.saveFromMeUnread(true)
-                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskFromMeLocalData, "ongoing")
-                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskFromMeLocalData, "done")
+                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                    taskFromMeLocalData,
+                                    "ongoing"
+                                )
+                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                    taskFromMeLocalData,
+                                    "done"
+                                )
                             } else if (doneTaskIndex >= 0) {
                                 val doneList = taskFromMeLocalData.allTasks.done.toMutableList()
                                 doneList[doneTaskIndex] = task
                                 taskFromMeLocalData.allTasks.done = doneList
-                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskFromMeLocalData, "done")
+                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                    taskFromMeLocalData,
+                                    "done"
+                                )
                                 sharedViewModel?.isFromMeUnread?.value = true
                                 sessionManager.saveFromMeUnread(true)
                             }
@@ -510,10 +618,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         ongoingTaskList.add(0, task)
                                         taskToMeLocalData.allTasks.ongoing = ongoingTaskList
                                     }
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "new")
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "ongoing")
-                                }
-                                else if (myState.equals(TaskStatus.DONE.name, true)) {
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "new"
+                                    )
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "ongoing"
+                                    )
+                                } else if (myState.equals(TaskStatus.DONE.name, true)) {
                                     val newTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                     newTaskList.removeAt(newTaskIndex)
                                     taskToMeLocalData.allTasks.new = newTaskList
@@ -530,20 +643,27 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         doneTaskList.add(0, task)
                                         taskToMeLocalData.allTasks.done = doneTaskList
                                     }
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "new")
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "done")
-                                }
-                                else {
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "new"
+                                    )
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "done"
+                                    )
+                                } else {
                                     val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                     allTaskList[newTaskIndex] = task
                                     taskToMeLocalData.allTasks.new = allTaskList
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "new")
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "new"
+                                    )
                                 }
                                 sharedViewModel?.isToMeUnread?.value = true
                                 sessionManager.saveToMeUnread(true)
 
-                            }
-                            else if (ongoingTaskIndex >= 0) {
+                            } else if (ongoingTaskIndex >= 0) {
                                 if (myState.equals(TaskStatus.DONE.name, true)) {
                                     val ongoingTaskList =
                                         taskToMeLocalData.allTasks.ongoing.toMutableList()
@@ -562,14 +682,23 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         doneTaskList.add(0, task)
                                         taskToMeLocalData.allTasks.done = doneTaskList
                                     }
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "ongoing")
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "done")
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "ongoing"
+                                    )
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "done"
+                                    )
                                 } else {
                                     val allTaskList =
                                         taskToMeLocalData.allTasks.ongoing.toMutableList()
                                     allTaskList[ongoingTaskIndex] = task
                                     taskToMeLocalData.allTasks.ongoing = allTaskList
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "ongoing")
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "ongoing"
+                                    )
                                 }
                                 sharedViewModel?.isToMeUnread?.value = true
                                 sessionManager.saveToMeUnread(true)
@@ -578,7 +707,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 val allTaskList = taskToMeLocalData.allTasks.done.toMutableList()
                                 allTaskList[doneTaskIndex] = task
                                 taskToMeLocalData.allTasks.done = allTaskList
-                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "done")
+                                taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                    taskToMeLocalData,
+                                    "done"
+                                )
                                 sharedViewModel?.isToMeUnread?.value = true
                                 sessionManager.saveToMeUnread(true)
 
@@ -587,7 +719,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     val allTaskList = taskToMeLocalData.allTasks.new.toMutableList()
                                     allTaskList.add(0, task)
                                     taskToMeLocalData.allTasks.new = allTaskList
-                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(taskToMeLocalData, "new")
+                                    taskDaoTaskV2DaoHelper.insertTaskDataUpdated(
+                                        taskToMeLocalData,
+                                        "new"
+                                    )
                                     sharedViewModel?.isToMeUnread?.value = true
                                     sessionManager.saveToMeUnread(true)
 
@@ -1162,8 +1297,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
         if (eventData != null) {
             val isExists = TaskEventsList.isExists(
-                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
-                )
+                SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
+            )
 
             if (!isExists) {
                 launch {
@@ -1271,8 +1406,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     }
                                     updatedTask = ongoingTask
 
-                                }
-                                else if (doneTask != null) {
+                                } else if (doneTask != null) {
                                     val allDoneTaskList =
                                         taskHiddenLocalData.allTasks.done.toMutableList()
                                     val taskIndex = allDoneTaskList.indexOf(doneTask)

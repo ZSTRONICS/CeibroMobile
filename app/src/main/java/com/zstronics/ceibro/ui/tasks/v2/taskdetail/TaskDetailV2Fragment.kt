@@ -152,6 +152,7 @@ class TaskDetailV2Fragment :
         mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
         mViewDataBinding.bodyScroll.isSmoothScrollingEnabled = true
+
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
          /*   lifecycleScope.launch {
                 viewModel.syncEvents(item.id,item.events)
