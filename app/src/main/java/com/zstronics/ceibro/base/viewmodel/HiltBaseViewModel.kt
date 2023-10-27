@@ -52,6 +52,7 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.FileUtils
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -257,36 +258,46 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 if (newTask.isCreator) {
                     when (newTask.fromMeState) {
                         TaskStatus.UNREAD.name.lowercase() -> {
-                            val allFromMeUnreadTasks = CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+                            val allFromMeUnreadTasks =
+                                CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
                             val foundTask = allFromMeUnreadTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allFromMeUnreadTasks.indexOf(foundTask)
                                 allFromMeUnreadTasks.removeAt(index)
                             }
                             allFromMeUnreadTasks.add(newTask)
-                            val unreadTasks = allFromMeUnreadTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            val unreadTasks =
+                                allFromMeUnreadTasks.sortedByDescending { it.updatedAt }
+                                    .toMutableList()
                             CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
                         }
+
                         TaskStatus.ONGOING.name.lowercase() -> {
-                            val allFromMeOngoingTasks = CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+                            val allFromMeOngoingTasks =
+                                CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
                             val foundTask = allFromMeOngoingTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allFromMeOngoingTasks.indexOf(foundTask)
                                 allFromMeOngoingTasks.removeAt(index)
                             }
                             allFromMeOngoingTasks.add(newTask)
-                            val ongoingTasks = allFromMeOngoingTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            val ongoingTasks =
+                                allFromMeOngoingTasks.sortedByDescending { it.updatedAt }
+                                    .toMutableList()
                             CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
                         }
+
                         TaskStatus.DONE.name.lowercase() -> {
-                            val allFromMeDoneTasks = CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+                            val allFromMeDoneTasks =
+                                CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
                             val foundTask = allFromMeDoneTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allFromMeDoneTasks.indexOf(foundTask)
                                 allFromMeDoneTasks.removeAt(index)
                             }
                             allFromMeDoneTasks.add(newTask)
-                            val doneTasks = allFromMeDoneTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            val doneTasks = allFromMeDoneTasks.sortedByDescending { it.updatedAt }
+                                .toMutableList()
                             CookiesManager.fromMeDoneTasks.postValue(doneTasks)
                         }
                     }
@@ -295,36 +306,45 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 if (newTask.isAssignedToMe) {
                     when (newTask.toMeState) {
                         TaskStatus.NEW.name.lowercase() -> {
-                            val allToMeNewTasks = CookiesManager.toMeNewTasks.value ?: mutableListOf()
+                            val allToMeNewTasks =
+                                CookiesManager.toMeNewTasks.value ?: mutableListOf()
                             val foundTask = allToMeNewTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allToMeNewTasks.indexOf(foundTask)
                                 allToMeNewTasks.removeAt(index)
                             }
                             allToMeNewTasks.add(newTask)
-                            val newTasks = allToMeNewTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            val newTasks =
+                                allToMeNewTasks.sortedByDescending { it.updatedAt }.toMutableList()
                             CookiesManager.toMeNewTasks.postValue(newTasks)
                         }
+
                         TaskStatus.ONGOING.name.lowercase() -> {
-                            val allToMeOngoingTasks = CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
+                            val allToMeOngoingTasks =
+                                CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
                             val foundTask = allToMeOngoingTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allToMeOngoingTasks.indexOf(foundTask)
                                 allToMeOngoingTasks.removeAt(index)
                             }
                             allToMeOngoingTasks.add(newTask)
-                            val ongoingTasks = allToMeOngoingTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            val ongoingTasks =
+                                allToMeOngoingTasks.sortedByDescending { it.updatedAt }
+                                    .toMutableList()
                             CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
                         }
+
                         TaskStatus.DONE.name.lowercase() -> {
-                            val allToMeDoneTasks = CookiesManager.toMeDoneTasks.value ?: mutableListOf()
+                            val allToMeDoneTasks =
+                                CookiesManager.toMeDoneTasks.value ?: mutableListOf()
                             val foundTask = allToMeDoneTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allToMeDoneTasks.indexOf(foundTask)
                                 allToMeDoneTasks.removeAt(index)
                             }
                             allToMeDoneTasks.add(newTask)
-                            val doneTasks = allToMeDoneTasks.sortedByDescending { it.updatedAt }.toMutableList()
+                            val doneTasks =
+                                allToMeDoneTasks.sortedByDescending { it.updatedAt }.toMutableList()
                             CookiesManager.toMeDoneTasks.postValue(doneTasks)
                         }
                     }
@@ -332,43 +352,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     sessionManager.saveToMeUnread(true)
                 }
 
-                /*if (task.isCreator) {
-                    val taskLocalData =
-                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
-                    val unreadList = mutableListOf(task)
-                    taskLocalData.allTasks.unread.let { oldList ->
-                        val oldListMutableList = oldList.toMutableList()
-                        val index = oldList.indexOfFirst { it.id == task.id }
-                        if (index >= 0) {
-                            oldListMutableList.removeAt(index)
-                        }
-                        unreadList.addAll(oldListMutableList)
-                    }
-
-                    taskLocalData.allTasks.unread = unreadList
-                    TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskLocalData, "unread")
-                    //   EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                }
-
-                if (task.isAssignedToMe) {
-                    val taskLocalData =
-                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-                    val newList = mutableListOf(task)
-                    taskLocalData.allTasks.new.let { oldList ->
-                        val oldListMutableList = oldList.toMutableList()
-                        val index = oldList.indexOfFirst { it.id == task.id }
-                        if (index >= 0) {
-                            oldListMutableList.removeAt(index)
-                        }
-                        newList.addAll(oldListMutableList)
-                    }
-                    taskLocalData.allTasks.new = newList
-                    TaskV2DaoHelper(taskDao).insertTaskDataUpdated(taskLocalData, "new")
-
-                    sharedViewModel?.isToMeUnread?.value = true
-                    sessionManager.saveToMeUnread(true)
-
-                }*/
                 EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
 
             }
@@ -766,10 +749,38 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         userId: String?,
         sessionManager: SessionManager
     ) {
-        var updatedTask: CeibroTaskV2? = null
         if (taskSeen != null) {
 
-            val exist = TaskEventsList.isExists(
+            GlobalScope.launch {
+                val task = taskDao.getTaskByID(taskSeen.taskId)
+
+                task.seenBy = taskSeen.seenBy
+                task.updatedAt = taskSeen.updatedAt
+
+                if (taskSeen.creatorStateChanged || taskSeen.stateChanged) {
+                    task.creatorState = taskSeen.newTaskData.creatorState
+
+                    val foundState =
+                        task.assignedToState.find { it.userId == taskSeen.state.userId }
+                    if (foundState != null) {
+                        val stateIndex = task.assignedToState.indexOf(foundState)
+                        task.assignedToState[stateIndex] = taskSeen.state
+                    }
+
+                    task.fromMeState = taskSeen.newTaskData.fromMeState
+                    task.toMeState = taskSeen.newTaskData.toMeState
+                    task.hiddenState = taskSeen.newTaskData.hiddenState
+                }
+
+                taskDao.updateTask(task)
+
+                EventBus.getDefault()
+                    .post(LocalEvents.TaskForwardEvent(task))
+                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+            }
+
+
+            /*val exist = TaskEventsList.isExists(
                 SocketHandler.TaskEvent.TASK_SEEN.name, taskSeen.taskId, true
             )
             if (!exist) {
@@ -1279,7 +1290,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         taskSeen.taskId
                     )
                 }
-            }
+            }*/
         }
     }
 

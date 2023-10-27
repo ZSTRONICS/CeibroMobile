@@ -119,6 +119,8 @@ data class Events(
     val taskId: String,
     @SerializedName("updatedAt")
     val updatedAt: String,
+    @SerializedName("eventNumber")
+    val eventNumber: Int = 0,
     @SerializedName("eventSeenBy")
     var eventSeenBy: List<String>? = emptyList()
 ) : Parcelable

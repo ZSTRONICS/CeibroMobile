@@ -76,7 +76,13 @@ data class EventV2Response(
             @SerializedName("isSeenByMe")
             val isSeenByMe: Boolean,
             @SerializedName("userSubState")
-            val userSubState: String
+            val userSubState: String,
+            @SerializedName("fromMeState")
+            val fromMeState: String,
+            @SerializedName("toMeState")
+            val toMeState: String,
+            @SerializedName("hiddenState")
+            val hiddenState: String
         ) : Parcelable
     }
 }
