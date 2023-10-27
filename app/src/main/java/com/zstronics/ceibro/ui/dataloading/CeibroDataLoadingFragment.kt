@@ -102,15 +102,30 @@ class CeibroDataLoadingFragment :
 
     private fun navigateToDashboard() {
         startPeriodicContactSyncWorker(requireContext())
-        launchActivity<NavHostPresenterActivity>(
-            options = Bundle(),
-            clearPrevious = true
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID,
-                R.id.homeFragment
-            )
+        if (viewModel.taskData != null) {
+            val bundle = Bundle()
+            bundle.putParcelable("notificationTaskData", viewModel.taskData)
+            launchActivity<NavHostPresenterActivity>(
+                options = bundle,
+                clearPrevious = true
+            ) {
+                putExtra(NAVIGATION_Graph_ID, viewModel.navigationGraphId)
+                putExtra(
+                    NAVIGATION_Graph_START_DESTINATION_ID,
+                    viewModel.startDestinationId
+                )
+            }
+        } else {
+            launchActivity<NavHostPresenterActivity>(
+                options = Bundle(),
+                clearPrevious = true
+            ) {
+                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                putExtra(
+                    NAVIGATION_Graph_START_DESTINATION_ID,
+                    R.id.homeFragment
+                )
+            }
         }
     }
 

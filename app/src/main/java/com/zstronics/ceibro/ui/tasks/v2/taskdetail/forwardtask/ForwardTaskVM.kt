@@ -27,8 +27,7 @@ class ForwardTaskVM @Inject constructor(
 ) : HiltBaseViewModel<IForwardTask.State>(), IForwardTask.ViewModel {
     val user = sessionManager.getUser().value
     var taskData: CeibroTaskV2? = null
-    var taskData2: NotificationTaskData? = null
-    var notificationId: MutableLiveData<Int> = MutableLiveData()
+    var notificationTaskData: NotificationTaskData? = null
     private val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
     private val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
 
@@ -51,20 +50,13 @@ class ForwardTaskVM @Inject constructor(
         taskData.let { _taskDetail.postValue(it) }
 
 
-        taskData2 = bundle?.getParcelable("notificationTaskData")
-        val notifyID: Int? = bundle?.getInt("notificationId")
-
-        taskData2?.let {
-
+        notificationTaskData = bundle?.getParcelable("notificationTaskData")
+        notificationTaskData?.let {
             if (CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
                 sessionManager.isUserLoggedIn()
             }
-            println("TaskData:comment $taskData2")
             taskId = it.taskId
-            notifyID?.let {
-                notificationId.postValue(it)
-            }
         }
     }
 

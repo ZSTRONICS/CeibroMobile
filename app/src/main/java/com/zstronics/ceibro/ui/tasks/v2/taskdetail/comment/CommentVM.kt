@@ -41,7 +41,6 @@ class CommentVM @Inject constructor(
     var notificationTaskData: NotificationTaskData? = null
     var taskId: String = ""
     var actionToPerform: MutableLiveData<String> = MutableLiveData("")
-    var notificationId: MutableLiveData<Int> = MutableLiveData()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -57,7 +56,6 @@ class CommentVM @Inject constructor(
 
 
         val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
-        val notifyID: Int? = bundle?.getInt("notificationId")
         if (taskData2 != null) {
             if (CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
@@ -67,9 +65,6 @@ class CommentVM @Inject constructor(
             actionToPerform.value = TaskDetailEvents.Comment.eventValue
             notificationTaskData = taskData2
             taskId = taskData2.taskId
-            notifyID?.let {
-                notificationId.postValue(it)
-            }
 
         }
     }

@@ -54,7 +54,22 @@ class CommentFragment :
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
         when (id) {
-            R.id.backBtn -> navigateBack()
+            R.id.backBtn -> {
+                if (viewModel.notificationTaskData != null) {
+                    launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                        options = Bundle(),
+                        clearPrevious = true
+                    ) {
+                        putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                        putExtra(
+                            NAVIGATION_Graph_START_DESTINATION_ID,
+                            R.id.homeFragment
+                        )
+                    }
+                } else {
+                    navigateBack()
+                }
+            }
             R.id.newCommentPhotoBtn -> {
                 val ceibroCamera = Intent(
                     requireContext(),
@@ -191,6 +206,9 @@ class CommentFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (viewModel.notificationTaskData != null) {
+            setBackButtonDispatcher()
+        }
         mViewDataBinding.filesLayout.visibility = View.GONE
         mViewDataBinding.onlyImagesRV.visibility = View.GONE
         mViewDataBinding.imagesWithCommentRV.visibility = View.GONE
@@ -199,12 +217,7 @@ class CommentFragment :
         mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
 
-        val notificationManager = NotificationManagerCompat.from(requireContext())
 
-
-        viewModel.notificationId.observe(viewLifecycleOwner) {
-            notificationManager.cancel(it)
-        }
         val handler = Handler()
         handler.postDelayed(Runnable {
             mViewDataBinding.newCommentAttachmentLayout.animate()

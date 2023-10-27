@@ -36,7 +36,22 @@ class ForwardTaskFragment :
     val FORWARD_REQUEST_CODE = 105
     override fun onClick(id: Int) {
         when (id) {
-            R.id.backBtn -> navigateBack()
+            R.id.backBtn -> {
+                if (viewModel.notificationTaskData != null) {
+                    launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                        options = Bundle(),
+                        clearPrevious = true
+                    ) {
+                        putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                        putExtra(
+                            NAVIGATION_Graph_START_DESTINATION_ID,
+                            R.id.homeFragment
+                        )
+                    }
+                } else {
+                    navigateBack()
+                }
+            }
             R.id.forwardToText -> {
                 val bundle = Bundle()
                 bundle.putStringArrayList(
@@ -58,8 +73,7 @@ class ForwardTaskFragment :
             R.id.forwardBtn -> {
                 viewModel.forwardTask { task ->
 
-                    if (viewModel.taskData2 != null) {
-
+                    if (viewModel.notificationTaskData != null) {
                         launchActivityWithFinishAffinity<NavHostPresenterActivity>(
                             options = Bundle(),
                             clearPrevious = true
@@ -70,8 +84,6 @@ class ForwardTaskFragment :
                                 R.id.homeFragment
                             )
                         }
-                        shortToastNow("Task forwarded successfully!")
-
                     } else {
                         val bundle = Bundle()
                         bundle.putParcelable("taskData", task)
@@ -85,7 +97,9 @@ class ForwardTaskFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        if (viewModel.notificationTaskData != null) {
+            setBackButtonDispatcher()
+        }
         mViewDataBinding.commentText.setOnTouchListener { view, event ->
             view.parent.requestDisallowInterceptTouchEvent(true)
             if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
@@ -94,11 +108,6 @@ class ForwardTaskFragment :
             return@setOnTouchListener false
         }
 
-        val notificationManager = NotificationManagerCompat.from(requireContext())
-
-        viewModel.notificationId.observe(viewLifecycleOwner) {
-            notificationManager.cancel(it)
-        }
 
         viewState.forwardToText.observe(viewLifecycleOwner) {
             if (it == "") {

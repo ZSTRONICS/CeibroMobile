@@ -22,6 +22,7 @@ import android.util.Base64
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.zstronics.ceibro.NotificationActivity
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BUNDLE_EXTRA
 import com.zstronics.ceibro.base.TYPE_EXTRA
@@ -187,11 +188,7 @@ class NotificationHelper(context: Context) {
         taskData: NotificationTaskData
     ): PendingIntent? {
         val requestCode = System.currentTimeMillis().toInt()
-        val intentReply = if (isAppOnForeground(context)) {
-            Intent(context, NavHostPresenterActivity::class.java)
-        } else {
-            Intent(context, SplashActivity::class.java)
-        }
+        val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
         bundle.putParcelable("notificationTaskData", taskData)
@@ -218,11 +215,7 @@ class NotificationHelper(context: Context) {
         taskData: NotificationTaskData
     ): PendingIntent? {
         val requestCode = System.currentTimeMillis().toInt()
-        val intentReply = if (isAppOnForeground(context)) {
-            Intent(context, NavHostPresenterActivity::class.java)
-        } else {
-            Intent(context, SplashActivity::class.java)
-        }
+        val intentReply =  Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
         bundle.putParcelable("notificationTaskData", taskData)
@@ -246,11 +239,7 @@ class NotificationHelper(context: Context) {
         taskData: NotificationTaskData
     ): PendingIntent? {
         val requestCode = System.currentTimeMillis().toInt()
-        val intentReply = if (isAppOnForeground(context)) {
-            Intent(context, NavHostPresenterActivity::class.java)
-        } else {
-            Intent(context, SplashActivity::class.java)
-        }
+        val intentReply =  Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
         bundle.putParcelable("notificationTaskData", taskData)
