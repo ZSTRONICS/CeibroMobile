@@ -10,12 +10,18 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.launchActivity
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboardWithFocus
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentCommentBinding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -43,6 +49,7 @@ class CommentFragment :
     override val viewModel: CommentVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_comment
     override fun toolBarVisibility(): Boolean = false
+
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
@@ -137,9 +144,19 @@ class CommentFragment :
                     viewModel.uploadComment(
                         requireContext()
                     ) { eventData ->
-                        if (viewModel.notificationTaskData!=null){
+                        if (viewModel.notificationTaskData != null) {
                             shortToastNow("Commented successfully!")
-                        }else{
+                            launchActivityWithFinishAffinity <NavHostPresenterActivity>(
+                                options = Bundle(),
+                                clearPrevious = true
+                            ) {
+                                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                                putExtra(
+                                    NAVIGATION_Graph_START_DESTINATION_ID,
+                                    R.id.homeFragment
+                                )
+                            }
+                        } else {
                             val bundle = Bundle()
                             bundle.putParcelable("eventData", eventData)
                             navigateBackWithResult(Activity.RESULT_OK, bundle)
@@ -182,6 +199,12 @@ class CommentFragment :
         mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
 
+        val notificationManager = NotificationManagerCompat.from(requireContext())
+
+
+        viewModel.notificationId.observe(viewLifecycleOwner) {
+            notificationManager.cancel(it)
+        }
         val handler = Handler()
         handler.postDelayed(Runnable {
             mViewDataBinding.newCommentAttachmentLayout.animate()
@@ -298,7 +321,10 @@ class CommentFragment :
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, data: PickedImages ->
                 val bundle = Bundle()
-                bundle.putParcelableArray("images", viewModel.imagesWithComments.value?.toTypedArray())
+                bundle.putParcelableArray(
+                    "images",
+                    viewModel.imagesWithComments.value?.toTypedArray()
+                )
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", false)
                 navigate(R.id.imageViewerFragment, bundle)

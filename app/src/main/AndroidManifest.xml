@@ -34,9 +34,7 @@
         android:theme="@style/Theme.Ceibro"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
-        <activity
-            android:name="com.zstronics.Notifyme"
-            android:exported="false" />
+
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
@@ -48,8 +46,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:exported="true"
             android:name=".base.navgraph.host.NavHostPresenterActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity

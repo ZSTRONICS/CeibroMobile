@@ -31,6 +31,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -657,14 +658,22 @@ class DashboardFragment :
         event?.let {
             if (it.isTaskCreated) {
                 run {
-                    /*val notificationHelper = NotificationHelper.getInstance(requireContext())
-                    notificationHelper.createNotification(
-                        notificationId = index++,
-                        notificationType = event.moduleName,
-                        title = event.notificationTitle,
-                        message = event.notificationDescription,
-                        context = requireContext()
-                    )*/
+//                    val notificationHelper = NotificationHelper.getInstance(requireContext())
+//                    val newData = NotificationTaskData(
+//                        avatar = "",
+//                        creator = "ABC",
+//                        description = "",
+//                        taskId = event.moduleId,
+//                        topic = event.notificationTitle
+//                    )
+//                    notificationHelper.createNotification(
+//                        newData,
+//                        notificationId = index++,
+//                        notificationType = "newTask",
+//                        title = event.notificationTitle,
+//                        message = "",
+//                        context = requireContext()
+//                    )
                 }
             }
         }

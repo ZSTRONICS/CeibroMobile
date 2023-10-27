@@ -1,41 +1,27 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask
 
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboardWithFocus
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
-import com.zstronics.ceibro.databinding.FragmentCommentBinding
 import com.zstronics.ceibro.databinding.FragmentForwardTaskBinding
-import com.zstronics.ceibro.extensions.openFilePicker
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import ee.zstronics.ceibro.camera.AttachmentTypes
-import ee.zstronics.ceibro.camera.CeibroCameraActivity
-import ee.zstronics.ceibro.camera.FileUtils
-import ee.zstronics.ceibro.camera.PickedImages
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ForwardTaskFragment :
@@ -63,15 +49,34 @@ class ForwardTaskFragment :
                 )
                 navigateForResult(R.id.forwardFragment, FORWARD_REQUEST_CODE, bundle)
             }
+
             R.id.forwardToClearBtn -> {
                 viewState.forwardToText.value = ""
                 viewModel.selectedContacts = MutableLiveData()
             }
+
             R.id.forwardBtn -> {
-                viewModel.forwardTask() { task ->
-                    val bundle = Bundle()
-                    bundle.putParcelable("taskData", task)
-                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                viewModel.forwardTask { task ->
+
+                    if (viewModel.taskData2 != null) {
+
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = Bundle(),
+                            clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.homeFragment
+                            )
+                        }
+                        shortToastNow("Task forwarded successfully!")
+
+                    } else {
+                        val bundle = Bundle()
+                        bundle.putParcelable("taskData", task)
+                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+                    }
                 }
             }
         }
@@ -87,6 +92,12 @@ class ForwardTaskFragment :
                 view.parent.requestDisallowInterceptTouchEvent(false)
             }
             return@setOnTouchListener false
+        }
+
+        val notificationManager = NotificationManagerCompat.from(requireContext())
+
+        viewModel.notificationId.observe(viewLifecycleOwner) {
+            notificationManager.cancel(it)
         }
 
         viewState.forwardToText.observe(viewLifecycleOwner) {

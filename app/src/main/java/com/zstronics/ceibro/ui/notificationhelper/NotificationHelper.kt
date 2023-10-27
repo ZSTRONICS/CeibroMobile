@@ -38,10 +38,10 @@ class NotificationHelper(context: Context) {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private var summaryNotification1: Notification? = null
     private var summaryNotificationId = 100
+    private var singleNotificationId = 0
 
     init {
         createNotificationChannel(context)
-
     }
 
     private fun createNotificationChannel(context: Context) {
@@ -55,8 +55,6 @@ class NotificationHelper(context: Context) {
         channel.enableLights(true)
         channel.lightColor = Color.RED
         notificationManager.createNotificationChannel(channel)
-
-
 
         summaryNotification1 = NotificationCompat.Builder(context, CHANNEL_ID_1)
             .setContentTitle("Task")
@@ -77,27 +75,12 @@ class NotificationHelper(context: Context) {
         message: String,
         context: Context
     ) {
-
+        singleNotificationId = System.currentTimeMillis().toInt()
         if (notificationType.equals("newTask", true)) {
-
-            /*val pendingIntent = NavDeepLinkBuilder(context)
-                .setComponentName(NavHostPresenterActivity::class.java)
-                .setGraph(R.navigation.home_nav_graph)
-                .setDestination(R.id.commentFragment)
-                .setArguments(bundle)
-                .createPendingIntent()*/
-
-            /* val pendingIntent = PendingIntent.getActivity(
-                 context, 0, intent,
-                 PendingIntent.FLAG_IMMUTABLE
-             )*/
 
             val replyIntent = cretePendingIntentForReply(context, task)
             val forwardIntent = cretePendingIntentForForward(context, task)
             val openIntent = cretePendingIntentForOpen(context, task)
-
-            val bigTextStyle = NotificationCompat.BigTextStyle().setBigContentTitle(title)
-                .bigText(message)
 
             val blueColor = ContextCompat.getColor(context, R.color.appBlue)
             ContextCompat.getColor(context, R.color.white)
@@ -127,14 +110,6 @@ class NotificationHelper(context: Context) {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
-
-            /*  val forwardIntent = PendingIntent.getActivity(
-                  context, 0, intent, PendingIntent.FLAG_IMMUTABLE
-              )
-              val openIntent = PendingIntent.getActivity(
-                  context, 0, intent, PendingIntent.FLAG_IMMUTABLE
-              )*/
-
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
                 val customNotificationLayout =
@@ -163,8 +138,9 @@ class NotificationHelper(context: Context) {
                         R.drawable.app_logo, openActionTextBlue, openIntent
                     )
                     .build()
+
                 notificationManager.apply {
-                    notify(notificationId, notification)
+                    notify(singleNotificationId, notification)
                     notify(summaryNotificationId, summaryNotification1)
                 }
             }, 120)
@@ -221,12 +197,14 @@ class NotificationHelper(context: Context) {
         bundle.putParcelable("notificationTaskData", taskData)
         bundle.putInt(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
         bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, R.id.commentFragment)
+        bundle.putInt("notificationId", singleNotificationId)
 
-
+        intentReply.action = "ACTION_CLOSE_NOTIFICATION"
         intentReply.putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
         intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.commentFragment)
         intentReply.putExtra("notificationTaskData", taskData)
         intentReply.putExtra(TYPE_EXTRA, 1)
+        intentReply.putExtra("notificationId", singleNotificationId)
         intentReply.putExtra(BUNDLE_EXTRA, bundle)
 
         return PendingIntent.getActivity(
@@ -250,11 +228,13 @@ class NotificationHelper(context: Context) {
         bundle.putParcelable("notificationTaskData", taskData)
         bundle.putInt(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
         bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, R.id.forwardTaskFragment)
+        bundle.putInt("notificationId", singleNotificationId)
 
         intentReply.putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
         intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.forwardTaskFragment)
         intentReply.putExtra("notificationTaskData", taskData)
         intentReply.putExtra(TYPE_EXTRA, 2)
+        intentReply.putExtra("notificationId", singleNotificationId)
         intentReply.putExtra(BUNDLE_EXTRA, bundle)
         return PendingIntent.getActivity(
             context, requestCode, intentReply, PendingIntent.FLAG_IMMUTABLE
@@ -276,13 +256,15 @@ class NotificationHelper(context: Context) {
         bundle.putParcelable("notificationTaskData", taskData)
         bundle.putInt(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
         bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailV2Fragment)
+        bundle.putInt("notificationId", singleNotificationId)
 
         intentReply.putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
         intentReply.putExtra(NAVIGATION_Graph_START_DESTINATION_ID, R.id.taskDetailV2Fragment)
         intentReply.putExtra("notificationTaskData", taskData)
         intentReply.putExtra(TYPE_EXTRA, 3)
+        intentReply.putExtra("notificationId", singleNotificationId)
         intentReply.putExtra(BUNDLE_EXTRA, bundle)
-        return PendingIntent.getActivity(
+        return PendingIntent.getBroadcast(
             context, requestCode, intentReply, PendingIntent.FLAG_IMMUTABLE
         )
     }

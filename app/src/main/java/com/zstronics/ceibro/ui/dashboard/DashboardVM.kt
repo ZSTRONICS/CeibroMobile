@@ -135,25 +135,25 @@ class DashboardVM @Inject constructor(
                     val notificationTitle: String =
                         if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
                             "" else taskCreatedData.data?.topic?.topic.toString()
-/*
 
-                    EventBus.getDefault().post(
-                        LocalEvents.CreateSimpleNotification(
-                            moduleId = taskCreatedData.data?.id ?: "",
-                            moduleName = socketData.module,
-                            notificationTitle =
-                            if (notificationTitle.isNotEmpty()) {
-                                "New task created as \"$notificationTitle\""
-                            } else {
-                                "New task created"
-                            },
-                            notificationDescription = taskCreatedData.data?.description ?: "",
-                            isOngoing = false,
-                            indeterminate = false,
-                            notificationIcon = R.drawable.app_logo,
-                            isTaskCreated = true
-                        )
-                    )*/
+
+//                    EventBus.getDefault().post(
+//                        LocalEvents.CreateSimpleNotification(
+//                            moduleId = taskCreatedData.data?.id ?: "",
+//                            moduleName = socketData.module,
+//                            notificationTitle =
+//                            if (notificationTitle.isNotEmpty()) {
+//                                "New task created as \"$notificationTitle\""
+//                            } else {
+//                                "New task created"
+//                            },
+//                            notificationDescription = taskCreatedData.data?.description ?: "",
+//                            isOngoing = false,
+//                            indeterminate = false,
+//                            notificationIcon = R.drawable.app_logo,
+//                            isTaskCreated = true
+//                        )
+//                    )
 
                 }
 
