@@ -1,10 +1,13 @@
 package com.zstronics.ceibro.ui.dataloading
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import androidx.work.WorkManager
 import com.zstronics.ceibro.base.KEY_TOKEN_VALID
 import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
@@ -15,6 +18,7 @@ import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
@@ -53,8 +57,35 @@ class CeibroDataLoadingVM @Inject constructor(
     private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<ICeibroDataLoading.State>(), ICeibroDataLoading.ViewModel {
+    var taskData: NotificationTaskData? = null
+    var taskId: String = ""
+    var navigationGraphId: Int = 0
+    var startDestinationId: Int = 0
+
     init {
         sessionManager.setUser()
+    }
+
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+
+        taskData = bundle?.getParcelable("notificationTaskData")
+        val navigationGraphId1 = bundle?.getInt(NAVIGATION_Graph_ID, 0)
+        val startDestinationId1 = bundle?.getInt(NAVIGATION_Graph_START_DESTINATION_ID, 0)
+        taskData?.let {
+            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                sessionManager.setUser()
+                sessionManager.isUserLoggedIn()
+            }
+            taskId = it.taskId
+            if (navigationGraphId1 != null) {
+                navigationGraphId = navigationGraphId1
+            }
+            if (startDestinationId1 != null) {
+                startDestinationId = startDestinationId1
+            }
+        }
+
     }
 
     var apiSucceedCount = 0f

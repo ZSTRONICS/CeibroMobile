@@ -1,31 +1,20 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask
 
-import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
-import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ee.zstronics.ceibro.camera.AttachmentTypes
-import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,19 +27,22 @@ class ForwardTaskVM @Inject constructor(
 ) : HiltBaseViewModel<IForwardTask.State>(), IForwardTask.ViewModel {
     val user = sessionManager.getUser().value
     var taskData: CeibroTaskV2? = null
-
-    val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
-    val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
+    var notificationTaskData: NotificationTaskData? = null
+    private val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
+    private val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
     var oldSelectedContacts: ArrayList<String> = arrayListOf()
 
-
+    var taskId: String = ""
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         val selectedContact = bundle?.getStringArrayList("assignToContacts")
         val taskData: CeibroTaskV2? = bundle?.getParcelable("taskDetail")
+        taskData?.let {
+            taskId = it.id
+        }
 
         if (!selectedContact.isNullOrEmpty()) {
             oldSelectedContacts = selectedContact
@@ -58,9 +50,13 @@ class ForwardTaskVM @Inject constructor(
         taskData.let { _taskDetail.postValue(it) }
 
 
-        val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
-        if (taskData2 != null) {
-            println("TaskData: forward $taskData2")
+        notificationTaskData = bundle?.getParcelable("notificationTaskData")
+        notificationTaskData?.let {
+            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                sessionManager.setUser()
+                sessionManager.isUserLoggedIn()
+            }
+            taskId = it.taskId
         }
     }
 
@@ -106,7 +102,7 @@ class ForwardTaskVM @Inject constructor(
             launch {
                 loading(true)
                 taskRepository.forwardTask(
-                    taskData?.id ?: "",
+                    taskId ?: "",
                     forwardTaskRequest
                 ) { isSuccess, task, errorMsg ->
                     if (isSuccess) {

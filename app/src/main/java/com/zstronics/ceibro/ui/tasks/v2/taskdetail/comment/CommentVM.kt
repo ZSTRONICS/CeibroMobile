@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -56,10 +57,15 @@ class CommentVM @Inject constructor(
 
         val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
         if (taskData2 != null) {
+            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                sessionManager.setUser()
+                sessionManager.isUserLoggedIn()
+            }
             println("TaskData:comment $taskData2")
             actionToPerform.value = TaskDetailEvents.Comment.eventValue
             notificationTaskData = taskData2
             taskId = taskData2.taskId
+
         }
     }
 

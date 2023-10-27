@@ -105,6 +105,18 @@ inline fun <reified T : Any> Fragment.launchActivityWithFinishAffinity(
     if (clearPrevious) finishAffinity()
 
 }
+inline fun <reified T : Any> Activity.launchActivityWithFinishAffinity(
+    options: Bundle? = null,
+    clearPrevious: Boolean = false,
+    noinline init: Intent.() -> Unit = {}
+) {
+    val intent = newIntent<T>(this)
+    intent.init()
+    intent.putExtra(EXTRA, options)
+    startActivity(intent, options)
+    if (clearPrevious) finishAffinity()
+
+}
 
 //inline fun <reified T : Any> Fragment.launchActivity(
 //    options: Bundle? = null,
