@@ -46,7 +46,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 68,
+    version = 73,
     exportSchema = false
 )
 @TypeConverters(
@@ -73,6 +73,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     CeibroTaskAndEventsV2TypeConverter::class,
     CeibroSingleTaskEntityV2TypeConverter::class,
     AssignedToStateListTypeConverter::class,
+    AssignToStateDataTypeConverter::class,
     TaskMemberDetailTypeConverter::class,
     ProjectOfTaskTypeConverter::class,
     TopicTypeConverter::class,
@@ -81,6 +82,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     EventsListTypeConverter::class,
     CommentDataTypeConverter::class,
     EventsDataListTypeConverter::class,
+    ForwardDataTypeConverter::class,
     EventsDataTypeConverter::class,
     InvitedNumbersListTypeConverter::class,
     TopicsResponseTypeConverter::class,

@@ -105,13 +105,17 @@ class TaskToMeVM @Inject constructor(
                 callBack.invoke()
             } else {
 
-                val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
-                val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
-                val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase())
+                val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                 val allTasks = mutableListOf<CeibroTaskV2>()
                 allTasks.addAll(newTasks)
                 allTasks.addAll(ongoingTasks)
                 allTasks.addAll(doneTasks)
+
+                CookiesManager.toMeNewTasks.postValue(newTasks)
+                CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.toMeDoneTasks.postValue(doneTasks)
 
                 if (firstStartOfFragment) {
                     selectedState = if (newTasks.isNotEmpty()) {
@@ -135,14 +139,14 @@ class TaskToMeVM @Inject constructor(
                 }
 
                 _allTasks.postValue(allTasks)
-                _newTasks.postValue(newTasks.toMutableList())
-                _ongoingTasks.postValue(ongoingTasks.toMutableList())
-                _doneTasks.postValue(doneTasks.toMutableList())
+                _newTasks.postValue(newTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
 
                 allOriginalTasks.postValue(allTasks)
-                originalNewTasks = newTasks.toMutableList()
-                originalOngoingTasks = ongoingTasks.toMutableList()
-                originalDoneTasks = doneTasks.toMutableList()
+                originalNewTasks = newTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
                 callBack.invoke()
             }
 

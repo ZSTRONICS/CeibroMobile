@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -11,10 +13,13 @@ import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,23 +67,12 @@ class ForwardTaskVM @Inject constructor(
 
 
     fun forwardTask(
-        onBack: (task: CeibroTaskV2) -> Unit,
+        onBack: (event: EventV2Response.Data) -> Unit,
     ) {
         val taskData = taskDetail.value
         val selectedContactList = selectedContacts.value
         if (!selectedContactList.isNullOrEmpty()) {
             val state = TaskStatus.NEW.name.lowercase()
-//            if (taskData != null) {
-//                state = if (user?.id == taskData.creator.id) {
-//                    taskData.creatorState
-//                } else {
-//                    taskData.assignedToState.find { it.userId == user?.id }?.state
-//                        ?: "new"
-//                }
-//            }
-//            if (state.equals(TaskStatus.UNREAD.name, true)) {
-//                state = "new"
-//            }
 
             val assignedToCeibroUsers =
                 selectedContactList.filter { it.isCeiborUser }
@@ -101,18 +95,17 @@ class ForwardTaskVM @Inject constructor(
 
             launch {
                 loading(true)
-                taskRepository.forwardTask(
-                    taskId ?: "",
-                    forwardTaskRequest
-                ) { isSuccess, task, errorMsg ->
+                taskRepository.forwardTask(taskId, forwardTaskRequest) { isSuccess, forwardEvent, errorMsg ->
                     if (isSuccess) {
-                        if (task != null) {
-                            _taskDetail.postValue(task)
-                            onBack(task)
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(Runnable {
+                            loading(false, "")
+                        }, 80)
+                        if (forwardEvent != null) {
+                            onBack(forwardEvent)
                         }
-                        loading(false, "")
                         launch {
-                            updateForwardTaskInLocal(task, taskDao, user?.id, sessionManager)
+                            updateForwardTaskInLocal(forwardEvent, taskDao, user?.id, sessionManager)
                         }
                     } else {
                         loading(false, errorMsg)

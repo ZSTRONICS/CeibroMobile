@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.R
@@ -155,17 +156,15 @@ class CommentVM @Inject constructor(
                         }
                     }
                 }
-
-//                taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
-
-//                val handler = Handler()
-//                handler.postDelayed(Runnable {
-                loading(false, "")
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(Runnable {
+                    loading(false, "")
+                }, 80)
                 if (isSuccess) {
                     onBack(eventData)
                 }
-//                }, 40)
 
+                updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
             }
         }
     }
@@ -259,17 +258,15 @@ class CommentVM @Inject constructor(
                         }
                     }
                 }
-
-                taskData = updateTaskDoneInLocal(eventData, taskDao, sessionManager)
-
-                val handler = Handler()
+                val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed(Runnable {
                     loading(false, "")
-                    if (isSuccess) {
-                        onBack()
-                    }
-                }, 50)
+                }, 80)
+                if (isSuccess) {
+                    onBack()
+                }
 
+                updateTaskDoneInLocal(eventData, taskDao, sessionManager)
             }
         }
     }

@@ -20,7 +20,7 @@ data class CeibroTaskV2(
     @SerializedName("access")
     val access: List<String>,
     @SerializedName("assignedToState")
-    var assignedToState: ArrayList<AssignedToState>,
+    var assignedToState: MutableList<AssignedToState>,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("creator")
@@ -107,6 +107,8 @@ data class Events(
     val eventData: List<EventData>?,
     @SerializedName("invitedMembers")
     val invitedMembers: List<EventData>?,
+    @SerializedName("forwardTaskData")
+    val forwardTaskData: ForwardData?,
     @SerializedName("commentData")
     val commentData: CommentData?,
     @SerializedName("eventType")
@@ -120,7 +122,7 @@ data class Events(
     @SerializedName("updatedAt")
     val updatedAt: String,
     @SerializedName("eventNumber")
-    val eventNumber: Int = 0,
+    val eventNumber: Int,
     @SerializedName("eventSeenBy")
     var eventSeenBy: List<String>? = emptyList()
 ) : Parcelable
@@ -252,7 +254,17 @@ data class EventData(
     @SerializedName("profilePic")
     val profilePic: String?,
     @SerializedName("surName")
-    val surName: String
+    val surName: String?
+) : Parcelable
+
+
+@Parcelize
+@Keep
+data class ForwardData(
+    @SerializedName("invitedNumbers")
+    val invitedNumbers: List<InvitedNumbers>,
+    @SerializedName("assignedToState")
+    val assignedToState: List<AssignedToState>
 ) : Parcelable
 
 

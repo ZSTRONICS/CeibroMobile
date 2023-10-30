@@ -93,25 +93,30 @@ class TaskFromMeVM @Inject constructor(
                     disabledUnreadState.value = false
                 }
 
+                allOriginalTasks.postValue(allFromMeTasks)
+                originalUnreadTasks = allFromMeUnreadTasks
+                originalOngoingTasks = allFromMeOngoingTasks
+                originalDoneTasks = allFromMeDoneTasks
+
                 _allTasks.postValue(allFromMeTasks)
                 _unreadTasks.postValue(allFromMeUnreadTasks)
                 _ongoingTasks.postValue(allFromMeOngoingTasks)
                 _doneTasks.postValue(allFromMeDoneTasks)
 
-                allOriginalTasks.postValue(allFromMeTasks)
-                originalUnreadTasks = allFromMeUnreadTasks
-                originalOngoingTasks = allFromMeOngoingTasks
-                originalDoneTasks = allFromMeDoneTasks
                 callBack.invoke()
             } else {
 
-                val unreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
-                val ongoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
-                val doneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase())
+                val unreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                 val allTasksList = mutableListOf<CeibroTaskV2>()
                 allTasksList.addAll(unreadTasks)
                 allTasksList.addAll(ongoingTasks)
                 allTasksList.addAll(doneTasks)
+
+                CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.fromMeDoneTasks.postValue(doneTasks)
 
                 if (firstStartOfFragment) {
                     selectedState = if (unreadTasks.isNotEmpty()) {
@@ -134,15 +139,16 @@ class TaskFromMeVM @Inject constructor(
                     disabledUnreadState.value = false
                 }
 
-                _allTasks.postValue(allTasksList)
-                _unreadTasks.postValue(unreadTasks.toMutableList())
-                _ongoingTasks.postValue(ongoingTasks.toMutableList())
-                _doneTasks.postValue(doneTasks.toMutableList())
-
                 allOriginalTasks.postValue(allTasksList)
-                originalUnreadTasks = unreadTasks.toMutableList()
-                originalOngoingTasks = ongoingTasks.toMutableList()
-                originalDoneTasks = doneTasks.toMutableList()
+                originalUnreadTasks = unreadTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
+
+                _allTasks.postValue(allTasksList)
+                _unreadTasks.postValue(unreadTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
+
                 callBack.invoke()
             }
         }

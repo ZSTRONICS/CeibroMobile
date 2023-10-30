@@ -44,16 +44,22 @@ interface TaskV2Dao {
     suspend fun getHiddenTasks(hiddenState: String): List<CeibroTaskV2>
 
     @Query("SELECT * FROM tasks_v2_basic WHERE id = :taskId")
-    suspend fun getTaskByID(taskId: String): CeibroTaskV2
+    suspend fun getTaskByID(taskId: String): CeibroTaskV2?
 
     @Query("DELETE FROM tasks_v2_basic WHERE id = :taskId")
     suspend fun deleteTaskByID(taskId: String)
 
-    @Transaction
-    suspend fun updateTask(task: CeibroTaskV2) {
-        deleteTaskByID(task.id)
-        insertTaskData(task)
-    }
+    @Query("UPDATE tasks_v2_basic SET seenBy = :seenBy, updatedAt = :updatedAt WHERE id = :taskId")
+    suspend fun updateTaskSeen(taskId: String, seenBy: List<String>, updatedAt: String)
+
+    @Query("UPDATE tasks_v2_basic SET seenBy = :seenBy, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, creatorState = :creatorState WHERE id = :taskId")
+    suspend fun updateTaskOnEvent(taskId: String, seenBy: List<String>, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, creatorState: String)
+
+    @Query("UPDATE tasks_v2_basic SET hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState WHERE id = :taskId")
+    suspend fun updateTaskHideUnHide(taskId: String, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String)
+
+    @Update
+    suspend fun updateTask(task: CeibroTaskV2)
 
 
 
@@ -65,6 +71,6 @@ interface TaskV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleEvents(tasks: List<Events>)
 
-    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY updatedAt ASC")
     suspend fun getEventsOfTask(taskId: String): List<Events>
 }

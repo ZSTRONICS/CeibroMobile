@@ -38,6 +38,8 @@ data class TaskSeenResponse(
         val eventInitiator: String,
         @SerializedName("updatedAt")
         val updatedAt: String,
+        @SerializedName("taskUpdatedAt")
+        val taskUpdatedAt: String,
         @SerializedName("newTaskData")
         val newTaskData: EventV2Response.Data.TaskStatesData,
         @SerializedName("oldTaskData")

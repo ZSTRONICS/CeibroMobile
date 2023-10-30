@@ -189,7 +189,7 @@ class EventsRVAdapter @Inject constructor() :
 
                     binding.eventName.text = context.resources.getString(R.string.comment_by)
 
-                    binding.eventName.visibility = View.GONE
+//                    binding.eventName.visibility = View.GONE
 
                     if (item.initiator.id == loggedInUserId) {
                         binding.mainLayout.setBackgroundResource(R.drawable.round_grey)

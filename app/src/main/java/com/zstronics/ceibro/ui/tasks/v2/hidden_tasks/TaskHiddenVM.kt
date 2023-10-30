@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.v2.hidden_tasks
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -77,22 +78,26 @@ class TaskHiddenVM @Inject constructor(
                 callBack.invoke()
             } else {
 
-                val canceledTasks = taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase())
-                val ongoingTasks = taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
-                val doneTasks = taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase())
+                val canceledTasks = taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                 val allTasksList = mutableListOf<CeibroTaskV2>()
                 allTasksList.addAll(canceledTasks)
                 allTasksList.addAll(ongoingTasks)
                 allTasksList.addAll(doneTasks)
 
-                _cancelledTasks.postValue(canceledTasks.toMutableList())
-                _ongoingTasks.postValue(ongoingTasks.toMutableList())
-                _doneTasks.postValue(doneTasks.toMutableList())
+                CookiesManager.hiddenCanceledTasks.postValue(canceledTasks)
+                CookiesManager.hiddenOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.hiddenDoneTasks.postValue(doneTasks)
+
+                _cancelledTasks.postValue(canceledTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
                 _allTasks.postValue(allTasksList)
 
-                originalCancelledTasks = canceledTasks.toMutableList()
-                originalOngoingTasks = ongoingTasks.toMutableList()
-                originalDoneTasks = doneTasks.toMutableList()
+                originalCancelledTasks = canceledTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
                 allOriginalTasks.postValue(allTasksList)
                 callBack.invoke()
             }
@@ -289,12 +294,14 @@ class TaskHiddenVM @Inject constructor(
             loading(true)
             when (val response = remoteTask.unCancelTask(taskId)) {
                 is ApiResponse.Success -> {
-                    updateTaskUnCanceledInLocal(
-                        response.data.data,
-                        taskDao,
-                        sessionManager
-                    )
-                    val handler = Handler()
+                    launch {
+                        updateTaskUnCanceledInLocal(
+                            response.data.data,
+                            taskDao,
+                            sessionManager
+                        )
+                    }
+                    val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         loading(false, "")
                         callBack.invoke(true)

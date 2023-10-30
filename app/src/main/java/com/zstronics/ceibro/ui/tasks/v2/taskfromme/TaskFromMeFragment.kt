@@ -265,7 +265,7 @@ class TaskFromMeFragment :
 
     private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
         val unreadTaskList = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }
-        val unreadCount = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val unreadCount = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.count()
         val ongoingCount = allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
         val doneCount = allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
 

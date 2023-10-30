@@ -158,12 +158,12 @@ class DashboardVM @Inject constructor(
                 }
 
                 SocketHandler.TaskEvent.TASK_FORWARDED.name -> {
-                    val task = gson.fromJson<SocketTaskV2CreatedResponse>(
+                    val eventData = gson.fromJson<SocketNewTaskEventV2Response>(
                         arguments,
-                        object : TypeToken<SocketTaskV2CreatedResponse>() {}.type
+                        object : TypeToken<SocketNewTaskEventV2Response>() {}.type
                     ).data
                     launch {
-                        updateForwardTaskInLocal(task, taskDao, userId, sessionManager)
+                        updateForwardTaskInLocal(eventData, taskDao, userId, sessionManager)
                     }
                 }
 
@@ -172,7 +172,9 @@ class DashboardVM @Inject constructor(
                         arguments,
                         object : TypeToken<SocketTaskSeenV2Response>() {}.type
                     ).data
-                    updateGenericTaskSeenInLocal(taskSeen, taskDao, userId, sessionManager)
+                    launch {
+                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId, sessionManager)
+                    }
                 }
 
                 SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
@@ -184,16 +186,8 @@ class DashboardVM @Inject constructor(
                     Log.d("TASK_EVENT", commentData?.taskId.toString())
 
                     if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
-                        updateTaskCommentInLocal(
-                            commentData,
-                            taskDao,
-                            userId,
-                            sessionManager
-                        )
-                    }
-                    if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
-                        if (commentData != null) {
-                            updateTaskCanceledInLocal(
+                        launch {
+                            updateTaskCommentInLocal(
                                 commentData,
                                 taskDao,
                                 userId,
@@ -201,24 +195,40 @@ class DashboardVM @Inject constructor(
                             )
                         }
                     }
+                    if (socketData.eventType == SocketHandler.TaskEvent.CANCELED_TASK.name) {
+                        if (commentData != null) {
+                            launch {
+                                updateTaskCanceledInLocal(
+                                    commentData,
+                                    taskDao,
+                                    userId,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
                     if (socketData.eventType == SocketHandler.TaskEvent.UN_CANCEL_TASK.name) {
                         if (commentData != null) {
-                            updateTaskUnCanceledInLocal(
-                                commentData,
-                                taskDao,
-                                sessionManager
-                            )
+                            launch {
+                                updateTaskUnCanceledInLocal(
+                                    commentData,
+                                    taskDao,
+                                    sessionManager
+                                )
+                            }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
                         if (commentData != null) {
-                            updateTaskDoneInLocal(commentData, taskDao, sessionManager)
+                            launch {
+                                updateTaskDoneInLocal(commentData, taskDao, sessionManager)
+                            }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
-                        println("Socket: JOINED_TASK triggered ")
-                        println("Socket: JOINED_TASK:  $commentData")
-                        updateTaskJoinedInLocal(commentData, taskDao, sessionManager)
+                        launch {
+                            updateTaskJoinedInLocal(commentData, taskDao, sessionManager)
+                        }
                         updateContactsInDB {
 
                         }
@@ -232,12 +242,16 @@ class DashboardVM @Inject constructor(
                     ).data
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
                         if (hideData != null) {
-                            updateTaskHideInLocal(hideData, taskDao, sessionManager)
+                            launch {
+                                updateTaskHideInLocal(hideData, taskDao, sessionManager)
+                            }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
                         if (hideData != null) {
-                            updateTaskUnHideInLocal(hideData, taskDao, sessionManager)
+                            launch {
+                                updateTaskUnHideInLocal(hideData, taskDao, sessionManager)
+                            }
                         }
                     }
                 }

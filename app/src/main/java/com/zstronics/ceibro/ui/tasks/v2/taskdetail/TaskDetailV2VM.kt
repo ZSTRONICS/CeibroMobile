@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
@@ -17,13 +18,15 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,8 +53,9 @@ class TaskDetailV2VM @Inject constructor(
     private val _documents: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<TaskFiles>> = _documents
 
-    private val _taskEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
+    val _taskEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
     val taskEvents: MutableLiveData<MutableList<Events>> = _taskEvents
+    val originalEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
 
     var rootState = ""
     var selectedState = ""
@@ -114,7 +118,20 @@ class TaskDetailV2VM @Inject constructor(
     private fun getAllEvents(taskId: String) {
         launch {
             val taskEvents = taskDao.getEventsOfTask(taskId)
+            originalEvents.postValue(taskEvents.toMutableList())
             _taskEvents.postValue(taskEvents.toMutableList())
+        }
+    }
+
+    fun updateTaskAndAllEvents(taskId: String, allEvents: MutableList<Events>) {
+        launch {
+            val task = taskDao.getTaskByID(taskId)
+//            _taskEvents.postValue(allEvents)
+            originalEvents.postValue(allEvents)
+            task?.let {
+                originalTask.postValue(it)
+                _taskDetail.postValue(it)
+            }
         }
     }
 
@@ -130,12 +147,14 @@ class TaskDetailV2VM @Inject constructor(
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
                     if (taskSeenData != null) {
-                        updateGenericTaskSeenInLocal(
-                            taskSeenData,
-                            taskDao,
-                            user?.id,
-                            sessionManager
-                        )
+                        launch {
+                            updateGenericTaskSeenInLocal(
+                                taskSeenData,
+                                taskDao,
+                                user?.id,
+                                sessionManager
+                            )
+                        }
                         onBack(taskSeenData)
                     }
 
@@ -170,11 +189,11 @@ class TaskDetailV2VM @Inject constructor(
 
     fun doneTask(
         taskId: String,
-        onBack: (task: CeibroTaskV2?) -> Unit
+        onBack: () -> Unit
     ) {
         launch {
             var isSuccess = false
-            var taskData: CeibroTaskV2? = null
+            var doneData: EventV2Response.Data? = null
 
             val request = EventCommentOnlyUploadV2Request(
                 message = ""
@@ -188,8 +207,10 @@ class TaskDetailV2VM @Inject constructor(
                 eventCommentOnlyUploadV2Request = request
             )) {
                 is ApiResponse.Success -> {
-                    val commentData = response.data.data
-                    taskData = updateTaskDoneInLocal(commentData, taskDao, sessionManager)
+                    doneData = response.data.data
+                    updateTaskDoneInLocal(doneData, taskDao, sessionManager)
+                    loading(false, "")
+                    onBack()
                     isSuccess = true
                 }
 
@@ -198,13 +219,13 @@ class TaskDetailV2VM @Inject constructor(
                 }
             }
 
-            val handler = Handler()
-            handler.postDelayed(Runnable {
-                loading(false, "")
-                if (isSuccess) {
-                    onBack(taskData)
-                }
-            }, 50)
+//            val handler = Handler()
+//            handler.postDelayed(Runnable {
+//                loading(false, "")
+//                if (isSuccess) {
+//                    onBack()
+//                }
+//            }, 10)
         }
     }
 

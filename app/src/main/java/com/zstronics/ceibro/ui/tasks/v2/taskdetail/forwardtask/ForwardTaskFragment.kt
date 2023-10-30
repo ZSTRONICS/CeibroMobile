@@ -71,7 +71,7 @@ class ForwardTaskFragment :
             }
 
             R.id.forwardBtn -> {
-                viewModel.forwardTask { task ->
+                viewModel.forwardTask { eventData ->
 
                     if (viewModel.notificationTaskData != null) {
                         launchActivityWithFinishAffinity<NavHostPresenterActivity>(
@@ -86,7 +86,7 @@ class ForwardTaskFragment :
                         }
                     } else {
                         val bundle = Bundle()
-                        bundle.putParcelable("taskData", task)
+                        bundle.putParcelable("eventData", eventData)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
                 }

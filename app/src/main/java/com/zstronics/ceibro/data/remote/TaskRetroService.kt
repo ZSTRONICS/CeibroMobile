@@ -188,7 +188,7 @@ interface TaskRetroService {
     suspend fun forwardTask(
         @Path("taskId") taskId: String,
         @Body request: ForwardTaskV2Request
-    ): Response<NewTaskV2Response>
+    ): Response<EventV2Response>
 
     @POST("v2/task/seen/{taskId}")
     suspend fun taskSeen(

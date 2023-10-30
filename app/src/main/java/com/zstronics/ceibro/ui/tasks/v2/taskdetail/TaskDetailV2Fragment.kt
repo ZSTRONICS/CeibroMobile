@@ -3,18 +3,19 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
-import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
@@ -28,6 +29,7 @@ import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAda
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -67,11 +69,11 @@ class TaskDetailV2Fragment :
                     bundle.putString("action", TaskDetailEvents.DoneTask.eventValue)
                     navigateForResult(R.id.commentFragment, DONE_REQUEST_CODE, bundle)
                 } else {
-                    viewModel.doneTask(viewModel.taskDetail.value?.id ?: "") { task ->
-                        if (task != null) {
-                            viewModel.originalTask.postValue(task)
-                            viewModel._taskDetail.postValue(task)
-                        }
+                    viewModel.doneTask(viewModel.taskDetail.value?.id ?: "") {
+//                        if (task != null) {
+//                            viewModel.originalTask.postValue(task)
+//                            viewModel._taskDetail.postValue(task)
+//                        }
                     }
                 }
             }
@@ -154,146 +156,147 @@ class TaskDetailV2Fragment :
         mViewDataBinding.bodyScroll.isSmoothScrollingEnabled = true
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
-         /*   lifecycleScope.launch {
-                viewModel.syncEvents(item.id,item.events)
-            }
-            lifecycleScope.launch {
-                viewModel.getTaskWithUpdatedTimeStamp(viewModel.sessionManagerInternal.getUpdatedAtTimeStamp(),{
+            if (item != null) {
 
-                })
-            }*/
 
-            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(
-                    TaskStatus.CANCELED.name,
-                    true
-                ) ||
-                (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
-                    TaskStatus.NEW.name,
-                    true
-                ))
-            ) {
-                mViewDataBinding.doneBtn.isEnabled = false
-                mViewDataBinding.doneBtn.isClickable = false
-                mViewDataBinding.doneBtn.alpha = 0.6f
-                mViewDataBinding.taskForwardBtn.isEnabled = false
-                mViewDataBinding.taskForwardBtn.isClickable = false
-                mViewDataBinding.taskForwardBtn.alpha = 0.6f
-            } else {
-                mViewDataBinding.doneBtn.isEnabled = true
-                mViewDataBinding.doneBtn.isClickable = true
-                mViewDataBinding.doneBtn.alpha = 1f
-                mViewDataBinding.taskForwardBtn.isEnabled = true
-                mViewDataBinding.taskForwardBtn.isClickable = true
-                mViewDataBinding.taskForwardBtn.alpha = 1f
-            }
-            if (item.creatorState.equals(TaskStatus.DONE.name, true) || item.creatorState.equals(
-                    TaskStatus.CANCELED.name,
-                    true
-                )
-            ) {
-                mViewDataBinding.doneRequirementBadge.visibility = View.GONE
-            } else {
-                if (item.doneCommentsRequired || item.doneImageRequired) {
-                    mViewDataBinding.doneRequirementBadge.visibility = View.VISIBLE
+                if (item.creatorState.equals(
+                        TaskStatus.DONE.name,
+                        true
+                    ) || item.creatorState.equals(
+                        TaskStatus.CANCELED.name,
+                        true
+                    ) ||
+                    (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
+                        TaskStatus.NEW.name,
+                        true
+                    ))
+                ) {
+                    mViewDataBinding.doneBtn.isEnabled = false
+                    mViewDataBinding.doneBtn.isClickable = false
+                    mViewDataBinding.doneBtn.alpha = 0.6f
+                    mViewDataBinding.taskForwardBtn.isEnabled = false
+                    mViewDataBinding.taskForwardBtn.isClickable = false
+                    mViewDataBinding.taskForwardBtn.alpha = 0.6f
                 } else {
-                    mViewDataBinding.doneRequirementBadge.visibility = View.GONE
+                    mViewDataBinding.doneBtn.isEnabled = true
+                    mViewDataBinding.doneBtn.isClickable = true
+                    mViewDataBinding.doneBtn.alpha = 1f
+                    mViewDataBinding.taskForwardBtn.isEnabled = true
+                    mViewDataBinding.taskForwardBtn.isClickable = true
+                    mViewDataBinding.taskForwardBtn.alpha = 1f
                 }
-            }
-
-            mViewDataBinding.detailViewHeading.text = item.taskUID
-
-            var state = ""
-            state =
-                if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
-                    item.creatorState
-                } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(
+                if (item.creatorState.equals(
+                        TaskStatus.DONE.name,
+                        true
+                    ) || item.creatorState.equals(
                         TaskStatus.CANCELED.name,
                         true
                     )
                 ) {
-                    item.creatorState
+                    mViewDataBinding.doneRequirementBadge.visibility = View.GONE
                 } else {
-                    item.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""
-                }
-            val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
-                TaskStatus.NEW.name -> Pair(
-                    R.drawable.status_new_filled_more_corners,
-                    requireContext().getString(R.string.new_heading)
-                )
-
-                TaskStatus.UNREAD.name -> Pair(
-                    R.drawable.status_new_filled_more_corners,
-                    requireContext().getString(R.string.unread_heading)
-                )
-
-                TaskStatus.ONGOING.name -> Pair(
-                    R.drawable.status_ongoing_filled_more_corners,
-                    requireContext().getString(R.string.ongoing_heading)
-                )
-
-                TaskStatus.DONE.name -> Pair(
-                    R.drawable.status_done_filled_more_corners,
-                    requireContext().getString(R.string.done_heading)
-                )
-
-                TaskStatus.CANCELED.name -> Pair(
-                    R.drawable.status_cancelled_filled_more_corners,
-                    requireContext().getString(R.string.canceled)
-                )
-
-                else -> Pair(
-                    R.drawable.status_draft_outline,
-                    state.ifEmpty {
-                        "N/A"
+                    if (item.doneCommentsRequired || item.doneImageRequired) {
+                        mViewDataBinding.doneRequirementBadge.visibility = View.VISIBLE
+                    } else {
+                        mViewDataBinding.doneRequirementBadge.visibility = View.GONE
                     }
-                )
-            }
-            val (background, status) = taskStatusNameBg
-            mViewDataBinding.taskDetailStatusName.setBackgroundResource(background)
-            mViewDataBinding.taskDetailStatusName.text = status
+                }
 
-            mViewDataBinding.taskDetailCreationDate.text = DateUtils.formatCreationUTCTimeToCustom(
-                utcTime = item.createdAt,
-                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
-            )
+                mViewDataBinding.detailViewHeading.text = item.taskUID
 
-            var dueDate = ""
-            dueDate = DateUtils.reformatStringDate(
-                date = item.dueDate,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
-            )
-            if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+                var state = ""
+                state =
+                    if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue && viewModel.user?.id == item.creator.id) {
+                        item.creatorState
+                    } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(
+                            TaskStatus.CANCELED.name,
+                            true
+                        )
+                    ) {
+                        item.creatorState
+                    } else {
+                        item.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""
+                    }
+                val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
+                    TaskStatus.NEW.name -> Pair(
+                        R.drawable.status_new_filled_more_corners,
+                        requireContext().getString(R.string.new_heading)
+                    )
+
+                    TaskStatus.UNREAD.name -> Pair(
+                        R.drawable.status_new_filled_more_corners,
+                        requireContext().getString(R.string.unread_heading)
+                    )
+
+                    TaskStatus.ONGOING.name -> Pair(
+                        R.drawable.status_ongoing_filled_more_corners,
+                        requireContext().getString(R.string.ongoing_heading)
+                    )
+
+                    TaskStatus.DONE.name -> Pair(
+                        R.drawable.status_done_filled_more_corners,
+                        requireContext().getString(R.string.done_heading)
+                    )
+
+                    TaskStatus.CANCELED.name -> Pair(
+                        R.drawable.status_cancelled_filled_more_corners,
+                        requireContext().getString(R.string.canceled)
+                    )
+
+                    else -> Pair(
+                        R.drawable.status_draft_outline,
+                        state.ifEmpty {
+                            "N/A"
+                        }
+                    )
+                }
+                val (background, status) = taskStatusNameBg
+                mViewDataBinding.taskDetailStatusName.setBackgroundResource(background)
+                mViewDataBinding.taskDetailStatusName.text = status
+
+                mViewDataBinding.taskDetailCreationDate.text =
+                    DateUtils.formatCreationUTCTimeToCustom(
+                        utcTime = item.createdAt,
+                        inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
+                    )
+
+                var dueDate = ""
                 dueDate = DateUtils.reformatStringDate(
                     date = item.dueDate,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
+                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
                     DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
                 )
-                if (dueDate == "") {
-                    dueDate = "N/A"
+                if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+                    dueDate = DateUtils.reformatStringDate(
+                        date = item.dueDate,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
+                        DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+                    )
+                    if (dueDate == "") {
+                        dueDate = "N/A"
+                    }
                 }
-            }
-            mViewDataBinding.taskDetailDueDate.text = "Due Date: $dueDate"
+                mViewDataBinding.taskDetailDueDate.text = "Due Date: $dueDate"
 
-            mViewDataBinding.taskTitle.text =
-                if (item.topic != null) {
-                    item.topic.topic.ifEmpty {
+                mViewDataBinding.taskTitle.text =
+                    if (item.topic != null) {
+                        item.topic.topic.ifEmpty {
+                            "N/A"
+                        }
+                    } else {
                         "N/A"
                     }
+
+                if (item.description.isNotEmpty()) {
+                    mViewDataBinding.taskDescription.text = item.description
                 } else {
-                    "N/A"
+                    mViewDataBinding.taskDescription.visibility = View.GONE
                 }
 
-            if (item.description.isNotEmpty()) {
-                mViewDataBinding.taskDescription.text = item.description
-            } else {
-                mViewDataBinding.taskDescription.visibility = View.GONE
-            }
 
-
-            if (item.files.isNotEmpty()) {
-                viewModel.separateFiles(item.files)
-            }
+                if (item.files.isNotEmpty()) {
+                    viewModel.separateFiles(item.files)
+                }
 
 //            if (item.events.isNotEmpty()) {
 //                mViewDataBinding.eventsLayout.visibility = View.VISIBLE
@@ -301,6 +304,9 @@ class TaskDetailV2Fragment :
 //            } else {
 //                mViewDataBinding.eventsLayout.visibility = View.GONE
 //            }
+            } else {
+                shortToastNow("Task Data is empty")
+            }
         }
 
 
@@ -374,27 +380,47 @@ class TaskDetailV2Fragment :
 
 
         viewModel.taskEvents.observe(viewLifecycleOwner) {
-            viewModel.sessionManager.getUser().value?.id?.let { userId ->
-                eventsAdapter.setList(
-                    it,
-                    userId
-                )
-            }
-            mViewDataBinding.eventsLayout.visibility =
-                if (it.isNotEmpty()) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
+            if (!it.isNullOrEmpty() && it.size == viewModel.originalEvents.value?.size) {
+                viewModel.sessionManager.getUser().value?.id?.let { userId ->
+                    eventsAdapter.setList(
+                        it,
+                        userId
+                    )
                 }
-            if (isScrollingWithDelay) {
-                isScrollingWithDelay = false
-                scrollToBottomWithDelay()
+                mViewDataBinding.eventsLayout.visibility =
+                    if (it.isNotEmpty()) {
+                        View.VISIBLE
+                    } else {
+                        View.GONE
+                    }
+                if (isScrollingWithDelay) {
+                    isScrollingWithDelay = false
+                    scrollToBottomWithDelay()
+                }
+            } else {
+                val allEvents = viewModel.originalEvents.value
+                if (allEvents != null) {
+                    viewModel.sessionManager.getUser().value?.id?.let { userId ->
+                        eventsAdapter.setList(
+                            allEvents,
+                            userId
+                        )
+                    }
+                    mViewDataBinding.eventsLayout.visibility =
+                        if (allEvents.isNotEmpty()) {
+                            View.VISIBLE
+                        } else {
+                            View.GONE
+                        }
+                    if (isScrollingWithDelay) {
+                        isScrollingWithDelay = false
+                        scrollToBottomWithDelay()
+                    }
+                }
             }
         }
         mViewDataBinding.eventsRV.adapter = eventsAdapter
         eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
-
-
             val bundle = Bundle()
             bundle.putParcelable("eventFile", data)
             navigate(R.id.fileViewerFragment, bundle)
@@ -439,45 +465,35 @@ class TaskDetailV2Fragment :
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {
                 FORWARD_TASK_REQUEST_CODE -> {
-                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
-                    if (updatedTask != null) {
-                        viewModel.originalTask.postValue(updatedTask)
-                        viewModel._taskDetail.postValue(updatedTask)
-                    }
+//                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
+//                    if (updatedTask != null) {
+//                        viewModel.originalTask.postValue(updatedTask)
+//                        viewModel._taskDetail.postValue(updatedTask)
+//                    }
                 }
 
                 COMMENT_REQUEST_CODE -> {
-                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
-                    if (eventData != null) {
-                        val taskEvent = Events(
-                            id = eventData.id,
-                            taskId = eventData.taskId,
-                            eventType = eventData.eventType,
-                            initiator = eventData.initiator,
-                            eventData = eventData.eventData,
-                            commentData = eventData.commentData,
-                            createdAt = eventData.createdAt,
-                            updatedAt = eventData.updatedAt,
-                            invitedMembers = eventData.invitedMembers
-                        )
-                        // onTaskEvent(LocalEvents.TaskEvent(taskEvent))
-                        viewModel.updateTaskCommentInLocal(
-                            eventData,
-                            viewModel.taskDao,
-                            viewModel.user?.id,
-                            viewModel.sessionManager
-                        )
-                        isScrollingWithDelay = true
-                        //  scrollToBottomWithDelay()
-                    }
+//                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
+//                    if (eventData != null) {
+//                        GlobalScope.launch {
+//                            viewModel.updateTaskCommentInLocal(
+//                                eventData,
+//                                viewModel.taskDao,
+//                                viewModel.user?.id,
+//                                viewModel.sessionManager
+//                            )
+//                            isScrollingWithDelay = true
+//                        }
+//                        //  scrollToBottomWithDelay()
+//                    }
                 }
 
                 DONE_REQUEST_CODE -> {
-                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
-                    if (updatedTask != null) {
-                        viewModel.originalTask.postValue(updatedTask)
-                        viewModel._taskDetail.postValue(updatedTask)
-                    }
+//                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
+//                    if (updatedTask != null) {
+//                        viewModel.originalTask.postValue(updatedTask)
+//                        viewModel._taskDetail.postValue(updatedTask)
+//                    }
                 }
             }
         }
@@ -504,27 +520,30 @@ class TaskDetailV2Fragment :
                 taskDetail.id
             )
         ) {
-//            val taskEvents = taskDetail.events.toMutableList()
-//            val eventExist = taskEvents.find { newEvent.id == it.id }
-//            if (eventExist == null) {  /// event not existed
-//                taskEvents.add(newEvent)
-//                taskDetail.seenBy = listOf()
-//                taskDetail.events = taskEvents
-////                val handler = Handler()
-////                handler.postDelayed(Runnable {
-////                    eventsAdapter.listItems.add(newEvent)
-////                    mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-////                }, 210)
-//                viewModel.originalTask.postValue(taskDetail)
-//                viewModel._taskDetail.postValue(taskDetail)
-//                viewModel.taskSeen(taskDetail.id) { }
-//                scrollToBottom()
-//            }
+            val taskEvents = viewModel.originalEvents.value
+            taskEvents?.let { allEvents ->
+                GlobalScope.launch {
+                    val eventExist = allEvents.find { newEvent.id == it.id }
+                    if (eventExist == null) {  /// event not existed
+                        allEvents.add(newEvent)
+//                        isScrollingWithDelay = true
+                        viewModel.updateTaskAndAllEvents(newEvent.taskId, allEvents)
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(Runnable {
+                            eventsAdapter.listItems.add(newEvent)
+                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+                            scrollToBottom()
+                        }, 1)
+
+                    }
+                }
+                viewModel.taskSeen(taskDetail.id) { }
+            }
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTaskForwardEvent(event: LocalEvents.TaskForwardEvent?) {
+    fun onTaskSeenEvent(event: LocalEvents.TaskSeenEvent?) {
         val task = event?.task
         if (task != null) {
             viewModel.taskDetail.value?.let { taskDetail ->
@@ -532,13 +551,7 @@ class TaskDetailV2Fragment :
                     task.let { it1 ->
                         viewModel.originalTask.postValue(it1)
                         viewModel._taskDetail.postValue(it1)
-                        val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
-                        if (seenByMe == null) {
-                            println("TaskSeen-CalledOnTaskForwardReceived: ${it1.id}")
-                            viewModel.taskSeen(it1.id) { }
-                        }
                     }
-                    scrollToBottom()
                 }
             }
         }
@@ -548,25 +561,26 @@ class TaskDetailV2Fragment :
     fun onTaskDoneEvent(event: LocalEvents.TaskDoneEvent?) {
         val task = event?.task
         val taskEvent = event?.taskEvent
-        if (task != null) {
-            viewModel.taskDetail.value?.let { taskDetail ->
-                if (task.id == taskDetail.id) {
-                    task.let { it1 ->
-//                        val oldAllEvents = taskDetail.events
-//                        /// check is event is already added in the list
-//                        val foundEvent =
-//                            oldAllEvents.find { it.id == taskEvent?.id }
-//                        if (foundEvent == null) {
-                            viewModel.originalTask.postValue(it1)
-                            viewModel._taskDetail.postValue(it1)
-                            val seenByMe = it1.seenBy.find { it == viewModel.user?.id }
-                            if (seenByMe == null) {
-                                println("TaskSeen-CalledOnTaskDoneReceived: ${it1.id}")
-                                viewModel.taskSeen(it1.id) { }
-//                            }
+        if (task != null && taskEvent != null) {
+            val taskEvents = viewModel.originalEvents.value
+            taskEvents?.let { allEvents ->
+                GlobalScope.launch {
+                    val eventExist = allEvents.find { taskEvent.id == it.id }
+                    if (eventExist == null) {  /// event not existed
+                        allEvents.add(taskEvent)
+//                        isScrollingWithDelay = true
+                        viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(Runnable {
+                            eventsAdapter.listItems.add(taskEvent)
+                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
                             scrollToBottom()
-                        }
+                        }, 1)
                     }
+                }
+                val seenByMe = task.seenBy.find { it == viewModel.user?.id }
+                if (seenByMe == null) {
+                    viewModel.taskSeen(task.id) { }
                 }
             }
         }
@@ -580,9 +594,9 @@ class TaskDetailV2Fragment :
     }
 
     private fun scrollToBottomWithDelay() {
-        isScrollingWithDelay = true
+//        isScrollingWithDelay = true
         mViewDataBinding.bodyScroll.postDelayed({
             mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
-        }, 1500)
+        }, 400)
     }
 }

@@ -116,7 +116,7 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     override suspend fun forwardTask(
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request
-    ): ApiResponse<NewTaskV2Response> =
+    ): ApiResponse<EventV2Response> =
         executeSafely(
             call =
             {

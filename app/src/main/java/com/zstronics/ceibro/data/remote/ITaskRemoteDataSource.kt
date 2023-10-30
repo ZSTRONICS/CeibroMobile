@@ -83,7 +83,7 @@ interface ITaskRemoteDataSource {
     suspend fun forwardTask(
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request
-    ): ApiResponse<NewTaskV2Response>
+    ): ApiResponse<EventV2Response>
 
     suspend fun taskSeen(taskId: String): ApiResponse<TaskSeenResponse>
     suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response>
