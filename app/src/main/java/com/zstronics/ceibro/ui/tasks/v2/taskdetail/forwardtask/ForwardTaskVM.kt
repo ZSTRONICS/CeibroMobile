@@ -47,14 +47,14 @@ class ForwardTaskVM @Inject constructor(
         val taskData: CeibroTaskV2? = bundle?.getParcelable("taskDetail")
         taskData?.let {
             taskId = it.id
+            _taskDetail.postValue(it)
         }
-
         if (!selectedContact.isNullOrEmpty()) {
             oldSelectedContacts = selectedContact
         }
-        taskData.let { _taskDetail.postValue(it) }
 
 
+        //Following code will only execute if forward screen is opened from notification
         notificationTaskData = bundle?.getParcelable("notificationTaskData")
         notificationTaskData?.let {
             if (CookiesManager.jwtToken.isNullOrEmpty()) {
@@ -62,6 +62,19 @@ class ForwardTaskVM @Inject constructor(
                 sessionManager.isUserLoggedIn()
             }
             taskId = it.taskId
+            launch {
+                val task = taskDao.getTaskByID(it.taskId)
+                task?.let { task1 ->
+                    _taskDetail.postValue(task1)
+
+                    val assignTo = task1.assignedToState.map {assignee -> assignee.phoneNumber }
+                    val invited = task1.invitedNumbers.map {invited -> invited.phoneNumber }
+                    val combinedList = arrayListOf<String>()
+                    combinedList.addAll(assignTo)
+                    combinedList.addAll(invited)
+                    oldSelectedContacts = combinedList
+                }
+            }
         }
     }
 
@@ -95,17 +108,22 @@ class ForwardTaskVM @Inject constructor(
 
             launch {
                 loading(true)
-                taskRepository.forwardTask(taskId, forwardTaskRequest) { isSuccess, forwardEvent, errorMsg ->
+                taskRepository.forwardTask(
+                    taskId,
+                    forwardTaskRequest
+                ) { isSuccess, forwardEvent, errorMsg ->
                     if (isSuccess) {
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.postDelayed(Runnable {
-                            loading(false, "")
-                        }, 80)
-                        if (forwardEvent != null) {
-                            onBack(forwardEvent)
-                        }
                         launch {
-                            updateForwardTaskInLocal(forwardEvent, taskDao, user?.id, sessionManager)
+                            updateForwardTaskInLocal(
+                                forwardEvent,
+                                taskDao,
+                                user?.id,
+                                sessionManager
+                            )
+                            loading(false, "")
+                            if (forwardEvent != null) {
+                                onBack(forwardEvent)
+                            }
                         }
                     } else {
                         loading(false, errorMsg)

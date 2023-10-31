@@ -40,7 +40,7 @@ data class CeibroTaskV2(
     @SerializedName("_id")
     val id: String,
     @SerializedName("isCanceled")
-    val isCanceled: Boolean,
+    var isCanceled: Boolean,
     @SerializedName("invitedNumbers")
     var invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
@@ -93,7 +93,7 @@ data class CeibroTaskV2(
             entity = CeibroTaskV2::class,
             parentColumns = ["id"],
             childColumns = ["taskId"],
-            onDelete = ForeignKey.NO_ACTION, // Define the behavior on delete
+            onDelete = ForeignKey.CASCADE, // Define the behavior on delete
             onUpdate = ForeignKey.NO_ACTION  // Define the behavior on update
         )
     ], indices = [Index(value = ["taskId"])]
@@ -107,8 +107,6 @@ data class Events(
     val eventData: List<EventData>?,
     @SerializedName("invitedMembers")
     val invitedMembers: List<EventData>?,
-    @SerializedName("forwardTaskData")
-    val forwardTaskData: ForwardData?,
     @SerializedName("commentData")
     val commentData: CommentData?,
     @SerializedName("eventType")

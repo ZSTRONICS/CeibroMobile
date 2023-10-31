@@ -39,6 +39,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketForwardedToMeNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
@@ -132,28 +133,28 @@ class DashboardVM @Inject constructor(
                         sessionManager
                     )
 
-                    val notificationTitle: String =
-                        if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
-                            "" else taskCreatedData.data?.topic?.topic.toString()
+//                    val notificationTitle: String =
+//                        if (taskCreatedData.data?.topic?.topic.isNullOrEmpty())
+//                            "" else taskCreatedData.data?.topic?.topic.toString()
 
 
-//                    EventBus.getDefault().post(
-//                        LocalEvents.CreateSimpleNotification(
-//                            moduleId = taskCreatedData.data?.id ?: "",
-//                            moduleName = socketData.module,
-//                            notificationTitle =
-//                            if (notificationTitle.isNotEmpty()) {
-//                                "New task created as \"$notificationTitle\""
-//                            } else {
-//                                "New task created"
-//                            },
-//                            notificationDescription = taskCreatedData.data?.description ?: "",
-//                            isOngoing = false,
-//                            indeterminate = false,
-//                            notificationIcon = R.drawable.app_logo,
-//                            isTaskCreated = true
-//                        )
-//                    )
+                    /*EventBus.getDefault().post(
+                        LocalEvents.CreateSimpleNotification(
+                            moduleId = taskCreatedData.data?.id ?: "",
+                            moduleName = socketData.module,
+                            notificationTitle =
+                            if (notificationTitle.isNotEmpty()) {
+                                "New task created as \"$notificationTitle\""
+                            } else {
+                                "New task created"
+                            },
+                            notificationDescription = taskCreatedData.data?.description ?: "",
+                            isOngoing = false,
+                            indeterminate = false,
+                            notificationIcon = R.drawable.app_logo,
+                            isTaskCreated = true
+                        )
+                    )*/
 
                 }
 
@@ -255,145 +256,6 @@ class DashboardVM @Inject constructor(
                         }
                     }
                 }
-
-                /*SocketHandler.TaskEvent.TASK_UPDATE_PRIVATE.name -> {
-                    val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
-                        arguments,
-                        object : TypeToken<SocketTaskCreatedResponse>() {}.type
-                    )
-                    // Need to check if task data object is null then don't do anything
-                    taskUpdatedData.data?._id?.let {
-                        //Following Code will run if the data object would not be null
-                        val taskCount =
-                            localTask.getSingleTaskCount(taskUpdatedData.data._id)
-                        if (taskCount < 1) {
-                            localTask.insertTask(taskUpdatedData.data)
-                        } else {
-                            localTask.updateTask(taskUpdatedData.data)
-                        }
-                    }
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                }
-
-                SocketHandler.TaskEvent.SUB_TASK_CREATED.name -> {
-                    val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
-                        arguments,
-                        object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
-                    )
-                    subtask.data?.let { localSubTask.insertSubTask(it) }
-                    EventBus.getDefault()
-                        .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
-                }
-
-                SocketHandler.TaskEvent.SUB_TASK_UPDATE_PRIVATE.name -> {
-                    val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
-                        arguments,
-                        object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
-                    )
-                    // Need to check if subtask data object is null then don't do anything
-                    subtask.data?.id?.let {
-                        val subtaskCount =
-                            localSubTask.getSingleSubTaskCount(subtask.data.id)
-                        if (subtaskCount < 1) {
-                            localSubTask.insertSubTask(subtask.data)
-                        } else {
-                            localSubTask.updateSubTask(subtask.data)
-                        }
-                    }
-                    EventBus.getDefault()
-                        .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
-                }
-
-                SocketHandler.TaskEvent.TASK_UPDATE_PUBLIC.name -> {
-                    val taskUpdatedData = gson.fromJson<SocketTaskCreatedResponse>(
-                        arguments,
-                        object : TypeToken<SocketTaskCreatedResponse>() {}.type
-                    )
-                    // Need to check if task data object is null then don't do anything
-                    taskUpdatedData.data?._id?.let {
-                        //Following Code will run if the data object would not be null
-                        val taskCount =
-                            localTask.getSingleTaskCount(taskUpdatedData.data._id)
-                        if (taskCount < 1) {
-                            localTask.insertTask(taskUpdatedData.data)
-                        } else {
-                            localTask.updateTask(taskUpdatedData.data)
-                        }
-                    }
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                }
-
-                SocketHandler.TaskEvent.SUB_TASK_UPDATE_PUBLIC.name -> {
-                    val subtask = gson.fromJson<SocketSubTaskCreatedResponse>(
-                        arguments,
-                        object : TypeToken<SocketSubTaskCreatedResponse>() {}.type
-                    )
-                    // Need to check if subtask data object is null then don't do anything
-                    subtask.data?.id?.let {
-                        val subtaskCount =
-                            localSubTask.getSingleSubTaskCount(subtask.data.id)
-                        if (subtaskCount < 1) {
-                            localSubTask.insertSubTask(subtask.data)
-                        } else {
-                            localSubTask.updateSubTask(subtask.data)
-                        }
-                    }
-                    EventBus.getDefault()
-                        .post(subtask.data?.let { LocalEvents.SubTaskCreatedEvent(it.taskId) })
-                }
-
-                SocketHandler.TaskEvent.TASK_SUBTASK_UPDATED.name -> {
-                    val taskSubtaskUpdateResponse =
-                        gson.fromJson<SocketTaskSubtaskUpdateResponse>(
-                            arguments,
-                            object : TypeToken<SocketTaskSubtaskUpdateResponse>() {}.type
-                        )
-                    val taskSubtaskUpdatedData = taskSubtaskUpdateResponse.data.results
-
-                    val subTasks = taskSubtaskUpdatedData.subtasks
-                    val task = taskSubtaskUpdatedData.task
-
-                    if (subTasks.isNotEmpty()) {
-                        val subTask = subTasks[0]
-                        localSubTask.updateSubTask(subTask)
-                        EventBus.getDefault()
-                            .post(LocalEvents.SubTaskCreatedEvent(subTask.taskId))
-                    }
-
-                    if (task != null) {
-                        localTask.updateTask(task)
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                    }
-                }*/
-            }
-        } else if (socketData.module == "SubTaskComments") {
-            if (socketData.eventType == SocketHandler.TaskEvent.SUBTASK_NEW_COMMENT.name) {
-                val newComment =
-                    gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
-                        arguments,
-                        object :
-                            TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
-                    ).data
-                launch {
-                    localSubTask.addFilesUnderComment(
-                        newComment.subTaskId,
-                        newComment,
-                        newComment.id
-                    )
-                }
-                EventBus.getDefault()
-                    .post(LocalEvents.NewSubTaskComment(newComment, newComment.id))
-
-                EventBus.getDefault().post(
-                    LocalEvents.CreateNotification(
-                        moduleName = socketData.module,
-                        moduleId = newComment.id,
-                        notificationTitle = "New Comment received",
-                        isOngoing = false,
-                        indeterminate = false,
-                        notificationIcon = R.drawable.icon_chat
-                    )
-                )
             }
         } else if (socketData.module == "project") {
             when (socketData.eventType) {
@@ -709,34 +571,10 @@ class DashboardVM @Inject constructor(
                         response.data.uploadData,
                         taskDao
                     )
-//                    notificationTitle =
-//                        if (filesCount > 1) "$filesCount files has been uploaded" else "$filesCount file has been uploaded"
-//                    createNotification(
-//                        LocalEvents.CreateNotification(
-//                            moduleName = uploadFilesToServer.request.moduleName,
-//                            moduleId = uploadFilesToServer.request.moduleId,
-//                            notificationTitle = notificationTitle,
-//                            isOngoing = false,
-//                            indeterminate = false,
-//                            notificationIcon = R.drawable.icon_upload
-//                        )
-//                    )
-
                 }
 
                 is ApiResponse.Error -> {
                     alert(response.error.message)
-
-//                    createNotification(
-//                        LocalEvents.CreateNotification(
-//                            moduleName = uploadFilesToServer.request.moduleName,
-//                            moduleId = uploadFilesToServer.request.moduleId,
-//                            notificationTitle = response.error.message,
-//                            isOngoing = false,
-//                            indeterminate = false,
-//                            notificationIcon = R.drawable.icon_upload
-//                        )
-//                    )
                 }
             }
         }
@@ -800,8 +638,8 @@ class DashboardVM @Inject constructor(
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
-            taskDao.deleteAllTasksData()
             taskDao.deleteAllEventsData()
+            taskDao.deleteAllTasksData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()

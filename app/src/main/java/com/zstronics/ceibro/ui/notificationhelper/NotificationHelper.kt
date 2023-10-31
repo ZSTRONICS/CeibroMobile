@@ -124,7 +124,7 @@ class NotificationHelper(context: Context) {
                     .setSmallIcon(R.drawable.app_logo)
                     .setContentTitle(task.creator)
                     .setContentText(title)
-                    .setLargeIcon(decodeBase64ToBitmap(task.avatar))
+                    .setLargeIcon(decodeBase64ToBitmap("UklGRiADAABXRUJQVlA4WAoAAAAQAAAAMQAAMQAAQUxQSEsBAAABkELbtrFtz2fbtm3bNrKtaiWbzd9vq9q2bVuvPp/7vTv+KSImgPufUNPQ2gpKMXrw8oMXj2o8UjRRHHf9XFrL//yrRQFDft8SkV+PkfSNsnTfEsHs4hK9ASFfxHBNDyBXwPA3GSCJx7DUCRD1h2UKIOA7SwWA7zeGL94AqTyGb74AuUKGn8EAYT8ZXtsBmD9lOKoM4POJYVYCwP8bwxQHaLJfSGtCkI15QDofisBpNQkIL8M5TPcPhF1SICrnCT0cppz3ZcJuGynxSVoV7X0nIgifz+UYiMcge/qJaImVd2sgSn2zNGIGb/GWNvfn6SYveTYFv9azv5bE+fFQqbUUTW7865LYRc9LaUaPlhD3SJM8P0Nc0SQl8yDeOJAqliD/xpG6MJaqKJJbQYYpyidAjsgRjB6A3NIjuH0E+ehOSPgHwksnFCyh1q0BAFZQOCCuAQAAkAoAnQEqMgAyAD6dSp1MJaQioiQYC2iwE4llAM2lg7gAlgFe3YWNQJUD3J7hb5Wd7qTnVO24IDSFKQRpKIXRHvDIvOBFanAloNQeQahgA3aGS7mPfEUUf5EHow4AAP78XNrKpbaALBfTbfZnCaeBdI3QPzV72GcOsA7Z5bZO7qaiuo9XyM8JA8/RJ9X/13Fi5ZfYJneUmZks0WbstacfbSIypOflQ+AfxZnQOZZaReeZtGLQywHbbGwAaCBjtrDixBWo0y4AFTT6feE30ZbEOySXTsfraQsba09/09vX5FX419TP0Vw0NdcZaC9m4OccuRrXG+quzIbdsPk6BHWpbJWsXp5gk7DHomPqvzgpaGYhDvi14WkdEInuGo4qKW4sR9yQfT8f4PuxuCz9TVutEbliZ2fPbEmnTg+CCBLkiagLPpRXWYAWxV7HJzrP67VYukn+6Rs9diLi82otLArOxZHZmQMesLHp2a8E49RLBN55dmhKu6txxUFoADM4eFZ5nHT4AOim0E+7SsSxnKrgrxC+xAjD8JAmWAV1RZQl2tbjSoJoy3Ei5+1Z+EAAAA=="))
                     .setCustomBigContentView(customNotificationLayout)
                     .setCustomContentView(customNotificationLayout)
                     .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
@@ -187,7 +187,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = System.currentTimeMillis().toInt()
+        val requestCode = System.currentTimeMillis().toInt() + 1
         val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -214,7 +214,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = System.currentTimeMillis().toInt()
+        val requestCode = System.currentTimeMillis().toInt() + 2
         val intentReply =  Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -238,7 +238,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = System.currentTimeMillis().toInt()
+        val requestCode = System.currentTimeMillis().toInt() + 3
         val intentReply =  Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -253,7 +253,7 @@ class NotificationHelper(context: Context) {
         intentReply.putExtra(TYPE_EXTRA, 3)
         intentReply.putExtra("notificationId", singleNotificationId)
         intentReply.putExtra(BUNDLE_EXTRA, bundle)
-        return PendingIntent.getBroadcast(
+        return PendingIntent.getActivity(
             context, requestCode, intentReply, PendingIntent.FLAG_IMMUTABLE
         )
     }

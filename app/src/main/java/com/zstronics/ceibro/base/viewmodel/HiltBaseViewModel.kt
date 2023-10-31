@@ -25,7 +25,6 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -36,10 +35,8 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
@@ -399,6 +396,32 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     }
 
+    suspend fun updateForwardedToMeNewTaskInLocal(
+        completeData: ForwardedToMeNewTaskV2Response?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
+    ) {
+        val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+            ViewModelProvider(it).get(SharedViewModel::class.java)
+        }
+        completeData?.let { newData ->
+            GlobalScope.launch {
+                sessionManager.saveUpdatedAtTimeStamp(newData.task.updatedAt)
+                taskDao.insertTaskData(newData.task)
+                taskDao.insertMultipleEvents(newData.taskEvents)
+
+                if (newData.task.isAssignedToMe) {
+                    sharedViewModel?.isToMeUnread?.value = true
+                    sessionManager.saveToMeUnread(true)
+                }
+                val toMeNewTask = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+
+//                updateAllTasksLists(taskDao)
+                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+
+            }.join()
+        }
+    }
+
 
     suspend fun updateForwardTaskInLocal(
         eventData: EventV2Response.Data?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
@@ -419,7 +442,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         initiator = eventData.initiator,
                         eventData = eventData.eventData,
                         commentData = eventData.commentData,
-                        forwardTaskData = eventData.forwardTaskData,
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
                         invitedMembers = eventData.invitedMembers,
@@ -434,14 +456,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.hiddenBy = eventData.taskData.hiddenBy
                             task.updatedAt = eventData.taskUpdatedAt
                             task.creatorState = eventData.newTaskData.creatorState
-                            val newAssigneeList = if (eventData.forwardTaskData != null) {
-                                eventData.forwardTaskData.assignedToState.toMutableList()
+                            val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
+                                eventData.taskData.assignedToState.toMutableList()
                             } else {
                                 task.assignedToState
                             }
                             task.assignedToState = newAssigneeList
-                            val newInvitedList = if (eventData.forwardTaskData != null) {
-                                eventData.forwardTaskData.invitedNumbers.toMutableList()
+                            val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
+                                eventData.taskData.invitedNumbers.toMutableList()
                             } else {
                                 task.invitedNumbers
                             }
@@ -471,7 +493,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     handler.postDelayed(Runnable {
                         EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                         EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                    }, 40)
+                    }, 50)
 
                     TaskEventsList.removeEvent(
                         SocketHandler.TaskEvent.TASK_FORWARDED.name,
@@ -549,14 +571,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         userId: String?,
         sessionManager: SessionManager
     ) {
-        val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
-            ViewModelProvider(it).get(SharedViewModel::class.java)
-        }
-
         if (eventData != null) {
             val isExists = TaskEventsList.isExists(
                 SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
             )
+            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+                ViewModelProvider(it).get(SharedViewModel::class.java)
+            }
+
             if (!isExists) {
                 val taskEvent = Events(
                     id = eventData.id,
@@ -565,7 +587,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     initiator = eventData.initiator,
                     eventData = eventData.eventData,
                     commentData = eventData.commentData,
-                    forwardTaskData = eventData.forwardTaskData,
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
@@ -573,17 +594,31 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
+                    val task = taskDao.getTaskByID(eventData.taskId)
 
-                    taskDao.updateTaskOnEvent(
-                        taskId = eventData.taskId,
-                        seenBy = eventData.taskData.seenBy,
-                        hiddenBy = eventData.taskData.hiddenBy,
-                        updatedAt = eventData.taskUpdatedAt,
-                        toMeState = eventData.newTaskData.toMeState,
-                        fromMeState = eventData.newTaskData.fromMeState,
-                        hiddenState = eventData.newTaskData.hiddenState,
-                        creatorState = eventData.newTaskData.creatorState
-                    )
+                    if (task != null) {
+                        task.seenBy = eventData.taskData.seenBy
+                        task.hiddenBy = eventData.taskData.hiddenBy
+                        task.updatedAt = eventData.taskUpdatedAt
+                        task.creatorState = eventData.newTaskData.creatorState
+                        val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
+                            eventData.taskData.assignedToState.toMutableList()
+                        } else {
+                            task.assignedToState
+                        }
+                        task.assignedToState = newAssigneeList
+                        val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
+                            eventData.taskData.invitedNumbers.toMutableList()
+                        } else {
+                            task.invitedNumbers
+                        }
+                        task.invitedNumbers = newInvitedList
+                        task.toMeState = eventData.newTaskData.toMeState
+                        task.fromMeState = eventData.newTaskData.fromMeState
+                        task.hiddenState = eventData.newTaskData.hiddenState
+
+                        taskDao.updateTask(task)
+                    }
                     taskDao.insertEventData(taskEvent)
 
                     if (eventData.newTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
@@ -607,7 +642,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                }, 40)
+                }, 50)
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.NEW_TASK_COMMENT.name,
@@ -637,7 +672,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         initiator = eventData.initiator,
                         eventData = eventData.eventData,
                         commentData = eventData.commentData,
-                        forwardTaskData = eventData.forwardTaskData,
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
                         invitedMembers = eventData.invitedMembers,
@@ -659,6 +693,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.toMeState = eventData.newTaskData.toMeState
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
+                        task.isCanceled = false
 
                         taskDao.updateTask(task)
                     }
@@ -710,7 +745,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         initiator = eventData.initiator,
                         eventData = eventData.eventData,
                         commentData = eventData.commentData,
-                        forwardTaskData = eventData.forwardTaskData,
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
                         invitedMembers = eventData.invitedMembers,
@@ -732,6 +766,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.toMeState = eventData.newTaskData.toMeState
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
+                        task.isCanceled = true
 
                         taskDao.updateTask(task)
                     }
@@ -760,13 +795,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         eventData: EventV2Response.Data?, taskDao: TaskV2Dao, sessionManager: SessionManager
     ): CeibroTaskV2? {
         var updatedTask: CeibroTaskV2? = null
-        val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
-            ViewModelProvider(it).get(SharedViewModel::class.java)
-        }
         if (eventData != null) {
             val isExists = TaskEventsList.isExists(
                 SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId, true
             )
+            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+                ViewModelProvider(it).get(SharedViewModel::class.java)
+            }
             if (!isExists) {
                 val taskEvent = Events(
                     id = eventData.id,
@@ -775,7 +810,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     initiator = eventData.initiator,
                     eventData = eventData.eventData,
                     commentData = eventData.commentData,
-                    forwardTaskData = eventData.forwardTaskData,
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
@@ -821,7 +855,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                }, 40)
+                }, 50)
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId
                 )
@@ -845,7 +879,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 initiator = eventData.initiator,
                 eventData = eventData.eventData,
                 commentData = eventData.commentData,
-                forwardTaskData = eventData.forwardTaskData,
                 createdAt = eventData.createdAt,
                 updatedAt = eventData.updatedAt,
                 invitedMembers = eventData.invitedMembers,
@@ -922,6 +955,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     sessionManager.saveUpdatedAtTimeStamp(hideData.taskUpdatedAt)
                     taskDao.updateTaskHideUnHide(
                         taskId = hideData.taskId,
+                        isHiddenByMe = true,
                         hiddenBy = hideData.hiddenBy,
                         updatedAt = hideData.taskUpdatedAt,
                         toMeState = hideData.toMeState,
@@ -968,6 +1002,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     sessionManager.saveUpdatedAtTimeStamp(hideData.taskUpdatedAt)
                     taskDao.updateTaskHideUnHide(
                         taskId = hideData.taskId,
+                        isHiddenByMe = false,
                         hiddenBy = hideData.hiddenBy,
                         updatedAt = hideData.taskUpdatedAt,
                         toMeState = hideData.toMeState,
@@ -1019,13 +1054,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     @Inject
     lateinit var dashboardRepositoryInternal: IDashboardRepository
     suspend fun syncDraftTask(context: Context) {
-
-
         Log.d("SyncDraftTask", "syncDraftTask")
         val user = sessionManagerInternal.getUser().value
         val unsyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
 
-        suspend fun uploadDraftTaskFiles(
+        /*suspend fun uploadDraftTaskFiles(
             listOfLocalFiles: List<LocalFilesToStore>, taskId: String
         ) {
             val list: List<PickedImages> = listOfLocalFiles.map {
@@ -1087,7 +1120,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     alert(response.error.message)
                 }
             }
-        }
+        }*/
 
         // Define a recursive function to process records one by one
         suspend fun processNextRecord(records: List<NewTaskV2Entity>) {
@@ -1164,28 +1197,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     }
                 }
             }
-
-
-//            taskRepositoryInternal.newTaskV2(newTaskRequest) { isSuccess, task, errorMessage ->
-//                if (isSuccess) {
-//                    launch {
-//                        draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
-//                        updateCreatedTaskInLocal(
-//                            task,
-//                            taskDaoInternal,
-//                            user?.id,
-//                            sessionManagerInternal
-//                        )
-//                        newTaskRequest.filesData?.let { filesData ->
-//                            task?.id?.let { uploadDraftTaskFiles(filesData, it) }
-//                        }
-//                        // Remove the processed record from the list
-//                        val updatedRecords = records - newTaskRequest
-//                        // Recursively process the next record
-//                        processNextRecord(updatedRecords)
-//                    }
-//                }
-//            }
         }
 
         // Start the recursive processing
@@ -1198,7 +1209,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         moduleName: String, moduleId: String, uploadedFiles: List<TaskFiles>, taskDao: TaskV2Dao
     ) {
         if (moduleName.equals(AttachmentModules.Task.name, true)) {
-            launch {
+            /*launch {
                 val taskToMeLocalData =
                     TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
                 val taskFromMeLocalData =
@@ -1316,7 +1327,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         taskFromMeLocalData
                     )
                 }
-            }
+            }*/
         }
     }
 

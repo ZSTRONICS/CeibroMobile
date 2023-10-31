@@ -3,30 +3,29 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,8 +56,14 @@ class TaskDetailV2VM @Inject constructor(
     val taskEvents: MutableLiveData<MutableList<Events>> = _taskEvents
     val originalEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
 
+    private val _missingEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
+    val missingEvents: MutableLiveData<MutableList<Events>> = _missingEvents
+
+    var notificationTaskData: NotificationTaskData? = null
+
     var rootState = ""
     var selectedState = ""
+    var taskId: String = ""
 
 //    init {
 //        EventBus.getDefault().register(this)
@@ -80,10 +85,37 @@ class TaskDetailV2VM @Inject constructor(
             getAllEvents(task.id)
             _taskDetail.postValue(task)
             originalTask.postValue(task)
+            syncEvents(task.id)
 
             val seenByMe = task.seenBy.find { it == user?.id }
             if (seenByMe == null) {
                 taskSeen(task.id) { }
+            }
+        } ?: run {
+            //Following code will only execute if forward screen is opened from notification
+            alert("From Notification")
+            notificationTaskData = bundle?.getParcelable("notificationTaskData")
+            notificationTaskData?.let {
+                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    sessionManager.setUser()
+                    sessionManager.isUserLoggedIn()
+                }
+                taskId = it.taskId
+                launch {
+                    val task = taskDao.getTaskByID(it.taskId)
+                    task?.let { task1 ->
+                        rootState = TaskRootStateTags.ToMe.tagValue
+                        getAllEvents(task1.id)
+                        _taskDetail.postValue(task1)
+                        originalTask.postValue(task1)
+                        syncEvents(task1.id)
+
+                        val seenByMe = task1.seenBy.find {it1 ->  it1 == user?.id }
+                        if (seenByMe == null) {
+                            taskSeen(task1.id) { }
+                        }
+                    }
+                }
             }
         }
     }
@@ -140,8 +172,6 @@ class TaskDetailV2VM @Inject constructor(
         taskId: String,
         onBack: (taskSeenData: TaskSeenResponse.TaskSeen) -> Unit,
     ) {
-
-
         launch {
             //loading(true)
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
@@ -165,23 +195,24 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-    suspend fun syncEvents(
-        taskId: String,
-        events: List<Events>?,
+    private fun syncEvents(
+        taskId: String
     ) {
         launch {
-            val eventsIds = ArrayList<String>()
-            eventsIds.clear()
-            events?.forEach {
-                eventsIds.add(it.id)
+            val allEvents = taskDao.getEventsOfTask(taskId)
+            val eventsIds: MutableList<Int> = mutableListOf()
+            allEvents.forEach {
+                eventsIds.add(it.eventNumber)
             }
-            val syncTasksBody = SyncTasksBody(eventsIds)
-            taskRepository.syncEvents(taskId, syncTasksBody) { isSuccess, taskEvents, message ->
+            val syncTaskEventsBody = SyncTaskEventsBody(eventsIds)
+            taskRepository.syncEvents(taskId, syncTaskEventsBody) { isSuccess, missingEvents, message ->
                 if (isSuccess) {
-
-
-                } else {
-
+                    if (missingEvents.isNotEmpty()) {
+                        _missingEvents.postValue(missingEvents.toMutableList())
+                        launch {
+                            taskDao.insertMultipleEvents(missingEvents)
+                        }
+                    }
                 }
             }
         }
@@ -218,14 +249,6 @@ class TaskDetailV2VM @Inject constructor(
                     loading(false, response.error.message)
                 }
             }
-
-//            val handler = Handler()
-//            handler.postDelayed(Runnable {
-//                loading(false, "")
-//                if (isSuccess) {
-//                    onBack()
-//                }
-//            }, 10)
         }
     }
 

@@ -35,7 +35,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
@@ -77,14 +77,13 @@ class TaskRepository @Inject constructor(
     }
 
     override suspend fun syncEvents(
-        newTask: String,
-        list: SyncTasksBody,
+        taskId: String,
+        request: SyncTaskEventsBody,
         callBack: (isSuccess: Boolean, events: List<Events>, message: String) -> Unit
     ) {
-        when (val response = remoteTask.syncEvents(newTask,list)) {
+        when (val response = remoteTask.syncEvents(taskId, request)) {
             is ApiResponse.Success -> {
-
-                callBack(true, response.data.events?: emptyList(),"")
+                callBack(true, response.data.missingEvents,"")
             }
 
             is ApiResponse.Error -> {

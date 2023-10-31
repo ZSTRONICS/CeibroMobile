@@ -171,8 +171,6 @@ class DashboardFragment :
             R.id.projectsBtn -> {
                 viewState.projectsSelected.value = true
             }
-
-
         }
     }
 

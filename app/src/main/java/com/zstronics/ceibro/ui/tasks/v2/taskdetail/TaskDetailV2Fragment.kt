@@ -10,12 +10,17 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
@@ -34,6 +39,7 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -53,7 +59,22 @@ class TaskDetailV2Fragment :
     val localAddedComment = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> navigateBack()
+            R.id.closeBtn -> {
+                if (viewModel.notificationTaskData != null) {
+                    launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                        options = Bundle(),
+                        clearPrevious = true
+                    ) {
+                        putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                        putExtra(
+                            NAVIGATION_Graph_START_DESTINATION_ID,
+                            R.id.homeFragment
+                        )
+                    }
+                } else {
+                    navigateBack()
+                }
+            }
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
             R.id.taskCommentBtn -> {
                 val bundle = Bundle()
@@ -145,6 +166,9 @@ class TaskDetailV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (viewModel.notificationTaskData != null) {
+            setBackButtonDispatcher()
+        }
         mViewDataBinding.confirmNeededBtn.visibility = View.GONE
         mViewDataBinding.filesLayout.visibility = View.GONE
         mViewDataBinding.onlyImagesRV.visibility = View.GONE
@@ -157,8 +181,6 @@ class TaskDetailV2Fragment :
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
             if (item != null) {
-
-
                 if (item.creatorState.equals(
                         TaskStatus.DONE.name,
                         true
@@ -379,6 +401,44 @@ class TaskDetailV2Fragment :
         }
 
 
+        viewModel.missingEvents.observe(viewLifecycleOwner) { missingEventsList ->
+            if (!missingEventsList.isNullOrEmpty()) {
+                val taskEvents = viewModel.originalEvents.value
+                taskEvents?.let { allEvents ->
+                    GlobalScope.launch {
+                        try {
+                            if (allEvents.isNotEmpty()) {
+                                val newMissingEventList = mutableListOf<Events>()
+                                missingEventsList.forEach { event ->
+                                    val eventExist = allEvents.find { event.id == it.id }
+                                    if (eventExist == null) {  /// event not existed
+                                        newMissingEventList.add(event)
+                                    }
+                                }
+                                val handler = Handler(Looper.getMainLooper())
+                                handler.postDelayed(Runnable {
+                                    val startPosition = eventsAdapter.listItems.size
+                                    val itemCount = newMissingEventList.size
+
+                                    eventsAdapter.listItems.addAll(newMissingEventList)
+                                    mViewDataBinding.eventsRV.adapter?.notifyItemRangeInserted(
+                                        startPosition,
+                                        itemCount
+                                    )
+                                }, 10)
+                            } else {
+                                allEvents.addAll(missingEventsList)
+                                viewModel._taskEvents.postValue(allEvents)
+                                viewModel.originalEvents.postValue(allEvents)
+                            }
+                        } catch (e: Exception) {
+                            println("missingEvents-Exception: $e")
+                        }
+                    }
+                }
+            }
+        }
+
         viewModel.taskEvents.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty() && it.size == viewModel.originalEvents.value?.size) {
                 viewModel.sessionManager.getUser().value?.id?.let { userId ->
@@ -399,7 +459,7 @@ class TaskDetailV2Fragment :
                 }
             } else {
                 val allEvents = viewModel.originalEvents.value
-                if (allEvents != null) {
+                if (!allEvents.isNullOrEmpty()) {
                     viewModel.sessionManager.getUser().value?.id?.let { userId ->
                         eventsAdapter.setList(
                             allEvents,
@@ -416,6 +476,8 @@ class TaskDetailV2Fragment :
                         isScrollingWithDelay = false
                         scrollToBottomWithDelay()
                     }
+                } else {
+                    mViewDataBinding.eventsLayout.visibility = View.GONE
                 }
             }
         }
@@ -465,35 +527,60 @@ class TaskDetailV2Fragment :
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {
                 FORWARD_TASK_REQUEST_CODE -> {
-//                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
-//                    if (updatedTask != null) {
-//                        viewModel.originalTask.postValue(updatedTask)
-//                        viewModel._taskDetail.postValue(updatedTask)
-//                    }
+                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
+                    if (eventData != null) {
+                        val taskEvent = Events(
+                            id = eventData.id,
+                            taskId = eventData.taskId,
+                            eventType = eventData.eventType,
+                            initiator = eventData.initiator,
+                            eventData = eventData.eventData,
+                            commentData = eventData.commentData,
+                            createdAt = eventData.createdAt,
+                            updatedAt = eventData.updatedAt,
+                            invitedMembers = eventData.invitedMembers,
+                            eventNumber = eventData.eventNumber
+                        )
+                        addEventsToUI(taskEvent)
+                    }
                 }
 
                 COMMENT_REQUEST_CODE -> {
-//                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
-//                    if (eventData != null) {
-//                        GlobalScope.launch {
-//                            viewModel.updateTaskCommentInLocal(
-//                                eventData,
-//                                viewModel.taskDao,
-//                                viewModel.user?.id,
-//                                viewModel.sessionManager
-//                            )
-//                            isScrollingWithDelay = true
-//                        }
-//                        //  scrollToBottomWithDelay()
-//                    }
+                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
+                    if (eventData != null) {
+                        val taskEvent = Events(
+                            id = eventData.id,
+                            taskId = eventData.taskId,
+                            eventType = eventData.eventType,
+                            initiator = eventData.initiator,
+                            eventData = eventData.eventData,
+                            commentData = eventData.commentData,
+                            createdAt = eventData.createdAt,
+                            updatedAt = eventData.updatedAt,
+                            invitedMembers = eventData.invitedMembers,
+                            eventNumber = eventData.eventNumber
+                        )
+                        addEventsToUI(taskEvent)
+                    }
                 }
 
                 DONE_REQUEST_CODE -> {
-//                    val updatedTask = result.data?.getParcelable<CeibroTaskV2>("taskData")
-//                    if (updatedTask != null) {
-//                        viewModel.originalTask.postValue(updatedTask)
-//                        viewModel._taskDetail.postValue(updatedTask)
-//                    }
+                    val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
+                    if (eventData != null) {
+                        val taskEvent = Events(
+                            id = eventData.id,
+                            taskId = eventData.taskId,
+                            eventType = eventData.eventType,
+                            initiator = eventData.initiator,
+                            eventData = eventData.eventData,
+                            commentData = eventData.commentData,
+                            createdAt = eventData.createdAt,
+                            updatedAt = eventData.updatedAt,
+                            invitedMembers = eventData.invitedMembers,
+                            eventNumber = eventData.eventNumber
+                        )
+                        addEventsToUI(taskEvent)
+                    }
                 }
             }
         }
@@ -509,6 +596,36 @@ class TaskDetailV2Fragment :
         EventBus.getDefault().unregister(this)
     }
 
+    private fun addEventsToUI(taskEvent: Events) {
+        val taskEvents = viewModel.originalEvents.value
+        taskEvents?.let { allEvents ->
+            GlobalScope.launch {
+                if (allEvents.isNotEmpty()) {
+                    val eventExist = allEvents.find { taskEvent.id == it.id }
+                    if (eventExist == null) {  /// event not existed
+                        allEvents.add(taskEvent)
+                        viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(Runnable {
+                            eventsAdapter.listItems.add(taskEvent)
+                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+                            scrollToBottom()
+                        }, 1)
+
+                    }
+                } else {
+                    val eventList = mutableListOf<Events>()
+                    eventList.add(taskEvent)
+                    allEvents.addAll(eventList)
+                    viewModel._taskEvents.postValue(allEvents)
+                    viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                    scrollToBottom()
+                }
+            }
+            viewModel.taskSeen(taskEvent.taskId) { }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTaskEvent(
         event: LocalEvents.TaskEvent?
@@ -520,25 +637,7 @@ class TaskDetailV2Fragment :
                 taskDetail.id
             )
         ) {
-            val taskEvents = viewModel.originalEvents.value
-            taskEvents?.let { allEvents ->
-                GlobalScope.launch {
-                    val eventExist = allEvents.find { newEvent.id == it.id }
-                    if (eventExist == null) {  /// event not existed
-                        allEvents.add(newEvent)
-//                        isScrollingWithDelay = true
-                        viewModel.updateTaskAndAllEvents(newEvent.taskId, allEvents)
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.postDelayed(Runnable {
-                            eventsAdapter.listItems.add(newEvent)
-                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-                            scrollToBottom()
-                        }, 1)
-
-                    }
-                }
-                viewModel.taskSeen(taskDetail.id) { }
-            }
+            addEventsToUI(newEvent)
         }
     }
 
@@ -565,17 +664,26 @@ class TaskDetailV2Fragment :
             val taskEvents = viewModel.originalEvents.value
             taskEvents?.let { allEvents ->
                 GlobalScope.launch {
-                    val eventExist = allEvents.find { taskEvent.id == it.id }
-                    if (eventExist == null) {  /// event not existed
-                        allEvents.add(taskEvent)
-//                        isScrollingWithDelay = true
+                    if (allEvents.isNotEmpty()) {
+                        val eventExist = allEvents.find { taskEvent.id == it.id }
+                        if (eventExist == null) {  /// event not existed
+                            allEvents.add(taskEvent)
+                            viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.postDelayed(Runnable {
+                                eventsAdapter.listItems.add(taskEvent)
+                                mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+                                scrollToBottom()
+                            }, 1)
+
+                        }
+                    } else {
+                        val eventList = mutableListOf<Events>()
+                        eventList.add(taskEvent)
+                        allEvents.addAll(eventList)
+                        viewModel._taskEvents.postValue(allEvents)
                         viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.postDelayed(Runnable {
-                            eventsAdapter.listItems.add(taskEvent)
-                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-                            scrollToBottom()
-                        }, 1)
+                        scrollToBottom()
                     }
                 }
                 val seenByMe = task.seenBy.find { it == viewModel.user?.id }

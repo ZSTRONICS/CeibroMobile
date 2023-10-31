@@ -184,9 +184,9 @@ class CommentFragment :
                 ) {
                     viewModel.doneTask(
                         requireContext()
-                    ) {
+                    ) { eventData ->
                         val bundle = Bundle()
-                        bundle.putParcelable("taskData", viewModel.taskData)
+                        bundle.putParcelable("eventData", eventData)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
                 }

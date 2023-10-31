@@ -9,6 +9,7 @@ import androidx.navigation.NavDestination
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
+import com.zstronics.ceibro.base.KEY_LAST_OFFLINE
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.databinding.ActivityNavhostPresenterBinding
@@ -61,36 +62,54 @@ class NavHostPresenterActivity :
                         getSessionManager(SharedPreferenceManager(applicationContext))
                     val isAppFirstRun =
                         sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
+                    val isLastOffline =
+                        sessionManager.getBooleanValue(KEY_LAST_OFFLINE)
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {
                             // Do not remove this losing state from here
-                            if (isAppFirstRun)
+                            if (isAppFirstRun) {
                                 sessionManager.saveBooleanValue(
                                     KEY_APP_FIRST_RUN_FOR_INTERNET,
                                     false
                                 )
+                            }
+                            sessionManager.saveBooleanValue(
+                                KEY_LAST_OFFLINE,
+                                true
+                            )
                         }
 
                         NetworkConnectivityObserver.Status.Available -> {
                             if (isAppFirstRun.not()) {
                                 if (navigationGraphStartDestination != R.id.editProfileFragment || mViewDataBinding.llInternetDisconnected.visibility == View.VISIBLE) {
-                                    mViewDataBinding.llInternetConnected.visibility = View.VISIBLE
-                                    mViewDataBinding.llInternetDisconnected.visibility = View.GONE
+                                    if (isLastOffline) {
+                                        sessionManager.saveBooleanValue(KEY_LAST_OFFLINE, false)
+                                        mViewDataBinding.llInternetConnected.visibility =
+                                            View.VISIBLE
+                                        mViewDataBinding.llInternetDisconnected.visibility =
+                                            View.GONE
 
-                                    delay(BANNER_HIDE_TIME)
-                                    // After the delay, hide the views
-                                    mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                        delay(BANNER_HIDE_TIME)
+                                        // After the delay, hide the views
+                                        mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                    }
                                 }
                             }
                             sessionManager.saveBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET, false)
+                            sessionManager.saveBooleanValue(KEY_LAST_OFFLINE, false)
                         }
 
                         else -> {
-                            if (isAppFirstRun)
+                            if (isAppFirstRun) {
                                 sessionManager.saveBooleanValue(
                                     KEY_APP_FIRST_RUN_FOR_INTERNET,
                                     false
                                 )
+                            }
+                            sessionManager.saveBooleanValue(
+                                KEY_LAST_OFFLINE,
+                                true
+                            )
                             mViewDataBinding.llInternetConnected.visibility = View.GONE
                             mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
                         }

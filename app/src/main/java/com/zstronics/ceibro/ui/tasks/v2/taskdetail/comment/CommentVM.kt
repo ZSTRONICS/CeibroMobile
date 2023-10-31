@@ -124,8 +124,8 @@ class CommentVM @Inject constructor(
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -147,8 +147,8 @@ class CommentVM @Inject constructor(
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -156,22 +156,19 @@ class CommentVM @Inject constructor(
                         }
                     }
                 }
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed(Runnable {
-                    loading(false, "")
-                }, 80)
+                updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
+
+                loading(false, "")
                 if (isSuccess) {
                     onBack(eventData)
                 }
-
-                updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
             }
         }
     }
 
     fun doneTask(
         context: Context,
-        onBack: () -> Unit
+        onBack: (eventData: EventV2Response.Data?) -> Unit
     ) {
         val list = getCombinedList()
         val imageList = getCombinedImagesList()
@@ -226,8 +223,8 @@ class CommentVM @Inject constructor(
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -249,8 +246,8 @@ class CommentVM @Inject constructor(
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -258,15 +255,13 @@ class CommentVM @Inject constructor(
                         }
                     }
                 }
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed(Runnable {
-                    loading(false, "")
-                }, 80)
-                if (isSuccess) {
-                    onBack()
-                }
 
                 updateTaskDoneInLocal(eventData, taskDao, sessionManager)
+
+                loading(false, "")
+                if (isSuccess) {
+                    onBack(eventData)
+                }
             }
         }
     }

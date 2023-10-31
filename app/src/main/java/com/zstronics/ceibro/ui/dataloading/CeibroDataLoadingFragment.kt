@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -44,6 +45,15 @@ class CeibroDataLoadingFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startSplashAnimation()
+        val subscriptionState = OneSignal.getDeviceState()
+        val isSubscribed = subscriptionState?.isSubscribed
+//        if (isSubscribed != null) {
+//            if (!isSubscribed) {
+//                OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)
+//                OneSignal.pauseInAppMessages(false)
+//            }
+//        }
+
         GlobalScope.launch {
             viewModel.loadAppData(requireContext()) {
                 val progress = viewModel.apiSucceedCount.div(API_CALL_COUNT).times(

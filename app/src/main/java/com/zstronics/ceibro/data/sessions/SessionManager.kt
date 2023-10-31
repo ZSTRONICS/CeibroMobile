@@ -83,7 +83,7 @@ class SessionManager constructor(
         CookiesManager.deviceType = ""
         OneSignal.removeExternalUserId()
         OneSignal.disablePush(true)
-        OneSignal.pauseInAppMessages(true)
+//        OneSignal.pauseInAppMessages(true)
     }
 
     companion object {
