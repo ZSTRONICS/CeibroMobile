@@ -334,23 +334,22 @@ class TaskDetailV2Fragment :
 
                 if (item.description.isNotEmpty()) {
                     mViewDataBinding.taskDescription.text = item.description
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        if (mViewDataBinding.taskDescription.lineCount > 15) {
-                            mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
-                            mViewDataBinding.viewMoreBtn.visibility = View.VISIBLE
-                            mViewDataBinding.viewLessBtn.visibility = View.GONE
-                        } else {
-                            mViewDataBinding.viewMoreLessLayout.visibility = View.GONE
-                            mViewDataBinding.viewMoreBtn.visibility = View.GONE
-                            mViewDataBinding.viewLessBtn.visibility = View.GONE
-                        }
-                    }, 30)
                 } else {
                     mViewDataBinding.taskDescription.text = ""
                     mViewDataBinding.taskDescription.visibility = View.GONE
                 }
-
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    if (mViewDataBinding.taskDescription.lineCount > 15) {
+                        mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
+                        mViewDataBinding.viewMoreBtn.visibility = View.VISIBLE
+                        mViewDataBinding.viewLessBtn.visibility = View.GONE
+                    } else {
+                        mViewDataBinding.viewMoreLessLayout.visibility = View.GONE
+                        mViewDataBinding.viewMoreBtn.visibility = View.GONE
+                        mViewDataBinding.viewLessBtn.visibility = View.GONE
+                    }
+                }, 25)
 
                 if (item.files.isNotEmpty()) {
                     viewModel.separateFiles(item.files)
