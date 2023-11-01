@@ -168,6 +168,16 @@ class DashboardVM @Inject constructor(
                     }
                 }
 
+                SocketHandler.TaskEvent.TASK_FORWARDED_TO_ME.name -> {
+                    val eventData = gson.fromJson<SocketForwardedToMeNewTaskEventV2Response>(
+                        arguments,
+                        object : TypeToken<SocketForwardedToMeNewTaskEventV2Response>() {}.type
+                    ).data
+                    launch {
+                        updateForwardedToMeNewTaskInLocal(eventData, taskDao, userId, sessionManager)
+                    }
+                }
+
                 SocketHandler.TaskEvent.TASK_SEEN.name -> {
                     val taskSeen = gson.fromJson<SocketTaskSeenV2Response>(
                         arguments,

@@ -5,7 +5,10 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
@@ -57,6 +60,7 @@ class TaskDetailV2Fragment :
     val COMMENT_REQUEST_CODE = 106
     val DONE_REQUEST_CODE = 107
     val localAddedComment = false
+    private var isScrolling = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> {
@@ -148,6 +152,24 @@ class TaskDetailV2Fragment :
                     mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
                 }
             }
+
+            R.id.viewMoreBtn -> {
+                if (mViewDataBinding.taskDescription.maxLines == 15) {
+                    mViewDataBinding.taskDescription.maxLines = Int.MAX_VALUE
+                    mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
+                    mViewDataBinding.viewMoreBtn.visibility = View.GONE
+                    mViewDataBinding.viewLessBtn.visibility = View.VISIBLE
+                }
+            }
+
+            R.id.viewLessBtn -> {
+                if (mViewDataBinding.taskDescription.maxLines > 15) {
+                    mViewDataBinding.taskDescription.maxLines = 15
+                    mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
+                    mViewDataBinding.viewMoreBtn.visibility = View.VISIBLE
+                    mViewDataBinding.viewLessBtn.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -163,6 +185,7 @@ class TaskDetailV2Fragment :
 
     @Inject
     lateinit var eventsAdapter: EventsRVAdapter
+    private var eventAdapterIsSet = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -311,7 +334,20 @@ class TaskDetailV2Fragment :
 
                 if (item.description.isNotEmpty()) {
                     mViewDataBinding.taskDescription.text = item.description
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed({
+                        if (mViewDataBinding.taskDescription.lineCount > 15) {
+                            mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
+                            mViewDataBinding.viewMoreBtn.visibility = View.VISIBLE
+                            mViewDataBinding.viewLessBtn.visibility = View.GONE
+                        } else {
+                            mViewDataBinding.viewMoreLessLayout.visibility = View.GONE
+                            mViewDataBinding.viewMoreBtn.visibility = View.GONE
+                            mViewDataBinding.viewLessBtn.visibility = View.GONE
+                        }
+                    }, 30)
                 } else {
+                    mViewDataBinding.taskDescription.text = ""
                     mViewDataBinding.taskDescription.visibility = View.GONE
                 }
 
@@ -438,7 +474,15 @@ class TaskDetailV2Fragment :
                 }
             }
         }
+//        if (!eventAdapterIsSet) {
+            mViewDataBinding.eventsRV.adapter = eventsAdapter
 
+            val layoutManager = LinearLayoutManager(context)
+//            layoutManager.isAutoMeasureEnabled = false      //to show all content in RV
+            mViewDataBinding.eventsRV.layoutManager = layoutManager
+//        }
+
+        println("RecyclerView Detached Or Not: ${mViewDataBinding.eventsRV.adapter}")
         viewModel.taskEvents.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty() && it.size == viewModel.originalEvents.value?.size) {
                 viewModel.sessionManager.getUser().value?.id?.let { userId ->
@@ -453,10 +497,7 @@ class TaskDetailV2Fragment :
                     } else {
                         View.GONE
                     }
-                if (isScrollingWithDelay) {
-                    isScrollingWithDelay = false
-                    scrollToBottomWithDelay()
-                }
+                eventAdapterIsSet = true
             } else {
                 val allEvents = viewModel.originalEvents.value
                 if (!allEvents.isNullOrEmpty()) {
@@ -472,16 +513,12 @@ class TaskDetailV2Fragment :
                         } else {
                             View.GONE
                         }
-                    if (isScrollingWithDelay) {
-                        isScrollingWithDelay = false
-                        scrollToBottomWithDelay()
-                    }
+                    eventAdapterIsSet = true
                 } else {
                     mViewDataBinding.eventsLayout.visibility = View.GONE
                 }
             }
         }
-        mViewDataBinding.eventsRV.adapter = eventsAdapter
         eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
             val bundle = Bundle()
             bundle.putParcelable("eventFile", data)
@@ -498,11 +535,6 @@ class TaskDetailV2Fragment :
                 bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
             }
-        val layoutManager = LinearLayoutManager(context)
-        layoutManager.isAutoMeasureEnabled = false      //to show all content in RV
-        mViewDataBinding.eventsRV.layoutManager = layoutManager
-
-
     }
 
 
@@ -599,7 +631,7 @@ class TaskDetailV2Fragment :
     private fun addEventsToUI(taskEvent: Events) {
         val taskEvents = viewModel.originalEvents.value
         taskEvents?.let { allEvents ->
-            GlobalScope.launch {
+            viewModel.launch {
                 if (allEvents.isNotEmpty()) {
                     val eventExist = allEvents.find { taskEvent.id == it.id }
                     if (eventExist == null) {  /// event not existed
@@ -696,9 +728,15 @@ class TaskDetailV2Fragment :
 
 
     private fun scrollToBottom() {
-        mViewDataBinding.bodyScroll.postDelayed({
-            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
-        }, 260)
+        if (!isScrolling) {
+            isScrolling = true
+            mViewDataBinding.bodyScroll.postDelayed({
+                mViewDataBinding.bodyScroll.isFocusableInTouchMode = true
+                mViewDataBinding.bodyScroll.descendantFocusability = ViewGroup.FOCUS_BEFORE_DESCENDANTS
+                mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
+                isScrolling = false
+            }, 260)
+        }
     }
 
     private fun scrollToBottomWithDelay() {

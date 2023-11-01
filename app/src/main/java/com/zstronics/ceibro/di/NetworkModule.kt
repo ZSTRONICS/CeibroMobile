@@ -2,11 +2,15 @@ package com.zstronics.ceibro.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.text.TextUtils
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.BuildConfig.BASE_URL
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
+import com.zstronics.ceibro.data.base.interceptor.KEY_AUTHORIZATION
+import com.zstronics.ceibro.data.base.interceptor.KEY_BEARER
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.remote.TaskRetroService
@@ -55,7 +59,9 @@ class NetworkModule {
     @Provides
     fun providesSessionManager(
         sharedPreferenceManager: SharedPreferenceManager
-    ) = SessionManager(sharedPreferenceManager)
+    ): SessionManager {
+        return SessionManager(sharedPreferenceManager)
+    }
 
     @Singleton
     @Provides
@@ -126,11 +132,15 @@ class NetworkModule {
     }
 
     @Provides
-    fun cookiesInterceptor(): CookiesInterceptor = CookiesInterceptor()
+    fun cookiesInterceptor(sessionManager: SessionManager): CookiesInterceptor = CookiesInterceptor(sessionManager)
 
     @Provides
-    fun headerInterceptor(): Interceptor = Interceptor { chain ->
+    fun headerInterceptor(sessionManager: SessionManager): Interceptor = Interceptor { chain ->
         val original = chain.request()
+        if (TextUtils.isEmpty(CookiesManager.jwtToken)) {
+            sessionManager.isUserLoggedIn()
+        }
+
         val url: HttpUrl = original.url.newBuilder()
             .build()
 

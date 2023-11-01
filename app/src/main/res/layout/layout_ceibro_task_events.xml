@@ -35,27 +35,11 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/eventName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:fontFamily="@font/inter_regular"
-                android:gravity="start"
-                android:maxLines="1"
-                android:text="Creter"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:paddingEnd="@dimen/_8sdp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
                 android:id="@+id/eventBy"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_7sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_13sdp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="start"
@@ -64,9 +48,20 @@
                 android:text="Kristo Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@+id/eventDate"
-                app:layout_constraintStart_toEndOf="@+id/eventName"
+                app:layout_constraintEnd_toStartOf="@+id/eventImg"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/eventImg"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="@dimen/_9sdp"
+                android:src="@drawable/icon_navigate_up"
+                app:layout_constraintBottom_toBottomOf="@+id/eventDate"
+                app:layout_constraintEnd_toStartOf="@+id/eventDate"
+                app:layout_constraintTop_toTopOf="@+id/eventDate" />
+
 
             <TextView
                 android:id="@+id/eventDate"
@@ -117,7 +112,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/forwardedToNames" />
 
-            <com.zstronics.ceibro.base.ScrollableTextView
+            <com.zstronics.ceibro.base.NoScrollTextView
                 android:id="@+id/onlyComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -125,16 +120,66 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="start"
-                android:maxLines="8"
+                android:maxLines="6"
                 android:text="Only comment will be shown here"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:visibility="visible"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/invitedNumbers" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/viewMoreLessLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/onlyComment"
+                android:theme="@style/NonSelectableTextTheme">
+
+                <TextView
+                    android:id="@+id/viewMoreBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_2sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:singleLine="true"
+                    android:text="View More"
+                    android:textColor="@color/appBlue"
+                    android:textSize="12.5sp"
+                    android:visibility="gone"
+                    app:drawableEndCompat="@drawable/icon_navigate_down"
+                    app:drawableTint="@color/appBlue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/viewLessBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_2sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:singleLine="true"
+                    android:text="View Less"
+                    android:textColor="@color/appBlue"
+                    android:textSize="12.5sp"
+                    android:visibility="gone"
+                    app:drawableEndCompat="@drawable/icon_navigate_up"
+                    app:drawableTint="@color/appBlue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/onlyImagesRV"
@@ -148,7 +193,7 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/onlyComment"
+                app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout"
                 tools:itemCount="3"
                 tools:listitem="@layout/layout_ceibro_only_image" />
 
