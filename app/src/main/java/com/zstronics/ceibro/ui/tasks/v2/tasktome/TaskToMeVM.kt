@@ -25,7 +25,7 @@ class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
     private val remoteTask: TaskRemoteDataSource,
     private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.NEW.name.lowercase()

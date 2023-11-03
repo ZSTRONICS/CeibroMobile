@@ -18,6 +18,10 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -182,11 +186,22 @@ class TaskToMeFragment :
         mViewDataBinding.taskRV.adapter = adapter
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
-                val bundle = Bundle()
-                bundle.putParcelable("taskDetail", data)
-                bundle.putString("rootState", TaskRootStateTags.ToMe.tagValue.lowercase())
-                bundle.putString("selectedState", viewModel.selectedState)
-                navigate(R.id.taskDetailV2Fragment, bundle)
+                if (data.eventsCount > 15) {
+                    viewModel.loading(true, "")
+                }
+                viewModel.launch {
+                    val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
+                    val bundle = Bundle()
+                    bundle.putParcelable("taskDetail", data)
+                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
+                    bundle.putString("rootState", TaskRootStateTags.ToMe.tagValue.lowercase())
+                    bundle.putString("selectedState", viewModel.selectedState)
+                    withContext(Dispatchers.Main) {
+                        // Update the UI here
+                        navigate(R.id.taskDetailV2Fragment, bundle)
+                        viewModel.loading(false, "")
+                    }
+                }
             }
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->

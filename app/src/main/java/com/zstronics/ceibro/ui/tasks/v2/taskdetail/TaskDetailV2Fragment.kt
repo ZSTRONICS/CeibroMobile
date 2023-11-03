@@ -3,28 +3,19 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
-import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -35,7 +26,7 @@ import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
-import com.zstronics.ceibro.utils.DateUtils
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.TaskDetailV2RVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -59,7 +50,7 @@ class TaskDetailV2Fragment :
     val FORWARD_TASK_REQUEST_CODE = 104
     val COMMENT_REQUEST_CODE = 106
     val DONE_REQUEST_CODE = 107
-    val localAddedComment = false
+    var taskSeenRequest = false
     private var isScrolling = false
     override fun onClick(id: Int) {
         when (id) {
@@ -79,6 +70,7 @@ class TaskDetailV2Fragment :
                     navigateBack()
                 }
             }
+
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
             R.id.taskCommentBtn -> {
                 val bundle = Bundle()
@@ -123,53 +115,53 @@ class TaskDetailV2Fragment :
                 navigateForResult(R.id.forwardTaskFragment, FORWARD_TASK_REQUEST_CODE, bundle)
             }
 
-            R.id.taskTitleBar -> {
-                if (mViewDataBinding.taskDescriptionImageLayout.visibility == View.VISIBLE) {
-                    mViewDataBinding.taskDescriptionImageLayout.visibility = View.GONE
-                    mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_down)
-                } else {
-                    mViewDataBinding.taskDescriptionImageLayout.visibility = View.VISIBLE
-                    mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_up)
-                }
-            }
+//            R.id.taskTitleBar -> {
+//                if (mViewDataBinding.taskDescriptionImageLayout.visibility == View.VISIBLE) {
+//                    mViewDataBinding.taskDescriptionImageLayout.visibility = View.GONE
+//                    mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_down)
+//                } else {
+//                    mViewDataBinding.taskDescriptionImageLayout.visibility = View.VISIBLE
+//                    mViewDataBinding.downUpIcon.setImageResource(R.drawable.icon_navigate_up)
+//                }
+//            }
 
-            R.id.filesHeaderLayout -> {
-                if (mViewDataBinding.filesRV.visibility == View.VISIBLE) {
-                    mViewDataBinding.filesRV.visibility = View.GONE
-                    mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
-                } else {
-                    mViewDataBinding.filesRV.visibility = View.VISIBLE
-                    mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
-                }
-            }
+//            R.id.filesHeaderLayout -> {
+//                if (mViewDataBinding.filesRV.visibility == View.VISIBLE) {
+//                    mViewDataBinding.filesRV.visibility = View.GONE
+//                    mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
+//                } else {
+//                    mViewDataBinding.filesRV.visibility = View.VISIBLE
+//                    mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+//                }
+//            }
 
-            R.id.eventsHeaderLayout -> {
-                if (mViewDataBinding.eventsRV.visibility == View.VISIBLE) {
-                    mViewDataBinding.eventsRV.visibility = View.GONE
-                    mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
-                } else {
-                    mViewDataBinding.eventsRV.visibility = View.VISIBLE
-                    mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
-                }
-            }
+//            R.id.eventsHeaderLayout -> {
+//                if (mViewDataBinding.eventsRV.visibility == View.VISIBLE) {
+//                    mViewDataBinding.eventsRV.visibility = View.GONE
+//                    mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
+//                } else {
+//                    mViewDataBinding.eventsRV.visibility = View.VISIBLE
+//                    mViewDataBinding.eventsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+//                }
+//            }
 
-            R.id.viewMoreBtn -> {
-                if (mViewDataBinding.taskDescription.maxLines == 15) {
-                    mViewDataBinding.taskDescription.maxLines = Int.MAX_VALUE
-                    mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
-                    mViewDataBinding.viewMoreBtn.visibility = View.GONE
-                    mViewDataBinding.viewLessBtn.visibility = View.VISIBLE
-                }
-            }
-
-            R.id.viewLessBtn -> {
-                if (mViewDataBinding.taskDescription.maxLines > 15) {
-                    mViewDataBinding.taskDescription.maxLines = 15
-                    mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
-                    mViewDataBinding.viewMoreBtn.visibility = View.VISIBLE
-                    mViewDataBinding.viewLessBtn.visibility = View.GONE
-                }
-            }
+//            R.id.viewMoreBtn -> {
+//                if (mViewDataBinding.taskDescription.maxLines == 15) {
+//                    mViewDataBinding.taskDescription.maxLines = Int.MAX_VALUE
+//                    mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
+//                    mViewDataBinding.viewMoreBtn.visibility = View.GONE
+//                    mViewDataBinding.viewLessBtn.visibility = View.VISIBLE
+//                }
+//            }
+//
+//            R.id.viewLessBtn -> {
+//                if (mViewDataBinding.taskDescription.maxLines > 15) {
+//                    mViewDataBinding.taskDescription.maxLines = 15
+//                    mViewDataBinding.viewMoreLessLayout.visibility = View.VISIBLE
+//                    mViewDataBinding.viewMoreBtn.visibility = View.VISIBLE
+//                    mViewDataBinding.viewLessBtn.visibility = View.GONE
+//                }
+//            }
         }
     }
 
@@ -185,6 +177,9 @@ class TaskDetailV2Fragment :
 
     @Inject
     lateinit var eventsAdapter: EventsRVAdapter
+
+    @Inject
+    lateinit var detailAdapter: TaskDetailV2RVAdapter
     private var eventAdapterIsSet = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -193,17 +188,80 @@ class TaskDetailV2Fragment :
             setBackButtonDispatcher()
         }
         mViewDataBinding.confirmNeededBtn.visibility = View.GONE
-        mViewDataBinding.filesLayout.visibility = View.GONE
-        mViewDataBinding.onlyImagesRV.visibility = View.GONE
-        mViewDataBinding.imagesWithCommentRV.visibility = View.GONE
 
-        mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
-        mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
-        mViewDataBinding.filesRV.isNestedScrollingEnabled = false
-        mViewDataBinding.bodyScroll.isSmoothScrollingEnabled = true
+        mViewDataBinding.parentRV.adapter = detailAdapter
+
+        detailAdapter.openEventImageClickListener = { position, bundle ->
+            navigate(R.id.imageViewerFragment, bundle)
+        }
+
+        detailAdapter.fileViewerClickListener = { position, bundle ->
+            navigate(R.id.fileViewerFragment, bundle)
+        }
+
+        detailAdapter.descriptionExpendedListener = { expanded ->
+            viewModel.descriptionExpanded = expanded
+            if (!expanded) {
+                mViewDataBinding.parentRV.scrollToPosition(0)
+            }
+        }
+
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
+
+            if (taskSeenRequest) {
+                taskSeenRequest = false
+                detailAdapter.updateTaskData(item, viewModel.descriptionExpanded)
+            }
+
             if (item != null) {
+                if (item.creatorState.equals(
+                        TaskStatus.DONE.name,
+                        true
+                    ) || item.creatorState.equals(
+                        TaskStatus.CANCELED.name,
+                        true
+                    ) ||
+                    (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
+                        TaskStatus.NEW.name,
+                        true
+                    ))
+                ) {
+                    mViewDataBinding.doneBtn.isEnabled = false
+                    mViewDataBinding.doneBtn.isClickable = false
+                    mViewDataBinding.doneBtn.alpha = 0.6f
+                    mViewDataBinding.taskForwardBtn.isEnabled = false
+                    mViewDataBinding.taskForwardBtn.isClickable = false
+                    mViewDataBinding.taskForwardBtn.alpha = 0.6f
+                } else {
+                    mViewDataBinding.doneBtn.isEnabled = true
+                    mViewDataBinding.doneBtn.isClickable = true
+                    mViewDataBinding.doneBtn.alpha = 1f
+                    mViewDataBinding.taskForwardBtn.isEnabled = true
+                    mViewDataBinding.taskForwardBtn.isClickable = true
+                    mViewDataBinding.taskForwardBtn.alpha = 1f
+                }
+                if (item.creatorState.equals(
+                        TaskStatus.DONE.name,
+                        true
+                    ) || item.creatorState.equals(
+                        TaskStatus.CANCELED.name,
+                        true
+                    )
+                ) {
+                    mViewDataBinding.doneRequirementBadge.visibility = View.GONE
+                } else {
+                    if (item.doneCommentsRequired || item.doneImageRequired) {
+                        mViewDataBinding.doneRequirementBadge.visibility = View.VISIBLE
+                    } else {
+                        mViewDataBinding.doneRequirementBadge.visibility = View.GONE
+                    }
+                }
+
+                mViewDataBinding.detailViewHeading.text = item.taskUID
+            }
+
+            /*if (item != null) {
                 if (item.creatorState.equals(
                         TaskStatus.DONE.name,
                         true
@@ -363,11 +421,11 @@ class TaskDetailV2Fragment :
 //            }
             } else {
                 shortToastNow("Task Data is empty")
-            }
+            }*/
         }
 
 
-        viewModel.onlyImages.observe(viewLifecycleOwner) {
+        /*viewModel.onlyImages.observe(viewLifecycleOwner) {
             onlyImageAdapter.setList(it)
             mViewDataBinding.onlyImagesRV.visibility =
                 if (it.isNotEmpty()) {
@@ -386,10 +444,10 @@ class TaskDetailV2Fragment :
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
-            }
+            }*/
 
 
-        viewModel.imagesWithComments.observe(viewLifecycleOwner) {
+        /*viewModel.imagesWithComments.observe(viewLifecycleOwner) {
             imageWithCommentAdapter.setList(it)
             mViewDataBinding.imagesWithCommentRV.visibility =
                 if (it.isNotEmpty()) {
@@ -411,9 +469,9 @@ class TaskDetailV2Fragment :
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
-            }
+            }*/
 
-        viewModel.documents.observe(viewLifecycleOwner) {
+        /*viewModel.documents.observe(viewLifecycleOwner) {
             filesAdapter.setList(it)
             mViewDataBinding.filesLayout.visibility =
                 if (it.isNotEmpty()) {
@@ -433,7 +491,7 @@ class TaskDetailV2Fragment :
 //                .addCategory(Intent.CATEGORY_BROWSABLE)
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            context?.startActivity(intent)
-        }
+        }*/
 
 
         viewModel.missingEvents.observe(viewLifecycleOwner) { missingEventsList ->
@@ -450,21 +508,26 @@ class TaskDetailV2Fragment :
                                         newMissingEventList.add(event)
                                     }
                                 }
-                                val handler = Handler(Looper.getMainLooper())
-                                handler.postDelayed(Runnable {
-                                    val startPosition = eventsAdapter.listItems.size
-                                    val itemCount = newMissingEventList.size
+                                allEvents.addAll(newMissingEventList)
+                                viewModel.originalEvents.postValue(allEvents)
+                                viewModel._taskEvents.postValue(allEvents)
 
-                                    eventsAdapter.listItems.addAll(newMissingEventList)
-                                    mViewDataBinding.eventsRV.adapter?.notifyItemRangeInserted(
-                                        startPosition,
-                                        itemCount
-                                    )
-                                }, 10)
+
+//                                val handler = Handler(Looper.getMainLooper())
+//                                handler.postDelayed(Runnable {
+//                                    val startPosition = eventsAdapter.listItems.size
+//                                    val itemCount = newMissingEventList.size
+//
+//                                    eventsAdapter.listItems.addAll(newMissingEventList)
+//                                    mViewDataBinding.eventsRV.adapter?.notifyItemRangeInserted(
+//                                        startPosition,
+//                                        itemCount
+//                                    )
+//                                }, 10)
                             } else {
                                 allEvents.addAll(missingEventsList)
-                                viewModel._taskEvents.postValue(allEvents)
                                 viewModel.originalEvents.postValue(allEvents)
+                                viewModel._taskEvents.postValue(allEvents)
                             }
                         } catch (e: Exception) {
                             println("missingEvents-Exception: $e")
@@ -474,66 +537,114 @@ class TaskDetailV2Fragment :
             }
         }
 //        if (!eventAdapterIsSet) {
-            mViewDataBinding.eventsRV.adapter = eventsAdapter
+//            mViewDataBinding.eventsRV.adapter = eventsAdapter
 
-            val layoutManager = LinearLayoutManager(context)
+//            val layoutManager = LinearLayoutManager(context)
 //            layoutManager.isAutoMeasureEnabled = false      //to show all content in RV
-            mViewDataBinding.eventsRV.layoutManager = layoutManager
+//            mViewDataBinding.eventsRV.layoutManager = layoutManager
 //        }
 
-        println("RecyclerView Detached Or Not: ${mViewDataBinding.eventsRV.adapter}")
-        viewModel.taskEvents.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty() && it.size == viewModel.originalEvents.value?.size) {
-                viewModel.sessionManager.getUser().value?.id?.let { userId ->
-                    eventsAdapter.setList(
-                        it,
-                        userId
-                    )
-                }
-                mViewDataBinding.eventsLayout.visibility =
-                    if (it.isNotEmpty()) {
-                        View.VISIBLE
-                    } else {
-                        View.GONE
-                    }
-                eventAdapterIsSet = true
-            } else {
-                val allEvents = viewModel.originalEvents.value
-                if (!allEvents.isNullOrEmpty()) {
+//        println("RecyclerView Detached Or Not: ${mViewDataBinding.eventsRV.adapter}")
+        viewModel.taskEvents.observe(viewLifecycleOwner) { events ->
+            detailAdapter.setOtherData(viewModel.rootState, viewModel.selectedState, viewModel.descriptionExpanded)
+
+            if (!events.isNullOrEmpty()) {
+                if (!eventAdapterIsSet) {
                     viewModel.sessionManager.getUser().value?.id?.let { userId ->
-                        eventsAdapter.setList(
-                            allEvents,
-                            userId
-                        )
-                    }
-                    mViewDataBinding.eventsLayout.visibility =
-                        if (allEvents.isNotEmpty()) {
-                            View.VISIBLE
-                        } else {
-                            View.GONE
+                        val task = viewModel.taskDetail.value
+                        task?.let { taskData ->
+                            val mixedList: MutableList<Any> = mutableListOf(taskData, events)
+
+                            detailAdapter.setTaskAndEventList(
+                                mixedList,
+                                userId,
+                                viewModel.descriptionExpanded
+                            )
                         }
+                    }
                     eventAdapterIsSet = true
                 } else {
-                    mViewDataBinding.eventsLayout.visibility = View.GONE
+                    viewModel.sessionManager.getUser().value?.id?.let { userId ->
+                        val task = viewModel.taskDetail.value
+                        task?.let { taskData ->
+                            val mixedList: MutableList<Any> = mutableListOf(taskData, events)
+
+                            detailAdapter.updateTaskAndEventList(
+                                mixedList,
+                                userId,
+                                viewModel.descriptionExpanded
+                            )
+                        }
+                    }
+                }
+            } else {
+                viewModel.sessionManager.getUser().value?.id?.let { userId ->
+                    val task = viewModel.taskDetail.value
+                    task?.let { taskData ->
+                        val mixedList: MutableList<Any> =
+                            mutableListOf(taskData, mutableListOf<Events>())
+
+                        detailAdapter.setTaskAndEventList(
+                            mixedList,
+                            userId,
+                            viewModel.descriptionExpanded
+                        )
+                    }
                 }
             }
-        }
-        eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
-            val bundle = Bundle()
-            bundle.putParcelable("eventFile", data)
-            navigate(R.id.fileViewerFragment, bundle)
-        }
 
 
-        eventsAdapter.openEventImageClickListener =
-            { _: View, position: Int, imageFiles: List<TaskFiles> ->
-//                viewModel.openImageViewer(requireContext(), fileUrls, position)
-                val bundle = Bundle()
-                bundle.putParcelableArray("images", imageFiles.toTypedArray())
-                bundle.putInt("position", position)
-                bundle.putBoolean("fromServerUrl", true)
-                navigate(R.id.imageViewerFragment, bundle)
-            }
+//            if (!it.isNullOrEmpty() && it.size == viewModel.originalEvents.value?.size) {
+//                viewModel.sessionManager.getUser().value?.id?.let { userId ->
+//                    eventsAdapter.setList(
+//                        it,
+//                        userId
+//                    )
+//                }
+//                mViewDataBinding.eventsLayout.visibility =
+//                    if (it.isNotEmpty()) {
+//                        View.VISIBLE
+//                    } else {
+//                        View.GONE
+//                    }
+//                eventAdapterIsSet = true
+//            } else {
+//                val allEvents = viewModel.originalEvents.value
+//                if (!allEvents.isNullOrEmpty()) {
+//                    viewModel.sessionManager.getUser().value?.id?.let { userId ->
+//                        eventsAdapter.setList(
+//                            allEvents,
+//                            userId
+//                        )
+//                    }
+//                    mViewDataBinding.eventsLayout.visibility =
+//                        if (allEvents.isNotEmpty()) {
+//                            View.VISIBLE
+//                        } else {
+//                            View.GONE
+//                        }
+//                    eventAdapterIsSet = true
+//                } else {
+//                    mViewDataBinding.eventsLayout.visibility = View.GONE
+//                }
+//            }
+        }
+//        eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
+//            val bundle = Bundle()
+//            bundle.putParcelable("eventFile", data)
+//            navigate(R.id.fileViewerFragment, bundle)
+//        }
+//
+//
+//        eventsAdapter.openEventImageClickListener =
+//            { _: View, position: Int, imageFiles: List<TaskFiles> ->
+////                viewModel.openImageViewer(requireContext(), fileUrls, position)
+//                val bundle = Bundle()
+//                bundle.putParcelableArray("images", imageFiles.toTypedArray())
+//                bundle.putInt("position", position)
+//                bundle.putBoolean("fromServerUrl", true)
+//                navigate(R.id.imageViewerFragment, bundle)
+//            }
     }
 
 
@@ -636,24 +747,37 @@ class TaskDetailV2Fragment :
                     if (eventExist == null) {  /// event not existed
                         allEvents.add(taskEvent)
                         viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.postDelayed(Runnable {
-                            eventsAdapter.listItems.add(taskEvent)
-                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-                            scrollToBottom()
-                        }, 1)
+
+//                        val handler = Handler(Looper.getMainLooper())
+//                        handler.postDelayed(Runnable {
+//                            eventsAdapter.listItems.add(taskEvent)
+//                            mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+                        scrollToBottom()
+//                        }, 1)
 
                     }
                 } else {
                     val eventList = mutableListOf<Events>()
                     eventList.add(taskEvent)
                     allEvents.addAll(eventList)
-                    viewModel._taskEvents.postValue(allEvents)
                     viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+//                    val task = viewModel.taskDao.getTaskByID(taskEvent.taskId)
+//                    task?.let {
+//                        viewModel.originalTask.postValue(it)
+//                        viewModel._taskDetail.postValue(it)
+//
+//                        detailAdapter.updateTaskData(it)
+//                    }
+//                    viewModel.originalEvents.postValue(allEvents)
+//                    viewModel._taskEvents.postValue(allEvents)
                     scrollToBottom()
+//                    val seenByMe = task?.seenBy?.find { it == viewModel.user?.id }
+//                    if (seenByMe == null) {
+//                        viewModel.taskSeen(taskEvent.taskId) { }
+//                    }
                 }
             }
-            viewModel.taskSeen(taskEvent.taskId) { }
+
         }
     }
 
@@ -679,6 +803,7 @@ class TaskDetailV2Fragment :
             viewModel.taskDetail.value?.let { taskDetail ->
                 if (task.id == taskDetail.id) {
                     task.let { it1 ->
+                        taskSeenRequest = true
                         viewModel.originalTask.postValue(it1)
                         viewModel._taskDetail.postValue(it1)
                     }
@@ -694,32 +819,28 @@ class TaskDetailV2Fragment :
         if (task != null && taskEvent != null) {
             val taskEvents = viewModel.originalEvents.value
             taskEvents?.let { allEvents ->
+                taskSeenRequest = true
                 GlobalScope.launch {
                     if (allEvents.isNotEmpty()) {
                         val eventExist = allEvents.find { taskEvent.id == it.id }
                         if (eventExist == null) {  /// event not existed
                             allEvents.add(taskEvent)
                             viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
-                            val handler = Handler(Looper.getMainLooper())
-                            handler.postDelayed(Runnable {
-                                eventsAdapter.listItems.add(taskEvent)
-                                mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-                                scrollToBottom()
-                            }, 1)
+//                            val handler = Handler(Looper.getMainLooper())
+//                            handler.postDelayed(Runnable {
+//                                eventsAdapter.listItems.add(taskEvent)
+//                                mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
+                            scrollToBottom()
+//                            }, 1)
 
                         }
                     } else {
                         val eventList = mutableListOf<Events>()
                         eventList.add(taskEvent)
                         allEvents.addAll(eventList)
-                        viewModel._taskEvents.postValue(allEvents)
                         viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
                         scrollToBottom()
                     }
-                }
-                val seenByMe = task.seenBy.find { it == viewModel.user?.id }
-                if (seenByMe == null) {
-                    viewModel.taskSeen(task.id) { }
                 }
             }
         }
@@ -727,21 +848,25 @@ class TaskDetailV2Fragment :
 
 
     private fun scrollToBottom() {
-        if (!isScrolling) {
-            isScrolling = true
-            mViewDataBinding.bodyScroll.postDelayed({
-                mViewDataBinding.bodyScroll.isFocusableInTouchMode = true
-                mViewDataBinding.bodyScroll.descendantFocusability = ViewGroup.FOCUS_BEFORE_DESCENDANTS
-                mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
-                isScrolling = false
-            }, 260)
-        }
+//        if (!isScrolling) {
+//            isScrolling = true
+        val lastPosition = mViewDataBinding.parentRV.adapter?.itemCount?.minus(1) ?: 0
+//        if (lastPosition >= 0) {
+//            recyclerView.smoothScrollToPosition(lastPosition)
+//        }
+        mViewDataBinding.parentRV.postDelayed({
+//            mViewDataBinding.parentRV.isFocusableInTouchMode = true
+//            mViewDataBinding.parentRV.descendantFocusability = ViewGroup.FOCUS_BEFORE_DESCENDANTS
+            mViewDataBinding.parentRV.scrollToPosition(1)
+//            isScrolling = false
+        }, 210)
+//        }
     }
 
     private fun scrollToBottomWithDelay() {
 //        isScrollingWithDelay = true
-        mViewDataBinding.bodyScroll.postDelayed({
-            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
-        }, 400)
+//        mViewDataBinding.bodyScroll.postDelayed({
+//            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
+//        }, 400)
     }
 }

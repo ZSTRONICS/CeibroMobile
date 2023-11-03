@@ -52,6 +52,7 @@ import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -268,7 +269,9 @@ class DashboardFragment :
         val coroutineScope = viewLifecycleOwner.lifecycleScope
         coroutineScope.launch(Dispatchers.IO) {
             val unSyncedTasks = viewModel.getDraftTasks()
-            updateDraftRecord(unSyncedTasks.size)
+            withContext(Dispatchers.Main) {
+                updateDraftRecord(unSyncedTasks.size)
+            }
         }
     }
 

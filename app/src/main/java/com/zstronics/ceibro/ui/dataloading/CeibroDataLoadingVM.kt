@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -92,6 +93,8 @@ class CeibroDataLoadingVM @Inject constructor(
             val lastUpdatedAt = sessionManager.getUpdatedAtTimeStamp()
             when (val response = remoteTask.getAllTaskWithEventsSeparately(lastUpdatedAt)) {
                 is ApiResponse.Success -> {
+                    taskDao.deleteAllEventsData()
+                    taskDao.deleteAllTasksData()
                     sessionManager.saveUpdatedAtTimeStamp(response.data.newData.latestUpdatedAt)
 
                     val allTasks = response.data.newData.allTasks
@@ -129,6 +132,28 @@ class CeibroDataLoadingVM @Inject constructor(
                 }
 
                 is ApiResponse.Error -> {
+                    val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                    val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val fromMeUnreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                    val fromMeOngoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val fromMeDoneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val hiddenCanceledTasks = taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+                    val hiddenOngoingTasks = taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val hiddenDoneTasks = taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+
+                    CookiesManager.toMeNewTasks.postValue(newTasks)
+                    CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                    CookiesManager.toMeDoneTasks.postValue(doneTasks)
+
+                    CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
+                    CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
+                    CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
+
+                    CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTasks)
+                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
+                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
+
                     apiSucceedCount++
                     callBack.invoke()
                 }

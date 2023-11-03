@@ -15,8 +15,13 @@ import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.databinding.ActivityNavhostPresenterBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.InetAddress
 import javax.inject.Inject
 
 const val NAVIGATION_Graph_ID = "navigationGraphId"
@@ -64,6 +69,7 @@ class NavHostPresenterActivity :
                         sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
                     val isLastOffline =
                         sessionManager.getBooleanValue(KEY_LAST_OFFLINE)
+                    println("InternetStatus: $connectionStatus")
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {
                             // Do not remove this losing state from here
@@ -77,6 +83,30 @@ class NavHostPresenterActivity :
                                 KEY_LAST_OFFLINE,
                                 true
                             )
+                            isPingableToServer { pingable ->
+                                if (pingable) {
+                                    if (isAppFirstRun.not()) {
+                                        if (navigationGraphStartDestination != R.id.editProfileFragment || mViewDataBinding.llInternetDisconnected.visibility == View.VISIBLE) {
+                                            if (isLastOffline) {
+                                                sessionManager.saveBooleanValue(KEY_LAST_OFFLINE, false)
+                                                mViewDataBinding.llInternetConnected.visibility =
+                                                    View.VISIBLE
+                                                mViewDataBinding.llInternetDisconnected.visibility =
+                                                    View.GONE
+
+                                                launch {
+                                                    delay(BANNER_HIDE_TIME)
+                                                }
+                                                // After the delay, hide the views
+                                                mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                    mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                                }
+                            }
                         }
 
                         NetworkConnectivityObserver.Status.Available -> {
@@ -110,8 +140,30 @@ class NavHostPresenterActivity :
                                 KEY_LAST_OFFLINE,
                                 true
                             )
-                            mViewDataBinding.llInternetConnected.visibility = View.GONE
-                            mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                            isPingableToServer { pingable ->
+                                if (pingable) {
+                                    if (isAppFirstRun.not()) {
+                                        if (navigationGraphStartDestination != R.id.editProfileFragment || mViewDataBinding.llInternetDisconnected.visibility == View.VISIBLE) {
+                                            if (isLastOffline) {
+                                                sessionManager.saveBooleanValue(KEY_LAST_OFFLINE, false)
+                                                mViewDataBinding.llInternetConnected.visibility =
+                                                    View.VISIBLE
+                                                mViewDataBinding.llInternetDisconnected.visibility =
+                                                    View.GONE
+
+                                                launch {
+                                                    delay(BANNER_HIDE_TIME)
+                                                }
+                                                // After the delay, hide the views
+                                                mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                    mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                                }
+                            }
                         }
                     }
                 }
@@ -119,6 +171,36 @@ class NavHostPresenterActivity :
         }
         mViewDataBinding.closeBanner.setOnClickListener {
             mViewDataBinding.llInternetDisconnected.visibility = View.GONE
+        }
+    }
+
+    private fun isPingableToServer(callback: (Boolean) -> Unit) {
+        GlobalScope.launch {
+            try {
+                // You can use either a Google URL or DNS address
+                val address = withContext(Dispatchers.IO) {
+                    InetAddress.getByName("www.google.com")
+                }
+                // Or use the Google DNS IP addresses: "8.8.8.8" or "8.8.4.4"
+                // val address = InetAddress.getByName("8.8.8.8")
+
+                // Timeout in milliseconds for the ping
+                val timeoutMs = 1500
+
+                // Attempt to reach the address within the specified timeout
+                val isReachable =
+                    withContext(Dispatchers.IO) {
+                        address.isReachable(timeoutMs)
+                    }
+                withContext(Dispatchers.Main) {
+                    callback(isReachable)
+                }
+            } catch (e: IOException) {
+                // An exception is thrown if the address is not reachable
+                withContext(Dispatchers.Main) {
+                    callback(false)
+                }
+            }
         }
     }
 

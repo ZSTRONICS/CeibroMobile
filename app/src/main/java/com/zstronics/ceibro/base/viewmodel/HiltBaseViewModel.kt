@@ -397,7 +397,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     suspend fun updateForwardedToMeNewTaskInLocal(
-        completeData: ForwardedToMeNewTaskV2Response?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
+        completeData: ForwardedToMeNewTaskV2Response?,
+        taskDao: TaskV2Dao,
+        userId: String?,
+        sessionManager: SessionManager
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -412,7 +415,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     sharedViewModel?.isToMeUnread?.value = true
                     sessionManager.saveToMeUnread(true)
                 }
-                val toMeNewTask = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                val toMeNewTask =
+                    taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
                 CookiesManager.toMeNewTasks.postValue(toMeNewTask)
 
 //                updateAllTasksLists(taskDao)
@@ -424,84 +428,87 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
 
     suspend fun updateForwardTaskInLocal(
-        eventData: EventV2Response.Data?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        userId: String?,
+        sessionManager: SessionManager
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
         }
-        launch {
-            if (eventData != null) {
-                val isExists = TaskEventsList.isExists(
-                    SocketHandler.TaskEvent.TASK_FORWARDED.name, eventData.id, true
+        if (eventData != null) {
+            val isExists = TaskEventsList.isExists(
+                SocketHandler.TaskEvent.TASK_FORWARDED.name, eventData.id, true
+            )
+            if (!isExists) {
+                val taskEvent = Events(
+                    id = eventData.id,
+                    taskId = eventData.taskId,
+                    eventType = eventData.eventType,
+                    initiator = eventData.initiator,
+                    eventData = eventData.eventData,
+                    commentData = eventData.commentData,
+                    createdAt = eventData.createdAt,
+                    updatedAt = eventData.updatedAt,
+                    invitedMembers = eventData.invitedMembers,
+                    eventNumber = eventData.eventNumber
                 )
-                if (!isExists) {
-                    val taskEvent = Events(
-                        id = eventData.id,
-                        taskId = eventData.taskId,
-                        eventType = eventData.eventType,
-                        initiator = eventData.initiator,
-                        eventData = eventData.eventData,
-                        commentData = eventData.commentData,
-                        createdAt = eventData.createdAt,
-                        updatedAt = eventData.updatedAt,
-                        invitedMembers = eventData.invitedMembers,
-                        eventNumber = eventData.eventNumber
-                    )
-                    GlobalScope.launch {
-                        sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
-                        val task = taskDao.getTaskByID(eventData.taskId)
+                GlobalScope.launch {
+                    sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
+                    val task = taskDao.getTaskByID(eventData.taskId)
 
-                        if (task != null) {
-                            task.seenBy = eventData.taskData.seenBy
-                            task.hiddenBy = eventData.taskData.hiddenBy
-                            task.updatedAt = eventData.taskUpdatedAt
-                            task.creatorState = eventData.newTaskData.creatorState
-                            val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
-                                eventData.taskData.assignedToState.toMutableList()
-                            } else {
-                                task.assignedToState
-                            }
-                            task.assignedToState = newAssigneeList
-                            val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
-                                eventData.taskData.invitedNumbers.toMutableList()
-                            } else {
-                                task.invitedNumbers
-                            }
-                            task.invitedNumbers = newInvitedList
-                            task.toMeState = eventData.newTaskData.toMeState
-                            task.fromMeState = eventData.newTaskData.fromMeState
-                            task.hiddenState = eventData.newTaskData.hiddenState
-
-                            taskDao.updateTask(task)
+                    if (task != null) {
+                        task.seenBy = eventData.taskData.seenBy
+                        task.hiddenBy = eventData.taskData.hiddenBy
+                        task.updatedAt = eventData.taskUpdatedAt
+                        task.creatorState = eventData.newTaskData.creatorState
+                        val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
+                            eventData.taskData.assignedToState.toMutableList()
+                        } else {
+                            task.assignedToState
                         }
-                        taskDao.insertEventData(taskEvent)
-
-                        if (eventData.newTaskData.isAssignedToMe) {
-                            sharedViewModel?.isToMeUnread?.value = true
-                            sessionManager.saveToMeUnread(true)
+                        task.assignedToState = newAssigneeList
+                        val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
+                            eventData.taskData.invitedNumbers.toMutableList()
+                        } else {
+                            task.invitedNumbers
                         }
-                        if (eventData.newTaskData.isCreator) {
-                            sharedViewModel?.isFromMeUnread?.value = true
-                            sessionManager.saveFromMeUnread(true)
-                        }
+                        task.invitedNumbers = newInvitedList
+                        task.toMeState = eventData.newTaskData.toMeState
+                        task.fromMeState = eventData.newTaskData.fromMeState
+                        task.hiddenState = eventData.newTaskData.hiddenState
+                        task.eventsCount = task.eventsCount + 1
 
-                        updateAllTasksLists(taskDao)
+                        taskDao.updateTask(task)
+                    }
+                    taskDao.insertEventData(taskEvent)
 
-                    }.join()
+                    if (eventData.newTaskData.isAssignedToMe) {
+                        sharedViewModel?.isToMeUnread?.value = true
+                        sessionManager.saveToMeUnread(true)
+                    }
+                    if (eventData.newTaskData.isCreator) {
+                        sharedViewModel?.isFromMeUnread?.value = true
+                        sessionManager.saveFromMeUnread(true)
+                    }
 
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed(Runnable {
-                        EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
-                        EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
-                    }, 50)
+                    updateAllTasksLists(taskDao)
 
-                    TaskEventsList.removeEvent(
-                        SocketHandler.TaskEvent.TASK_FORWARDED.name,
-                        eventData.id
-                    )
-                }
+                }.join()
+
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(Runnable {
+                    EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                }, 50)
+
+                TaskEventsList.removeEvent(
+                    SocketHandler.TaskEvent.TASK_FORWARDED.name,
+                    eventData.id
+                )
             }
         }
+
     }
 
     suspend fun updateGenericTaskSeenInLocal(
@@ -616,6 +623,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.toMeState = eventData.newTaskData.toMeState
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
+                        task.eventsCount = task.eventsCount + 1
 
                         taskDao.updateTask(task)
                     }
@@ -694,6 +702,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.isCanceled = false
+                        task.eventsCount = task.eventsCount + 1
 
                         taskDao.updateTask(task)
                     }
@@ -767,6 +776,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.isCanceled = true
+                        task.eventsCount = task.eventsCount + 1
 
                         taskDao.updateTask(task)
                     }
@@ -832,6 +842,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.toMeState = eventData.newTaskData.toMeState
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
+                        task.eventsCount = task.eventsCount + 1
 
                         taskDao.updateTask(task)
                     }
@@ -896,6 +907,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     task.toMeState = eventData.newTaskData.toMeState
                     task.fromMeState = eventData.newTaskData.fromMeState
                     task.hiddenState = eventData.newTaskData.hiddenState
+                    task.eventsCount = task.eventsCount + 1
 
                     val invitedList = task.invitedNumbers.toMutableList()
                     val invited =
