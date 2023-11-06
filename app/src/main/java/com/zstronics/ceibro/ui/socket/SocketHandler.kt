@@ -110,7 +110,7 @@ object SocketHandler {
                 handler.removeCallbacks(runnable)
                 hbCounter = 0
                 handler.postDelayed(runnable, delayMillis)
-                println("Heartbeat, Socket on Connect")
+                println("Heartbeat, Socket Connected")
 
                 if (sharedViewModel != null) {
                     sharedViewModel.isConnectedToServer.postValue(true)
@@ -122,6 +122,7 @@ object SocketHandler {
             mSocket?.on(
                 CEIBRO_HEARTBEAT_ACK
             ) {
+//                println("Heartbeat, CEIBRO_HEARTBEAT_ACK... connected = ${mSocket?.connected()}")
 //                hbCounter -= 1
             }
 
@@ -174,7 +175,7 @@ object SocketHandler {
     @Synchronized
     fun establishConnection() {
         mSocket?.connect()
-//        println("Heartbeat Socket connecting...")
+//        println("Heartbeat, Socket connecting... ${mSocket?.connected()}")
     }
 
     @Synchronized

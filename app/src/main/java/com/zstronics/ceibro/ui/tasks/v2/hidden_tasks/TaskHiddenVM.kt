@@ -27,7 +27,7 @@ class TaskHiddenVM @Inject constructor(
     override val viewState: TaskHiddenState,
     private val remoteTask: TaskRemoteDataSource,
     private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskHidden.State>(), ITaskHidden.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = "ongoing"

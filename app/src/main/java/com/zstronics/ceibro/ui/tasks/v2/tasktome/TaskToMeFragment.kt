@@ -186,7 +186,7 @@ class TaskToMeFragment :
         mViewDataBinding.taskRV.adapter = adapter
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
-                if (data.eventsCount > 15) {
+                if (data.eventsCount > 30) {
                     viewModel.loading(true, "")
                 }
                 viewModel.launch {

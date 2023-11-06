@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.base.navgraph.host
 
 import android.os.Bundle
+import android.os.Handler
 import android.os.PersistableBundle
 import android.view.View
 import androidx.activity.viewModels
@@ -10,10 +11,12 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.KEY_LAST_OFFLINE
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.databinding.ActivityNavhostPresenterBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -69,7 +72,7 @@ class NavHostPresenterActivity :
                         sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
                     val isLastOffline =
                         sessionManager.getBooleanValue(KEY_LAST_OFFLINE)
-                    println("InternetStatus: $connectionStatus")
+                    println("InternetStatus: $connectionStatus -> Last Offline $isLastOffline")
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {
                             // Do not remove this losing state from here
@@ -88,7 +91,10 @@ class NavHostPresenterActivity :
                                     if (isAppFirstRun.not()) {
                                         if (navigationGraphStartDestination != R.id.editProfileFragment || mViewDataBinding.llInternetDisconnected.visibility == View.VISIBLE) {
                                             if (isLastOffline) {
-                                                sessionManager.saveBooleanValue(KEY_LAST_OFFLINE, false)
+                                                sessionManager.saveBooleanValue(
+                                                    KEY_LAST_OFFLINE,
+                                                    false
+                                                )
                                                 mViewDataBinding.llInternetConnected.visibility =
                                                     View.VISIBLE
                                                 mViewDataBinding.llInternetDisconnected.visibility =
@@ -98,13 +104,15 @@ class NavHostPresenterActivity :
                                                     delay(BANNER_HIDE_TIME)
                                                 }
                                                 // After the delay, hide the views
-                                                mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                                mViewDataBinding.llInternetConnected.visibility =
+                                                    View.GONE
                                             }
                                         }
                                     }
                                 } else {
                                     mViewDataBinding.llInternetConnected.visibility = View.GONE
-                                    mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                                    mViewDataBinding.llInternetDisconnected.visibility =
+                                        View.VISIBLE
                                 }
                             }
                         }
@@ -145,7 +153,10 @@ class NavHostPresenterActivity :
                                     if (isAppFirstRun.not()) {
                                         if (navigationGraphStartDestination != R.id.editProfileFragment || mViewDataBinding.llInternetDisconnected.visibility == View.VISIBLE) {
                                             if (isLastOffline) {
-                                                sessionManager.saveBooleanValue(KEY_LAST_OFFLINE, false)
+                                                sessionManager.saveBooleanValue(
+                                                    KEY_LAST_OFFLINE,
+                                                    false
+                                                )
                                                 mViewDataBinding.llInternetConnected.visibility =
                                                     View.VISIBLE
                                                 mViewDataBinding.llInternetDisconnected.visibility =
@@ -155,13 +166,15 @@ class NavHostPresenterActivity :
                                                     delay(BANNER_HIDE_TIME)
                                                 }
                                                 // After the delay, hide the views
-                                                mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                                mViewDataBinding.llInternetConnected.visibility =
+                                                    View.GONE
                                             }
                                         }
                                     }
                                 } else {
                                     mViewDataBinding.llInternetConnected.visibility = View.GONE
-                                    mViewDataBinding.llInternetDisconnected.visibility = View.VISIBLE
+                                    mViewDataBinding.llInternetDisconnected.visibility =
+                                        View.VISIBLE
                                 }
                             }
                         }
@@ -202,6 +215,32 @@ class NavHostPresenterActivity :
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        if (applicationContext != null) {
+//            val sessionManager =
+//                getSessionManager(SharedPreferenceManager(applicationContext))
+//            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+//                sessionManager.setUser()
+//                sessionManager.isUserLoggedIn()
+//            }
+//            println("Heartbeat, NavHostPresenterActivity... connected - notNul = ${CookiesManager.jwtToken}")
+//            if (navigationGraphStartDestination == R.id.ceibroDataLoadingFragment || navigationGraphStartDestination == R.id.loginFragment ||
+//                navigationGraphStartDestination == R.id.registerFragment || navigationGraphStartDestination == R.id.verifyNumberFragment ||
+//                navigationGraphStartDestination == R.id.termsFragment || navigationGraphStartDestination == R.id.signUpFragment ||
+//                navigationGraphStartDestination == R.id.photoFragment || navigationGraphStartDestination == R.id.contactsSelectionFragment ||
+//                navigationGraphStartDestination == R.id.forgotPasswordFragment
+//            ) {
+//                //Do nothing
+//            } else {
+//                Handler().postDelayed({
+//                    println("Heartbeat, NavHostPresenterActivity... connected = ${SocketHandler.getSocket()?.connected()}")
+//                }, 1500)
+//            }
+//
+//        }
     }
 
     private fun getSessionManager(

@@ -134,6 +134,7 @@ class TaskDetailV2RVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(task: CeibroTaskV2) {
+            binding.viewMoreLessLayout.visibility = View.GONE
             binding.filesLayout.visibility = View.GONE
             binding.onlyImagesRV.visibility = View.GONE
             binding.imagesWithCommentRV.visibility = View.GONE
@@ -228,14 +229,14 @@ class TaskDetailV2RVAdapter @Inject constructor() :
 
             if (descriptionExpanded) {
                 binding.taskDescription.maxLines = Int.MAX_VALUE
-                binding.viewMoreLessLayout.visibility = View.VISIBLE
-                binding.viewMoreBtn.visibility = View.GONE
-                binding.viewLessBtn.visibility = View.VISIBLE
+//                binding.viewMoreLessLayout.visibility = View.VISIBLE
+//                binding.viewMoreBtn.visibility = View.GONE
+//                binding.viewLessBtn.visibility = View.VISIBLE
             } else {
                 binding.taskDescription.maxLines = 15
-                binding.viewMoreLessLayout.visibility = View.VISIBLE
-                binding.viewMoreBtn.visibility = View.VISIBLE
-                binding.viewLessBtn.visibility = View.GONE
+//                binding.viewMoreLessLayout.visibility = View.VISIBLE
+//                binding.viewMoreBtn.visibility = View.VISIBLE
+//                binding.viewLessBtn.visibility = View.GONE
             }
 
             if (task.description.isNotEmpty()) {

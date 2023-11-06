@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DefaultItemAnimator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
@@ -190,6 +191,7 @@ class TaskDetailV2Fragment :
         mViewDataBinding.confirmNeededBtn.visibility = View.GONE
 
         mViewDataBinding.parentRV.adapter = detailAdapter
+        mViewDataBinding.parentRV.itemAnimator = DefaultItemAnimator()
 
         detailAdapter.openEventImageClickListener = { position, bundle ->
             navigate(R.id.imageViewerFragment, bundle)
@@ -854,12 +856,13 @@ class TaskDetailV2Fragment :
 //        if (lastPosition >= 0) {
 //            recyclerView.smoothScrollToPosition(lastPosition)
 //        }
-        mViewDataBinding.parentRV.postDelayed({
-//            mViewDataBinding.parentRV.isFocusableInTouchMode = true
-//            mViewDataBinding.parentRV.descendantFocusability = ViewGroup.FOCUS_BEFORE_DESCENDANTS
-            mViewDataBinding.parentRV.scrollToPosition(1)
+        mViewDataBinding.bodyScroll.postDelayed({
+            mViewDataBinding.bodyScroll.isFocusableInTouchMode = true
+            mViewDataBinding.bodyScroll.descendantFocusability = ViewGroup.FOCUS_BEFORE_DESCENDANTS
+            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
+//            mViewDataBinding.parentRV.scrollToPosition(1)
 //            isScrolling = false
-        }, 210)
+        }, 250)
 //        }
     }
 

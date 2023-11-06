@@ -30,6 +30,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.login.User
@@ -424,6 +425,10 @@ class DashboardFragment :
                             println("Heartbeat, Internet observer")
                             if (SocketHandler.getSocket() == null || !appStartWithInternet || sharedViewModel.socketOnceConnected.value == false) {
                                 println("Heartbeat, Internet observer Socket == null")
+                                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                                    viewModel.sessionManager.setUser()
+                                    viewModel.sessionManager.setToken()
+                                }
                                 SocketHandler.setActivityContext(requireActivity())
                                 SocketHandler.setSocket()
                                 appStartWithInternet = true

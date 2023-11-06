@@ -93,8 +93,12 @@ class TaskDetailV2VM @Inject constructor(
                     originalEvents.postValue(events.toMutableList())
                     _taskEvents.postValue(events.toMutableList())
                 } else {
-                    originalEvents.postValue(mutableListOf<Events>())
-                    _taskEvents.postValue(mutableListOf<Events>())
+                    if (task.eventsCount > 0) {
+                        getAllEvents(task.id)
+                    } else {
+                        originalEvents.postValue(mutableListOf<Events>())
+                        _taskEvents.postValue(mutableListOf<Events>())
+                    }
                 }
                 syncEvents(task.id)
 
