@@ -32,9 +32,7 @@ class ForwardTaskVM @Inject constructor(
 ) : HiltBaseViewModel<IForwardTask.State>(), IForwardTask.ViewModel {
     val user = sessionManager.getUser().value
     var taskData: CeibroTaskV2? = null
-    var notificationTaskData: NotificationTaskData? = null
-    private val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
-    private val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
+    var notificationTaskData: MutableLiveData<NotificationTaskData?> = MutableLiveData()
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
@@ -44,10 +42,9 @@ class ForwardTaskVM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         val selectedContact = bundle?.getStringArrayList("assignToContacts")
-        val taskData: CeibroTaskV2? = bundle?.getParcelable("taskDetail")
-        taskData?.let {
-            taskId = it.id
-            _taskDetail.postValue(it)
+        val tasksId = bundle?.getString("taskId")
+        tasksId?.let {
+            taskId = it
         }
         if (!selectedContact.isNullOrEmpty()) {
             oldSelectedContacts = selectedContact
@@ -55,8 +52,9 @@ class ForwardTaskVM @Inject constructor(
 
 
         //Following code will only execute if forward screen is opened from notification
-        notificationTaskData = bundle?.getParcelable("notificationTaskData")
-        notificationTaskData?.let {
+        val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+        notificationTaskData.postValue(notificationData)
+        notificationData?.let {
             if (CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
                 sessionManager.isUserLoggedIn()
@@ -65,8 +63,6 @@ class ForwardTaskVM @Inject constructor(
             launch {
                 val task = taskDao.getTaskByID(it.taskId)
                 task?.let { task1 ->
-                    _taskDetail.postValue(task1)
-
                     val assignTo = task1.assignedToState.map {assignee -> assignee.phoneNumber }
                     val invited = task1.invitedNumbers.map {invited -> invited.phoneNumber }
                     val combinedList = arrayListOf<String>()
@@ -82,7 +78,6 @@ class ForwardTaskVM @Inject constructor(
     fun forwardTask(
         onBack: (event: EventV2Response.Data) -> Unit,
     ) {
-        val taskData = taskDetail.value
         val selectedContactList = selectedContacts.value
         if (!selectedContactList.isNullOrEmpty()) {
             val state = TaskStatus.NEW.name.lowercase()

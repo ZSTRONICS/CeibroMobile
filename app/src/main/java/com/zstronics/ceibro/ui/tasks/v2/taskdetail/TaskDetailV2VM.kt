@@ -61,7 +61,7 @@ class TaskDetailV2VM @Inject constructor(
         MutableLiveData(mutableListOf())
     val missingEvents: MutableLiveData<MutableList<Events>> = _missingEvents
 
-    var notificationTaskData: NotificationTaskData? = null
+    var notificationTaskData: MutableLiveData<NotificationTaskData?> = MutableLiveData()
 
     var rootState = ""
     var selectedState = ""
@@ -75,17 +75,18 @@ class TaskDetailV2VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-        val taskData: CeibroTaskV2? = bundle?.getParcelable("taskDetail")
-        val events = bundle?.getParcelableArrayList<Events>("eventsArray")
-        val parentRootState = bundle?.getString("rootState")
-        val parentSelectedState = bundle?.getString("selectedState")
-        if (parentRootState != null) {
-            rootState = parentRootState
-        }
-        if (parentSelectedState != null) {
-            selectedState = parentSelectedState
-        }
         launch {
+            val taskData: CeibroTaskV2? = CookiesManager.taskDataForDetails
+            val events = CookiesManager.taskDetailEvents
+            val parentRootState = CookiesManager.taskDetailRootState
+            val parentSelectedState = CookiesManager.taskDetailSelectedSubState
+            if (parentRootState != null) {
+                rootState = parentRootState
+            }
+            if (parentSelectedState != null) {
+                selectedState = parentSelectedState
+            }
+
             taskData?.let { task ->
                 _taskDetail.postValue(task)
                 originalTask.postValue(task)
@@ -109,8 +110,9 @@ class TaskDetailV2VM @Inject constructor(
             } ?: run {
                 //Following code will only execute if forward screen is opened from notification
                 alert("From Notification")
-                notificationTaskData = bundle?.getParcelable("notificationTaskData")
-                notificationTaskData?.let {
+                val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+                notificationTaskData.postValue(notificationData)
+                notificationData?.let {
                     if (CookiesManager.jwtToken.isNullOrEmpty()) {
                         sessionManager.setUser()
                         sessionManager.isUserLoggedIn()
@@ -131,6 +133,8 @@ class TaskDetailV2VM @Inject constructor(
                             }
                         }
                     }
+                } ?: run {
+                    alert("No info to show")
                 }
             }
         }

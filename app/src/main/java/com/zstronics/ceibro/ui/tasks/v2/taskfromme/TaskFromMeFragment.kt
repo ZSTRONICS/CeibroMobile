@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
@@ -187,14 +188,13 @@ class TaskFromMeFragment :
                 }
                 viewModel.launch {
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
-                    val bundle = Bundle()
-                    bundle.putParcelable("taskDetail", data)
-                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
-                    bundle.putString("rootState", TaskRootStateTags.FromMe.tagValue.lowercase())
-                    bundle.putString("selectedState", viewModel.selectedState)
+                    CookiesManager.taskDataForDetails = data
+                    CookiesManager.taskDetailEvents = allEvents
+                    CookiesManager.taskDetailRootState = TaskRootStateTags.FromMe.tagValue.lowercase()
+                    CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
                     withContext(Dispatchers.Main) {
                         // Update the UI here
-                        navigate(R.id.taskDetailV2Fragment, bundle)
+                        navigate(R.id.taskDetailV2Fragment)
                         viewModel.loading(false, "")
                     }
                 }

@@ -93,8 +93,8 @@ class CeibroDataLoadingVM @Inject constructor(
             val lastUpdatedAt = sessionManager.getUpdatedAtTimeStamp()
             when (val response = remoteTask.getAllTaskWithEventsSeparately(lastUpdatedAt)) {
                 is ApiResponse.Success -> {
-                    taskDao.deleteAllEventsData()
-                    taskDao.deleteAllTasksData()
+//                    taskDao.deleteAllEventsData()
+//                    taskDao.deleteAllTasksData()
                     sessionManager.saveUpdatedAtTimeStamp(response.data.newData.latestUpdatedAt)
 
                     val allTasks = response.data.newData.allTasks

@@ -1,15 +1,19 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboardWithFocus
@@ -37,16 +41,22 @@ class ForwardTaskFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> {
-                if (viewModel.notificationTaskData != null) {
-                    launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                        options = Bundle(),
-                        clearPrevious = true
-                    ) {
-                        putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-                        putExtra(
-                            NAVIGATION_Graph_START_DESTINATION_ID,
-                            R.id.homeFragment
-                        )
+                val instances = countActivitiesInBackStack(requireContext())
+                if (viewModel.notificationTaskData.value != null) {
+                    if (instances <= 1) {
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = Bundle(),
+                            clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.homeFragment
+                            )
+                        }
+                    } else {
+                        //finish is called so that second instance of app will be closed and only one last instance will remain
+                        finish()
                     }
                 } else {
                     navigateBack()
@@ -73,16 +83,22 @@ class ForwardTaskFragment :
             R.id.forwardBtn -> {
                 viewModel.forwardTask { eventData ->
 
-                    if (viewModel.notificationTaskData != null) {
-                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                            options = Bundle(),
-                            clearPrevious = true
-                        ) {
-                            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-                            putExtra(
-                                NAVIGATION_Graph_START_DESTINATION_ID,
-                                R.id.homeFragment
-                            )
+                    if (viewModel.notificationTaskData.value != null) {
+                        val instances = countActivitiesInBackStack(requireContext())
+                        if (instances <= 1) {
+                            launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                                options = Bundle(),
+                                clearPrevious = true
+                            ) {
+                                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                                putExtra(
+                                    NAVIGATION_Graph_START_DESTINATION_ID,
+                                    R.id.homeFragment
+                                )
+                            }
+                        } else {
+                            //finish is called so that second instance of app will be closed and only one last instance will remain
+                            finish()
                         }
                     } else {
                         val bundle = Bundle()
@@ -94,12 +110,35 @@ class ForwardTaskFragment :
         }
     }
 
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val instances = countActivitiesInBackStack(requireContext())
+            if (instances <= 1) {
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = Bundle(),
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        R.id.homeFragment
+                    )
+                }
+            } else {
+                //finish is called so that second instance of app will be closed and only one last instance will remain
+                finish()
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (viewModel.notificationTaskData != null) {
-            setBackButtonDispatcher()
+        viewModel.notificationTaskData.observe(viewLifecycleOwner) { notificationData ->
+            if (notificationData != null) {
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+            }
         }
+
         mViewDataBinding.commentText.setOnTouchListener { view, event ->
             view.parent.requestDisallowInterceptTouchEvent(true)
             if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
@@ -155,5 +194,18 @@ class ForwardTaskFragment :
 
             }
         }
+    }
+
+    private fun countActivitiesInBackStack(context: Context): Int {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningTasks = activityManager.appTasks
+        var activityCount = 0
+
+        for (task in runningTasks) {
+            val taskInfo = task.taskInfo
+            activityCount += taskInfo.numActivities
+        }
+
+        return activityCount
     }
 }

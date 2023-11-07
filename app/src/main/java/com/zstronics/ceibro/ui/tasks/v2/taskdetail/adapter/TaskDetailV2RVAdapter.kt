@@ -115,7 +115,7 @@ class TaskDetailV2RVAdapter @Inject constructor() :
         this.descriptionExpanded = descriptionExpanded
         this.listItems.clear()
         this.listItems.addAll(listItems)
-        notifyItemChanged(1)
+        notifyDataSetChanged()
     }
 
     fun setOtherData(rootState: String, selectedState: String, descriptionExpanded: Boolean) {

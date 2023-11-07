@@ -3,6 +3,7 @@ package com.zstronics.ceibro
 import android.app.NotificationManager
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
@@ -87,6 +88,9 @@ class NotificationActivity : AppCompatActivity() {
                         NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
                     )
                 }
+                Handler().postDelayed({
+                    finish()
+                }, 50)
             }
         } else {
             launchActivityWithFinishAffinity<NavHostPresenterActivity>(
