@@ -533,4 +533,6 @@
     <string name="no">No</string>
     <string name="logout">Logout</string>
     <string name="if_you_log_out_while_in_offline_mode_all_the_tasks_created_offline_will_be_deleted">If you log out while in offline mode, all the tasks created offline will be deleted.</string>
+    <string name="new_project">New Project</string>
+    <string name="mis_on_location_asukoht">Mis on Location/asukoht?</string>
 </resources>
