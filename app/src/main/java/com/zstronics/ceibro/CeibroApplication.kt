@@ -3,6 +3,7 @@ package com.zstronics.ceibro
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.gu.toolargetool.TooLargeTool
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
@@ -31,7 +32,7 @@ open class CeibroApplication : Application() {
 
         // Logging set to help debug issues, remove before releasing your app.
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
-
+        TooLargeTool.startLogging(this)
         // OneSignal Initialization
         OneSignal.initWithContext(this)
         OneSignal.setAppId(BuildConfig.ONE_SIGNAL_ID)

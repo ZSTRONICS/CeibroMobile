@@ -13,15 +13,15 @@ import com.zstronics.ceibro.data.repos.task.models.TasksResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -116,7 +116,7 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     override suspend fun forwardTask(
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request
-    ): ApiResponse<NewTaskV2Response> =
+    ): ApiResponse<EventV2Response> =
         executeSafely(
             call =
             {
@@ -153,12 +153,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
 
     override suspend fun syncEvents(
         taskId: String,
-        list: SyncTasksBody
-    ): ApiResponse<SyncTasksResponse> =
+        request: SyncTaskEventsBody
+    ): ApiResponse<SyncTaskEventsResponse> =
         executeSafely(
             call =
             {
-                service.syncEvents(taskId, list)
+                service.syncEvents(taskId, request)
             }
         )
 
@@ -214,16 +214,13 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun getTaskWithUpdatedTimeStamp(updatedAtTimeStamp: String): ApiResponse<AllTasksResponse> =
+    override suspend fun getAllTaskWithEventsSeparately(updatedAtTimeStamp: String): ApiResponse<AllTasksV2NewResponse> =
         executeSafely(
             call =
             {
-                service.getTaskWithUpdatedTimeStamp(updatedAtTimeStamp)
+                service.getAllTaskWithEventsSeparately(updatedAtTimeStamp)
             }
         )
-
-
-
 
 
     override suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response> =

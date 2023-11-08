@@ -11,19 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +25,7 @@ class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
     private val remoteTask: TaskRemoteDataSource,
     private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.NEW.name.lowercase()
@@ -49,9 +43,10 @@ class TaskToMeVM @Inject constructor(
     private val _doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _doneTasks
     var originalDoneTasks: MutableList<CeibroTaskV2> = mutableListOf()
-    private val _allTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
-    val allTasks: MutableLiveData<TaskV2Response.AllTasks> = _allTasks
-    var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
+
+    private val _allTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val allTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _allTasks
+    var allOriginalTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val localSearchQuery: MutableLiveData<String> = MutableLiveData("")
 
     init {
@@ -59,14 +54,96 @@ class TaskToMeVM @Inject constructor(
     }
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
-        if (skeletonVisible) {
-            taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
-                itemCount(5)
-                color(R.color.appGrey3)
-            }
-        }
         launch {
-            val taskLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
+            val allToMeNewTasks = CookiesManager.toMeNewTasks.value ?: mutableListOf()
+            val allToMeOngoingTasks = CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
+            val allToMeDoneTasks = CookiesManager.toMeDoneTasks.value ?: mutableListOf()
+            val allTasksList = mutableListOf<CeibroTaskV2>()
+            allTasksList.addAll(allToMeNewTasks)
+            allTasksList.addAll(allToMeOngoingTasks)
+            allTasksList.addAll(allToMeDoneTasks)
+
+            if (allTasksList.isNotEmpty()) {
+
+                if (firstStartOfFragment) {
+                    selectedState = if (allToMeNewTasks.isNotEmpty()) {
+                        TaskStatus.NEW.name.lowercase()
+                    } else {
+                        TaskStatus.ONGOING.name.lowercase()
+                    }
+                    firstStartOfFragment = false
+                }
+                if (allToMeNewTasks.isEmpty()) {
+                    disabledNewState.value = true
+                    if (selectedState.equals(
+                            TaskStatus.NEW.name.lowercase(),
+                            true
+                        )
+                    ) {  //if new state was selected then we have to change it because it is disabled now
+                        selectedState = TaskStatus.ONGOING.name.lowercase()
+                    }
+                } else {
+                    disabledNewState.value = false
+                }
+
+                _allTasks.postValue(allTasksList)
+                _newTasks.postValue(allToMeNewTasks)
+                _ongoingTasks.postValue(allToMeOngoingTasks)
+                _doneTasks.postValue(allToMeDoneTasks)
+
+                allOriginalTasks.postValue(allTasksList)
+                originalNewTasks = allToMeNewTasks
+                originalOngoingTasks = allToMeOngoingTasks
+                originalDoneTasks = allToMeDoneTasks
+                callBack.invoke()
+            } else {
+
+                val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                val allTasks = mutableListOf<CeibroTaskV2>()
+                allTasks.addAll(newTasks)
+                allTasks.addAll(ongoingTasks)
+                allTasks.addAll(doneTasks)
+
+                CookiesManager.toMeNewTasks.postValue(newTasks)
+                CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.toMeDoneTasks.postValue(doneTasks)
+
+                if (firstStartOfFragment) {
+                    selectedState = if (newTasks.isNotEmpty()) {
+                        TaskStatus.NEW.name.lowercase()
+                    } else {
+                        TaskStatus.ONGOING.name.lowercase()
+                    }
+                    firstStartOfFragment = false
+                }
+                if (newTasks.isEmpty()) {
+                    disabledNewState.value = true
+                    if (selectedState.equals(
+                            TaskStatus.NEW.name.lowercase(),
+                            true
+                        )
+                    ) {  //if new state was selected then we have to change it because it is disabled now
+                        selectedState = TaskStatus.ONGOING.name.lowercase()
+                    }
+                } else {
+                    disabledNewState.value = false
+                }
+
+                _allTasks.postValue(allTasks)
+                _newTasks.postValue(newTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
+
+                allOriginalTasks.postValue(allTasks)
+                originalNewTasks = newTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
+                callBack.invoke()
+            }
+
+            /*val taskLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
             if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(
                     TaskRootStateTags.ToMe.tagValue,
                     taskLocalData
@@ -182,10 +259,7 @@ class TaskToMeVM @Inject constructor(
                     }
                 }
 
-            }
-            if (skeletonVisible) {
-                taskRV.hideSkeleton()
-            }
+            }*/
         }
 
     }
@@ -209,17 +283,6 @@ class TaskToMeVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _newTasks.postValue(filteredTasks)
@@ -234,17 +297,6 @@ class TaskToMeVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _ongoingTasks.postValue(filteredTasks)
@@ -259,17 +311,6 @@ class TaskToMeVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _doneTasks.postValue(filteredTasks)
@@ -309,7 +350,7 @@ class TaskToMeVM @Inject constructor(
             when (val response = remoteTask.hideTask(taskId)) {
                 is ApiResponse.Success -> {
                     val hideResponse = response.data
-                    updateTaskHideInLocal(hideResponse, taskDao,sessionManager)
+                    updateTaskHideInLocal(hideResponse, taskDao, sessionManager)
                     loading(false, "")
                     callBack.invoke(true)
                 }

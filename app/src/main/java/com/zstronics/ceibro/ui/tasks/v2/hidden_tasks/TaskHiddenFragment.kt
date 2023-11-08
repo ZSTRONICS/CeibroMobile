@@ -9,9 +9,9 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
 import com.zstronics.ceibro.databinding.FragmentTaskHiddenBinding
 import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -20,6 +20,8 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter.HiddenRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -181,11 +183,21 @@ class TaskHiddenFragment :
         mViewDataBinding.taskRV.adapter = adapter
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
-                val bundle = Bundle()
-                bundle.putParcelable("taskDetail", data)
-                bundle.putString("rootState", TaskRootStateTags.Hidden.tagValue.lowercase())
-                bundle.putString("selectedState", viewModel.selectedState)
-                navigate(R.id.taskDetailV2Fragment, bundle)
+                if (data.eventsCount > 30) {
+                    viewModel.loading(true, "")
+                }
+                viewModel.launch {
+                    val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
+                    CookiesManager.taskDataForDetails = data
+                    CookiesManager.taskDetailEvents = allEvents
+                    CookiesManager.taskDetailRootState = TaskRootStateTags.Hidden.tagValue.lowercase()
+                    CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
+                    withContext(Dispatchers.Main) {
+                        // Update the UI here
+                        navigate(R.id.taskDetailV2Fragment)
+                        viewModel.loading(false, "")
+                    }
+                }
             }
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
@@ -267,8 +279,8 @@ class TaskHiddenFragment :
         EventBus.getDefault().unregister(this)
     }
 
-    private fun updateCount(allTasks: TaskV2Response.AllTasks) {
-        val canceledCount = allTasks.canceled.count { task -> viewModel.user?.id !in task.seenBy }
+    private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
+        val canceledCount = allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
         mViewDataBinding.cancelledStateCount.text =
             if (canceledCount > 99) {
                 "99+"

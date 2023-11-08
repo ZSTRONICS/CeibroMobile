@@ -64,7 +64,7 @@ class LoginVM @Inject constructor(
                         response.data.user,
                         response.data.tokens,
                         "",
-                        rememberMe,
+                        true,
                         secureUUID.toString(),
                         deviceInfo.toString()
                     )
@@ -94,23 +94,23 @@ class LoginVM @Inject constructor(
     }
 
 
-    override fun getTaskWithUpdatedTimeStamp(
-        timeStamp: String,
-        onLoggedIn: () -> Unit
-    ) {
-
-        launch {
-            loading(true)
-
-            taskRepository.getTaskWithUpdatedTimeStamp(timeStamp) { isSuccess, taskEvents, message ->
-                if (isSuccess) {
-
-                } else {
-
-                }
-            }
-        }
-    }
+//    override fun getTaskWithUpdatedTimeStamp(
+//        timeStamp: String,
+//        onLoggedIn: () -> Unit
+//    ) {
+//
+//        launch {
+//            loading(true)
+//
+//            taskRepository.getTaskWithUpdatedTimeStamp(timeStamp) { isSuccess, taskEvents, message ->
+//                if (isSuccess) {
+//
+//                } else {
+//
+//                }
+//            }
+//        }
+//    }
 
     private fun getSavedContactsToStoreInSharePreference(callBack: () -> Unit) {
         val userId = sessionManager.getUser().value?.id

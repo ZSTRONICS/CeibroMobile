@@ -55,7 +55,8 @@ class SplashViewModel @Inject constructor(
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
-            taskDao.deleteAllData()
+            taskDao.deleteAllEventsData()
+            taskDao.deleteAllTasksData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
@@ -66,6 +67,13 @@ class SplashViewModel @Inject constructor(
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)
             .cancelAllWorkByTag(ContactSyncWorker.CONTACT_SYNC_WORKER_TAG)
+    }
+
+    fun deleteTaskAndEvents() {
+        launch {
+            taskDao.deleteAllEventsData()
+            taskDao.deleteAllTasksData()
+        }
     }
 
 }

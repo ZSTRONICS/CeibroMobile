@@ -14,8 +14,8 @@ import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -24,8 +24,6 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.TaskRepository
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
@@ -35,6 +33,7 @@ import com.zstronics.ceibro.ui.contacts.compareExistingAndNewContacts
 import com.zstronics.ceibro.ui.contacts.findDeletedContacts
 import com.zstronics.ceibro.ui.contacts.toLightContacts
 import com.zstronics.ceibro.ui.socket.SocketHandler
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
@@ -88,127 +87,78 @@ class CeibroDataLoadingVM @Inject constructor(
     }
 
     var apiSucceedCount = 0f
-    fun loadAppData(context: Context, callBack: () -> Unit) {
+    suspend fun loadAppData(context: Context, callBack: () -> Unit) {
         Log.d("Data loading stared at ", DateUtils.getCurrentTimeStamp())
         GlobalScope.launch {
             val lastUpdatedAt = sessionManager.getUpdatedAtTimeStamp()
-            when (val response = remoteTask.syncAllTask(lastUpdatedAt)) {
+            when (val response = remoteTask.getAllTaskWithEventsSeparately(lastUpdatedAt)) {
                 is ApiResponse.Success -> {
-                    sessionManager.saveUpdatedAtTimeStamp(response.data.allTasks.latestUpdatedAt)
+//                    taskDao.deleteAllEventsData()
+//                    taskDao.deleteAllTasksData()
+                    sessionManager.saveUpdatedAtTimeStamp(response.data.newData.latestUpdatedAt)
 
-                    // START => Update TO ME into database
-                    val toMeLocal =
-                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.ToMe.tagValue)
-//                    val toMeLocal = taskDao.getTasks(TaskRootStateTags.ToMe.tagValue)
-                    val toMeRemote = response.data.allTasks.toMe
-                    // insert data on first time
-                    if (TaskV2DaoHelper(taskDao).isTaskListEmpty(
-                            TaskRootStateTags.ToMe.tagValue,
-                            toMeLocal
-                        )
-                    ) {
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.ToMe.tagValue,
-                                allTasks = toMeRemote
-                            )
-                        )
-                    } else {
-//                        toMeLocal.allTasks.new.addAll(toMeRemote.new)
-//                        toMeLocal.allTasks.unread.addAll(toMeRemote.unread)
-//                        toMeLocal.allTasks.ongoing.addAll(toMeRemote.ongoing)
-//                        toMeLocal.allTasks.done.addAll(toMeRemote.done)
-                        toMeLocal.allTasks.new = toMeRemote.new
-                        toMeLocal.allTasks.ongoing = toMeRemote.ongoing
-                        toMeLocal.allTasks.done = toMeRemote.done
+                    val allTasks = response.data.newData.allTasks
+                    val allEvents = response.data.newData.allEvents
 
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.ToMe.tagValue,
-                                allTasks = toMeRemote
-                            )
-                        )
-                    }
-                    // END => Update TO ME into database
+                    taskDao.insertMultipleTasks(allTasks)
+                    taskDao.insertMultipleEvents(allEvents)
 
+                    val toMeNewTask = allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeOngoingTask = allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeDoneTask = allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
 
-                    // START => Update FROM ME into database
-                    val fromMeLocal =
-                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
-                    val fromMeRemote = response.data.allTasks.fromMe
-                    // insert data on first time
-                    if (TaskV2DaoHelper(taskDao).isTaskListEmpty(
-                            TaskRootStateTags.FromMe.tagValue,
-                            fromMeLocal
-                        )
-                    ) {
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.FromMe.tagValue,
-                                allTasks = fromMeRemote
-                            )
-                        )
-                    } else {
-//                        fromMeLocal.allTasks.new.addAll(fromMeRemote.new)
-//                        fromMeLocal.allTasks.unread.addAll(fromMeRemote.unread)
-//                        fromMeLocal.allTasks.ongoing.addAll(fromMeRemote.ongoing)
-//                        fromMeLocal.allTasks.done.addAll(fromMeRemote.done)
-                        fromMeLocal.allTasks.new = mutableListOf()
-                        fromMeLocal.allTasks.ongoing = fromMeRemote.ongoing
-                        fromMeLocal.allTasks.done = fromMeRemote.done
+                    val fromMeUnreadTask = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeOngoingTask = allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeDoneTask = allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
 
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.FromMe.tagValue,
-                                allTasks = fromMeLocal.allTasks
-                            )
-                        )
-                    }
-                    // END => Update FROM ME into database
+                    val hiddenCanceledTask = allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenOngoingTask = allTasks.filter { it.hiddenState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenDoneTask = allTasks.filter { it.hiddenState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
 
-                    // START => Update HIDDEN into database
-                    val hiddenLocal =
-                        TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.Hidden.tagValue)
-                    val hiddenRemote = response.data.allTasks.hidden
-                    // insert data on first time
-                    if (TaskV2DaoHelper(taskDao).isTaskListEmpty(
-                            TaskRootStateTags.Hidden.tagValue,
-                            hiddenLocal
-                        )
-                    ) {
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.Hidden.tagValue,
-                                allTasks = hiddenRemote
-                            )
-                        )
-                    } else {
-//                        hiddenLocal.allTasks.ongoing.addAll(hiddenRemote.ongoing)
-//                        hiddenLocal.allTasks.done.addAll(hiddenRemote.done)
-//                        hiddenLocal.allTasks.canceled.addAll(hiddenRemote.canceled)
-                        hiddenLocal.allTasks.ongoing = hiddenRemote.ongoing
-                        hiddenLocal.allTasks.done = hiddenRemote.done
-                        hiddenLocal.allTasks.canceled = hiddenRemote.canceled
+                    CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                    CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                    CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = TaskRootStateTags.Hidden.tagValue,
-                                allTasks = hiddenLocal.allTasks
-                            )
-                        )
-                    }
-                    // END => Update FROM ME into database
+                    CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                    CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                    CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+
+                    CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
                     apiSucceedCount++
                     callBack.invoke()
                 }
 
                 is ApiResponse.Error -> {
+                    val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                    val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val fromMeUnreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                    val fromMeOngoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val fromMeDoneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val hiddenCanceledTasks = taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+                    val hiddenOngoingTasks = taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val hiddenDoneTasks = taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+
+                    CookiesManager.toMeNewTasks.postValue(newTasks)
+                    CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                    CookiesManager.toMeDoneTasks.postValue(doneTasks)
+
+                    CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
+                    CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
+                    CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
+
+                    CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTasks)
+                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
+                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
+
                     apiSucceedCount++
                     callBack.invoke()
                 }
             }
-        }
+        }.join()
 
         launch {
             when (val response = remoteTask.getAllTopics()) {
@@ -374,7 +324,8 @@ class CeibroDataLoadingVM @Inject constructor(
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
-            taskDao.deleteAllData()
+            taskDao.deleteAllEventsData()
+            taskDao.deleteAllTasksData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()

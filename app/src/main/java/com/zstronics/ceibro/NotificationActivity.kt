@@ -1,13 +1,16 @@
 package com.zstronics.ceibro
 
+import android.app.NotificationManager
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import com.zstronics.ceibro.base.TYPE_EXTRA
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
@@ -51,7 +54,17 @@ class NotificationActivity : AppCompatActivity() {
         bundle.putInt(NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId)
 
         val notificationManager = NotificationManagerCompat.from(this)
+        val notificationManager1 = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val activeNotifications = notificationManager1.activeNotifications
+
+        val notificationCount = activeNotifications.size
         notificationManager.cancel(notificationId)
+
+        println("NotificationSize: $notificationCount")
+        //condition is equal to 2 because after calculating count, we are canceling 1 notification, so remaining 1 is of summary notification left, so removed all
+        if (notificationCount <= 2) {
+            notificationManager.cancelAll()
+        }
 
         if (sessionManager.isLoggedIn()) {
             if (CookiesManager.jwtToken.isNullOrEmpty()) {
@@ -75,6 +88,9 @@ class NotificationActivity : AppCompatActivity() {
                         NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
                     )
                 }
+                Handler().postDelayed({
+                    finish()
+                }, 50)
             }
         } else {
             launchActivityWithFinishAffinity<NavHostPresenterActivity>(

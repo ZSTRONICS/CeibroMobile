@@ -93,4 +93,6 @@ dependencies {
     implementation("androidx.webkit:webkit:1.7.0")
     implementation("com.jsibbold:zoomage:1.3.1")
     implementation("com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1")
+    implementation("com.gu.android:toolargetool:0.3.0")
+    implementation("com.google.android.gms:play-services-base:17.6.0")
 }

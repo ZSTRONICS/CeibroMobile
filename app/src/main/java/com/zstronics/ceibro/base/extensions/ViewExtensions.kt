@@ -19,13 +19,17 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ScrollView
+import android.widget.Scroller
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -54,6 +58,17 @@ fun ScrollView.scrollToBottomWithoutFocusChange() { // Kotlin extension to scrol
     post {
         smoothScrollBy(0, delta)
     }
+}
+
+fun NestedScrollView.scrollToBottomWithoutFocusChange() { // Kotlin extension to scrollView
+    requestLayout()
+    val lastChild = getChildAt(childCount - 1)
+    val bottom = lastChild.bottom + paddingBottom
+    val delta = bottom - (scrollY + height)
+
+    val scroller = Scroller(context, DecelerateInterpolator())
+    scroller.startScroll(scrollX, scrollY, 0, delta, 700)
+    ViewCompat.postOnAnimation(this) { smoothScrollBy(0, delta) }
 }
 
 fun ChipGroup.generateChipViews(@LayoutRes itemView: Int, list: List<String>) {

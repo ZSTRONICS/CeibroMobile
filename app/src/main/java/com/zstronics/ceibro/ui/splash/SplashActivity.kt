@@ -23,6 +23,7 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.ActivitySplashBinding
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +48,9 @@ class SplashActivity :
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var networkConnectivityObserver: NetworkConnectivityObserver
 
     override fun postExecutePendingBindings(savedInstanceState: Bundle?) {
         if (sessionManager.isFirstTimeLaunch()) {
@@ -96,6 +100,9 @@ class SplashActivity :
 
                         } else {
                             sessionManager.saveStringValue(KEY_User_Last_Login_Time, currentUTCTime)
+//                            if (networkConnectivityObserver.isNetworkAvailable()) {
+//                                viewModel.deleteTaskAndEvents()   //This is only for just now. It will be removed when get task will be on actual time stamp
+//                            }
                             navigateToCeibroDataLoading()
                         }
                     } else navigateToLoginScreen()
@@ -150,56 +157,6 @@ class SplashActivity :
                     NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
                 )
             }
-
-//
-//        val intent = intent
-//        val notificationBundle = intent.getBundleExtra(BUNDLE_EXTRA)
-//        val taskData: NotificationTaskData? = intent.getParcelableExtra("notificationTaskData")
-//        val extrasType = intent.getIntExtra(TYPE_EXTRA, 0)
-//        val taskData2: NotificationTaskData? = notificationBundle?.getParcelable("notificationTaskData")
-//
-//        if (extrasType != 0) {
-//
-//            val navigationGraphId = R.navigation.home_nav_graph
-//            var startDestinationId: Int? = null
-//
-//            when (extrasType) {
-//
-//                1 -> {
-//                    startDestinationId = R.id.commentFragment
-//                }
-//
-//                2 -> {
-//                    startDestinationId = R.id.forwardTaskFragment
-//                }
-//
-//                3 -> {
-//                    startDestinationId = R.id.taskDetailV2Fragment
-//                }
-//            }
-//
-//            val bundle = Bundle()
-//            bundle.putParcelable("notificationTaskData", taskData)
-//
-//            launchActivity<NavHostPresenterActivity>(
-//                options = bundle, clearPrevious = true
-//            ) {
-//                putExtra(NAVIGATION_Graph_ID, navigationGraphId)
-//                putExtra(
-//                    NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
-//                )
-//            }
-//        } else {
-//            launchActivity<NavHostPresenterActivity>(
-//                options = Bundle(), clearPrevious = true
-//            ) {
-//                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-//                putExtra(
-//                    NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
-//                )
-//            }
-//        }
-
     }
 
 

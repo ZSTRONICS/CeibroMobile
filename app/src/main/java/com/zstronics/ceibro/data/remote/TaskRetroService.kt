@@ -2,15 +2,15 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
-import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -44,8 +44,8 @@ interface TaskRetroService {
     @POST("/v2/task/syncEvents/{taskId}")
     suspend fun syncEvents(
         @Path("taskId") taskId: String,
-        @Body requestBody: SyncTasksBody
-    ): Response<SyncTasksResponse>
+        @Body requestBody: SyncTaskEventsBody
+    ): Response<SyncTaskEventsResponse>
 
     @PATCH("v1/task/{taskId}")
     suspend fun updateTaskNoStateNoAdvanceOptions(
@@ -182,13 +182,13 @@ interface TaskRetroService {
     suspend fun syncAllTask(@Path("updatedAtTimeStamp") updatedAtTimeStamp: String): Response<AllTasksV2Response>
 
     @GET("v2/task/syncTask/{updatedAtTimeStamp}")
-    suspend fun getTaskWithUpdatedTimeStamp(@Path("updatedAtTimeStamp") updatedAtTimeStamp: String): Response<AllTasksResponse>
+    suspend fun getAllTaskWithEventsSeparately(@Path("updatedAtTimeStamp") updatedAtTimeStamp: String): Response<AllTasksV2NewResponse>
 
     @POST("v2/task/forward/{taskId}")
     suspend fun forwardTask(
         @Path("taskId") taskId: String,
         @Body request: ForwardTaskV2Request
-    ): Response<NewTaskV2Response>
+    ): Response<EventV2Response>
 
     @POST("v2/task/seen/{taskId}")
     suspend fun taskSeen(

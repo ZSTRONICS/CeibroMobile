@@ -10,12 +10,12 @@ import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
 import com.zstronics.ceibro.data.database.models.subtask.*
 import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntitySingle
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 
@@ -35,14 +35,14 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         SubTaskProject::class,
         FilesAttachments::class,
         RejectionComment::class,
-        TasksV2DatabaseEntity::class,
-        TasksV2DatabaseEntitySingle::class,
+        CeibroTaskV2::class,
+        Events::class,
         TopicsV2DatabaseEntity::class,
         ProjectsV2DatabaseEntity::class,
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 63,
+    version = 78,
     exportSchema = false
 )
 @TypeConverters(
@@ -65,8 +65,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     FilesAttachmentsTypeConverter::class,
     /// v2
     CeibroTaskV2TypeConverter::class,
-    CeibroSingleTaskEntityV2TypeConverter::class,
+    CeibroTaskAndEventsV2ResponseTypeConverter::class,
+    CeibroTaskAndEventsV2TypeConverter::class,
     AssignedToStateListTypeConverter::class,
+    AssignToStateDataTypeConverter::class,
     TaskMemberDetailTypeConverter::class,
     ProjectOfTaskTypeConverter::class,
     TopicTypeConverter::class,
@@ -75,6 +77,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     EventsListTypeConverter::class,
     CommentDataTypeConverter::class,
     EventsDataListTypeConverter::class,
+    ForwardDataTypeConverter::class,
     EventsDataTypeConverter::class,
     InvitedNumbersListTypeConverter::class,
     TopicsResponseTypeConverter::class,

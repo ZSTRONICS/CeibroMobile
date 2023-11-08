@@ -12,19 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +26,7 @@ class TaskFromMeVM @Inject constructor(
     override val viewState: TaskFromMeState,
     private val remoteTask: TaskRemoteDataSource,
     private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskFromMe.State>(), ITaskFromMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.UNREAD.name.lowercase()
@@ -51,9 +45,9 @@ class TaskFromMeVM @Inject constructor(
     val doneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _doneTasks
     var originalDoneTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
-    private val _allTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
-    val allTasks: MutableLiveData<TaskV2Response.AllTasks> = _allTasks
-    var allOriginalTasks: MutableLiveData<TaskV2Response.AllTasks> = MutableLiveData()
+    private val _allTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val allTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _allTasks
+    var allOriginalTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
 
     init {
         selectedState = TaskStatus.UNREAD.name.lowercase()
@@ -61,23 +55,25 @@ class TaskFromMeVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val taskLocalData = TaskV2DaoHelper(taskDao).getTasks(TaskRootStateTags.FromMe.tagValue)
-            if (!TaskV2DaoHelper(taskDao).isTaskListEmpty(TaskRootStateTags.FromMe.tagValue, taskLocalData)) {
-                val allTasks = taskLocalData.allTasks
-                val unreadTask = allTasks.unread.sortedByDescending { it.updatedAt }.toMutableList()
-                val ongoingTask =
-                    allTasks.ongoing.sortedByDescending { it.updatedAt }.toMutableList()
-                val doneTask = allTasks.done.sortedByDescending { it.updatedAt }.toMutableList()
+            val allFromMeUnreadTasks = CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+            val allFromMeOngoingTasks = CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+            val allFromMeDoneTasks = CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+            val allFromMeTasks = mutableListOf<CeibroTaskV2>()
+            allFromMeTasks.addAll(allFromMeUnreadTasks)
+            allFromMeTasks.addAll(allFromMeOngoingTasks)
+            allFromMeTasks.addAll(allFromMeDoneTasks)
+
+            if (allFromMeTasks.isNotEmpty()) {
 
                 if (firstStartOfFragment) {
-                    selectedState = if (unreadTask.isNotEmpty()) {
+                    selectedState = if (allFromMeUnreadTasks.isNotEmpty()) {
                         TaskStatus.UNREAD.name.lowercase()
                     } else {
                         TaskStatus.ONGOING.name.lowercase()
                     }
                     firstStartOfFragment = false
                 }
-                if (unreadTask.isEmpty()) {
+                if (allFromMeUnreadTasks.isEmpty()) {
                     disabledUnreadState.value = true
                     if (selectedState.equals(
                             TaskStatus.UNREAD.name.lowercase(),
@@ -90,87 +86,63 @@ class TaskFromMeVM @Inject constructor(
                     disabledUnreadState.value = false
                 }
 
-                _allTasks.postValue(allTasks)
-                _unreadTasks.postValue(unreadTask)
-                _ongoingTasks.postValue(ongoingTask)
-                _doneTasks.postValue(doneTask)
+                allOriginalTasks.postValue(allFromMeTasks)
+                originalUnreadTasks = allFromMeUnreadTasks
+                originalOngoingTasks = allFromMeOngoingTasks
+                originalDoneTasks = allFromMeDoneTasks
 
-                originalUnreadTasks = unreadTask
-                originalOngoingTasks = ongoingTask
-                originalDoneTasks = doneTask
-                allOriginalTasks.postValue(allTasks)
+                _allTasks.postValue(allFromMeTasks)
+                _unreadTasks.postValue(allFromMeUnreadTasks)
+                _ongoingTasks.postValue(allFromMeOngoingTasks)
+                _doneTasks.postValue(allFromMeDoneTasks)
+
                 callBack.invoke()
             } else {
-                if (skeletonVisible) {
-                    taskRV.loadSkeleton(R.layout.layout_task_box_v2_for_skeleton) {
-                        itemCount(5)
-                        color(R.color.appGrey3)
-                    }
-                }
-                when (val response = remoteTask.getAllTasks("from-me")) {
-                    is ApiResponse.Success -> {
 
-                        TaskV2DaoHelper(taskDao).insertTaskData(
-                            TasksV2DatabaseEntity(
-                                rootState = "from-me",
-                                allTasks = response.data.allTasks
-                            )
+                val unreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                val allTasksList = mutableListOf<CeibroTaskV2>()
+                allTasksList.addAll(unreadTasks)
+                allTasksList.addAll(ongoingTasks)
+                allTasksList.addAll(doneTasks)
+
+                CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.fromMeDoneTasks.postValue(doneTasks)
+
+                if (firstStartOfFragment) {
+                    selectedState = if (unreadTasks.isNotEmpty()) {
+                        TaskStatus.UNREAD.name.lowercase()
+                    } else {
+                        TaskStatus.ONGOING.name.lowercase()
+                    }
+                    firstStartOfFragment = false
+                }
+                if (unreadTasks.isEmpty()) {
+                    disabledUnreadState.value = true
+                    if (selectedState.equals(
+                            TaskStatus.UNREAD.name.lowercase(),
+                            true
                         )
-                        val unreadTask =
-                            response.data.allTasks.unread.sortedByDescending { it.updatedAt }
-                                .toMutableList()
-                        val ongoingTask =
-                            response.data.allTasks.ongoing.sortedByDescending { it.updatedAt }
-                                .toMutableList()
-                        val doneTask =
-                            response.data.allTasks.done.sortedByDescending { it.updatedAt }
-                                .toMutableList()
-                        val allTasks = response.data.allTasks
-
-                        if (firstStartOfFragment) {
-                            selectedState = if (unreadTask.isNotEmpty()) {
-                                TaskStatus.UNREAD.name.lowercase()
-                            } else {
-                                TaskStatus.ONGOING.name.lowercase()
-                            }
-                            firstStartOfFragment = false
-                        }
-                        if (unreadTask.isEmpty()) {
-                            disabledUnreadState.value = true
-                            if (selectedState.equals(
-                                    TaskStatus.UNREAD.name.lowercase(),
-                                    true
-                                )
-                            ) {  //if unread state was selected then we have to change it because it is disabled now
-                                selectedState = TaskStatus.ONGOING.name.lowercase()
-                            }
-                        } else {
-                            disabledUnreadState.value = false
-                        }
-
-                        _allTasks.postValue(allTasks)
-                        _unreadTasks.postValue(unreadTask)
-                        _ongoingTasks.postValue(ongoingTask)
-                        _doneTasks.postValue(doneTask)
-
-                        originalUnreadTasks = unreadTask
-                        originalOngoingTasks = ongoingTask
-                        originalDoneTasks = doneTask
-                        allOriginalTasks.postValue(allTasks)
-
-                        if (skeletonVisible) {
-                            taskRV.hideSkeleton()
-                        }
-                        callBack.invoke()
+                    ) {  //if unread state was selected then we have to change it because it is disabled now
+                        selectedState = TaskStatus.ONGOING.name.lowercase()
                     }
-                    is ApiResponse.Error -> {
-                        alert(response.error.message)
-                        if (skeletonVisible) {
-                            taskRV.hideSkeleton()
-                        }
-                        callBack.invoke()
-                    }
+                } else {
+                    disabledUnreadState.value = false
                 }
+
+                allOriginalTasks.postValue(allTasksList)
+                originalUnreadTasks = unreadTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
+
+                _allTasks.postValue(allTasksList)
+                _unreadTasks.postValue(unreadTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
+
+                callBack.invoke()
             }
         }
     }
@@ -194,17 +166,6 @@ class TaskFromMeVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _unreadTasks.postValue(filteredTasks)
@@ -219,17 +180,6 @@ class TaskFromMeVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _ongoingTasks.postValue(filteredTasks)
@@ -244,17 +194,6 @@ class TaskFromMeVM @Inject constructor(
                                     query.trim(),
                                     true
                                 ) || assignee.surName.contains(query.trim(), true)
-                            } ||
-                            it.events.filter { events ->
-                                events.eventType.equals(
-                                    TaskDetailEvents.Comment.eventValue,
-                                    true
-                                )
-                            }.any { filteredComments ->
-                                filteredComments.commentData?.message?.contains(
-                                    query,
-                                    true
-                                ) == true
                             }
                 }.toMutableList()
             _doneTasks.postValue(filteredTasks)
