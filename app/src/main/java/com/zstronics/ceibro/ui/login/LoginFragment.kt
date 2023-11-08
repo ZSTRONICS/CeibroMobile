@@ -59,7 +59,7 @@ class LoginFragment :
                             parsedNumber,
                             PhoneNumberUtil.PhoneNumberFormat.E164
                         )
-                        viewModel.doLogin(formattedNumber, password, rememberMe ?: false) {
+                        viewModel.doLogin(requireContext(), formattedNumber, password, rememberMe ?: false) {
                             navigateToAppLoadingScreen()
                         }
                     }

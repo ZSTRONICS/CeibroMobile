@@ -27,6 +27,7 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
 
         println("NotificationContent:title ${title}")
         println("NotificationContent:body ${body}")
+        println("NotificationContent:type ${type}")
         println("NotificationContent:task ${task}")
 
         val notificationHelper = NotificationHelper.getInstance(context)

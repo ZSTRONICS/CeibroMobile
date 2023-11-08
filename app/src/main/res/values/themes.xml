@@ -158,4 +158,11 @@
     <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
     </style>
+
+    <style name="notificationTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:textColor">@color/black</item>
+        <!-- Text color for the largeText TextView -->
+        <item name="largeTextTextColor">@color/appTextGrey</item>
+    </style>
+
 </resources>

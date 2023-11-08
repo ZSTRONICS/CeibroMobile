@@ -4,8 +4,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.ui.dashboard.DashboardFragment
-import com.zstronics.ceibro.ui.notificationhelper.NotificationHelper
 import org.json.JSONObject
 
 class BaseMessagingService : FirebaseMessagingService()  {

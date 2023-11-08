@@ -26,6 +26,7 @@ object SocketHandler {
     const val CEIBRO_HEARTBEAT_ACK = "heartbeatAck"
     const val CEIBRO_EVENT_ACK = "eventAck"
     const val CEIBRO_LOGOUT = "logout"
+    const val CLEAR_DATA = "clearData"
     var hbCounter = 0
     var handler = android.os.Handler()
     var delayMillis: Long = 10000 // 10 seconds
@@ -75,7 +76,7 @@ object SocketHandler {
             options.auth =
                 mapOf("token" to CookiesManager.jwtToken) // Use auth for token instead of query
             options.query =
-                "secureUUID=${CookiesManager.secureUUID}&deviceType=${CookiesManager.deviceType}"
+                "secureUUID=${CookiesManager.secureUUID}&deviceType=${CookiesManager.deviceType}&androidId=${CookiesManager.androidId}"
 //            println("QueryOnSocket: ${options.query}")
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)
@@ -201,6 +202,7 @@ object SocketHandler {
         mSocket?.io()?.off(CEIBRO_HEARTBEAT_ACK)
         mSocket?.io()?.off(CEIBRO_EVENT_ACK)
         mSocket?.io()?.off(CEIBRO_LOGOUT)
+        mSocket?.io()?.off(CLEAR_DATA)
         handler.removeCallbacks(runnable)
 //        EventBus.getDefault().unregister(this)
     }

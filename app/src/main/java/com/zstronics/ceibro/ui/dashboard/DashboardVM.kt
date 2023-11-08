@@ -540,8 +540,8 @@ class DashboardVM @Inject constructor(
             socketData.uuid?.let { SocketHandler.sendEventAck(it) }
             if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
-                println("Socket: ${socketData.eventType}")
             }
+            println("Heartbeat SocketEvent: ${socketData.eventType}")
 
             pushToQueue(socketData, arguments);
         }

@@ -43,4 +43,6 @@
     <declare-styleable name="PhotoEditorView">
         <attr name="photo_src" format="integer" />
     </declare-styleable>
+
+    <attr name="largeTextTextColor" format="reference|color" />
 </resources>

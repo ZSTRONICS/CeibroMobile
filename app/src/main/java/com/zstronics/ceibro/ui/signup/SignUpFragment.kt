@@ -27,6 +27,7 @@ class SignUpFragment :
         when (id) {
             R.id.signupContinueBtn -> {
                 viewModel.doSignUp(
+                    requireContext(),
                     viewState.firstName.value.toString().trim(),
                     viewState.surname.value.toString().trim(),
                     viewState.email.value.toString(),
