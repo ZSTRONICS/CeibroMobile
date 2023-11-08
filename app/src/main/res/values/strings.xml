@@ -405,6 +405,7 @@
     <string name="created_heading">Created</string>
     <string name="canceled">Canceled</string>
     <string name="topic_required">Topic <font color="#D9000D">*</font></string>
+    <string name="project_name_required">Project name <font color="#D9000D">*</font></string>
     <string name="assign_to_required_heading">Assign to <font color="#D9000D">*</font></string>
     <string name="forward_to_required_heading">Forward to <font color="#D9000D">*</font></string>
     <string name="attach_heading">Attach</string>
@@ -534,4 +535,6 @@
     <string name="no">No</string>
     <string name="logout">Logout</string>
     <string name="if_you_log_out_while_in_offline_mode_all_the_tasks_created_offline_will_be_deleted">If you log out while in offline mode, all the tasks created offline will be deleted.</string>
+    <string name="new_project">New Project</string>
+    <string name="mis_on_location_asukoht">Mis on Location/asukoht?</string>
 </resources>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.projectv2.locationv2.LocationStateV2" />
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2VM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbarHeader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textViewProjectList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_regular"
+                android:text="Project list"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_14sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_newProject"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:background="@drawable/round_blue_transparent"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewProjectList">
+
+                <TextView
+                    android:focusable="false"
+                    android:clickable="false"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_14sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:text="Add new prject"
+                    android:id="@+id/newProject"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/hiddenOngoingInfoLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+               android:paddingTop="@dimen/_14sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cl_newProject">
+
+                <TextView
+                    android:id="@+id/hiddenOngoingDescHeadingEstonia"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_semibold"
+                    android:maxLines="2"
+                    android:text="@string/mis_on_location_asukoht"
+                    android:textColor="@color/appBlue"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/hiddenOngoingDescDetailEstonia"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="12"
+                    android:text="Lisa tööülesandele teema. Korduvaid teemasid saad hõlpsalt tulevikus uuesti kasutada. Teemad ja erinevad ülesannete loendid hõlbustavad ülesannete jälgimist ja päeva korraldamist."
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescHeadingEstonia" />
+
+                <TextView
+                    android:id="@+id/hiddenOngoingDescHeadingEnglish"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:maxLines="2"
+                    android:text="What is the topic?"
+                    android:textColor="@color/appBlue"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescDetailEstonia" />
+
+                <TextView
+                    android:id="@+id/hiddenOngoingDescDetailEnglish"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="11"
+                    android:text="Add topics to your tasks to save and organise tasks around common themes and reuse them in future."
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescHeadingEnglish" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

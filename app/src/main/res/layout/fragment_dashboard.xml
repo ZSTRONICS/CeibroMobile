@@ -419,25 +419,64 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/locationBtn"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/locationBtnLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/transparent"
-                android:drawableTop="@drawable/icon_location"
-                android:drawableTint="@drawable/bottom_nav_color"
-                android:enabled="false"
-                android:fontFamily="@font/inter_medium"
-                android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:text="@string/location_heading"
-                android:textAllCaps="false"
-                android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="@dimen/_8sdp"
-                app:checked="@{viewState.locationSelected}" />
+                android:paddingEnd="@dimen/_3sdp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/locationBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:drawableTop="@drawable/icon_location"
+                    android:drawableTint="@drawable/bottom_nav_color"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxLines="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/hidden_heading"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/bottom_nav_text_color"
+                    android:textSize="@dimen/_8sdp"
+                    app:checked="@{viewState.hiddenSelected}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/locationUnreadBadge"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/unread_badge"
+                    android:elevation="7dp"
+                    android:outlineSpotShadowColor="@color/white"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/locationBtn"
+                    app:layout_constraintHorizontal_bias="0.63"
+                    app:layout_constraintStart_toStartOf="@+id/locationBtn"
+                    app:layout_constraintTop_toTopOf="@+id/locationBtn" />
+
+                <View
+                    android:id="@+id/locationLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/appBlue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/locationBtn"
+                    app:layout_constraintEnd_toEndOf="@+id/locationBtn"
+                    app:layout_constraintStart_toStartOf="@+id/locationBtn" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/projectsBtn"

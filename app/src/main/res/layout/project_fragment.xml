@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.projectv2.newprojectv2.NewProjectStateV2" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.projectv2.newprojectv2.NewProjectV2VM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbarHeader"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@color/white"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/new_project"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbarHeader">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/newTaskTopicField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_14sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_14sdp"
+                android:background="@drawable/input_field_bottom_line"
+                android:paddingStart="0dp"
+                android:paddingEnd="11dp"
+                android:textColorHint="@color/appTextGrey"
+                app:boxStrokeColor="@color/transparent"
+                app:boxStrokeWidth="0dp"
+                app:endIconMode="custom"
+                app:hintTextColor="@color/appGrey3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <AutoCompleteTextView
+                    android:id="@+id/newTaskTopicText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:fontFamily="@font/inter_regular"
+                    android:hint="@string/project_name_required"
+                    android:inputType="text|textCapSentences"
+                    android:maxLines="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="1dp"
+                    android:text="@={viewState.projectName}"
+                    android:textSize="15sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/topicEndLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/newTaskTopicField"
+                app:layout_constraintEnd_toEndOf="@+id/newTaskTopicField"
+                app:layout_constraintTop_toTopOf="@+id/newTaskTopicField"
+                app:layout_constraintVertical_bias="0.6">
+
+
+                <ImageView
+                    android:id="@+id/newTaskTopicClearBtn"
+                    android:layout_width="29dp"
+                    android:layout_height="29dp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="@dimen/_3sdp"
+                    android:src="@drawable/icon_close_round_grey"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                    app:layout_constraintVertical_bias="0.6" />
+            </LinearLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/newTaskAssignToField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/input_field_bottom_line"
+                android:hint="Description"
+                android:textColorHint="@color/appTextGrey"
+                app:boxStrokeColor="@color/transparent"
+                app:boxStrokeWidth="0dp"
+                app:hintTextColor="@color/appGrey3"
+                app:layout_constraintEnd_toEndOf="@+id/newTaskTopicField"
+                app:layout_constraintStart_toStartOf="@+id/newTaskTopicField"
+                app:layout_constraintTop_toBottomOf="@+id/newTaskTopicField">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/newTaskAssignToText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:fontFamily="@font/inter_regular"
+                    android:inputType="none"
+                    android:lineSpacingExtra="2dp"
+                    android:maxLines="4"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:paddingStart="1dp"
+                    android:paddingEnd="62dp"
+                    android:text="@={viewState.projectDescription}"
+                    android:textSize="15sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_newProject"
+                android:layout_width="@dimen/_160sdp"
+                android:layout_height="@dimen/_160sdp"
+                android:layout_marginTop="@dimen/_65sdp"
+                android:background="@drawable/round_grey"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/newTaskAssignToField">
+
+                <TextView
+                    android:id="@+id/newProject"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:text="Add Photo"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/_14sdp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
