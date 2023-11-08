@@ -99,7 +99,6 @@
                     android:maxLines="1"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="1dp"
-                    android:paddingEnd="1dp"
                     android:text="@={viewState.projectName}"
                     android:textSize="15sp" />
 
@@ -138,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:background="@drawable/input_field_bottom_line"
-                android:hint="Description"
+                android:hint="@string/description"
                 android:textColorHint="@color/appTextGrey"
                 app:boxStrokeColor="@color/transparent"
                 app:boxStrokeWidth="0dp"
@@ -168,18 +167,18 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_newProject"
-                android:layout_width="@dimen/_160sdp"
-                android:layout_height="@dimen/_160sdp"
-                android:layout_marginTop="@dimen/_65sdp"
+                android:id="@+id/cl_newPhoto"
+                android:layout_width="@dimen/_125sdp"
+                android:layout_height="@dimen/_125sdp"
                 android:background="@drawable/round_grey"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                app:layout_constraintBottom_toTopOf="@+id/AddDrawingBtn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/newTaskAssignToField">
 
                 <TextView
-                    android:id="@+id/newProject"
+                    android:id="@+id/newPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clickable="false"
@@ -188,14 +187,94 @@
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingHorizontal="@dimen/_20sdp"
-                    android:text="Add Photo"
+                    android:text="@string/add_photo"
                     android:textColor="@color/grey"
-                    android:textSize="@dimen/_14sdp" />
+                    android:textSize="@dimen/_12sdp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/AddDrawingBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_37sdp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:text="@string/add_new_drawing"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/AddNewMemberBtn"
+                app:layout_constraintEnd_toEndOf="@+id/cl_newPhoto"
+                app:layout_constraintStart_toStartOf="@+id/cl_newPhoto"
+                app:layout_constraintTop_toBottomOf="@+id/cl_newPhoto" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/AddNewMemberBtn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_37sdp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:text="@string/add_members"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/view"
+                app:layout_constraintEnd_toEndOf="@+id/cl_newPhoto"
+                app:layout_constraintStart_toStartOf="@+id/cl_newPhoto"
+                app:layout_constraintTop_toBottomOf="@+id/AddDrawingBtn" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toTopOf="@+id/cl_action" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/cancelBtn"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_37ssp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:background="@drawable/skip_button_red"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/cancel_btn_text"
+                    android:textAllCaps="false"
+                    android:textColor="@color/red_color_picker"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/saveBtn"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_37sdp"
+                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:background="@drawable/signin_button_back"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/cancelBtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/cancelBtn" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

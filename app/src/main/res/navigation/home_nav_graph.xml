@@ -436,4 +436,16 @@
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.imageviewer.ImageViewerFragment"
         android:label="ImageViewerFragment"
         tools:layout="@layout/fragment_image_viewer"/>
+    <fragment
+        android:id="@+id/newProjectV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.newprojectv2.NewProjectV2Fragment"
+        android:label="NewProjectV2Fragment" />
+    <fragment
+        android:id="@+id/locationV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment"
+        android:label="LocationV2Fragment" >
+        <action
+            android:id="@+id/action_locationV2Fragment_to_newProjectV2Fragment"
+            app:destination="@id/newProjectV2Fragment" />
+    </fragment>
 </navigation>

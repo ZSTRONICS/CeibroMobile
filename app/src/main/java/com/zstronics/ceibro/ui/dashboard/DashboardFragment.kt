@@ -31,7 +31,6 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
-import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -132,6 +131,7 @@ class DashboardFragment :
 
         when (btnID) {
             R.id.toMeBtn -> {
+                mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
                 viewState.toMeSelected.value = true
                 if (taskToMeFragmentInstance == null) {
                     taskToMeFragmentInstance = TaskToMeFragment()
@@ -143,6 +143,7 @@ class DashboardFragment :
             }
 
             R.id.fromMeBtn -> {
+                mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
                 viewState.fromMeSelected.value = true
                 if (newTask) {
                     taskFromMeFragmentInstance = TaskFromMeFragment()
@@ -158,6 +159,7 @@ class DashboardFragment :
             }
 
             R.id.hiddenBtn -> {
+                mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
                 viewState.hiddenSelected.value = true
                 if (taskHiddenFragmentInstance == null) {
                     taskHiddenFragmentInstance = TaskHiddenFragment()
@@ -169,9 +171,8 @@ class DashboardFragment :
             }
 
             R.id.locationBtn -> {
+                mViewDataBinding.createNewTaskBtn.visibility = View.GONE
                 viewState.locationSelected.value = true
-
-
 
                 if (locationFragmentInstance == null) {
                     locationFragmentInstance = LocationV2Fragment()

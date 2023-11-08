@@ -8,9 +8,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.LocationfragmentBinding
-import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.adapter.HiddenRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LocationV2Fragment :
@@ -24,15 +22,15 @@ class LocationV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
 
-            R.id.cl_newProject -> {
+            R.id.cl_AddNewProject -> {
+                navigate(R.id.newProjectV2Fragment)
+            }
 
+            R.id.tvNewProject -> {
+                navigate(R.id.newProjectV2Fragment)
             }
         }
     }
-
-
-    @Inject
-    lateinit var adapter: HiddenRVAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
