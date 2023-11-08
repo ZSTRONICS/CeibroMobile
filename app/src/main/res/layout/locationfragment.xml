@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
             name="viewState"
             type="com.zstronics.ceibro.ui.projectv2.locationv2.LocationStateV2" />
+
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2VM" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbarHeader"
@@ -23,6 +28,7 @@
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:elevation="4dp"
+            android:visibility="@{viewState.containProject ? View.VISIBLE : View.GONE,default=visible}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -33,8 +39,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
-                android:fontFamily="@font/inter_regular"
-                android:text="Project list"
+                android:fontFamily="@font/inter_medium"
+                android:text="@string/project_list"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/_14sdp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -42,41 +48,43 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_newProject"
+                android:id="@+id/cl_AddNewProject"
                 android:layout_width="@dimen/_100sdp"
                 android:layout_height="@dimen/_100sdp"
-                android:background="@drawable/round_blue_transparent"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/round_blue_transparent"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewProjectList">
 
                 <TextView
-                    android:focusable="false"
-                    android:clickable="false"
-                    android:paddingHorizontal="@dimen/_20sdp"
-                    android:textColor="@color/appBlue"
-                    android:textSize="@dimen/_14sdp"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="center"
-                    android:text="Add new prject"
-                    android:id="@+id/newProject"
+                    android:id="@+id/tvNewProject"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}" />
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:text="@string/add_new_project"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_14sdp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
+
+
                 android:id="@+id/hiddenOngoingInfoLayout"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:paddingTop="@dimen/_14sdp"
                 android:visibility="visible"
-               android:paddingTop="@dimen/_14sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_newProject">
+                app:layout_constraintTop_toBottomOf="@id/cl_AddNewProject">
 
                 <TextView
                     android:id="@+id/hiddenOngoingDescHeadingEstonia"
@@ -96,11 +104,11 @@
                     android:id="@+id/hiddenOngoingDescDetailEstonia"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:ellipsize="end"
                     android:fontFamily="@font/inter_regular"
                     android:maxLines="12"
-                    android:text="Lisa tööülesandele teema. Korduvaid teemasid saad hõlpsalt tulevikus uuesti kasutada. Teemad ja erinevad ülesannete loendid hõlbustavad ülesannete jälgimist ja päeva korraldamist."
+                    android:text="@string/lisa_t_lesandele_teema_korduvaid_teemasid"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -111,11 +119,11 @@
                     android:id="@+id/hiddenOngoingDescHeadingEnglish"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:layout_marginTop="@dimen/_7sdp"
+                    android:ellipsize="end"
                     android:fontFamily="@font/inter_semibold"
                     android:maxLines="2"
-                    android:text="What is the topic?"
+                    android:text="@string/what_is_the_topic"
                     android:textColor="@color/appBlue"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -126,11 +134,11 @@
                     android:id="@+id/hiddenOngoingDescDetailEnglish"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:ellipsize="end"
                     android:fontFamily="@font/inter_regular"
                     android:maxLines="11"
-                    android:text="Add topics to your tasks to save and organise tasks around common themes and reuse them in future."
+                    android:text="@string/add_topics_to_your_tasks_to_save_and_organise_tasks"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -138,10 +146,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/hiddenOngoingDescHeadingEnglish" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

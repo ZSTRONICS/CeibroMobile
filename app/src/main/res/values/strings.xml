@@ -537,4 +537,15 @@
     <string name="if_you_log_out_while_in_offline_mode_all_the_tasks_created_offline_will_be_deleted">If you log out while in offline mode, all the tasks created offline will be deleted.</string>
     <string name="new_project">New Project</string>
     <string name="mis_on_location_asukoht">Mis on Location/asukoht?</string>
+    <string name="from_local_device">From local device</string>
+    <string name="from_ceibro_files">From Ceibro Files</string>
+    <string name="project_list">Project list</string>
+    <string name="lisa_t_lesandele_teema_korduvaid_teemasid">Lisa tööülesandele teema. Korduvaid teemasid saad hõlpsalt tulevikus uuesti kasutada. Teemad ja erinevad ülesannete loendid hõlbustavad ülesannete jälgimist ja päeva korraldamist.</string>
+    <string name="what_is_the_topic">What is the topic?</string>
+    <string name="add_topics_to_your_tasks_to_save_and_organise_tasks">Add topics to your tasks to save and organise tasks around common themes and reuse them in future.</string>
+    <string name="description">Description</string>
+    <string name="add_new_drawing">Add new drawing</string>
+    <string name="add_members">Add members</string>
+    <string name="save">Save</string>
+
 </resources>
