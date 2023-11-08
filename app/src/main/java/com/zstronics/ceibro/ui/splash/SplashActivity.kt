@@ -9,16 +9,21 @@ import com.bumptech.glide.Glide
 import com.ceibro.permissionx.PermissionX
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.BUNDLE_EXTRA
+import com.zstronics.ceibro.base.EXTRA
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.KEY_User_Last_Login_Time
+import com.zstronics.ceibro.base.TYPE_EXTRA
 import com.zstronics.ceibro.base.activity.BaseBindingViewModelActivity
 import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.ActivitySplashBinding
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +48,9 @@ class SplashActivity :
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var networkConnectivityObserver: NetworkConnectivityObserver
 
     override fun postExecutePendingBindings(savedInstanceState: Bundle?) {
         if (sessionManager.isFirstTimeLaunch()) {
@@ -92,6 +100,9 @@ class SplashActivity :
 
                         } else {
                             sessionManager.saveStringValue(KEY_User_Last_Login_Time, currentUTCTime)
+//                            if (networkConnectivityObserver.isNetworkAvailable()) {
+//                                viewModel.deleteTaskAndEvents()   //This is only for just now. It will be removed when get task will be on actual time stamp
+//                            }
                             navigateToCeibroDataLoading()
                         }
                     } else navigateToLoginScreen()
@@ -139,13 +150,13 @@ class SplashActivity :
             }
         }
         launchActivity<NavHostPresenterActivity>(
-            options = Bundle(), clearPrevious = true
-        ) {
-            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-            putExtra(
-                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
-            )
-        }
+                options = Bundle(), clearPrevious = true
+            ) {
+                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                putExtra(
+                    NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                )
+            }
     }
 
 

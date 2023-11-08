@@ -6,8 +6,8 @@ import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.models.tasks.Events
 
 @Keep
-data class SyncTasksResponse(
-    @SerializedName("events")
-    var events: List<Events>? = null
+data class SyncTaskEventsResponse(
+    @SerializedName("missingEvents")
+    var missingEvents: List<Events> = emptyList()
 ) : BaseResponse()
 

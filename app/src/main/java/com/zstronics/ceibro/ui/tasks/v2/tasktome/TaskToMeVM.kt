@@ -12,19 +12,12 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +25,7 @@ class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
     private val remoteTask: TaskRemoteDataSource,
     private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.NEW.name.lowercase()
@@ -105,13 +98,17 @@ class TaskToMeVM @Inject constructor(
                 callBack.invoke()
             } else {
 
-                val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
-                val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
-                val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase())
+                val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                 val allTasks = mutableListOf<CeibroTaskV2>()
                 allTasks.addAll(newTasks)
                 allTasks.addAll(ongoingTasks)
                 allTasks.addAll(doneTasks)
+
+                CookiesManager.toMeNewTasks.postValue(newTasks)
+                CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.toMeDoneTasks.postValue(doneTasks)
 
                 if (firstStartOfFragment) {
                     selectedState = if (newTasks.isNotEmpty()) {
@@ -135,14 +132,14 @@ class TaskToMeVM @Inject constructor(
                 }
 
                 _allTasks.postValue(allTasks)
-                _newTasks.postValue(newTasks.toMutableList())
-                _ongoingTasks.postValue(ongoingTasks.toMutableList())
-                _doneTasks.postValue(doneTasks.toMutableList())
+                _newTasks.postValue(newTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
 
                 allOriginalTasks.postValue(allTasks)
-                originalNewTasks = newTasks.toMutableList()
-                originalOngoingTasks = ongoingTasks.toMutableList()
-                originalDoneTasks = doneTasks.toMutableList()
+                originalNewTasks = newTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
                 callBack.invoke()
             }
 

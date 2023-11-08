@@ -19,5 +19,13 @@ data class HideTaskResponse(
     @SerializedName("userSubState")
     val userSubState: String,
     @SerializedName("updatedAt")
-    val updatedAt: String
+    val updatedAt: String,
+    @SerializedName("taskUpdatedAt")
+    val taskUpdatedAt: String,
+    @SerializedName("fromMeState")
+    val fromMeState: String,
+    @SerializedName("toMeState")
+    val toMeState: String,
+    @SerializedName("hiddenState")
+    val hiddenState: String
 ) : BaseResponse(), Parcelable

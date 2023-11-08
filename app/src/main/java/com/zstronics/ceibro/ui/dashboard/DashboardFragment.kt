@@ -30,7 +30,9 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -51,6 +53,7 @@ import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -170,8 +173,6 @@ class DashboardFragment :
             R.id.projectsBtn -> {
                 viewState.projectsSelected.value = true
             }
-
-
         }
     }
 
@@ -269,7 +270,9 @@ class DashboardFragment :
         val coroutineScope = viewLifecycleOwner.lifecycleScope
         coroutineScope.launch(Dispatchers.IO) {
             val unSyncedTasks = viewModel.getDraftTasks()
-            updateDraftRecord(unSyncedTasks.size)
+            withContext(Dispatchers.Main) {
+                updateDraftRecord(unSyncedTasks.size)
+            }
         }
     }
 
@@ -422,6 +425,10 @@ class DashboardFragment :
                             println("Heartbeat, Internet observer")
                             if (SocketHandler.getSocket() == null || !appStartWithInternet || sharedViewModel.socketOnceConnected.value == false) {
                                 println("Heartbeat, Internet observer Socket == null")
+                                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                                    viewModel.sessionManager.setUser()
+                                    viewModel.sessionManager.setToken()
+                                }
                                 SocketHandler.setActivityContext(requireActivity())
                                 SocketHandler.setSocket()
                                 appStartWithInternet = true
@@ -657,14 +664,22 @@ class DashboardFragment :
         event?.let {
             if (it.isTaskCreated) {
                 run {
-                    /*val notificationHelper = NotificationHelper.getInstance(requireContext())
-                    notificationHelper.createNotification(
-                        notificationId = index++,
-                        notificationType = event.moduleName,
-                        title = event.notificationTitle,
-                        message = event.notificationDescription,
-                        context = requireContext()
-                    )*/
+//                    val notificationHelper = NotificationHelper.getInstance(requireContext())
+//                    val newData = NotificationTaskData(
+//                        avatar = "",
+//                        creator = "ABC",
+//                        description = "",
+//                        taskId = event.moduleId,
+//                        topic = event.notificationTitle
+//                    )
+//                    notificationHelper.createNotification(
+//                        newData,
+//                        notificationId = index++,
+//                        notificationType = "newTask",
+//                        title = event.notificationTitle,
+//                        message = "",
+//                        context = requireContext()
+//                    )
                 }
             }
         }

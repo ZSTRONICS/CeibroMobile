@@ -33,32 +33,3 @@ data class TaskV2Response(
         var canceled: MutableList<CeibroTaskV2> = mutableListOf()
     ) : BaseResponse(), Parcelable
 }
-
-@Entity(tableName = TableNamesV2.TasksInternal)
-@Keep
-data class TasksV2DatabaseEntity(
-    @PrimaryKey
-    @ColumnInfo("rootState")
-    val rootState: String,
-    @SerializedName("tasks")
-    val allTasks: TaskV2Response.AllTasks
-)
-
-@Entity(tableName = TableNamesV2.Tasks,primaryKeys = ["rootState", "subState"])
-@Keep
-data class TasksV2DatabaseEntitySingle(
-    @ColumnInfo("rootState")
-    val rootState: String,
-    @ColumnInfo("subState")
-    val subState: String,
-    @SerializedName("task")
-    var task: SingleTaskEntity
-)
-
-
-@Parcelize
-@Keep
-data class SingleTaskEntity(
-    @SerializedName("data")
-    var data: MutableList<CeibroTaskV2> = mutableListOf()
-) : BaseResponse(), Parcelable

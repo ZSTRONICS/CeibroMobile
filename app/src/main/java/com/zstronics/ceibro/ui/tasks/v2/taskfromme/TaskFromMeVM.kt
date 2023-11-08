@@ -13,19 +13,12 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
-import com.zstronics.ceibro.data.database.dao.TaskV2DaoHelper
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.TaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +26,7 @@ class TaskFromMeVM @Inject constructor(
     override val viewState: TaskFromMeState,
     private val remoteTask: TaskRemoteDataSource,
     private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskFromMe.State>(), ITaskFromMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.UNREAD.name.lowercase()
@@ -93,25 +86,30 @@ class TaskFromMeVM @Inject constructor(
                     disabledUnreadState.value = false
                 }
 
+                allOriginalTasks.postValue(allFromMeTasks)
+                originalUnreadTasks = allFromMeUnreadTasks
+                originalOngoingTasks = allFromMeOngoingTasks
+                originalDoneTasks = allFromMeDoneTasks
+
                 _allTasks.postValue(allFromMeTasks)
                 _unreadTasks.postValue(allFromMeUnreadTasks)
                 _ongoingTasks.postValue(allFromMeOngoingTasks)
                 _doneTasks.postValue(allFromMeDoneTasks)
 
-                allOriginalTasks.postValue(allFromMeTasks)
-                originalUnreadTasks = allFromMeUnreadTasks
-                originalOngoingTasks = allFromMeOngoingTasks
-                originalDoneTasks = allFromMeDoneTasks
                 callBack.invoke()
             } else {
 
-                val unreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
-                val ongoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
-                val doneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase())
+                val unreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                val ongoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                 val allTasksList = mutableListOf<CeibroTaskV2>()
                 allTasksList.addAll(unreadTasks)
                 allTasksList.addAll(ongoingTasks)
                 allTasksList.addAll(doneTasks)
+
+                CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                CookiesManager.fromMeDoneTasks.postValue(doneTasks)
 
                 if (firstStartOfFragment) {
                     selectedState = if (unreadTasks.isNotEmpty()) {
@@ -134,15 +132,16 @@ class TaskFromMeVM @Inject constructor(
                     disabledUnreadState.value = false
                 }
 
-                _allTasks.postValue(allTasksList)
-                _unreadTasks.postValue(unreadTasks.toMutableList())
-                _ongoingTasks.postValue(ongoingTasks.toMutableList())
-                _doneTasks.postValue(doneTasks.toMutableList())
-
                 allOriginalTasks.postValue(allTasksList)
-                originalUnreadTasks = unreadTasks.toMutableList()
-                originalOngoingTasks = ongoingTasks.toMutableList()
-                originalDoneTasks = doneTasks.toMutableList()
+                originalUnreadTasks = unreadTasks
+                originalOngoingTasks = ongoingTasks
+                originalDoneTasks = doneTasks
+
+                _allTasks.postValue(allTasksList)
+                _unreadTasks.postValue(unreadTasks)
+                _ongoingTasks.postValue(ongoingTasks)
+                _doneTasks.postValue(doneTasks)
+
                 callBack.invoke()
             }
         }

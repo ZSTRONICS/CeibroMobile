@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskToMeBinding
@@ -18,6 +19,10 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -182,11 +187,25 @@ class TaskToMeFragment :
         mViewDataBinding.taskRV.adapter = adapter
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
-                val bundle = Bundle()
-                bundle.putParcelable("taskDetail", data)
-                bundle.putString("rootState", TaskRootStateTags.ToMe.tagValue.lowercase())
-                bundle.putString("selectedState", viewModel.selectedState)
-                navigate(R.id.taskDetailV2Fragment, bundle)
+                if (data.eventsCount > 30) {
+                    viewModel.loading(true, "")
+                }
+                viewModel.launch {
+                    val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
+                    CookiesManager.taskDataForDetails = data
+                    CookiesManager.taskDetailEvents = allEvents
+                    CookiesManager.taskDetailRootState = TaskRootStateTags.ToMe.tagValue.lowercase()
+                    CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
+//                    bundle.putParcelable("taskDetail", data)
+//                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
+//                    bundle.putString("rootState", TaskRootStateTags.ToMe.tagValue.lowercase())
+//                    bundle.putString("selectedState", viewModel.selectedState)
+                    withContext(Dispatchers.Main) {
+                        // Update the UI here
+                        navigate(R.id.taskDetailV2Fragment)
+                        viewModel.loading(false, "")
+                    }
+                }
             }
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->

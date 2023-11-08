@@ -38,7 +38,7 @@ object SocketHandler {
 
     enum class TaskEvent {
         TASK_CREATED, TASK_UPDATE_PUBLIC, TASK_UPDATE_PRIVATE, SUB_TASK_CREATED, SUB_TASK_UPDATE_PUBLIC, SUB_TASK_UPDATE_PRIVATE,
-        TASK_SUBTASK_UPDATED, COMMENT_WITH_FILES, SUBTASK_NEW_COMMENT, TASK_FORWARDED, TASK_SEEN, NEW_TASK_COMMENT, TASK_DONE, CANCELED_TASK,
+        TASK_SUBTASK_UPDATED, COMMENT_WITH_FILES, SUBTASK_NEW_COMMENT, TASK_FORWARDED, TASK_FORWARDED_TO_ME, TASK_SEEN, NEW_TASK_COMMENT, TASK_DONE, CANCELED_TASK,
         TASK_HIDDEN, TASK_SHOWN, JOINED_TASK, UN_CANCEL_TASK
     }
 
@@ -110,7 +110,7 @@ object SocketHandler {
                 handler.removeCallbacks(runnable)
                 hbCounter = 0
                 handler.postDelayed(runnable, delayMillis)
-                println("Heartbeat, Socket on Connect")
+                println("Heartbeat, Socket Connected")
 
                 if (sharedViewModel != null) {
                     sharedViewModel.isConnectedToServer.postValue(true)
@@ -122,6 +122,7 @@ object SocketHandler {
             mSocket?.on(
                 CEIBRO_HEARTBEAT_ACK
             ) {
+//                println("Heartbeat, CEIBRO_HEARTBEAT_ACK... connected = ${mSocket?.connected()}")
 //                hbCounter -= 1
             }
 
@@ -174,7 +175,7 @@ object SocketHandler {
     @Synchronized
     fun establishConnection() {
         mSocket?.connect()
-//        println("Heartbeat Socket connecting...")
+//        println("Heartbeat, Socket connecting... ${mSocket?.connected()}")
     }
 
     @Synchronized

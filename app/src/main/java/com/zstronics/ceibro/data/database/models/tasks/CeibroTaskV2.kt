@@ -20,7 +20,7 @@ data class CeibroTaskV2(
     @SerializedName("access")
     val access: List<String>,
     @SerializedName("assignedToState")
-    var assignedToState: ArrayList<AssignedToState>,
+    var assignedToState: MutableList<AssignedToState>,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("creator")
@@ -40,7 +40,7 @@ data class CeibroTaskV2(
     @SerializedName("_id")
     val id: String,
     @SerializedName("isCanceled")
-    val isCanceled: Boolean,
+    var isCanceled: Boolean,
     @SerializedName("invitedNumbers")
     var invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
@@ -76,7 +76,9 @@ data class CeibroTaskV2(
     @SerializedName("toMeState")
     var toMeState: String,
     @SerializedName("hiddenState")
-    var hiddenState: String
+    var hiddenState: String,
+    @SerializedName("eventsCount")
+    var eventsCount: Int
 ) : Parcelable {
     override fun hashCode(): Int {
         return super.hashCode()
@@ -91,7 +93,7 @@ data class CeibroTaskV2(
             entity = CeibroTaskV2::class,
             parentColumns = ["id"],
             childColumns = ["taskId"],
-            onDelete = ForeignKey.NO_ACTION, // Define the behavior on delete
+            onDelete = ForeignKey.CASCADE, // Define the behavior on delete
             onUpdate = ForeignKey.NO_ACTION  // Define the behavior on update
         )
     ], indices = [Index(value = ["taskId"])]
@@ -117,6 +119,8 @@ data class Events(
     val taskId: String,
     @SerializedName("updatedAt")
     val updatedAt: String,
+    @SerializedName("eventNumber")
+    val eventNumber: Int,
     @SerializedName("eventSeenBy")
     var eventSeenBy: List<String>? = emptyList()
 ) : Parcelable
@@ -248,7 +252,17 @@ data class EventData(
     @SerializedName("profilePic")
     val profilePic: String?,
     @SerializedName("surName")
-    val surName: String
+    val surName: String?
+) : Parcelable
+
+
+@Parcelize
+@Keep
+data class ForwardData(
+    @SerializedName("invitedNumbers")
+    val invitedNumbers: List<InvitedNumbers>,
+    @SerializedName("assignedToState")
+    val assignedToState: List<AssignedToState>
 ) : Parcelable
 
 

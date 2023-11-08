@@ -3,13 +3,16 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
@@ -35,19 +38,38 @@ class CommentVM @Inject constructor(
     val imagesWithComments: MutableLiveData<ArrayList<PickedImages>> =
         MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
-    var taskData: CeibroTaskV2? = null
+    var notificationTaskData: MutableLiveData<NotificationTaskData?> = MutableLiveData()
+    var taskId: String = ""
+    var doneCommentsRequired: Boolean = false
+    var doneImageRequired: Boolean = false
     var actionToPerform: MutableLiveData<String> = MutableLiveData("")
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-
-        val bundleTaskData: CeibroTaskV2? = bundle?.getParcelable("taskData")
+        val doneComment = bundle?.getBoolean("doneCommentsRequired")
+        val doneImage = bundle?.getBoolean("doneImageRequired")
+        val tasksId = bundle?.getString("taskId")
         val action = bundle?.getString("action")
-        if (bundleTaskData != null) {
-            taskData = bundleTaskData
+        if (tasksId != null) {
+            taskId = tasksId
         }
+        doneComment?.let { doneCommentsRequired = it }
+        doneImage?.let { doneImageRequired = it }
         action?.let { actionToPerform.value = it }
+
+
+        val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+        if (taskData2 != null) {
+            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                sessionManager.setUser()
+                sessionManager.isUserLoggedIn()
+            }
+            println("TaskData:comment $taskData2")
+            actionToPerform.value = TaskDetailEvents.Comment.eventValue
+            notificationTaskData.postValue(taskData2)
+            taskId = taskData2.taskId
+        }
     }
 
     fun uploadComment(
@@ -98,14 +120,14 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithFilesV2(
                         event = TaskDetailEvents.Comment.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = true,
                         eventWithFileUploadV2Request = request
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -121,14 +143,14 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithoutFilesV2(
                         event = TaskDetailEvents.Comment.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = false,
                         eventCommentOnlyUploadV2Request = request
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -136,30 +158,25 @@ class CommentVM @Inject constructor(
                         }
                     }
                 }
+                updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
 
-//                taskData = updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
-
-//                val handler = Handler()
-//                handler.postDelayed(Runnable {
                 loading(false, "")
                 if (isSuccess) {
                     onBack(eventData)
                 }
-//                }, 40)
-
             }
         }
     }
 
     fun doneTask(
         context: Context,
-        onBack: () -> Unit
+        onBack: (eventData: EventV2Response.Data?) -> Unit
     ) {
         val list = getCombinedList()
         val imageList = getCombinedImagesList()
-        if (taskData?.doneCommentsRequired == true && viewState.comment.value.toString() == "") {
+        if (doneCommentsRequired && viewState.comment.value.toString() == "") {
             alert(context.resources.getString(R.string.comment_is_required_to_mark_task_as_done))
-        } else if (taskData?.doneImageRequired == true && imageList.isEmpty()) {
+        } else if (doneImageRequired && imageList.isEmpty()) {
             alert(context.resources.getString(R.string.image_is_required_to_mark_task_as_done))
         } else {
             launch {
@@ -202,14 +219,14 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithFilesV2(
                         event = TaskDetailEvents.DoneTask.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = true,
                         eventWithFileUploadV2Request = request
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -225,14 +242,14 @@ class CommentVM @Inject constructor(
                     loading(true)
                     when (val response = dashboardRepository.uploadEventWithoutFilesV2(
                         event = TaskDetailEvents.DoneTask.eventValue,
-                        taskId = taskData?.id ?: "",
+                        taskId = taskId ?: "",
                         hasFiles = false,
                         eventCommentOnlyUploadV2Request = request
                     )) {
                         is ApiResponse.Success -> {
                             val commentData = response.data.data
-                            eventData = commentData
                             isSuccess = true
+                            eventData = commentData
                         }
 
                         is ApiResponse.Error -> {
@@ -241,16 +258,12 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                taskData = updateTaskDoneInLocal(eventData, taskDao, sessionManager)
+                updateTaskDoneInLocal(eventData, taskDao, sessionManager)
 
-                val handler = Handler()
-                handler.postDelayed(Runnable {
-                    loading(false, "")
-                    if (isSuccess) {
-                        onBack()
-                    }
-                }, 50)
-
+                loading(false, "")
+                if (isSuccess) {
+                    onBack(eventData)
+                }
             }
         }
     }

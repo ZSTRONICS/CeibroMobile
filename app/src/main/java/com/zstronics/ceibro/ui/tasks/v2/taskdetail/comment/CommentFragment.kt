@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -9,13 +10,21 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.finish
+import com.zstronics.ceibro.base.extensions.launchActivity
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboardWithFocus
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentCommentBinding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -32,7 +41,6 @@ import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -45,10 +53,33 @@ class CommentFragment :
     override val layoutResId: Int = R.layout.fragment_comment
     override fun toolBarVisibility(): Boolean = false
 
+
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
         when (id) {
-            R.id.backBtn -> navigateBack()
+            R.id.backBtn -> {
+                val instances = countActivitiesInBackStack(requireContext())
+                if (viewModel.notificationTaskData.value != null) {
+                    if (instances <= 1) {
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = Bundle(),
+                            clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.homeFragment
+                            )
+                        }
+                    } else {
+                        //finish is called so that second instance of app will be closed and only one last instance will remain
+                        finish()
+                    }
+                } else {
+                    navigateBack()
+                }
+            }
+
             R.id.newCommentPhotoBtn -> {
                 val ceibroCamera = Intent(
                     requireContext(),
@@ -138,9 +169,29 @@ class CommentFragment :
                     viewModel.uploadComment(
                         requireContext()
                     ) { eventData ->
-                        val bundle = Bundle()
-                        bundle.putParcelable("eventData", eventData)
-                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+                        if (viewModel.notificationTaskData.value != null) {
+                            shortToastNow("Commented successfully!")
+                            val instances = countActivitiesInBackStack(requireContext())
+                            if (instances <= 1) {
+                                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                                    options = Bundle(),
+                                    clearPrevious = true
+                                ) {
+                                    putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                                    putExtra(
+                                        NAVIGATION_Graph_START_DESTINATION_ID,
+                                        R.id.homeFragment
+                                    )
+                                }
+                            } else {
+                                //finish is called so that second instance of app will be closed and only one last instance will remain
+                                finish()
+                            }
+                        } else {
+                            val bundle = Bundle()
+                            bundle.putParcelable("eventData", eventData)
+                            navigateBackWithResult(Activity.RESULT_OK, bundle)
+                        }
                     }
                 } else if (viewModel.actionToPerform.value.equals(
                         TaskDetailEvents.DoneTask.eventValue,
@@ -149,9 +200,9 @@ class CommentFragment :
                 ) {
                     viewModel.doneTask(
                         requireContext()
-                    ) {
+                    ) { eventData ->
                         val bundle = Bundle()
-                        bundle.putParcelable("taskData", viewModel.taskData)
+                        bundle.putParcelable("eventData", eventData)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
                 }
@@ -169,8 +220,30 @@ class CommentFragment :
     @Inject
     lateinit var filesAdapter: CeibroFilesRVAdapter
 
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val instances = countActivitiesInBackStack(requireContext())
+            if (instances <= 1) {
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = Bundle(),
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        R.id.homeFragment
+                    )
+                }
+            } else {
+                //finish is called so that second instance of app will be closed and only one last instance will remain
+                finish()
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         mViewDataBinding.filesLayout.visibility = View.GONE
         mViewDataBinding.onlyImagesRV.visibility = View.GONE
         mViewDataBinding.imagesWithCommentRV.visibility = View.GONE
@@ -178,6 +251,12 @@ class CommentFragment :
         mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
         mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
+
+        viewModel.notificationTaskData.observe(viewLifecycleOwner) { notificationData ->
+            if (notificationData != null) {
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+            }
+        }
 
         val handler = Handler()
         handler.postDelayed(Runnable {
@@ -211,15 +290,14 @@ class CommentFragment :
                 ) {
                     mViewDataBinding.commentHeading.text =
                         resources.getString(R.string.done_requirements_heading)
-                    if (viewModel.taskData != null) {
-                        if (viewModel.taskData?.doneCommentsRequired == true) {
-                            mViewDataBinding.commentRequiredHeading.visibility = View.VISIBLE
-                        }
-                        if (viewModel.taskData?.doneImageRequired == true) {
-                            mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
-                            mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
-                        }
+                    if (viewModel.doneCommentsRequired) {
+                        mViewDataBinding.commentRequiredHeading.visibility = View.VISIBLE
                     }
+                    if (viewModel.doneImageRequired) {
+                        mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
+                        mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
+                    }
+
                 }
             }
         }
@@ -233,7 +311,7 @@ class CommentFragment :
                 if (!it.isNullOrEmpty()) {
                     mViewDataBinding.commentRequiredHeading.visibility = View.GONE
                 } else {
-                    if (viewModel.taskData?.doneCommentsRequired == true) {
+                    if (viewModel.doneCommentsRequired) {
                         mViewDataBinding.commentRequiredHeading.visibility = View.VISIBLE
                     } else {
                         mViewDataBinding.commentRequiredHeading.visibility = View.GONE
@@ -252,7 +330,7 @@ class CommentFragment :
                     mViewDataBinding.imageRequiredHeading.visibility = View.GONE
                     mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
                 } else {
-                    if (viewModel.taskData?.doneImageRequired == true) {
+                    if (viewModel.doneImageRequired) {
                         mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
                         mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
                     } else {
@@ -295,7 +373,10 @@ class CommentFragment :
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, data: PickedImages ->
                 val bundle = Bundle()
-                bundle.putParcelableArray("images", viewModel.imagesWithComments.value?.toTypedArray())
+                bundle.putParcelableArray(
+                    "images",
+                    viewModel.imagesWithComments.value?.toTypedArray()
+                )
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", false)
                 navigate(R.id.imageViewerFragment, bundle)
@@ -560,5 +641,16 @@ class CommentFragment :
         )
     }
 
+    private fun countActivitiesInBackStack(context: Context): Int {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningTasks = activityManager.appTasks
+        var activityCount = 0
 
+        for (task in runningTasks) {
+            val taskInfo = task.taskInfo
+            activityCount += taskInfo.numActivities
+        }
+
+        return activityCount
+    }
 }

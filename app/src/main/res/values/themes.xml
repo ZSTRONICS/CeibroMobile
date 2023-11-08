@@ -42,6 +42,9 @@
     <style name="SelectableTextTheme" parent="Theme.Ceibro">
         <item name="android:textIsSelectable">true</item>
     </style>
+    <style name="NonSelectableTextTheme" parent="Theme.Ceibro">
+        <item name="android:textIsSelectable">false</item>
+    </style>
 
     <style name="CustomBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/CustomBottomSheet</item>

@@ -19,8 +19,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -39,10 +39,11 @@ interface ITaskRemoteDataSource {
         updateTask: UpdateTaskRequestNoAdvanceOptions
     ): ApiResponse<NewTaskResponse>
 
-     suspend fun syncEvents(
+    suspend fun syncEvents(
         taskId: String,
-       list: SyncTasksBody
-    ): ApiResponse<SyncTasksResponse>
+        request: SyncTaskEventsBody
+    ): ApiResponse<SyncTaskEventsResponse>
+
     suspend fun deleteTask(taskId: String): ApiResponse<GenericResponse>
 
     suspend fun getAllTopics(): ApiResponse<TopicsResponse>
@@ -83,7 +84,7 @@ interface ITaskRemoteDataSource {
     suspend fun forwardTask(
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request
-    ): ApiResponse<NewTaskV2Response>
+    ): ApiResponse<EventV2Response>
 
     suspend fun taskSeen(taskId: String): ApiResponse<TaskSeenResponse>
     suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response>

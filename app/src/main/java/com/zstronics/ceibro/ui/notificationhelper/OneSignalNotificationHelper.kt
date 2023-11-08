@@ -18,7 +18,6 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
         val title = notification.title
         val body = notification.body
 
-
         val additionalData = notification.additionalData
         val type = additionalData.getString("type")
         val taskObj = additionalData.getString("payload")
@@ -30,16 +29,16 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
         println("NotificationContent:body ${body}")
         println("NotificationContent:task ${task}")
 
-
         val notificationHelper = NotificationHelper.getInstance(context)
+        osNotificationReceivedEvent.complete(null)
         notificationHelper.createNotification(
             task,
-            notificationId = DashboardFragment.index++,
+            notificationId =
+            DashboardFragment.index++,
             notificationType = type,
             title = task.topic,
             message = task.description,
             context = context
         )
-        osNotificationReceivedEvent.complete(null)
     }
 }

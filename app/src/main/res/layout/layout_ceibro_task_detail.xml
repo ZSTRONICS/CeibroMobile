@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/detailRootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/_5sdp"
+        android:paddingStart="@dimen/_11sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_11sdp"
+        android:theme="@style/SelectableTextTheme">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/taskDetailStatusBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/taskDetailStatusName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/status_ongoing_filled_more_corners"
+                android:fontFamily="@font/inter_regular"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text="@string/ongoing_heading"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/taskDetailCreationDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/status_draft_filled"
+                android:backgroundTint="@color/white"
+                android:elevation="0dp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLength="18"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2dp"
+                android:text="Yesterday 13:30"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/taskDetailDueDateHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/status_draft_filled"
+                android:backgroundTint="@color/white"
+                android:elevation="0dp"
+                android:fontFamily="@font/inter_regular"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="1dp"
+                android:paddingBottom="2dp"
+                android:text="@string/due_date_heading"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/taskDetailDueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/status_draft_filled"
+                android:backgroundTint="@color/white"
+                android:elevation="0dp"
+                android:fontFamily="@font/inter_regular"
+                android:maxLength="25"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="1dp"
+                android:paddingBottom="2dp"
+                android:text="Due date: 22.05.2021"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/taskTitleBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_9sdp"
+            android:paddingTop="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_1sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskDetailStatusBar">
+
+            <TextView
+                android:id="@+id/taskTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_9sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:maxLines="3"
+                android:text="Magnis dis parturient montes, nascetur ridicuu dis mus."
+                android:textColor="@color/black"
+                android:textSize="15.5sp"
+                app:layout_constraintEnd_toStartOf="@+id/downUpIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/downUpIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_navigate_up"
+                app:layout_constraintBottom_toBottomOf="@+id/taskTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/taskTitle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/taskDescriptionImageLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:paddingTop="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_1sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskTitleBar">
+
+            <com.zstronics.ceibro.base.NoScrollTextView
+                android:id="@+id/taskDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="15"
+                android:text="Task description text over here."
+                android:textColor="@color/black"
+                android:textSize="14.5sp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/viewMoreLessLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/taskDescription"
+                android:theme="@style/NonSelectableTextTheme">
+
+                <TextView
+                    android:id="@+id/viewMoreBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_2sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:singleLine="true"
+                    android:text="View More"
+                    android:textColor="@color/appBlue"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    app:drawableEndCompat="@drawable/icon_navigate_down"
+                    app:drawableTint="@color/appBlue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/viewLessBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_2sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:singleLine="true"
+                    android:text="View Less"
+                    android:textColor="@color/appBlue"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    app:drawableEndCompat="@drawable/icon_navigate_up"
+                    app:drawableTint="@color/appBlue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/onlyImagesRV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingStart="-2dp"
+                android:paddingEnd="-2dp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_ceibro_only_image" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagesWithCommentRV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV"
+                tools:itemCount="1"
+                tools:listitem="@layout/layout_ceibro_image_with_comment" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/taskDescriptionImageBottomLine"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:alpha="0.7"
+            android:background="@color/appGrey3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskDescriptionImageLayout" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/filesLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_7sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskDescriptionImageBottomLine">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/filesHeaderLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_1sdp"
+                android:paddingBottom="@dimen/_1sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/fileHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    android:fontFamily="@font/inter_regular"
+                    android:text="@string/files_heading"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="0.8dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
+                    app:layout_constraintStart_toEndOf="@+id/fileHeading"
+                    app:layout_constraintTop_toTopOf="@+id/fileHeading" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/filesCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="2 files"
+                    android:textColor="@color/black"
+                    android:textSize="14.5sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
+                    app:layout_constraintStart_toEndOf="@+id/view4"
+                    app:layout_constraintTop_toTopOf="@+id/fileHeading" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/filesDownUpIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icon_navigate_up"
+                    app:layout_constraintBottom_toBottomOf="@+id/filesCount"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/filesCount" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/filesRV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
+                tools:itemCount="2"
+                tools:listitem="@layout/layout_ceibro_files" />
+
+
+            <View
+                android:id="@+id/filesRVBottomLine"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:alpha="0.7"
+                android:background="@color/appGrey3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filesRV" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

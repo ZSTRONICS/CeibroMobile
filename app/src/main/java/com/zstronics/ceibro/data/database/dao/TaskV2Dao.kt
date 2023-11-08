@@ -3,28 +3,15 @@ package com.zstronics.ceibro.data.database.dao
 import androidx.room.*
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntitySingle
 
 @Dao
 interface TaskV2Dao {
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insertTaskData(task: TasksV2DatabaseEntity)
-//
-//    @Query("SELECT * FROM tasks_v2_internal WHERE rootState = :rootState")
-//    suspend fun getTasks(rootState: String): TasksV2DatabaseEntity?
 
     @Query("DELETE FROM tasks_v2_basic")
     suspend fun deleteAllTasksData()
 
     @Query("DELETE FROM tasks_v2_events")
     suspend fun deleteAllEventsData()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTaskDataWithState(task: TasksV2DatabaseEntitySingle)
-
-    @Query("SELECT * FROM tasks_v2 WHERE rootState = :rootState AND subState = :subState")
-    suspend fun getTasksByState(rootState: String, subState: String): TasksV2DatabaseEntitySingle?
-
 
 
     //Following functions are for tasks
@@ -43,6 +30,24 @@ interface TaskV2Dao {
     @Query("SELECT * FROM tasks_v2_basic WHERE hiddenState = :hiddenState ORDER BY updatedAt DESC")
     suspend fun getHiddenTasks(hiddenState: String): List<CeibroTaskV2>
 
+    @Query("SELECT * FROM tasks_v2_basic WHERE id = :taskId")
+    suspend fun getTaskByID(taskId: String): CeibroTaskV2?
+
+    @Query("DELETE FROM tasks_v2_basic WHERE id = :taskId")
+    suspend fun deleteTaskByID(taskId: String)
+
+    @Query("UPDATE tasks_v2_basic SET seenBy = :seenBy, updatedAt = :updatedAt WHERE id = :taskId")
+    suspend fun updateTaskSeen(taskId: String, seenBy: List<String>, updatedAt: String)
+
+    @Query("UPDATE tasks_v2_basic SET seenBy = :seenBy, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, creatorState = :creatorState WHERE id = :taskId")
+    suspend fun updateTaskOnEvent(taskId: String, seenBy: List<String>, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, creatorState: String)
+
+    @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState WHERE id = :taskId")
+    suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String)
+
+    @Update
+    suspend fun updateTask(task: CeibroTaskV2)
+
 
 
 
@@ -52,4 +57,7 @@ interface TaskV2Dao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleEvents(tasks: List<Events>)
+
+    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY updatedAt ASC")
+    suspend fun getEventsOfTask(taskId: String): List<Events>
 }

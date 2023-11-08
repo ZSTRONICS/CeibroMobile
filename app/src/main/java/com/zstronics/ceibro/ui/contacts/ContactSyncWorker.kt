@@ -45,9 +45,9 @@ import java.util.concurrent.TimeUnit
 class ContactSyncWorker @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters
-) :
-    CoroutineWorker(context, workerParams) {
+) : CoroutineWorker(context, workerParams) {
 
+    val sessionManager2 = getSessionManager(SharedPreferenceManager(context))
     override suspend fun doWork(): Result = coroutineScope {
         val dashboardRepository = DashboardRepository(providesDashboardRepoService())
 
@@ -214,7 +214,7 @@ class ContactSyncWorker @AssistedInject constructor(
         chain.proceed(request)
     }
 
-    private fun cookiesInterceptor(): CookiesInterceptor = CookiesInterceptor()
+    private fun cookiesInterceptor(): CookiesInterceptor = CookiesInterceptor(sessionManager2)
     private fun providesSessionValidator(
     ): SessionValidator {
         val validator = object : SessionValidator() {

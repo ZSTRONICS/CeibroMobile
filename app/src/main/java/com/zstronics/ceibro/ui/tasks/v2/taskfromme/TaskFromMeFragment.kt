@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
@@ -18,6 +19,8 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter.TaskFromMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -180,11 +183,21 @@ class TaskFromMeFragment :
         mViewDataBinding.taskRV.adapter = adapter
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
-                val bundle = Bundle()
-                bundle.putParcelable("taskDetail", data)
-                bundle.putString("rootState", TaskRootStateTags.FromMe.tagValue.lowercase())
-                bundle.putString("selectedState", viewModel.selectedState)
-                navigate(R.id.taskDetailV2Fragment, bundle)
+                if (data.eventsCount > 30) {
+                    viewModel.loading(true, "")
+                }
+                viewModel.launch {
+                    val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
+                    CookiesManager.taskDataForDetails = data
+                    CookiesManager.taskDetailEvents = allEvents
+                    CookiesManager.taskDetailRootState = TaskRootStateTags.FromMe.tagValue.lowercase()
+                    CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
+                    withContext(Dispatchers.Main) {
+                        // Update the UI here
+                        navigate(R.id.taskDetailV2Fragment)
+                        viewModel.loading(false, "")
+                    }
+                }
             }
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
@@ -265,7 +278,7 @@ class TaskFromMeFragment :
 
     private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
         val unreadTaskList = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }
-        val unreadCount = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val unreadCount = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.count()
         val ongoingCount = allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
         val doneCount = allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
 

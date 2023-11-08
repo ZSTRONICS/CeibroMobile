@@ -64,7 +64,7 @@ class LoginVM @Inject constructor(
                         response.data.user,
                         response.data.tokens,
                         "",
-                        rememberMe,
+                        true,
                         secureUUID.toString(),
                         deviceInfo.toString()
                     )

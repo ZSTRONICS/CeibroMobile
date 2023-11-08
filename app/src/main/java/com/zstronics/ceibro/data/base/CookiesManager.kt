@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.base
 
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 
 object CookiesManager {
@@ -19,4 +20,8 @@ object CookiesManager {
     var hiddenCanceledTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     var hiddenOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     var hiddenDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    var taskDataForDetails: CeibroTaskV2? = null
+    var taskDetailEvents: List<Events>? = null
+    var taskDetailRootState: String? = null
+    var taskDetailSelectedSubState: String? = null
 }

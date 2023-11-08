@@ -22,9 +22,10 @@ import com.zstronics.ceibro.data.repos.task.models.UpdateSubTaskStatusWithoutCom
 import com.zstronics.ceibro.data.repos.task.models.UpdateSubtaskRequest
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
-import com.zstronics.ceibro.data.repos.task.models.v2.SyncTasksBody
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import ee.zstronics.ceibro.camera.PickedImages
 
@@ -43,8 +44,8 @@ interface ITaskRepository {
     )
 
     suspend fun syncEvents(
-        taskID: String,
-        list: SyncTasksBody,
+        taskId: String,
+        request: SyncTaskEventsBody,
         callBack: (isSuccess: Boolean, events: List<Events>, message: String) -> Unit
     )
 
@@ -67,7 +68,7 @@ interface ITaskRepository {
     suspend fun forwardTask(
         taskId: String,
         forwardTaskV2Request: ForwardTaskV2Request,
-        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMsg: String) -> Unit
+        callBack: (isSuccess: Boolean, task: EventV2Response.Data?, errorMsg: String) -> Unit
     )
 
     suspend fun taskSeen(

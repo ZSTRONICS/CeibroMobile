@@ -151,6 +151,7 @@
                         android:text="@string/remember_me_text"
                         android:textColor="@color/black"
                         android:textSize="13.5sp"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/loginBtn"
                         app:layout_constraintStart_toStartOf="@+id/loginBtn" />
 
@@ -162,20 +163,19 @@
                         android:fontFamily="@font/inter_medium"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:padding="4dp"
+                        android:layout_marginBottom="36dp"
                         android:text="@string/forgot_password_heading"
                         android:textColor="@color/appBlue"
                         android:textSize="13.5sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/rememberMeCheckBox"
+                        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
                         app:layout_constraintEnd_toEndOf="@+id/loginBtn"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toEndOf="@+id/rememberMeCheckBox"
-                        app:layout_constraintTop_toTopOf="@+id/rememberMeCheckBox" />
+                        app:layout_constraintHorizontal_bias="1.0" />
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextPassword"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@drawable/input_field_rectangle"
                         android:ems="10"
                         android:hint="@string/password_hint"
@@ -186,7 +186,7 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/appGrey"
                         android:textSize="15.5sp"
-                        app:layout_constraintBottom_toTopOf="@+id/rememberMeCheckBox"
+                        app:layout_constraintBottom_toTopOf="@+id/forgotPasswordBtn"
                         app:layout_constraintEnd_toEndOf="@+id/loginBtn"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/loginBtn"

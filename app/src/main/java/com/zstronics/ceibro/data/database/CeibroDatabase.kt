@@ -16,8 +16,6 @@ import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntity
-import com.zstronics.ceibro.data.repos.task.models.TasksV2DatabaseEntitySingle
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 
@@ -37,8 +35,6 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         SubTaskProject::class,
         FilesAttachments::class,
         RejectionComment::class,
-        TasksV2DatabaseEntity::class,
-        TasksV2DatabaseEntitySingle::class,
         CeibroTaskV2::class,
         Events::class,
         TopicsV2DatabaseEntity::class,
@@ -46,7 +42,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 66,
+    version = 78,
     exportSchema = false
 )
 @TypeConverters(
@@ -71,8 +67,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     CeibroTaskV2TypeConverter::class,
     CeibroTaskAndEventsV2ResponseTypeConverter::class,
     CeibroTaskAndEventsV2TypeConverter::class,
-    CeibroSingleTaskEntityV2TypeConverter::class,
     AssignedToStateListTypeConverter::class,
+    AssignToStateDataTypeConverter::class,
     TaskMemberDetailTypeConverter::class,
     ProjectOfTaskTypeConverter::class,
     TopicTypeConverter::class,
@@ -81,6 +77,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     EventsListTypeConverter::class,
     CommentDataTypeConverter::class,
     EventsDataListTypeConverter::class,
+    ForwardDataTypeConverter::class,
     EventsDataTypeConverter::class,
     InvitedNumbersListTypeConverter::class,
     TopicsResponseTypeConverter::class,
