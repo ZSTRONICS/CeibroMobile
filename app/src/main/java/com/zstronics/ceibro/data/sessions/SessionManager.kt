@@ -4,6 +4,7 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_DATA_SYNC_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_DEVICE_TYPE
 import com.zstronics.ceibro.base.KEY_IS_FIRST_TIME_LAUNCH
@@ -34,7 +35,8 @@ class SessionManager constructor(
         pass: String,
         rememberMe: Boolean,
         secureUUID: String,
-        deviceType: String
+        deviceType: String,
+        androidId: String
     ) {
         sharedPreferenceManager.saveBoolean(
             KEY_IS_USER_LOGGED_IN,
@@ -44,11 +46,13 @@ class SessionManager constructor(
         CookiesManager.jwtToken = tokens.access.token
         CookiesManager.secureUUID = secureUUID
         CookiesManager.deviceType = deviceType
+        CookiesManager.androidId = androidId
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)
         sharedPreferenceManager.saveString(KEY_SECURE_UUID, secureUUID)
         sharedPreferenceManager.saveString(KEY_DEVICE_TYPE, deviceType)
+        sharedPreferenceManager.saveString(KEY_ANDROID_ID, androidId)
 
         _user.postValue(user)
     }
@@ -81,6 +85,7 @@ class SessionManager constructor(
         CookiesManager.jwtToken = ""
         CookiesManager.secureUUID = ""
         CookiesManager.deviceType = ""
+        CookiesManager.androidId = ""
         OneSignal.removeExternalUserId()
         OneSignal.disablePush(true)
 //        OneSignal.pauseInAppMessages(true)
@@ -173,10 +178,12 @@ class SessionManager constructor(
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         val secureUUID = sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
         val deviceType = sharedPreferenceManager.getValueString(KEY_DEVICE_TYPE) ?: ""
+        val androidId = sharedPreferenceManager.getValueString(KEY_ANDROID_ID) ?: ""
         CookiesManager.isLoggedIn = true
         CookiesManager.jwtToken = tokenPref?.access?.token
         CookiesManager.secureUUID = secureUUID
         CookiesManager.deviceType = deviceType
+        CookiesManager.androidId = androidId
     }
 
     private fun getTokens(): Tokens? {

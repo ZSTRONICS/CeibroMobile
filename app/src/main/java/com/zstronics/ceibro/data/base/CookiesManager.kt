@@ -11,6 +11,7 @@ object CookiesManager {
     var tokens: Tokens? = null
     var secureUUID: String? = null
     var deviceType: String? = null
+    var androidId: String? = null
     var toMeNewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     var toMeOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     var toMeDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()

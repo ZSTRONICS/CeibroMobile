@@ -2,28 +2,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/notificationTheme">
 
     <TextView
         android:id="@+id/firstLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Name Line"
-        android:textColor="@color/black"
         android:maxLines="1"
         android:ellipsize="end"
         android:textSize="14sp"
-        android:fontFamily="@font/inter_bold"/>
+        android:fontFamily="@font/inter_bold"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/secondLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Heading Line"
-        android:textColor="@color/black"
         android:textSize="14sp"
         android:fontFamily="@font/inter_bold"
+        android:textStyle="bold"
         android:maxLines="1"
+        android:layout_marginTop="@dimen/_3sdp"
         android:ellipsize="end"/>
 
     <TextView
@@ -31,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your large text here..."
-        android:textColor="@color/appTextGrey"
+        android:textColor="?attr/largeTextTextColor"
         android:maxLines="5"
         android:fontFamily="@font/inter_regular"
         android:ellipsize="end"

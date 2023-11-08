@@ -150,4 +150,11 @@
         <!-- active thumb & track color (30% transparency) -->
         <item name="colorControlActivated">@color/appGreen</item>
     </style>
+
+    <style name="notificationTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:textColor">@color/black</item>
+        <!-- Text color for the largeText TextView -->
+        <item name="largeTextTextColor">@color/appTextGrey</item>
+    </style>
+
 </resources>

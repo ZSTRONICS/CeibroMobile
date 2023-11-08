@@ -1,7 +1,9 @@
 package com.zstronics.ceibro.ui.signup
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
@@ -36,6 +38,7 @@ class SignUpVM @Inject constructor(
     }
 
     override fun doSignUp(
+        context: Context,
         firstName: String,
         surname: String,
         email: String,
@@ -49,6 +52,12 @@ class SignUpVM @Inject constructor(
         deviceInfo.append("$manufacturer ")
         val model = Build.MODEL
         deviceInfo.append("$model")
+
+        val androidId =  Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.ANDROID_ID
+        )
+        println("DeviceInfo: ${deviceInfo.toString()} -> android ID: $androidId")
 
         val request = SignUpRequest(
             firstName = firstName,
@@ -67,13 +76,15 @@ class SignUpVM @Inject constructor(
                     val secureUUID = UUID.randomUUID()
                     CookiesManager.deviceType = deviceInfo.toString()
                     CookiesManager.secureUUID = secureUUID.toString()
+                    CookiesManager.androidId = androidId
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,
                         "",
                         true,
                         secureUUID.toString(),
-                        deviceInfo.toString()
+                        deviceInfo.toString(),
+                        androidId
                     )
                     OneSignal.setExternalUserId(response.data.user.id)
                     OneSignal.disablePush(false)        //Running setSubscription() operation inside this method (a hack)

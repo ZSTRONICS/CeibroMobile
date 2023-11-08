@@ -18,8 +18,10 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.databinding.FragmentCeibroDataLoadingBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -42,6 +44,20 @@ class CeibroDataLoadingFragment :
     override fun onClick(id: Int) {
     }
 
+    private fun socketEventsInitiating() {
+        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+            println("Heartbeat, CeibroDataLoadingFragment")
+            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                viewModel.sessionManager.setToken()
+                viewModel.sessionManager.setUser()
+            }
+            SocketHandler.setActivityContext(requireActivity())
+            SocketHandler.disconnectSocket()
+            SocketHandler.setSocket()
+            SocketHandler.establishConnection()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         startSplashAnimation()
@@ -53,6 +69,7 @@ class CeibroDataLoadingFragment :
 //                OneSignal.pauseInAppMessages(false)
 //            }
 //        }
+        socketEventsInitiating()
 
         GlobalScope.launch {
             viewModel.loadAppData(requireContext()) {

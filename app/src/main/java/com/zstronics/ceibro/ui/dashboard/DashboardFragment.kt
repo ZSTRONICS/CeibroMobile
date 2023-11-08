@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.dashboard
 
-import com.zstronics.ceibro.ui.notificationhelper.NotificationHelper
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.NotificationManager
@@ -436,14 +435,16 @@ class DashboardFragment :
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
+                        println("Heartbeat, Internet observer Socket: ${SocketHandler.getSocket()?.connected()}")
                         if (SocketHandler.getSocket()?.connected() == false) {
                             println("Heartbeat, Internet observer")
                             if (SocketHandler.getSocket() == null || !appStartWithInternet || sharedViewModel.socketOnceConnected.value == false) {
-                                println("Heartbeat, Internet observer Socket == null")
+                                println("Heartbeat, Internet observer Socket == ${SocketHandler.getSocket()}")
                                 if (CookiesManager.jwtToken.isNullOrEmpty()) {
                                     viewModel.sessionManager.setUser()
                                     viewModel.sessionManager.setToken()
                                 }
+                                SocketHandler.disconnectSocket()
                                 SocketHandler.setActivityContext(requireActivity())
                                 SocketHandler.setSocket()
                                 appStartWithInternet = true
@@ -486,20 +487,19 @@ class DashboardFragment :
 
 
     private fun socketEventsInitiating() {
-        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
-            println("Heartbeat, Dashboard")
-            SocketHandler.setActivityContext(requireActivity())
-            SocketHandler.setSocket()
-            SocketHandler.establishConnection()
-        }
+//        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+//            println("Heartbeat, Dashboard")
+//            SocketHandler.setActivityContext(requireActivity())
+//            SocketHandler.setSocket()
+//            SocketHandler.establishConnection()
+//        }
         if (networkConnectivityObserver.isNetworkAvailable().not()) {
             appStartWithInternet = false
         }
 
-//        viewModel.handleSocketEvents()
-        handleFileUploaderSocketEvents()
+//        handleFileUploaderSocketEvents()
+        viewModel.handleSocketEvents()
         viewModel.launch {
-
             viewModel.syncDraftTask(requireContext())
         }
         setConnectivityIcon()

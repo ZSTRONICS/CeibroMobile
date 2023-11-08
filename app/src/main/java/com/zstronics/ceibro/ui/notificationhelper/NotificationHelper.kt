@@ -19,6 +19,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Base64
+import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -48,8 +49,8 @@ class NotificationHelper(context: Context) {
     private fun createNotificationChannel(context: Context) {
 
         val channel = NotificationChannel(
-            "my_notification_channel",
-            "My Notification Channel",
+            CHANNEL_ID_1,
+            "My Channel",
             NotificationManager.IMPORTANCE_DEFAULT
         )
         channel.description = "My custom notification channel"
@@ -113,20 +114,25 @@ class NotificationHelper(context: Context) {
 
             val handler = Handler(Looper.getMainLooper())
             handler.postDelayed({
-                val customNotificationLayout =
-                    RemoteViews(context.packageName, R.layout.custom_notification_view)
-                customNotificationLayout.setTextViewText(R.id.firstLine, task.creator)
-                customNotificationLayout.setTextViewText(R.id.secondLine, title)
-                customNotificationLayout.setTextViewText(R.id.largeText, message)
+                val collapsedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
+                val expandedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
 
+                collapsedView.setTextViewText(R.id.firstLine, task.creator)
+                collapsedView.setTextViewText(R.id.secondLine, title)
+                collapsedView.setViewVisibility(R.id.largeText, View.GONE)
+
+                expandedView.setTextViewText(R.id.firstLine, task.creator)
+                expandedView.setTextViewText(R.id.secondLine, title)
+                expandedView.setTextViewText(R.id.largeText, message)
+                expandedView.setViewVisibility(R.id.largeText, View.VISIBLE)
 
                 val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
                     .setSmallIcon(R.drawable.app_logo)
                     .setContentTitle(task.creator)
                     .setContentText(title)
                     .setLargeIcon(decodeBase64ToBitmap(task.avatar))
-                    .setCustomBigContentView(customNotificationLayout)
-                    .setCustomContentView(customNotificationLayout)
+                    .setCustomBigContentView(expandedView)
+                    .setCustomContentView(collapsedView)
                     .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
                     .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -141,8 +147,8 @@ class NotificationHelper(context: Context) {
                     .build()
 
                 notificationManager.apply {
-                    notify(singleNotificationId, notification)
                     notify(summaryNotificationId, summaryNotification1)
+                    notify(singleNotificationId, notification)
                 }
             }, 120)
         }
