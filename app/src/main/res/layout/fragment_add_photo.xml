@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/transparent">
+
+    <data>
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_19sdp"
+        android:paddingEnd="@dimen/_19sdp"
+        android:paddingTop="@dimen/_8sdp"
+        android:paddingBottom="@dimen/_8sdp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/mainCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="@dimen/_7sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/card_view_bg_white"
+            app:layout_constraintBottom_toTopOf="@+id/cancelBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <TextView
+                    android:id="@+id/tvFromLocal"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:text="@string/from_local_device"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintBottom_toTopOf="@id/view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/appLightGrey"
+                    app:layout_constraintBottom_toTopOf="@+id/tvFromCeibroFiles"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvFromLocal" />
+
+                <TextView
+                    android:id="@+id/tvFromCeibroFiles"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:text="@string/from_ceibro_files"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelBtn"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginBottom="@dimen/_1sdp"
+            android:background="@drawable/cancel_button_bg_white"
+            android:fontFamily="@font/inter_medium"
+            android:text="@string/cancel_btn_text"
+            android:textAllCaps="false"
+            android:textColor="@color/red_color_picker"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -9,6 +9,7 @@ interface ILocationV2 {
     interface State : IBase.State {
         var projectName: MutableLiveData<String>
         var projectDescription: MutableLiveData<String>
+         var containProject: MutableLiveData<Boolean>
     }
     interface ViewModel : IBase.ViewModel<State> {
 

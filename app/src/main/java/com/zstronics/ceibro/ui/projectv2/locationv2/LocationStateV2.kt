@@ -7,4 +7,6 @@ import javax.inject.Inject
 class LocationStateV2 @Inject constructor() : BaseState(), ILocationV2.State {
     override var projectName: MutableLiveData<String> = MutableLiveData("Project List")
     override var projectDescription: MutableLiveData<String> = MutableLiveData("")
+    override var containProject: MutableLiveData<Boolean> = MutableLiveData(true)
+
 }
