@@ -80,5 +80,6 @@ dependencies {
     implementation("com.hbb20:ccp:2.6.1")
     implementation("io.ak1.pix:piximagepicker:1.6.3")
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    implementation("com.github.barteksc:pdfium-android:1.9.0")
 }
 
