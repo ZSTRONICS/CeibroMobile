@@ -1,8 +1,6 @@
 package com.zstronics.ceibro.ui.projectv2.locationv2
 
 
-import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -30,11 +28,6 @@ class LocationV2Fragment :
                 navigate(R.id.newProjectV2Fragment)
             }
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
 

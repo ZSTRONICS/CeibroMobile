@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_58sdp"
+        android:layout_margin="@dimen/_3sdp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/connectionImgCard"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:elevation="0dp"
+            app:cardCornerRadius="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/connectionImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/app_icon" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@id/iv_fav"
+            app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="start"
+                android:maxLines="1"
+                android:textColor="@color/appTextGrey"
+                android:textSize="10sp"
+                tools:text="23.09.2023" />
+
+
+            <TextView
+                android:id="@+id/projectName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="start"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+                app:layout_constraintTop_toBottomOf="@id/tvDate"
+                tools:text="Kandreas Danzik" />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="start"
+                android:maxLines="1"
+                android:textColor="@color/black_01"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
+                app:layout_constraintTop_toBottomOf="@id/projectName"
+                tools:text="Kandreas Danzik" />
+
+            <TextView
+                android:id="@+id/userCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/userName"
+                app:layout_constraintStart_toStartOf="@+id/userName"
+                app:layout_constraintTop_toBottomOf="@id/userName"
+                tools:text="Company" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/iv_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/add_to_fav"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iv_hide"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_hide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/show_password_selector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

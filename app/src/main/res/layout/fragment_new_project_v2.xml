@@ -194,6 +194,7 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
+                android:visibility="invisible"
                 android:id="@+id/AddDrawingBtn"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_37sdp"
@@ -210,6 +211,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/cl_newPhoto" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:visibility="invisible"
                 android:id="@+id/AddNewMemberBtn"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_37sdp"

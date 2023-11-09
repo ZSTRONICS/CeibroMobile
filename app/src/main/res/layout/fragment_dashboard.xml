@@ -159,25 +159,26 @@
                 app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
                 app:layout_constraintEnd_toStartOf="@+id/feedbackBtn"
                 app:layout_constraintTop_toTopOf="@+id/profileIcon" />
+
             <TextView
                 android:id="@+id/draftTaskCounter"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:backgroundTint="@color/appGrey2"
                 android:background="@drawable/input_field_rectangle"
+                android:backgroundTint="@color/appGrey2"
                 android:elevation="12dp"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center"
                 android:maxLength="3"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:visibility="gone"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:outlineProvider="none"
                 android:outlineSpotShadowColor="@color/white"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
                 android:text="0"
                 android:textColor="@color/black"
                 android:textSize="10sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/sync"
                 app:layout_constraintEnd_toEndOf="@+id/sync"
                 app:layout_constraintStart_toEndOf="@+id/sync"
@@ -223,7 +224,7 @@
             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
             android:src="@drawable/ic_add"
             android:tooltipText="@string/new_task_heading"
-            android:visibility="@{viewState.locationSelected ?View.GONE :View.VISIBLE}"
+            android:visibility="@{viewState.projectsSelected ?View.GONE :View.VISIBLE}"
             app:elevation="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
@@ -420,13 +421,13 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/locationBtnLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/transparent"
+                android:enabled="false"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
                 android:paddingEnd="@dimen/_3sdp">
@@ -438,6 +439,7 @@
                     android:background="@color/transparent"
                     android:drawableTop="@drawable/icon_location"
                     android:drawableTint="@drawable/bottom_nav_color"
+                    android:enabled="false"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -479,25 +481,63 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/projectsBtn"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/projectsBtnLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/transparent"
-                android:drawableTop="@drawable/icon_folder"
-                android:drawableTint="@drawable/bottom_nav_color"
-                android:enabled="false"
-                android:fontFamily="@font/inter_medium"
-                android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:text="@string/project_heading"
-                android:textAllCaps="false"
-                android:textColor="@drawable/bottom_nav_text_color"
-                android:textSize="@dimen/_8sdp"
-                app:checked="@{viewState.projectsSelected}" />
+                android:paddingEnd="@dimen/_3sdp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/projectsBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:drawableTop="@drawable/icon_folder"
+                    android:drawableTint="@drawable/bottom_nav_color"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxLines="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/projects"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/bottom_nav_text_color"
+                    android:textSize="@dimen/_8sdp"
+                    app:checked="@{viewState.projectsSelected}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/projectsUnreadBadge"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/unread_badge"
+                    android:elevation="7dp"
+                    android:outlineSpotShadowColor="@color/white"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/projectsBtn"
+                    app:layout_constraintHorizontal_bias="0.63"
+                    app:layout_constraintStart_toStartOf="@+id/projectsBtn"
+                    app:layout_constraintTop_toTopOf="@+id/projectsBtn" />
+
+                <View
+                    android:id="@+id/projectsLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/appBlue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/projectsBtn"
+                    app:layout_constraintEnd_toEndOf="@+id/projectsBtn"
+                    app:layout_constraintStart_toStartOf="@+id/projectsBtn" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </LinearLayout>
 

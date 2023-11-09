@@ -158,4 +158,16 @@
     <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
     </style>
+
+    <style name="MyTabLayout" parent="Widget.Design.TabLayout">
+        <!-- Customize TabLayout attributes here -->
+        <item name="tabBackground">@color/white</item>
+        <item name="tabIndicatorColor">@color/appBlue</item>
+        <item name="tabTextColor">@color/appBlue</item>
+        <item name="tabTextAppearance">@style/MyTabTextAppearance</item>
+    </style>
+    <style name="MyTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">15sp</item>
+        <item name="textAllCaps">false</item>
+    </style>
 </resources>

@@ -443,9 +443,13 @@
     <fragment
         android:id="@+id/locationV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment"
-        android:label="LocationV2Fragment" >
+        android:label="LocationV2Fragment" />
+    <fragment
+        android:id="@+id/projectsV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment"
+        android:label="ProjectsV2Fragment" >
         <action
-            android:id="@+id/action_locationV2Fragment_to_newProjectV2Fragment"
+            android:id="@+id/action_projectsV2Fragment_to_newProjectV2Fragment"
             app:destination="@id/newProjectV2Fragment" />
     </fragment>
 </navigation>
