@@ -537,8 +537,28 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val foundState =
                                 task.assignedToState.find { it.userId == taskSeen.state.userId }
                             if (foundState != null) {
-                                val stateIndex = task.assignedToState.indexOf(foundState)
-                                task.assignedToState[stateIndex] = taskSeen.state
+                                if (taskSeen.state.state.isEmpty()) {
+                                    val stateIndex = task.assignedToState.indexOf(foundState)
+                                    foundState.state = taskSeen.newTaskData.userSubState
+                                    task.assignedToState[stateIndex] = foundState
+                                } else {
+                                    val stateIndex = task.assignedToState.indexOf(foundState)
+                                    task.assignedToState[stateIndex] = taskSeen.state
+                                }
+                            } else {
+                                //else will run if state object does not contain userId
+                                val foundState2 =
+                                    task.assignedToState.find { it.userId == taskSeen.eventInitiator }
+                                if (foundState2 != null) {
+                                    if (taskSeen.state.state.isEmpty()) {
+                                        val stateIndex = task.assignedToState.indexOf(foundState2)
+                                        foundState2.state = taskSeen.newTaskData.userSubState
+                                        task.assignedToState[stateIndex] = foundState2
+                                    } else {
+                                        val stateIndex = task.assignedToState.indexOf(foundState2)
+                                        task.assignedToState[stateIndex] = taskSeen.state
+                                    }
+                                }
                             }
 
                             task.fromMeState = taskSeen.newTaskData.fromMeState

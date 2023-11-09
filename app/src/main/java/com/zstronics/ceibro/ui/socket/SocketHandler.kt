@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.socket
 
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BuildConfig
@@ -22,11 +24,13 @@ object SocketHandler {
     const val CHAT_EVENT_REQ_OVER_SOCKET = "CHAT_EVENT_REQ_OVER_SOCKET"
     const val CEIBRO_LIVE_EVENT_BY_USER = "CEIBRO_LIVE_EVENT_BY_USER"
     const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
+    const val CEIBRO_RE_SYNC_DATA = "RE_SYNC_DATA"
     const val CEIBRO_HEARTBEAT = "heartbeat"
     const val CEIBRO_HEARTBEAT_ACK = "heartbeatAck"
     const val CEIBRO_EVENT_ACK = "eventAck"
     const val CEIBRO_LOGOUT = "logout"
-    const val CLEAR_DATA = "clearData"
+    const val CLEAR_DATA = "CLEAR_DATA"
+    const val SOCKET_SYNC_REQUIRED = "IS_SYNC_REQUIRED"
     var hbCounter = 0
     var handler = android.os.Handler()
     var delayMillis: Long = 10000 // 10 seconds
@@ -114,8 +118,19 @@ object SocketHandler {
                 println("Heartbeat, Socket Connected")
 
                 if (sharedViewModel != null) {
+                    if (sharedViewModel.appFirstStartForSocket.value == true) {
+                        sharedViewModel.appFirstStartForSocket.postValue(false)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            sendClearData()
+                            println("Heartbeat, Socket Data Cleared")
+                        }, 100)
+                    }
                     sharedViewModel.isConnectedToServer.postValue(true)
                     sharedViewModel.socketOnceConnected.postValue(true)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        emitIsSyncRequired()
+                        println("Heartbeat, Socket emitIsSyncRequired")
+                    }, 300)
                 }
                 //EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
             }
@@ -202,7 +217,6 @@ object SocketHandler {
         mSocket?.io()?.off(CEIBRO_HEARTBEAT_ACK)
         mSocket?.io()?.off(CEIBRO_EVENT_ACK)
         mSocket?.io()?.off(CEIBRO_LOGOUT)
-        mSocket?.io()?.off(CLEAR_DATA)
         handler.removeCallbacks(runnable)
 //        EventBus.getDefault().unregister(this)
     }
@@ -220,6 +234,16 @@ object SocketHandler {
     @Synchronized
     fun sendLogout() {
         mSocket?.emit(CEIBRO_LOGOUT)
+    }
+
+    @Synchronized
+    fun sendClearData() {
+        mSocket?.emit(CLEAR_DATA)
+    }
+
+    @Synchronized
+    fun emitIsSyncRequired() {
+        mSocket?.emit(SOCKET_SYNC_REQUIRED)
     }
 
     @Synchronized

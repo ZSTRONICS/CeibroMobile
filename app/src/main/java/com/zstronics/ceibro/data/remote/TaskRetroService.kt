@@ -6,6 +6,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
@@ -215,5 +216,10 @@ interface TaskRetroService {
     suspend fun unHideTask(
         @Path("taskId") taskId: String
     ): Response<HideTaskResponse>
+
+    @GET("v2/task/{taskId}")
+    suspend fun getTaskById(
+        @Path("taskId") taskId: String
+    ): Response<ForwardedToMeNewTaskV2Response>
 
 }

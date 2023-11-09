@@ -37,6 +37,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import androidx.work.*
 import com.ceibro.permissionx.PermissionX
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -48,11 +51,13 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.FileUtils
 import ee.zstronics.photoediting.EditImageActivity
 import okhttp3.internal.immutableListOf
@@ -374,6 +379,28 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             }
         }
     }
+
+
+    fun handleSocketReSyncDataEvent() {
+        SocketHandler.getSocket()?.on(SocketHandler.CEIBRO_RE_SYNC_DATA) { args ->
+            val gson = Gson()
+            val arguments = args[0].toString()
+            println("Heartbeat, handleSocketReSyncDataEvent: ${arguments}")
+//            val socketData: SocketEventTypeResponse = gson.fromJson(
+//                arguments,
+//                object : TypeToken<SocketEventTypeResponse>() {}.type
+//            )
+//            socketData.uuid?.let { SocketHandler.sendEventAck(it) }
+//            if (BuildConfig.DEBUG) {
+//                alert("Socket: ${socketData.eventType}")
+//            }
+//            println("Heartbeat SocketEvent: ${socketData.eventType}")
+//
+//            pushToQueue(socketData, arguments);
+        }
+    }
+
+
 
 //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //        if (!Environment.isExternalStorageManager()) {

@@ -11,6 +11,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.KEY_LAST_OFFLINE
+import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
@@ -219,28 +220,45 @@ class NavHostPresenterActivity :
 
     override fun onResume() {
         super.onResume()
-//        if (applicationContext != null) {
-//            val sessionManager =
-//                getSessionManager(SharedPreferenceManager(applicationContext))
-//            if (CookiesManager.jwtToken.isNullOrEmpty()) {
-//                sessionManager.setUser()
-//                sessionManager.isUserLoggedIn()
-//            }
-//            println("Heartbeat, NavHostPresenterActivity... connected - notNul = ${CookiesManager.jwtToken}")
-//            if (navigationGraphStartDestination == R.id.ceibroDataLoadingFragment || navigationGraphStartDestination == R.id.loginFragment ||
-//                navigationGraphStartDestination == R.id.registerFragment || navigationGraphStartDestination == R.id.verifyNumberFragment ||
-//                navigationGraphStartDestination == R.id.termsFragment || navigationGraphStartDestination == R.id.signUpFragment ||
-//                navigationGraphStartDestination == R.id.photoFragment || navigationGraphStartDestination == R.id.contactsSelectionFragment ||
-//                navigationGraphStartDestination == R.id.forgotPasswordFragment
-//            ) {
-//                //Do nothing
-//            } else {
-//                Handler().postDelayed({
-//                    println("Heartbeat, NavHostPresenterActivity... connected = ${SocketHandler.getSocket()?.connected()}")
-//                }, 1500)
-//            }
-//
-//        }
+        println("Heartbeat -> NavHostPresenterActivity Resumed")
+        if (applicationContext != null) {
+            val sessionManager =
+                getSessionManager(SharedPreferenceManager(applicationContext))
+            println("Heartbeat -> NavHostPresenterActivity jwtToken.isNullOrEmpty ${CookiesManager.jwtToken.isNullOrEmpty()}")
+            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                sessionManager.setToken()
+                println("Heartbeat -> NavHostPresenterActivity jwtToken set")
+            }
+            if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
+                sessionManager.setUser()
+                println("Heartbeat -> NavHostPresenterActivity User set")
+            }
+
+            if (navigationGraphStartDestination == R.id.ceibroDataLoadingFragment || navigationGraphStartDestination == R.id.loginFragment ||
+                navigationGraphStartDestination == R.id.registerFragment || navigationGraphStartDestination == R.id.verifyNumberFragment ||
+                navigationGraphStartDestination == R.id.termsFragment || navigationGraphStartDestination == R.id.signUpFragment ||
+                navigationGraphStartDestination == R.id.photoFragment || navigationGraphStartDestination == R.id.contactsSelectionFragment ||
+                navigationGraphStartDestination == R.id.forgotPasswordFragment
+            ) {
+                //Do nothing
+            } else {
+                Handler().postDelayed({
+                    println("Heartbeat, NavHostPresenterActivity... connected = ${SocketHandler.getSocket()?.connected()}")
+                    if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null || SocketHandler.getSocket()?.connected() == false) {
+                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null) {
+                            println("Heartbeat, Internet observer Socket setting new NavHostPresenterActivity")
+                            SocketHandler.setActivityContext(this)
+                            SocketHandler.closeConnectionAndRemoveObservers()
+                            SocketHandler.setSocket()
+                            if (navigationGraphStartDestination != R.id.homeFragment) {
+                                sessionManager.saveBooleanValue(KEY_SOCKET_OBSERVER_SET, false)
+                            }
+                        }
+                        SocketHandler.establishConnection()
+                    }
+                }, 2600)
+            }
+        }
     }
 
     private fun getSessionManager(

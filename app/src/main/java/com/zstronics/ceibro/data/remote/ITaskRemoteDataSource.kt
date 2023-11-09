@@ -16,6 +16,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
@@ -91,4 +92,5 @@ interface ITaskRemoteDataSource {
     suspend fun unCancelTask(taskId: String): ApiResponse<EventV2Response>
     suspend fun hideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun unHideTask(taskId: String): ApiResponse<HideTaskResponse>
+    suspend fun getTaskById(taskId: String): ApiResponse<ForwardedToMeNewTaskV2Response>
 }

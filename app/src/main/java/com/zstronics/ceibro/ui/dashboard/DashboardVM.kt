@@ -89,7 +89,7 @@ class DashboardVM @Inject constructor(
 
         // Schedule the processQueue method to run periodically
         val initialDelay = 100L // Initial delay in milliseconds
-        val period = 200L // Period between executions in milliseconds
+        val period = 100L // Period between executions in milliseconds
         executor.scheduleAtFixedRate(
             this::processQueue,
             initialDelay,
@@ -675,10 +675,11 @@ class DashboardVM @Inject constructor(
         sharedViewModel.isHiddenUnread.value = hiddenUnread
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onInitSocketEventCallBack(event: LocalEvents.InitSocketEventCallBack?) {
-        handleSocketEvents()
-    }
+    //Moved to fragment
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onInitSocketEventCallBack(event: LocalEvents.InitSocketEventCallBack?) {
+//        handleSocketEvents()
+//    }
 
     private fun updateContactsInDB(callback: (result: Boolean) -> Unit) {
         launch {

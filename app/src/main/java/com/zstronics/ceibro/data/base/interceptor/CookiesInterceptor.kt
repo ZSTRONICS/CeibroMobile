@@ -28,7 +28,7 @@ class CookiesInterceptor @Inject constructor(_sessionManager: SessionManager) : 
     private fun addCookiesInRequest(request: Request): Request {
         val builder = request.newBuilder()
 
-        if (!TextUtils.isEmpty(CookiesManager.jwtToken)) {
+        if (!CookiesManager.jwtToken.isNullOrEmpty()) {
             builder.addHeader(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
         } else {
             sessionManager.isUserLoggedIn()

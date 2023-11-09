@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
@@ -34,6 +35,7 @@ class TaskDetailV2VM @Inject constructor(
     override val viewState: TaskDetailV2State,
     val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
+    private val remoteTask: TaskRemoteDataSource,
     val dashboardRepository: IDashboardRepository,
     val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
@@ -68,9 +70,12 @@ class TaskDetailV2VM @Inject constructor(
     var taskId: String = ""
     var descriptionExpanded = false
 
-//    init {
-//        EventBus.getDefault().register(this)
-//    }
+    init {
+        if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
+            sessionManager.setUser()
+            sessionManager.setToken()
+        }
+    }
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -109,14 +114,13 @@ class TaskDetailV2VM @Inject constructor(
                 }
             } ?: run {
                 //Following code will only execute if forward screen is opened from notification
-                alert("From Notification")
                 val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
                 notificationTaskData.postValue(notificationData)
+                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    sessionManager.setUser()
+                    sessionManager.setToken()
+                }
                 notificationData?.let {
-                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
-                        sessionManager.setUser()
-                        sessionManager.isUserLoggedIn()
-                    }
                     taskId = it.taskId
                     launch {
                         val task = taskDao.getTaskByID(it.taskId)
@@ -131,6 +135,23 @@ class TaskDetailV2VM @Inject constructor(
                             if (seenByMe == null) {
                                 taskSeen(task1.id) { }
                             }
+                        }?: run {
+                            // run API call because task not found in DB
+                            getTaskById(taskId) { isSuccess, task, events ->
+                                if (isSuccess) {
+                                    _taskDetail.postValue(task)
+                                    originalTask.postValue(task)
+                                    originalEvents.postValue(events.toMutableList())
+                                    _taskEvents.postValue(events.toMutableList())
+
+                                    val seenByMe = task?.seenBy?.find { it1 -> it1 == user?.id }
+                                    if (seenByMe == null) {
+                                        taskSeen(taskId) { }
+                                    }
+                                } else {
+                                    loading(false,"No task details to show")
+                                }
+                            }
                         }
                     }
                 } ?: run {
@@ -140,32 +161,6 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-
-    fun separateFiles(files: List<TaskFiles>) {
-        val onlyImage: ArrayList<TaskFiles> = arrayListOf()
-        val imagesWithComment: ArrayList<TaskFiles> = arrayListOf()
-        val document: ArrayList<TaskFiles> = arrayListOf()
-
-        for (item in files) {
-            when (item.fileTag) {
-                AttachmentTags.Image.tagValue -> {
-                    onlyImage.add(item)
-                }
-
-                AttachmentTags.ImageWithComment.tagValue -> {
-                    imagesWithComment.add(item)
-                }
-
-                AttachmentTags.File.tagValue -> {
-                    document.add(item)
-                }
-            }
-        }
-
-        _onlyImages.postValue(onlyImage)
-        _imagesWithComments.postValue(imagesWithComment)
-        _documents.postValue(document)
-    }
 
     private fun getAllEvents(taskId: String) {
         launch {
@@ -197,6 +192,24 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
+    private fun getTaskById(taskId: String, callBack: (isSuccess: Boolean, task: CeibroTaskV2?, taskEvents: List<Events>) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.getTaskById(taskId)) {
+                is ApiResponse.Success -> {
+                    taskDao.insertTaskData(response.data.task)
+                    taskDao.insertMultipleEvents(response.data.taskEvents)
+                    loading(false, "")
+                    callBack.invoke(true, response.data.task, response.data.taskEvents)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false, null, emptyList())
+                }
+            }
+        }
+    }
 
     fun taskSeen(
         taskId: String,
