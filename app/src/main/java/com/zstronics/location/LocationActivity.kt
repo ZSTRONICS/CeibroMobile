@@ -3,6 +3,7 @@ package com.zstronics.location
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import com.shockwave.pdfium.PdfiumCore
 import com.zstronics.ceibro.R
 import java.io.File
 import java.io.FileOutputStream
@@ -65,21 +67,24 @@ class LocationActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        var currentZoomFactor = 1.0f
-
         pdfMapView.fromFile(file)
             .enableSwipe(true)
             .enableAnnotationRendering(true)
             .onTap { event ->
-                val pdfPoint = floatArrayOf(event.x, event.y)
-                pdfMatrix.invert(pdfMatrix)
-                pdfMatrix.mapPoints(pdfPoint)
+                pdfMapView.convertScreenPointsToPdfCoordinates(event)?.let {
+                    tappedPoint.x = it.x.toFloat()
+                    tappedPoint.y = it.y.toFloat()
+                }
 
-                val adjustedX = pdfPoint[0]
-                val adjustedY = pdfPoint[1]
-
-                tappedPoint.x = adjustedX
-                tappedPoint.y = adjustedY
+//                val pdfPoint = floatArrayOf(event.x, event.y)
+//                pdfMatrix.invert(pdfMatrix)
+//                pdfMatrix.mapPoints(pdfPoint)
+//
+//                val adjustedX = pdfPoint[0]
+//                val adjustedY = pdfPoint[1]
+//
+//                tappedPoint.x = adjustedX
+//                tappedPoint.y = adjustedY
 
 
                 // Check if the tap is within the bounds of an existing circle

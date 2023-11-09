@@ -68,8 +68,8 @@ dependencies {
     implementation("androidx.room:room-common:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")
 
-    implementation("io.socket:socket.io-client:2.0.0"){
-        exclude("org.json","json")
+    implementation("io.socket:socket.io-client:2.0.0") {
+        exclude("org.json", "json")
     }
     implementation("com.github.clans:fab:1.6.4")
     implementation("org.greenrobot:eventbus:3.3.1")
@@ -79,7 +79,5 @@ dependencies {
     implementation("com.googlecode.libphonenumber:libphonenumber:8.12.30")
     implementation("com.hbb20:ccp:2.6.1")
     implementation("io.ak1.pix:piximagepicker:1.6.3")
-    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
-    implementation("com.github.barteksc:pdfium-android:1.9.0")
 }
 
