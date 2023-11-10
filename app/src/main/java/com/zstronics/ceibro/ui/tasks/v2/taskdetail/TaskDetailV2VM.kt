@@ -93,6 +93,7 @@ class TaskDetailV2VM @Inject constructor(
             }
 
             taskData?.let { task ->
+                taskId = task.id
                 _taskDetail.postValue(task)
                 originalTask.postValue(task)
                 if (!events.isNullOrEmpty()) {
@@ -175,6 +176,21 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
+    fun getAllEventsFromLocalEvents() {
+        launch {
+            if (taskId.isNotEmpty()) {
+                val taskEvents = taskDao.getEventsOfTask(taskId)
+                if (taskEvents.isEmpty()) {
+                    originalEvents.postValue(mutableListOf<Events>())
+                    _taskEvents.postValue(mutableListOf<Events>())
+                } else {
+                    originalEvents.postValue(taskEvents.toMutableList())
+                    _taskEvents.postValue(taskEvents.toMutableList())
+                }
+            }
+        }
+    }
+
     fun updateTaskAndAllEvents(taskId: String, allEvents: MutableList<Events>) {
         launch {
             val task = taskDao.getTaskByID(taskId)
@@ -219,6 +235,7 @@ class TaskDetailV2VM @Inject constructor(
             //loading(true)
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
+                    println("Heartbeat taskSeenData: ${taskSeenData}")
                     if (taskSeenData != null) {
                         launch {
                             updateGenericTaskSeenInLocal(
@@ -232,6 +249,7 @@ class TaskDetailV2VM @Inject constructor(
                     }
 
                 } else {
+                    println("Heartbeat taskSeenData: ${taskSeenData}")
                     //loading(false, "")
                 }
             }

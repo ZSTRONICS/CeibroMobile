@@ -25,4 +25,6 @@ object CookiesManager {
     var taskDetailEvents: List<Events>? = null
     var taskDetailRootState: String? = null
     var taskDetailSelectedSubState: String? = null
+    val appFirstStartForSocket: MutableLiveData<Boolean> = MutableLiveData(true)
+    val socketOnceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
 }

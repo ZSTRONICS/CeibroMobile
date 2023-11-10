@@ -20,7 +20,6 @@ import com.google.gson.reflect.TypeToken
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -448,7 +447,7 @@ class DashboardFragment :
                         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null || SocketHandler.getSocket()?.connected() == false) {
                             println("Heartbeat, Internet observer")
                             if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null ||
-                                !appStartWithInternet || sharedViewModel.socketOnceConnected.value == false) {
+                                !appStartWithInternet || CookiesManager.socketOnceConnected.value == false) {
                                 println("Heartbeat, Internet observer Socket setting new")
                                 if (CookiesManager.jwtToken.isNullOrEmpty()) {
                                     viewModel.sessionManager.setUser()
@@ -515,6 +514,8 @@ class DashboardFragment :
         }
         setConnectivityIcon()
         socketEventsInitiated = true
+
+        SocketHandler.emitIsSyncRequired()
     }
 
     private fun handleFileUploaderSocketEvents() {
@@ -712,7 +713,7 @@ class DashboardFragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
         viewModel.updateRootUnread(requireActivity())
     }
 

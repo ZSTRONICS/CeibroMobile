@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Resp
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
@@ -221,5 +222,10 @@ interface TaskRetroService {
     suspend fun getTaskById(
         @Path("taskId") taskId: String
     ): Response<ForwardedToMeNewTaskV2Response>
+
+    @POST("v2/task/sync/taskwithevents")
+    suspend fun syncTaskAndEvents(
+        @Body request: SocketReSyncUpdateV2Request
+    ): Response<AllTasksV2NewResponse.NewData>
 
 }

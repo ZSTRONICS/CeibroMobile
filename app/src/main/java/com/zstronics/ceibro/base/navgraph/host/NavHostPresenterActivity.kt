@@ -220,18 +220,19 @@ class NavHostPresenterActivity :
 
     override fun onResume() {
         super.onResume()
-        println("Heartbeat -> NavHostPresenterActivity Resumed")
         if (applicationContext != null) {
             val sessionManager =
                 getSessionManager(SharedPreferenceManager(applicationContext))
             println("Heartbeat -> NavHostPresenterActivity jwtToken.isNullOrEmpty ${CookiesManager.jwtToken.isNullOrEmpty()}")
-            if (CookiesManager.jwtToken.isNullOrEmpty()) {
-                sessionManager.setToken()
-                println("Heartbeat -> NavHostPresenterActivity jwtToken set")
-            }
-            if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
-                sessionManager.setUser()
-                println("Heartbeat -> NavHostPresenterActivity User set")
+            if (sessionManager.isLoggedIn()) {
+                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    sessionManager.setToken()
+                    println("Heartbeat -> NavHostPresenterActivity jwtToken set")
+                }
+                if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
+                    sessionManager.setUser()
+                    println("Heartbeat -> NavHostPresenterActivity User set")
+                }
             }
 
             if (navigationGraphStartDestination == R.id.ceibroDataLoadingFragment || navigationGraphStartDestination == R.id.loginFragment ||
@@ -246,7 +247,7 @@ class NavHostPresenterActivity :
                     println("Heartbeat, NavHostPresenterActivity... connected = ${SocketHandler.getSocket()?.connected()}")
                     if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null || SocketHandler.getSocket()?.connected() == false) {
                         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null) {
-                            println("Heartbeat, Internet observer Socket setting new NavHostPresenterActivity")
+                            println("Heartbeat, Internet observer Socket setting new in NavHostPresenterActivity")
                             SocketHandler.setActivityContext(this)
                             SocketHandler.closeConnectionAndRemoveObservers()
                             SocketHandler.setSocket()

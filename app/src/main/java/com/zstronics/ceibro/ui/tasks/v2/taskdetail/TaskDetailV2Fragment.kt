@@ -100,7 +100,10 @@ class TaskDetailV2Fragment :
                 if (viewModel.taskDetail.value?.doneCommentsRequired == true || viewModel.taskDetail.value?.doneImageRequired == true) {
                     val bundle = Bundle()
                     val taskData = viewModel.taskDetail.value
-                    bundle.putBoolean("doneCommentsRequired", taskData?.doneCommentsRequired ?: false)
+                    bundle.putBoolean(
+                        "doneCommentsRequired",
+                        taskData?.doneCommentsRequired ?: false
+                    )
                     bundle.putBoolean("doneImageRequired", taskData?.doneImageRequired ?: false)
                     bundle.putString("taskId", taskData?.id)
                     bundle.putString("action", TaskDetailEvents.DoneTask.eventValue)
@@ -803,13 +806,16 @@ class TaskDetailV2Fragment :
     ) {
         val newEvent = event?.events
         val taskDetail = viewModel.taskDetail.value
-        if (taskDetail != null && newEvent != null && viewModel.isSameTask(
-                newEvent,
-                taskDetail.id
-            )
-        ) {
+        if (taskDetail != null && newEvent != null && newEvent.taskId == taskDetail.id) {
             addEventsToUI(newEvent)
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshAllEvents(
+        event: LocalEvents.RefreshAllEvents?
+    ) {
+        viewModel.getAllEventsFromLocalEvents()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -832,30 +838,33 @@ class TaskDetailV2Fragment :
     fun onTaskDoneEvent(event: LocalEvents.TaskDoneEvent?) {
         val task = event?.task
         val taskEvent = event?.taskEvent
+        val oldTaskDetail = viewModel.taskDetail.value
         if (task != null && taskEvent != null) {
-            val taskEvents = viewModel.originalEvents.value
-            taskEvents?.let { allEvents ->
-                taskSeenRequest = true
-                GlobalScope.launch {
-                    if (allEvents.isNotEmpty()) {
-                        val eventExist = allEvents.find { taskEvent.id == it.id }
-                        if (eventExist == null) {  /// event not existed
-                            allEvents.add(taskEvent)
-                            viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+            if (oldTaskDetail?.id == taskEvent.taskId) {
+                val taskEvents = viewModel.originalEvents.value
+                taskEvents?.let { allEvents ->
+                    taskSeenRequest = true
+                    GlobalScope.launch {
+                        if (allEvents.isNotEmpty()) {
+                            val eventExist = allEvents.find { taskEvent.id == it.id }
+                            if (eventExist == null) {  /// event not existed
+                                allEvents.add(taskEvent)
+                                viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
 //                            val handler = Handler(Looper.getMainLooper())
 //                            handler.postDelayed(Runnable {
 //                                eventsAdapter.listItems.add(taskEvent)
 //                                mViewDataBinding.eventsRV.adapter?.notifyItemInserted(eventsAdapter.listItems.size - 1)
-                            scrollToBottom(allEvents.size)
+                                scrollToBottom(allEvents.size)
 //                            }, 1)
 
+                            }
+                        } else {
+                            val eventList = mutableListOf<Events>()
+                            eventList.add(taskEvent)
+                            allEvents.addAll(eventList)
+                            viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                            scrollToBottom(allEvents.size)
                         }
-                    } else {
-                        val eventList = mutableListOf<Events>()
-                        eventList.add(taskEvent)
-                        allEvents.addAll(eventList)
-                        viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
-                        scrollToBottom(allEvents.size)
                     }
                 }
             }

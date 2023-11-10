@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,6 +12,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.transition.ChangeBounds
@@ -39,7 +40,6 @@ import androidx.work.*
 import com.ceibro.permissionx.PermissionX
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BaseBindingViewModelFragment
 import com.zstronics.ceibro.base.extensions.launchActivity
@@ -51,7 +51,8 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncV2Response
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
@@ -385,18 +386,20 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         SocketHandler.getSocket()?.on(SocketHandler.CEIBRO_RE_SYNC_DATA) { args ->
             val gson = Gson()
             val arguments = args[0].toString()
+            val reSyncData = gson.fromJson<SocketReSyncV2Response>(
+                arguments,
+                object : TypeToken<SocketReSyncV2Response>() {}.type
+            ).data
             println("Heartbeat, handleSocketReSyncDataEvent: ${arguments}")
-//            val socketData: SocketEventTypeResponse = gson.fromJson(
-//                arguments,
-//                object : TypeToken<SocketEventTypeResponse>() {}.type
-//            )
-//            socketData.uuid?.let { SocketHandler.sendEventAck(it) }
-//            if (BuildConfig.DEBUG) {
-//                alert("Socket: ${socketData.eventType}")
-//            }
-//            println("Heartbeat SocketEvent: ${socketData.eventType}")
-//
-//            pushToQueue(socketData, arguments);
+
+            viewModel.loading(true, "Syncing App Data")
+            Handler(Looper.getMainLooper()).postDelayed({
+
+                viewModel.reSyncAppData(reSyncData) { isSuccess ->
+                    viewModel.loading(false, "")
+                }
+
+            }, 500)
         }
     }
 
