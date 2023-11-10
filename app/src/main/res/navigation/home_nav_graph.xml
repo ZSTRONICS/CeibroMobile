@@ -452,4 +452,10 @@
             android:id="@+id/action_projectsV2Fragment_to_newProjectV2Fragment"
             app:destination="@id/newProjectV2Fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/projectDetailV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.ProjectDetailV2Fragment"
+        android:label="ProjectDetailV2Fragment" />
+
+
 </navigation>

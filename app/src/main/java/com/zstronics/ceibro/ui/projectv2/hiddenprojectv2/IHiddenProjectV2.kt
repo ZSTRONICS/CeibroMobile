@@ -1,15 +1,15 @@
-package com.zstronics.ceibro.ui.projectv2
+package com.zstronics.ceibro.ui.projectv2.hiddenprojectv2
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
 
-interface IProjectsV2 {
+
+interface IHiddenProjectV2 {
     interface State : IBase.State {
 
         var projectName: MutableLiveData<String>
         var projectDescription: MutableLiveData<String>
-        var searchProjectText: MutableLiveData<String>
         var containProject: MutableLiveData<Boolean>
     }
 

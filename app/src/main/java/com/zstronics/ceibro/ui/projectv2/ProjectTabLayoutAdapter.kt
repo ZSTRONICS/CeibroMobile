@@ -4,15 +4,28 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.zstronics.ceibro.ui.projectv2.allprojectsv2.AllProjectsV2Fragment
+import com.zstronics.ceibro.ui.projectv2.hiddenprojectv2.HiddenProjectsV2Fragment
 
-class ProjectTabLayoutAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class ProjectTabLayoutAdapter(fm: FragmentManager, val callback: (Int) -> Unit) :
+    FragmentPagerAdapter(fm) {
+
 
     override fun getItem(position: Int): Fragment {
-        // Return the fragment based on the position
+
+        val allProjectsV2Fragment = AllProjectsV2Fragment {
+            callback.invoke(1)
+        }
+
+        val hiddenProjectsV2Fragment = HiddenProjectsV2Fragment {
+            callback.invoke(1)
+        }
+
         return when (position) {
-            0 -> AllProjectsV2Fragment()
-            1 -> AllProjectsV2Fragment()
-            else -> AllProjectsV2Fragment()
+
+
+            0 -> allProjectsV2Fragment
+            1 -> hiddenProjectsV2Fragment
+            else -> allProjectsV2Fragment
         }
     }
 

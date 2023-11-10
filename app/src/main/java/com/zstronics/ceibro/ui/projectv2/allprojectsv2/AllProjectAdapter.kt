@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.projectv2.allprojectsv2
 
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.data.repos.chat.room.Project
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) :
     RecyclerView.Adapter<AllProjectAdapter.AllProjectViewHolder>() {
-
+    var callback: ((Int) -> Unit)? = null
+    var fav: Boolean = true
     private var list: MutableList<Project> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllProjectViewHolder {
@@ -32,7 +34,8 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
         return list.size
     }
 
-    fun setList(list: MutableList<Project>) {
+    fun setList(list: MutableList<Project>, fav: Boolean) {
+        this.fav=fav
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
@@ -48,7 +51,19 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
             binding.projectName.text = item.title
             binding.userCompany.text = "Ceibro limiteds"
             binding.userName.text = "Rebel"
+            binding.connectionImg.setOnClickListener {
+                callback?.invoke(1)
+            }
+            if (fav){
+                binding.ivFav.visibility = View.VISIBLE
+            }else{
+                binding.ivFav.visibility = View.GONE
+            }
 
         }
+    }
+
+    fun setCallBack(callback: (Int) -> Unit) {
+        this.callback = callback
     }
 }

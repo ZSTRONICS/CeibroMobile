@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.allprojectsv2
+package com.zstronics.ceibro.ui.projectv2.hiddenprojectv2
 
 import android.os.Bundle
 import android.view.View
@@ -8,19 +8,21 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Project
 import com.zstronics.ceibro.databinding.FragmentAllProjectsV2Binding
+import com.zstronics.ceibro.databinding.FragmentHiddenProjectsV2Binding
+import com.zstronics.ceibro.ui.projectv2.allprojectsv2.AllProjectAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionsSectionHeader
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AllProjectsV2Fragment(callback: (Int) -> Unit) :
-    BaseNavViewModelFragment<FragmentAllProjectsV2Binding, IAllProjectV2.State, AllProjectsV2VM>() {
+class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
+    BaseNavViewModelFragment<FragmentHiddenProjectsV2Binding, IHiddenProjectV2.State, HiddenProjectsV2VM>() {
 
     var callback: ((Int) -> Unit)?=null
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: AllProjectsV2VM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_all_projects_v2
+    override val viewModel: HiddenProjectsV2VM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_hidden_projects_v2
     override fun toolBarVisibility(): Boolean = false
 
     init {
@@ -85,7 +87,7 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
     private fun initRecyclerView(adapter: AllProjectAdapter, list: MutableList<Project>) {
         mViewDataBinding.projectsRV.adapter = adapter
-        adapter.setList(list, true)
+        adapter.setList(list,false)
         adapter.setCallBack {
             callback?.invoke(1)
         }
