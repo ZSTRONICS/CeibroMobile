@@ -1,24 +1,29 @@
 package com.zstronics.ceibro.ui.projectv2.hiddenprojectv2
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.Window
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Project
-import com.zstronics.ceibro.databinding.FragmentAllProjectsV2Binding
 import com.zstronics.ceibro.databinding.FragmentHiddenProjectsV2Binding
 import com.zstronics.ceibro.ui.projectv2.allprojectsv2.AllProjectAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionsSectionHeader
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
     BaseNavViewModelFragment<FragmentHiddenProjectsV2Binding, IHiddenProjectV2.State, HiddenProjectsV2VM>() {
 
-    var callback: ((Int) -> Unit)?=null
+    var callback: ((Int) -> Unit)? = null
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: HiddenProjectsV2VM by viewModels()
@@ -27,8 +32,9 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
 
     init {
 
-        this.callback=callback
+        this.callback = callback
     }
+
     @Inject
     lateinit var adapter: AllProjectAdapter
 //
@@ -87,13 +93,31 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
 
     private fun initRecyclerView(adapter: AllProjectAdapter, list: MutableList<Project>) {
         mViewDataBinding.projectsRV.adapter = adapter
-        adapter.setList(list,false)
+        adapter.setList(list, false)
         adapter.setCallBack {
-            callback?.invoke(1)
+
+            showDialog()
+            //    callback?.invoke(1)
         }
 
     }
-//    fun setCallBack(callback: (Int) -> Unit){
-//        this.callback=callback
-//    }
+
+
+    private fun showDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.layout_task_hide_dialog)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val tvYes: TextView = dialog.findViewById(R.id.tvYes)
+        val tvNo: TextView = dialog.findViewById(R.id.tvNo)
+
+        tvYes.setOnClickListener {
+            dialog.dismiss()
+        }
+        tvNo.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 }

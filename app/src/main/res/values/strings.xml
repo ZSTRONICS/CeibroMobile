@@ -550,5 +550,6 @@
     <string name="projects">Projects</string>
     <string name="new_proj">New</string>
     <string name="search">Search</string>
+    <string name="do_you_want_to_un_hide_this_project">Do you want to unhide this project.</string>
 
 </resources>
