@@ -44,6 +44,7 @@ import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.dashboard.BottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.enums.EventType
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment
 import com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -73,6 +74,7 @@ class DashboardFragment :
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
     private var locationFragmentInstance: LocationV2Fragment? = null
+    private var projectsV2FragmentInstance: ProjectsV2Fragment? = null
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
@@ -129,6 +131,7 @@ class DashboardFragment :
         mViewDataBinding.fromMeLine.visibility = View.GONE
         mViewDataBinding.hiddenLine.visibility = View.GONE
         mViewDataBinding.locationLine.visibility = View.GONE
+        mViewDataBinding.projectsLine.visibility = View.GONE
 
         when (btnID) {
             R.id.toMeBtn -> {
@@ -188,6 +191,16 @@ class DashboardFragment :
 
             R.id.projectsBtn -> {
                 viewState.projectsSelected.value = true
+                mViewDataBinding.createNewTaskBtn.visibility = View.GONE
+
+                if (projectsV2FragmentInstance == null) {
+                    projectsV2FragmentInstance = ProjectsV2Fragment()
+                }
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, projectsV2FragmentInstance!!)
+                    .commit()
+                mViewDataBinding.projectsLine.visibility = View.VISIBLE
+
             }
         }
     }

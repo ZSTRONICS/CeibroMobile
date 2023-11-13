@@ -547,5 +547,10 @@
     <string name="add_new_drawing">Add new drawing</string>
     <string name="add_members">Add members</string>
     <string name="save">Save</string>
+    <string name="projects">Projects</string>
+    <string name="new_proj">New</string>
+    <string name="search">Search</string>
+    <string name="do_you_want_to_un_hide_this_project">Do you want to unhide this project.</string>
+    <string name="details">Details</string>
 
 </resources>

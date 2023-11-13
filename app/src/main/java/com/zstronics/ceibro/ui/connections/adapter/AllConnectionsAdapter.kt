@@ -137,7 +137,8 @@ class AllConnectionsAdapter @Inject constructor(val sessionManager: SessionManag
                     binding.connectionImgText.visibility = View.GONE
                 }
 
-                binding.connectionUserName.text = "${userFromObj?.firstName} ${userFromObj?.surName}"
+                binding.connectionUserName.text =
+                    "${userFromObj?.firstName} ${userFromObj?.surName}"
                 binding.connectionUserCompany.text = "${userFromObj?.companyName}"
 
                 if (userFromObj?.companyName == "" || userFromObj?.companyName.isNullOrEmpty()) {
