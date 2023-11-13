@@ -13,5 +13,6 @@ interface INewProjectV2 {
     interface ViewModel : IBase.ViewModel<State> {
 
         fun getProjectName(context: Context)
+        fun addNewProject()
     }
 }

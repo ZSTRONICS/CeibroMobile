@@ -1,7 +1,5 @@
 package com.zstronics.ceibro.ui.projectv2.newprojectv2
 
-import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -43,16 +41,19 @@ class NewProjectV2Fragment :
             }
 
             R.id.saveBtn -> {
-                navigateBack()
+
+                viewState.projectName.value?.let {
+                    if (it.isEmpty()) {
+                        showToast("Project name is required.")
+                    } else {
+                        viewModel.addNewProject()
+                    }
+
+                }
+
             }
 
         }
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
     }
 
     private fun showAddPhotoBottomSheet() {

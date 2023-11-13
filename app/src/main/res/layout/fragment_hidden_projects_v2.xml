@@ -27,6 +27,7 @@
             android:layout_height="0dp"
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -34,6 +35,36 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="10"
             tools:listitem="@layout/layout_project_item_list" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbarHeader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <TextView
+                android:id="@+id/hiddenOngoingDescDetailEstonia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="12"
+                android:text="@string/no_projects_are_hidden"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

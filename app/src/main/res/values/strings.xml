@@ -559,5 +559,5 @@
     <string name="local">local</string>
     <string name="ceibro">ceibro</string>
     <string name="detail">Detail</string>
-
+    <string name="no_projects_are_hidden">No projects are hidden.</string>
 </resources>
