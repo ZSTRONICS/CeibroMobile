@@ -1,7 +1,12 @@
 package com.zstronics.ceibro.ui.projectv2.allprojectsv2
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.Window
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -16,7 +21,7 @@ import javax.inject.Inject
 class AllProjectsV2Fragment(callback: (Int) -> Unit) :
     BaseNavViewModelFragment<FragmentAllProjectsV2Binding, IAllProjectV2.State, AllProjectsV2VM>() {
 
-    var callback: ((Int) -> Unit)?=null
+    var callback: ((Int) -> Unit)? = null
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: AllProjectsV2VM by viewModels()
@@ -25,8 +30,9 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
     init {
 
-        this.callback=callback
+        this.callback = callback
     }
+
     @Inject
     lateinit var adapter: AllProjectAdapter
 //
@@ -87,11 +93,36 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
         mViewDataBinding.projectsRV.adapter = adapter
         adapter.setList(list, true)
         adapter.setCallBack {
-            callback?.invoke(1)
+
+            when (it) {
+                1 -> {
+                    callback?.invoke(1)
+                }
+
+                2 -> {
+                    showDialog()
+                }
+            }
+
         }
 
     }
-//    fun setCallBack(callback: (Int) -> Unit){
-//        this.callback=callback
-//    }
+
+    private fun showDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.layout_task_hide_dialog)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val tvYes: TextView = dialog.findViewById(R.id.tvYes)
+        val tvNo: TextView = dialog.findViewById(R.id.tvNo)
+
+        tvYes.setOnClickListener {
+            dialog.dismiss()
+        }
+        tvNo.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 }

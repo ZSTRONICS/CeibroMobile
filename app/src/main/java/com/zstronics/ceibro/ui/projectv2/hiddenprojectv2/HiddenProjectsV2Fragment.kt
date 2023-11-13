@@ -96,8 +96,15 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
         adapter.setList(list, false)
         adapter.setCallBack {
 
-            showDialog()
-            //    callback?.invoke(1)
+            when (it) {
+                1 -> {
+                    callback?.invoke(1)
+                }
+                2 -> {
+                    showDialog()
+                }
+            }
+
         }
 
     }

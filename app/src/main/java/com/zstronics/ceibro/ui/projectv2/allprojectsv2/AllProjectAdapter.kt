@@ -35,7 +35,7 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
     }
 
     fun setList(list: MutableList<Project>, fav: Boolean) {
-        this.fav=fav
+        this.fav = fav
         this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
@@ -54,9 +54,15 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
             binding.connectionImg.setOnClickListener {
                 callback?.invoke(1)
             }
-            if (fav){
+            binding.llProjectDetail.setOnClickListener {
+                callback?.invoke(1)
+            }
+            binding.ivHide.setOnClickListener {
+                callback?.invoke(2)
+            }
+            if (fav) {
                 binding.ivFav.visibility = View.VISIBLE
-            }else{
+            } else {
                 binding.ivFav.visibility = View.GONE
             }
 

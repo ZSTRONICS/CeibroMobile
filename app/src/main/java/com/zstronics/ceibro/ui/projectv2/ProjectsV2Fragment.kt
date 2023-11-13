@@ -5,6 +5,8 @@ import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
@@ -16,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ProjectsV2Fragment :
     BaseNavViewModelFragment<FragmentProjectsV2Binding, IProjectsV2.State, ProjectsV2VM>() {
+    val list= ArrayList<String>()
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -35,7 +38,8 @@ class ProjectsV2Fragment :
             }
 
             R.id.cl_new -> {
-                navigate(R.id.newProjectV2Fragment)
+
+               navigate(R.id.newProjectV2Fragment)
             }
 
             R.id.tvCancel -> {
@@ -60,12 +64,20 @@ class ProjectsV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fragmentManager: FragmentManager = childFragmentManager
-        val adapter = ProjectTabLayoutAdapter(fragmentManager) {
-           navigate(R.id.projectDetailV2Fragment)
+
+        list.add("All Projects")
+        list.add("Hidden Projects")
+        val adapter = ProjectTabLayoutAdapter(fragmentManager,lifecycle) {
+            navigate(R.id.projectDetailV2Fragment)
         }
         mViewDataBinding.viewPager.adapter = adapter
 
-        mViewDataBinding.tabLayout.setupWithViewPager(mViewDataBinding.viewPager)
+
+        TabLayoutMediator(mViewDataBinding.tabLayout, mViewDataBinding.viewPager) { tab, position ->
+            tab.text = list[position]
+        }.attach()
+
+
         mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

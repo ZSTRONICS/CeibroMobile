@@ -1,16 +1,15 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2
 
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
-import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProjectDetailV2Fragment :
@@ -23,30 +22,22 @@ class ProjectDetailV2Fragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-
-            R.id.backBtn->{
+            R.id.backBtn -> {
                 navigateBack()
             }
         }
     }
 
-    private fun showAddPhotoBottomSheet() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val fragmentManager: FragmentManager = childFragmentManager
+        val adapter = ProjectDetailTabLayoutAdapter(fragmentManager, lifecycle)
+        mViewDataBinding.viewPager.adapter = adapter
+        // mViewDataBinding.viewPager.isUserInputEnabled = false
 
-        val coroutineScope = viewLifecycleOwner.lifecycleScope
-        coroutineScope.launch(Dispatchers.Main) {
-
-            val sheet = AddNewPhotoBottomSheet {
-
-                showToast(it)
-            }
-            sheet.isCancelable = true
-            sheet.setStyle(
-                BottomSheetDialogFragment.STYLE_NORMAL,
-                R.style.CustomBottomSheetDialogTheme
-            );
-            sheet.show(childFragmentManager, "AddPhotoBottomSheet")
-        }
-
-
+        TabLayoutMediator(mViewDataBinding.tabLayout, mViewDataBinding.viewPager) { tab, position ->
+            tab.text = "Detail"
+        }.attach()
     }
+
 }
