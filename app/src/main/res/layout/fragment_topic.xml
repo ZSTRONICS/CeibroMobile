@@ -15,6 +15,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topicRootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
@@ -35,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_11sdp"
                 android:layout_marginTop="@dimen/_9sdp"
-                android:layout_marginEnd="@dimen/_11sdp"
+                android:layout_marginEnd="@dimen/_9sdp"
                 android:layout_marginBottom="@dimen/_9sdp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
@@ -44,9 +45,22 @@
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/topicSearchBtn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/topicSearchBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_11sdp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="@dimen/_3sdp"
+                android:src="@drawable/icon_search"
+                app:layout_constraintBottom_toBottomOf="@+id/topicHeading"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topicHeading"
+                app:tint="@color/appBlue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -54,8 +68,8 @@
             android:id="@+id/topicLogoBackground"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/ceibro_logo_dim_background"
             android:padding="@dimen/_35sdp"
+            android:src="@drawable/ceibro_logo_dim_background"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout5"
             app:layout_constraintEnd_toEndOf="@+id/constraintLayout5"
             app:layout_constraintStart_toStartOf="parent"
@@ -260,9 +274,9 @@
                 android:layout_marginEnd="@dimen/_1sdp"
                 android:closeIcon="@drawable/icon_close_round_grey"
                 android:elevation="0dp"
+                android:iconifiedByDefault="false"
                 android:paddingStart="-1dp"
                 android:paddingEnd="-4dp"
-                android:iconifiedByDefault="false"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="Start typing"
                 android:searchIcon="@null"

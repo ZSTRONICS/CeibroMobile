@@ -1,14 +1,27 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.topic
 
 import android.app.Activity
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.finish
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentTopicBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +43,7 @@ class TopicFragment :
             R.id.backBtn -> {
                 navigateBack()
             }
+
             R.id.saveTopicBtn -> {
                 val searchedText = mViewDataBinding.topicSearchBar.query.toString().trim()
                 if (searchedText.isNotEmpty()) {
@@ -47,17 +61,24 @@ class TopicFragment :
                     shortToastNow("Nothing to save")
                 }
             }
+
+            R.id.topicSearchBtn -> {
+                activateSearchView()
+            }
         }
     }
 
 
     @Inject
     lateinit var recentTopicAdapter: RecentTopicAdapter
+
     @Inject
     lateinit var allTopicsHeaderAdapter: AllTopicsHeaderAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         mViewDataBinding.saveTopicBtn.visibility = View.GONE
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
         mViewDataBinding.allTopicsRV.visibility = View.VISIBLE
@@ -106,16 +127,18 @@ class TopicFragment :
             }
         }
 
-        recentTopicAdapter.recentTopicItemClickListener = { _: View, position: Int, data: TopicsResponse.TopicData ->
-            val bundle = Bundle()
-            bundle.putParcelable("topic", data)
-            navigateBackWithResult(Activity.RESULT_OK, bundle)
-        }
-        allTopicsHeaderAdapter.allTopicItemClickListener = { _: View, position: Int, data: TopicsResponse.TopicData ->
-            val bundle = Bundle()
-            bundle.putParcelable("topic", data)
-            navigateBackWithResult(Activity.RESULT_OK, bundle)
-        }
+        recentTopicAdapter.recentTopicItemClickListener =
+            { _: View, position: Int, data: TopicsResponse.TopicData ->
+                val bundle = Bundle()
+                bundle.putParcelable("topic", data)
+                navigateBackWithResult(Activity.RESULT_OK, bundle)
+            }
+        allTopicsHeaderAdapter.allTopicItemClickListener =
+            { _: View, position: Int, data: TopicsResponse.TopicData ->
+                val bundle = Bundle()
+                bundle.putParcelable("topic", data)
+                navigateBackWithResult(Activity.RESULT_OK, bundle)
+            }
 
 
         mViewDataBinding.topicSearchBar.setOnQueryTextListener(object :
@@ -144,13 +167,25 @@ class TopicFragment :
                         } else {
                             View.GONE
                         }
-                    viewModel.originalAllTopics.filter { it.topic.equals(newText.trim(), true) }.map {
-                        mViewDataBinding.saveTopicBtn.visibility = View.GONE
-                    }
+                    viewModel.originalAllTopics.filter { it.topic.equals(newText.trim(), true) }
+                        .map {
+                            mViewDataBinding.saveTopicBtn.visibility = View.GONE
+                        }
                 }
                 return true
             }
         })
+
+        mViewDataBinding.topicSearchBar.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // The SearchView has gained focus
+                mViewDataBinding.topicSearchBtn.visibility = View.GONE
+            } else {
+                // The SearchView has lost focus
+                mViewDataBinding.topicSearchBtn.visibility = View.VISIBLE
+            }
+        }
+
     }
 
     private fun loadTopics(skeletonVisible: Boolean) {
@@ -220,6 +255,18 @@ class TopicFragment :
         }
     }
 
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            println("TopicFragment: OnBackPressedCallback")
+            if (mViewDataBinding.topicSearchBar.hasFocus()) {
+                deactivateSearchView()
+                println("TopicFragment: OnBackPressedCallback hasFocus")
+            } else {
+                navigateBack()
+                println("TopicFragment: OnBackPressedCallback navigateBack")
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -227,4 +274,24 @@ class TopicFragment :
         mViewDataBinding.recentTopicLayout.visibility = View.GONE
         loadTopics(true)
     }
+
+    private fun activateSearchView() {
+        // Set focus on the SearchView
+        mViewDataBinding.topicSearchBtn.visibility = View.GONE
+        mViewDataBinding.topicSearchBar.requestFocus()
+
+        // Open the keyboard
+        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(mViewDataBinding.topicSearchBar, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun deactivateSearchView() {
+        // close the keyboard
+        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(mViewDataBinding.topicSearchBar.windowToken, 0)
+
+        mViewDataBinding.topicSearchBar.clearFocus()
+        mViewDataBinding.topicSearchBtn.visibility = View.VISIBLE
+    }
+
 }
