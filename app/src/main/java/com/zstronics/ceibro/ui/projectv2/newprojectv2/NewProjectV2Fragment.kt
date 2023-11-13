@@ -43,7 +43,6 @@ class NewProjectV2Fragment :
             }
 
             R.id.saveBtn -> {
-                showToast("Project Saved")
                 navigateBack()
             }
 
