@@ -20,8 +20,6 @@ import com.zstronics.ceibro.ui.tasks.v2.tasktome.adapter.TaskToMeRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -267,7 +265,7 @@ class TaskToMeFragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
 //        showToast("New Task Created")
         loadTasks(false)
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)

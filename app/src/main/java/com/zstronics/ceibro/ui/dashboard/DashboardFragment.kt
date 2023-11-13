@@ -20,6 +20,7 @@ import com.google.gson.reflect.TypeToken
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
@@ -347,6 +348,7 @@ class DashboardFragment :
             socketEventsInitiating()
             changeSelectedTab(R.id.toMeBtn, false)
         }
+
         SearchDataSingleton.searchString = MutableLiveData("")
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.observe(viewLifecycleOwner) { isUnread ->
@@ -414,7 +416,11 @@ class DashboardFragment :
         }
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
 
-
+        val socketObserversSet = viewModel.sessionManager.getBooleanValue(KEY_SOCKET_OBSERVER_SET)
+        if (!socketObserversSet) {
+            viewModel.handleSocketEvents()
+            handleSocketReSyncDataEvent()
+        }
     }
 
     private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?, size: Int) {
@@ -449,15 +455,19 @@ class DashboardFragment :
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
-                        if (SocketHandler.getSocket()?.connected() == false) {
+                        println("Heartbeat, Internet observer SocketConnected: ${SocketHandler.getSocket()?.connected()}")
+                        println("Heartbeat, Internet observer Socket object == ${SocketHandler.getSocket()}")
+                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null || SocketHandler.getSocket()?.connected() == false) {
                             println("Heartbeat, Internet observer")
-                            if (SocketHandler.getSocket() == null || !appStartWithInternet || sharedViewModel.socketOnceConnected.value == false) {
-                                println("Heartbeat, Internet observer Socket == null")
+                            if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null ||
+                                !appStartWithInternet || CookiesManager.socketOnceConnected.value == false) {
+                                println("Heartbeat, Internet observer Socket setting new")
                                 if (CookiesManager.jwtToken.isNullOrEmpty()) {
                                     viewModel.sessionManager.setUser()
                                     viewModel.sessionManager.setToken()
                                 }
                                 SocketHandler.setActivityContext(requireActivity())
+                                SocketHandler.closeConnectionAndRemoveObservers()
                                 SocketHandler.setSocket()
                                 appStartWithInternet = true
                             }
@@ -499,24 +509,26 @@ class DashboardFragment :
 
 
     private fun socketEventsInitiating() {
-        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
-            println("Heartbeat, Dashboard")
-            SocketHandler.setActivityContext(requireActivity())
-            SocketHandler.setSocket()
-            SocketHandler.establishConnection()
-        }
+//        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
+//            println("Heartbeat, Dashboard")
+//            SocketHandler.setActivityContext(requireActivity())
+//            SocketHandler.setSocket()
+//            SocketHandler.establishConnection()
+//        }
         if (networkConnectivityObserver.isNetworkAvailable().not()) {
             appStartWithInternet = false
         }
-
-//        viewModel.handleSocketEvents()
-        handleFileUploaderSocketEvents()
+        viewModel.sessionManager.saveBooleanValue(KEY_SOCKET_OBSERVER_SET, true)
+        viewModel.handleSocketEvents()
+        handleSocketReSyncDataEvent()
+//        handleFileUploaderSocketEvents()
         viewModel.launch {
-
             viewModel.syncDraftTask(requireContext())
         }
         setConnectivityIcon()
         socketEventsInitiated = true
+
+        SocketHandler.emitIsSyncRequired()
     }
 
     private fun handleFileUploaderSocketEvents() {
@@ -714,8 +726,14 @@ class DashboardFragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
         viewModel.updateRootUnread(requireActivity())
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onInitSocketEventCallBack(event: LocalEvents.InitSocketEventCallBack?) {
+        viewModel.handleSocketEvents()
+        handleSocketReSyncDataEvent()
     }
 
     override fun onStart() {

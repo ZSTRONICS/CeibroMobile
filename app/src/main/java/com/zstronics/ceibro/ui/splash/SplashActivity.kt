@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.ceibro.permissionx.PermissionX
@@ -11,6 +12,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BUNDLE_EXTRA
 import com.zstronics.ceibro.base.EXTRA
+import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.KEY_User_Last_Login_Time
 import com.zstronics.ceibro.base.TYPE_EXTRA
@@ -69,6 +71,16 @@ class SplashActivity :
                 startSplashAnimation()
             }
         } else {
+            if (sessionManager.isLoggedIn()) {
+                val androidId =  Settings.Secure.getString(
+                    this.contentResolver,
+                    Settings.Secure.ANDROID_ID
+                )
+                val storedAndroidId = sessionManager.getStringValue(KEY_ANDROID_ID)
+                if (storedAndroidId.isEmpty()) {
+                    sessionManager.saveStringValue(KEY_ANDROID_ID, androidId)
+                }
+            }
             startSplashAnimation()
         }
     }

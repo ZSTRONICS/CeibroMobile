@@ -14,7 +14,6 @@ import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.work.*
-import com.google.gson.Gson
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
@@ -29,18 +28,18 @@ import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
-import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
-import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.UpdateRequiredEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.SubtaskAttachment
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -49,7 +48,6 @@ import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.FileUtils
-import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
@@ -241,6 +239,85 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         removeAllFiles()
     }
 
+    fun reSyncAppData(
+        reSyncData: UpdateRequiredEvents,
+        callBack: (isSuccess: Boolean) -> Unit
+    ) {
+        val request = SocketReSyncUpdateV2Request(
+            missingEventIds = reSyncData.missingEventIds,
+            missingTaskIds = reSyncData.missingTaskIds
+        )
+        GlobalScope.launch {
+            when (val response = remoteTaskInternal.syncTaskAndEvents(request)) {
+                is ApiResponse.Success -> {
+                    println("Heartbeat, Missing Sync Response: ${response.data}")
+                    sessionManagerInternal.saveUpdatedAtTimeStamp(response.data.latestUpdatedAt)
+                    if (response.data.allTasks.isNotEmpty()) {
+                        taskDaoInternal.insertMultipleTasks(response.data.allTasks)
+                    }
+                    if (response.data.allEvents.isNotEmpty()) {
+                        taskDaoInternal.insertMultipleEvents(response.data.allEvents)
+                    }
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        GlobalScope.launch {
+                            val newTasks =
+                                taskDaoInternal.getToMeTasks(TaskStatus.NEW.name.lowercase())
+                                    .toMutableList()
+                            val ongoingTasks =
+                                taskDaoInternal.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                    .toMutableList()
+                            val doneTasks =
+                                taskDaoInternal.getToMeTasks(TaskStatus.DONE.name.lowercase())
+                                    .toMutableList()
+                            val fromMeUnreadTasks =
+                                taskDaoInternal.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
+                                    .toMutableList()
+                            val fromMeOngoingTasks =
+                                taskDaoInternal.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                    .toMutableList()
+                            val fromMeDoneTasks =
+                                taskDaoInternal.getFromMeTasks(TaskStatus.DONE.name.lowercase())
+                                    .toMutableList()
+                            val hiddenCanceledTasks =
+                                taskDaoInternal.getHiddenTasks(TaskStatus.CANCELED.name.lowercase())
+                                    .toMutableList()
+                            val hiddenOngoingTasks =
+                                taskDaoInternal.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
+                                    .toMutableList()
+                            val hiddenDoneTasks =
+                                taskDaoInternal.getHiddenTasks(TaskStatus.DONE.name.lowercase())
+                                    .toMutableList()
+
+                            CookiesManager.toMeNewTasks.postValue(newTasks)
+                            CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                            CookiesManager.toMeDoneTasks.postValue(doneTasks)
+
+                            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
+                            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
+                            CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
+
+                            CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTasks)
+                            CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
+                            CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
+
+                            EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                            EventBus.getDefault().post(LocalEvents.RefreshAllEvents())
+                            callBack.invoke(true)
+                        }
+                    }, 200)
+
+                }
+
+                is ApiResponse.Error -> {
+                    println("Heartbeat, Missing Sync Response: ${response.error.message}")
+//                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
+    }
+
 
     private suspend fun updateAllTasksLists(taskDao: TaskV2Dao): Boolean {
         GlobalScope.launch {
@@ -389,7 +466,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     sessionManager.saveToMeUnread(true)
                 }
 
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
 
             }
         }
@@ -420,7 +497,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 CookiesManager.toMeNewTasks.postValue(toMeNewTask)
 
 //                updateAllTasksLists(taskDao)
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
 
             }.join()
         }
@@ -499,7 +576,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 }, 50)
 
                 TaskEventsList.removeEvent(
@@ -537,8 +614,28 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val foundState =
                                 task.assignedToState.find { it.userId == taskSeen.state.userId }
                             if (foundState != null) {
-                                val stateIndex = task.assignedToState.indexOf(foundState)
-                                task.assignedToState[stateIndex] = taskSeen.state
+                                if (taskSeen.state.state.isEmpty()) {
+                                    val stateIndex = task.assignedToState.indexOf(foundState)
+                                    foundState.state = taskSeen.newTaskData.userSubState
+                                    task.assignedToState[stateIndex] = foundState
+                                } else {
+                                    val stateIndex = task.assignedToState.indexOf(foundState)
+                                    task.assignedToState[stateIndex] = taskSeen.state
+                                }
+                            } else {
+                                //else will run if state object does not contain userId
+                                val foundState2 =
+                                    task.assignedToState.find { it.userId == taskSeen.eventInitiator }
+                                if (foundState2 != null) {
+                                    if (taskSeen.state.state.isEmpty()) {
+                                        val stateIndex = task.assignedToState.indexOf(foundState2)
+                                        foundState2.state = taskSeen.newTaskData.userSubState
+                                        task.assignedToState[stateIndex] = foundState2
+                                    } else {
+                                        val stateIndex = task.assignedToState.indexOf(foundState2)
+                                        task.assignedToState[stateIndex] = taskSeen.state
+                                    }
+                                }
                             }
 
                             task.fromMeState = taskSeen.newTaskData.fromMeState
@@ -560,7 +657,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 }.join()
                 EventBus.getDefault()
                     .post(LocalEvents.TaskSeenEvent(updatedTask))
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_SEEN.name,
@@ -649,7 +746,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 }, 50)
 
                 TaskEventsList.removeEvent(
@@ -721,7 +818,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                 }.join()
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.UN_CANCEL_TASK.name,
@@ -792,7 +889,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                 }.join()
 
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.CANCELED_TASK.name,
                     eventData.taskId
@@ -865,7 +962,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
-                    EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 }, 50)
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId
@@ -950,7 +1047,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             }.join()
 
             EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
-            EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+            EventBus.getDefault().post(LocalEvents.RefreshTasksData())
         }
     }
 
@@ -993,7 +1090,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
 //                    updateAllTasksLists(taskDao)
                 }.join()
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_HIDDEN.name, hideData.taskId
@@ -1041,7 +1138,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 //                    updateAllTasksLists(taskDao)
 
                 }.join()
-                EventBus.getDefault().post(LocalEvents.RefreshTasksEvent())
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_SHOWN.name, hideData.taskId
@@ -1056,6 +1153,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     @Inject
     lateinit var taskRepositoryInternal: ITaskRepository
+
+    @Inject
+    lateinit var remoteTaskInternal: TaskRemoteDataSource
 
     @Inject
     lateinit var taskDaoInternal: TaskV2Dao

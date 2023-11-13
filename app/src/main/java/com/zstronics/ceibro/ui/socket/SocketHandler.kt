@@ -1,9 +1,13 @@
 package com.zstronics.ceibro.ui.socket
 
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -22,10 +26,13 @@ object SocketHandler {
     const val CHAT_EVENT_REQ_OVER_SOCKET = "CHAT_EVENT_REQ_OVER_SOCKET"
     const val CEIBRO_LIVE_EVENT_BY_USER = "CEIBRO_LIVE_EVENT_BY_USER"
     const val CEIBRO_LIVE_EVENT_BY_SERVER = "CEIBRO_LIVE_EVENT_BY_SERVER"
+    const val CEIBRO_RE_SYNC_DATA = "RE_SYNC_DATA"
     const val CEIBRO_HEARTBEAT = "heartbeat"
     const val CEIBRO_HEARTBEAT_ACK = "heartbeatAck"
     const val CEIBRO_EVENT_ACK = "eventAck"
     const val CEIBRO_LOGOUT = "logout"
+    const val CLEAR_DATA = "CLEAR_DATA"
+    const val SOCKET_SYNC_REQUIRED = "IS_SYNC_REQUIRED"
     var hbCounter = 0
     var handler = android.os.Handler()
     var delayMillis: Long = 10000 // 10 seconds
@@ -75,12 +82,18 @@ object SocketHandler {
             options.auth =
                 mapOf("token" to CookiesManager.jwtToken) // Use auth for token instead of query
             options.query =
-                "secureUUID=${CookiesManager.secureUUID}&deviceType=${CookiesManager.deviceType}"
+                "secureUUID=${CookiesManager.secureUUID}&deviceType=${CookiesManager.deviceType}&androidId=${CookiesManager.androidId}"
 //            println("QueryOnSocket: ${options.query}")
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)
             val sharedViewModel =
                 requireActivity?.let { ViewModelProvider(it).get(SharedViewModel::class.java) }
+            val sessionManager =
+                requireActivity?.applicationContext?.let {
+                    SharedPreferenceManager(
+                        it
+                    )
+                }?.let { getSessionManager(it) }
 
             mSocket?.on(
                 Socket.EVENT_DISCONNECT
@@ -113,8 +126,19 @@ object SocketHandler {
                 println("Heartbeat, Socket Connected")
 
                 if (sharedViewModel != null) {
+                    if (CookiesManager.appFirstStartForSocket.value == true) {
+                        CookiesManager.appFirstStartForSocket.postValue(false)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            sendClearData()
+                            println("Heartbeat, Socket Data Cleared")
+                        }, 100)
+                    }
                     sharedViewModel.isConnectedToServer.postValue(true)
-                    sharedViewModel.socketOnceConnected.postValue(true)
+                    CookiesManager.socketOnceConnected.postValue(true)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        emitIsSyncRequired()
+                        println("Heartbeat, Socket emitIsSyncRequired")
+                    }, 350)
                 }
                 //EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
             }
@@ -132,6 +156,10 @@ object SocketHandler {
             exception.message
         }
     }
+
+    private fun getSessionManager(
+        sharedPreferenceManager: SharedPreferenceManager
+    ) = SessionManager(sharedPreferenceManager)
 
     fun sendHeartbeat() {
         if (mSocket != null) {
@@ -218,6 +246,16 @@ object SocketHandler {
     @Synchronized
     fun sendLogout() {
         mSocket?.emit(CEIBRO_LOGOUT)
+    }
+
+    @Synchronized
+    fun sendClearData() {
+        mSocket?.emit(CLEAR_DATA)
+    }
+
+    @Synchronized
+    fun emitIsSyncRequired() {
+        mSocket?.emit(SOCKET_SYNC_REQUIRED)
     }
 
     @Synchronized

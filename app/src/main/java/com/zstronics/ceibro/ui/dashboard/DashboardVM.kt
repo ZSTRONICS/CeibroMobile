@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +20,7 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.local.SubTaskLocalDataSource
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.UserUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
@@ -42,6 +45,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketForwardedToMeNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -64,6 +68,7 @@ class DashboardVM @Inject constructor(
     val sessionManager: SessionManager,
     val localSubTask: SubTaskLocalDataSource,
     private val taskRepository: TaskRepository,
+    val remoteTask: TaskRemoteDataSource,
     private val projectRepository: IProjectRepository,
     val dashboardRepository: IDashboardRepository,
     private val authRepository: IAuthRepository,
@@ -89,7 +94,7 @@ class DashboardVM @Inject constructor(
 
         // Schedule the processQueue method to run periodically
         val initialDelay = 100L // Initial delay in milliseconds
-        val period = 200L // Period between executions in milliseconds
+        val period = 100L // Period between executions in milliseconds
         executor.scheduleAtFixedRate(
             this::processQueue,
             initialDelay,
@@ -540,7 +545,10 @@ class DashboardVM @Inject constructor(
             socketData.uuid?.let { SocketHandler.sendEventAck(it) }
             if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
-                println("Socket: ${socketData.eventType}")
+            }
+            println("Heartbeat SocketEvent: ${socketData.eventType}")
+            if (socketData.eventType.equals("TASK_SEEN", true) || socketData.eventType.equals(SocketHandler.TaskEvent.TASK_CREATED.name, true)) {
+                println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
             }
 
             pushToQueue(socketData, arguments);
@@ -675,10 +683,11 @@ class DashboardVM @Inject constructor(
         sharedViewModel.isHiddenUnread.value = hiddenUnread
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onInitSocketEventCallBack(event: LocalEvents.InitSocketEventCallBack?) {
-        handleSocketEvents()
-    }
+    //Moved to fragment
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onInitSocketEventCallBack(event: LocalEvents.InitSocketEventCallBack?) {
+//        handleSocketEvents()
+//    }
 
     private fun updateContactsInDB(callback: (result: Boolean) -> Unit) {
         launch {

@@ -108,7 +108,8 @@ object LocalEvents {
 
     class LogoutUserEvent
     object UpdateConnections
-    class RefreshTasksEvent
+    class RefreshTasksData
+    class RefreshAllEvents
     data class TaskSeenEvent(val task: CeibroTaskV2?)
     data class TaskDoneEvent(val task: CeibroTaskV2?, val taskEvent: Events)
     data class TaskEvent(val events: Events)

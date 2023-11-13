@@ -104,7 +104,7 @@ class HomeVM @Inject constructor(
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
 //        getTasks()
     }
 

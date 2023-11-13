@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.signup
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
 
@@ -17,7 +18,7 @@ interface ISignUp {
     }
 
     interface ViewModel : IBase.ViewModel<State> {
-        fun doSignUp(firstName: String, surname: String, email: String, companyName: String, jobTitle: String,
-                     password: String, onSignedUp: () -> Unit)
+        fun doSignUp(context: Context, firstName: String, surname: String, email: String, companyName: String, jobTitle: String,
+            password: String, onSignedUp: () -> Unit)
     }
 }

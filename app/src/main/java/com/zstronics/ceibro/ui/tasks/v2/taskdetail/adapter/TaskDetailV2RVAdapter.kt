@@ -127,7 +127,7 @@ class TaskDetailV2RVAdapter @Inject constructor() :
     fun updateTaskData(task: CeibroTaskV2, descriptionExpanded: Boolean) {
         this.descriptionExpanded = descriptionExpanded
         this.listItems[0] = task
-        notifyItemChanged(0)
+        notifyDataSetChanged()
     }
 
     inner class SingleItemViewHolder(private val binding: LayoutCeibroTaskDetailBinding) :
