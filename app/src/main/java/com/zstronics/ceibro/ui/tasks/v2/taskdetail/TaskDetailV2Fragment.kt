@@ -765,7 +765,7 @@ class TaskDetailV2Fragment :
                     val eventExist = allEvents.find { taskEvent.id == it.id }
                     if (eventExist == null) {  /// event not existed
                         allEvents.add(taskEvent)
-                        viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                        viewModel.updateTaskAndAllEvents(taskEvent, allEvents)
 
 //                        val handler = Handler(Looper.getMainLooper())
 //                        handler.postDelayed(Runnable {
@@ -779,7 +779,7 @@ class TaskDetailV2Fragment :
                     val eventList = mutableListOf<Events>()
                     eventList.add(taskEvent)
                     allEvents.addAll(eventList)
-                    viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                    viewModel.updateTaskAndAllEvents(taskEvent, allEvents)
 //                    val task = viewModel.taskDao.getTaskByID(taskEvent.taskId)
 //                    task?.let {
 //                        viewModel.originalTask.postValue(it)
@@ -849,7 +849,7 @@ class TaskDetailV2Fragment :
                             val eventExist = allEvents.find { taskEvent.id == it.id }
                             if (eventExist == null) {  /// event not existed
                                 allEvents.add(taskEvent)
-                                viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                                viewModel.updateTaskAndAllEvents(taskEvent, allEvents)
 //                            val handler = Handler(Looper.getMainLooper())
 //                            handler.postDelayed(Runnable {
 //                                eventsAdapter.listItems.add(taskEvent)
@@ -862,7 +862,7 @@ class TaskDetailV2Fragment :
                             val eventList = mutableListOf<Events>()
                             eventList.add(taskEvent)
                             allEvents.addAll(eventList)
-                            viewModel.updateTaskAndAllEvents(taskEvent.taskId, allEvents)
+                            viewModel.updateTaskAndAllEvents(taskEvent, allEvents)
                             scrollToBottom(allEvents.size)
                         }
                     }

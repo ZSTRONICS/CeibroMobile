@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity
@@ -17,7 +16,6 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
-import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
@@ -191,9 +189,9 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-    fun updateTaskAndAllEvents(taskId: String, allEvents: MutableList<Events>) {
+    fun updateTaskAndAllEvents(taskEvent: Events, allEvents: MutableList<Events>) {
         launch {
-            val task = taskDao.getTaskByID(taskId)
+            val task = taskDao.getTaskByID(taskEvent.taskId)
             task?.let {
                 originalTask.postValue(it)
                 _taskDetail.postValue(it)
@@ -201,9 +199,11 @@ class TaskDetailV2VM @Inject constructor(
             originalEvents.postValue(allEvents)
             _taskEvents.postValue(allEvents)
 
-            val seenByMe = task?.seenBy?.find { it == user?.id }
-            if (seenByMe == null) {
-                taskSeen(taskId) { }
+            if (taskEvent.initiator.id != user?.id) {
+                val seenByMe = task?.seenBy?.find { it == user?.id }
+                if (seenByMe == null) {
+                    taskSeen(taskEvent.taskId) { }
+                }
             }
         }
     }
