@@ -52,7 +52,7 @@ class CeibroDataLoadingFragment :
                 viewModel.sessionManager.setUser()
             }
             SocketHandler.setActivityContext(requireActivity())
-            SocketHandler.disconnectSocket()
+            SocketHandler.closeConnectionAndRemoveObservers()
             SocketHandler.setSocket()
             SocketHandler.establishConnection()
         }

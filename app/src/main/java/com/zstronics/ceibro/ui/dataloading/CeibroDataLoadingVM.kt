@@ -24,6 +24,7 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
@@ -73,6 +74,7 @@ class CeibroDataLoadingVM @Inject constructor(
         taskData?.let {
             if (CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
+                sessionManager.setToken()
                 sessionManager.isUserLoggedIn()
             }
             taskId = it.taskId

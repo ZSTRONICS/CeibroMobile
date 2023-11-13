@@ -10,17 +10,16 @@
 
 
     <androidx.cardview.widget.CardView
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="2dp"
-        app:cardCornerRadius="@dimen/_8sdp"
         app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="2dp"
         app:cardMaxElevation="@dimen/_1sdp"
         app:cardUseCompatPadding="true"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,9 +42,10 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="start"
+                android:maxLength="30"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Kristo Vunukainen"
+                android:text="Kristo Vunukainen Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/eventImg"
@@ -120,6 +120,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="start"
+                android:maxLength="1500"
                 android:maxLines="6"
                 android:text="Only comment will be shown here"
                 android:textColor="@color/black"
@@ -133,9 +134,9 @@
                 android:id="@+id/viewMoreLessLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:theme="@style/NonSelectableTextTheme"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/onlyComment"
-                android:theme="@style/NonSelectableTextTheme">
+                app:layout_constraintTop_toBottomOf="@+id/onlyComment">
 
                 <TextView
                     android:id="@+id/viewMoreBtn"
@@ -189,6 +190,7 @@
                 android:layout_marginTop="@dimen/_6sdp"
                 android:nestedScrollingEnabled="false"
                 android:orientation="horizontal"
+                android:paddingStart="1dp"
                 android:visibility="visible"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -205,6 +207,7 @@
                 android:layout_marginTop="@dimen/_6sdp"
                 android:nestedScrollingEnabled="false"
                 android:orientation="vertical"
+                android:paddingStart="1dp"
                 android:visibility="visible"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"

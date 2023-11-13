@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.base
 import com.zstronics.ceibro.data.base.error.ApiError
 import org.json.JSONObject
 import retrofit2.Response
+import java.net.SocketTimeoutException
 import com.google.gson.stream.MalformedJsonException as MalformedJsonException1
 
 const val MALFORMED_JSON_EXCEPTION_CODE = 0
@@ -23,6 +24,13 @@ abstract class BaseNetworkRepository : INetwork {
                 ApiError(
                     MALFORMED_JSON_EXCEPTION_CODE,
                     "No response from server"
+                )
+            )
+        } catch (e: SocketTimeoutException) {
+            return ApiResponse.Error(
+                ApiError(
+                    getDefaultCode(),
+                    "Your request timed-out"
                 )
             )
         } catch (exception: Exception) {

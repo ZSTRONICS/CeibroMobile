@@ -262,7 +262,7 @@ class TaskHiddenFragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksEvent(event: LocalEvents.RefreshTasksEvent?) {
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
         loadTasks(false)
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isHiddenUnread.value = false

@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.v2.newtask
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -172,7 +173,7 @@ class NewTaskV2VM @Inject constructor(
                     ) { isSuccess, task, errorMessage ->
                         if (isSuccess) {
                             updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
-                            val handler = Handler()
+                            val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
                                 onBack()
                                 loading(false, "")
@@ -188,7 +189,7 @@ class NewTaskV2VM @Inject constructor(
                     taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
                         if (isSuccess) {
                             updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
-                            val handler = Handler()
+                            val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
                                 onBack()
                                 loading(false, "")

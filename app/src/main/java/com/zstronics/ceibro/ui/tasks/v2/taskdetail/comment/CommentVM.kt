@@ -4,9 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
@@ -131,7 +133,7 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            loading(false, response.error.message)
+                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
                         }
                     }
 
@@ -154,7 +156,7 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            loading(false, response.error.message)
+                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
                         }
                     }
                 }
@@ -230,7 +232,7 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            loading(false, response.error.message)
+                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
                         }
                     }
 
@@ -253,7 +255,7 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            loading(false, response.error.message)
+                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
                         }
                     }
                 }
