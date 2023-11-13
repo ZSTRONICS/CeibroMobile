@@ -3,9 +3,7 @@ package com.zstronics.ceibro.ui.projectv2
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -18,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ProjectsV2Fragment :
     BaseNavViewModelFragment<FragmentProjectsV2Binding, IProjectsV2.State, ProjectsV2VM>() {
-    val list= ArrayList<String>()
+    val list = ArrayList<String>()
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -39,7 +37,7 @@ class ProjectsV2Fragment :
 
             R.id.cl_new -> {
 
-               navigate(R.id.newProjectV2Fragment)
+                navigate(R.id.newProjectV2Fragment)
             }
 
             R.id.tvCancel -> {
@@ -63,11 +61,9 @@ class ProjectsV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fragmentManager: FragmentManager = childFragmentManager
-
-        list.add("All Projects")
-        list.add("Hidden Projects")
-        val adapter = ProjectTabLayoutAdapter(fragmentManager,lifecycle) {
+        list.add(getString(R.string.all_projects))
+        list.add(getString(R.string.hidden_projects))
+        val adapter = ProjectTabLayoutAdapter(requireActivity()) {
             navigate(R.id.projectDetailV2Fragment)
         }
         mViewDataBinding.viewPager.adapter = adapter

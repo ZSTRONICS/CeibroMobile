@@ -40,15 +40,15 @@ class AddNewPhotoBottomSheet(val callback: (String) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cancelBtn.setOnClickListener {
-            callback.invoke("cancel")
+            callback.invoke(getString(R.string.cancel))
             dismiss()
         }
         binding.tvFromLocal.setOnClickListener {
-            callback.invoke("local")
+            callback.invoke(getString(R.string.local))
             dismiss()
         }
         binding.tvFromCeibroFiles.setOnClickListener {
-            callback.invoke("ceibro")
+            callback.invoke(getString(R.string.ceibro))
             dismiss()
         }
     }

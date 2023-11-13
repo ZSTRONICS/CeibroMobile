@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.projectv2.newprojectv2
 
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
@@ -12,11 +13,14 @@ import javax.inject.Inject
 @HiltViewModel
 class NewProjectV2VM @Inject constructor(
     override val viewState: NewProjectStateV2,
-    private val remoteTask: TaskRemoteDataSource,
-    private val sessionManager: SessionManager,
-    private val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<INewProjectV2.State>(), INewProjectV2.ViewModel {
+
+
     override fun getProjectName(context: Context) {
+
+    }
+
+    override fun addNewProject() {
 
     }
 

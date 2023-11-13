@@ -37,9 +37,6 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
 
     @Inject
     lateinit var adapter: AllProjectAdapter
-//
-    // lateinit var adapter: AllProjectsAdapterSectionRecycler
-
 
     private var sectionList: MutableList<ConnectionsSectionHeader> = mutableListOf()
 
@@ -71,8 +68,6 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
             1,
             ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
         )
-        //adapter = AllProjectsAdapterSectionRecycler(requireContext(), sectionList)
-
 
         mViewDataBinding.projectsRV.adapter = adapter
 
@@ -88,7 +83,18 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
         list.add(Project("123", "Try again and again"))
         list.add(Project("123", "Try again and again"))
 
-        initRecyclerView(adapter, list)
+
+        if (!list.isNotEmpty()) {
+            mViewDataBinding.toolbarHeader.visibility = View.GONE
+            mViewDataBinding.projectsRV.visibility = View.VISIBLE
+            initRecyclerView(adapter, list)
+        } else {
+            mViewDataBinding.toolbarHeader.visibility = View.VISIBLE
+            mViewDataBinding.projectsRV.visibility = View.GONE
+        }
+
+
+
     }
 
     private fun initRecyclerView(adapter: AllProjectAdapter, list: MutableList<Project>) {
@@ -100,6 +106,7 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
                 1 -> {
                     callback?.invoke(1)
                 }
+
                 2 -> {
                     showDialog()
                 }
@@ -108,7 +115,6 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
         }
 
     }
-
 
     private fun showDialog() {
         val dialog = Dialog(requireContext())

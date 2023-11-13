@@ -2,7 +2,6 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
@@ -30,13 +29,11 @@ class ProjectDetailV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fragmentManager: FragmentManager = childFragmentManager
-        val adapter = ProjectDetailTabLayoutAdapter(fragmentManager, lifecycle)
+        val adapter = ProjectDetailTabLayoutAdapter(requireActivity())
         mViewDataBinding.viewPager.adapter = adapter
-        // mViewDataBinding.viewPager.isUserInputEnabled = false
 
         TabLayoutMediator(mViewDataBinding.tabLayout, mViewDataBinding.viewPager) { tab, position ->
-            tab.text = "Detail"
+            tab.text = getString(R.string.detail)
         }.attach()
     }
 
