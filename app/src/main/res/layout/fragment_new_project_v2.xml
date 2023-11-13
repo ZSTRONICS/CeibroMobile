@@ -87,7 +87,7 @@
                 app:hintTextColor="@color/appGrey3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/projectText"
@@ -103,11 +103,10 @@
                     android:scrollbarStyle="insideInset"
                     android:scrollbars="none"
                     android:text="@={viewState.projectName}"
-                    android:textSize="15sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -145,8 +144,8 @@
                     android:scrollbarStyle="insideInset"
                     android:scrollbars="none"
                     android:text=""
-                    android:textSize="15sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,7 +175,6 @@
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
             <View
