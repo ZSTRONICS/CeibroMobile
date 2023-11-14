@@ -44,7 +44,7 @@ class NewProjectV2Fragment :
 
                 viewState.projectName.value?.let {
                     if (it.isEmpty()) {
-                        showToast("Project name is required.")
+                        showToast(getString(R.string.project_name_is_required))
                     } else {
                         viewModel.addNewProject()
                     }

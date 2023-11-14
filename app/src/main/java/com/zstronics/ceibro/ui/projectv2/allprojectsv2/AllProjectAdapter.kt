@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.chat.room.Project
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutProjectItemListBinding
@@ -47,10 +48,12 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
         fun bind(item: Project) {
             val context = binding.root.context
 
-            binding.tvDate.text = "23.09.2023"
+            binding.tvDate.text = context.getString(R.string.sample_date)
             binding.projectName.text = item.title
-            binding.userCompany.text = "Ceibro limiteds"
-            binding.userName.text = "Rebel"
+            binding.userCompany.text =  context.getString(R.string.ceibro)
+            binding.userName.text = context.getString(R.string.username)
+
+
             binding.connectionImg.setOnClickListener {
                 callback?.invoke(1)
             }

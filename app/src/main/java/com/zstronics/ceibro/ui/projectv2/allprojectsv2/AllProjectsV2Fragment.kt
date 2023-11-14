@@ -1,12 +1,12 @@
 package com.zstronics.ceibro.ui.projectv2.allprojectsv2
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
+import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -37,6 +37,9 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
     lateinit var adapter: AllProjectAdapter
 
 
+    lateinit var sectionedAdapter: AllProjectsAdapterSectionRecycler
+
+
     private var sectionList: MutableList<ConnectionsSectionHeader> = mutableListOf()
 
     private var list: MutableList<Project> = mutableListOf()
@@ -61,15 +64,12 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
         sectionList.add(
             0,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
-        )
-        sectionList.add(
-            1,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
+            ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_projects))
         )
 
 
-        mViewDataBinding.projectsRV.adapter = adapter
+       sectionedAdapter  = AllProjectsAdapterSectionRecycler(requireContext(), sectionList)
+        mViewDataBinding.projectsRV.adapter = sectionedAdapter
 
         list.add(Project("123", "Try again and again"))
         list.add(Project("123", "Try again and again"))
@@ -87,7 +87,7 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
         if (list.isNotEmpty()) {
             mViewDataBinding.toolbarHeader.visibility = View.GONE
             mViewDataBinding.projectsRV.visibility = View.VISIBLE
-            initRecyclerView(adapter, list)
+            initRecyclerView(sectionedAdapter, list)
         } else {
             mViewDataBinding.toolbarHeader.visibility = View.VISIBLE
             mViewDataBinding.projectsRV.visibility = View.GONE
@@ -95,40 +95,41 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
     }
 
-    private fun initRecyclerView(adapter: AllProjectAdapter, list: MutableList<Project>) {
+    private fun initRecyclerView(adapter: AllProjectsAdapterSectionRecycler, list: MutableList<Project>) {
         mViewDataBinding.projectsRV.adapter = adapter
-        adapter.setList(list, true)
-        adapter.setCallBack {
-
-            when (it) {
-                1 -> {
-                    callback?.invoke(1)
-                }
-
-                2 -> {
-                    showDialog()
-                }
-            }
-
-        }
+//        adapter.setList(list, true)
+//        adapter.setCallBack {
+//            when (it) {
+//                1 -> {
+//                    callback?.invoke(1)
+//                }
+//
+//                2 -> {
+//                    showHideTaskDialog(requireContext())
+//                }
+//            }
+//        }
 
     }
 
-    private fun showDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.layout_task_hide_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val tvYes: TextView = dialog.findViewById(R.id.tvYes)
-        val tvNo: TextView = dialog.findViewById(R.id.tvNo)
 
-        tvYes.setOnClickListener {
-            dialog.dismiss()
+    private fun showHideTaskDialog(context: Context) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_un_hide_this_project)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            alertDialog.dismiss()
         }
-        tvNo.setOnClickListener {
-            dialog.dismiss()
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
         }
-        dialog.show()
     }
 }
