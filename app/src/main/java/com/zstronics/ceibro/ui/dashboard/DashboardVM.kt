@@ -543,10 +543,10 @@ class DashboardVM @Inject constructor(
                 object : TypeToken<SocketEventTypeResponse>() {}.type
             )
             socketData.uuid?.let { SocketHandler.sendEventAck(it) }
-            if (BuildConfig.DEBUG) {
+//            if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
-            }
-            println("Heartbeat SocketEvent: ${socketData.eventType}")
+//            }
+            println("Heartbeat SocketEvent: ${socketData.eventType} SocketData: ${arguments}")
             if (socketData.eventType.equals("TASK_SEEN", true) || socketData.eventType.equals(SocketHandler.TaskEvent.TASK_CREATED.name, true)) {
                 println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
             }

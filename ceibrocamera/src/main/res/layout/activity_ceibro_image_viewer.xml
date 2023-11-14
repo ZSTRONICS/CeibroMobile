@@ -34,33 +34,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/doneBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_25sdp"
-                android:background="@drawable/blue_button_back"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:paddingStart="@dimen/_6sdp"
-                android:paddingEnd="@dimen/_6sdp"
-                android:text="@string/done"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_11sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="TouchTargetSizeCheck" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/galleryButton"
                 android:layout_width="@dimen/_22sdp"
                 android:layout_height="@dimen/_22sdp"
-                android:layout_marginEnd="@dimen/_18sdp"
                 android:padding="@dimen/_1sdp"
                 android:src="@drawable/ic_photo_picker"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/doneBtn"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -70,8 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@drawable/new_background"
-            android:visibility="gone"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +67,7 @@
             app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topLayout"/>
+            app:layout_constraintTop_toBottomOf="@+id/topLayout" />
 
 
         <LinearLayout
@@ -190,18 +171,18 @@
                 android:id="@+id/smallFooterImagesRV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/_1sdp"
                 android:paddingEnd="@dimen/_1sdp"
                 android:visibility="visible"
-                android:layout_gravity="center_horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@+id/commentsLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topLayout"
                 tools:itemCount="3"
-                tools:listitem="@layout/layout_ceibro_small_image_viewer"/>
+                tools:listitem="@layout/layout_ceibro_small_image_viewer" />
 
             <!--Comment or delete bottom ImageView to see recyclerView because its just sample-->
             <androidx.appcompat.widget.AppCompatImageView
@@ -225,16 +206,54 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cameraBtn"
-                android:layout_width="@dimen/_44sdp"
-                android:layout_height="0dp"
-                android:padding="@dimen/_10sdp"
-                android:src="@drawable/icon_camera_only"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:paddingHorizontal="@dimen/_3sdp"
+                android:paddingVertical="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/appBlue" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/newPhotoText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center"
+                    android:text="@string/new_photo"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_8sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/camImg" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/camImg"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/icon_add_photo" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/camLine"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginVertical="@dimen/_2sdp"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:background="@color/appGrey"
+                app:layout_constraintBottom_toBottomOf="@+id/cameraBtn"
+                app:layout_constraintStart_toEndOf="@+id/cameraBtn"
+                app:layout_constraintTop_toTopOf="@+id/cameraBtn" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/commentsField"
@@ -246,17 +265,17 @@
                 android:hint="@string/start_typing_your_comment_here"
                 android:inputType="text"
                 android:maxLines="1"
-                android:paddingStart="5dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="11dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/appGrey3"
                 android:textSize="15.5sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/editBtn"
+                app:layout_constraintEnd_toStartOf="@+id/saveBtn"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/cameraBtn" />
+                app:layout_constraintStart_toEndOf="@+id/camLine" />
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <!--<androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/confirmBtn"
                 android:layout_width="@dimen/_37sdp"
                 android:layout_height="0dp"
@@ -278,7 +297,43 @@
                 app:layout_constraintBottom_toBottomOf="@+id/commentsField"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/commentsField"
-                app:tint="@color/appBlue" />
+                app:tint="@color/appBlue" />-->
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/saveBtn"
+                android:layout_width="@dimen/_41sdp"
+                android:layout_height="@dimen/_27sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:background="@drawable/blue_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:text="@string/save"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/okBtn"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_27sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:background="@drawable/blue_button_back"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:text="@string/ok"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

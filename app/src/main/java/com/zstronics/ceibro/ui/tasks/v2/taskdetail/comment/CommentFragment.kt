@@ -81,10 +81,28 @@ class CommentFragment :
             }
 
             R.id.newCommentPhotoBtn -> {
+                val listOfPickedImages = arrayListOf<PickedImages>()
+                viewModel.listOfImages.value?.let { listOfPickedImages.addAll(it) }
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("allImagesList", listOfPickedImages)
                 val ceibroCamera = Intent(
                     requireContext(),
                     CeibroCameraActivity::class.java
                 )
+                ceibroCamera.putExtra("allImagesBundle", bundle)
+                ceibroImagesPickerLauncher.launch(ceibroCamera)
+            }
+
+            R.id.imageRequiredPhotoBtn -> {
+                val listOfPickedImages = arrayListOf<PickedImages>()
+                viewModel.listOfImages.value?.let { listOfPickedImages.addAll(it) }
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("allImagesList", listOfPickedImages)
+                val ceibroCamera = Intent(
+                    requireContext(),
+                    CeibroCameraActivity::class.java
+                )
+                ceibroCamera.putExtra("allImagesBundle", bundle)
                 ceibroImagesPickerLauncher.launch(ceibroCamera)
             }
 
@@ -284,6 +302,7 @@ class CommentFragment :
                         resources.getString(R.string.reply_heading)
                     mViewDataBinding.commentRequiredHeading.visibility = View.GONE
                     mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                    mViewDataBinding.imageRequiredPhotoBtn.visibility = View.GONE
                     mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
 
                 } else if (it.equals(TaskDetailEvents.DoneTask.eventValue, true)
@@ -295,6 +314,7 @@ class CommentFragment :
                     }
                     if (viewModel.doneImageRequired) {
                         mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
+                        mViewDataBinding.imageRequiredPhotoBtn.visibility = View.VISIBLE
                         mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
                     }
 
@@ -328,13 +348,16 @@ class CommentFragment :
             ) {
                 if (!it.isNullOrEmpty()) {
                     mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                    mViewDataBinding.imageRequiredPhotoBtn.visibility = View.GONE
                     mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
                 } else {
                     if (viewModel.doneImageRequired) {
                         mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
+                        mViewDataBinding.imageRequiredPhotoBtn.visibility = View.VISIBLE
                         mViewDataBinding.imageRequiredBottomLine.visibility = View.VISIBLE
                     } else {
                         mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                        mViewDataBinding.imageRequiredPhotoBtn.visibility = View.GONE
                         mViewDataBinding.imageRequiredBottomLine.visibility = View.GONE
                     }
                 }
@@ -353,6 +376,9 @@ class CommentFragment :
                 }
                 viewModel.onlyImages.postValue(onlyImages1)
                 viewModel.imagesWithComments.postValue(imagesWithComment1)
+            } else {
+                viewModel.onlyImages.postValue(arrayListOf())
+                viewModel.imagesWithComments.postValue(arrayListOf())
             }
         }
 
@@ -454,9 +480,11 @@ class CommentFragment :
             if (result.resultCode == Activity.RESULT_OK) {
                 val images = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
                 if (images != null) {
-                    val oldImages = viewModel.listOfImages.value
-                    oldImages?.addAll(images)
-                    viewModel.listOfImages.postValue(oldImages)
+//                    val oldImages = viewModel.listOfImages.value
+//                    oldImages?.addAll(images)
+                    viewModel.listOfImages.postValue(images)
+                } else {
+                    viewModel.listOfImages.postValue(arrayListOf())
                 }
             }
         }

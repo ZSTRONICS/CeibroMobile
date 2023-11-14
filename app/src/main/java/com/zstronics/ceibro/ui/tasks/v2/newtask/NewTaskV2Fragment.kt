@@ -132,10 +132,15 @@ class NewTaskV2Fragment :
             }
 
             R.id.newTaskPhotoBtn -> {
+                val listOfPickedImages = arrayListOf<PickedImages>()
+                viewModel.listOfImages.value?.let { listOfPickedImages.addAll(it) }
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("allImagesList", listOfPickedImages)
                 val ceibroCamera = Intent(
                     requireContext(),
                     CeibroCameraActivity::class.java
                 )
+                ceibroCamera.putExtra("allImagesBundle", bundle)
                 ceibroImagesPickerLauncher.launch(ceibroCamera)
             }
 
@@ -299,6 +304,9 @@ class NewTaskV2Fragment :
                 }
                 viewModel.onlyImages.postValue(onlyImages1)
                 viewModel.imagesWithComments.postValue(imagesWithComment1)
+            } else {
+                viewModel.onlyImages.postValue(arrayListOf())
+                viewModel.imagesWithComments.postValue(arrayListOf())
             }
         }
 
@@ -388,9 +396,11 @@ class NewTaskV2Fragment :
             if (result.resultCode == RESULT_OK) {
                 val images = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
                 if (images != null) {
-                    val oldImages = viewModel.listOfImages.value
-                    oldImages?.addAll(images)
-                    viewModel.listOfImages.postValue(oldImages)
+//                    val oldImages = viewModel.listOfImages.value
+//                    oldImages?.addAll(images)
+                    viewModel.listOfImages.postValue(images)
+                } else {
+                    viewModel.listOfImages.postValue(arrayListOf())
                 }
             }
         }
