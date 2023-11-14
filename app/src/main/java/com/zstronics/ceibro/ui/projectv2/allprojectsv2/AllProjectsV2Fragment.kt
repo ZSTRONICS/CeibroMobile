@@ -1,13 +1,9 @@
 package com.zstronics.ceibro.ui.projectv2.allprojectsv2
 
-import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -39,6 +35,9 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
     @Inject
     lateinit var adapter: AllProjectAdapter
+
+
+    lateinit var sectionedAdapter: AllProjectsAdapterSectionRecycler
 
 
     private var sectionList: MutableList<ConnectionsSectionHeader> = mutableListOf()
@@ -73,7 +72,8 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
         )
 
 
-        mViewDataBinding.projectsRV.adapter = adapter
+       sectionedAdapter  = AllProjectsAdapterSectionRecycler(requireContext(), sectionList)
+        mViewDataBinding.projectsRV.adapter = sectionedAdapter
 
         list.add(Project("123", "Try again and again"))
         list.add(Project("123", "Try again and again"))
@@ -91,7 +91,7 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
         if (list.isNotEmpty()) {
             mViewDataBinding.toolbarHeader.visibility = View.GONE
             mViewDataBinding.projectsRV.visibility = View.VISIBLE
-            initRecyclerView(adapter, list)
+            initRecyclerView(sectionedAdapter, list)
         } else {
             mViewDataBinding.toolbarHeader.visibility = View.VISIBLE
             mViewDataBinding.projectsRV.visibility = View.GONE
@@ -99,22 +99,20 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
     }
 
-    private fun initRecyclerView(adapter: AllProjectAdapter, list: MutableList<Project>) {
+    private fun initRecyclerView(adapter: AllProjectsAdapterSectionRecycler, list: MutableList<Project>) {
         mViewDataBinding.projectsRV.adapter = adapter
-        adapter.setList(list, true)
-        adapter.setCallBack {
-
-            when (it) {
-                1 -> {
-                    callback?.invoke(1)
-                }
-
-                2 -> {
-                    showHideTaskDialog(requireContext())
-                }
-            }
-
-        }
+//        adapter.setList(list, true)
+//        adapter.setCallBack {
+//            when (it) {
+//                1 -> {
+//                    callback?.invoke(1)
+//                }
+//
+//                2 -> {
+//                    showHideTaskDialog(requireContext())
+//                }
+//            }
+//        }
 
     }
 
@@ -122,10 +120,8 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
     private fun showHideTaskDialog(context: Context) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
-
         val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
         val alertDialog = builder.create()
-
         val yesBtn = view.findViewById<Button>(R.id.yesBtn)
         val noBtn = view.findViewById<Button>(R.id.noBtn)
         val dialogText = view.findViewById<TextView>(R.id.dialog_text)
@@ -136,7 +132,6 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
         yesBtn.setOnClickListener {
             alertDialog.dismiss()
         }
-
         noBtn.setOnClickListener {
             alertDialog.dismiss()
         }

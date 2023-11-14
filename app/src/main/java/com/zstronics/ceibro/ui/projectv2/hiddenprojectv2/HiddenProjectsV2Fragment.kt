@@ -89,7 +89,7 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
         list.add(Project("123", "Try again and again"))
 
 
-        if (!list.isNotEmpty()) {
+        if (list.isNotEmpty()) {
             mViewDataBinding.toolbarHeader.visibility = View.GONE
             mViewDataBinding.projectsRV.visibility = View.VISIBLE
             initRecyclerView(adapter, list)
