@@ -562,4 +562,5 @@
     <string name="no_projects_are_hidden">No projects are hidden.</string>
     <string name="project_name_is_required">Project name is required.</string>
     <string name="created_by">Created by</string>
+    <string name="sample_date">23.09.2023</string>
 </resources>

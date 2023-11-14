@@ -64,11 +64,7 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
         sectionList.add(
             0,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
-        )
-        sectionList.add(
-            1,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
+            ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_projects))
         )
 
 
