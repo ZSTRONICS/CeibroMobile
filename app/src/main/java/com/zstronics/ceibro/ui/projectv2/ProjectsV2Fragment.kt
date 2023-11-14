@@ -46,6 +46,8 @@ class ProjectsV2Fragment :
                 mViewDataBinding.projectSearchBar.hideKeyboard()
                 mViewDataBinding.projectsSearchCard.visibility = View.GONE
                 mViewDataBinding.connectionImgCard.visibility = View.VISIBLE
+
+                mViewDataBinding.projectSearchBar.setQuery("", false)
             }
 
             R.id.connectionImgCard -> {
