@@ -15,10 +15,10 @@ import ee.zstronics.ceibro.camera.R
  * @version 0.1.2
  * @since 5/23/2018
  */
-class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
+class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected, _selectedPosition: Int = -1) :
     RecyclerView.Adapter<EditingToolsAdapter.ViewHolder>() {
     private val mToolList: MutableList<ToolModel> = ArrayList()
-    var selectedPosition = -1
+    var selectedPosition = _selectedPosition
 
     interface OnItemSelected {
         fun onToolSelected(toolType: ToolType)
@@ -57,6 +57,14 @@ class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
 
     override fun getItemCount(): Int {
         return mToolList.size
+    }
+
+    fun selectDefaultView(position: Int) {
+        selectedPosition = position
+        mOnItemSelected.onToolSelected(
+            mToolList[selectedPosition].mToolType
+        )
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

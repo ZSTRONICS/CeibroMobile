@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Ceibro</string>
     <string name="done">Done</string>
+    <string name="save">Save</string>
+    <string name="ok">Ok</string>
     <string name="start_typing_your_comment_here">Start typing your comment here</string>
     <string name="do_you_want_to_cancel_all_the_changes_that_you_made">Do you want to cancel all the changes that you made?</string>
     <string name="no_btn_text">No</string>
@@ -26,6 +28,7 @@
     <string name="app_intent_name">PhotoEditor</string>
     <string name="msg_save_image_to_share">Please save image to share</string>
     <string name="msg_share_image">Share Image</string>
+    <string name="new_photo">New photo</string>
 
     <string-array name="photo_editor_emoji">
 

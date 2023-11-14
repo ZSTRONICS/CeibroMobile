@@ -89,6 +89,7 @@ class TextEditorDialogFragment : DialogFragment() {
         mColorCode = arguments.getInt(EXTRA_COLOR_CODE)
         mAddTextEditText!!.setTextColor(mColorCode)
         mInputMethodManager!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        mAddTextEditText!!.requestFocus()
 
         //Make a callback on activity when user is done with text editing
         mAddTextDoneTextView!!.setOnClickListener { onClickListenerView ->

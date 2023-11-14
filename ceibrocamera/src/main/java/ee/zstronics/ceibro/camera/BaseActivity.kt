@@ -130,10 +130,16 @@ open class BaseActivity : AppCompatActivity() {
         )
     }
 
-    fun startEditor(imageUri: Uri, onPhotoEditedCallback: (updatedUri: Uri?) -> Unit) {
+    fun startEditor(
+        imageUri: Uri,
+        editType: String,
+        onPhotoEditedCallback: (updatedUri: Uri?) -> Unit
+    ) {
         launchActivityForResult<EditImageActivity>(init = {
             this.data = imageUri
             action = Intent.ACTION_EDIT
+            this.putExtra("editType", editType)
+
         }) { resultCode, data ->
 //            println("ImagesURIInEditMode0: ${data?.data}")
             if (data?.data != null) {       //If null then it means no changes done in file so don't delete the file, issue fixed

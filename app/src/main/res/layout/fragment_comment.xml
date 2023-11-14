@@ -161,16 +161,54 @@
                     app:layout_constraintStart_toStartOf="@+id/commentField"
                     app:layout_constraintTop_toBottomOf="@+id/commentField" />
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/imageRequiredPhotoBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_65sdp"
+                    android:layout_marginTop="@dimen/_11sdp"
+                    android:background="@drawable/round_grey"
+                    android:visibility="gone"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    app:layout_constraintStart_toStartOf="@+id/commentField"
+                    app:layout_constraintTop_toBottomOf="@id/imageRequiredHeading">
+
+                    <TextView
+                        android:id="@+id/newPhotoText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/_8sdp"
+                        android:text="@string/add_photo"
+                        android:textColor="@color/grey"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:srcCompat="@drawable/icon_add_photo" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <View
                     android:id="@+id/imageRequiredBottomLine"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:background="@color/appGrey3"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/imageRequiredHeading"
                     app:layout_constraintStart_toStartOf="@+id/imageRequiredHeading"
-                    app:layout_constraintTop_toBottomOf="@+id/imageRequiredHeading" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageRequiredPhotoBtn" />
 
 
                 <androidx.recyclerview.widget.RecyclerView

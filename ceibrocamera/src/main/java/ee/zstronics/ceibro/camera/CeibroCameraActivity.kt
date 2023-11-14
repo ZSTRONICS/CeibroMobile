@@ -40,6 +40,7 @@ class CeibroCameraActivity : BaseActivity() {
     private var isTorchOn: Boolean = false
     private var isFlashEnabled: Boolean = false
     var sourceName = ""
+    val oldImages = arrayListOf<PickedImages>()
     var whiteTint = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +49,12 @@ class CeibroCameraActivity : BaseActivity() {
             DataBindingUtil.inflate(layoutInflater, R.layout.activity_ceibro_camera, null, false)
         setContentView(binding.root)
         sourceName = intent.getStringExtra("source_name") ?: ""
+
+        if (sourceName != CeibroImageViewerActivity::class.java.name) {
+            val allImages = intent.getBundleExtra("allImagesBundle")
+            val imagesList = allImages?.getParcelableArrayList<PickedImages>("allImagesList")
+            imagesList?.let { oldImages.addAll(it) }
+        }
 
         binding.imagesPicker.visibility =
             if (sourceName == CeibroImageViewerActivity::class.java.name) {
@@ -104,7 +111,9 @@ class CeibroCameraActivity : BaseActivity() {
                         val ceibroImagesIntent =
                             Intent()
                         val newBundle = Bundle()
-                        newBundle.putParcelableArrayList("images", listOfPickedImages)
+                        oldImages.addAll(listOfPickedImages)
+
+                        newBundle.putParcelableArrayList("images", oldImages)
                         ceibroImagesIntent.putExtras(newBundle)
                         setResult(RESULT_OK, ceibroImagesIntent)
                         finish()
@@ -112,7 +121,9 @@ class CeibroCameraActivity : BaseActivity() {
                         val ceibroCamera =
                             Intent(applicationContext, CeibroImageViewerActivity::class.java)
                         val bundle = Bundle()
-                        bundle.putParcelableArrayList("images", listOfPickedImages)
+                        oldImages.addAll(listOfPickedImages)
+
+                        bundle.putParcelableArrayList("images", oldImages)
                         ceibroCamera.putExtras(bundle)
                         ceibroImageViewerLauncher.launch(ceibroCamera)
                     }
@@ -167,7 +178,11 @@ class CeibroCameraActivity : BaseActivity() {
                 val ceibroCamera =
                     Intent(applicationContext, CeibroImageViewerActivity::class.java)
                 val bundle = Bundle()
-                bundle.putParcelableArrayList("images", listOfPickedImages)
+                if (listOfPickedImages != null) {
+                    oldImages.addAll(listOfPickedImages)
+                }
+
+                bundle.putParcelableArrayList("images", oldImages)
                 ceibroCamera.putExtras(bundle)
                 ceibroImageViewerLauncher.launch(ceibroCamera)
             }

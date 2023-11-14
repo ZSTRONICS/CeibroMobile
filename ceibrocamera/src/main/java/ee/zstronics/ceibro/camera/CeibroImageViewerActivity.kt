@@ -14,8 +14,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
@@ -31,6 +29,8 @@ class CeibroImageViewerActivity : BaseActivity() {
     var lastSelectedPosition: Int = 0
     var newImagesAdded: Boolean = false
     var oldListIndexesSize: Int = 0         //this will be index count, considering from 0
+    var imagesOnceSet = false
+    var imageDeleted = false
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,12 +69,17 @@ class CeibroImageViewerActivity : BaseActivity() {
                 smallImageAdapter.setSelectedItem(newItemPosition)
                 newImagesAdded = false
             }
+            if (!imagesOnceSet) {
+                setUserCommentLogic(0)
+                imagesOnceSet = true
+            }
         }
         binding.fullSizeImagesVP.adapter = fullImageAdapter
         binding.smallFooterImagesRV.adapter = smallImageAdapter
 
         smallImageAdapter.itemClickListener =
             { _: View, position: Int ->
+                saveComment()
                 binding.fullSizeImagesVP.setCurrentItem(position, true)
                 setUserCommentLogic(position)
                 hideKeyboard()
@@ -84,6 +89,10 @@ class CeibroImageViewerActivity : BaseActivity() {
         binding.fullSizeImagesVP.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                if (!imageDeleted) {     //registerOnPageChangeCallback is called even when we delete photo because image view pager is scrolled to next image
+                    saveComment()       //this is done because when image is deleted, its comment shifts to next image, in order to stop it, dont save on delete
+                }
+                imageDeleted = false
                 binding.smallFooterImagesRV.smoothScrollToPosition(position)
                 smallImageAdapter.setSelectedItem(position)
                 setUserCommentLogic(position)
@@ -95,36 +104,19 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         binding.commentsField.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
-                binding.confirmBtn.visibility = View.VISIBLE
-                binding.editBtn.visibility = View.INVISIBLE
-            }
-        }
-
-        binding.confirmBtn.setOnClickListener {
-            val comment = binding.commentsField.text.toString().trim()
-            val oldImages = listOfImages.value
-            oldImages?.get(lastSelectedPosition)?.comment = comment
-            listOfImages.postValue(oldImages)
-
-            if (comment.isNotEmpty()) {
-                binding.confirmBtn.visibility = View.INVISIBLE
-                binding.editBtn.visibility = View.VISIBLE
+                binding.okBtn.visibility = View.VISIBLE
+                binding.saveBtn.visibility = View.INVISIBLE
+                binding.commentsField.text?.length?.let { it1 -> binding.commentsField.setSelection(it1) }
             } else {
-                binding.confirmBtn.visibility = View.INVISIBLE
-                binding.editBtn.visibility = View.INVISIBLE
+                binding.okBtn.visibility = View.INVISIBLE
+                binding.saveBtn.visibility = View.VISIBLE
             }
-
-            binding.commentsField.clearFocus()
-            hideKeyboard()
         }
 
-        binding.editBtn.setOnClickListener {
-            binding.commentsField.requestFocus()
-            binding.commentsField.text?.length?.let { it1 -> binding.commentsField.setSelection(it1) }
-            showKeyboard()
-            binding.confirmBtn.visibility = View.VISIBLE
-            binding.editBtn.visibility = View.INVISIBLE
+        binding.okBtn.setOnClickListener {
+            saveComment()
         }
+
 
         binding.closeBtn.setOnClickListener {
             showCancelDialog()
@@ -134,7 +126,7 @@ class CeibroImageViewerActivity : BaseActivity() {
             showDeleteDialog()
         }
 
-        binding.doneBtn.setOnClickListener {
+        binding.saveBtn.setOnClickListener {
             listOfImages.value?.let { listOfPickedImages ->
                 println("ImagesURIOnDone: ${listOfPickedImages}")
                 val newList = listOfPickedImages.map { it ->
@@ -157,6 +149,7 @@ class CeibroImageViewerActivity : BaseActivity() {
         }
 
         binding.galleryButton.setOnClickListener {
+            saveComment()
             checkPermission(
                 listOf(
                     Manifest.permission.CAMERA,
@@ -164,12 +157,17 @@ class CeibroImageViewerActivity : BaseActivity() {
             ) {
                 pickFiles { listOfPickedImages ->
                     val oldImages = listOfImages.value
+                    if (listOfPickedImages.size > 0) {
+                        oldListIndexesSize = oldImages?.size?.minus(1) ?: 0
+                        newImagesAdded = true
+                    }
                     oldImages?.addAll(listOfPickedImages)
                     listOfImages.postValue(oldImages)
                 }
             }
         }
         binding.cameraBtn.setOnClickListener {
+            saveComment()
             val ceibroCamera = Intent(
                 applicationContext,
                 CeibroCameraActivity::class.java
@@ -197,58 +195,21 @@ class CeibroImageViewerActivity : BaseActivity() {
                     .start()
             }
         }
-        binding.editInnerLayout.setOnClickListener {
-            listOfImages.value?.let {
-                it[lastSelectedPosition].fileUri?.let { uri ->
-//                    println("ImagesURIBeforeEdit: ${uri}")
-                    startEditor(uri) { updatedUri ->
-                        if (updatedUri != null) {
-                            var updatedPickedImage = getPickedImage(updatedUri)
-//                            println("ImagesURIAfterEdit1: ${updatedUri}")
 
-                            if (updatedUri.toString().contains("content://media/")) {
-                                try {
-                                    val contentResolver = applicationContext.contentResolver
-                                    val projection = arrayOf(MediaStore.Images.Media.DATA)
-                                    val cursor = contentResolver.query(
-                                        updatedUri,
-                                        projection,
-                                        null,
-                                        null,
-                                        null
-                                    )
-                                    val filePath: String? = cursor?.use { cursor1 ->
-                                        if (cursor1.moveToFirst()) {
-                                            cursor1.getString(cursor1.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
-                                        } else {
-                                            null
-                                        }
-                                    }
-                                    val file = filePath?.let { File(it) }
-                                    val uri1 = Uri.fromFile(file)
-                                    updatedPickedImage = getPickedImage(uri1)
-//                                    println("ImagesURIAfterEdit222: $updatedPickedImage")
-                                } catch (_: Exception) {
-                                }
-                            }
-
-                            val files = listOfImages.value
-
-                            if (files != null) {
-                                val singleFile = files.get(lastSelectedPosition)
-                                updatedPickedImage.comment = singleFile.comment
-
-                                files.removeAt(lastSelectedPosition)
-                                files.add(
-                                    lastSelectedPosition,
-                                    updatedPickedImage
-                                )    //added after old file removal because file name and URI, everything is changed
-                            }
-                            listOfImages.postValue(files)
-                        }
-                    }
-                }
-            }
+        binding.squareBtn.setOnClickListener {
+            openEditor("square")
+        }
+        binding.arrowBtn.setOnClickListener {
+            openEditor("arrow")
+        }
+        binding.drawBtn.setOnClickListener {
+            openEditor("draw")
+        }
+        binding.insertTextBtn.setOnClickListener {
+            openEditor("insertText")
+        }
+        binding.undoBtn.setOnClickListener {
+            openEditor("undo")
         }
     }
 
@@ -258,8 +219,8 @@ class CeibroImageViewerActivity : BaseActivity() {
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             if (s.toString().isNotEmpty()) {
-                binding.confirmBtn.visibility = View.VISIBLE
-                binding.editBtn.visibility = View.INVISIBLE
+                binding.okBtn.visibility = View.VISIBLE
+                binding.saveBtn.visibility = View.INVISIBLE
             }
         }
 
@@ -267,15 +228,79 @@ class CeibroImageViewerActivity : BaseActivity() {
         }
     }
 
+    private fun openEditor(editType: String) {
+        saveComment()
+        listOfImages.value?.let {
+            it[lastSelectedPosition].fileUri?.let { uri ->
+//                    println("ImagesURIBeforeEdit: ${uri}")
+                startEditor(uri, editType) { updatedUri ->
+                    if (updatedUri != null) {
+                        var updatedPickedImage = getPickedImage(updatedUri)
+//                            println("ImagesURIAfterEdit1: ${updatedUri}")
+
+                        if (updatedUri.toString().contains("content://media/")) {
+                            try {
+                                val contentResolver = applicationContext.contentResolver
+                                val projection = arrayOf(MediaStore.Images.Media.DATA)
+                                val cursor = contentResolver.query(
+                                    updatedUri,
+                                    projection,
+                                    null,
+                                    null,
+                                    null
+                                )
+                                val filePath: String? = cursor?.use { cursor1 ->
+                                    if (cursor1.moveToFirst()) {
+                                        cursor1.getString(cursor1.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                                    } else {
+                                        null
+                                    }
+                                }
+                                val file = filePath?.let { File(it) }
+                                val uri1 = Uri.fromFile(file)
+                                updatedPickedImage = getPickedImage(uri1)
+//                                    println("ImagesURIAfterEdit222: $updatedPickedImage")
+                            } catch (_: Exception) {
+                            }
+                        }
+
+                        val files = listOfImages.value
+
+                        if (files != null) {
+                            val singleFile = files.get(lastSelectedPosition)
+                            updatedPickedImage.comment = singleFile.comment
+
+                            files.removeAt(lastSelectedPosition)
+                            files.add(
+                                lastSelectedPosition,
+                                updatedPickedImage
+                            )    //added after old file removal because file name and URI, everything is changed
+                        }
+                        listOfImages.postValue(files)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun saveComment(){
+        val comment = binding.commentsField.text.toString().trim()
+        val oldImages = listOfImages.value
+        oldImages?.get(lastSelectedPosition)?.comment = comment
+        listOfImages.postValue(oldImages)
+
+        binding.okBtn.visibility = View.INVISIBLE
+        binding.saveBtn.visibility = View.VISIBLE
+
+        binding.commentsField.clearFocus()
+        hideKeyboard()
+    }
+
     private fun setUserCommentLogic(position: Int) {
         val userComment = listOfImages.value?.get(position)?.comment
         binding.commentsField.setText(userComment)
-        binding.confirmBtn.visibility = View.INVISIBLE
-        if (userComment?.isNotEmpty() == true) {
-            binding.editBtn.visibility = View.VISIBLE
-        } else {
-            binding.editBtn.visibility = View.INVISIBLE
-        }
+        binding.okBtn.visibility = View.INVISIBLE
+        binding.saveBtn.visibility = View.VISIBLE
     }
 
     private fun hideKeyboard() {
@@ -352,11 +377,12 @@ class CeibroImageViewerActivity : BaseActivity() {
         yesBtn.setOnClickListener {
             val oldImages = listOfImages.value
             alertDialog.dismiss()
+            imageDeleted = true
 
             if (oldImages?.size == 1) {
                 val ceibroImagesIntent = Intent()
                 val newBundle = Bundle()
-                newBundle.putParcelableArrayList("images", arrayListOf())
+                newBundle.putParcelableArrayList("images", arrayListOf<PickedImages>())
                 ceibroImagesIntent.putExtras(newBundle)
                 setResult(RESULT_OK, ceibroImagesIntent)
                 finish()

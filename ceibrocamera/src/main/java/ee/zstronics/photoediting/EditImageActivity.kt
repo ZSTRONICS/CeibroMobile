@@ -66,7 +66,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
     private lateinit var mWonderFont: Typeface
     private lateinit var mRvTools: RecyclerView
     private lateinit var mRvFilters: RecyclerView
-    private val mEditingToolsAdapter = EditingToolsAdapter(this)
+    private var mEditingToolsAdapter = EditingToolsAdapter(this)
     private val mFilterViewAdapter = FilterViewAdapter(this)
     private lateinit var mRootView: ConstraintLayout
     private val mConstraintSet = ConstraintSet()
@@ -105,7 +105,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
 
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         mRvTools.layoutManager = llmTools
-        mRvTools.adapter = mEditingToolsAdapter
+//        mRvTools.adapter = mEditingToolsAdapter
 
         val llmFilters = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         mRvFilters.layoutManager = llmFilters
@@ -141,9 +141,11 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
             Intent.ACTION_EDIT, ACTION_NEXTGEN_EDIT -> {
                 try {
                     val uri = intent.data
+                    val editType = intent.getStringExtra("editType")
 //                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
                     source.setImageURI(uri)
                     oldUri = uri
+                    setEditorAccordingToTypes(editType)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -152,11 +154,47 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 val intentType = intent.type
                 if (intentType != null && intentType.startsWith("image/")) {
                     val imageUri = intent.data
+                    val editType = intent.getStringExtra("editType")
                     if (imageUri != null) {
                         source.setImageURI(imageUri)
                         oldUri = imageUri
                     }
+                    setEditorAccordingToTypes(editType)
                 }
+            }
+        }
+    }
+
+    private fun setEditorAccordingToTypes(editType: String?) {
+        when (editType) {
+            "square" -> {
+                mEditingToolsAdapter = EditingToolsAdapter(this, 0)
+                mRvTools.adapter = mEditingToolsAdapter
+                mEditingToolsAdapter.selectDefaultView(0)
+            }
+
+            "arrow" -> {
+                mEditingToolsAdapter = EditingToolsAdapter(this, 1)
+                mRvTools.adapter = mEditingToolsAdapter
+                mEditingToolsAdapter.selectDefaultView(1)
+            }
+
+            "draw" -> {
+                mEditingToolsAdapter = EditingToolsAdapter(this, 2)
+                mRvTools.adapter = mEditingToolsAdapter
+                mEditingToolsAdapter.selectDefaultView(2)
+            }
+
+            "insertText" -> {
+                mEditingToolsAdapter = EditingToolsAdapter(this, 3)
+                mRvTools.adapter = mEditingToolsAdapter
+                mEditingToolsAdapter.selectDefaultView(3)
+            }
+
+            "undo" -> {
+                mEditingToolsAdapter = EditingToolsAdapter(this, 4)
+                mRvTools.adapter = mEditingToolsAdapter
+                mEditingToolsAdapter.selectDefaultView(4)
             }
         }
     }
@@ -250,6 +288,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 startActivityForResult(cameraIntent, CAMERA_REQUEST)
             }
+
             R.id.imgGallery -> {
                 val intent = Intent()
                 intent.type = "image/*"
@@ -368,6 +407,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                     val photo = data?.extras?.get("data") as Bitmap?
                     mPhotoEditorView.source.setImageBitmap(photo)
                 }
+
                 PICK_REQUEST -> try {
                     mPhotoEditor.clearAllViews()
                     val uri = data?.data
@@ -441,6 +481,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 mTxtCurrentTool.setText(R.string.label_shape)
                 showBottomSheetDialogFragment(mShapeBSFragment)
             }
+
             ToolType.TEXT -> {
                 val textEditorDialogFragment = TextEditorDialogFragment.show(this)
                 textEditorDialogFragment.setOnTextEditorListener(object :
@@ -453,14 +494,17 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                     }
                 })
             }
+
             ToolType.ERASER -> {
                 mPhotoEditor.brushEraser()
                 mTxtCurrentTool.setText(R.string.label_eraser_mode)
             }
+
             ToolType.FILTER -> {
                 mTxtCurrentTool.setText(R.string.label_filter)
                 showFilter(true)
             }
+
             ToolType.EMOJI -> showBottomSheetDialogFragment(mEmojiBSFragment)
             ToolType.STICKER -> showBottomSheetDialogFragment(mStickerBSFragment)
             ToolType.UNDO -> mPhotoEditor.undo()
@@ -473,6 +517,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 onShapePicked(ShapeType.Arrow())
                 onColorChanged(Color.RED)
             }
+
             ToolType.RECTANGLE_SHAPE -> {
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
@@ -492,6 +537,7 @@ class EditImageActivity : BaseActivity(), OnPhotoEditorListener, View.OnClickLis
                 onShapePicked(ShapeType.Line)
                 onColorChanged(Color.RED)
             }
+
             ToolType.BRUSH -> {
                 mPhotoEditor.setBrushDrawingMode(true)
                 mShapeBuilder = ShapeBuilder()
