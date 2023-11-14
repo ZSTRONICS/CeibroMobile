@@ -13,7 +13,6 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.chat.room.Project
 import com.zstronics.ceibro.databinding.FragmentAllProjectsV2Binding
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionsSectionHeader
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -40,7 +39,7 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
     lateinit var sectionedAdapter: AllProjectsAdapterSectionRecycler
 
 
-    private var sectionList: MutableList<ConnectionsSectionHeader> = mutableListOf()
+    private var sectionList: MutableList<ProjectsSectionHeader> = mutableListOf()
 
     private var list: MutableList<Project> = mutableListOf()
     override fun onClick(id: Int) {
@@ -60,29 +59,34 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
+        list.add(Project("123", "Try again and again"))
 
         sectionList.add(
             0,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_projects))
+            ProjectsSectionHeader(list, getString(R.string.all_projects))
         )
 
+        sectionList.add(
+            1,
+            ProjectsSectionHeader(list, getString(R.string.favorite_projects))
+        )
 
-       sectionedAdapter  = AllProjectsAdapterSectionRecycler(requireContext(), sectionList)
+        sectionedAdapter = AllProjectsAdapterSectionRecycler(requireContext(), sectionList)
+
         mViewDataBinding.projectsRV.adapter = sectionedAdapter
-
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-        list.add(Project("123", "Try again and again"))
-
+        sectionedAdapter.setCallBack { view, position, data ->
+            navigate(R.id.projectDetailV2Fragment)
+        }
 
         if (list.isNotEmpty()) {
             mViewDataBinding.toolbarHeader.visibility = View.GONE
@@ -95,7 +99,10 @@ class AllProjectsV2Fragment(callback: (Int) -> Unit) :
 
     }
 
-    private fun initRecyclerView(adapter: AllProjectsAdapterSectionRecycler, list: MutableList<Project>) {
+    private fun initRecyclerView(
+        adapter: AllProjectsAdapterSectionRecycler,
+        list: MutableList<Project>
+    ) {
         mViewDataBinding.projectsRV.adapter = adapter
 //        adapter.setList(list, true)
 //        adapter.setCallBack {
