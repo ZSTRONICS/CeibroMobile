@@ -55,7 +55,7 @@
                 android:gravity="start"
                 android:maxLines="1"
                 android:textColor="@color/appTextGrey"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 tools:text="23.09.2023" />
 
 

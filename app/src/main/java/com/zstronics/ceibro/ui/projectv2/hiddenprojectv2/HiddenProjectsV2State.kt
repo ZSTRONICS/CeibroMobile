@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 
 class HiddenProjectsV2State @Inject constructor() : BaseState(), IHiddenProjectV2.State {
-    override var projectName: MutableLiveData<String> = MutableLiveData("Project List")
+    override var projectName: MutableLiveData<String> = MutableLiveData("")
     override var projectDescription: MutableLiveData<String> = MutableLiveData("")
     override var containProject: MutableLiveData<Boolean> = MutableLiveData(false)
 
