@@ -14,7 +14,11 @@ class AllProjectsAdapterSectionRecycler constructor(
     val context: Context,
     sectionList: MutableList<ProjectsSectionHeader>
 ) :
-    SectionRecyclerViewAdapter<ProjectsSectionHeader, Project, AllProjectsAdapterSectionRecycler.ConnectionsSectionViewHolder, AllProjectsAdapterSectionRecycler.ConnectionsChildViewHolder>(
+    SectionRecyclerViewAdapter<
+            ProjectsSectionHeader,
+            Project,
+            AllProjectsAdapterSectionRecycler.ConnectionsSectionViewHolder,
+            AllProjectsAdapterSectionRecycler.ConnectionsChildViewHolder>(
         context,
         sectionList
     ) {
@@ -41,7 +45,7 @@ class AllProjectsAdapterSectionRecycler constructor(
 
     override fun onBindSectionViewHolder(
         connectionsSectionViewHolder: ConnectionsSectionViewHolder?,
-        p1: Int,
+        sectionPosition: Int,
         connectionsSectionHeader: ProjectsSectionHeader?
     ) {
         connectionsSectionViewHolder?.bind(connectionsSectionHeader)
@@ -61,15 +65,13 @@ class AllProjectsAdapterSectionRecycler constructor(
     }
 
     override fun onBindChildViewHolder(
-        p0: ConnectionsChildViewHolder?,
-        p1: Int,
-        p2: Int,
-        p3: Project?
+        holder: ConnectionsChildViewHolder?,
+        sectionPosition: Int,
+        childPostitoin: Int,
+        data: Project?
     ) {
-        p0?.bind(p3,p2)
+        holder?.bind(data, childPostitoin)
     }
-
-
 
 
     inner class ConnectionsSectionViewHolder constructor(private val binding: LayoutItemHeaderBinding) :
@@ -89,7 +91,7 @@ class AllProjectsAdapterSectionRecycler constructor(
                 with(binding) {
                     this.projectName.text = item.title
                     this.llProjectDetail.setOnClickListener {
-                        itemClickListener?.invoke(it,p2,item)
+                        itemClickListener?.invoke(it, p2, item)
                     }
                 }
             }
