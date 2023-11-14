@@ -553,6 +553,7 @@
     <string name="do_you_want_to_un_hide_this_project">Do you want to unhide this project.</string>
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
+    <string name="favorite_projects">Favorite Projects</string>
     <string name="hidden_projects">Hidden Projects</string>
     <string name="project_name">Project Name</string>
     <string name="cancel">cancel</string>
