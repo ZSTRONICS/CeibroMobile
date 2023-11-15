@@ -8,11 +8,12 @@ import com.zstronics.ceibro.base.interfaces.IBase
 interface INewProjectV2 {
     interface State : IBase.State {
         var projectName: MutableLiveData<String>
+        var projectPhoto: MutableLiveData<String>
         var projectDescription: MutableLiveData<String>
     }
     interface ViewModel : IBase.ViewModel<State> {
 
         fun getProjectName(context: Context)
-        fun addNewProject()
+        fun addNewProject(context: Context, callBack: (isSuccess: Boolean) -> Unit)
     }
 }

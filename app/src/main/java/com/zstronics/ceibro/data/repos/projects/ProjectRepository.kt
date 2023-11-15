@@ -15,13 +15,13 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -240,4 +240,30 @@ class ProjectRepository @Inject constructor(
                 service.getProjectsV2()
             }
         )
+
+    override suspend fun createNewProjectWithFile(
+        title: RequestBody,
+        description: RequestBody,
+        file: MultipartBody.Part
+    ): ApiResponse<NewProjectResponseV2> {
+        return executeSafely(call = {
+            service.createNewProjectWithFile(
+                title = title,
+                description = description,
+                file = file
+            )
+        })
+    }
+
+    override suspend fun createNewProjectWithoutFile(
+        title: RequestBody,
+        description: RequestBody
+    ): ApiResponse<NewProjectResponseV2> {
+        return executeSafely(call = {
+            service.createNewProjectWithoutFile(
+                title = title,
+                description = description
+            )
+        })
+    }
 }

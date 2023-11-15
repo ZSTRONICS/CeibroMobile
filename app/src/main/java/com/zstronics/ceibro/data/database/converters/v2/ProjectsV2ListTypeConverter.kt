@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 
 class ProjectsV2ListTypeConverter {
 

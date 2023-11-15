@@ -246,18 +246,31 @@ class TopicFragment :
 //                }
             }
         }
+
+
+        val rootView = requireView()
+
+        rootView.viewTreeObserver.addOnPreDrawListener {
+            val screenHeight = rootView.rootView.height
+            val heightDiff = screenHeight - rootView.height
+            val thresholdPercentage = 0.16 // Adjust as needed
+
+            if (heightDiff < screenHeight * thresholdPercentage) {
+                // Keyboard is considered closed
+                mViewDataBinding.topicSearchBtn.visibility = View.VISIBLE
+                mViewDataBinding.topicSearchBtn.clearFocus()
+            } else {
+                mViewDataBinding.topicSearchBtn.visibility = View.GONE
+                // Keyboard is considered open
+            }
+            true
+        }
     }
 
     val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             println("TopicFragment: OnBackPressedCallback")
-            if (mViewDataBinding.topicSearchBar.hasFocus()) {
-                deactivateSearchView()
-                println("TopicFragment: OnBackPressedCallback hasFocus")
-            } else {
-                navigateBack()
-                println("TopicFragment: OnBackPressedCallback navigateBack")
-            }
+            navigateBack()
         }
     }
 

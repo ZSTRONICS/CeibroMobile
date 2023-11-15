@@ -12,13 +12,14 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -166,6 +167,21 @@ interface ProjectRepositoryService {
 
     @GET("v2/project")
     suspend fun getProjectsV2(): Response<AllProjectsResponseV2>
+
+    @Multipart
+    @POST("v2/project")
+    suspend fun createNewProjectWithFile(
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part file: MultipartBody.Part?
+    ): Response<NewProjectResponseV2>
+
+    @Multipart
+    @POST("v2/project")
+    suspend fun createNewProjectWithoutFile(
+        @Part("title") title: RequestBody,
+        @Part("description") description: RequestBody
+    ): Response<NewProjectResponseV2>
 
 
 }

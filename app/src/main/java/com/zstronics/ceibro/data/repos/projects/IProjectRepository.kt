@@ -13,13 +13,16 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectMembersResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
+import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 interface IProjectRepository {
     suspend fun getProjects(): ApiResponse<AllProjectsResponse>
@@ -88,4 +91,15 @@ interface IProjectRepository {
     suspend fun updateDocumentAccess(request: ManageProjectDocumentAccessRequest): ApiResponse<BaseResponse>
 
     suspend fun getProjectsV2(): ApiResponse<AllProjectsResponseV2>
+
+    suspend fun createNewProjectWithFile(
+        title: RequestBody,
+        description: RequestBody,
+        file: MultipartBody.Part
+    ): ApiResponse<NewProjectResponseV2>
+
+    suspend fun createNewProjectWithoutFile(
+        title: RequestBody,
+        description: RequestBody
+    ): ApiResponse<NewProjectResponseV2>
 }

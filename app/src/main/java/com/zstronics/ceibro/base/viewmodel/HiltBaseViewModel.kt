@@ -23,7 +23,9 @@ import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -356,6 +358,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         return true
     }
 
+
+    fun updateCreatedProjectInLocal(
+        project: CeibroProjectV2, projectDao: ProjectsV2Dao
+    ) {
+        GlobalScope.launch {
+            projectDao.insertProject(project)
+
+            EventBus.getDefault().post(LocalEvents.RefreshProjectsData())
+
+        }
+    }
 
     fun updateCreatedTaskInLocal(
         task: CeibroTaskV2?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
