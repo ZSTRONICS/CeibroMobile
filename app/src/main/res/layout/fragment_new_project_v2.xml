@@ -32,7 +32,7 @@
                 android:id="@+id/closeBtn"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
-                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_12sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="3dp"
@@ -65,6 +65,8 @@
             android:layout_height="0dp"
             android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbarHeader">
 
 
@@ -76,13 +78,14 @@
                 android:layout_marginStart="@dimen/_14sdp"
                 android:layout_marginTop="@dimen/_11sdp"
                 android:layout_marginEnd="@dimen/_14sdp"
-                android:background="@drawable/input_field_bottom_line"
                 android:hint="@string/project_name_required"
                 android:paddingStart="0dp"
                 android:paddingEnd="-10dp"
                 android:textColorHint="@color/appTextGrey"
                 app:boxStrokeColor="@color/transparent"
                 app:boxStrokeWidth="0dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="100"
                 app:endIconMode="clear_text"
                 app:hintTextColor="@color/appGrey3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,10 +96,12 @@
                     android:id="@+id/projectText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/input_field_bottom_line"
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="top|start"
                     android:inputType="none"
+                    android:maxLength="100"
                     android:maxLines="5"
                     android:overScrollMode="always"
                     android:paddingStart="1dp"
@@ -115,15 +120,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_14sdp"
-                android:layout_marginTop="@dimen/_11sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_14sdp"
-                android:background="@drawable/input_field_bottom_line"
                 android:hint="@string/description"
                 android:paddingStart="0dp"
                 android:paddingEnd="-10dp"
                 android:textColorHint="@color/appTextGrey"
                 app:boxStrokeColor="@color/transparent"
                 app:boxStrokeWidth="0dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="1500"
                 app:endIconMode="clear_text"
                 app:hintTextColor="@color/appGrey3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -134,47 +140,62 @@
                     android:id="@+id/descriptionText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/input_field_bottom_line"
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="top|start"
                     android:inputType="none"
+                    android:maxLength="1500"
                     android:maxLines="5"
                     android:overScrollMode="always"
                     android:paddingStart="1dp"
                     android:scrollbarStyle="insideInset"
                     android:scrollbars="none"
-                    android:text=""
+                    android:text="@={viewState.projectDescription}"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cl_newPhoto"
-                android:layout_width="@dimen/_125sdp"
+                android:layout_width="@dimen/_120sdp"
                 android:layout_height="@dimen/_125sdp"
-                android:background="@drawable/round_grey"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="10dp"
                 app:layout_constraintBottom_toTopOf="@+id/cl_action"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/descriptionField">
+                app:layout_constraintTop_toBottomOf="@id/descriptionField"
+                app:layout_constraintVertical_bias="0.14">
 
                 <TextView
-                    android:id="@+id/newPhoto"
+                    android:id="@+id/newPhotoText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/appGrey0"
                     android:clickable="false"
                     android:focusable="false"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingHorizontal="@dimen/_20sdp"
                     android:text="@string/add_photo"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/_12sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/projectImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </com.google.android.material.card.MaterialCardView>
 
 
             <View
@@ -194,10 +215,10 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/cancelBtn"
                     android:layout_width="@dimen/_90sdp"
-                    android:layout_height="@dimen/_37ssp"
+                    android:layout_height="@dimen/_30sdp"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_13sdp"
+                    android:layout_marginBottom="@dimen/_14sdp"
                     android:background="@drawable/skip_button_red"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -212,8 +233,8 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/saveBtn"
                     android:layout_width="@dimen/_90sdp"
-                    android:layout_height="@dimen/_37sdp"
-                    android:layout_marginEnd="@dimen/_18sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
                     android:background="@drawable/signin_button_back"
                     android:fontFamily="@font/inter_medium"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"

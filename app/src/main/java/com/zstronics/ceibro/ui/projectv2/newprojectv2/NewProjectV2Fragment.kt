@@ -1,12 +1,24 @@
 package com.zstronics.ceibro.ui.projectv2.newprojectv2
 
+import android.Manifest
+import android.app.Activity
+import android.os.Bundle
+import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.github.drjacky.imagepicker.ImagePicker
+import com.github.drjacky.imagepicker.constant.ImageProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentNewProjectV2Binding
+import com.zstronics.ceibro.ui.profile.ImagePickerOrCaptureDialogSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,13 +35,12 @@ class NewProjectV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.cl_newPhoto -> {
-                showAddPhotoBottomSheet()
-
-            }
-
-            R.id.newPhoto -> {
-                showAddPhotoBottomSheet()
-
+//                showAddPhotoBottomSheet()
+                if (isPermissionGranted(Manifest.permission.CAMERA)) {
+                    choosePhoto()
+                } else {
+                    shortToastNow(getString(R.string.files_access_denied))
+                }
             }
 
             R.id.closeBtn -> {
@@ -41,23 +52,28 @@ class NewProjectV2Fragment :
             }
 
             R.id.saveBtn -> {
-
                 viewState.projectName.value?.let {
                     if (it.isEmpty()) {
                         showToast(getString(R.string.project_name_is_required))
                     } else {
-                        viewModel.addNewProject()
+                        viewModel.addNewProject(requireContext()) { isSuccess ->
+                            if (isSuccess) {
+                                navigateBack()
+                            }
+                        }
                     }
-
                 }
-
             }
 
         }
     }
 
-    private fun showAddPhotoBottomSheet() {
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun showAddPhotoBottomSheet() {
         val coroutineScope = viewLifecycleOwner.lifecycleScope
         coroutineScope.launch(Dispatchers.Main) {
 
@@ -69,12 +85,63 @@ class NewProjectV2Fragment :
             sheet.setStyle(
                 BottomSheetDialogFragment.STYLE_NORMAL,
                 R.style.CustomBottomSheetDialogTheme
-            );
+            )
             sheet.show(childFragmentManager, "AddPhotoBottomSheet")
         }
-
-
     }
+
+
+    private fun choosePhoto() {
+        val sheet = ImagePickerOrCaptureDialogSheet()
+        sheet.onCameraBtnClick = {
+            imagePickerOrCaptureLauncher.launch(
+                ImagePicker.with(requireActivity())
+                    .cropFreeStyle()
+                    .cropSquare()
+                    .setMultipleAllowed(false)
+                    .provider(ImageProvider.CAMERA)
+                    .createIntent()
+            )
+        }
+        sheet.onGalleryBtnClick = {
+            imagePickerOrCaptureLauncher.launch(
+                ImagePicker.with(requireActivity())
+                    .cropFreeStyle()
+                    .cropSquare()
+                    .setMultipleAllowed(false)
+                    .provider(ImageProvider.GALLERY)
+                    .galleryMimeTypes(
+                        mimeTypes = arrayOf(
+                            "image/jpeg",
+                            "image/jpg",
+                            "image/png",
+                            "image/webp",
+                            "image/bmp"
+                        )
+                    )
+                    .createIntent()
+            )
+        }
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "ImagePickerOrCaptureDialogSheet")
+    }
+
+    private val imagePickerOrCaptureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val uri = it.data?.data!!
+                println("imagePickerOrCaptureLauncher11: ${uri}")
+//                viewModel.updateProfilePhoto(uri.toString(), requireContext())
+                viewState.projectPhoto.postValue(uri.toString())
+                Glide.with(this)
+                    .load(uri)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // Optional: Caching strategy
+                    .into(mViewDataBinding.projectImg)
+
+                mViewDataBinding.newPhotoText.visibility = View.GONE
+                mViewDataBinding.projectImg.visibility = View.VISIBLE
+            }
+        }
 
 
 }

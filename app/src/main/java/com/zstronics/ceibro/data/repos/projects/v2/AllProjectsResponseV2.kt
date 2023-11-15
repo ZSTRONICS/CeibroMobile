@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.data.repos.projects.projectsmain
+package com.zstronics.ceibro.data.repos.projects.v2
 
 import android.os.Parcelable
 import androidx.annotation.Keep
