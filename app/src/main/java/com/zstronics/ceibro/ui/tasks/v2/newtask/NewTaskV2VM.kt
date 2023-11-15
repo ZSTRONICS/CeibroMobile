@@ -130,7 +130,7 @@ class NewTaskV2VM @Inject constructor(
 
                 val invitedNumbers = selectedContacts.filter { !it.isCeiborUser }
                     .map { it.phoneNumber }
-                val projectId = viewState.selectedProject.value?.id ?: ""
+                val projectId = viewState.selectedProject.value?._id ?: ""
                 val list = getCombinedList()
 
                 val newTaskRequest = NewTaskV2Entity(

@@ -4,18 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
-import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
-import com.zstronics.ceibro.databinding.LayoutItemConnectionHeaderBinding
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.LayoutItemTopicHeaderBinding
 import com.zstronics.ceibro.ui.tasks.v2.newtask.taskproject.TaskProjectVM
 import javax.inject.Inject
 
 class AllProjectsHeaderAdapter @Inject constructor() :
     RecyclerView.Adapter<AllProjectsHeaderAdapter.AllProjectsHeaderViewHolder>() {
-    var allProjectItemClickListener: ((view: View, position: Int, data: AllProjectsResponseV2.ProjectsV2) -> Unit)? =
+    var allProjectItemClickListener: ((view: View, position: Int, data: CeibroProjectV2) -> Unit)? =
         null
     var listItems: MutableList<TaskProjectVM.CeibroProjectGroup> = mutableListOf()
     override fun onCreateViewHolder(
@@ -54,7 +50,7 @@ class AllProjectsHeaderAdapter @Inject constructor() :
             adapter.setList(item.items)
             binding.topicRV.adapter = adapter
             adapter.itemClickListener =
-                { it: View, position: Int, data: AllProjectsResponseV2.ProjectsV2 ->
+                { it: View, position: Int, data: CeibroProjectV2 ->
                     allProjectItemClickListener?.invoke(it, absoluteAdapterPosition, data)
                 }
         }

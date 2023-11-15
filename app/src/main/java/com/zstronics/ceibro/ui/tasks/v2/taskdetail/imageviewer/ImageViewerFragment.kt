@@ -8,8 +8,6 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentImageViewerBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

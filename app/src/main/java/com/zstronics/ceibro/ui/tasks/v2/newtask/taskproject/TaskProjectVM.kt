@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,10 +20,10 @@ class TaskProjectVM @Inject constructor(
     val user = sessionManager.getUser().value
 
 
-    private val _allProjects: MutableLiveData<MutableList<AllProjectsResponseV2.ProjectsV2>> =
+    private val _allProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
         MutableLiveData()
-    val allProjects: MutableLiveData<MutableList<AllProjectsResponseV2.ProjectsV2>> = _allProjects
-    var originalAllProjects = mutableListOf<AllProjectsResponseV2.ProjectsV2>()
+    val allProjects: MutableLiveData<MutableList<CeibroProjectV2>> = _allProjects
+    var originalAllProjects = mutableListOf<CeibroProjectV2>()
 
     private var _allProjectsGrouped: MutableLiveData<MutableList<CeibroProjectGroup>> =
         MutableLiveData()
@@ -33,19 +33,19 @@ class TaskProjectVM @Inject constructor(
 
     fun loadProjects(callBack: () -> Unit) {
         launch {
-            val projectsData = projectDao.getAll()
+            val projectsData = projectDao.getAllProjects()
             if (projectsData != null) {
                 originalAllProjects =
-                    projectsData.projects as MutableList<AllProjectsResponseV2.ProjectsV2>
-                _allProjects.postValue(originalAllProjects)
+                    projectsData as MutableList<CeibroProjectV2>
+                _allProjects.postValue(projectsData)
                 callBack.invoke()
             } else {
                 when (val response = projectRepository.getProjectsV2()) {
                     is ApiResponse.Success -> {
-                        val data = response.data.projects
+                        val data = response.data.allProjects
                         if (data != null) {
                             originalAllProjects =
-                                (data as MutableList<AllProjectsResponseV2.ProjectsV2>).toMutableList()
+                                (data as MutableList<CeibroProjectV2>).toMutableList()
                             _allProjects.postValue(originalAllProjects)
                         }
                         callBack.invoke()
@@ -67,11 +67,11 @@ class TaskProjectVM @Inject constructor(
         }
         val filterProjects =
             originalAllProjects.filter { it.title.contains(query.trim(), true) }
-        _allProjects.postValue(filterProjects as MutableList<AllProjectsResponseV2.ProjectsV2>?)
+        _allProjects.postValue(filterProjects as MutableList<CeibroProjectV2>?)
     }
 
 
-    fun groupDataByFirstLetter(data: List<AllProjectsResponseV2.ProjectsV2>) {
+    fun groupDataByFirstLetter(data: List<CeibroProjectV2>) {
         val sections = mutableListOf<CeibroProjectGroup>()
 
         val groupedData = data.groupBy {
@@ -100,7 +100,7 @@ class TaskProjectVM @Inject constructor(
 
     data class CeibroProjectGroup(
         val sectionLetter: Char,
-        val items: List<AllProjectsResponseV2.ProjectsV2>
+        val items: List<CeibroProjectV2>
     )
 
 }

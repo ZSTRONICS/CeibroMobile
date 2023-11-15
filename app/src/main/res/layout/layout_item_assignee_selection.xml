@@ -20,9 +20,11 @@
             android:outlineSpotShadowColor="@color/transparent"
             app:cardBackgroundColor="@color/appGrey1"
             app:cardCornerRadius="4dp"
-            app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/contactCheckBox"
-            app:layout_constraintTop_toTopOf="@+id/contactName">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/contactImage"
@@ -46,100 +48,103 @@
                 android:textSize="16sp" />
         </androidx.cardview.widget.CardView>
 
-
-        <TextView
-            android:id="@+id/contactName"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/nameAndNumberLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_9sdp"
-            android:layout_marginTop="@dimen/_9sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_semibold"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="Kristo Vunukainen"
-            android:textColor="@color/black"
-            android:textSize="15sp"
+            android:layout_marginEnd="@dimen/_9sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/connectionImgCard"
             app:layout_constraintEnd_toStartOf="@+id/userInfoBtn"
             app:layout_constraintStart_toEndOf="@+id/connectionImgCard"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/connectionImgCard">
 
-        <TextView
-            android:id="@+id/phoneNumber"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_6sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="+372 564 9382"
-            android:textColor="@color/appTextGrey"
-            android:textSize="12sp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/userInfoBtn"
-            app:layout_constraintStart_toStartOf="@+id/contactName"
-            app:layout_constraintTop_toBottomOf="@+id/contactName"
-            app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/contactName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_semibold"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Kristo Vunukainen"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/companyName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="start"
-            android:maxLength="24"
-            android:maxLines="1"
-            android:textColor="@color/appTextGrey"
-            android:textSize="12sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/contactName"
-            app:layout_constraintTop_toBottomOf="@+id/contactName"
-            tools:text="Ceibro" />
+            <TextView
+                android:id="@+id/phoneNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="+372 564 9382"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/contactName"
+                app:layout_constraintStart_toStartOf="@+id/contactName"
+                app:layout_constraintTop_toBottomOf="@+id/contactName"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/dot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="·"
-            android:textColor="@color/appTextGrey"
-            android:textSize="12sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/companyName"
-            app:layout_constraintTop_toBottomOf="@+id/contactName" />
+            <TextView
+                android:id="@+id/companyName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLength="22"
+                android:maxLines="1"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/contactName"
+                app:layout_constraintTop_toBottomOf="@+id/contactName"
+                tools:text="Ceibro" />
+
+            <TextView
+                android:id="@+id/dot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:maxLength="5"
+                android:text="  ·  "
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/companyName"
+                app:layout_constraintTop_toBottomOf="@+id/contactName" />
 
 
-        <TextView
-            android:id="@+id/jobTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="start"
-            android:maxLines="1"
-            android:textColor="@color/appTextGrey"
-            android:textSize="12sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/userInfoBtn"
-            app:layout_constraintStart_toEndOf="@+id/dot"
-            app:layout_constraintTop_toBottomOf="@+id/contactName"
-            tools:text="Android Engineer" />
+            <TextView
+                android:id="@+id/jobTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:textColor="@color/appTextGrey"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/contactName"
+                app:layout_constraintStart_toEndOf="@+id/dot"
+                app:layout_constraintTop_toBottomOf="@+id/contactName"
+                tools:text="Android Engineer" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <CheckBox
             android:id="@+id/contactCheckBox"
@@ -158,9 +163,9 @@
             android:padding="@dimen/_4sdp"
             android:src="@drawable/icon_info"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/phoneNumber"
+            app:layout_constraintBottom_toBottomOf="@+id/connectionImgCard"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/contactName"
+            app:layout_constraintTop_toTopOf="@+id/connectionImgCard"
             app:tint="@color/appBlue" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,6 +33,7 @@ class ForwardFragment :
     override fun toolBarVisibility(): Boolean = false
     private var searchedContacts = false
     private var searchedRecentContacts = false
+    private var fullItemClickedForDone = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -142,6 +143,17 @@ class ForwardFragment :
             if (it != null) {
                 chipAdapter.setList(it)
             }
+            if (fullItemClickedForDone) {
+                fullItemClickedForDone = false
+                val selectedContactList = it
+                if (selectedContactList.isNullOrEmpty()) {
+                    shortToastNow(getString(R.string.please_select_contacts_to_forward))
+                } else {
+                    val bundle = Bundle()
+                    bundle.putParcelableArray("forwardContacts", selectedContactList.toTypedArray())
+                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                }
+            }
         }
         chipAdapter.removeItemClickListener =
             { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
@@ -201,6 +213,13 @@ class ForwardFragment :
 
         adapter.itemClickListener =
             { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+                fullItemClickedForDone = false
+                connectionsAdapterClickListener.invoke(childView, position, contact)
+            }
+
+        adapter.fullItemClickListener =
+            { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+                fullItemClickedForDone = true
                 connectionsAdapterClickListener.invoke(childView, position, contact)
             }
 

@@ -278,7 +278,7 @@
                 android:paddingStart="-1dp"
                 android:paddingEnd="-4dp"
                 android:queryBackground="@android:color/transparent"
-                android:queryHint="Start typing"
+                android:queryHint="@string/start_typing"
                 android:searchIcon="@null"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/saveTopicBtn"

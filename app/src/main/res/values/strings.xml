@@ -564,4 +564,5 @@
     <string name="project_name_is_required">Project name is required.</string>
     <string name="created_by">Created by</string>
     <string name="sample_date">23.09.2023</string>
+    <string name="start_typing">Start typing</string>
 </resources>

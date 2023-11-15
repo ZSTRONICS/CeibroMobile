@@ -106,25 +106,30 @@ class CeibroConnectionsAdapter @Inject constructor() :
 
             if (item.isCeiborUser) {
                 binding.phoneNumber.text = ""
-                binding.companyName.text =
-                    if (item.userCeibroData?.companyName.equals("")) {
-                        "N/A"
+                binding.phoneNumber.visibility = View.GONE
+
+                if (item.userCeibroData?.companyName?.trim().isNullOrEmpty()) {
+                    binding.companyName.visibility = View.GONE
+                    binding.dot.visibility = View.GONE
+                } else {
+                    binding.companyName.visibility = View.VISIBLE
+                    binding.companyName.text = item.userCeibroData?.companyName?.trim()
+                }
+
+                if (item.userCeibroData?.jobTitle?.trim().isNullOrEmpty()) {
+                    binding.dot.visibility = View.GONE
+                    binding.jobTitle.visibility = View.GONE
+                } else {
+                    if (!item.userCeibroData?.companyName?.trim().isNullOrEmpty()) {
+                        binding.dot.visibility = View.VISIBLE
                     }
-                    else {
-                        item.userCeibroData?.companyName
-                    }
-                binding.jobTitle.text =
-                    if (item.userCeibroData?.jobTitle.equals("")) {
-                        "N/A"
-                    }
-                    else {
-                        item.userCeibroData?.jobTitle
-                    }
-                binding.companyName.visibility = View.VISIBLE
-                binding.dot.visibility = View.VISIBLE
-                binding.jobTitle.visibility = View.VISIBLE
+                    binding.jobTitle.visibility = View.VISIBLE
+                    binding.jobTitle.text = item.userCeibroData?.jobTitle?.trim()
+                }
+
             } else {
                 binding.phoneNumber.text = item.phoneNumber
+                binding.phoneNumber.visibility = View.VISIBLE
                 binding.companyName.visibility = View.GONE
                 binding.dot.visibility = View.GONE
                 binding.jobTitle.visibility = View.GONE
