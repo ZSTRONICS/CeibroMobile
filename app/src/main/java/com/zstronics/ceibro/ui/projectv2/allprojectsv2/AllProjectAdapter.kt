@@ -5,17 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.repos.chat.room.Project
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutProjectItemListBinding
+import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
 class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) :
     RecyclerView.Adapter<AllProjectAdapter.AllProjectViewHolder>() {
-    var callback: ((Int) -> Unit)? = null
+    var callback: ((Pair<Int, CeibroProjectV2>) -> Unit)? = null
     var fav: Boolean = true
-    private var list: MutableList<Project> = mutableListOf()
+    private var list: MutableList<CeibroProjectV2> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllProjectViewHolder {
         return AllProjectViewHolder(
@@ -35,7 +35,7 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
         return list.size
     }
 
-    fun setList(list: MutableList<Project>, fav: Boolean) {
+    fun setList(list: MutableList<CeibroProjectV2>, fav: Boolean) {
         this.fav = fav
         this.list.clear()
         this.list.addAll(list)
@@ -45,23 +45,31 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
     inner class AllProjectViewHolder(private val binding: LayoutProjectItemListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Project) {
+        fun bind(item: CeibroProjectV2) {
             val context = binding.root.context
 
-            binding.tvDate.text = context.getString(R.string.sample_date)
+            binding.tvDate.text = DateUtils.formatCreationUTCTimeToCustom(
+                utcTime = item.createdAt,
+                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
+            )
             binding.projectName.text = item.title
-            binding.userCompany.text =  context.getString(R.string.ceibro)
-            binding.userName.text = context.getString(R.string.username)
+            binding.userCompany.text = item.creator.companyName
+            binding.userName.text = "${item.creator.firstName} ${item.creator.firstName}"
 
 
             binding.connectionImg.setOnClickListener {
-                callback?.invoke(1)
+                val pairToPass = Pair(1, item) // Replace this with your actual Pair values
+                callback?.invoke(pairToPass)
+
             }
             binding.llProjectDetail.setOnClickListener {
-                callback?.invoke(1)
+                val pairToPass = Pair(1, item) // Replace this with your actual Pair values
+                callback?.invoke(pairToPass)
             }
             binding.ivHide.setOnClickListener {
-                callback?.invoke(2)
+                val pairToPass =
+                    Pair(2, item) // Replace this with your actual Pair values
+                callback?.invoke(pairToPass)
             }
             if (fav) {
                 binding.ivFav.visibility = View.VISIBLE
@@ -72,7 +80,8 @@ class AllProjectAdapter @Inject constructor(val sessionManager: SessionManager) 
         }
     }
 
-    fun setCallBack(callback: (Int) -> Unit) {
+    fun setCallBack(callback: (Pair<Int, CeibroProjectV2>) -> Unit) {
+
         this.callback = callback
     }
 }

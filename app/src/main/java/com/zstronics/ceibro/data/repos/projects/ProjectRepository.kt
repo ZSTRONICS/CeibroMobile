@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.projects
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
@@ -13,14 +14,19 @@ import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsRespon
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
-import com.zstronics.ceibro.data.repos.projects.member.*
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.DeleteMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -263,6 +269,18 @@ class ProjectRepository @Inject constructor(
             service.createNewProjectWithoutFile(
                 title = title,
                 description = description
+            )
+        })
+    }
+
+    override suspend fun updateHideProjectStatus(
+        hidden: Boolean,
+        projectId: String
+    ): ApiResponse<CeibroProjectV2> {
+        return executeSafely(call = {
+            service.updateHideProjectStatus(
+                hidden,
+                projectId
             )
         })
     }
