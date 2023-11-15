@@ -7,8 +7,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.database.TableNamesV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import ee.zstronics.ceibro.camera.AttachmentTypes
 
@@ -43,7 +43,7 @@ data class NewTaskV2Entity(
 @Keep
 data class NewTaskToSave(
     @SerializedName("topic") val topic: TopicsResponse.TopicData?,
-    @SerializedName("project") val project: AllProjectsResponseV2.ProjectsV2?,
+    @SerializedName("project") val project: CeibroProjectV2?,
     @SerializedName("selectedContacts") val selectedContacts: List<AllCeibroConnections.CeibroConnection>?,
     @SerializedName("dueDate") val dueDate: String?,
     @SerializedName("selfAssigned") val selfAssigned: Boolean?

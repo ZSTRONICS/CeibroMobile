@@ -384,7 +384,8 @@ class EventsRVAdapter @Inject constructor() :
                             surName = "",
                             profilePic = "",
                             id = "",
-                            phoneNumber = ""
+                            phoneNumber = "",
+                            companyName = ""
                         ),
                         v = 0,
                         version = 0
@@ -420,7 +421,8 @@ class EventsRVAdapter @Inject constructor() :
                             surName = "",
                             profilePic = "",
                             id = "",
-                            phoneNumber = ""
+                            phoneNumber = "",
+                            companyName = ""
                         ),
                         v = 0,
                         version = 0

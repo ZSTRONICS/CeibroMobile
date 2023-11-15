@@ -28,9 +28,6 @@ interface ProjectRepositoryService {
     @GET("v1/project")
     suspend fun getProjects(): Response<AllProjectsResponse>
 
-    @GET("v2/project")
-    suspend fun getProjectsV2(): Response<AllProjectsResponseV2>
-
     @POST("v1/project/getProjectsWithMembers")
     suspend fun getProjectsWithMembers(@Query("includeMe") includeMe: Boolean = false): Response<ProjectsWithMembersResponse>
 
@@ -162,4 +159,13 @@ interface ProjectRepositoryService {
 
 //    Parameter type must not include a type variable or wildcard: java.util.List<? extends okhttp3.RequestBody> (parameter #7)
 //    for method ProjectRepositoryService.createProject
+
+
+
+    //Projects V2 end points
+
+    @GET("v2/project")
+    suspend fun getProjectsV2(): Response<AllProjectsResponseV2>
+
+
 }

@@ -154,6 +154,7 @@ data class TaskMemberDetail(
     @SerializedName("surName") val surName: String,
     @SerializedName("profilePic") val profilePic: String?,
     @SerializedName("phoneNumber") val phoneNumber: String?,
+    @SerializedName("companyName") val companyName: String?,
     @SerializedName("_id") val id: String,
 ) : Parcelable
 

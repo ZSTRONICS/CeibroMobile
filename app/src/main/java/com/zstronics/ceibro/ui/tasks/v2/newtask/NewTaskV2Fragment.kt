@@ -20,8 +20,8 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -664,7 +664,7 @@ class NewTaskV2Fragment :
 
                 PROJECT_REQUEST_CODE -> {
                     val selectedProject =
-                        result.data?.getParcelable<AllProjectsResponseV2.ProjectsV2>("project")
+                        result.data?.getParcelable<CeibroProjectV2>("project")
                     if (selectedProject != null) {
                         viewState.selectedProject.value = selectedProject
                         viewState.projectText.value = selectedProject.title

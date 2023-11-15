@@ -40,6 +40,7 @@ class AssigneeFragment :
     override fun toolBarVisibility(): Boolean = false
     private var searchedContacts = false
     private var searchedRecentContacts = false
+    private var fullItemClickedForDone = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -144,6 +145,19 @@ class AssigneeFragment :
 
                 chipAdapter.setList(it)
             }
+            if (fullItemClickedForDone) {
+                fullItemClickedForDone = false
+                val selectedContactList = it
+                val selfAssigned = viewState.isSelfAssigned.value
+                if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
+                    shortToastNow("Please select contacts to proceed")
+                } else {
+                    val bundle = Bundle()
+                    bundle.putParcelableArray("contacts", selectedContactList?.toTypedArray())
+                    bundle.putBoolean("self-assign", selfAssigned ?: false)
+                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                }
+            }
         }
         chipAdapter.removeItemClickListener =
             { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
@@ -211,6 +225,13 @@ class AssigneeFragment :
 
         adapter.itemClickListener =
             { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+                fullItemClickedForDone = false
+                connectionsAdapterClickListener.invoke(childView, position, contact)
+            }
+
+        adapter.fullItemClickListener =
+            { childView: View, position: Int, contact: AllCeibroConnections.CeibroConnection ->
+                fullItemClickedForDone = true
                 connectionsAdapterClickListener.invoke(childView, position, contact)
             }
 

@@ -5,12 +5,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.ceibro.permissionx.PermissionX
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
@@ -24,9 +26,12 @@ class ConnectionAdapterSectionRecycler constructor(
         context,
         sectionList
     ) {
-    var showContactPermissionToast=true
+    var showContactPermissionToast = true
 
     var itemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
+        null
+
+    var fullItemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
     var dataList: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
     var oldContacts: ArrayList<String> = arrayListOf()
@@ -83,8 +88,8 @@ class ConnectionAdapterSectionRecycler constructor(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ConnectionsSectionHeader?) {
             binding.headerTitle.text = item?.getSectionText()
-            if (!isPermissionGranted(Manifest.permission.READ_CONTACTS)&&showContactPermissionToast) {
-                showContactPermissionToast=false
+            if (!isPermissionGranted(Manifest.permission.READ_CONTACTS) && showContactPermissionToast) {
+                showContactPermissionToast = false
                 context.shortToastNow(context.getString(R.string.contacts_permission))
             }
 
@@ -117,33 +122,45 @@ class ConnectionAdapterSectionRecycler constructor(
                     root.alpha = 1.0f
                     contactInitials.setTextColor(context.resources.getColor(R.color.black))
                     contactName.setTextColor(context.resources.getColor(R.color.black))
-                    root.setOnClickListener {
+                    contactCheckBox.setOnClickListener {
                         item.isChecked = !item.isChecked
                         notifyDataSetChanged()
                         itemClickListener?.invoke(it, position, item)
+                    }
+                    root.setOnClickListener {
+                        item.isChecked = !item.isChecked
+                        notifyDataSetChanged()
+                        fullItemClickListener?.invoke(it, position, item)
                     }
 
                     contactName.text = "${item.contactFirstName} ${item.contactSurName}"
 
                     if (item.isCeiborUser) {
                         phoneNumber.text = ""
-                        companyName.text =
-                            if (item.userCeibroData?.companyName.equals("")) {
-                                "N/A"
-                            } else {
-                                item.userCeibroData?.companyName
+                        phoneNumber.visibility = View.GONE
+
+                        if (item.userCeibroData?.companyName?.trim().isNullOrEmpty()) {
+                            companyName.visibility = View.GONE
+                            dot.visibility = View.GONE
+                        } else {
+                            companyName.visibility = View.VISIBLE
+                            companyName.text = item.userCeibroData?.companyName?.trim()
+                        }
+
+                        if (item.userCeibroData?.jobTitle?.trim().isNullOrEmpty()) {
+                            dot.visibility = View.GONE
+                            jobTitle.visibility = View.GONE
+                        } else {
+                            if (!item.userCeibroData?.companyName?.trim().isNullOrEmpty()) {
+                                dot.visibility = View.VISIBLE
                             }
-                        jobTitle.text =
-                            if (item.userCeibroData?.jobTitle.equals("")) {
-                                "N/A"
-                            } else {
-                                item.userCeibroData?.jobTitle
-                            }
-                        companyName.visibility = View.VISIBLE
-                        dot.visibility = View.VISIBLE
-                        jobTitle.visibility = View.VISIBLE
+                            jobTitle.visibility = View.VISIBLE
+                            jobTitle.text = item.userCeibroData?.jobTitle?.trim()
+                        }
+
                     } else {
                         phoneNumber.text = item.phoneNumber
+                        phoneNumber.visibility = View.VISIBLE
                         companyName.visibility = View.GONE
                         dot.visibility = View.GONE
                         jobTitle.visibility = View.GONE
@@ -192,6 +209,7 @@ class ConnectionAdapterSectionRecycler constructor(
                     if (!currentContact.isNullOrEmpty()) {
                         contactCheckBox.isChecked = true
                         mainLayout.isEnabled = false
+                        contactCheckBox.isClickable = false
                         root.isEnabled = false
                         root.isClickable = false
                         root.alpha = 0.7f

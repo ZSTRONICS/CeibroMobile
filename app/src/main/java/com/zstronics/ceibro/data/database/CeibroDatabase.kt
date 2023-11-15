@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.database.converters.*
 import com.zstronics.ceibro.data.database.converters.v2.*
 import com.zstronics.ceibro.data.database.dao.*
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.subtask.*
 import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
@@ -15,7 +16,6 @@ import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 
@@ -38,11 +38,11 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         CeibroTaskV2::class,
         Events::class,
         TopicsV2DatabaseEntity::class,
-        ProjectsV2DatabaseEntity::class,
+        CeibroProjectV2::class,
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 78,
+    version = 79,
     exportSchema = false
 )
 @TypeConverters(
@@ -83,7 +83,6 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     TopicsResponseTypeConverter::class,
     TopicDataListTypeConverter::class,
     ProjectsV2ListTypeConverter::class,
-    OwnerV2TypeConverter::class,
     UserCeibroDataTypeConverter::class,
     AssignedToStateTypeConverter::class,
     LocalFilesToStoreTypeConverter::class,
