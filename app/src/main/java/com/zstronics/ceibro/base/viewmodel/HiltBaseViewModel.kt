@@ -370,6 +370,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
+    fun updateProjectInLocal(
+        project: CeibroProjectV2, projectDao: ProjectsV2Dao
+    ) {
+        GlobalScope.launch {
+            projectDao.insertProject(project)
+
+            EventBus.getDefault().post(LocalEvents.RefreshProjectsData())
+
+        }
+    }
+
     fun updateCreatedTaskInLocal(
         task: CeibroTaskV2?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
     ) {

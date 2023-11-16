@@ -48,7 +48,7 @@ class HiddenProjectsV2VM @Inject constructor(
         }
     }
 
-    override fun hideProject(
+    override fun unHideProject(
         hidden: Boolean,
         projectId: String,
         callBack: (isSuccess: Boolean) -> Unit
@@ -61,9 +61,11 @@ class HiddenProjectsV2VM @Inject constructor(
                 projectId = projectId
             )) {
                 is ApiResponse.Success -> {
-                    val ceibroProjectV2: CeibroProjectV2 = response.data
-                    projectsV2Dao.insertProject(ceibroProjectV2)
-
+                    val ceibroProjectV2 = response.data.updatedProject
+                    updateProjectInLocal(ceibroProjectV2, projectsV2Dao)
+//                    projectsV2Dao.insertProject(ceibroProjectV2)
+//                    getHiddenProjects()
+                    loading(false, "")
                     callBack(true)
                 }
 
@@ -73,7 +75,6 @@ class HiddenProjectsV2VM @Inject constructor(
                 }
             }
         }
-
     }
 
 }

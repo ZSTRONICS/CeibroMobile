@@ -139,6 +139,59 @@ object ImageBinding {
             .into(imageView)
     }
 
+
+
+    @JvmStatic
+    @BindingAdapter(
+        value = ["app:loadProjectDetailImageFromUrl"],
+        requireAll = false
+    )
+    fun loadProjectDetailImage(
+        imageView: AppCompatImageView,
+        imageUrl: String?,
+    ) {
+        val context = imageView.context
+
+        val circularProgressDrawable = CircularProgressDrawable(context)
+        circularProgressDrawable.strokeWidth = 4f
+        circularProgressDrawable.centerRadius = 14f
+        circularProgressDrawable.start()
+
+        val requestOptions = RequestOptions()
+            .placeholder(circularProgressDrawable)
+            .error(R.drawable.project_img)
+            .skipMemoryCache(true)
+            .centerCrop()
+
+        Glide.with(context)
+            .load(imageUrl)
+            .apply(requestOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    circularProgressDrawable.stop()
+                    return false
+                }
+            })
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imageView)
+    }
+
+
     @JvmStatic
     @BindingAdapter(
         value = ["app:setTextNow"],

@@ -37,10 +37,10 @@
             tools:listitem="@layout/layout_project_item_list" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/toolbarHeader"
+            android:id="@+id/projectHiddenHeader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:elevation="4dp"
             android:visibility="visible"
@@ -50,16 +50,17 @@
 
 
             <TextView
-                android:id="@+id/hiddenOngoingDescDetailEstonia"
+                android:id="@+id/hiddenText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
                 android:ellipsize="end"
-                android:fontFamily="@font/inter_regular"
+                android:fontFamily="@font/inter_semibold"
                 android:maxLines="12"
                 android:text="@string/no_projects_are_hidden"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="17sp"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

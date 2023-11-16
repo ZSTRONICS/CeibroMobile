@@ -11,6 +11,9 @@ interface ProjectsV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleProject(projectsData: List<CeibroProjectV2>)
 
+    @Query("SELECT * FROM projects_v2 ORDER BY updatedAt DESC")
+    suspend fun getAllProjectsForTask(): List<CeibroProjectV2>
+
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe ORDER BY updatedAt DESC")
     suspend fun getAllHiddenProjects(isHiddenByMe: Boolean = true): List<CeibroProjectV2>
 

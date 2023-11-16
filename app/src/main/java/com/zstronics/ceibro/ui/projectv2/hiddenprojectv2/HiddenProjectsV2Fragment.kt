@@ -11,10 +11,14 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentHiddenProjectsV2Binding
-import com.zstronics.ceibro.ui.projectv2.allprojectsv2.AllProjectAdapter
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 
@@ -30,15 +34,12 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
     override fun toolBarVisibility(): Boolean = false
 
     init {
-
         this.callback = callback
     }
 
     @Inject
-    lateinit var adapter: AllProjectAdapter
+    lateinit var adapter: HiddenProjectAdapter
 
-
-    private var list: MutableList<CeibroProjectV2> = mutableListOf()
     override fun onClick(id: Int) {
 
         when (id) {
@@ -56,43 +57,41 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        mViewDataBinding.projectHiddenHeader.visibility = View.GONE
+        mViewDataBinding.projectsRV.visibility = View.VISIBLE
+
         mViewDataBinding.projectsRV.adapter = adapter
-        if (list.isNotEmpty()) {
-            mViewDataBinding.toolbarHeader.visibility = View.GONE
-            mViewDataBinding.projectsRV.visibility = View.VISIBLE
 
-        } else {
-            mViewDataBinding.toolbarHeader.visibility = View.VISIBLE
-            mViewDataBinding.projectsRV.visibility = View.GONE
-        }
-
-        initRecyclerView(adapter, list)
+        initRecyclerView(adapter)
         viewModel.allHiddenProjects.observe(viewLifecycleOwner) {
 
             if (it.isNotEmpty()) {
-                adapter.setList(it, false)
-                mViewDataBinding.toolbarHeader.visibility = View.GONE
+                adapter.setList(it)
+                mViewDataBinding.projectHiddenHeader.visibility = View.GONE
                 mViewDataBinding.projectsRV.visibility = View.VISIBLE
             } else {
-
+                mViewDataBinding.projectHiddenHeader.visibility = View.VISIBLE
+                mViewDataBinding.projectsRV.visibility = View.GONE
             }
         }
 
 
     }
 
-    private fun initRecyclerView(adapter: AllProjectAdapter, list: MutableList<CeibroProjectV2>) {
+    private fun initRecyclerView(adapter: HiddenProjectAdapter) {
         mViewDataBinding.projectsRV.adapter = adapter
-        adapter.setList(list, false)
         adapter.setCallBack {
-
             when (it.first) {
-                1 -> {
-                    callback?.invoke(1)
+                "root" -> {
+                    CookiesManager.projectNameForDetails = it.second.title
+                    CookiesManager.projectDataForDetails = it.second
+//                    val bundle = Bundle()
+//                    bundle.putParcelable("projectData", it.second)
+                    navigate(R.id.projectDetailV2Fragment)
                 }
 
-                2 -> {
-                    showHideTaskDialog(requireContext(), it.second)
+                "unHide" -> {
+                    showUnHideTaskDialog(requireContext(), it.second)
                 }
             }
 
@@ -100,7 +99,10 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
 
     }
 
-    private fun showHideTaskDialog(context: Context, second: CeibroProjectV2) {
+    private fun showUnHideTaskDialog(
+        context: Context,
+        projectData: CeibroProjectV2
+    ) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
 
@@ -115,14 +117,35 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
         alertDialog.show()
 
         yesBtn.setOnClickListener {
-            viewModel.hideProject(!(second.isHiddenByMe), second._id) {
-                alertDialog.dismiss()
+            alertDialog.dismiss()
+            viewModel.unHideProject(!(projectData.isHiddenByMe), projectData._id) {
+                callback?.invoke(1)
             }
-
         }
 
         noBtn.setOnClickListener {
             alertDialog.dismiss()
         }
+    }
+
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshProjectsData(event: LocalEvents.RefreshProjectsData?) {
+        loadProjects()
+    }
+
+    fun loadProjects() {
+        viewModel.getHiddenProjects()
     }
 }

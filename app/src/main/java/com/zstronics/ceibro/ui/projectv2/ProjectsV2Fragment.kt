@@ -24,38 +24,29 @@ class ProjectsV2Fragment :
     override val layoutResId: Int = R.layout.fragment_projects_v2
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
-
         when (id) {
-
             R.id.cl_AddNewProject -> {
                 navigate(R.id.newProjectV2Fragment)
             }
 
-            R.id.tvNewProject -> {
-                navigate(R.id.newProjectV2Fragment)
-            }
-
             R.id.cl_new -> {
-
                 navigate(R.id.newProjectV2Fragment)
             }
 
-            R.id.tvCancel -> {
-
+            R.id.cancelSearch -> {
                 viewModel.viewState.searchProjectText.value = ""
                 mViewDataBinding.projectSearchBar.hideKeyboard()
                 mViewDataBinding.projectsSearchCard.visibility = View.GONE
-                mViewDataBinding.connectionImgCard.visibility = View.VISIBLE
+                mViewDataBinding.projectSearchBtn.visibility = View.VISIBLE
 
                 mViewDataBinding.projectSearchBar.setQuery("", false)
             }
 
-            R.id.connectionImgCard -> {
-
+            R.id.projectSearchBtn -> {
                 showKeyboard()
                 mViewDataBinding.projectSearchBar.requestFocus()
                 mViewDataBinding.projectsSearchCard.visibility = View.VISIBLE
-                mViewDataBinding.connectionImgCard.visibility = View.GONE
+                mViewDataBinding.projectSearchBtn.visibility = View.GONE
 
             }
         }
@@ -65,9 +56,7 @@ class ProjectsV2Fragment :
         super.onViewCreated(view, savedInstanceState)
         list.add(getString(R.string.all_projects))
         list.add(getString(R.string.hidden_projects))
-        val adapter = ProjectTabLayoutAdapter(requireActivity()) {
-            navigate(R.id.projectDetailV2Fragment)
-        }
+        val adapter = ProjectTabLayoutAdapter(requireActivity())
         mViewDataBinding.viewPager.adapter = adapter
 
 
@@ -92,7 +81,6 @@ class ProjectsV2Fragment :
                 return true
             }
         })
-
     }
 
 

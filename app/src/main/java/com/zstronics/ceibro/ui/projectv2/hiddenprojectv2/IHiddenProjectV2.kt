@@ -17,6 +17,6 @@ interface IHiddenProjectV2 {
     interface ViewModel : IBase.ViewModel<State> {
         fun getProjectName(context: Context)
         fun getHiddenProjects()
-        fun hideProject( hidden: Boolean, projectId: String,callBack: (isSuccess: Boolean) -> Unit)
+        fun unHideProject( hidden: Boolean, projectId: String,callBack: (isSuccess: Boolean) -> Unit)
     }
 }

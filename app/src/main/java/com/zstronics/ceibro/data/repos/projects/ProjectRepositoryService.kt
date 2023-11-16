@@ -20,6 +20,7 @@ import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
+import com.zstronics.ceibro.data.repos.projects.v2.UpdateProjectResponseV2
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -183,11 +184,18 @@ interface ProjectRepositoryService {
     ): Response<NewProjectResponseV2>
 
 
-    @POST("/v2/project/hidden/{hidden}/{projectId}")
-    fun updateHideProjectStatus(
-        @Path("hidden") hidden: Boolean,
+    @POST("v2/project/hidden/{state}/{projectId}")
+    suspend fun updateHideProjectStatus(
+        @Path("state") state: Boolean,
         @Path("projectId") projectId: String
-    ): Response<CeibroProjectV2>
+    ): Response<UpdateProjectResponseV2>
+
+
+    @POST("v2/project/favorite/{state}/{projectId}")
+    suspend fun updateFavoriteProjectStatus(
+        @Path("state") state: Boolean,
+        @Path("projectId") projectId: String
+    ): Response<UpdateProjectResponseV2>
 
 
 }

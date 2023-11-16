@@ -3,7 +3,6 @@ package com.zstronics.ceibro.data.repos.projects
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.base.BaseResponse
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
@@ -28,6 +27,7 @@ import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
+import com.zstronics.ceibro.data.repos.projects.v2.UpdateProjectResponseV2
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -276,11 +276,23 @@ class ProjectRepository @Inject constructor(
     override suspend fun updateHideProjectStatus(
         hidden: Boolean,
         projectId: String
-    ): ApiResponse<CeibroProjectV2> {
+    ): ApiResponse<UpdateProjectResponseV2> {
         return executeSafely(call = {
             service.updateHideProjectStatus(
-                hidden,
-                projectId
+                state = hidden,
+                projectId = projectId
+            )
+        })
+    }
+
+    override suspend fun updateFavoriteProjectStatus(
+        favorite: Boolean,
+        projectId: String
+    ): ApiResponse<UpdateProjectResponseV2> {
+        return executeSafely(call = {
+            service.updateFavoriteProjectStatus(
+                state = favorite,
+                projectId = projectId
             )
         })
     }

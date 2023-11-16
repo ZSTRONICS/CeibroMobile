@@ -28,7 +28,7 @@
                 android:id="@+id/cl_tab"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_margin="@dimen/_5sdp"
+                android:layout_margin="@dimen/_2sdp"
                 android:orientation="horizontal"
                 android:weightSum="10"
                 app:layout_constraintTop_toTopOf="parent">
@@ -38,7 +38,8 @@
                     style="@style/MyTabLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:layout_marginEnd="@dimen/_2sdp"
                     android:layout_weight="7.5" />
 
 
@@ -57,8 +58,9 @@
                         android:id="@+id/add"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_marginStart="@dimen/_9sdp"
                         android:clickable="false"
+                        android:padding="1dp"
                         android:src="@drawable/add"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/tv_new"
@@ -74,7 +76,7 @@
                         android:gravity="center"
                         android:text="@string/new_proj"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_12sdp"
+                        android:textSize="@dimen/_10sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/add"
@@ -110,7 +112,7 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/connectionImgCard"
+            android:id="@+id/projectSearchBtn"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_marginStart="@dimen/_3sdp"
@@ -196,14 +198,14 @@
                     android:queryHint="Start typing"
                     android:searchIcon="@null"
                     android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@+id/tvCancel"
+                    app:layout_constraintEnd_toStartOf="@+id/cancelSearch"
                     app:layout_constraintStart_toEndOf="@+id/saperator"
                     app:layout_constraintTop_toTopOf="parent"
                     app:theme="@style/AppSearchView" />
 
 
                 <TextView
-                    android:id="@+id/tvCancel"
+                    android:id="@+id/cancelSearch"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/_10sdp"
