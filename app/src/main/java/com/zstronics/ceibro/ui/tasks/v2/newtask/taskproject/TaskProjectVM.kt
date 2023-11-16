@@ -33,7 +33,7 @@ class TaskProjectVM @Inject constructor(
 
     fun loadProjects(callBack: () -> Unit) {
         launch {
-            val projectsData = projectDao.getAllProjects()
+            val projectsData = projectDao.getAllProjectsForTask()
             if (projectsData != null) {
                 originalAllProjects =
                     projectsData as MutableList<CeibroProjectV2>

@@ -13,15 +13,21 @@ import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsRespon
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
-import com.zstronics.ceibro.data.repos.projects.member.*
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.DeleteMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
+import com.zstronics.ceibro.data.repos.projects.v2.UpdateProjectResponseV2
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -263,6 +269,30 @@ class ProjectRepository @Inject constructor(
             service.createNewProjectWithoutFile(
                 title = title,
                 description = description
+            )
+        })
+    }
+
+    override suspend fun updateHideProjectStatus(
+        hidden: Boolean,
+        projectId: String
+    ): ApiResponse<UpdateProjectResponseV2> {
+        return executeSafely(call = {
+            service.updateHideProjectStatus(
+                state = hidden,
+                projectId = projectId
+            )
+        })
+    }
+
+    override suspend fun updateFavoriteProjectStatus(
+        favorite: Boolean,
+        projectId: String
+    ): ApiResponse<UpdateProjectResponseV2> {
+        return executeSafely(call = {
+            service.updateFavoriteProjectStatus(
+                state = favorite,
+                projectId = projectId
             )
         })
     }

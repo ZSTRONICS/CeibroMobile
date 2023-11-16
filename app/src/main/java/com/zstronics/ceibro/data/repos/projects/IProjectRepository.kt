@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
@@ -20,7 +21,7 @@ import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.projects.v2.UpdateProjectResponseV2
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
@@ -102,4 +103,15 @@ interface IProjectRepository {
         title: RequestBody,
         description: RequestBody
     ): ApiResponse<NewProjectResponseV2>
+
+
+    suspend fun updateHideProjectStatus(
+        hidden: Boolean,
+        projectId: String
+    ): ApiResponse<UpdateProjectResponseV2>
+
+    suspend fun updateFavoriteProjectStatus(
+        favorite: Boolean,
+        projectId: String
+    ): ApiResponse<UpdateProjectResponseV2>
 }

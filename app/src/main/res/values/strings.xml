@@ -551,9 +551,11 @@
     <string name="new_proj">New</string>
     <string name="search">Search</string>
     <string name="do_you_want_to_un_hide_this_project">Do you want to unhide this project.</string>
+    <string name="do_you_want_to_hide_this_project">Do you want to hide this project.</string>
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
-    <string name="favorite_projects">Favorite Projects</string>
+    <string name="recent_projects">Recent used projects</string>
+    <string name="favorite_projects">Favorites</string>
     <string name="hidden_projects">Hidden Projects</string>
     <string name="project_name">Project Name</string>
     <string name="cancel">cancel</string>
@@ -565,4 +567,5 @@
     <string name="created_by">Created by</string>
     <string name="sample_date">23.09.2023</string>
     <string name="start_typing">Start typing</string>
+    <string name="no_description_added">No description added</string>
 </resources>

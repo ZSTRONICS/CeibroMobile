@@ -23,8 +23,6 @@
             android:id="@+id/projectsRV"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingStart="2dp"
-            android:paddingEnd="2dp"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +32,7 @@
             tools:itemCount="10"
             tools:listitem="@layout/layout_project_item_list" />
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/toolbarHeader"
+            android:id="@+id/emptyProjectListHeader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/_16sdp"
@@ -64,7 +62,6 @@
                     android:focusable="false"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingHorizontal="@dimen/_20sdp"
                     android:text="@string/add_new_project"
                     android:textColor="@color/appBlue"

@@ -151,6 +151,68 @@ class NotificationHelper(context: Context) {
                     notify(singleNotificationId, notification)
                 }
             }, 120)
+        } else if (notificationType.equals("comment", true)) {
+
+            val replyIntent = createPendingIntentForReply(context, task)
+            val openIntent = createPendingIntentForOpen(context, task)
+
+            val blueColor = ContextCompat.getColor(context, R.color.appBlue)
+            ContextCompat.getColor(context, R.color.white)
+
+            val replyActionText = "Reply"
+            val openActionText = "Open"
+
+            val replyActionTextBlue = SpannableString(replyActionText)
+            replyActionTextBlue.setSpan(
+                ForegroundColorSpan(blueColor),
+                0, replyActionTextBlue.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            val openActionTextBlue = SpannableString(openActionText)
+            openActionTextBlue.setSpan(
+                ForegroundColorSpan(blueColor),
+                0, openActionTextBlue.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                val collapsedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
+                val expandedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
+
+                collapsedView.setTextViewText(R.id.firstLine, task.creator)
+                collapsedView.setTextViewText(R.id.secondLine, title)
+                collapsedView.setViewVisibility(R.id.largeText, View.GONE)
+
+                expandedView.setTextViewText(R.id.firstLine, task.creator)
+                expandedView.setTextViewText(R.id.secondLine, title)
+                expandedView.setTextViewText(R.id.largeText, message)
+                expandedView.setViewVisibility(R.id.largeText, View.VISIBLE)
+
+                val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
+                    .setSmallIcon(R.drawable.app_logo)
+                    .setContentTitle(task.creator)
+                    .setContentText(title)
+                    .setLargeIcon(decodeBase64ToBitmap(task.avatar))
+                    .setCustomBigContentView(expandedView)
+                    .setCustomContentView(collapsedView)
+                    .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setGroup(groupKey)
+                    .addAction(
+                        R.drawable.app_logo, replyActionTextBlue, replyIntent
+                    ).addAction(
+                        R.drawable.app_logo, openActionTextBlue, openIntent
+                    )
+                    .build()
+
+                notificationManager.apply {
+                    notify(summaryNotificationId, summaryNotification1)
+                    notify(singleNotificationId, notification)
+                }
+            }, 120)
         }
     }
 

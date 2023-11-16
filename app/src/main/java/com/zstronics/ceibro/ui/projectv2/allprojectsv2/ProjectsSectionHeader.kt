@@ -1,15 +1,15 @@
 package com.zstronics.ceibro.ui.projectv2.allprojectsv2
 
 import com.intrusoft.sectionedrecyclerview.Section
-import com.zstronics.ceibro.data.repos.chat.room.Project
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 
 
 class ProjectsSectionHeader(
-    private val childList: MutableList<Project>,
+    private val childList: MutableList<CeibroProjectV2>,
     private val sectionText: String,
-) : Section<Project> {
+) : Section<CeibroProjectV2> {
 
-    override fun getChildItems(): MutableList<Project> {
+    override fun getChildItems(): MutableList<CeibroProjectV2> {
         return childList
     }
 

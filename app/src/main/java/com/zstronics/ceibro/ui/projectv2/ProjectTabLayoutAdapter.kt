@@ -10,17 +10,15 @@ import com.zstronics.ceibro.ui.projectv2.hiddenprojectv2.HiddenProjectsV2Fragmen
 private const val NUM_TABS = 2
 
 
-class ProjectTabLayoutAdapter(fragmentManager: FragmentActivity, val callback: (Int) -> Unit) :
+class ProjectTabLayoutAdapter(fragmentManager: FragmentActivity) :
     FragmentStateAdapter(fragmentManager) {
     override fun getItemCount(): Int = NUM_TABS
 
     override fun createFragment(position: Int): Fragment {
-        val allProjectsV2Fragment = AllProjectsV2Fragment {
-            callback.invoke(1)
-        }
+        val allProjectsV2Fragment = AllProjectsV2Fragment()
 
         val hiddenProjectsV2Fragment = HiddenProjectsV2Fragment {
-            callback.invoke(1)
+           // allProjectsV2Fragment.reloadData()
         }
         return when (position) {
             0 -> allProjectsV2Fragment

@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.projects
 
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
@@ -12,14 +13,14 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.projects.v2.UpdateProjectResponseV2
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -162,7 +163,6 @@ interface ProjectRepositoryService {
 //    for method ProjectRepositoryService.createProject
 
 
-
     //Projects V2 end points
 
     @GET("v2/project")
@@ -182,6 +182,20 @@ interface ProjectRepositoryService {
         @Part("title") title: RequestBody,
         @Part("description") description: RequestBody
     ): Response<NewProjectResponseV2>
+
+
+    @POST("v2/project/hidden/{state}/{projectId}")
+    suspend fun updateHideProjectStatus(
+        @Path("state") state: Boolean,
+        @Path("projectId") projectId: String
+    ): Response<UpdateProjectResponseV2>
+
+
+    @POST("v2/project/favorite/{state}/{projectId}")
+    suspend fun updateFavoriteProjectStatus(
+        @Path("state") state: Boolean,
+        @Path("projectId") projectId: String
+    ): Response<UpdateProjectResponseV2>
 
 
 }

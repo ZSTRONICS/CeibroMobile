@@ -25,6 +25,7 @@ class ProjectsVM @Inject constructor(
         MutableLiveData()
     val allProjects: LiveData<MutableList<AllProjectsResponse.Projects>> = _allProjects
     var originalAlProjects = mutableListOf<AllProjectsResponse.Projects>()
+
     var statusesList: List<String> = listOf()
     var ownersList: List<AllProjectsResponse.Projects.Owner> = listOf()
     override fun onResume() {

@@ -11,5 +11,6 @@ data class NotificationTaskData(
     val creator: String,
     val description: String,
     val taskId: String,
-    val topic: String
+    val title: String,
+    val eventId: String? = ""
 ) : Parcelable

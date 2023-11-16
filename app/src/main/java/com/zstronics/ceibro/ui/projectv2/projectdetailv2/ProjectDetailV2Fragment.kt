@@ -7,6 +7,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,12 +31,18 @@ class ProjectDetailV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val adapter = ProjectDetailTabLayoutAdapter(requireActivity())
         mViewDataBinding.viewPager.adapter = adapter
 
-        TabLayoutMediator(mViewDataBinding.tabLayout, mViewDataBinding.viewPager) { tab, position ->
+        TabLayoutMediator(
+            mViewDataBinding.tabLayout,
+            mViewDataBinding.viewPager
+        ) { tab, position ->
             tab.text = getString(R.string.detail)
         }.attach()
+
+        mViewDataBinding.tvProjectName.text = CookiesManager.projectNameForDetails
     }
 
 }
