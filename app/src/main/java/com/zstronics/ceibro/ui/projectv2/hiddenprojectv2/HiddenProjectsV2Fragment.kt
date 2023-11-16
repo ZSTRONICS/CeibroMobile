@@ -2,18 +2,24 @@ package com.zstronics.ceibro.ui.projectv2.hiddenprojectv2
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.postDelayed
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentHiddenProjectsV2Binding
+import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -32,6 +38,9 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
     override val viewModel: HiddenProjectsV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_hidden_projects_v2
     override fun toolBarVisibility(): Boolean = false
+    var firstStartOffragment = true
+    var sharedViewModel: SharedViewModel? = null
+
 
     init {
         this.callback = callback
@@ -57,6 +66,9 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
         mViewDataBinding.projectHiddenHeader.visibility = View.GONE
         mViewDataBinding.projectsRV.visibility = View.VISIBLE
 
@@ -73,6 +85,19 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
                 mViewDataBinding.projectHiddenHeader.visibility = View.VISIBLE
                 mViewDataBinding.projectsRV.visibility = View.GONE
             }
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (firstStartOffragment) {
+                firstStartOffragment = false
+                if (!sharedViewModel?.projectSearchQuery?.value?.trim().isNullOrEmpty()) {
+                    sharedViewModel?.projectSearchQuery?.value?.let { viewModel.filterAllProjects(it) }
+                }
+            }
+        }, 100)
+
+        sharedViewModel?.projectSearchQuery?.observe(viewLifecycleOwner) {
+            viewModel.filterAllProjects(it)
         }
 
 
@@ -127,7 +152,6 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
             alertDialog.dismiss()
         }
     }
-
 
 
     override fun onAttach(context: Context) {

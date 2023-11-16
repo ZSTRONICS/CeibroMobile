@@ -61,7 +61,7 @@ class NewProjectV2VM @Inject constructor(
                         file = fileParts
                     )) {
                         is ApiResponse.Success -> {
-                            updateCreatedProjectInLocal(response.data.newProject, projectDao)
+                            addCreatedProjectInLocal(response.data.newProject, projectDao)
                             loading(false, "Project created successfully")
                             callBack(true)
                         }
@@ -80,7 +80,7 @@ class NewProjectV2VM @Inject constructor(
                         description = description
                     )) {
                         is ApiResponse.Success -> {
-                            updateCreatedProjectInLocal(response.data.newProject, projectDao)
+                            addCreatedProjectInLocal(response.data.newProject, projectDao)
                             loading(false, "Project created successfully")
                             callBack(true)
                         }

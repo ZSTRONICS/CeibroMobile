@@ -1,16 +1,12 @@
 package com.zstronics.ceibro.ui.dashboard
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.zstronics.ceibro.BuildConfig
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -34,18 +30,16 @@ import com.zstronics.ceibro.data.repos.projects.group.GroupRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberAddedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.projects.member.MemberUpdatedSocketResponse
-import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectCreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectV2CreatedUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
-import com.zstronics.ceibro.data.repos.task.models.CommentsFilesUploadedSocketEventResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketForwardedToMeNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
-import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -275,46 +269,21 @@ class DashboardVM @Inject constructor(
         } else if (socketData.module == "project") {
             when (socketData.eventType) {
                 SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
-                    val newProject =
-                        gson.fromJson<ProjectCreatedSocketResponse>(
+                    val newProject = gson.fromJson<ProjectV2CreatedUpdatedSocketResponse>(
                             arguments,
-                            object : TypeToken<ProjectCreatedSocketResponse>() {}.type
+                            object : TypeToken<ProjectV2CreatedUpdatedSocketResponse>() {}.type
                         ).data
 
-                    EventBus.getDefault().post(LocalEvents.ProjectCreatedEvent(newProject))
-
-                    EventBus.getDefault().post(
-                        LocalEvents.CreateNotification(
-                            moduleName = socketData.module,
-                            moduleId = newProject.id,
-                            notificationTitle = "New Project Created as ${newProject.title}",
-                            isOngoing = false,
-                            indeterminate = false,
-                            notificationIcon = R.drawable.app_logo
-                        )
-                    )
+                    addCreatedProjectInLocal(newProject, projectsV2Dao)
                 }
 
                 SocketHandler.ProjectEvent.PROJECT_UPDATED.name -> {
-                    val updatedProject =
-                        gson.fromJson<ProjectCreatedSocketResponse>(
+                    val updatedProject = gson.fromJson<ProjectV2CreatedUpdatedSocketResponse>(
                             arguments,
-                            object : TypeToken<ProjectCreatedSocketResponse>() {}.type
+                            object : TypeToken<ProjectV2CreatedUpdatedSocketResponse>() {}.type
                         ).data
 
-                    EventBus.getDefault()
-                        .post(LocalEvents.ProjectCreatedEvent(updatedProject))
-
-                    EventBus.getDefault().post(
-                        LocalEvents.CreateNotification(
-                            moduleName = socketData.module,
-                            moduleId = updatedProject.id,
-                            notificationTitle = "${updatedProject.title} Updated",
-                            isOngoing = false,
-                            indeterminate = false,
-                            notificationIcon = R.drawable.app_logo
-                        )
-                    )
+                    updateProjectInLocal(updatedProject, projectsV2Dao)
                 }
 
                 SocketHandler.ProjectEvent.REFRESH_PROJECTS.name -> {

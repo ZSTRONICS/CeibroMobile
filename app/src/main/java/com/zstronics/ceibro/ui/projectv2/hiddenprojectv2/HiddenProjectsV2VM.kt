@@ -23,6 +23,7 @@ class HiddenProjectsV2VM @Inject constructor(
     private val _allHiddenProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
         MutableLiveData()
     val allHiddenProjects: LiveData<MutableList<CeibroProjectV2>> = _allHiddenProjects
+    var originalHiddenProjects: MutableList<CeibroProjectV2> = mutableListOf()
 
     override fun getProjectName(context: Context) {
 
@@ -41,8 +42,10 @@ class HiddenProjectsV2VM @Inject constructor(
             val hiddenProjects = projectsV2Dao.getAllHiddenProjects(true)
             if (hiddenProjects.isNotEmpty()) {
                 _allHiddenProjects.postValue(hiddenProjects.toMutableList())
+                originalHiddenProjects = hiddenProjects.toMutableList()
             } else {
                 _allHiddenProjects.postValue(mutableListOf())
+                originalHiddenProjects = mutableListOf()
             }
 
         }
@@ -75,6 +78,27 @@ class HiddenProjectsV2VM @Inject constructor(
                 }
             }
         }
+    }
+
+
+    fun filterAllProjects(search: String) {
+        if (search.isEmpty()) {
+            if (originalHiddenProjects.isNotEmpty()) {
+                _allHiddenProjects.postValue(originalHiddenProjects as MutableList<CeibroProjectV2>)
+            }
+            return
+        }
+        val filtered = originalHiddenProjects.filter {
+            (it.title.isNotEmpty() && it.title.lowercase().contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (!it.creator.companyName.isNullOrEmpty() && it.creator.companyName.lowercase()
+                        .contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _allHiddenProjects.postValue(filtered as MutableList<CeibroProjectV2>)
+        else
+            _allHiddenProjects.postValue(mutableListOf())
     }
 
 }

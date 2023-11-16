@@ -57,14 +57,30 @@ class HiddenProjectAdapter @Inject constructor(val sessionManager: SessionManage
 
         fun bind(item: CeibroProjectV2) {
             val context = binding.root.context
-
+            binding.ivHide.setImageResource(R.drawable.icon_visibility_on)
+            binding.ivFav.visibility = View.GONE
             binding.tvDate.text = DateUtils.formatCreationUTCTimeToCustom(
                 utcTime = item.createdAt,
                 inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
             )
             binding.projectName.text = item.title
-            binding.userCompany.text = item.creator.companyName
-            binding.userName.text = "${item.creator.firstName} ${item.creator.firstName}"
+
+            if (item.creator.firstName.trim().isEmpty() && item.creator.surName.trim()
+                    .isEmpty()
+            ) {
+                binding.userName.text = ""
+                binding.userName.visibility = View.GONE
+            } else {
+                binding.userName.text = "${item.creator.firstName} ${item.creator.surName}"
+            }
+
+            if (item.creator.companyName.isNullOrEmpty()) {
+                binding.userCompany.text = ""
+                binding.userCompany.visibility = View.GONE
+            } else {
+                binding.userCompany.text = item.creator.companyName
+            }
+
 
 //            if (item.projectPic.isNotEmpty()) {
                 val circularProgressDrawable = CircularProgressDrawable(context)
@@ -121,7 +137,6 @@ class HiddenProjectAdapter @Inject constructor(val sessionManager: SessionManage
 //            } else {
 //                binding.ivFav.visibility = View.VISIBLE
 //            }
-            binding.ivFav.visibility = View.GONE
 
         }
     }

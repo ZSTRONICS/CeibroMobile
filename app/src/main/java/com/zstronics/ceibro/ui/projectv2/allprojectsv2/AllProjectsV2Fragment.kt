@@ -9,13 +9,16 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentAllProjectsV2Binding
+import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -31,12 +34,8 @@ class AllProjectsV2Fragment :
     override val viewModel: AllProjectsV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_all_projects_v2
     override fun toolBarVisibility(): Boolean = false
-
-
-    lateinit var sectionedAdapter: AllProjectsAdapterSectionRecycler
-
-    private var sectionList: MutableList<ProjectsSectionHeader> = mutableListOf()
-
+    var sharedViewModel: SharedViewModel? = null
+    var searchingProject = false
     override fun onClick(id: Int) {
 
         when (id) {
@@ -51,9 +50,15 @@ class AllProjectsV2Fragment :
         }
     }
 
+    lateinit var sectionedAdapter: AllProjectsAdapterSectionRecycler
+    private var sectionList: MutableList<ProjectsSectionHeader> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        mViewDataBinding.emptyProjectListHeader.visibility = View.GONE
+        mViewDataBinding.projectsRV.visibility = View.VISIBLE
+
         sectionList.add(
             0,
             ProjectsSectionHeader(mutableListOf(), getString(R.string.favorite_projects))
@@ -179,8 +184,10 @@ class AllProjectsV2Fragment :
                 )
 
                 sectionedAdapter.notifyDataSetChanged()
+//                if (!searchingProject) {
                 mViewDataBinding.emptyProjectListHeader.visibility = View.GONE
                 mViewDataBinding.projectsRV.visibility = View.VISIBLE
+//                }
 
             } else {
                 sectionList.removeAt(2)
@@ -195,12 +202,21 @@ class AllProjectsV2Fragment :
                     ), 2
                 )
                 sectionedAdapter.notifyDataSetChanged()
-                mViewDataBinding.emptyProjectListHeader.visibility = View.VISIBLE
-                mViewDataBinding.projectsRV.visibility = View.GONE
+                if (!searchingProject) {
+                    mViewDataBinding.emptyProjectListHeader.visibility = View.VISIBLE
+                    mViewDataBinding.projectsRV.visibility = View.GONE
+                }
             }
         }
 
-
+        sharedViewModel?.projectSearchQuery?.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                searchingProject = true
+            }
+            viewModel.filterFavoriteProjects(it)
+            viewModel.filterRecentProjects(it)
+            viewModel.filterAllProjects(it)
+        }
     }
 
 

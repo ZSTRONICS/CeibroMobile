@@ -359,14 +359,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
 
-    fun updateCreatedProjectInLocal(
+    fun addCreatedProjectInLocal(
         project: CeibroProjectV2, projectDao: ProjectsV2Dao
     ) {
         GlobalScope.launch {
             projectDao.insertProject(project)
 
             EventBus.getDefault().post(LocalEvents.RefreshProjectsData())
-
         }
     }
 
@@ -377,7 +376,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             projectDao.insertProject(project)
 
             EventBus.getDefault().post(LocalEvents.RefreshProjectsData())
-
         }
     }
 

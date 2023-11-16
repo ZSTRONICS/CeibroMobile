@@ -264,12 +264,13 @@
                 android:fontFamily="@font/inter_regular"
                 android:hint="@string/start_typing_your_comment_here"
                 android:inputType="text"
+                android:maxLength="1500"
                 android:maxLines="1"
                 android:paddingStart="8dp"
                 android:paddingEnd="11dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/appGrey3"
-                android:textSize="15.5sp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/saveBtn"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -301,7 +302,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/saveBtn"
-                android:layout_width="@dimen/_41sdp"
+                android:layout_width="@dimen/_44sdp"
                 android:layout_height="@dimen/_27sdp"
                 android:layout_marginEnd="@dimen/_3sdp"
                 android:background="@drawable/blue_button_back"
@@ -319,7 +320,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/okBtn"
-                android:layout_width="@dimen/_40sdp"
+                android:layout_width="@dimen/_44sdp"
                 android:layout_height="@dimen/_27sdp"
                 android:layout_marginEnd="@dimen/_3sdp"
                 android:background="@drawable/blue_button_back"

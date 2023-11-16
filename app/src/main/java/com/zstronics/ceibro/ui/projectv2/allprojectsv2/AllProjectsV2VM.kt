@@ -8,6 +8,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,15 +24,18 @@ class AllProjectsV2VM @Inject constructor(
     private val _allProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
         MutableLiveData()
     val allProjects: LiveData<MutableList<CeibroProjectV2>> = _allProjects
+    var originalAllProjects: MutableList<CeibroProjectV2> = mutableListOf()
 
 
     private val _allFavoriteProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
         MutableLiveData()
     val allFavoriteProjects: LiveData<MutableList<CeibroProjectV2>> = _allFavoriteProjects
+    var originalFavoriteProjects: MutableList<CeibroProjectV2> = mutableListOf()
 
     private val _allRecentProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
         MutableLiveData()
     val allRecentProjects: LiveData<MutableList<CeibroProjectV2>> = _allRecentProjects
+    var originalRecentProjects: MutableList<CeibroProjectV2> = mutableListOf()
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -50,8 +54,10 @@ class AllProjectsV2VM @Inject constructor(
             val allProjects = projectsV2Dao.getAllProjects()
             if (allProjects.isNotEmpty()) {
                 _allProjects.postValue(allProjects.toMutableList())
+                originalAllProjects = allProjects.toMutableList()
             } else {
                 _allProjects.postValue(mutableListOf())
+                originalAllProjects = mutableListOf()
             }
         }
     }
@@ -61,8 +67,10 @@ class AllProjectsV2VM @Inject constructor(
             val allFavoriteProjects = projectsV2Dao.getAllFavoriteProjects()
             if (allFavoriteProjects.isNotEmpty()) {
                 _allFavoriteProjects.postValue(allFavoriteProjects.toMutableList())
+                originalFavoriteProjects = allFavoriteProjects.toMutableList()
             } else {
                 _allFavoriteProjects.postValue(mutableListOf())
+                originalFavoriteProjects = mutableListOf()
             }
         }
     }
@@ -72,14 +80,16 @@ class AllProjectsV2VM @Inject constructor(
             val allRecentProjects = projectsV2Dao.getAllRecentUsedProjects()
             if (allRecentProjects.isNotEmpty()) {
                 _allRecentProjects.postValue(allRecentProjects.toMutableList())
+                originalRecentProjects = allRecentProjects.toMutableList()
             } else {
                 _allRecentProjects.postValue(mutableListOf())
+                originalRecentProjects = mutableListOf()
             }
         }
     }
 
 
-    override  fun hideProject(
+    override fun hideProject(
         hidden: Boolean,
         projectId: String,
         callBack: (isSuccess: Boolean) -> Unit
@@ -106,7 +116,7 @@ class AllProjectsV2VM @Inject constructor(
         }
     }
 
-    override  fun updateFavoriteProjectStatus(
+    override fun updateFavoriteProjectStatus(
         favorite: Boolean,
         projectId: String,
         callBack: (isSuccess: Boolean) -> Unit
@@ -137,5 +147,66 @@ class AllProjectsV2VM @Inject constructor(
         getAllProjects()
         getFavoriteProjects()
         getRecentProjects()
+    }
+
+
+    fun filterAllProjects(search: String) {
+        if (search.isEmpty()) {
+            if (originalAllProjects.isNotEmpty()) {
+                _allProjects.postValue(originalAllProjects as MutableList<CeibroProjectV2>)
+            }
+            return
+        }
+        val filtered = originalAllProjects.filter {
+            (it.title.isNotEmpty() && it.title.lowercase().contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (!it.creator.companyName.isNullOrEmpty() && it.creator.companyName.lowercase()
+                        .contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _allProjects.postValue(filtered as MutableList<CeibroProjectV2>)
+        else
+            _allProjects.postValue(mutableListOf())
+    }
+
+    fun filterRecentProjects(search: String) {
+        if (search.isEmpty()) {
+            if (originalRecentProjects.isNotEmpty()) {
+                _allRecentProjects.postValue(originalRecentProjects as MutableList<CeibroProjectV2>)
+            }
+            return
+        }
+        val filtered = originalRecentProjects.filter {
+            (it.title.isNotEmpty() && it.title.lowercase().contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (!it.creator.companyName.isNullOrEmpty() && it.creator.companyName.lowercase()
+                        .contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _allRecentProjects.postValue(filtered as MutableList<CeibroProjectV2>)
+        else
+            _allRecentProjects.postValue(mutableListOf())
+    }
+
+    fun filterFavoriteProjects(search: String) {
+        if (search.isEmpty()) {
+            if (originalFavoriteProjects.isNotEmpty()) {
+                _allFavoriteProjects.postValue(originalFavoriteProjects as MutableList<CeibroProjectV2>)
+            }
+            return
+        }
+        val filtered = originalFavoriteProjects.filter {
+            (it.title.isNotEmpty() && it.title.lowercase().contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (!it.creator.companyName.isNullOrEmpty() && it.creator.companyName.lowercase()
+                        .contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _allFavoriteProjects.postValue(filtered as MutableList<CeibroProjectV2>)
+        else
+            _allFavoriteProjects.postValue(mutableListOf())
     }
 }

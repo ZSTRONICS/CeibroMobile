@@ -22,13 +22,12 @@
             android:id="@+id/toolbarHeader"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
-            android:background="@color/white"
-            android:elevation="4dp"
+            android:elevation="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/closeBtn"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
@@ -58,159 +57,185 @@
                 app:layout_constraintStart_toEndOf="@+id/closeBtn"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbarHeader">
 
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/projectField"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_14sdp"
-                android:layout_marginTop="@dimen/_11sdp"
-                android:layout_marginEnd="@dimen/_14sdp"
-                android:hint="@string/project_name_required"
-                android:paddingStart="0dp"
-                android:paddingEnd="-10dp"
-                android:textColorHint="@color/appTextGrey"
-                app:boxStrokeColor="@color/transparent"
-                app:boxStrokeWidth="0dp"
-                app:counterEnabled="true"
-                app:counterMaxLength="100"
-                app:endIconMode="clear_text"
-                app:hintTextColor="@color/appGrey3"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/footerLine"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/projectText"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/input_field_bottom_line"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="top|start"
-                    android:inputType="none"
-                    android:maxLength="100"
-                    android:maxLines="5"
-                    android:overScrollMode="always"
-                    android:paddingStart="1dp"
-                    android:scrollbarStyle="insideInset"
-                    android:scrollbars="none"
-                    android:text="@={viewState.projectName}"
-                    android:textColor="@color/black"
-                    android:textSize="15sp" />
+                    android:layout_height="wrap_content">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/projectField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_11sdp"
+                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:hint="@string/project_name_required"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="-10dp"
+                        android:textColorHint="@color/appTextGrey"
+                        app:boxStrokeColor="@color/transparent"
+                        app:boxStrokeWidth="0dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="100"
+                        app:endIconMode="clear_text"
+                        app:hintTextColor="@color/appGrey3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/projectText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/input_field_bottom_line"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="top|start"
+                            android:inputType="none"
+                            android:maxLength="100"
+                            android:maxLines="5"
+                            android:overScrollMode="always"
+                            android:paddingStart="1dp"
+                            android:scrollbarStyle="insideInset"
+                            android:scrollbars="none"
+                            android:text="@={viewState.projectName}"
+                            android:textColor="@color/black"
+                            android:textSize="15sp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/descriptionField"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_14sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_14sdp"
-                android:hint="@string/description"
-                android:paddingStart="0dp"
-                android:paddingEnd="-10dp"
-                android:textColorHint="@color/appTextGrey"
-                app:boxStrokeColor="@color/transparent"
-                app:boxStrokeWidth="0dp"
-                app:counterEnabled="true"
-                app:counterMaxLength="1500"
-                app:endIconMode="clear_text"
-                app:hintTextColor="@color/appGrey3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/projectField">
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/descriptionText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/input_field_bottom_line"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="top|start"
-                    android:inputType="none"
-                    android:maxLength="1500"
-                    android:maxLines="5"
-                    android:overScrollMode="always"
-                    android:paddingStart="1dp"
-                    android:scrollbarStyle="insideInset"
-                    android:scrollbars="none"
-                    android:text="@={viewState.projectDescription}"
-                    android:textColor="@color/black"
-                    android:textSize="15sp" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/descriptionField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:hint="@string/description"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="-10dp"
+                        android:textColorHint="@color/appTextGrey"
+                        app:boxStrokeColor="@color/transparent"
+                        app:boxStrokeWidth="0dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="1500"
+                        app:endIconMode="clear_text"
+                        app:hintTextColor="@color/appGrey3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/projectField">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/descriptionText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/input_field_bottom_line"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="top|start"
+                            android:inputType="none"
+                            android:maxLength="1500"
+                            android:maxLines="5"
+                            android:overScrollMode="always"
+                            android:paddingStart="1dp"
+                            android:scrollbarStyle="insideInset"
+                            android:scrollbars="none"
+                            android:text="@={viewState.projectDescription}"
+                            android:textColor="@color/black"
+                            android:textSize="15sp" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cl_newPhoto"
-                android:layout_width="@dimen/_120sdp"
-                android:layout_height="@dimen/_125sdp"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="10dp"
-                app:layout_constraintBottom_toTopOf="@+id/cl_action"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/descriptionField"
-                app:layout_constraintVertical_bias="0.14">
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/newPhotoText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/appGrey0"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/_20sdp"
-                    android:text="@string/add_photo"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/_12sdp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cl_newPhoto"
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_125sdp"
+                        android:layout_marginTop="@dimen/_11sdp"
+                        android:layout_marginBottom="@dimen/_11sdp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/descriptionField">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/projectImg"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/newPhotoText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/appGrey0"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/_20sdp"
+                            android:text="@string/add_photo"
+                            android:textColor="@color/grey"
+                            android:textSize="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-            </com.google.android.material.card.MaterialCardView>
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/projectImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ScrollView>
 
 
             <View
-                android:id="@+id/view"
+                android:id="@+id/footerLine"
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:background="@color/appLightGrey"
-                app:layout_constraintBottom_toTopOf="@+id/cl_action" />
+                app:layout_constraintBottom_toTopOf="@+id/cl_action"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/cancelBtn"
