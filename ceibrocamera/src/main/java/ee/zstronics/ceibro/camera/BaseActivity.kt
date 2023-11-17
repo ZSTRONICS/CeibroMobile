@@ -107,6 +107,10 @@ open class BaseActivity : AppCompatActivity() {
         val fileSize = FileUtils.getFileSizeInBytes(applicationContext, fileUri)
         val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
         val attachmentType = when {
+            mimeType == null -> {
+                AttachmentTypes.Image
+            }
+
             mimeType.startsWith("image") -> {
                 AttachmentTypes.Image
             }

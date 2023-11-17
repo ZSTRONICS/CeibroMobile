@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -512,13 +513,13 @@ class DashboardVM @Inject constructor(
                 object : TypeToken<SocketEventTypeResponse>() {}.type
             )
             socketData.uuid?.let { SocketHandler.sendEventAck(it) }
-//            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
-//            }
-            println("Heartbeat SocketEvent: ${socketData.eventType} SocketData: ${arguments}")
-            if (socketData.eventType.equals("TASK_SEEN", true) || socketData.eventType.equals(SocketHandler.TaskEvent.TASK_CREATED.name, true)) {
-                println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
             }
+            println("Heartbeat SocketEvent: ${socketData.eventType}")
+//            if (socketData.eventType.equals("TASK_SEEN", true) || socketData.eventType.equals(SocketHandler.TaskEvent.TASK_CREATED.name, true)) {
+//                println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
+//            }
 
             pushToQueue(socketData, arguments);
         }

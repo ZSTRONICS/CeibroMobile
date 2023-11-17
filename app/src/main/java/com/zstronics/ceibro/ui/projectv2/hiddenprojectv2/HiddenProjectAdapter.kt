@@ -25,7 +25,6 @@ class HiddenProjectAdapter @Inject constructor(val sessionManager: SessionManage
     RecyclerView.Adapter<HiddenProjectAdapter.AllProjectViewHolder>() {
     var callback: ((Pair<String, CeibroProjectV2>) -> Unit)? = null
 
-    var fav: Boolean = true
     private var list: MutableList<CeibroProjectV2> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllProjectViewHolder {

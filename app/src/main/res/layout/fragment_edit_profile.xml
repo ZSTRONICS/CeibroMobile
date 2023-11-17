@@ -38,7 +38,7 @@
                 android:layout_marginStart="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="3dp"
+                android:padding="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
@@ -58,7 +58,7 @@
                 android:maxLines="1"
                 android:text="@string/edit_profile_heading"
                 android:textColor="@color/black"
-                android:textSize="19sp"
+                android:textSize="18.5sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/saveProfileBtn"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -71,13 +71,13 @@
                 android:layout_height="33dp"
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:background="@drawable/signin_button_back"
+                android:enabled="false"
                 android:fontFamily="@font/inter_medium"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:text="@string/save_heading"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6" />
@@ -148,13 +148,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_15sdp"
-                    android:layout_marginTop="@dimen/_14sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginEnd="@dimen/_15sdp"
                     android:hint="@string/first_name_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="50"
+                    app:counterTextColor="@color/appGrey3"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/editProfileImgCard">
@@ -165,9 +168,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
+                        android:maxLength="50"
                         android:text="@={viewState.userFirstName}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -176,12 +180,15 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_11sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
                     android:hint="@string/surname_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="50"
+                    app:counterTextColor="@color/appGrey3"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etName"
                     app:layout_constraintStart_toStartOf="@+id/etName"
                     app:layout_constraintTop_toBottomOf="@+id/etName">
@@ -192,9 +199,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
+                        android:maxLength="50"
                         android:text="@={viewState.userSurname}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -203,12 +211,15 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
                     android:hint="@string/email_required"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="50"
+                    app:counterTextColor="@color/appGrey3"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etSurname"
                     app:layout_constraintStart_toStartOf="@+id/etSurname"
                     app:layout_constraintTop_toBottomOf="@+id/etSurname">
@@ -219,9 +230,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="textEmailAddress"
+                        android:maxLength="50"
                         android:text="@={viewState.userEmail}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -230,12 +242,15 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
                     android:hint="@string/company_name_optional"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="50"
+                    app:counterTextColor="@color/appGrey3"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etEmail"
                     app:layout_constraintStart_toStartOf="@+id/etEmail"
                     app:layout_constraintTop_toBottomOf="@+id/etEmail">
@@ -246,9 +261,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
+                        android:maxLength="50"
                         android:text="@={viewState.userCompanyName}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -257,12 +273,15 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
                     android:hint="@string/job_title_optional"
                     android:textColorHint="@color/grey"
-                    app:hintTextColor="@color/grey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="50"
+                    app:counterTextColor="@color/appGrey3"
+                    app:hintTextColor="@color/grey"
                     app:layout_constraintEnd_toEndOf="@+id/etCompany"
                     app:layout_constraintStart_toStartOf="@+id/etCompany"
                     app:layout_constraintTop_toBottomOf="@+id/etCompany">
@@ -273,9 +292,10 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="text|textCapWords"
+                        android:maxLength="50"
                         android:text="@={viewState.userJobTitle}"
-                        android:textSize="15sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -283,7 +303,7 @@
                     android:id="@+id/etPhoneLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_6sdp"
                     android:alpha="0.6"
                     android:background="@drawable/input_field_rectangle"
                     android:clickable="false"
@@ -295,8 +315,8 @@
                         android:id="@+id/ccp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:ccpDialog_backgroundColor="@color/appDimBlue"
                         android:focusable="false"
+                        app:ccpDialog_backgroundColor="@color/appDimBlue"
                         app:ccpDialog_initialScrollToSelection="true"
                         app:ccpDialog_keyboardAutoPopup="false"
                         app:ccpDialog_showCloseIcon="true"
@@ -328,7 +348,7 @@
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/phone_number_heading"
-                        android:inputType="phone"
+                        android:inputType="numberSigned"
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
                         android:textColor="@color/black"

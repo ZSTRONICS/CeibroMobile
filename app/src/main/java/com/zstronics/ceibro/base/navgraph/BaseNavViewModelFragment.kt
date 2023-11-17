@@ -500,6 +500,10 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         val fileSize = FileUtils.getFileSizeInBytes(requireContext(), fileUri)
         val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
         val attachmentType = when {
+            mimeType == null -> {
+                AttachmentTypes.Doc
+            }
+
             mimeType.startsWith("image") -> {
                 AttachmentTypes.Image
             }

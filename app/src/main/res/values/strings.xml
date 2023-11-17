@@ -20,8 +20,8 @@
     <string name="error_message_phone_validation">Invalid phone number</string>
     <string name="error_message_otp_length">Invalid OTP length</string>
     <string name="error_message_password_length">Invalid password length</string>
-    <string name="error_message_password_regex_validation">Password must be a minimum of 8 characters long and include a combination of uppercase and lowercase letters, numbers and special characters for increased security.</string>
-    <string name="error_message_note_password_regex_validation">Note: Password must be a minimum of 8 characters long and include a combination of uppercase and lowercase letters, numbers and special characters for increased security.</string>
+    <string name="error_message_password_regex_validation">Password must be a minimum of 8 and max 20 characters long and include a combination of uppercase and lowercase letters, and numbers for increased security.</string>
+    <string name="error_message_note_password_regex_validation">Note: Password must be a minimum of 8 and max 20 characters long and include a combination of uppercase and lowercase letters, and numbers for increased security.</string>
     <string name="error_message_credit_card_validation">Invalid Credit Card format</string>
     <string name="error_message_empty_validation">This field can\'t be empty</string>
     <string name="error_message_not_equal_password">Passwords are not the same</string>
@@ -452,6 +452,10 @@
     <string name="topics_heading">Topics</string>
     <string name="save_and_use"><![CDATA[Save & use]]></string>
     <string name="app_data_sync_message">Please wait while we sync your data</string>
+    <string name="project_desc_heading_estonia">Mis on project/projekt?</string>
+    <string name="project_desc_detail_estonia">Lisage oma ülesannetele projekte, et salvestada ja korraldada ülesandeid ühiste teemade järgi ning kasutada neid tulevikus uuesti ning saate muuta projekti lemmikuks või peidetuks.</string>
+    <string name="project_desc_heading_english">What is the project?</string>
+    <string name="project_desc_detail_english">Add projects to your tasks to save and organize the tasks around common themes and reuse them in the future and you can make a project favorite or hidden.</string>
     <string name="topic_desc_heading_estonia">Mis on topic/teema?</string>
     <string name="topic_desc_detail_estonia">Lisa tööülesandele teema. Korduvaid teemasid saad hõlpsalt tulevikus uuesti kasutada. Teemad ja erinevad ülesannete loendid hõlbustavad ülesannete jälgimist ja päeva korraldamist.</string>
     <string name="topic_desc_heading_english">What is the topic?</string>

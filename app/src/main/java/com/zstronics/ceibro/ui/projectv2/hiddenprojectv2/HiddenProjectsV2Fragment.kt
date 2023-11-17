@@ -29,10 +29,9 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
+class HiddenProjectsV2Fragment :
     BaseNavViewModelFragment<FragmentHiddenProjectsV2Binding, IHiddenProjectV2.State, HiddenProjectsV2VM>() {
 
-    var callback: ((Int) -> Unit)? = null
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: HiddenProjectsV2VM by viewModels()
@@ -40,28 +39,14 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
     override fun toolBarVisibility(): Boolean = false
     var firstStartOffragment = true
     var sharedViewModel: SharedViewModel? = null
+    override fun onClick(id: Int) {
+        when (id) {
 
-
-    init {
-        this.callback = callback
+        }
     }
 
     @Inject
     lateinit var adapter: HiddenProjectAdapter
-
-    override fun onClick(id: Int) {
-
-        when (id) {
-
-            R.id.cl_AddNewProject -> {
-                navigate(R.id.newProjectV2Fragment)
-            }
-
-            R.id.tvNewProject -> {
-                navigate(R.id.newProjectV2Fragment)
-            }
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,13 +76,13 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
             if (firstStartOffragment) {
                 firstStartOffragment = false
                 if (!sharedViewModel?.projectSearchQuery?.value?.trim().isNullOrEmpty()) {
-                    sharedViewModel?.projectSearchQuery?.value?.let { viewModel.filterAllProjects(it) }
+                    sharedViewModel?.projectSearchQuery?.value?.let { viewModel.filterHiddenProjects(it) }
                 }
             }
         }, 100)
 
         sharedViewModel?.projectSearchQuery?.observe(viewLifecycleOwner) {
-            viewModel.filterAllProjects(it)
+            viewModel.filterHiddenProjects(it)
         }
 
 
@@ -144,7 +129,7 @@ class HiddenProjectsV2Fragment(callback: (Int) -> Unit) :
         yesBtn.setOnClickListener {
             alertDialog.dismiss()
             viewModel.unHideProject(!(projectData.isHiddenByMe), projectData._id) {
-                callback?.invoke(1)
+
             }
         }
 

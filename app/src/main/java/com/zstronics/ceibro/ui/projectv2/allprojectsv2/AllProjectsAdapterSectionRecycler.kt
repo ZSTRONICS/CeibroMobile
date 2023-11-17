@@ -108,15 +108,12 @@ class AllProjectsAdapterSectionRecycler constructor(
             item?.let {
                 with(binding) {
 
-//                    if (sectionPosition == 0) {
-//                        ivHide.visibility = View.GONE
-//                    }
                     if (item.isFavoriteByMe) {
                         ivHide.visibility = View.GONE
-                        ivFav.setImageResource(R.drawable.add_to_fav)
+                        ivFav.setImageResource(R.drawable.icon_star_filled)
                     } else {
                         ivHide.visibility = View.VISIBLE
-                        ivFav.setImageResource(R.drawable.non_favorite)
+                        ivFav.setImageResource(R.drawable.icon_star_outline)
                     }
 
                     projectName.text = item.title

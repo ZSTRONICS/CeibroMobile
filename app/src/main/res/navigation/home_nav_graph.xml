@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_homeFragment_to_taskHiddenFragment"
             app:destination="@id/taskHiddenFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_projectsV2Fragment"
+            app:destination="@id/projectsV2Fragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -439,7 +442,8 @@
     <fragment
         android:id="@+id/newProjectV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.newprojectv2.NewProjectV2Fragment"
-        android:label="NewProjectV2Fragment" />
+        android:label="NewProjectV2Fragment"
+        tools:layout="@layout/fragment_new_project_v2"/>
     <fragment
         android:id="@+id/locationV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment"
@@ -447,15 +451,53 @@
     <fragment
         android:id="@+id/projectsV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment"
-        android:label="ProjectsV2Fragment" >
+        android:label="ProjectsV2Fragment"
+        tools:layout="@layout/fragment_projects_v2">
         <action
             android:id="@+id/action_projectsV2Fragment_to_newProjectV2Fragment"
             app:destination="@id/newProjectV2Fragment" />
+        <action
+            android:id="@+id/action_projectsV2Fragment_to_allProjectsV2Fragment"
+            app:destination="@id/allProjectsV2Fragment" />
+        <action
+            android:id="@+id/action_projectsV2Fragment_to_hiddenProjectsV2Fragment"
+            app:destination="@id/hiddenProjectsV2Fragment" />
     </fragment>
     <fragment
         android:id="@+id/projectDetailV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.ProjectDetailV2Fragment"
-        android:label="ProjectDetailV2Fragment" />
+        android:label="ProjectDetailV2Fragment"
+        tools:layout="@layout/fragment_project_detail_v2">
+        <action
+            android:id="@+id/action_projectDetailV2Fragment_to_projectInfoV2Fragment"
+            app:destination="@id/projectInfoV2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allProjectsV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.allprojectsv2.AllProjectsV2Fragment"
+        android:label="AllProjectsV2Fragment"
+        tools:layout="@layout/fragment_all_projects_v2">
+        <action
+            android:id="@+id/action_allProjectsV2Fragment_to_projectDetailV2Fragment"
+            app:destination="@id/projectDetailV2Fragment" />
+        <action
+            android:id="@+id/action_allProjectsV2Fragment_to_newProjectV2Fragment"
+            app:destination="@id/newProjectV2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/hiddenProjectsV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.hiddenprojectv2.HiddenProjectsV2Fragment"
+        android:label="HiddenProjectsV2Fragment"
+        tools:layout="@layout/fragment_hidden_projects_v2">
+        <action
+            android:id="@+id/action_hiddenProjectsV2Fragment_to_projectDetailV2Fragment"
+            app:destination="@id/projectDetailV2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectInfoV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.projectinfo.ProjectInfoV2Fragment"
+        android:label="ProjectInfoV2Fragment"
+        tools:layout="@layout/fragment_project_info_v2"/>
 
 
 </navigation>

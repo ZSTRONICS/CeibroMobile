@@ -66,8 +66,6 @@ class HiddenProjectsV2VM @Inject constructor(
                 is ApiResponse.Success -> {
                     val ceibroProjectV2 = response.data.updatedProject
                     updateProjectInLocal(ceibroProjectV2, projectsV2Dao)
-//                    projectsV2Dao.insertProject(ceibroProjectV2)
-//                    getHiddenProjects()
                     loading(false, "")
                     callBack(true)
                 }
@@ -81,7 +79,7 @@ class HiddenProjectsV2VM @Inject constructor(
     }
 
 
-    fun filterAllProjects(search: String) {
+    fun filterHiddenProjects(search: String) {
         if (search.isEmpty()) {
             if (originalHiddenProjects.isNotEmpty()) {
                 _allHiddenProjects.postValue(originalHiddenProjects as MutableList<CeibroProjectV2>)

@@ -45,7 +45,7 @@
             android:layout_marginEnd="@dimen/_5sdp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/projectImgImgCard"
-            app:layout_constraintEnd_toStartOf="@id/iv_fav"
+            app:layout_constraintEnd_toStartOf="@id/ivFav"
             app:layout_constraintStart_toEndOf="@+id/projectImgImgCard"
             app:layout_constraintTop_toTopOf="@+id/projectImgImgCard">
 
@@ -69,11 +69,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/inter_bold"
+                android:fontFamily="@font/inter_semibold"
                 android:gravity="start"
                 android:maxLines="1"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 app:layout_constraintStart_toEndOf="@+id/projectImgImgCard"
                 app:layout_constraintTop_toBottomOf="@id/tvDate"
                 tools:text="@string/ceibro" />
@@ -111,19 +111,19 @@
         </LinearLayout>
 
 
-        <ImageView
-            android:id="@+id/iv_fav"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivFav"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="@dimen/_9sdp"
             android:padding="@dimen/_2sdp"
-            android:src="@drawable/add_to_fav"
+            android:src="@drawable/icon_star_outline"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/iv_hide"
+            app:layout_constraintEnd_toStartOf="@+id/ivHide"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_hide"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivHide"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="@dimen/_9sdp"
