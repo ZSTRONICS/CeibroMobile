@@ -254,10 +254,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 is ApiResponse.Success -> {
                     println("Heartbeat, Missing Sync Response: ${response.data}")
                     sessionManagerInternal.saveUpdatedAtTimeStamp(response.data.latestUpdatedAt)
-                    if (response.data.allTasks.isNotEmpty()) {
+                    if (!response.data.allTasks.isNullOrEmpty()) {
                         taskDaoInternal.insertMultipleTasks(response.data.allTasks)
                     }
-                    if (response.data.allEvents.isNotEmpty()) {
+                    if (!response.data.allEvents.isNullOrEmpty()) {
                         taskDaoInternal.insertMultipleEvents(response.data.allEvents)
                     }
 
