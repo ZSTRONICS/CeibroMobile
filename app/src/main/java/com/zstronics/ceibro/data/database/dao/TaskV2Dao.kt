@@ -48,6 +48,9 @@ interface TaskV2Dao {
     @Update
     suspend fun updateTask(task: CeibroTaskV2)
 
+    @Query("SELECT * FROM tasks_v2_basic")
+    suspend fun getAllTasks(): List<CeibroTaskV2>?
+
 
 
 
@@ -60,4 +63,7 @@ interface TaskV2Dao {
 
     @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY updatedAt ASC")
     suspend fun getEventsOfTask(taskId: String): List<Events>
+
+    @Query("SELECT * FROM tasks_v2_events")
+    suspend fun getAllEvents(): List<Events>?
 }

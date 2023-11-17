@@ -15,6 +15,8 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -96,8 +98,8 @@ class CeibroDataLoadingVM @Inject constructor(
 //                    taskDao.deleteAllTasksData()
                     sessionManager.saveUpdatedAtTimeStamp(response.data.newData.latestUpdatedAt)
 
-                    val allTasks = response.data.newData.allTasks
-                    val allEvents = response.data.newData.allEvents
+                    val allTasks = response.data.newData.allTasks ?: taskDao.getAllTasks()?.toMutableList() ?: mutableListOf<CeibroTaskV2>()
+                    val allEvents = response.data.newData.allEvents ?: taskDao.getAllEvents()?.toMutableList() ?: mutableListOf<Events>()
 
                     taskDao.insertMultipleTasks(allTasks)
                     taskDao.insertMultipleEvents(allEvents)

@@ -25,9 +25,9 @@ data class AllTasksV2NewResponse(
     @Keep
     data class NewData(
         @SerializedName("allTasks")
-        val allTasks: List<CeibroTaskV2>,
+        val allTasks: List<CeibroTaskV2>?,
         @SerializedName("allEvents")
-        val allEvents: List<Events>,
+        val allEvents: List<Events>?,
         @SerializedName("latestUpdatedAt")
         val latestUpdatedAt: String
     ) : BaseResponse(), Parcelable
