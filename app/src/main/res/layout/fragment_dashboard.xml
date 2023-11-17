@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -154,7 +155,7 @@
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="4dp"
+                android:padding="4.5dp"
                 android:src="@drawable/icon_sync_good_connection"
                 app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
                 app:layout_constraintEnd_toStartOf="@+id/feedbackBtn"
@@ -163,7 +164,7 @@
             <TextView
                 android:id="@+id/draftTaskCounter"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="19dp"
                 android:background="@drawable/input_field_rectangle"
                 android:backgroundTint="@color/appGrey2"
                 android:elevation="12dp"
@@ -173,8 +174,8 @@
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:outlineProvider="none"
                 android:outlineSpotShadowColor="@color/white"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:paddingStart="4.5dp"
+                android:paddingEnd="4.5dp"
                 android:text="0"
                 android:textColor="@color/black"
                 android:textSize="10sp"
@@ -182,7 +183,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/sync"
                 app:layout_constraintEnd_toEndOf="@+id/sync"
                 app:layout_constraintStart_toEndOf="@+id/sync"
-                app:layout_constraintTop_toTopOf="@+id/sync" />
+                app:layout_constraintTop_toTopOf="@+id/sync"
+                tools:ignore="HardcodedText,SmallSp,UnusedAttribute" />
 
             <TextView
                 android:id="@+id/friendsReqCount"
@@ -221,6 +223,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="6dp"
+            android:contentDescription="@string/new_task_heading"
             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
             android:src="@drawable/ic_add"
             android:tooltipText="@string/new_task_heading"

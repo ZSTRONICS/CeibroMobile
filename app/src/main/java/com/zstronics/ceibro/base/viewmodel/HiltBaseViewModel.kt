@@ -928,10 +928,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             val isExists = TaskEventsList.isExists(
                 SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId, true
             )
-            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
-                ViewModelProvider(it).get(SharedViewModel::class.java)
-            }
             if (!isExists) {
+                val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+                    ViewModelProvider(it).get(SharedViewModel::class.java)
+                }
                 val taskEvent = Events(
                     id = eventData.id,
                     taskId = eventData.taskId,

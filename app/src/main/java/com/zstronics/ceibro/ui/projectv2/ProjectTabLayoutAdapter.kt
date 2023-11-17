@@ -17,9 +17,8 @@ class ProjectTabLayoutAdapter(fragmentManager: FragmentActivity) :
     override fun createFragment(position: Int): Fragment {
         val allProjectsV2Fragment = AllProjectsV2Fragment()
 
-        val hiddenProjectsV2Fragment = HiddenProjectsV2Fragment {
-           // allProjectsV2Fragment.reloadData()
-        }
+        val hiddenProjectsV2Fragment = HiddenProjectsV2Fragment()
+
         return when (position) {
             0 -> allProjectsV2Fragment
             1 -> hiddenProjectsV2Fragment

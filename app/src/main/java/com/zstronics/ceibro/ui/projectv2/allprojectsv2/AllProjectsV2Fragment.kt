@@ -37,16 +37,12 @@ class AllProjectsV2Fragment :
     var sharedViewModel: SharedViewModel? = null
     var searchingProject = false
     override fun onClick(id: Int) {
-
         when (id) {
 
             R.id.cl_AddNewProject -> {
                 navigate(R.id.newProjectV2Fragment)
             }
 
-            R.id.tvNewProject -> {
-                navigate(R.id.newProjectV2Fragment)
-            }
         }
     }
 

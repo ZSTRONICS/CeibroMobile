@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
-import android.widget.TextView.OnEditorActionListener
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
@@ -38,7 +36,10 @@ class TopicFragment :
             }
 
             R.id.saveTopicBtn -> {
-                val searchedText = mViewDataBinding.topicSearchBar.query.toString().trim()
+                var searchedText = mViewDataBinding.topicSearchBar.query.toString().trim()
+                if(searchedText.length > 99){
+                    searchedText = searchedText.substring(0,100)
+                }
                 if (searchedText.isNotEmpty()) {
                     viewModel.saveTopic(searchedText) { isSuccess, newTopic ->
                         mViewDataBinding.topicSearchBar.setQuery("", false)
@@ -153,6 +154,11 @@ class TopicFragment :
             }
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
+                    if(newText.trim().length > 100){
+                        shortToastNow("Topic max length is 100 characters")
+                        mViewDataBinding.topicSearchBar.setQuery(newText.trim().substring(0,100), false)
+                        return true
+                    }
                     viewModel.filterTopics(newText.trim())
                     mViewDataBinding.saveTopicBtn.visibility =
                         if (newText.trim().isNotEmpty()) {

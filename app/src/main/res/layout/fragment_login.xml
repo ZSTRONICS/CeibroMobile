@@ -252,7 +252,7 @@
                             android:fontFamily="@font/inter_regular"
                             android:hint="@string/phone_number_heading"
                             android:inputType="numberSigned"
-                            android:maxLength="20"
+                            android:maxLength="15"
                             android:paddingStart="14dp"
                             android:paddingEnd="14dp"
                             android:text="@={viewState.email}"

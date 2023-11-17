@@ -122,7 +122,8 @@
                 android:ems="10"
                 android:fontFamily="@font/inter_regular"
                 android:hint="@string/phone_number_heading"
-                android:inputType="phone"
+                android:inputType="numberSigned"
+                android:maxLength="15"
                 android:paddingStart="14dp"
                 android:paddingEnd="14dp"
                 android:textColor="@color/black"
@@ -157,6 +158,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
+                android:maxLength="20"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
 

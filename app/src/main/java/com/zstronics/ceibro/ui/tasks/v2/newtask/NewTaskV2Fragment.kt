@@ -185,9 +185,10 @@ class NewTaskV2Fragment :
                         "application/vnd.ms-excel.sheet.macroEnabled.12",                           // .xls
                         "application/vnd.ms-powerpoint",
                         "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
-                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12"                 // .ppt
+                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",                 // .ppt
+                        "image/vnd.dwg",    // AutoCAD Drawing Database (DWG)
+                        "application/acad"  // AutoCAD Drawing
 //                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
-//                        "image/vnd.dwg" // AutoCAD Drawing Database (DWG)
                     )
                 )
             }
@@ -201,10 +202,10 @@ class NewTaskV2Fragment :
                         "image/gif",
                         "image/webp",
                         "image/bmp",
-                        "image/x-icon",
-                        "image/svg+xml",
-                        "image/tiff",
                         "image/*"
+//                        "image/x-icon",
+//                        "image/svg+xml",
+//                        "image/tiff"
                     )
                 )
             }
@@ -542,7 +543,12 @@ class NewTaskV2Fragment :
         val fileName = FileUtils.getFileName(context, fileUri)
         val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
         val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+        println("mimeTypeFound: ${mimeType} - ${fileName}")
         val attachmentType = when {
+            mimeType == null -> {
+                AttachmentTypes.Doc
+            }
+
             mimeType == "application/pdf" -> {
                 AttachmentTypes.Pdf
             }
@@ -582,7 +588,19 @@ class NewTaskV2Fragment :
                     mimeType.equals(
                         "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
                         true
+                    ) ||
+                    mimeType.equals(
+                        "image/vnd.dwg",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/acad",
+                        true
                     ) -> {
+                AttachmentTypes.Doc
+            }
+
+            mimeType.contains("image/vnd") -> {
                 AttachmentTypes.Doc
             }
 
