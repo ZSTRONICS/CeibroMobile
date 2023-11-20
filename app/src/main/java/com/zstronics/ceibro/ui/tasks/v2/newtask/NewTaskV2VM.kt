@@ -167,6 +167,11 @@ class NewTaskV2VM @Inject constructor(
                         channelName = "File Upload Progress",
                         notificationTitle = "Uploading Files"
                     )
+
+
+                     taskRequest=newTaskRequest
+                     taskList=list
+
                     taskRepository.newTaskV2WithFiles(
                         newTaskRequest,
                         list
@@ -285,5 +290,10 @@ class NewTaskV2VM @Inject constructor(
         )
         EventBus.getDefault()
             .post(LocalEvents.UploadFilesToV2Server(request))
+    }
+
+    companion object {
+        var taskRequest: NewTaskV2Entity? = null
+        var taskList: ArrayList<PickedImages>? = null
     }
 }

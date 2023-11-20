@@ -29,9 +29,8 @@ import com.zstronics.ceibro.base.BUNDLE_EXTRA
 import com.zstronics.ceibro.base.TYPE_EXTRA
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.repos.NotificationTaskData
-import com.zstronics.ceibro.ui.splash.SplashActivity
+import java.util.UUID
 
 
 class NotificationHelper(context: Context) {
@@ -71,13 +70,12 @@ class NotificationHelper(context: Context) {
     @SuppressLint("RemoteViewLayout")
     fun createNotification(
         task: NotificationTaskData,
-        notificationId: Int,
         notificationType: String,
         title: String,
         message: String,
         context: Context
     ) {
-        singleNotificationId = System.currentTimeMillis().toInt()
+        singleNotificationId =  generateUniqueKey()
         if (notificationType.equals("newTask", true)) {
 
             val replyIntent = createPendingIntentForReply(context, task)
@@ -255,7 +253,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = System.currentTimeMillis().toInt() + 1
+        val requestCode =  generateUniqueKey()
         val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -282,7 +280,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = System.currentTimeMillis().toInt() + 5
+        val requestCode =  generateUniqueKey()
         val intentReply =  Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -306,7 +304,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = System.currentTimeMillis().toInt() + 9
+        val requestCode = generateUniqueKey()
         val intentReply =  Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -324,5 +322,10 @@ class NotificationHelper(context: Context) {
         return PendingIntent.getActivity(
             context, requestCode, intentReply, PendingIntent.FLAG_IMMUTABLE
         )
+    }
+
+    private fun generateUniqueKey(): Int {
+        val uniqueId = UUID.randomUUID().toString()
+        return uniqueId.hashCode()
     }
 }
