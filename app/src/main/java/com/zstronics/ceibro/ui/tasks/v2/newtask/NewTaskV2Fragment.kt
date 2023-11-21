@@ -60,6 +60,7 @@ class NewTaskV2Fragment :
     private val PICK_FILE_REQUEST = 1
     private var isExpanded = true
     private val expandDuration = 100L
+
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
         when (id) {
@@ -75,11 +76,18 @@ class NewTaskV2Fragment :
                     doneCommentsRequired = doneCommentsRequired,
                     requireActivity()
                 ) {
-                    val bundle = Bundle()
-                    bundle.putBoolean("createdNewTask", true)
-                    navigateBackWithResult(RESULT_OK, bundle)
+//                    if (it.equals("ServiceCall", true)) {
+//                        context?.let { context ->
+//                            context.startService(Intent(context, CreateNewTaskService::class.java))
+//                        }
+//                    } else {
+                        val bundle = Bundle()
+                        bundle.putBoolean("createdNewTask", true)
+                        navigateBackWithResult(RESULT_OK, bundle)
+//                    }
                 }
             }
+
             R.id.backBtn -> navigateBack()
             R.id.newTaskTopicText -> navigateForResult(R.id.topicFragment, TOPIC_REQUEST_CODE)
             R.id.newTaskProjectText -> navigateForResult(
@@ -328,7 +336,10 @@ class NewTaskV2Fragment :
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, data: PickedImages ->
                 val bundle = Bundle()
-                bundle.putParcelableArray("images", viewModel.imagesWithComments.value?.toTypedArray())
+                bundle.putParcelableArray(
+                    "images",
+                    viewModel.imagesWithComments.value?.toTypedArray()
+                )
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", false)
                 navigate(R.id.imageViewerFragment, bundle)

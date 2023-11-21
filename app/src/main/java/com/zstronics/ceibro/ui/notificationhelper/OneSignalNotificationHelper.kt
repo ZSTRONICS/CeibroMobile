@@ -6,7 +6,6 @@ import com.onesignal.OSNotification
 import com.onesignal.OSNotificationReceivedEvent
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.repos.NotificationTaskData
-import com.zstronics.ceibro.ui.dashboard.DashboardFragment
 
 class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandler {
     override fun remoteNotificationReceived(
@@ -36,8 +35,6 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
         osNotificationReceivedEvent.complete(null)
         notificationHelper.createNotification(
             task,
-            notificationId =
-            DashboardFragment.index++,
             notificationType = type,
             title = task.title,
             message = task.description,
