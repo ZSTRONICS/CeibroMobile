@@ -79,8 +79,10 @@ class NewTaskV2Fragment :
                     if (it.equals("ServiceCall", true)) {
                         context?.let { context ->
                             showToast(context.getString(R.string.creating_task_with_files))
-                            context.startService(Intent(context, CreateNewTaskService::class.java))
-                           navigateBack()
+                            val serviceIntent = Intent(context, CreateNewTaskService::class.java)
+                            serviceIntent.putExtra("taskRequest", "ServiceCall")
+                            context.startService(serviceIntent)
+                            navigateBack()
                         }
                     } else {
                         val bundle = Bundle()
