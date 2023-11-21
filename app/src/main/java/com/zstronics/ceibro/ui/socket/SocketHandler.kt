@@ -107,6 +107,7 @@ object SocketHandler {
             mSocket?.on(
                 Socket.EVENT_CONNECT_ERROR
             ) {
+                CookiesManager.appFirstStartForSocket.postValue(false)
                 println("Heartbeat, Socket EVENT_CONNECT_ERROR")
                 handler.removeCallbacks(runnable)
 //                hbCounter = 0
@@ -126,20 +127,20 @@ object SocketHandler {
                 println("Heartbeat, Socket Connected")
 
                 if (sharedViewModel != null) {
-                    if (CookiesManager.appFirstStartForSocket.value == true) {
-                        CookiesManager.appFirstStartForSocket.postValue(false)
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            sendClearData()
-                            println("Heartbeat, Socket Data Cleared")
-                        }, 100)
-                    }
                     sharedViewModel.isConnectedToServer.postValue(true)
-                    CookiesManager.socketOnceConnected.postValue(true)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        emitIsSyncRequired()
-                        println("Heartbeat, Socket emitIsSyncRequired")
-                    }, 350)
                 }
+                if (CookiesManager.appFirstStartForSocket.value == true) {
+                    CookiesManager.appFirstStartForSocket.postValue(false)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        println("Heartbeat, Socket Data Cleared")
+                        sendClearData()
+                    }, 100)
+                }
+                CookiesManager.socketOnceConnected.postValue(true)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    println("Heartbeat, Socket emitIsSyncRequired")
+                    emitIsSyncRequired()
+                }, 350)
                 //EventBus.getDefault().post(LocalEvents.InitSocketEventCallBack())
             }
 
@@ -244,8 +245,8 @@ object SocketHandler {
     }
 
     @Synchronized
-    fun sendLogout() {
-        mSocket?.emit(CEIBRO_LOGOUT)
+    fun sendLogout(oneSignalPlayerId: String?) {
+        mSocket?.emit(CEIBRO_LOGOUT, oneSignalPlayerId)
     }
 
     @Synchronized

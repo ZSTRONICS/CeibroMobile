@@ -6,6 +6,8 @@ import com.onesignal.OSNotification
 import com.onesignal.OSNotificationReceivedEvent
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.repos.NotificationTaskData
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandler {
     override fun remoteNotificationReceived(
@@ -33,12 +35,14 @@ class OneSignalNotificationHelper : OneSignal.OSRemoteNotificationReceivedHandle
 
         val notificationHelper = NotificationHelper.getInstance(context)
         osNotificationReceivedEvent.complete(null)
-        notificationHelper.createNotification(
-            task,
-            notificationType = type,
-            title = task.title,
-            message = task.description,
-            context = context
-        )
+        GlobalScope.launch {
+            notificationHelper.createNotification(
+                task,
+                notificationType = type,
+                title = task.title,
+                message = task.description,
+                context = context
+            )
+        }
     }
 }

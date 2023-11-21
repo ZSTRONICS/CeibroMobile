@@ -395,8 +395,11 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             viewModel.loading(true, "Syncing App Data")
             Handler(Looper.getMainLooper()).postDelayed({
 
-                viewModel.reSyncAppData(reSyncData) { isSuccess ->
-                    viewModel.loading(false, "")
+                viewModel.launch {
+                    viewModel.reSyncAppData(reSyncData) { isSuccess ->
+                        viewModel.loading(false, "")
+                        SocketHandler.sendClearData()
+                    }
                 }
 
             }, 500)

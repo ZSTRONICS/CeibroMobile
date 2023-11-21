@@ -23,7 +23,8 @@ class HiddenRVAdapter @Inject constructor() :
     var itemLongClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
     var listItems: MutableList<CeibroTaskV2> = mutableListOf()
-    val currentUser = SessionManager.user.value
+    var currentUser = SessionManager.user.value
+    var sessionManager: SessionManager? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -46,7 +47,15 @@ class HiddenRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<CeibroTaskV2>) {
+    fun setList(list: List<CeibroTaskV2>, sessionManager: SessionManager) {
+        this.sessionManager = sessionManager
+        println("TaskAdaptersSeenIssue: Hidden -> currentUser in setList = ${currentUser?.id}")
+        if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
+            sessionManager.setUser()
+            currentUser = sessionManager.getUser().value
+        } else {
+            currentUser = sessionManager.getUser().value
+        }
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -64,6 +73,14 @@ class HiddenRVAdapter @Inject constructor() :
             binding.root.setOnLongClickListener {
                 itemLongClickListener?.invoke(it, absoluteAdapterPosition, item)
                 true
+            }
+
+            if (sessionManager != null) {
+                if (currentUser?.id.isNullOrEmpty()) {
+                    println("TaskAdaptersSeenIssue: Hidden -> currentUser.id = ${currentUser?.id}")
+                    sessionManager?.setUser()
+                    currentUser = sessionManager?.getUser()?.value
+                }
             }
 
             binding.taskCardParentLayout.background = null

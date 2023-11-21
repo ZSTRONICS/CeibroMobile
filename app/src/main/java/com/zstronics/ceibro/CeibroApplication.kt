@@ -57,7 +57,7 @@ open class CeibroApplication : Application() {
 
     override fun onTerminate() {
         super.onTerminate()
-        SocketHandler.sendLogout()
+//        SocketHandler.sendLogout()
         SocketHandler.closeConnectionAndRemoveObservers()
     }
 }

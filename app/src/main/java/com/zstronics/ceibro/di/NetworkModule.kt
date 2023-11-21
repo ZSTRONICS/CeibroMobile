@@ -199,7 +199,7 @@ class NetworkModule {
         NetworkConnectivityObserverImpl(connectivityManager)
 }
 
-const val timeoutRead = 70   //In seconds
+const val timeoutRead = 600   //In seconds
 const val contentType = "Content-Type"
 const val contentTypeValue = "application/json"
-const val timeoutConnect = 70   //In seconds
+const val timeoutConnect =600   //In seconds

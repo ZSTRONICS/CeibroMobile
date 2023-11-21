@@ -241,7 +241,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         removeAllFiles()
     }
 
-    fun reSyncAppData(
+    suspend fun reSyncAppData(
         reSyncData: UpdateRequiredEvents,
         callBack: (isSuccess: Boolean) -> Unit
     ) {
@@ -317,7 +317,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     callBack.invoke(false)
                 }
             }
-        }
+        }.join()
     }
 
 

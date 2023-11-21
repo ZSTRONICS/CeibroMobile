@@ -1,22 +1,16 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskfromme.adapter
 
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
-import com.zstronics.ceibro.databinding.LayoutCeibroOnlyImageBinding
-import com.zstronics.ceibro.databinding.LayoutTaskBoxV2Binding
 import com.zstronics.ceibro.databinding.LayoutTaskBoxV2FromMeBinding
 import com.zstronics.ceibro.utils.DateUtils
-import ee.zstronics.ceibro.camera.PickedImages
 import javax.inject.Inject
 
 class TaskFromMeRVAdapter @Inject constructor() :
@@ -26,7 +20,8 @@ class TaskFromMeRVAdapter @Inject constructor() :
     var itemLongClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
     var listItems: MutableList<CeibroTaskV2> = mutableListOf()
-    val currentUser = SessionManager.user.value
+    var currentUser = SessionManager.user.value
+    var sessionManager: SessionManager? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -49,7 +44,15 @@ class TaskFromMeRVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<CeibroTaskV2>) {
+    fun setList(list: List<CeibroTaskV2>, sessionManager: SessionManager) {
+        this.sessionManager = sessionManager
+        println("TaskAdaptersSeenIssue: From-Me -> currentUser in setList = ${currentUser?.id}")
+        if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
+            sessionManager.setUser()
+            currentUser = sessionManager.getUser().value
+        } else {
+            currentUser = sessionManager.getUser().value
+        }
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -68,6 +71,14 @@ class TaskFromMeRVAdapter @Inject constructor() :
             binding.root.setOnLongClickListener {
                 itemLongClickListener?.invoke(it, absoluteAdapterPosition, item)
                 true
+            }
+
+            if (sessionManager != null) {
+                if (currentUser?.id.isNullOrEmpty()) {
+                    println("TaskAdaptersSeenIssue: From-Me -> currentUser.id = ${currentUser?.id}")
+                    sessionManager?.setUser()
+                    currentUser = sessionManager?.getUser()?.value
+                }
             }
 
             binding.taskCardParentLayout.background = null

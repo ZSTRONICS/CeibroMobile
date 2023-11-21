@@ -41,11 +41,11 @@ class TaskFromMeFragment :
                 viewModel.selectedState = TaskStatus.UNREAD.name.lowercase()
                 val unreadTask = viewModel.unreadTasks.value
                 if (!unreadTask.isNullOrEmpty()) {
-                    adapter.setList(unreadTask)
+                    adapter.setList(unreadTask, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
@@ -58,13 +58,13 @@ class TaskFromMeFragment :
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 val ongoingTask = viewModel.ongoingTasks.value
                 if (!ongoingTask.isNullOrEmpty()) {
-                    adapter.setList(ongoingTask)
+                    adapter.setList(ongoingTask, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
@@ -77,13 +77,13 @@ class TaskFromMeFragment :
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
                 val doneTask = viewModel.doneTasks.value
                 if (!doneTask.isNullOrEmpty()) {
-                    adapter.setList(doneTask)
+                    adapter.setList(doneTask, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
@@ -111,11 +111,11 @@ class TaskFromMeFragment :
         viewModel.unreadTasks.observe(viewLifecycleOwner) {
             if (viewModel.selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it)
+                    adapter.setList(it, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
                 }
@@ -128,12 +128,12 @@ class TaskFromMeFragment :
         viewModel.ongoingTasks.observe(viewLifecycleOwner) {
             if (viewModel.selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it)
+                    adapter.setList(it, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE
@@ -146,12 +146,12 @@ class TaskFromMeFragment :
         viewModel.doneTasks.observe(viewLifecycleOwner) {
             if (viewModel.selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it)
+                    adapter.setList(it, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.fromMeDoneInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.fromMeLogoBackground.visibility = View.VISIBLE

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import androidx.core.net.toUri
 import androidx.work.WorkManager
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -259,6 +260,8 @@ class EditProfileVM @Inject constructor(
     }
 
     override fun endUserSession(context: Context) {
+        val oneSignalPlayerId = OneSignal.getDeviceState()?.userId
+        SocketHandler.sendLogout(oneSignalPlayerId)
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
@@ -269,7 +272,6 @@ class EditProfileVM @Inject constructor(
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }
-        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)

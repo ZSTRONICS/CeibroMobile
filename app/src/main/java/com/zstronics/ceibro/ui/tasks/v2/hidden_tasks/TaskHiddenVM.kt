@@ -26,7 +26,7 @@ import javax.inject.Inject
 class TaskHiddenVM @Inject constructor(
     override val viewState: TaskHiddenState,
     private val remoteTask: TaskRemoteDataSource,
-    private val sessionManager: SessionManager,
+    val sessionManager: SessionManager,
     val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskHidden.State>(), ITaskHidden.ViewModel {
     val user = sessionManager.getUser().value

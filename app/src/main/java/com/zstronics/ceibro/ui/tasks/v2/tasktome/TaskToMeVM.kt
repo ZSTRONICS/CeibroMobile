@@ -24,7 +24,7 @@ import javax.inject.Inject
 class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
     private val remoteTask: TaskRemoteDataSource,
-    private val sessionManager: SessionManager,
+    val sessionManager: SessionManager,
     val taskDao: TaskV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
