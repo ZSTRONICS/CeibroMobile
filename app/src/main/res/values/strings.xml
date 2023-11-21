@@ -572,4 +572,5 @@
     <string name="sample_date">23.09.2023</string>
     <string name="start_typing">Start typing</string>
     <string name="no_description_added">No description added</string>
+    <string name="creating_task_with_files">Creating task with files.</string>
 </resources>
