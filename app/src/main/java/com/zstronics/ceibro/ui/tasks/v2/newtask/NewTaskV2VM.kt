@@ -161,12 +161,12 @@ class NewTaskV2VM @Inject constructor(
 
                 if (list.isNotEmpty()) {
                     loading(true, "Creating task with files")
-                    createIndeterminateNotificationForFileUpload(
-                        activity = activity,
-                        channelId = "file_upload_channel",
-                        channelName = "File Upload Progress",
-                        notificationTitle = "Uploading Files"
-                    )
+//                    createIndeterminateNotificationForFileUpload(
+//                        activity = activity,
+//                        channelId = "file_upload_channel",
+//                        channelName = "File Upload Progress",
+//                        notificationTitle = "Uploading Files"
+//                    )
 
 
                     taskRequest = newTaskRequest

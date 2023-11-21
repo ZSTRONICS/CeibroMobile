@@ -1,19 +1,28 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask
 
+import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.google.gson.Gson
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.BuildConfig.BASE_URL
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.data.base.BaseNetworkRepository
+import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.base.error.ApiError
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
 import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
@@ -31,6 +40,8 @@ import com.zstronics.ceibro.di.timeoutRead
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService.NotificationUtils.CHANNEL_ID
+import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService.NotificationUtils.CHANNEL_NAME
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskList
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskRequest
 import ee.zstronics.ceibro.camera.AttachmentTypes
@@ -47,6 +58,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -68,7 +80,6 @@ class CreateNewTaskService : Service() {
     private val indeterminateNotificationID = 1
 
     override fun onCreate() {
-
         super.onCreate()
         taskObjectData = taskRequest
         taskListData = taskList
@@ -78,8 +89,20 @@ class CreateNewTaskService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        sessionManager = getSessionManager(SharedPreferenceManager(this))
-        createTask(apiService(), sessionManager)
+        Handler(Looper.getMainLooper()).postDelayed({
+            sessionManager = getSessionManager(SharedPreferenceManager(this))
+
+
+            startForeground(
+                indeterminateNotificationID, createIndeterminateNotificationForFileUpload(
+                    activity = this,
+                    channelId = CHANNEL_ID,
+                    channelName = CHANNEL_NAME,
+                    notificationTitle = "Creating task with files"
+                )
+            )
+            createTask(apiService(), sessionManager)
+        }, 100)
         return START_STICKY
     }
 
@@ -186,17 +209,20 @@ class CreateNewTaskService : Service() {
                         .show()
 
                     hideIndeterminateNotificationForFileUpload(context)
+                    stopSelf()
+
                 } else {
-                    response.errorBody()
+                    val error = detectError(response)
 
                     Toast.makeText(
                         this@CreateNewTaskService,
-                        response.errorBody().toString(),
+                        error.message,
                         Toast.LENGTH_LONG
                     )
                         .show()
                 }
                 hideIndeterminateNotificationForFileUpload(context)
+                stopSelf()
             }
 
             override fun onFailure(call: Call<NewTaskV2Response>, t: Throwable) {
@@ -206,7 +232,9 @@ class CreateNewTaskService : Service() {
                     Toast.LENGTH_LONG
                 )
                     .show()
+
                 hideIndeterminateNotificationForFileUpload(context)
+                stopSelf()
             }
         })
     }
@@ -265,9 +293,7 @@ class CreateNewTaskService : Service() {
             .build()
     }
 
-
     private fun apiService() = getRetrofitBuilder().create(ApiService::class.java)
-
 
     interface ApiService {
         @Multipart
@@ -421,4 +447,179 @@ class CreateNewTaskService : Service() {
         notificationManager.cancel(indeterminateNotificationID) // Remove the notification with ID
     }
 
+
+    object NotificationUtils {
+        const val CHANNEL_ID = "file_upload_channel"
+        const val CHANNEL_NAME = "Create Progress Channel"
+    }
+
+    private fun <T : BaseResponse> detectError(response: Response<T>): ApiError {
+        val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+        return when (response.code()) {
+            401 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.Unauthorized,
+                    response.code(),
+                    jsonObj.getString("message")
+                )
+            )
+
+            403 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.Forbidden,
+                    response.code(),
+                    response.message()
+                )
+            )
+
+            404 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.NotFound,
+                    response.code(),
+                    response.message()
+                )
+            )
+
+            502 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.BadGateway,
+                    response.code(),
+                    "No response from server"
+                )
+            )
+
+            504 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.NoInternet,
+                    response.code(),
+                    response.message()
+                )
+            )
+
+            in 400..500 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.InternalServerError,
+                    response.code(),
+                    jsonObj.getString("message")
+                )
+            )
+
+            -1009 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.NoInternet,
+                    response.code(),
+                    response.message()
+                )
+            )
+
+            -1001 -> getApiError(
+                mapError(
+                    BaseNetworkRepository.NetworkErrors.RequestTimedOut,
+                    response.code(),
+                    response.message()
+                )
+            )
+
+            else -> {
+                getApiError(
+                    mapError(
+                        BaseNetworkRepository.NetworkErrors.UnknownError(),
+                        response.code(),
+                        response.message()
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getApiError(error: BaseNetworkRepository.ServerError): ApiError {
+        return ApiError(
+            error.code ?: getDefaultCode(),
+            error.message ?: getDefaultMessage()
+        )
+    }
+
+    private fun mapError(
+        error: BaseNetworkRepository.NetworkErrors,
+        code: Int = 0,
+        message: String?
+    ): BaseNetworkRepository.ServerError {
+        return when (error) {
+
+            is BaseNetworkRepository.NetworkErrors.NoInternet -> BaseNetworkRepository.ServerError(
+                code,
+                "It seems you're offline. Please try to reconnect and refresh to continue"
+            )
+
+            is BaseNetworkRepository.NetworkErrors.RequestTimedOut -> BaseNetworkRepository.ServerError(
+                code,
+                "It seems you're offline. Please try to reconnect and refresh to continue"
+            )
+
+            is BaseNetworkRepository.NetworkErrors.BadGateway -> BaseNetworkRepository.ServerError(
+                code,
+                "Bad Gateway"
+            )
+
+            is BaseNetworkRepository.NetworkErrors.NotFound -> BaseNetworkRepository.ServerError(
+                code,
+                "Not Found"
+            )
+
+            is BaseNetworkRepository.NetworkErrors.Forbidden -> BaseNetworkRepository.ServerError(
+                code,
+                "You don't have access to this information"
+            )
+
+            is BaseNetworkRepository.NetworkErrors.InternalServerError -> BaseNetworkRepository.ServerError(
+                code,
+                message
+            )
+
+            is BaseNetworkRepository.NetworkErrors.UnknownError -> BaseNetworkRepository.ServerError(
+                code,
+                getDefaultMessage()
+            )
+
+            is BaseNetworkRepository.NetworkErrors.Unauthorized -> BaseNetworkRepository.ServerError(
+                code,
+                message
+            )
+        }
+    }
+
+    private fun getDefaultMessage(): String {
+        return "Something went wrong."
+    }
+
+    private fun getDefaultCode(): Int {
+        return 0
+    }
+
+    private fun createIndeterminateNotificationForFileUpload(
+        activity: CreateNewTaskService,
+        channelId: String,
+        channelName: String,
+        notificationTitle: String,
+        isOngoing: Boolean = true,
+        indeterminate: Boolean = true,
+        notificationIcon: Int = R.drawable.icon_upload
+    ): Notification {
+        val channel =
+            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager = activity.getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+
+        val builder = NotificationCompat.Builder(activity, channelId).setSmallIcon(notificationIcon)
+            .setContentTitle(notificationTitle).setOngoing(isOngoing)
+            .setProgress(0, 0, indeterminate)
+
+        notificationManager.notify(indeterminateNotificationID, builder.build())
+        return builder.build()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("Service is destroyed...")
+    }
 }
