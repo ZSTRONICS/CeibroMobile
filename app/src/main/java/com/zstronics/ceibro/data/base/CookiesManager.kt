@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 
 object CookiesManager {
+    var navigationGraphStartDestination: Int = 0
     var jwtToken: String? = null
     var isLoggedIn: Boolean = false
     var tokens: Tokens? = null

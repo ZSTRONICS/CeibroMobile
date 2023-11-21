@@ -48,6 +48,7 @@ class NavHostPresenterActivity :
         destination: NavDestination?,
         arguments: Bundle?
     ) {
+        CookiesManager.navigationGraphStartDestination = destination?.id ?: 0
     }
 
     companion object {
@@ -73,7 +74,7 @@ class NavHostPresenterActivity :
                         sessionManager.getBooleanValue(KEY_APP_FIRST_RUN_FOR_INTERNET)
                     val isLastOffline =
                         sessionManager.getBooleanValue(KEY_LAST_OFFLINE)
-                    println("InternetStatus: $connectionStatus -> Last Offline $isLastOffline")
+                    println("Heartbeat, InternetStatus: $connectionStatus -> Last Offline $isLastOffline")
                     when (connectionStatus) {
                         NetworkConnectivityObserver.Status.Losing -> {
                             // Do not remove this losing state from here
@@ -130,6 +131,9 @@ class NavHostPresenterActivity :
 
                                         delay(BANNER_HIDE_TIME)
                                         // After the delay, hide the views
+                                        mViewDataBinding.llInternetConnected.visibility = View.GONE
+                                    } else {
+                                        mViewDataBinding.llInternetDisconnected.visibility = View.GONE
                                         mViewDataBinding.llInternetConnected.visibility = View.GONE
                                     }
                                 }
