@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.splash
 
 import android.content.Context
 import androidx.work.WorkManager
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -52,6 +53,8 @@ class SplashViewModel @Inject constructor(
     }
 
     fun endUserSession(context: Context) {
+        val oneSignalPlayerId = OneSignal.getDeviceState()?.userId
+        SocketHandler.sendLogout(oneSignalPlayerId)
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
@@ -62,7 +65,6 @@ class SplashViewModel @Inject constructor(
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }
-        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)

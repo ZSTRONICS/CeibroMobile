@@ -58,6 +58,9 @@ class SessionManager constructor(
     }
 
     fun endUserSession() {
+        OneSignal.removeExternalUserId()
+        OneSignal.disablePush(true)
+        OneSignal.pauseInAppMessages(true)
         sharedPreferenceManager.removeValue(KEY_IS_USER_LOGGED_IN)
         sharedPreferenceManager.removeValue(KEY_USER)
         sharedPreferenceManager.removeValue(KEY_TOKEN)
@@ -86,9 +89,6 @@ class SessionManager constructor(
         CookiesManager.secureUUID = ""
         CookiesManager.deviceType = ""
         CookiesManager.androidId = ""
-        OneSignal.removeExternalUserId()
-        OneSignal.disablePush(true)
-//        OneSignal.pauseInAppMessages(true)
     }
 
     companion object {

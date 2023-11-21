@@ -30,6 +30,11 @@ import com.zstronics.ceibro.base.TYPE_EXTRA
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.data.repos.NotificationTaskData
+import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 
@@ -40,16 +45,22 @@ class NotificationHelper(context: Context) {
     private var summaryNotification1: Notification? = null
     private var summaryNotificationId = 100
     private var singleNotificationId = 0
+    var sessionManager: SessionManager? = null
 
     init {
+        sessionManager = getSessionManager(SharedPreferenceManager(context))
         createNotificationChannel(context)
     }
+
+    private fun getSessionManager(
+        sharedPreferenceManager: SharedPreferenceManager
+    ) = SessionManager(sharedPreferenceManager)
 
     private fun createNotificationChannel(context: Context) {
 
         val channel = NotificationChannel(
             CHANNEL_ID_1,
-            "My Channel",
+            "Ceibro Channel",
             NotificationManager.IMPORTANCE_DEFAULT
         )
         channel.description = "My custom notification channel"
@@ -68,149 +79,182 @@ class NotificationHelper(context: Context) {
     }
 
     @SuppressLint("RemoteViewLayout")
-    fun createNotification(
+    suspend fun createNotification(
         task: NotificationTaskData,
         notificationType: String,
         title: String,
         message: String,
         context: Context
     ) {
-        singleNotificationId =  generateUniqueKey()
-        if (notificationType.equals("newTask", true)) {
+        var loggedInUserId = ""
+        if (sessionManager != null) {
+            println("NotificationHelper-SessionManager:: not null")
+            if (sessionManager!!.getUser().value?.id.isNullOrEmpty()) {
+                sessionManager!!.setUser()
+                loggedInUserId = sessionManager!!.getUserId()
+            } else {
+                loggedInUserId = sessionManager!!.getUser().value?.id.toString()
+            }
+        } else {
+            println("NotificationHelper-SessionManager:: is null")
+            sessionManager = getSessionManager(SharedPreferenceManager(context))
+            sessionManager!!.setUser()
+            loggedInUserId = sessionManager!!.getUserId()
+        }
+        println("NotificationHelper-SessionManager:: loggedInUserId = ${loggedInUserId}")
 
-            val replyIntent = createPendingIntentForReply(context, task)
-            val forwardIntent = createPendingIntentForForward(context, task)
-            val openIntent = createPendingIntentForOpen(context, task)
+        if (task.userId == loggedInUserId) {
 
-            val blueColor = ContextCompat.getColor(context, R.color.appBlue)
-            ContextCompat.getColor(context, R.color.white)
+            singleNotificationId = System.currentTimeMillis().toInt() + generateUniqueKey()
+            if (notificationType.equals("newTask", true)) {
 
-            val replyActionText = "Reply"
-            val forwardActionText = "Forward"
-            val openActionText = "Open"
+                var replyIntent: PendingIntent? = null
+                var forwardIntent: PendingIntent? = null
+                var openIntent: PendingIntent? = null
+                GlobalScope.launch(Dispatchers.Default) {
+                    replyIntent = createPendingIntentForReply(context, task)
+                    forwardIntent = createPendingIntentForForward(context, task)
+                    openIntent = createPendingIntentForOpen(context, task)
+                }.join()
 
-            val replyActionTextBlue = SpannableString(replyActionText)
-            replyActionTextBlue.setSpan(
-                ForegroundColorSpan(blueColor),
-                0, replyActionTextBlue.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                val blueColor = ContextCompat.getColor(context, R.color.appBlue)
+                ContextCompat.getColor(context, R.color.white)
 
-            val forwardActionTextBlue = SpannableString(forwardActionText)
-            forwardActionTextBlue.setSpan(
-                ForegroundColorSpan(blueColor),
-                0, forwardActionTextBlue.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                val replyActionText = "Reply"
+                val forwardActionText = "Forward"
+                val openActionText = "Open"
 
-            val openActionTextBlue = SpannableString(openActionText)
-            openActionTextBlue.setSpan(
-                ForegroundColorSpan(blueColor),
-                0, openActionTextBlue.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                val replyActionTextBlue = SpannableString(replyActionText)
+                replyActionTextBlue.setSpan(
+                    ForegroundColorSpan(blueColor),
+                    0, replyActionTextBlue.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
-            val handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({
-                val collapsedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
-                val expandedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
+                val forwardActionTextBlue = SpannableString(forwardActionText)
+                forwardActionTextBlue.setSpan(
+                    ForegroundColorSpan(blueColor),
+                    0, forwardActionTextBlue.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
-                collapsedView.setTextViewText(R.id.firstLine, task.creator)
-                collapsedView.setTextViewText(R.id.secondLine, title)
-                collapsedView.setViewVisibility(R.id.largeText, View.GONE)
+                val openActionTextBlue = SpannableString(openActionText)
+                openActionTextBlue.setSpan(
+                    ForegroundColorSpan(blueColor),
+                    0, openActionTextBlue.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
-                expandedView.setTextViewText(R.id.firstLine, task.creator)
-                expandedView.setTextViewText(R.id.secondLine, title)
-                expandedView.setTextViewText(R.id.largeText, message)
-                expandedView.setViewVisibility(R.id.largeText, View.VISIBLE)
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    val collapsedView =
+                        RemoteViews(context.packageName, R.layout.custom_notification_view)
+                    val expandedView =
+                        RemoteViews(context.packageName, R.layout.custom_notification_view)
 
-                val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
-                    .setSmallIcon(R.drawable.app_logo)
-                    .setContentTitle(task.creator)
-                    .setContentText(title)
-                    .setLargeIcon(decodeBase64ToBitmap(task.avatar))
-                    .setCustomBigContentView(expandedView)
-                    .setCustomContentView(collapsedView)
-                    .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
-                    .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setGroup(groupKey)
-                    .addAction(
-                        R.drawable.app_logo, replyActionTextBlue, replyIntent
-                    ).addAction(
-                        R.drawable.app_logo, forwardActionTextBlue, forwardIntent
-                    ).addAction(
-                        R.drawable.app_logo, openActionTextBlue, openIntent
-                    )
-                    .build()
+                    collapsedView.setTextViewText(R.id.firstLine, task.creator)
+                    collapsedView.setTextViewText(R.id.secondLine, title)
+                    collapsedView.setViewVisibility(R.id.largeText, View.GONE)
 
-                notificationManager.apply {
-                    notify(summaryNotificationId, summaryNotification1)
-                    notify(singleNotificationId, notification)
-                }
-            }, 120)
-        } else if (notificationType.equals("comment", true)) {
+                    expandedView.setTextViewText(R.id.firstLine, task.creator)
+                    expandedView.setTextViewText(R.id.secondLine, title)
+                    expandedView.setTextViewText(R.id.largeText, message)
+                    expandedView.setViewVisibility(R.id.largeText, View.VISIBLE)
 
-            val replyIntent = createPendingIntentForReply(context, task)
-            val openIntent = createPendingIntentForOpen(context, task)
+                    val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
+                        .setSmallIcon(R.drawable.app_logo)
+                        .setContentTitle(task.creator)
+                        .setContentText(title)
+                        .setLargeIcon(decodeBase64ToBitmap(task.avatar))
+                        .setCustomBigContentView(expandedView)
+                        .setCustomContentView(collapsedView)
+                        .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
+                        .setAutoCancel(true)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setGroup(groupKey)
+                        .addAction(
+                            R.drawable.app_logo, replyActionTextBlue, replyIntent
+                        ).addAction(
+                            R.drawable.app_logo, forwardActionTextBlue, forwardIntent
+                        ).addAction(
+                            R.drawable.app_logo, openActionTextBlue, openIntent
+                        )
+                        .build()
 
-            val blueColor = ContextCompat.getColor(context, R.color.appBlue)
-            ContextCompat.getColor(context, R.color.white)
+                    notificationManager.apply {
+                        notify(summaryNotificationId, summaryNotification1)
+                        notify(singleNotificationId, notification)
+                    }
+                }, 160)
+            } else if (notificationType.equals("comment", true)) {
 
-            val replyActionText = "Reply"
-            val openActionText = "Open"
+                var replyIntent: PendingIntent? = null
+                var openIntent: PendingIntent? = null
+                GlobalScope.launch(Dispatchers.Default) {
+                    replyIntent = createPendingIntentForReply(context, task)
+                    openIntent = createPendingIntentForOpen(context, task)
+                }.join()
 
-            val replyActionTextBlue = SpannableString(replyActionText)
-            replyActionTextBlue.setSpan(
-                ForegroundColorSpan(blueColor),
-                0, replyActionTextBlue.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                val blueColor = ContextCompat.getColor(context, R.color.appBlue)
+                ContextCompat.getColor(context, R.color.white)
 
-            val openActionTextBlue = SpannableString(openActionText)
-            openActionTextBlue.setSpan(
-                ForegroundColorSpan(blueColor),
-                0, openActionTextBlue.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                val replyActionText = "Reply"
+                val openActionText = "Open"
 
-            val handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({
-                val collapsedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
-                val expandedView = RemoteViews(context.packageName, R.layout.custom_notification_view)
+                val replyActionTextBlue = SpannableString(replyActionText)
+                replyActionTextBlue.setSpan(
+                    ForegroundColorSpan(blueColor),
+                    0, replyActionTextBlue.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
-                collapsedView.setTextViewText(R.id.firstLine, task.creator)
-                collapsedView.setTextViewText(R.id.secondLine, title)
-                collapsedView.setViewVisibility(R.id.largeText, View.GONE)
+                val openActionTextBlue = SpannableString(openActionText)
+                openActionTextBlue.setSpan(
+                    ForegroundColorSpan(blueColor),
+                    0, openActionTextBlue.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
-                expandedView.setTextViewText(R.id.firstLine, task.creator)
-                expandedView.setTextViewText(R.id.secondLine, title)
-                expandedView.setTextViewText(R.id.largeText, message)
-                expandedView.setViewVisibility(R.id.largeText, View.VISIBLE)
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    val collapsedView =
+                        RemoteViews(context.packageName, R.layout.custom_notification_view)
+                    val expandedView =
+                        RemoteViews(context.packageName, R.layout.custom_notification_view)
 
-                val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
-                    .setSmallIcon(R.drawable.app_logo)
-                    .setContentTitle(task.creator)
-                    .setContentText(title)
-                    .setLargeIcon(decodeBase64ToBitmap(task.avatar))
-                    .setCustomBigContentView(expandedView)
-                    .setCustomContentView(collapsedView)
-                    .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
-                    .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setGroup(groupKey)
-                    .addAction(
-                        R.drawable.app_logo, replyActionTextBlue, replyIntent
-                    ).addAction(
-                        R.drawable.app_logo, openActionTextBlue, openIntent
-                    )
-                    .build()
+                    collapsedView.setTextViewText(R.id.firstLine, task.creator)
+                    collapsedView.setTextViewText(R.id.secondLine, title)
+                    collapsedView.setViewVisibility(R.id.largeText, View.GONE)
 
-                notificationManager.apply {
-                    notify(summaryNotificationId, summaryNotification1)
-                    notify(singleNotificationId, notification)
-                }
-            }, 120)
+                    expandedView.setTextViewText(R.id.firstLine, task.creator)
+                    expandedView.setTextViewText(R.id.secondLine, title)
+                    expandedView.setTextViewText(R.id.largeText, message)
+                    expandedView.setViewVisibility(R.id.largeText, View.VISIBLE)
+
+                    val notification = NotificationCompat.Builder(context, CHANNEL_ID_1)
+                        .setSmallIcon(R.drawable.app_logo)
+                        .setContentTitle(task.creator)
+                        .setContentText(title)
+                        .setLargeIcon(decodeBase64ToBitmap(task.avatar))
+                        .setCustomBigContentView(expandedView)
+                        .setCustomContentView(collapsedView)
+                        .setStyle(NotificationCompat.DecoratedCustomViewStyle()) // Enable expanded view
+                        .setAutoCancel(true)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setGroup(groupKey)
+                        .addAction(
+                            R.drawable.app_logo, replyActionTextBlue, replyIntent
+                        ).addAction(
+                            R.drawable.app_logo, openActionTextBlue, openIntent
+                        )
+                        .build()
+
+                    notificationManager.apply {
+                        notify(summaryNotificationId, summaryNotification1)
+                        notify(singleNotificationId, notification)
+                    }
+                }, 160)
+            }
         }
     }
 
@@ -253,7 +297,7 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode =  generateUniqueKey()
+        val requestCode = System.currentTimeMillis().toInt() + generateUniqueKey()
         val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
@@ -280,8 +324,8 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode =  generateUniqueKey()
-        val intentReply =  Intent(context, NotificationActivity::class.java)
+        val requestCode = System.currentTimeMillis().toInt() + generateUniqueKey()
+        val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
 //        bundle.putParcelable("notificationTaskData", taskData)
@@ -304,8 +348,8 @@ class NotificationHelper(context: Context) {
         context: Context,
         taskData: NotificationTaskData
     ): PendingIntent? {
-        val requestCode = generateUniqueKey()
-        val intentReply =  Intent(context, NotificationActivity::class.java)
+        val requestCode = System.currentTimeMillis().toInt() + generateUniqueKey()
+        val intentReply = Intent(context, NotificationActivity::class.java)
 
         val bundle = Bundle()
 //        bundle.putParcelable("notificationTaskData", taskData)

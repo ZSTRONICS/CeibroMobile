@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.work.WorkManager
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.KEY_TOKEN_VALID
 import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
@@ -321,6 +322,8 @@ class CeibroDataLoadingVM @Inject constructor(
 
 
     fun endUserSession(context: Context) {
+        val oneSignalPlayerId = OneSignal.getDeviceState()?.userId
+        SocketHandler.sendLogout(oneSignalPlayerId)
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
@@ -331,7 +334,6 @@ class CeibroDataLoadingVM @Inject constructor(
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }
-        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)

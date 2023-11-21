@@ -42,14 +42,14 @@ class TaskHiddenFragment :
                 viewModel.selectedState = TaskStatus.CANCELED.name.lowercase()
                 val cancelledTasks = viewModel.cancelledTasks.value
                 if (!cancelledTasks.isNullOrEmpty()) {
-                    adapter.setList(cancelledTasks)
+                    adapter.setList(cancelledTasks, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
@@ -63,14 +63,14 @@ class TaskHiddenFragment :
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 val ongoingTask = viewModel.ongoingTasks.value
                 if (!ongoingTask.isNullOrEmpty()) {
-                    adapter.setList(ongoingTask)
+                    adapter.setList(ongoingTask, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.VISIBLE
@@ -84,14 +84,14 @@ class TaskHiddenFragment :
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
                 val doneTask = viewModel.doneTasks.value
                 if (!doneTask.isNullOrEmpty()) {
-                    adapter.setList(doneTask)
+                    adapter.setList(doneTask, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
@@ -120,14 +120,14 @@ class TaskHiddenFragment :
         viewModel.cancelledTasks.observe(viewLifecycleOwner) {
             if (viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it)
+                    adapter.setList(it, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
@@ -141,14 +141,14 @@ class TaskHiddenFragment :
         viewModel.ongoingTasks.observe(viewLifecycleOwner) {
             if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true)) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it)
+                    adapter.setList(it, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.VISIBLE
@@ -162,14 +162,14 @@ class TaskHiddenFragment :
         viewModel.doneTasks.observe(viewLifecycleOwner) {
             if (viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it)
+                    adapter.setList(it, viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenDoneInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenLogoBackground.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf())
+                    adapter.setList(listOf(), viewModel.sessionManager)
                     mViewDataBinding.taskRV.visibility = View.GONE
                     mViewDataBinding.hiddenCanceledInfoLayout.visibility = View.GONE
                     mViewDataBinding.hiddenOngoingInfoLayout.visibility = View.GONE

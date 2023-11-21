@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.work.WorkManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.onesignal.OneSignal
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -623,6 +624,8 @@ class DashboardVM @Inject constructor(
     }
 
     fun endUserSession(context: Context) {
+        val oneSignalPlayerId = OneSignal.getDeviceState()?.userId
+        SocketHandler.sendLogout(oneSignalPlayerId)
         launch {
             taskRepository.eraseTaskTable()
             taskRepository.eraseSubTaskTable()
@@ -633,7 +636,6 @@ class DashboardVM @Inject constructor(
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }
-        SocketHandler.sendLogout()
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
         WorkManager.getInstance(context)
