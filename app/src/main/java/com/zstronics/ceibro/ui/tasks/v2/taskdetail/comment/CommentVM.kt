@@ -25,6 +25,8 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -82,7 +84,7 @@ class CommentVM @Inject constructor(
         if (viewState.comment.value.toString() == "" && list.isEmpty()) {
             alert("Please add comment or files")
         } else {
-            launch {
+            GlobalScope.launch {
                 var eventData: EventV2Response.Data? = null
                 var isSuccess = false
 
@@ -162,10 +164,13 @@ class CommentVM @Inject constructor(
                 }
                 updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
 
-                loading(false, "")
-                if (isSuccess) {
-                    onBack(eventData)
-                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    loading(false, "")
+                    if (isSuccess) {
+                        onBack(eventData)
+                    }
+                },10)
+
             }
         }
     }

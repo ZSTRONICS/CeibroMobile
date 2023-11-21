@@ -90,73 +90,75 @@ class TaskDetailV2VM @Inject constructor(
                 selectedState = parentSelectedState
             }
 
-            taskData?.let { task ->
-                taskId = task.id
-                _taskDetail.postValue(task)
-                originalTask.postValue(task)
-                if (!events.isNullOrEmpty()) {
-                    originalEvents.postValue(events.toMutableList())
-                    _taskEvents.postValue(events.toMutableList())
-                } else {
-                    if (task.eventsCount > 0) {
-                        getAllEvents(task.id)
-                    } else {
-                        originalEvents.postValue(mutableListOf<Events>())
-                        _taskEvents.postValue(mutableListOf<Events>())
-                    }
-                }
-                syncEvents(task.id)
+            val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
 
-                val seenByMe = task.seenBy.find { it == user?.id }
-                if (seenByMe == null) {
-                    taskSeen(task.id) { }
-                }
-            } ?: run {
-                //Following code will only execute if forward screen is opened from notification
-                val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+            if (notificationData != null) {         //It means detail is opened via notification if not null
                 notificationTaskData.postValue(notificationData)
                 if (CookiesManager.jwtToken.isNullOrEmpty()) {
                     sessionManager.setUser()
                     sessionManager.setToken()
                 }
-                notificationData?.let {
-                    taskId = it.taskId
-                    launch {
-                        val task = taskDao.getTaskByID(it.taskId)
-                        task?.let { task1 ->
-                            rootState = TaskRootStateTags.ToMe.tagValue
-                            _taskDetail.postValue(task1)
-                            originalTask.postValue(task1)
-                            getAllEvents(task1.id)
-                            syncEvents(task1.id)
 
-                            val seenByMe = task1.seenBy.find { it1 -> it1 == user?.id }
-                            if (seenByMe == null) {
-                                taskSeen(task1.id) { }
-                            }
-                        }?: run {
-                            // run API call because task not found in DB
-                            getTaskById(taskId) { isSuccess, task, events ->
-                                if (isSuccess) {
-                                    _taskDetail.postValue(task)
-                                    originalTask.postValue(task)
-                                    originalEvents.postValue(events.toMutableList())
-                                    _taskEvents.postValue(events.toMutableList())
+                taskId = notificationData.taskId
+                launch {
+                    val task = taskDao.getTaskByID(notificationData.taskId)
+                    task?.let { task1 ->
+                        rootState = TaskRootStateTags.ToMe.tagValue
+                        _taskDetail.postValue(task1)
+                        originalTask.postValue(task1)
+                        getAllEvents(task1.id)
+                        syncEvents(task1.id)
 
-                                    val seenByMe = task?.seenBy?.find { it1 -> it1 == user?.id }
-                                    if (seenByMe == null) {
-                                        taskSeen(taskId) { }
-                                    }
-                                } else {
-                                    loading(false,"No task details to show")
+                        val seenByMe = task1.seenBy.find { it1 -> it1 == user?.id }
+                        if (seenByMe == null) {
+                            taskSeen(task1.id) { }
+                        }
+                    } ?: run {
+                        // run API call because task not found in DB
+                        getTaskById(taskId) { isSuccess, task, events ->
+                            if (isSuccess) {
+                                _taskDetail.postValue(task)
+                                originalTask.postValue(task)
+                                originalEvents.postValue(events.toMutableList())
+                                _taskEvents.postValue(events.toMutableList())
+
+                                val seenByMe = task?.seenBy?.find { it1 -> it1 == user?.id }
+                                if (seenByMe == null) {
+                                    taskSeen(taskId) { }
                                 }
+                            } else {
+                                loading(false, "No task details to show")
                             }
                         }
                     }
+                }
+            } else {
+                taskData?.let { task ->
+                    taskId = task.id
+                    _taskDetail.postValue(task)
+                    originalTask.postValue(task)
+                    if (!events.isNullOrEmpty()) {
+                        originalEvents.postValue(events.toMutableList())
+                        _taskEvents.postValue(events.toMutableList())
+                    } else {
+                        if (task.eventsCount > 0) {
+                            getAllEvents(task.id)
+                        } else {
+                            originalEvents.postValue(mutableListOf<Events>())
+                            _taskEvents.postValue(mutableListOf<Events>())
+                        }
+                    }
+                    syncEvents(task.id)
+
+                    val seenByMe = task.seenBy.find { it == user?.id }
+                    if (seenByMe == null) {
+                        taskSeen(task.id) { }
+                    }
                 } ?: run {
-                    alert("No info to show")
+                    alert("No details to display")
                 }
             }
+
         }
     }
 
@@ -208,7 +210,10 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
-    private fun getTaskById(taskId: String, callBack: (isSuccess: Boolean, task: CeibroTaskV2?, taskEvents: List<Events>) -> Unit) {
+    private fun getTaskById(
+        taskId: String,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, taskEvents: List<Events>) -> Unit
+    ) {
         launch {
             loading(true)
             when (val response = remoteTask.getTaskById(taskId)) {
