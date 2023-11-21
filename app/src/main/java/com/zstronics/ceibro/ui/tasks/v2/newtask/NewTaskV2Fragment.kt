@@ -76,15 +76,17 @@ class NewTaskV2Fragment :
                     doneCommentsRequired = doneCommentsRequired,
                     requireActivity()
                 ) {
-//                    if (it.equals("ServiceCall", true)) {
-//                        context?.let { context ->
-//                            context.startService(Intent(context, CreateNewTaskService::class.java))
-//                        }
-//                    } else {
+                    if (it.equals("ServiceCall", true)) {
+                        context?.let { context ->
+                            showToast(context.getString(R.string.creating_task_with_files))
+                            context.startService(Intent(context, CreateNewTaskService::class.java))
+                           navigateBack()
+                        }
+                    } else {
                         val bundle = Bundle()
                         bundle.putBoolean("createdNewTask", true)
                         navigateBackWithResult(RESULT_OK, bundle)
-//                    }
+                    }
                 }
             }
 

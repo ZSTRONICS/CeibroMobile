@@ -171,26 +171,26 @@ class NewTaskV2VM @Inject constructor(
 
                     taskRequest = newTaskRequest
                     taskList = list
-//                    onBack.invoke("ServiceCall")
-//                    loading(false, "")
+                    onBack.invoke("ServiceCall")
+                    loading(false, "")
 
-                    taskRepository.newTaskV2WithFiles(
-                        newTaskRequest,
-                        list
-                    ) { isSuccess, task, errorMessage ->
-                        if (isSuccess) {
-                            updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
-                            val handler = Handler(Looper.getMainLooper())
-                            handler.postDelayed({
-                                onBack.invoke("ServiceCall")
-                                loading(false, "")
-                                hideIndeterminateNotificationForFileUpload(activity)
-                            }, 50)
-                        } else {
-                            hideIndeterminateNotificationForFileUpload(activity)
-                            loading(false, errorMessage)
-                        }
-                    }
+//                    taskRepository.newTaskV2WithFiles(
+//                        newTaskRequest,
+//                        list
+//                    ) { isSuccess, task, errorMessage ->
+//                        if (isSuccess) {
+//                            updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
+//                            val handler = Handler(Looper.getMainLooper())
+//                            handler.postDelayed({
+//                                onBack()
+//                                loading(false, "")
+//                                hideIndeterminateNotificationForFileUpload(activity)
+//                            }, 50)
+//                        } else {
+//                            hideIndeterminateNotificationForFileUpload(activity)
+//                            loading(false, errorMessage)
+//                        }
+//                    }
                 } else {
                     loading(true)
                     taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
