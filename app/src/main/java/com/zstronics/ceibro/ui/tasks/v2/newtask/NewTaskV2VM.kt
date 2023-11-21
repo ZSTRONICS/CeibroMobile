@@ -98,7 +98,7 @@ class NewTaskV2VM @Inject constructor(
         doneImageRequired: Boolean,
         doneCommentsRequired: Boolean,
         activity: FragmentActivity,
-        onBack: () -> Unit,
+        onBack: (String) -> Unit,
     ) {
 
         if (viewState.taskTitle.value.toString() == "") {
@@ -169,8 +169,10 @@ class NewTaskV2VM @Inject constructor(
                     )
 
 
-                     taskRequest=newTaskRequest
-                     taskList=list
+                    taskRequest = newTaskRequest
+                    taskList = list
+//                    onBack.invoke("ServiceCall")
+//                    loading(false, "")
 
                     taskRepository.newTaskV2WithFiles(
                         newTaskRequest,
@@ -180,7 +182,7 @@ class NewTaskV2VM @Inject constructor(
                             updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
-                                onBack()
+                                onBack.invoke("ServiceCall")
                                 loading(false, "")
                                 hideIndeterminateNotificationForFileUpload(activity)
                             }, 50)
@@ -196,7 +198,7 @@ class NewTaskV2VM @Inject constructor(
                             updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
-                                onBack()
+                                onBack.invoke("")
                                 loading(false, "")
                             }, 50)
                         } else {
@@ -212,7 +214,7 @@ class NewTaskV2VM @Inject constructor(
     private suspend fun saveDataInLocal(
         newTaskRequest: NewTaskV2Entity,
         list: java.util.ArrayList<PickedImages>,
-        onBack: () -> Unit
+        onBack: (String) -> Unit
     ) {
         val localFilesData = list.map {
             LocalFilesToStore(
@@ -233,7 +235,7 @@ class NewTaskV2VM @Inject constructor(
             draftNewTaskV2Dao.upsert(newTaskRequest)
             // Invoke the callback on the appropriate thread (in this case, the main thread)
             withContext(Dispatchers.Main) {
-                onBack()
+                onBack.invoke("")
             }
         }
     }

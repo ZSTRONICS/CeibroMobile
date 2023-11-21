@@ -8,14 +8,17 @@ import android.widget.Toast
 import com.google.gson.Gson
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.BuildConfig.BASE_URL
-import com.zstronics.ceibro.data.repos.dashboard.DashboardRepositoryService
+import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.di.contentType
 import com.zstronics.ceibro.di.contentTypeValue
-import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService.ServiceGenerator.apiService
+import com.zstronics.ceibro.di.timeoutConnect
+import com.zstronics.ceibro.di.timeoutRead
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskList
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskRequest
 import ee.zstronics.ceibro.camera.AttachmentTypes
@@ -24,13 +27,13 @@ import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -38,18 +41,21 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 
 class CreateNewTaskService : Service() {
+     var sessionManager: SessionManager?=null
     private lateinit var context: Context
     override fun onCreate() {
         super.onCreate()
         context = this
-        // val sessionManager2 = getSessionManager(SharedPreferenceManager(this))
+
+        sessionManager = getSessionManager(SharedPreferenceManager(this))
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
         createTask()
         return START_STICKY
     }
@@ -141,6 +147,7 @@ class CreateNewTaskService : Service() {
                 response: Response<NewTaskV2Response>
             ) {
                 if (response.isSuccessful) {
+
                     Toast.makeText(
                         this@CreateNewTaskService,
                         "Task Created Successfully",
@@ -148,10 +155,18 @@ class CreateNewTaskService : Service() {
                     )
                         .show()
                     // Handle successful response here
-                    val data = response.body()
+                    val data = response.body()?.newTask
 
                     // Do something with the data
                 } else {
+                    response.errorBody()
+
+                    Toast.makeText(
+                        this@CreateNewTaskService,
+                        response.errorBody().toString(),
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
                     // Handle error
                     // For example, log the error or retry the call
                 }
@@ -168,30 +183,14 @@ class CreateNewTaskService : Service() {
     }
 
 
-    object ServiceGenerator {
+    private val retrofitBuilder = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClient())
+        .build()
 
-
-        private fun providesDashboardRepoService(): DashboardRepositoryService =
-            getRetrofitBuilder().create(DashboardRepositoryService::class.java)
-
-        private fun getRetrofitBuilder(): Retrofit {
-            return Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .build()
-        }
-
-        private val retrofitBuilder = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val apiService: ApiService by lazy {
-            retrofitBuilder.create(ApiService::class.java)
-        }
-    }
-
-    public fun provideConverterFactoryy(): Converter.Factory {
-        return GsonConverterFactory.create()
+    private val apiService: ApiService by lazy {
+        retrofitBuilder.create(ApiService::class.java)
     }
 
     private fun providesLoggingInterceptor(): HttpLoggingInterceptor {
@@ -219,21 +218,23 @@ class CreateNewTaskService : Service() {
         chain.proceed(request)
     }
 
-    // private fun cookiesInterceptor(): CookiesInterceptor = CookiesInterceptor(sessionManager2)
-    /*    private fun okHttpClient(): OkHttpClient {
-            val okHttpBuilder = OkHttpClient.Builder()
-            okHttpBuilder.addInterceptor(providesLoggingInterceptor())
-            okHttpBuilder.addInterceptor(headerInterceptor())
-            okHttpBuilder.addInterceptor(cookiesInterceptor())
-    //        okHttpBuilder.addInterceptor(providesSessionValidator())
-            okHttpBuilder.connectTimeout(timeoutConnect.toLong(), TimeUnit.SECONDS)
-            okHttpBuilder.readTimeout(timeoutRead.toLong(), TimeUnit.SECONDS)
-            return okHttpBuilder.build()
-        }*/
+    private fun cookiesInterceptor(): CookiesInterceptor? =
+        sessionManager?.let { CookiesInterceptor(it) }
+
+    private fun okHttpClient(): OkHttpClient {
+
+        val okHttpBuilder = OkHttpClient.Builder()
+        okHttpBuilder.addInterceptor(providesLoggingInterceptor())
+        okHttpBuilder.addInterceptor(headerInterceptor())
+        cookiesInterceptor()?.let { okHttpBuilder.addInterceptor(it) }
+        //        okHttpBuilder.addInterceptor(providesSessionValidator())
+        okHttpBuilder.connectTimeout(timeoutConnect.toLong(), TimeUnit.SECONDS)
+        okHttpBuilder.readTimeout(timeoutRead.toLong(), TimeUnit.SECONDS)
+        return okHttpBuilder.build()
+    }
 
 
     interface ApiService {
-
         @Multipart
         @POST("v2/task/files")
         fun newTaskV2WithFiles(
@@ -251,4 +252,9 @@ class CreateNewTaskService : Service() {
             @Part("metadata") metadata: RequestBody
         ): Call<NewTaskV2Response>
     }
+
+    private fun getSessionManager(
+        sharedPreferenceManager: SharedPreferenceManager
+    ) = SessionManager(sharedPreferenceManager)
+
 }
