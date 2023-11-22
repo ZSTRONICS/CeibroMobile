@@ -497,6 +497,41 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    fun createNotification(
+        channelId: String?,
+        chanelName: String,
+        notificationTitle: String = "Uploading file",
+        isOngoing: Boolean = true,
+        indeterminate: Boolean = false,
+        notificationIcon: Int = R.drawable.icon_upload
+    ): Pair<NotificationManager, NotificationCompat.Builder> {
+        // Create a notification channel (for Android O and above)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                requireActivity().getSystemService(NotificationManager::class.java)
+            val channel = NotificationChannel(
+                channelId,
+                chanelName,
+                NotificationManager.IMPORTANCE_LOW
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+        // Create a notification builder
+        val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
+            .setSmallIcon(notificationIcon)
+            .setContentTitle(notificationTitle)
+            .setOngoing(isOngoing)
+            .setOnlyAlertOnce(true)
+        if (isOngoing) {
+            builder.setProgress(100, 1, indeterminate)
+        }
+        // Show the notification
+        val notificationManager =
+            requireActivity().getSystemService(NotificationManager::class.java)
+        notificationManager.notify(channelId.hashCode(), builder.build())
+        return Pair(notificationManager, builder)
+    }
+
     private fun addFileToUriList(fileUri: Uri?) {
         val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
         val fileName = FileUtils.getFileName(requireContext(), fileUri)
@@ -534,41 +569,6 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 fileName
             )
         )
-    }
-
-    fun createNotification(
-        channelId: String?,
-        chanelName: String,
-        notificationTitle: String = "Uploading file",
-        isOngoing: Boolean = true,
-        indeterminate: Boolean = false,
-        notificationIcon: Int = R.drawable.icon_upload
-    ): Pair<NotificationManager, NotificationCompat.Builder> {
-        // Create a notification channel (for Android O and above)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager =
-                requireActivity().getSystemService(NotificationManager::class.java)
-            val channel = NotificationChannel(
-                channelId,
-                chanelName,
-                NotificationManager.IMPORTANCE_LOW
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-        // Create a notification builder
-        val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
-            .setSmallIcon(notificationIcon)
-            .setContentTitle(notificationTitle)
-            .setOngoing(isOngoing)
-            .setOnlyAlertOnce(true)
-        if (isOngoing) {
-            builder.setProgress(100, 1, indeterminate)
-        }
-        // Show the notification
-        val notificationManager =
-            requireActivity().getSystemService(NotificationManager::class.java)
-        notificationManager.notify(channelId.hashCode(), builder.build())
-        return Pair(notificationManager, builder)
     }
 
 

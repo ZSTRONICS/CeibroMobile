@@ -4,6 +4,7 @@ package com.zstronics.ceibro.base.viewmodel
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -49,6 +50,7 @@ import com.zstronics.ceibro.ui.dashboard.TaskEventsList
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import com.zstronics.ceibro.utils.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.GlobalScope
@@ -1187,10 +1189,21 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     @Inject
     lateinit var dashboardRepositoryInternal: IDashboardRepository
+
     suspend fun syncDraftTask(context: Context) {
-        Log.d("SyncDraftTask", "syncDraftTask")
-        val user = sessionManagerInternal.getUser().value
-        val unsyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+//        Log.d("SyncDraftTask", "syncDraftTask")
+//        val user = sessionManagerInternal.getUser().value
+        val unSyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+
+
+        if (unSyncedRecords.isNotEmpty()) {
+            launch {
+                val serviceIntent = Intent(context, CreateNewTaskService::class.java)
+                serviceIntent.putExtra("ServiceRequest", "draftUploadRequest")
+                context.startService(serviceIntent)
+//                 viewModel.syncDraftTask(requireContext())
+            }
+        }
 
         /*suspend fun uploadDraftTaskFiles(
             listOfLocalFiles: List<LocalFilesToStore>, taskId: String
@@ -1257,7 +1270,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }*/
 
         // Define a recursive function to process records one by one
-        suspend fun processNextRecord(records: List<NewTaskV2Entity>) {
+        /*suspend fun processNextRecord(records: List<NewTaskV2Entity>) {
             if (records.isEmpty()) {
                 // All records have been processed, exit the recursion
                 return
@@ -1336,7 +1349,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         // Start the recursive processing
         launch {
             processNextRecord(unsyncedRecords)
-        }
+        }*/
     }
 
     fun saveFilesInDB(

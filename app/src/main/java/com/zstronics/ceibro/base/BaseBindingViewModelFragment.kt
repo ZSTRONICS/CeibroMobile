@@ -17,7 +17,6 @@ import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
-import com.zstronics.ceibro.ui.socket.SocketHandler
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject

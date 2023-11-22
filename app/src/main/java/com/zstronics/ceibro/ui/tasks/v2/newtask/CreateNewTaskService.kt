@@ -6,18 +6,23 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
+import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.CeibroDatabase
+import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -38,8 +43,10 @@ import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService.Notificatio
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskList
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskRequest
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentVM.Companion.eventWithFileUploadV2RequestData
+import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.PickedImages
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -47,12 +54,22 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreateNewTaskService : Service() {
+    private var taskCounter = 0
+    private var draftTasksFailed = 0
 
     private var taskObjectData: NewTaskV2Entity? = null
     private var taskListData: ArrayList<PickedImages>? = null
     var sessionManager: SessionManager? = null
-    private lateinit var mContext: Context
-    private val indeterminateNotificationID = 1
+    private var mContext: Context? = null
+    private val errorTaskNotificationID = 111
+    private val createTaskNotificationID = 1
+    private val doneNotificationID = 2
+    private val commentNotificationID = 3
+    private val draftCreateTaskNotificationID = 4
+
+    private var draftRecordCallBack: ((Int) -> Unit)? = null
+
+    val _draftRecordObserver = MutableLiveData<Int>()
 
     @Inject
     lateinit var taskRepository: TaskRepository
@@ -60,9 +77,15 @@ class CreateNewTaskService : Service() {
     @Inject
     lateinit var dashboardRepository: DashboardRepository
 
+    @Inject
+    lateinit var draftNewTaskV2Internal: DraftNewTaskV2Dao
+
+    @Inject
+    lateinit var taskDaoInternal: TaskV2Dao
+
     override fun onCreate() {
         super.onCreate()
-        println("Service is in onCreate state...")
+        println("Service Status .. onCreate state...")
         taskObjectData = taskRequest
         taskListData = taskList
         mContext = this
@@ -76,6 +99,7 @@ class CreateNewTaskService : Service() {
         val taskId = intent?.getStringExtra("taskId")
         val event = intent?.getStringExtra("event")
 
+
         when (request) {
             "commentRequest" -> {
                 taskId?.let { taskId ->
@@ -84,12 +108,13 @@ class CreateNewTaskService : Service() {
                             eventWithFileUploadV2RequestData?.let {
 
                                 startForeground(
-                                    indeterminateNotificationID,
+                                    commentNotificationID,
                                     createIndeterminateNotificationForFileUpload(
-                                        activity = this,
+                                        context = this,
                                         channelId = CHANNEL_ID,
                                         channelName = CHANNEL_NAME,
-                                        notificationTitle = "Replying task with files"
+                                        notificationTitle = "Replying task with files",
+                                        notificationID = commentNotificationID
                                     )
                                 )
                                 uploadComment(it, taskId, event, sessionManager, this)
@@ -99,32 +124,67 @@ class CreateNewTaskService : Service() {
                     }
                 }
             }
+
             "taskRequest" -> {
                 startForeground(
-                    indeterminateNotificationID, createIndeterminateNotificationForFileUpload(
-                        activity = this,
+                    createTaskNotificationID, createIndeterminateNotificationForFileUpload(
+                        context = this,
                         channelId = CHANNEL_ID,
                         channelName = CHANNEL_NAME,
-                        notificationTitle = "Creating task with files"
+                        notificationTitle = "Creating task with files",
+                        notificationID = createTaskNotificationID
                     )
                 )
-                createTask(sessionManager, mContext)
+                createTask(sessionManager, this)
             }
+
+            "draftUploadRequest" -> {
+
+                GlobalScope.launch {
+                    val unSyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+
+                    if (unSyncedRecords.isNotEmpty()) {
+                        startForeground(
+                            draftCreateTaskNotificationID,
+                            createIndeterminateNotificationForFileUpload(
+                                context = this@CreateNewTaskService,
+                                channelId = CHANNEL_ID,
+                                channelName = CHANNEL_NAME,
+                                notificationTitle = "Uploading draft tasks",
+                                notificationID = draftCreateTaskNotificationID
+                            )
+                        )
+                        sessionManager?.let { sessionManager ->
+                            mContext?.let { mContext ->
+                                syncDraftTask(sessionManager, mContext)
+                            }
+                        }
+                    } else {
+
+                        hideIndeterminateNotifications(
+                            this@CreateNewTaskService,
+                            draftCreateTaskNotificationID
+                        )
+                        stopSelf()
+                    }
+                }
+            }
+
             "doneRequest" -> {
 
-               /*
                 taskId?.let { taskId ->
                     event?.let { event ->
                         sessionManager?.let { sessionManager ->
                             eventWithFileUploadV2RequestData?.let {
 
                                 startForeground(
-                                    indeterminateNotificationID,
+                                    doneNotificationID,
                                     createIndeterminateNotificationForFileUpload(
-                                        activity = this,
+                                        context = this@CreateNewTaskService,
                                         channelId = CHANNEL_ID,
                                         channelName = CHANNEL_NAME,
-                                        notificationTitle = "Marking task as done with files"
+                                        notificationTitle = "Marking task as done with files",
+                                        notificationID = doneNotificationID
                                     )
                                 )
                                 uploadComment(it, taskId, event, sessionManager, this)
@@ -132,7 +192,7 @@ class CreateNewTaskService : Service() {
                             }
                         }
                     }
-                }*/
+                }
 
             }
             // Add more cases if needed
@@ -141,91 +201,35 @@ class CreateNewTaskService : Service() {
             }
         }
 
-
-        /*      if (request == "commentRequest") {
-
-                  taskId?.let { taskId ->
-                      event?.let { event ->
-                          sessionManager?.let { sessionManager ->
-                              eventWithFileUploadV2RequestData?.let {
-
-                                  startForeground(
-                                      indeterminateNotificationID,
-                                      createIndeterminateNotificationForFileUpload(
-                                          activity = this,
-                                          channelId = CHANNEL_ID,
-                                          channelName = CHANNEL_NAME,
-                                          notificationTitle = "Replying task with files"
-                                      )
-                                  )
-                                  uploadComment(it, taskId, event, sessionManager, this)
-
-                              }
-                          }
-                      }
-                  }
-              } else if (request == "taskRequest") {
-
-                  startForeground(
-                      indeterminateNotificationID, createIndeterminateNotificationForFileUpload(
-                          activity = this,
-                          channelId = CHANNEL_ID,
-                          channelName = CHANNEL_NAME,
-                          notificationTitle = "Creating task with files"
-                      )
-                  )
-                  createTask(sessionManager, mContext)
-
-              } else if (request == "doneRequest") {
-                  taskId?.let { taskId ->
-                      event?.let { event ->
-                          sessionManager?.let { sessionManager ->
-                              eventWithFileUploadV2RequestData?.let {
-
-                                  startForeground(
-                                      indeterminateNotificationID,
-                                      createIndeterminateNotificationForFileUpload(
-                                          activity = this,
-                                          channelId = CHANNEL_ID,
-                                          channelName = CHANNEL_NAME,
-                                          notificationTitle = "Marking task as done with files"
-                                      )
-                                  )
-                                  uploadComment(it, taskId, event, sessionManager, this)
-
-                              }
-                          }
-                      }
-                  }
-              }*/
-
         return START_STICKY
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun createTask(sessionManager: SessionManager?, context: Context) {
 
         taskObjectData?.let { taskRequestData ->
             taskListData?.let { taskListData ->
-                newTaskV2WithFiles(
-                    taskRequestData, taskListData, context, sessionManager
-                )
-            }
-        }
-
-    }
-
-    private fun newTaskV2WithFiles(
-        newTask: NewTaskV2Entity,
-        list: ArrayList<PickedImages>?,
-        context: Context,
-        sessionManager: SessionManager?
-    ) {
-        GlobalScope.launch {
-            sessionManager?.let {
-                createTaskWithFiles(newTask, list, sessionManager, context)
+                GlobalScope.launch {
+                    sessionManager?.let {
+                        createTaskWithFiles(taskRequestData, taskListData, sessionManager, context)
+                    }
+                }
             }
         }
     }
+
+//    private fun newTaskV2WithFiles(
+//        newTask: NewTaskV2Entity,
+//        list: ArrayList<PickedImages>?,
+//        context: Context,
+//        sessionManager: SessionManager?
+//    ) {
+//        GlobalScope.launch {
+//            sessionManager?.let {
+//                createTaskWithFiles(newTask, list, sessionManager, context)
+//            }
+//        }
+//    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -359,9 +363,9 @@ class CreateNewTaskService : Service() {
         sharedPreferenceManager: SharedPreferenceManager
     ) = SessionManager(sharedPreferenceManager)
 
-    private fun hideIndeterminateNotificationForFileUpload(activity: Context) {
+    private fun hideIndeterminateNotifications(activity: Context, notificationID: Int) {
         val notificationManager = activity.getSystemService(NotificationManager::class.java)
-        notificationManager.cancel(indeterminateNotificationID) // Remove the notification with ID
+        notificationManager.cancel(notificationID) // Remove the notification with ID
     }
 
 
@@ -372,24 +376,52 @@ class CreateNewTaskService : Service() {
 
 
     private fun createIndeterminateNotificationForFileUpload(
-        activity: CreateNewTaskService,
+        context: CreateNewTaskService,
         channelId: String,
         channelName: String,
         notificationTitle: String,
         isOngoing: Boolean = true,
         indeterminate: Boolean = true,
+        notificationIcon: Int = R.drawable.icon_upload,
+        notificationID: Int
+    ): Notification {
+        val channel =
+            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+
+        val builder = NotificationCompat.Builder(context, channelId).setSmallIcon(notificationIcon)
+            .setContentTitle(notificationTitle).setOngoing(isOngoing)
+            .setProgress(0, 0, indeterminate)
+
+        notificationManager.notify(notificationID, builder.build())
+        return builder.build()
+    }
+
+    private fun createSimpleNotification(
+        context: CreateNewTaskService,
+        channelId: String,
+        channelName: String,
+        notificationTitle: String,
+        isOngoing: Boolean = false,
+        indeterminate: Boolean = false,
         notificationIcon: Int = R.drawable.icon_upload
     ): Notification {
         val channel =
             NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-        val notificationManager = activity.getSystemService(NotificationManager::class.java)
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
 
-        val builder = NotificationCompat.Builder(activity, channelId).setSmallIcon(notificationIcon)
-            .setContentTitle(notificationTitle).setOngoing(isOngoing)
-            .setProgress(0, 0, indeterminate)
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(notificationIcon)
+            .setContentTitle(notificationTitle)
+            .setOngoing(isOngoing)
+            .setOnlyAlertOnce(true)
+        if (isOngoing) {
+            builder.setProgress(100, 1, indeterminate)
+        }
 
-        notificationManager.notify(indeterminateNotificationID, builder.build())
+        notificationManager.notify(errorTaskNotificationID, builder.build())
         return builder.build()
     }
 
@@ -402,24 +434,38 @@ class CreateNewTaskService : Service() {
     ) {
 
         list?.let {
+            taskCounter += 1
             taskRepository.newTaskV2WithFiles(
                 newTask,
                 it
             ) { isSuccess, task, errorMessage ->
                 if (isSuccess) {
-
                     val room = providesAppDatabase(context)
                     val taskDao = room.getTaskV2sDao()
                     this.sessionManager?.let {
                         updateCreatedTaskInLocal(task, taskDao, sessionManager)
                     }
-                    hideIndeterminateNotificationForFileUpload(context)
-                    println("Service is destroyed...:Create task with success")
-                    stopSelf()
+                    hideIndeterminateNotifications(context, createTaskNotificationID)
+                    println("Service Status...:Create task with success")
+                    taskCounter -= 1
+                    if (taskCounter <= 0) {
+                        stopSelf()
+                    }
                 } else {
-                    hideIndeterminateNotificationForFileUpload(context)
-                    println("Service is destroyed...:Create task with failure")
-                    stopSelf()
+                    hideIndeterminateNotifications(context, createTaskNotificationID)
+
+                    createSimpleNotification(
+                        context = this,
+                        channelId = CHANNEL_ID,
+                        channelName = CHANNEL_NAME,
+                        notificationTitle = "Task creation un-successful"
+                    )
+
+                    println("Service Status...:Create task with failure -> $errorMessage")
+                    taskCounter -= 1
+                    if (taskCounter <= 0) {
+                        stopSelf()
+                    }
                 }
             }
         }
@@ -434,10 +480,10 @@ class CreateNewTaskService : Service() {
         context: CreateNewTaskService
     ) {
         GlobalScope.launch {
-
+            taskCounter += 1
             when (val response = dashboardRepository.uploadEventWithFilesV2(
                 event = event,
-                taskId = taskId ?: "",
+                taskId = taskId,
                 hasFiles = true,
                 eventWithFileUploadV2Request = request
             )) {
@@ -447,23 +493,37 @@ class CreateNewTaskService : Service() {
                     val taskDao = room.getTaskV2sDao()
 
                     if (event == "comment") {
+
                         updateTaskCommentInLocal(
                             response.data.data, taskDao,
                             sessionManager
                         )
+                        hideIndeterminateNotifications(context, commentNotificationID)
                     } else if (event == "doneTask") {
                         updateTaskDoneInLocal(response.data.data, taskDao, sessionManager)
+                        hideIndeterminateNotifications(context, doneNotificationID)
                     }
 
-                    println("Service is destroyed...:Upload comment with success")
-                    hideIndeterminateNotificationForFileUpload(context)
-                    stopSelf()
+                    println("Service Status...:Upload comment with success")
+                    taskCounter -= 1
+                    if (taskCounter <= 0) {
+                        stopSelf()
+                    }
                 }
 
                 is ApiResponse.Error -> {
-                    hideIndeterminateNotificationForFileUpload(context)
-                    println("Service is destroyed...:Upload comment with failure")
-                    stopSelf()
+                    if (event == "comment") {
+                        hideIndeterminateNotifications(context, commentNotificationID)
+                    } else if (event == "doneTask") {
+
+                        hideIndeterminateNotifications(context, doneNotificationID)
+                    }
+
+                    println("Service Status...:Upload comment with failure -> ${response.error.message}")
+                    taskCounter -= 1
+                    if (taskCounter <= 0) {
+                        stopSelf()
+                    }
                 }
             }
         }
@@ -668,8 +728,134 @@ class CreateNewTaskService : Service() {
         return updatedTask
     }
 
+    private fun syncDraftTask(sessionManager: SessionManager, context: Context) {
+
+        GlobalScope.launch {
+
+
+            Log.d("SyncDraftTask", "syncDraftTask")
+            val unSyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+            taskCounter += unSyncedRecords.size
+
+
+            // Define a recursive function to process records one by one
+            suspend fun processNextRecord(
+                records: List<NewTaskV2Entity>,
+                sessionManager: SessionManager
+            ) {
+                if (records.isEmpty()) {
+                    println("Service Status .. drafts task failed $draftTasksFailed")
+                    hideIndeterminateNotifications(context, draftCreateTaskNotificationID)
+                    if (taskCounter <= 0) {
+                        stopSelf()
+                    }
+//                    stopSelf()
+                    // All records have been processed, exit the recursion
+                    return
+                }
+                val newTaskRequest = records.first()
+                var list: ArrayList<PickedImages> = arrayListOf()
+
+                newTaskRequest.filesData?.let { filesData ->
+                    list = filesData.map {
+                        PickedImages(
+                            fileUri = Uri.parse(it.fileUri),
+                            comment = it.comment,
+                            fileName = it.fileName,
+                            fileSizeReadAble = it.fileSizeReadAble,
+                            editingApplied = it.editingApplied,
+                            attachmentType = it.attachmentType,
+                            file = FileUtils.getFile(context, Uri.parse(it.fileUri))
+                        )
+                    } as ArrayList<PickedImages>
+                }
+
+                if (list.isNotEmpty()) {
+
+                    taskRepository.newTaskV2WithFiles(
+                        newTaskRequest, list
+                    ) { isSuccess, task, errorMessage ->
+                        if (isSuccess) {
+
+                            GlobalScope.launch {
+                                taskCounter -= 1
+                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+
+                                updateCreatedTaskInLocal(
+                                    task, taskDaoInternal,
+                                    sessionManager
+                                )
+                                // Remove the processed record from the list
+                                val updatedRecords = records - newTaskRequest
+
+                                draftRecordCallBack?.invoke(updatedRecords.size)
+                                _draftRecordObserver.postValue(updatedRecords.size)
+                                // Recursively process the next record
+
+
+                                HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size)
+                                //  sharedViewModel.syncedRecord.postValue(updatedRecords.size)
+                                processNextRecord(updatedRecords, sessionManager)
+
+
+                            }
+                        } else {
+                            GlobalScope.launch {
+                                taskCounter -= 1
+                                draftTasksFailed++
+                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+                                val updatedRecords = records - newTaskRequest
+                                processNextRecord(updatedRecords, sessionManager)
+                            }
+                        }
+
+                    }
+                } else {
+
+                    taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
+                        if (isSuccess) {
+                            GlobalScope.launch {
+                                taskCounter -= 1
+                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+
+                                updateCreatedTaskInLocal(
+                                    task, taskDaoInternal,
+                                    sessionManager
+                                )
+                                // Remove the processed record from the list
+                                val updatedRecords = records - newTaskRequest
+                                draftRecordCallBack?.invoke(updatedRecords.size)
+                                _draftRecordObserver.postValue(updatedRecords.size)
+
+                                // Recursively process the next record
+                                HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size)
+                                processNextRecord(updatedRecords, sessionManager)
+
+
+                            }
+                        } else {
+                            GlobalScope.launch {
+                                taskCounter -= 1
+                                draftTasksFailed++
+                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
+                                val updatedRecords = records - newTaskRequest
+                                processNextRecord(updatedRecords, sessionManager)
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            // Start the recursive processing
+            GlobalScope.launch {
+                processNextRecord(unSyncedRecords, sessionManager)
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        println("Service is destroyed...:On Destroyed called...")
+        println("Service Status...:On Destroyed called...")
     }
 }

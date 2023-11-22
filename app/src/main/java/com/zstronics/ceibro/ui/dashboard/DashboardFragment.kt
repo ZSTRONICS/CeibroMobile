@@ -49,6 +49,7 @@ import com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
+import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -455,12 +456,21 @@ class DashboardFragment :
                     }
 
                     NetworkConnectivityObserver.Status.Available -> {
-                        println("Heartbeat, Internet observer SocketConnected: ${SocketHandler.getSocket()?.connected()}")
+                        println(
+                            "Heartbeat, Internet observer SocketConnected: ${
+                                SocketHandler.getSocket()?.connected()
+                            }"
+                        )
                         println("Heartbeat, Internet observer Socket object == ${SocketHandler.getSocket()}")
-                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null || SocketHandler.getSocket()?.connected() == false) {
+                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()
+                                ?.connected() == null || SocketHandler.getSocket()
+                                ?.connected() == false
+                        ) {
                             println("Heartbeat, Internet observer")
-                            if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null ||
-                                !appStartWithInternet || CookiesManager.socketOnceConnected.value == false) {
+                            if (SocketHandler.getSocket() == null || SocketHandler.getSocket()
+                                    ?.connected() == null ||
+                                !appStartWithInternet || CookiesManager.socketOnceConnected.value == false
+                            ) {
                                 println("Heartbeat, Internet observer Socket setting new")
                                 if (CookiesManager.jwtToken.isNullOrEmpty()) {
                                     viewModel.sessionManager.setUser()
@@ -522,8 +532,10 @@ class DashboardFragment :
         viewModel.handleSocketEvents()
         handleSocketReSyncDataEvent()
 //        handleFileUploaderSocketEvents()
-        viewModel.launch {
-            viewModel.syncDraftTask(requireContext())
+        if (networkConnectivityObserver.isNetworkAvailable()) {
+            viewModel.launch {
+                viewModel.syncDraftTask(requireContext())
+            }
         }
         setConnectivityIcon()
         socketEventsInitiated = true
