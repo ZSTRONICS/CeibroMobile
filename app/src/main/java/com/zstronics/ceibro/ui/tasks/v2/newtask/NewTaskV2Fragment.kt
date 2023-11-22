@@ -80,7 +80,7 @@ class NewTaskV2Fragment :
                         context?.let { context ->
                             showToast(context.getString(R.string.creating_task_with_files))
                             val serviceIntent = Intent(context, CreateNewTaskService::class.java)
-                            serviceIntent.putExtra("taskRequest", "ServiceCall")
+                            serviceIntent.putExtra("ServiceRequest", "taskRequest")
                             context.startService(serviceIntent)
                             navigateBack()
                         }

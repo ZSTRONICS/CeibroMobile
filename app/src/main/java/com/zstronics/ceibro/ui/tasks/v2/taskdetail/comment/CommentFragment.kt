@@ -189,7 +189,7 @@ class CommentFragment :
                         requireContext()
                     ) { eventData ->
                         if (viewModel.notificationTaskData.value != null) {
-                            shortToastNow("Commented successfully!")
+                            shortToastNow(getString(R.string.commented_successfully))
                             val instances = countActivitiesInBackStack(requireContext())
                             if (instances <= 1) {
                                 launchActivityWithFinishAffinity<NavHostPresenterActivity>(
@@ -207,8 +207,9 @@ class CommentFragment :
                                 finish()
                             }
                         } else {
+
                             val bundle = Bundle()
-                            bundle.putParcelable("eventData", eventData)
+                            bundle.putParcelable("eventData", null)
                             navigateBackWithResult(Activity.RESULT_OK, bundle)
                         }
                     }

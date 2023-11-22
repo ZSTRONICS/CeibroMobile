@@ -573,4 +573,6 @@
     <string name="start_typing">Start typing</string>
     <string name="no_description_added">No description added</string>
     <string name="creating_task_with_files">Creating task with files.</string>
+    <string name="please_add_comment_or_files">Please add comment or files</string>
+    <string name="commented_successfully">Commented successfully!</string>
 </resources>
