@@ -1,12 +1,14 @@
 package com.zstronics.ceibro.base.navgraph
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
@@ -15,6 +17,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.transition.ChangeBounds
 import android.transition.Fade
@@ -51,7 +54,6 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncV2Response
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
@@ -431,10 +433,29 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 //            return
 //        }
 
+    @SuppressLint("Range")
+    fun getFileNameFromUri(context: Context, uri: Uri): String? {
+        var fileName: String? = null
+        val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val displayName =
+                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                fileName = displayName
+            }
+        }
+        return fileName
+    }
+
+
     //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
-    fun createFileUriFromContentUri(context: Context, contentUri: Uri): Uri? {
+    fun createFileUriFromContentUri(context: Context, contentUri: Uri, fileName: String?): Uri? {
         val outputPath = context.getExternalFilesDir(null)?.absolutePath
-        val filename = System.currentTimeMillis().toString() + ".jpg"
+        val filename = if (fileName.isNullOrEmpty()) {
+            System.currentTimeMillis().toString() + ".jpg"
+        } else {
+            fileName
+        }
 
         try {
             val input = context.contentResolver.openInputStream(contentUri)
@@ -497,6 +518,41 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         }
     }
 
+    fun createNotification(
+        channelId: String?,
+        chanelName: String,
+        notificationTitle: String = "Uploading file",
+        isOngoing: Boolean = true,
+        indeterminate: Boolean = false,
+        notificationIcon: Int = R.drawable.icon_upload
+    ): Pair<NotificationManager, NotificationCompat.Builder> {
+        // Create a notification channel (for Android O and above)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager =
+                requireActivity().getSystemService(NotificationManager::class.java)
+            val channel = NotificationChannel(
+                channelId,
+                chanelName,
+                NotificationManager.IMPORTANCE_LOW
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+        // Create a notification builder
+        val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
+            .setSmallIcon(notificationIcon)
+            .setContentTitle(notificationTitle)
+            .setOngoing(isOngoing)
+            .setOnlyAlertOnce(true)
+        if (isOngoing) {
+            builder.setProgress(100, 1, indeterminate)
+        }
+        // Show the notification
+        val notificationManager =
+            requireActivity().getSystemService(NotificationManager::class.java)
+        notificationManager.notify(channelId.hashCode(), builder.build())
+        return Pair(notificationManager, builder)
+    }
+
     private fun addFileToUriList(fileUri: Uri?) {
         val mimeType = FileUtils.getMimeType(requireContext(), fileUri)
         val fileName = FileUtils.getFileName(requireContext(), fileUri)
@@ -534,41 +590,6 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
                 fileName
             )
         )
-    }
-
-    fun createNotification(
-        channelId: String?,
-        chanelName: String,
-        notificationTitle: String = "Uploading file",
-        isOngoing: Boolean = true,
-        indeterminate: Boolean = false,
-        notificationIcon: Int = R.drawable.icon_upload
-    ): Pair<NotificationManager, NotificationCompat.Builder> {
-        // Create a notification channel (for Android O and above)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager =
-                requireActivity().getSystemService(NotificationManager::class.java)
-            val channel = NotificationChannel(
-                channelId,
-                chanelName,
-                NotificationManager.IMPORTANCE_LOW
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-        // Create a notification builder
-        val builder = NotificationCompat.Builder(requireContext(), channelId ?: "channel_id")
-            .setSmallIcon(notificationIcon)
-            .setContentTitle(notificationTitle)
-            .setOngoing(isOngoing)
-            .setOnlyAlertOnce(true)
-        if (isOngoing) {
-            builder.setProgress(100, 1, indeterminate)
-        }
-        // Show the notification
-        val notificationManager =
-            requireActivity().getSystemService(NotificationManager::class.java)
-        notificationManager.notify(channelId.hashCode(), builder.build())
-        return Pair(notificationManager, builder)
     }
 
 

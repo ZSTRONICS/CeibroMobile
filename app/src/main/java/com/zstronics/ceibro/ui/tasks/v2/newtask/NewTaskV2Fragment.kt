@@ -20,6 +20,7 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
@@ -80,7 +81,7 @@ class NewTaskV2Fragment :
                         context?.let { context ->
                             showToast(context.getString(R.string.creating_task_with_files))
                             val serviceIntent = Intent(context, CreateNewTaskService::class.java)
-                            serviceIntent.putExtra("taskRequest", "ServiceCall")
+                            serviceIntent.putExtra("ServiceRequest", "taskRequest")
                             context.startService(serviceIntent)
                             navigateBack()
                         }
@@ -453,48 +454,60 @@ class NewTaskV2Fragment :
                     if (clipData != null) {
                         for (i in 0 until clipData.itemCount) {
                             val fileUri = clipData.getItemAt(i).uri
-                            val newUri = createFileUriFromContentUri(requireContext(), fileUri)
+                            val fileName = getFileNameFromUri(requireContext(), fileUri)
+                            val newUri = createFileUriFromContentUri(requireContext(), fileUri, fileName)
                             val file = FileUtils.getFile(requireContext(), newUri)
+                            val selectedImgDetail =
+                                getPickedFileDetail(requireContext(), newUri)
 
-                            val compressedImageFile =
-                                Compressor.compress(requireContext(), file) {
-                                    quality(80)
-                                    format(Bitmap.CompressFormat.JPEG)
-                                }
-                            val compressedImageUri = Uri.fromFile(compressedImageFile)
-
-                            if (compressedImageUri != null) {
-                                val selectedImgDetail =
-                                    getPickedFileDetail(requireContext(), compressedImageUri)
-
-                                if (oldImages?.contains(selectedImgDetail) == true) {
+                            val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
+                            if (foundImage != null) {
+                                viewModel.launch(Dispatcher.Main) {
                                     shortToastNow("You selected an already-added image")
-                                } else {
-                                    pickedImage.add(selectedImgDetail)
+                                }
+                            } else {
+                                val compressedImageFile =
+                                    Compressor.compress(requireContext(), file) {
+                                        quality(80)
+                                        format(Bitmap.CompressFormat.JPEG)
+                                    }
+                                val compressedImageUri = Uri.fromFile(compressedImageFile)
+
+                                if (compressedImageUri != null) {
+                                    val selectedNewImgDetail =
+                                        getPickedFileDetail(requireContext(), compressedImageUri)
+
+                                    pickedImage.add(selectedNewImgDetail)
                                 }
                             }
                         }
                     } else {
                         val fileUri = data.data
                         fileUri?.let {
-                            val newUri = createFileUriFromContentUri(requireContext(), it)
+                            val fileName = getFileNameFromUri(requireContext(), it)
+                            val newUri = createFileUriFromContentUri(requireContext(), it, fileName)
                             val file = FileUtils.getFile(requireContext(), newUri)
+                            val selectedImgDetail =
+                                getPickedFileDetail(requireContext(), newUri)
 
-                            val compressedImageFile =
-                                Compressor.compress(requireContext(), file) {
-                                    quality(80)
-                                    format(Bitmap.CompressFormat.JPEG)
-                                }
-                            val compressedImageUri = Uri.fromFile(compressedImageFile)
-
-                            if (compressedImageUri != null) {
-                                val selectedImgDetail =
-                                    getPickedFileDetail(requireContext(), compressedImageUri)
-
-                                if (oldImages?.contains(selectedImgDetail) == true) {
+                            val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
+                            if (foundImage != null) {
+                                viewModel.launch(Dispatcher.Main) {
                                     shortToastNow("You selected an already-added image")
-                                } else {
-                                    pickedImage.add(selectedImgDetail)
+                                }
+                            } else {
+                                val compressedImageFile =
+                                    Compressor.compress(requireContext(), file) {
+                                        quality(80)
+                                        format(Bitmap.CompressFormat.JPEG)
+                                    }
+                                val compressedImageUri = Uri.fromFile(compressedImageFile)
+
+                                if (compressedImageUri != null) {
+                                    val selectedNewImgDetail =
+                                        getPickedFileDetail(requireContext(), compressedImageUri)
+
+                                    pickedImage.add(selectedNewImgDetail)
                                 }
                             }
                         }

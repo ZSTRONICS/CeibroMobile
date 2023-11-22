@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,11 +10,12 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
+import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
@@ -22,6 +24,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
@@ -82,13 +85,14 @@ class CommentVM @Inject constructor(
     ) {
         val list = getCombinedList()
         if (viewState.comment.value.toString() == "" && list.isEmpty()) {
-            alert("Please add comment or files")
+            alert(context.getString(R.string.please_add_comment_or_files))
         } else {
             GlobalScope.launch {
                 var eventData: EventV2Response.Data? = null
                 var isSuccess = false
 
                 if (list.isNotEmpty()) {
+                    loading(true)
                     val attachmentUriList = list.map {
                         it.file
                     }
@@ -121,23 +125,37 @@ class CommentVM @Inject constructor(
                         metadata = metadataString2
                     )
 
-                    loading(true)
-                    when (val response = dashboardRepository.uploadEventWithFilesV2(
-                        event = TaskDetailEvents.Comment.eventValue,
-                        taskId = taskId ?: "",
-                        hasFiles = true,
-                        eventWithFileUploadV2Request = request
-                    )) {
-                        is ApiResponse.Success -> {
-                            val commentData = response.data.data
-                            isSuccess = true
-                            eventData = commentData
-                        }
+                    eventData = null
 
-                        is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
-                        }
+                    eventWithFileUploadV2RequestData = request
+                    val serviceIntent = Intent(context, CreateNewTaskService::class.java)
+                    serviceIntent.putExtra("ServiceRequest", "commentRequest")
+                    serviceIntent.putExtra("taskId", taskId)
+                    serviceIntent.putExtra("event", TaskDetailEvents.Comment.eventValue)
+                    context.startService(serviceIntent)
+
+                    loading(false, "")
+                    launch(Dispatcher.Main) {
+                        onBack.invoke(eventData)
                     }
+
+
+//                    when (val response = dashboardRepository.uploadEventWithFilesV2(
+//                        event = TaskDetailEvents.Comment.eventValue,
+//                        taskId = taskId ?: "",
+//                        hasFiles = true,
+//                        eventWithFileUploadV2Request = request
+//                    )) {
+//                        is ApiResponse.Success -> {
+//                            val commentData = response.data.data
+//                            isSuccess = true
+//                            eventData = commentData
+//                        }
+//
+//                        is ApiResponse.Error -> {
+//                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+//                        }
+//                    }
 
                 } else {        //if list is empty, moving to else part
                     val request = EventCommentOnlyUploadV2Request(
@@ -158,7 +176,9 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
                 }
@@ -169,7 +189,7 @@ class CommentVM @Inject constructor(
                     if (isSuccess) {
                         onBack(eventData)
                     }
-                },10)
+                }, 10)
 
             }
         }
@@ -224,6 +244,22 @@ class CommentVM @Inject constructor(
                     )
 
                     loading(true)
+
+
+//                    eventData=null
+//                    eventWithFileUploadV2RequestData = request
+//                    val serviceIntent = Intent(context, CreateNewTaskService::class.java)
+//                    serviceIntent.putExtra("ServiceRequest", "doneRequest")
+//                    serviceIntent.putExtra("taskId", taskId)
+//                    serviceIntent.putExtra("event", TaskDetailEvents.DoneTask.eventValue)
+//                    context.startService(serviceIntent)
+//
+//                    loading(false, "")
+//                    launch(Dispatcher.Main) {
+//                        onBack.invoke(eventData)
+//                    }
+
+
                     when (val response = dashboardRepository.uploadEventWithFilesV2(
                         event = TaskDetailEvents.DoneTask.eventValue,
                         taskId = taskId ?: "",
@@ -237,7 +273,9 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
 
@@ -260,7 +298,9 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
                 }
@@ -302,4 +342,7 @@ class CommentVM @Inject constructor(
         return combinedList
     }
 
+    companion object {
+        var eventWithFileUploadV2RequestData: EventWithFileUploadV2Request? = null
+    }
 }
