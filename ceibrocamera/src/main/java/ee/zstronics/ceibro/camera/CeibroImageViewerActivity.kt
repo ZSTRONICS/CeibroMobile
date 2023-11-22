@@ -13,6 +13,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -63,15 +64,17 @@ class CeibroImageViewerActivity : BaseActivity() {
                 println(e.toString())
             }
             if (newImagesAdded) {
-                val newItemPosition = oldListIndexesSize + 1
+                val newItemPosition = 0
                 binding.fullSizeImagesVP.setCurrentItem(newItemPosition, true)
                 binding.smallFooterImagesRV.smoothScrollToPosition(newItemPosition)
                 smallImageAdapter.setSelectedItem(newItemPosition)
                 newImagesAdded = false
             }
-            if (!imagesOnceSet) {
-                setUserCommentLogic(0)
-                imagesOnceSet = true
+            if (it.isNotEmpty()) {
+                if (!imagesOnceSet) {
+                    setUserCommentLogic(0)
+                    imagesOnceSet = true
+                }
             }
         }
         binding.fullSizeImagesVP.adapter = fullImageAdapter
@@ -156,13 +159,26 @@ class CeibroImageViewerActivity : BaseActivity() {
                 )
             ) {
                 pickFiles { listOfPickedImages ->
+                    val newList: java.util.ArrayList<PickedImages> = arrayListOf()
                     val oldImages = listOfImages.value
+
+                    oldImages?.map {oldImage ->
+                        val foundImage = listOfPickedImages.find { it.fileName == oldImage.fileName }
+                        if (foundImage != null) {
+                            val index = listOfPickedImages.indexOf(foundImage)
+                            listOfPickedImages.removeAt(index)
+                            cancelAndMakeToast(this, "Removed duplicate images", Toast.LENGTH_SHORT)
+                        }
+                    }
+
                     if (listOfPickedImages.size > 0) {
                         oldListIndexesSize = oldImages?.size?.minus(1) ?: 0
                         newImagesAdded = true
+                        newList.addAll(listOfPickedImages)
                     }
-                    oldImages?.addAll(listOfPickedImages)
-                    listOfImages.postValue(oldImages)
+                    oldImages?.let { newList.addAll(it) }
+
+                    listOfImages.postValue(newList)
                 }
             }
         }
@@ -316,6 +332,7 @@ class CeibroImageViewerActivity : BaseActivity() {
     private val ceibroImagesPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
+                val newList: java.util.ArrayList<PickedImages> = arrayListOf()
                 val listOfPickedImages =
                     result.data?.extras?.getParcelableArrayList<PickedImages>("images")
                         ?: arrayListOf()
@@ -323,9 +340,11 @@ class CeibroImageViewerActivity : BaseActivity() {
                 if (listOfPickedImages.size > 0) {
                     oldListIndexesSize = oldImages?.size?.minus(1) ?: 0
                     newImagesAdded = true
+                    newList.addAll(listOfPickedImages)
                 }
-                oldImages?.addAll(listOfPickedImages)
-                listOfImages.postValue(oldImages)
+                oldImages?.let { newList.addAll(it) }
+
+                listOfImages.postValue(newList)
             }
         }
 

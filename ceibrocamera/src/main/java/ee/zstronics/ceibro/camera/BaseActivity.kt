@@ -1,11 +1,14 @@
 package ee.zstronics.ceibro.camera
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
@@ -64,23 +67,44 @@ open class BaseActivity : AppCompatActivity() {
                     for (i in 0 until clipData.itemCount) {
                         val fileUri = clipData.getItemAt(i).uri
                         // Add the URI to the list
-                        val newUri = createFileUriFromContentUri(fileUri)
+                        val fileName = getFileNameFromUri(this, fileUri)
+                        val newUri = createFileUriFromContentUri(fileUri, fileName)
                         pickedImages.add(getPickedImage(newUri))
                     }
                     onPickAttachmentsRef.invoke(pickedImages)
                 } else {
                     val fileUri = data.data
-                    val newUri = fileUri?.let { createFileUriFromContentUri(it) }
+                    val fileName = fileUri?.let { getFileNameFromUri(this, it) }
+                    val newUri = fileUri?.let { createFileUriFromContentUri(it, fileName) }
                     pickedImages.add(getPickedImage(newUri))
                     onPickAttachmentsRef.invoke(pickedImages)
                 }
             }
         }
     }
+
+    @SuppressLint("Range")
+    fun getFileNameFromUri(context: Context, uri: Uri): String? {
+        var fileName: String? = null
+        val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val displayName =
+                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                fileName = displayName
+            }
+        }
+        return fileName
+    }
+
     //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
-    private fun createFileUriFromContentUri(contentUri: Uri): Uri? {
+    private fun createFileUriFromContentUri(contentUri: Uri, fileName: String?): Uri? {
         val outputPath = getExternalFilesDir(null)?.absolutePath
-        val filename = System.currentTimeMillis().toString() + ".jpg"
+        val filename = if (fileName.isNullOrEmpty()) {
+            System.currentTimeMillis().toString() + ".jpg"
+        } else {
+            fileName
+        }
 
         try {
             val input = contentResolver.openInputStream(contentUri)

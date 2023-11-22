@@ -107,13 +107,26 @@ class CeibroCameraActivity : BaseActivity() {
                 )
             ) {
                 pickFiles { listOfPickedImages ->
+                    val newList: java.util.ArrayList<PickedImages> = arrayListOf()
                     if (sourceName == CeibroImageViewerActivity::class.java.name) {
                         val ceibroImagesIntent =
                             Intent()
                         val newBundle = Bundle()
-                        oldImages.addAll(listOfPickedImages)
+                        println("oldImages.size11= ${oldImages}")
+                        println("oldImages.size22= ${listOfPickedImages}")
+                        oldImages.map {oldImage ->
+                            val foundImage = listOfPickedImages.find { it.fileName == oldImage.fileName }
+                            if (foundImage != null) {
+                                val index = listOfPickedImages.indexOf(foundImage)
+                                listOfPickedImages.removeAt(index)
+                                cancelAndMakeToast(this, "Removed duplicate images as received", Toast.LENGTH_SHORT)
+                            }
+                        }
+                        newList.addAll(listOfPickedImages)
+                        newList.addAll(oldImages)
+//                        listOfPickedImages.addAll(oldImages)
 
-                        newBundle.putParcelableArrayList("images", oldImages)
+                        newBundle.putParcelableArrayList("images", newList)
                         ceibroImagesIntent.putExtras(newBundle)
                         setResult(RESULT_OK, ceibroImagesIntent)
                         finish()
@@ -121,9 +134,20 @@ class CeibroCameraActivity : BaseActivity() {
                         val ceibroCamera =
                             Intent(applicationContext, CeibroImageViewerActivity::class.java)
                         val bundle = Bundle()
-                        oldImages.addAll(listOfPickedImages)
+                        println("oldImages.size1= ${oldImages}")
+                        println("oldImages.size2= ${listOfPickedImages}")
+                        oldImages.map {oldImage ->
+                            val foundImage = listOfPickedImages.find { it.fileName == oldImage.fileName }
+                            if (foundImage != null) {
+                                val index = listOfPickedImages.indexOf(foundImage)
+                                listOfPickedImages.removeAt(index)
+                                cancelAndMakeToast(this, "Removed duplicate images as received", Toast.LENGTH_SHORT)
+                            }
+                        }
+                        newList.addAll(listOfPickedImages)
+                        newList.addAll(oldImages)
 
-                        bundle.putParcelableArrayList("images", oldImages)
+                        bundle.putParcelableArrayList("images", newList)
                         ceibroCamera.putExtras(bundle)
                         ceibroImageViewerLauncher.launch(ceibroCamera)
                     }
@@ -173,16 +197,18 @@ class CeibroCameraActivity : BaseActivity() {
     private val cameraPreviewLauncherNoFinish =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
+                val newList: ArrayList<PickedImages> = arrayListOf()
                 val listOfPickedImages =
                     result.data?.extras?.getParcelableArrayList<PickedImages>("images")
                 val ceibroCamera =
                     Intent(applicationContext, CeibroImageViewerActivity::class.java)
                 val bundle = Bundle()
                 if (listOfPickedImages != null) {
-                    oldImages.addAll(listOfPickedImages)
+                    newList.addAll(listOfPickedImages)
                 }
+                newList.addAll(oldImages)
 
-                bundle.putParcelableArrayList("images", oldImages)
+                bundle.putParcelableArrayList("images", newList)
                 ceibroCamera.putExtras(bundle)
                 ceibroImageViewerLauncher.launch(ceibroCamera)
             }

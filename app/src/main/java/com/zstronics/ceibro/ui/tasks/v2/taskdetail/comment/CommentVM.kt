@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -175,7 +176,9 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
                 }
@@ -270,7 +273,9 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
 
@@ -293,7 +298,9 @@ class CommentVM @Inject constructor(
                         }
 
                         is ApiResponse.Error -> {
-                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
+                            }
                         }
                     }
                 }

@@ -518,9 +518,9 @@ class DashboardVM @Inject constructor(
                 alert("Socket: ${socketData.eventType}")
             }
             println("Heartbeat SocketEvent: ${socketData.eventType}")
-//            if (socketData.eventType.equals("TASK_SEEN", true) || socketData.eventType.equals(SocketHandler.TaskEvent.TASK_CREATED.name, true)) {
-//                println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
-//            }
+            if (socketData.eventType.equals("TASK_SEEN", true)) {
+                println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
+            }
 
             pushToQueue(socketData, arguments);
         }
