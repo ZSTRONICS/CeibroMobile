@@ -631,12 +631,18 @@ class CreateNewTaskService : Service() {
                                 if (errorMessage.contains(
                                         "No internet",
                                         true
+                                    ) || errorMessage.contains(
+                                        "connection abort",
+                                        true
                                     ) || networkConnectivityObserver.isNetworkAvailable().not()
                                 ) {
+                                    println("draft tasks error1: $errorMessage")
                                     draftTasksFailed++
                                     val updatedRecords = records - newTaskRequest
                                     processNextRecord(updatedRecords, sessionManager)
                                 } else {
+
+                                    println("draft tasks error2: $errorMessage")
                                     draftTasksFailed++
                                     draftNewTaskV2DaoInternal.updateUnSyncedRecords(
                                         taskId = newTaskRequest.taskId,
