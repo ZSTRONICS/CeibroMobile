@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentActivity
@@ -39,7 +38,6 @@ import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
-import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.UpdateRequiredEvents
@@ -52,7 +50,6 @@ import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import com.zstronics.ceibro.utils.FileUtils
-import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -360,6 +357,187 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         return true
     }
 
+    private suspend fun updateAllTasksListForComment(
+        taskDao: TaskV2Dao,
+        eventData: EventV2Response.Data
+    ): Boolean {
+        GlobalScope.launch {
+            if (!eventData.oldTaskData.hiddenState.equals(TaskStatus.CANCELED.name.lowercase(), true)) {
+
+                if (eventData.newTaskData.isAssignedToMe) {
+                    if (eventData.oldTaskData.userSubState.equals(TaskStatus.NEW.name, true)) {
+                        val toMeNewTask =
+                            taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                        CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+
+                    } else if (eventData.oldTaskData.userSubState.equals(
+                            TaskStatus.ONGOING.name,
+                            true
+                        )
+                    ) {
+                        val toMeOngoingTask =
+                            taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+
+                    } else {
+                        val toMeDoneTask =
+                            taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                        CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                    }
+                }
+
+                if (eventData.newTaskData.isCreator) {
+                    if (eventData.oldTaskData.creatorState.equals(TaskStatus.UNREAD.name, true)) {
+                        val fromMeUnreadTask =
+                            taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+
+                    } else if (eventData.oldTaskData.creatorState.equals(
+                            TaskStatus.ONGOING.name,
+                            true
+                        )
+                    ) {
+                        val fromMeOngoingTask =
+                            taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+
+                    } else {
+                        val fromMeDoneTask =
+                            taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                        CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+                    }
+                }
+
+                if (!eventData.oldTaskData.hiddenState.equals("NA", true)) {
+                    if (eventData.oldTaskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
+                        val hiddenOngoingTask =
+                            taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                        CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+
+                    } else {
+                        val hiddenDoneTask =
+                            taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                        CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                    }
+                }
+            } else {
+                val hiddenCanceledTask =
+                    taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+                CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+            }
+
+        }.join()
+        return true
+    }
+
+
+    private suspend fun updateAllTasksListForTaskSeen(
+        taskDao: TaskV2Dao,
+        taskSeen: TaskSeenResponse.TaskSeen
+    ): Boolean {
+        GlobalScope.launch {
+            if (!taskSeen.oldTaskData.hiddenState.equals(TaskStatus.CANCELED.name.lowercase(), true)) {
+                if (taskSeen.isAssignedToMe) {
+                    if (taskSeen.stateChanged) {
+                        val toMeNewTask =
+                            taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                        val toMeOngoingTask =
+                            taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+
+                        CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                    } else {
+                        if (taskSeen.oldTaskData.userSubState.equals(TaskStatus.NEW.name, true)) {
+                            val toMeNewTask =
+                                taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
+                                    .toMutableList()
+                            CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+
+                        } else if (taskSeen.oldTaskData.userSubState.equals(
+                                TaskStatus.ONGOING.name,
+                                true
+                            )
+                        ) {
+                            val toMeOngoingTask =
+                                taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                    .toMutableList()
+                            CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                        } else {
+                            val toMeDoneTask =
+                                taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase())
+                                    .toMutableList()
+                            CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                        }
+                    }
+                }
+
+                if (taskSeen.isCreator) {
+                    if (taskSeen.creatorStateChanged) {
+                        val fromMeUnreadTask =
+                            taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
+                                .toMutableList()
+                        val fromMeOngoingTask =
+                            taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                    } else {
+                        if (taskSeen.oldTaskData.creatorState.equals(
+                                TaskStatus.UNREAD.name,
+                                true
+                            )
+                        ) {
+                            val fromMeUnreadTask =
+                                taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
+                                    .toMutableList()
+                            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+
+                        } else if (taskSeen.oldTaskData.creatorState.equals(
+                                TaskStatus.ONGOING.name,
+                                true
+                            )
+                        ) {
+                            val fromMeOngoingTask =
+                                taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                    .toMutableList()
+                            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+
+                        } else {
+                            val fromMeDoneTask =
+                                taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase())
+                                    .toMutableList()
+                            CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+                        }
+                    }
+
+                }
+
+                if (!taskSeen.oldTaskData.hiddenState.equals("NA", true)) {
+                    if (taskSeen.oldTaskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
+                        val hiddenOngoingTask =
+                            taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                        CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+
+                    } else {
+                        val hiddenDoneTask =
+                            taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                        CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                    }
+                }
+            } else {
+                val hiddenCanceledTask =
+                    taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+                CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+            }
+
+        }.join()
+        return true
+    }
+
 
     fun addCreatedProjectInLocal(
         project: CeibroProjectV2, projectDao: ProjectsV2Dao
@@ -624,6 +802,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             )
             if (!exist) {
                 var updatedTask: CeibroTaskV2? = null
+//                println("Heartbeat SocketEvent TASK_SEEN started ${System.currentTimeMillis()}")
                 sessionManager.saveUpdatedAtTimeStamp(taskSeen.taskUpdatedAt)
                 GlobalScope.launch {
                     val task = taskDao.getTaskByID(taskSeen.taskId)
@@ -676,7 +855,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         }
                     }
                     updatedTask = task
-                    updateAllTasksLists(taskDao)
+//                    println("Heartbeat SocketEvent TASK_SEEN DB update started3 ${System.currentTimeMillis()}")
+                    updateAllTasksListForTaskSeen(taskDao, taskSeen)
+//                    println("Heartbeat SocketEvent TASK_SEEN DB update ended3 ${System.currentTimeMillis()}")
 
                 }.join()
                 EventBus.getDefault()
@@ -687,6 +868,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     SocketHandler.TaskEvent.TASK_SEEN.name,
                     taskSeen.taskId
                 )
+//                println("Heartbeat SocketEvent TASK_SEEN ended ${System.currentTimeMillis()}")
             }
 
         }
@@ -720,6 +902,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     invitedMembers = eventData.invitedMembers,
                     eventNumber = eventData.eventNumber
                 )
+//                println("Heartbeat SocketEvent NEW_TASK_COMMENT started ${System.currentTimeMillis()}")
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
                     val task = taskDao.getTaskByID(eventData.taskId)
@@ -764,7 +947,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         }
                     }
 
-                    updateAllTasksLists(taskDao)
+//                    println("Heartbeat SocketEvent NEW_TASK_COMMENT DB operation started ${System.currentTimeMillis()}")
+                    updateAllTasksListForComment(taskDao, eventData)
+//                    println("Heartbeat SocketEvent NEW_TASK_COMMENT DB operation ended ${System.currentTimeMillis()}")
 
                 }.join()
                 val handler = Handler(Looper.getMainLooper())
@@ -777,6 +962,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     SocketHandler.TaskEvent.NEW_TASK_COMMENT.name,
                     eventData.id
                 )
+//                println("Heartbeat SocketEvent NEW_TASK_COMMENT ended ${System.currentTimeMillis()}")
             }
         }
     }

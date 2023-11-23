@@ -103,10 +103,10 @@ class DashboardVM @Inject constructor(
     private fun processQueue() {
         if (DataQueue.isEmpty() || isProcessing) {
         } else {
-            println("Calling => EXECUTING FUNCTION ${DataQueue[0].first.eventType}")
-            isProcessing = true;
-            val data = DataQueue[0];
-            processScoketData(data.first, data.second);
+            println("Heartbeat SocketEvent Calling => EXECUTING FUNCTION ${DataQueue[0].first.eventType}")
+            isProcessing = true
+            val data = DataQueue[0]
+            processScoketData(data.first, data.second)
         }
     }
 
