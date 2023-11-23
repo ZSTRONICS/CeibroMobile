@@ -30,7 +30,10 @@ data class NewTaskV2Entity(
     /// RoomDB specific rows
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "task_id") @Transient val taskId: Int = 0,
-    @ColumnInfo(name = "files_data") @Transient var filesData: List<LocalFilesToStore>? = null
+    @ColumnInfo(name = "files_data") @Transient var filesData: List<LocalFilesToStore>? = null,
+    @ColumnInfo(name = "isNewTaskCreationFailed") @Transient var isNewTaskCreationFailed: Boolean = false,
+    @ColumnInfo(name = "isDraftTaskCreationFailed") @Transient var isDraftTaskCreationFailed: Boolean = false,
+    @ColumnInfo(name = "taskCreationFailedError") @Transient var taskCreationFailedError: String = ""
 ) {
     @Keep
     data class AssignedToStateNewEntity(

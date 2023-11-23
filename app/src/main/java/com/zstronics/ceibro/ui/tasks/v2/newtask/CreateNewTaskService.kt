@@ -30,11 +30,13 @@ import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.dashboard.TaskEventsList
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
@@ -47,13 +49,16 @@ import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreateNewTaskService : Service() {
+
     private var taskCounter = 0
     private var draftTasksFailed = 0
 
@@ -78,10 +83,13 @@ class CreateNewTaskService : Service() {
     lateinit var dashboardRepository: DashboardRepository
 
     @Inject
-    lateinit var draftNewTaskV2Internal: DraftNewTaskV2Dao
+    lateinit var draftNewTaskV2DaoInternal: DraftNewTaskV2Dao
 
     @Inject
     lateinit var taskDaoInternal: TaskV2Dao
+
+    @Inject
+    lateinit var networkConnectivityObserver: NetworkConnectivityObserver
 
     override fun onCreate() {
         super.onCreate()
@@ -141,7 +149,8 @@ class CreateNewTaskService : Service() {
             "draftUploadRequest" -> {
 
                 GlobalScope.launch {
-                    val unSyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
+                    val unSyncedRecords =
+                        draftNewTaskV2DaoInternal.getUnSyncedRecords() ?: emptyList()
 
                     if (unSyncedRecords.isNotEmpty()) {
                         startForeground(
@@ -218,18 +227,6 @@ class CreateNewTaskService : Service() {
         }
     }
 
-//    private fun newTaskV2WithFiles(
-//        newTask: NewTaskV2Entity,
-//        list: ArrayList<PickedImages>?,
-//        context: Context,
-//        sessionManager: SessionManager?
-//    ) {
-//        GlobalScope.launch {
-//            sessionManager?.let {
-//                createTaskWithFiles(newTask, list, sessionManager, context)
-//            }
-//        }
-//    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -426,49 +423,80 @@ class CreateNewTaskService : Service() {
     }
 
 
+    private suspend fun saveFailedTaskInDraft(
+        newTaskRequest: NewTaskV2Entity,
+        list: ArrayList<PickedImages>,
+        errorMessage: String
+    ) {
+        val localFilesData = list.map {
+            LocalFilesToStore(
+                fileUri = it.fileUri.toString(),
+                comment = it.comment,
+                fileName = it.fileName,
+                fileSizeReadAble = it.fileSizeReadAble,
+                editingApplied = it.editingApplied,
+                attachmentType = it.attachmentType
+            )
+        }
+        newTaskRequest.apply {
+            this.filesData = localFilesData
+            this.isNewTaskCreationFailed = true
+            this.taskCreationFailedError = errorMessage
+        }
+        // Use the IO dispatcher for database operations
+        withContext(Dispatchers.IO) {
+            // Insert or replace the data into the database
+            draftNewTaskV2DaoInternal.upsert(newTaskRequest)
+
+            HiltBaseViewModel.syncDraftRecords.postValue(draftNewTaskV2DaoInternal.getCountOfDraftRecords())
+        }
+    }
+
     private suspend fun createTaskWithFiles(
         newTask: NewTaskV2Entity,
-        list: ArrayList<PickedImages>?,
+        list: ArrayList<PickedImages>,
         sessionManager: SessionManager,
         context: Context
     ) {
 
-        list?.let {
-            taskCounter += 1
-            taskRepository.newTaskV2WithFiles(
-                newTask,
-                it
-            ) { isSuccess, task, errorMessage ->
-                if (isSuccess) {
-                    val room = providesAppDatabase(context)
-                    val taskDao = room.getTaskV2sDao()
-                    this.sessionManager?.let {
-                        updateCreatedTaskInLocal(task, taskDao, sessionManager)
-                    }
-                    hideIndeterminateNotifications(context, createTaskNotificationID)
-                    println("Service Status...:Create task with success")
-                    taskCounter -= 1
-                    if (taskCounter <= 0) {
-                        stopSelf()
-                    }
-                } else {
-                    hideIndeterminateNotifications(context, createTaskNotificationID)
+        taskCounter += 1
+        taskRepository.newTaskV2WithFiles(
+            newTask,
+            list
+        ) { isSuccess, task, errorMessage ->
+            if (isSuccess) {
+                val room = providesAppDatabase(context)
+                val taskDao = room.getTaskV2sDao()
+                this.sessionManager?.let {
+                    updateCreatedTaskInLocal(task, taskDao, sessionManager)
+                }
+                hideIndeterminateNotifications(context, createTaskNotificationID)
+                println("Service Status...:Create task with success")
+                taskCounter -= 1
+                if (taskCounter <= 0) {
+                    stopSelf()
+                }
+            } else {
+                hideIndeterminateNotifications(context, createTaskNotificationID)
 
-                    createSimpleNotification(
-                        context = this,
-                        channelId = CHANNEL_ID,
-                        channelName = CHANNEL_NAME,
-                        notificationTitle = "Task creation un-successful"
-                    )
+                GlobalScope.launch {
+                    saveFailedTaskInDraft(newTask, list, errorMessage)
+                }
+                createSimpleNotification(
+                    context = this,
+                    channelId = CHANNEL_ID,
+                    channelName = CHANNEL_NAME,
+                    notificationTitle = "Task creation un-successful"
+                )
 
-                    println("Service Status...:Create task with failure -> $errorMessage")
-                    taskCounter -= 1
-                    if (taskCounter <= 0) {
-                        stopSelf()
-                    }
+                println("Service Status...:Create task with failure -> $errorMessage")
+                taskCounter -= 1
+                if (taskCounter <= 0) {
+                    stopSelf()
                 }
             }
         }
+
 
     }
 
@@ -528,6 +556,154 @@ class CreateNewTaskService : Service() {
             }
         }
     }
+
+    private fun syncDraftTask(sessionManager: SessionManager, context: Context) {
+
+        GlobalScope.launch {
+            Log.d("SyncDraftTask", "syncDraftTask")
+            val allUnSyncedRecords = draftNewTaskV2DaoInternal.getCountOfDraftRecords()
+            val unSyncedRecords = draftNewTaskV2DaoInternal.getUnFailedDraftRecords() ?: emptyList()
+            draftTasksFailed = allUnSyncedRecords - unSyncedRecords.size
+            taskCounter++
+
+
+            // Define a recursive function to process records one by one
+            suspend fun processNextRecord(
+                records: List<NewTaskV2Entity>,
+                sessionManager: SessionManager
+            ) {
+                if (records.isEmpty()) {
+                    println("Service Status .. drafts task failed $draftTasksFailed")
+                    hideIndeterminateNotifications(context, draftCreateTaskNotificationID)
+                    taskCounter--
+                    if (taskCounter <= 0) {
+                        stopSelf()
+                    }
+                    return
+                }
+                val newTaskRequest = records.first()
+                var list: ArrayList<PickedImages> = arrayListOf()
+
+                newTaskRequest.filesData?.let { filesData ->
+                    list = filesData.map {
+                        PickedImages(
+                            fileUri = Uri.parse(it.fileUri),
+                            comment = it.comment,
+                            fileName = it.fileName,
+                            fileSizeReadAble = it.fileSizeReadAble,
+                            editingApplied = it.editingApplied,
+                            attachmentType = it.attachmentType,
+                            file = FileUtils.getFile(context, Uri.parse(it.fileUri))
+                        )
+                    } as ArrayList<PickedImages>
+                }
+
+                if (list.isNotEmpty()) {
+
+                    taskRepository.newTaskV2WithFiles(
+                        newTaskRequest, list
+                    ) { isSuccess, task, errorMessage ->
+                        if (isSuccess) {
+
+                            GlobalScope.launch {
+                                draftNewTaskV2DaoInternal.deleteTaskById(newTaskRequest.taskId)
+
+                                updateCreatedTaskInLocal(
+                                    task, taskDaoInternal,
+                                    sessionManager
+                                )
+                                // Remove the processed record from the list
+                                val updatedRecords = records - newTaskRequest
+
+                                draftRecordCallBack?.invoke(updatedRecords.size)
+                                _draftRecordObserver.postValue(updatedRecords.size)
+                                // Recursively process the next record
+
+                                HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size + draftTasksFailed)
+                                processNextRecord(updatedRecords, sessionManager)
+
+                            }
+                        } else {
+                            GlobalScope.launch {
+                                if (errorMessage.contains(
+                                        "No internet",
+                                        true
+                                    ) || networkConnectivityObserver.isNetworkAvailable().not()
+                                ) {
+                                    draftTasksFailed++
+                                    val updatedRecords = records - newTaskRequest
+                                    processNextRecord(updatedRecords, sessionManager)
+                                } else {
+                                    draftTasksFailed++
+                                    draftNewTaskV2DaoInternal.updateUnSyncedRecords(
+                                        taskId = newTaskRequest.taskId,
+                                        isDraftTaskCreationFailed = true,
+                                        isNewTaskCreationFailed = true,
+                                        taskCreationFailedError = errorMessage
+                                    )
+                                    val updatedRecords = records - newTaskRequest
+                                    processNextRecord(updatedRecords, sessionManager)
+                                }
+                            }
+                        }
+
+                    }
+                } else {
+
+                    taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
+                        if (isSuccess) {
+                            GlobalScope.launch {
+                                draftNewTaskV2DaoInternal.deleteTaskById(newTaskRequest.taskId)
+
+                                updateCreatedTaskInLocal(
+                                    task, taskDaoInternal,
+                                    sessionManager
+                                )
+                                // Remove the processed record from the list
+                                val updatedRecords = records - newTaskRequest
+                                draftRecordCallBack?.invoke(updatedRecords.size)
+                                _draftRecordObserver.postValue(updatedRecords.size)
+
+                                // Recursively process the next record
+                                HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size + draftTasksFailed)
+                                processNextRecord(updatedRecords, sessionManager)
+
+
+                            }
+                        } else {
+                            GlobalScope.launch {
+                                if (errorMessage.contains(
+                                        "No internet",
+                                        true
+                                    ) || networkConnectivityObserver.isNetworkAvailable().not()
+                                ) {
+                                    draftTasksFailed++
+                                    val updatedRecords = records - newTaskRequest
+                                    processNextRecord(updatedRecords, sessionManager)
+                                } else {
+                                    draftTasksFailed++
+                                    draftNewTaskV2DaoInternal.updateUnSyncedRecords(
+                                        taskId = newTaskRequest.taskId,
+                                        isDraftTaskCreationFailed = true,
+                                        isNewTaskCreationFailed = true,
+                                        taskCreationFailedError = errorMessage
+                                    )
+                                    val updatedRecords = records - newTaskRequest
+                                    processNextRecord(updatedRecords, sessionManager)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Start the recursive processing
+            GlobalScope.launch {
+                processNextRecord(unSyncedRecords, sessionManager)
+            }
+        }
+    }
+
 
     private suspend fun updateTaskCommentInLocal(
         eventData: EventV2Response.Data?,
@@ -653,7 +829,6 @@ class CreateNewTaskService : Service() {
         return true
     }
 
-
     private suspend fun updateTaskDoneInLocal(
         eventData: EventV2Response.Data?, taskDao: TaskV2Dao, sessionManager: SessionManager
     ): CeibroTaskV2? {
@@ -726,132 +901,6 @@ class CreateNewTaskService : Service() {
             }
         }
         return updatedTask
-    }
-
-    private fun syncDraftTask(sessionManager: SessionManager, context: Context) {
-
-        GlobalScope.launch {
-
-
-            Log.d("SyncDraftTask", "syncDraftTask")
-            val unSyncedRecords = draftNewTaskV2Internal.getUnSyncedRecords() ?: emptyList()
-            taskCounter += unSyncedRecords.size
-
-
-            // Define a recursive function to process records one by one
-            suspend fun processNextRecord(
-                records: List<NewTaskV2Entity>,
-                sessionManager: SessionManager
-            ) {
-                if (records.isEmpty()) {
-                    println("Service Status .. drafts task failed $draftTasksFailed")
-                    hideIndeterminateNotifications(context, draftCreateTaskNotificationID)
-                    if (taskCounter <= 0) {
-                        stopSelf()
-                    }
-//                    stopSelf()
-                    // All records have been processed, exit the recursion
-                    return
-                }
-                val newTaskRequest = records.first()
-                var list: ArrayList<PickedImages> = arrayListOf()
-
-                newTaskRequest.filesData?.let { filesData ->
-                    list = filesData.map {
-                        PickedImages(
-                            fileUri = Uri.parse(it.fileUri),
-                            comment = it.comment,
-                            fileName = it.fileName,
-                            fileSizeReadAble = it.fileSizeReadAble,
-                            editingApplied = it.editingApplied,
-                            attachmentType = it.attachmentType,
-                            file = FileUtils.getFile(context, Uri.parse(it.fileUri))
-                        )
-                    } as ArrayList<PickedImages>
-                }
-
-                if (list.isNotEmpty()) {
-
-                    taskRepository.newTaskV2WithFiles(
-                        newTaskRequest, list
-                    ) { isSuccess, task, errorMessage ->
-                        if (isSuccess) {
-
-                            GlobalScope.launch {
-                                taskCounter -= 1
-                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
-
-                                updateCreatedTaskInLocal(
-                                    task, taskDaoInternal,
-                                    sessionManager
-                                )
-                                // Remove the processed record from the list
-                                val updatedRecords = records - newTaskRequest
-
-                                draftRecordCallBack?.invoke(updatedRecords.size)
-                                _draftRecordObserver.postValue(updatedRecords.size)
-                                // Recursively process the next record
-
-
-                                HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size)
-                                //  sharedViewModel.syncedRecord.postValue(updatedRecords.size)
-                                processNextRecord(updatedRecords, sessionManager)
-
-
-                            }
-                        } else {
-                            GlobalScope.launch {
-                                taskCounter -= 1
-                                draftTasksFailed++
-                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
-                                val updatedRecords = records - newTaskRequest
-                                processNextRecord(updatedRecords, sessionManager)
-                            }
-                        }
-
-                    }
-                } else {
-
-                    taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
-                        if (isSuccess) {
-                            GlobalScope.launch {
-                                taskCounter -= 1
-                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
-
-                                updateCreatedTaskInLocal(
-                                    task, taskDaoInternal,
-                                    sessionManager
-                                )
-                                // Remove the processed record from the list
-                                val updatedRecords = records - newTaskRequest
-                                draftRecordCallBack?.invoke(updatedRecords.size)
-                                _draftRecordObserver.postValue(updatedRecords.size)
-
-                                // Recursively process the next record
-                                HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size)
-                                processNextRecord(updatedRecords, sessionManager)
-
-
-                            }
-                        } else {
-                            GlobalScope.launch {
-                                taskCounter -= 1
-                                draftTasksFailed++
-                                draftNewTaskV2Internal.deleteTaskById(newTaskRequest.taskId)
-                                val updatedRecords = records - newTaskRequest
-                                processNextRecord(updatedRecords, sessionManager)
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            // Start the recursive processing
-            GlobalScope.launch {
-                processNextRecord(unSyncedRecords, sessionManager)
-            }
-        }
     }
 
     override fun onDestroy() {

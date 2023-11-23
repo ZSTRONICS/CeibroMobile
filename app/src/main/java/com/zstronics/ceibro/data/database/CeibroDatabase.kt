@@ -42,7 +42,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 79,
+    version = 80,
     exportSchema = false
 )
 @TypeConverters(

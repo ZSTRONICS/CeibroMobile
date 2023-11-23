@@ -49,11 +49,11 @@ import com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
-import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
@@ -261,7 +261,9 @@ class DashboardFragment :
                         topicName,
                         contactList,
                         item.dueDate,
-                        item.filesData?.size ?: 0
+                        item.filesData?.size ?: 0,
+                        item.isDraftTaskCreationFailed,
+                        item.taskCreationFailedError
                     )
                 )
             }
@@ -277,6 +279,8 @@ class DashboardFragment :
 
     @MainThread
     private fun updateDraftRecord(unSyncedTasks: Int) {
+
+
         if (unSyncedTasks > 0) {
             mViewDataBinding.sync.visibility = View.VISIBLE
             mViewDataBinding.draftTaskCounter.visibility = View.VISIBLE
