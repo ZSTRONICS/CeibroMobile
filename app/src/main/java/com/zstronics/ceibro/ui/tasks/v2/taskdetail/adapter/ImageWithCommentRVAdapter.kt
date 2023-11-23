@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
+import android.os.Handler
+import android.os.Looper
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +60,10 @@ class ImageWithCommentRVAdapter @Inject constructor() :
                 openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
 
+            if (item.hasComment) {
+                binding.imgComment.text = item.comment
+            }
+
             val context = binding.smallImgView.context
 
             val circularProgressDrawable = CircularProgressDrawable(context)
@@ -77,9 +83,34 @@ class ImageWithCommentRVAdapter @Inject constructor() :
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.smallImgView)
 
-            if (item.hasComment) {
-                binding.imgComment.movementMethod = ScrollingMovementMethod()
-                binding.imgComment.text = item.comment
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (binding.imgComment.lineCount > 5) {
+                    binding.viewMoreLessLayout.visibility = View.VISIBLE
+                    binding.viewMoreBtn.visibility = View.VISIBLE
+                    binding.viewLessBtn.visibility = View.GONE
+                } else {
+                    binding.viewMoreLessLayout.visibility = View.GONE
+                    binding.viewMoreBtn.visibility = View.GONE
+                    binding.viewLessBtn.visibility = View.GONE
+                }
+            }, 10)
+
+            binding.viewMoreBtn.setOnClickListener {
+                if (binding.imgComment.maxLines == 5) {
+                    binding.imgComment.maxLines = binding.imgComment.lineCount
+                    binding.viewMoreLessLayout.visibility = View.VISIBLE
+                    binding.viewMoreBtn.visibility = View.GONE
+                    binding.viewLessBtn.visibility = View.VISIBLE
+                }
+            }
+
+            binding.viewLessBtn.setOnClickListener {
+                if (binding.imgComment.maxLines > 5) {
+                    binding.imgComment.maxLines = 5
+                    binding.viewMoreLessLayout.visibility = View.VISIBLE
+                    binding.viewMoreBtn.visibility = View.VISIBLE
+                    binding.viewLessBtn.visibility = View.GONE
+                }
             }
 
         }

@@ -51,6 +51,12 @@ interface TaskV2Dao {
     @Query("SELECT * FROM tasks_v2_basic")
     suspend fun getAllTasks(): List<CeibroTaskV2>?
 
+    @Query("UPDATE tasks_v2_basic SET isBeingDoneByAPI = :isBeingDone WHERE id = :taskId")
+    suspend fun updateTaskIsBeingDoneByAPI(taskId: String, isBeingDone: Boolean)
+
+    @Query("SELECT isBeingDoneByAPI FROM tasks_v2_basic WHERE id = :taskId")
+    suspend fun getTaskIsBeingDoneByAPI(taskId: String): Boolean
+
 
 
 

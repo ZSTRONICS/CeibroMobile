@@ -49,11 +49,11 @@ import com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
-import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
@@ -261,7 +261,9 @@ class DashboardFragment :
                         topicName,
                         contactList,
                         item.dueDate,
-                        item.filesData?.size ?: 0
+                        item.filesData?.size ?: 0,
+                        item.isDraftTaskCreationFailed,
+                        item.taskCreationFailedError
                     )
                 )
             }
@@ -277,6 +279,8 @@ class DashboardFragment :
 
     @MainThread
     private fun updateDraftRecord(unSyncedTasks: Int) {
+
+
         if (unSyncedTasks > 0) {
             mViewDataBinding.sync.visibility = View.VISIBLE
             mViewDataBinding.draftTaskCounter.visibility = View.VISIBLE
@@ -399,22 +403,22 @@ class DashboardFragment :
         }
 
 
-        SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
-            val navHostFragment =
-                activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
-            val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
-            when {
-                args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
-                    println("RECEIVE_MESSAGE")
-                }
-            }
-
-            if (fragment is DashboardFragment) {
-//                val gson = Gson()
-//                val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
-//                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
-            }
-        }
+//        SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+//            val navHostFragment =
+//                activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
+//            val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+//            when {
+//                args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
+//                    println("RECEIVE_MESSAGE")
+//                }
+//            }
+//
+//            if (fragment is DashboardFragment) {
+////                val gson = Gson()
+////                val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
+////                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
+//            }
+//        }
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
 
         val socketObserversSet = viewModel.sessionManager.getBooleanValue(KEY_SOCKET_OBSERVER_SET)
@@ -541,6 +545,7 @@ class DashboardFragment :
         socketEventsInitiated = true
 
         SocketHandler.emitIsSyncRequired()
+        startPeriodicContactSyncWorker(requireContext())
     }
 
     private fun handleFileUploaderSocketEvents() {

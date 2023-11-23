@@ -4,5 +4,7 @@ data class LocalTaskDetail(
     val topicName: String?,
     val assignee: MutableList<String>?,
     val dueDate: String?,
-    val noOfFiles: Int
+    val noOfFiles: Int,
+    var isDraftTaskCreationFailed: Boolean = false,
+    var taskCreationFailedError: String = ""
 )

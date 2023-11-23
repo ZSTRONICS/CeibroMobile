@@ -103,10 +103,10 @@ class DashboardVM @Inject constructor(
     private fun processQueue() {
         if (DataQueue.isEmpty() || isProcessing) {
         } else {
-            println("Calling => EXECUTING FUNCTION ${DataQueue[0].first.eventType}")
-            isProcessing = true;
-            val data = DataQueue[0];
-            processScoketData(data.first, data.second);
+            println("Heartbeat SocketEvent Calling => EXECUTING FUNCTION ${DataQueue[0].first.eventType}")
+            isProcessing = true
+            val data = DataQueue[0]
+            processScoketData(data.first, data.second)
         }
     }
 
@@ -518,8 +518,11 @@ class DashboardVM @Inject constructor(
                 alert("Socket: ${socketData.eventType}")
             }
             println("Heartbeat SocketEvent: ${socketData.eventType}")
-            if (socketData.eventType.equals("TASK_SEEN", true)) {
-                println("Heartbeat SocketEvent DATA_RECEIVED: ${arguments}")
+            if (socketData.eventType.equals(SocketHandler.TaskEvent.TASK_SEEN.name, true)) {
+                println("Heartbeat SocketEvent TASK_SEEN DATA_RECEIVED: ${arguments}")
+            }
+            if (socketData.eventType.equals(SocketHandler.TaskEvent.TASK_CREATED.name, true)) {
+                println("Heartbeat SocketEvent TASK_CREATED DATA: ${arguments}")
             }
 
             pushToQueue(socketData, arguments);

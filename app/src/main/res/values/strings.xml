@@ -404,6 +404,7 @@
     <string name="photo_heading">Photo</string>
     <string name="created_heading">Created</string>
     <string name="canceled">Canceled</string>
+    <string name="failed">Failed</string>
     <string name="topic_required">Topic <font color="#D9000D">*</font></string>
     <string name="project_name_required">Project name <font color="#D9000D">*</font></string>
     <string name="assign_to_required_heading">Assign to <font color="#D9000D">*</font></string>
@@ -575,4 +576,6 @@
     <string name="creating_task_with_files">Creating task with files.</string>
     <string name="please_add_comment_or_files">Please add comment or files</string>
     <string name="commented_successfully">Commented successfully!</string>
+    <string name="view_more">View More</string>
+    <string name="view_less">View Less</string>
 </resources>
