@@ -403,22 +403,22 @@ class DashboardFragment :
         }
 
 
-        SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
-            val navHostFragment =
-                activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
-            val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
-            when {
-                args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
-                    println("RECEIVE_MESSAGE")
-                }
-            }
-
-            if (fragment is DashboardFragment) {
-//                val gson = Gson()
-//                val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
-//                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
-            }
-        }
+//        SocketHandler.getSocket()?.on(SocketHandler.CHAT_EVENT_REP_OVER_SOCKET) { args ->
+//            val navHostFragment =
+//                activity?.supportFragmentManager?.findFragmentById(R.id.nav_host_fragment)
+//            val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+//            when {
+//                args[0].toString().contains(EventType.RECEIVE_MESSAGE.name) -> {
+//                    println("RECEIVE_MESSAGE")
+//                }
+//            }
+//
+//            if (fragment is DashboardFragment) {
+////                val gson = Gson()
+////                val messageType = object : TypeToken<SocketReceiveMessageResponse>() {}.type
+////                val message: SocketReceiveMessageResponse = gson.fromJson(args[0].toString(), messageType)
+//            }
+//        }
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
 
         val socketObserversSet = viewModel.sessionManager.getBooleanValue(KEY_SOCKET_OBSERVER_SET)
@@ -545,6 +545,7 @@ class DashboardFragment :
         socketEventsInitiated = true
 
         SocketHandler.emitIsSyncRequired()
+        startPeriodicContactSyncWorker(requireContext())
     }
 
     private fun handleFileUploaderSocketEvents() {

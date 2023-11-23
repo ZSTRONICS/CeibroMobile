@@ -128,11 +128,10 @@ class CeibroDataLoadingFragment :
     }
 
     private fun navigateToDashboard() {
-        startPeriodicContactSyncWorker(requireContext())
         if (viewModel.taskData != null) {
             val bundle = Bundle()
             bundle.putParcelable("notificationTaskData", viewModel.taskData)
-            launchActivity<NavHostPresenterActivity>(
+            launchActivityWithFinishAffinity<NavHostPresenterActivity>(
                 options = bundle,
                 clearPrevious = true
             ) {
@@ -143,7 +142,7 @@ class CeibroDataLoadingFragment :
                 )
             }
         } else {
-            launchActivity<NavHostPresenterActivity>(
+            launchActivityWithFinishAffinity<NavHostPresenterActivity>(
                 options = Bundle(),
                 clearPrevious = true
             ) {
