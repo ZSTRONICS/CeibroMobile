@@ -46,7 +46,7 @@
 
         </androidx.cardview.widget.CardView>
 
-        <com.zstronics.ceibro.base.ScrollableTextView
+        <TextView
             android:id="@+id/imgComment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -54,7 +54,9 @@
             android:layout_marginEnd="@dimen/_6sdp"
             android:fontFamily="@font/inter_regular"
             android:includeFontPadding="false"
-            android:maxLines="6"
+            android:maxLines="5"
+            android:ellipsize="end"
+            android:theme="@style/SelectableTextTheme"
             android:paddingBottom="1dp"
             android:scrollbarStyle="insideOverlay"
             android:scrollbars="none"
@@ -67,6 +69,59 @@
             app:layout_constraintStart_toEndOf="@+id/mainCard"
             app:layout_constraintTop_toTopOf="@+id/mainCard"
             app:layout_constraintVertical_bias="0.0" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/viewMoreLessLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:theme="@style/NonSelectableTextTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgComment">
+
+            <TextView
+                android:id="@+id/viewMoreBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/_2sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:singleLine="true"
+                android:text="@string/view_more"
+                android:textColor="@color/appBlue"
+                android:textSize="12.5sp"
+                android:visibility="gone"
+                app:drawableEndCompat="@drawable/icon_navigate_down"
+                app:drawableTint="@color/appBlue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/viewLessBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/_2sdp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:singleLine="true"
+                android:text="@string/view_less"
+                android:textColor="@color/appBlue"
+                android:textSize="12.5sp"
+                android:visibility="gone"
+                app:drawableEndCompat="@drawable/icon_navigate_up"
+                app:drawableTint="@color/appBlue"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

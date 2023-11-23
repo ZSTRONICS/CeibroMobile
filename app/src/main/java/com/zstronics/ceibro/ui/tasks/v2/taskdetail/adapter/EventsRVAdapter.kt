@@ -159,7 +159,7 @@ class EventsRVAdapter @Inject constructor() :
                             binding.viewMoreBtn.visibility = View.GONE
                             binding.viewLessBtn.visibility = View.GONE
                         }
-                    }, 7)
+                    }, 10)
 
                 }
 
@@ -203,7 +203,7 @@ class EventsRVAdapter @Inject constructor() :
                             binding.viewMoreBtn.visibility = View.GONE
                             binding.viewLessBtn.visibility = View.GONE
                         }
-                    }, 7)
+                    }, 10)
                 }
 
                 TaskDetailEvents.Comment.eventValue -> {
@@ -237,7 +237,7 @@ class EventsRVAdapter @Inject constructor() :
                                 binding.viewMoreBtn.visibility = View.GONE
                                 binding.viewLessBtn.visibility = View.GONE
                             }
-                        }, 5)
+                        }, 10)
                     }
                 }
 
@@ -318,7 +318,7 @@ class EventsRVAdapter @Inject constructor() :
                             binding.viewMoreBtn.visibility = View.GONE
                             binding.viewLessBtn.visibility = View.GONE
                         }
-                    }, 5)
+                    }, 10)
                 }
             }
 

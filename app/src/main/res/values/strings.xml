@@ -576,4 +576,6 @@
     <string name="creating_task_with_files">Creating task with files.</string>
     <string name="please_add_comment_or_files">Please add comment or files</string>
     <string name="commented_successfully">Commented successfully!</string>
+    <string name="view_more">View More</string>
+    <string name="view_less">View Less</string>
 </resources>

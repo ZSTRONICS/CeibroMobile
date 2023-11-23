@@ -144,18 +144,6 @@ class TaskDetailV2Fragment :
 
 
     @Inject
-    lateinit var onlyImageAdapter: OnlyImageRVAdapter
-
-    @Inject
-    lateinit var imageWithCommentAdapter: ImageWithCommentRVAdapter
-
-    @Inject
-    lateinit var filesAdapter: FilesRVAdapter
-
-    @Inject
-    lateinit var eventsAdapter: EventsRVAdapter
-
-    @Inject
     lateinit var detailAdapter: TaskDetailV2RVAdapter
     private var eventAdapterIsSet = false
 
