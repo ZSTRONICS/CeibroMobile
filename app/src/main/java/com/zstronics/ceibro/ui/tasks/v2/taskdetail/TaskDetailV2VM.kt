@@ -62,6 +62,7 @@ class TaskDetailV2VM @Inject constructor(
     val missingEvents: MutableLiveData<MutableList<Events>> = _missingEvents
 
     var notificationTaskData: MutableLiveData<NotificationTaskData?> = MutableLiveData()
+    var isTaskBeingDone: MutableLiveData<Boolean> = MutableLiveData(false)
 
     var rootState = ""
     var selectedState = ""
@@ -103,6 +104,7 @@ class TaskDetailV2VM @Inject constructor(
                 launch {
                     val task = taskDao.getTaskByID(notificationData.taskId)
                     task?.let { task1 ->
+                        isTaskBeingDone.postValue(task.isBeingDoneByAPI)
                         rootState = TaskRootStateTags.ToMe.tagValue
                         _taskDetail.postValue(task1)
                         originalTask.postValue(task1)
@@ -117,6 +119,7 @@ class TaskDetailV2VM @Inject constructor(
                         // run API call because task not found in DB
                         getTaskById(taskId) { isSuccess, task, events ->
                             if (isSuccess) {
+                                isTaskBeingDone.postValue(false)
                                 _taskDetail.postValue(task)
                                 originalTask.postValue(task)
                                 originalEvents.postValue(events.toMutableList())
@@ -135,6 +138,8 @@ class TaskDetailV2VM @Inject constructor(
             } else {
                 taskData?.let { task ->
                     taskId = task.id
+                    val isTaskBeingDone1 = taskDao.getTaskIsBeingDoneByAPI(task.id)
+                    isTaskBeingDone.postValue(isTaskBeingDone1)
                     _taskDetail.postValue(task)
                     originalTask.postValue(task)
                     if (!events.isNullOrEmpty()) {

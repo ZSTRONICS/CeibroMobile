@@ -530,6 +530,7 @@ class CreateNewTaskService : Service() {
                     } else if (event == "doneTask") {
                         updateTaskDoneInLocal(response.data.data, taskDao, sessionManager)
                         hideIndeterminateNotifications(context, doneNotificationID)
+                        taskDaoInternal.updateTaskIsBeingDoneByAPI(taskId, false)
                     }
 
                     println("Service Status...:Upload comment with success")
@@ -543,9 +544,11 @@ class CreateNewTaskService : Service() {
                     if (event == "comment") {
                         hideIndeterminateNotifications(context, commentNotificationID)
                     } else if (event == "doneTask") {
-
                         hideIndeterminateNotifications(context, doneNotificationID)
+                        taskDaoInternal.updateTaskIsBeingDoneByAPI(taskId, false)
+                        EventBus.getDefault().post(LocalEvents.TaskFailedToDone())
                     }
+
 
                     println("Service Status...:Upload comment with failure -> ${response.error.message}")
                     taskCounter -= 1

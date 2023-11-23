@@ -221,9 +221,10 @@ class CommentFragment :
                 ) {
                     viewModel.doneTask(
                         requireContext()
-                    ) { eventData ->
+                    ) { eventData,isBeingDone ->
                         val bundle = Bundle()
                         bundle.putParcelable("eventData", eventData)
+                        bundle.putBoolean("isBeingDone", isBeingDone)
                         navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
                 }

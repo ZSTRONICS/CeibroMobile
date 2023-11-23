@@ -16,6 +16,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.scrollToBottomWithoutFocusChange
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -41,7 +42,6 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -207,6 +207,20 @@ class TaskDetailV2Fragment :
             }
         }
 
+        viewModel.isTaskBeingDone.observe(viewLifecycleOwner) {
+//            if (notificationData != null) {
+//                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+//            }
+            if (it) {
+                mViewDataBinding.doneBtn.isEnabled = false
+                mViewDataBinding.doneBtn.isClickable = false
+                mViewDataBinding.doneBtn.alpha = 0.6f
+                mViewDataBinding.taskForwardBtn.isEnabled = false
+                mViewDataBinding.taskForwardBtn.isClickable = false
+                mViewDataBinding.taskForwardBtn.alpha = 0.6f
+            }
+        }
+
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
 
             if (taskSeenRequest) {
@@ -234,12 +248,14 @@ class TaskDetailV2Fragment :
                     mViewDataBinding.taskForwardBtn.isClickable = false
                     mViewDataBinding.taskForwardBtn.alpha = 0.6f
                 } else {
-                    mViewDataBinding.doneBtn.isEnabled = true
-                    mViewDataBinding.doneBtn.isClickable = true
-                    mViewDataBinding.doneBtn.alpha = 1f
-                    mViewDataBinding.taskForwardBtn.isEnabled = true
-                    mViewDataBinding.taskForwardBtn.isClickable = true
-                    mViewDataBinding.taskForwardBtn.alpha = 1f
+                    if (viewModel.isTaskBeingDone.value == false) {
+                        mViewDataBinding.doneBtn.isEnabled = true
+                        mViewDataBinding.doneBtn.isClickable = true
+                        mViewDataBinding.doneBtn.alpha = 1f
+                        mViewDataBinding.taskForwardBtn.isEnabled = true
+                        mViewDataBinding.taskForwardBtn.isClickable = true
+                        mViewDataBinding.taskForwardBtn.alpha = 1f
+                    }
                 }
                 if (item.creatorState.equals(
                         TaskStatus.DONE.name,
@@ -714,6 +730,16 @@ class TaskDetailV2Fragment :
 
                 DONE_REQUEST_CODE -> {
                     val eventData = result.data?.getParcelable<EventV2Response.Data>("eventData")
+                    val isBeingDone = result.data?.getBoolean("isBeingDone")
+                    if (isBeingDone == true) {
+                        shortToastNow("Marking task as done...")
+                        mViewDataBinding.doneBtn.isEnabled = false
+                        mViewDataBinding.doneBtn.isClickable = false
+                        mViewDataBinding.doneBtn.alpha = 0.6f
+                        mViewDataBinding.taskForwardBtn.isEnabled = false
+                        mViewDataBinding.taskForwardBtn.isClickable = false
+                        mViewDataBinding.taskForwardBtn.alpha = 0.6f
+                    }
                     if (eventData != null) {
                         val taskEvent = Events(
                             id = eventData.id,
@@ -804,6 +830,16 @@ class TaskDetailV2Fragment :
         event: LocalEvents.RefreshAllEvents?
     ) {
         viewModel.getAllEventsFromLocalEvents()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskFailedToDone(event: LocalEvents.TaskFailedToDone?) {
+        mViewDataBinding.doneBtn.isEnabled = true
+        mViewDataBinding.doneBtn.isClickable = true
+        mViewDataBinding.doneBtn.alpha = 1f
+        mViewDataBinding.taskForwardBtn.isEnabled = true
+        mViewDataBinding.taskForwardBtn.isClickable = true
+        mViewDataBinding.taskForwardBtn.alpha = 1f
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
