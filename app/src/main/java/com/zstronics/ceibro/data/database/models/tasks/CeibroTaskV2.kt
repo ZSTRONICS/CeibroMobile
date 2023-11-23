@@ -3,13 +3,12 @@ package com.zstronics.ceibro.data.database.models.tasks
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.database.TableNamesV2
-import com.zstronics.ceibro.utils.DateUtils
 import kotlinx.parcelize.Parcelize
 
 
@@ -78,7 +77,10 @@ data class CeibroTaskV2(
     @SerializedName("hiddenState")
     var hiddenState: String,
     @SerializedName("eventsCount")
-    var eventsCount: Int
+    var eventsCount: Int,
+
+    //only for room DB Column
+    @ColumnInfo(name = "isBeingDoneByAPI") @Transient var isBeingDoneByAPI: Boolean = false
 ) : Parcelable {
     override fun hashCode(): Int {
         return super.hashCode()
