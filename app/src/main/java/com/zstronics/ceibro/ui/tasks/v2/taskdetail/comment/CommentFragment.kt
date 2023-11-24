@@ -8,11 +8,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
@@ -510,11 +508,14 @@ class CommentFragment :
                         for (i in 0 until clipData.itemCount) {
                             val fileUri = clipData.getItemAt(i).uri
                             val fileName = getFileNameFromUri(requireContext(), fileUri)
-                            val newUri = createFileUriFromContentUri(requireContext(), fileUri, fileName)
+                            var fileExtension = getFileExtension(requireContext(), fileUri)
+                            if (fileExtension.isNullOrEmpty()){
+                                fileExtension="jpg"
+                            }
+                            val newUri = createFileUriFromContentUri(requireContext(), fileUri, fileName,fileExtension!!)
                             val file = FileUtils.getFile(requireContext(), newUri)
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
-
                             val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
                             if (foundImage != null) {
                                 viewModel.launch(Dispatcher.Main) {
@@ -540,7 +541,16 @@ class CommentFragment :
                         val fileUri = data.data
                         fileUri?.let {
                             val fileName = getFileNameFromUri(requireContext(), it)
-                            val newUri = createFileUriFromContentUri(requireContext(), it, fileName)
+                            var fileExtension = getFileExtension(requireContext(), fileUri)
+                            if (fileExtension.isNullOrEmpty()){
+                                fileExtension="jpg"
+                            }
+                            val newUri = createFileUriFromContentUri(
+                                requireContext(),
+                                it,
+                                fileName,
+                                fileExtension!!
+                            )
                             val file = FileUtils.getFile(requireContext(), newUri)
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
@@ -624,7 +634,7 @@ class CommentFragment :
         val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
         val attachmentType = when {
             mimeType == null -> {
-                AttachmentTypes.Doc
+                AttachmentTypes.UnKnown
             }
 
             mimeType == "application/pdf" -> {
