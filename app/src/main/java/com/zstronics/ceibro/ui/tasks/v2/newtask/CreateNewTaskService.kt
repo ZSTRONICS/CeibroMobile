@@ -58,7 +58,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CreateNewTaskService : Service() {
 
-    private var taskCounter = 0
+    private var apiCounter = 0
     private var draftTasksFailed = 0
     private var taskObjectData: NewTaskV2Entity? = null
     private var taskListData: ArrayList<PickedImages>? = null
@@ -170,7 +170,7 @@ class CreateNewTaskService : Service() {
                             this@CreateNewTaskService,
                             draftCreateTaskNotificationID
                         )
-                        stopSelf()
+
                     }
                 }
             }
@@ -375,7 +375,7 @@ class CreateNewTaskService : Service() {
         notificationID: Int
     ): Notification {
         val channel =
-            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
         val notificationManager = context.getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
 
@@ -450,7 +450,7 @@ class CreateNewTaskService : Service() {
         context: Context
     ) {
 
-        taskCounter += 1
+        apiCounter++
         taskRepository.newTaskV2WithFiles(
             newTask,
             list
@@ -463,9 +463,9 @@ class CreateNewTaskService : Service() {
                 }
                 hideIndeterminateNotifications(context, createTaskNotificationID)
                 println("Service Status...:Create task with success")
-                taskCounter -= 1
-                if (taskCounter <= 0) {
-                    stopSelf()
+                apiCounter--
+                if (apiCounter <= 0) {
+                    stopServiceAndClearNotification()
                 }
             } else {
                 hideIndeterminateNotifications(context, createTaskNotificationID)
@@ -481,9 +481,9 @@ class CreateNewTaskService : Service() {
                 )
 
                 println("Service Status...:Create task with failure -> $errorMessage")
-                taskCounter -= 1
-                if (taskCounter <= 0) {
-                    stopSelf()
+                apiCounter--
+                if (apiCounter <= 0) {
+                    stopServiceAndClearNotification()
                 }
             }
         }
@@ -498,7 +498,7 @@ class CreateNewTaskService : Service() {
         context: CreateNewTaskService
     ) {
         GlobalScope.launch {
-            taskCounter += 1
+            apiCounter++
             when (val response = dashboardRepository.uploadEventWithFilesV2(
                 event = event,
                 taskId = taskId,
@@ -511,39 +511,42 @@ class CreateNewTaskService : Service() {
                     val taskDao = room.getTaskV2sDao()
 
                     if (event == "comment") {
-
+                        println("Service Status...:Upload comment with success")
                         updateTaskCommentInLocal(
                             response.data.data, taskDao,
                             sessionManager
                         )
                         hideIndeterminateNotifications(context, commentNotificationID)
                     } else if (event == "doneTask") {
+                        println("Service Status...:Done task with success")
                         updateTaskDoneInLocal(response.data.data, taskDao, sessionManager)
                         hideIndeterminateNotifications(context, doneNotificationID)
                         taskDaoInternal.updateTaskIsBeingDoneByAPI(taskId, false)
                     }
 
-                    println("Service Status...:Upload comment with success")
-                    taskCounter -= 1
-                    if (taskCounter <= 0) {
-                        stopSelf()
+
+                    apiCounter--
+                    if (apiCounter <= 0) {
+                        stopServiceAndClearNotification()
                     }
                 }
 
                 is ApiResponse.Error -> {
                     if (event == "comment") {
+                        println("Service Status...:Upload comment with failure -> ${response.error.message}")
                         hideIndeterminateNotifications(context, commentNotificationID)
                     } else if (event == "doneTask") {
+                        println("Service Status...:Done task with failure -> ${response.error.message}")
                         hideIndeterminateNotifications(context, doneNotificationID)
                         taskDaoInternal.updateTaskIsBeingDoneByAPI(taskId, false)
                         EventBus.getDefault().post(LocalEvents.TaskFailedToDone())
                     }
 
 
-                    println("Service Status...:Upload comment with failure -> ${response.error.message}")
-                    taskCounter -= 1
-                    if (taskCounter <= 0) {
-                        stopSelf()
+
+                    apiCounter--
+                    if (apiCounter <= 0) {
+                        stopServiceAndClearNotification()
                     }
                 }
             }
@@ -557,7 +560,7 @@ class CreateNewTaskService : Service() {
             val allUnSyncedRecords = draftNewTaskV2DaoInternal.getCountOfDraftRecords()
             val unSyncedRecords = draftNewTaskV2DaoInternal.getUnFailedDraftRecords() ?: emptyList()
             draftTasksFailed = allUnSyncedRecords - unSyncedRecords.size
-            taskCounter++
+            apiCounter++
 
 
             // Define a recursive function to process records one by one
@@ -568,9 +571,9 @@ class CreateNewTaskService : Service() {
                 if (records.isEmpty()) {
                     println("Service Status .. drafts task failed $draftTasksFailed")
                     hideIndeterminateNotifications(context, draftCreateTaskNotificationID)
-                    taskCounter--
-                    if (taskCounter <= 0) {
-                        stopSelf()
+                    apiCounter--
+                    if (apiCounter <= 0) {
+                        stopServiceAndClearNotification()
                     }
                     return
                 }
@@ -669,6 +672,9 @@ class CreateNewTaskService : Service() {
                             GlobalScope.launch {
                                 if (errorMessage.contains(
                                         "No internet",
+                                        true
+                                    ) || errorMessage.contains(
+                                        "connection abort",
                                         true
                                     ) || networkConnectivityObserver.isNetworkAvailable().not()
                                 ) {
@@ -904,4 +910,26 @@ class CreateNewTaskService : Service() {
         super.onDestroy()
         println("Service Status...:On Destroyed called...")
     }
+
+    private fun stopServiceAndClearNotification() {
+        hideIndeterminateNotifications(
+            this@CreateNewTaskService,
+            createTaskNotificationID
+        )
+        hideIndeterminateNotifications(
+            this@CreateNewTaskService,
+            doneNotificationID
+        )
+        hideIndeterminateNotifications(
+            this@CreateNewTaskService,
+            commentNotificationID
+        )
+        hideIndeterminateNotifications(
+            this@CreateNewTaskService,
+            draftCreateTaskNotificationID
+        )
+        stopSelf()
+    }
+
 }
+

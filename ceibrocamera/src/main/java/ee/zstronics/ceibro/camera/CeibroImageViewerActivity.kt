@@ -158,7 +158,7 @@ class CeibroImageViewerActivity : BaseActivity() {
                     Manifest.permission.CAMERA,
                 )
             ) {
-                pickFiles { listOfPickedImages ->
+                pickImageFiles { listOfPickedImages ->
                     val newList: java.util.ArrayList<PickedImages> = arrayListOf()
                     val oldImages = listOfImages.value
 

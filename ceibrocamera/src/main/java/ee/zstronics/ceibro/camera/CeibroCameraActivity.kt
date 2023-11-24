@@ -4,14 +4,10 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.util.Size
-import android.view.Surface
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -106,14 +102,12 @@ class CeibroCameraActivity : BaseActivity() {
                     Manifest.permission.CAMERA,
                 )
             ) {
-                pickFiles { listOfPickedImages ->
+                pickImageFiles { listOfPickedImages ->
                     val newList: java.util.ArrayList<PickedImages> = arrayListOf()
                     if (sourceName == CeibroImageViewerActivity::class.java.name) {
                         val ceibroImagesIntent =
                             Intent()
                         val newBundle = Bundle()
-                        println("oldImages.size11= ${oldImages}")
-                        println("oldImages.size22= ${listOfPickedImages}")
                         oldImages.map {oldImage ->
                             val foundImage = listOfPickedImages.find { it.fileName == oldImage.fileName }
                             if (foundImage != null) {
@@ -134,8 +128,6 @@ class CeibroCameraActivity : BaseActivity() {
                         val ceibroCamera =
                             Intent(applicationContext, CeibroImageViewerActivity::class.java)
                         val bundle = Bundle()
-                        println("oldImages.size1= ${oldImages}")
-                        println("oldImages.size2= ${listOfPickedImages}")
                         oldImages.map {oldImage ->
                             val foundImage = listOfPickedImages.find { it.fileName == oldImage.fileName }
                             if (foundImage != null) {

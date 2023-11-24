@@ -2,13 +2,16 @@ package ee.zstronics.ceibro.camera
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
@@ -36,7 +39,7 @@ open class BaseActivity : AppCompatActivity() {
             }
     }
 
-    fun pickFiles(
+    fun pickImageFiles(
         allowMultiple: Boolean = true,
         onPickAttachments: (list: ArrayList<PickedImages>) -> Unit
     ) {
@@ -68,19 +71,54 @@ open class BaseActivity : AppCompatActivity() {
                         val fileUri = clipData.getItemAt(i).uri
                         // Add the URI to the list
                         val fileName = getFileNameFromUri(this, fileUri)
-                        val newUri = createFileUriFromContentUri(fileUri, fileName)
+                        var fileExtension = getFileExtension(this, fileUri)
+                        if (fileExtension.isNullOrEmpty()){
+                            fileExtension="jpg"
+                        }
+                        val newUri = createFileUriFromContentUri(fileUri, fileName, fileExtension)
                         pickedImages.add(getPickedImage(newUri))
                     }
                     onPickAttachmentsRef.invoke(pickedImages)
                 } else {
                     val fileUri = data.data
                     val fileName = fileUri?.let { getFileNameFromUri(this, it) }
-                    val newUri = fileUri?.let { createFileUriFromContentUri(it, fileName) }
+                    var fileExtension = fileUri?.let { getFileExtension(this, it) }
+                    if (fileExtension.isNullOrEmpty()){
+                        fileExtension="jpg"
+                    }
+                    val newUri = fileUri?.let { createFileUriFromContentUri(it, fileName, fileExtension) }
                     pickedImages.add(getPickedImage(newUri))
                     onPickAttachmentsRef.invoke(pickedImages)
                 }
             }
         }
+    }
+
+
+    private fun getFileExtension(context: Context, fileUri: Uri): String? {
+        val contentResolver: ContentResolver = context.contentResolver
+
+        // Try to get the file extension using the ContentResolver
+        val type = contentResolver.getType(fileUri)
+
+        if (type != null) {
+            // Extract file extension from the MIME type
+            return MimeTypeMap.getSingleton().getExtensionFromMimeType(type)
+        } else {
+            // If ContentResolver couldn't determine the type, try using MimeTypeMap with URI path
+            val pathSegments = fileUri.pathSegments
+            val lastPathSegment = pathSegments.lastOrNull()
+
+            if (lastPathSegment != null) {
+                val dotIndex = lastPathSegment.lastIndexOf('.')
+                if (dotIndex != -1 && dotIndex < lastPathSegment.length - 1) {
+                    return lastPathSegment.substring(dotIndex + 1)
+                }
+            }
+        }
+
+        // Unable to determine file extension
+        return null
     }
 
     @SuppressLint("Range")
@@ -98,12 +136,20 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
-    private fun createFileUriFromContentUri(contentUri: Uri, fileName: String?): Uri? {
+    private fun createFileUriFromContentUri(
+        contentUri: Uri,
+        fileName: String?,
+        fileExtension: String
+    ): Uri? {
         val outputPath = getExternalFilesDir(null)?.absolutePath
         val filename = if (fileName.isNullOrEmpty()) {
             System.currentTimeMillis().toString() + ".jpg"
         } else {
-            fileName
+            if (!ensureImageExtension(fileName).isNullOrEmpty()){
+                fileName
+            } else {
+                "$fileName.$fileExtension"
+            }
         }
 
         try {
@@ -124,6 +170,21 @@ open class BaseActivity : AppCompatActivity() {
         return contentUri
     }
 
+    private fun ensureImageExtension(fileName: String): String? {
+        // List of common image extensions
+        val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "bmp", "webp", "heic")
+
+        // Extract the extension from the file name
+        val lastDotIndex = fileName.lastIndexOf('.')
+        if (lastDotIndex != -1 && lastDotIndex < fileName.length - 1) {
+            val extension = fileName.substring(lastDotIndex + 1).toLowerCase()
+            if (extension in imageExtensions) {
+                // The file name already has a valid image extension
+                return extension
+            }
+        }
+        return null
+    }
 
     fun getPickedImage(fileUri: Uri?): PickedImages {
         val mimeType = FileUtils.getMimeType(applicationContext, fileUri)
