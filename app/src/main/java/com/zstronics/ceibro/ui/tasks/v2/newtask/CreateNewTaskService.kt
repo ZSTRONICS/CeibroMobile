@@ -12,7 +12,6 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -61,20 +60,15 @@ class CreateNewTaskService : Service() {
 
     private var taskCounter = 0
     private var draftTasksFailed = 0
-
     private var taskObjectData: NewTaskV2Entity? = null
     private var taskListData: ArrayList<PickedImages>? = null
-    var sessionManager: SessionManager? = null
+    private var sessionManager: SessionManager? = null
     private var mContext: Context? = null
     private val errorTaskNotificationID = 111
     private val createTaskNotificationID = 1
     private val doneNotificationID = 2
     private val commentNotificationID = 3
     private val draftCreateTaskNotificationID = 4
-
-    private var draftRecordCallBack: ((Int) -> Unit)? = null
-
-    val _draftRecordObserver = MutableLiveData<Int>()
 
     @Inject
     lateinit var taskRepository: TaskRepository
@@ -92,6 +86,7 @@ class CreateNewTaskService : Service() {
     lateinit var networkConnectivityObserver: NetworkConnectivityObserver
 
     override fun onCreate() {
+
         super.onCreate()
         println("Service Status .. onCreate state...")
         taskObjectData = taskRequest
@@ -101,15 +96,15 @@ class CreateNewTaskService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
         sessionManager = getSessionManager(SharedPreferenceManager(this))
         val request = intent?.getStringExtra("ServiceRequest")
-
         val taskId = intent?.getStringExtra("taskId")
         val event = intent?.getStringExtra("event")
 
-
         when (request) {
             "commentRequest" -> {
+
                 taskId?.let { taskId ->
                     event?.let { event ->
                         sessionManager?.let { sessionManager ->
@@ -134,6 +129,7 @@ class CreateNewTaskService : Service() {
             }
 
             "taskRequest" -> {
+
                 startForeground(
                     createTaskNotificationID, createIndeterminateNotificationForFileUpload(
                         context = this,
@@ -343,10 +339,8 @@ class CreateNewTaskService : Service() {
                 }
 
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
-
             }
         }
-
     }
 
     private fun providesAppDatabase(context: Context): CeibroDatabase {
@@ -365,12 +359,10 @@ class CreateNewTaskService : Service() {
         notificationManager.cancel(notificationID) // Remove the notification with ID
     }
 
-
     object NotificationUtils {
         const val CHANNEL_ID = "file_upload_channel"
         const val CHANNEL_NAME = "Create Progress Channel"
     }
-
 
     private fun createIndeterminateNotificationForFileUpload(
         context: CreateNewTaskService,
@@ -421,7 +413,6 @@ class CreateNewTaskService : Service() {
         notificationManager.notify(errorTaskNotificationID, builder.build())
         return builder.build()
     }
-
 
     private suspend fun saveFailedTaskInDraft(
         newTaskRequest: NewTaskV2Entity,
@@ -496,7 +487,6 @@ class CreateNewTaskService : Service() {
                 }
             }
         }
-
 
     }
 
@@ -618,9 +608,6 @@ class CreateNewTaskService : Service() {
                                 // Remove the processed record from the list
                                 val updatedRecords = records - newTaskRequest
 
-                                draftRecordCallBack?.invoke(updatedRecords.size)
-                                _draftRecordObserver.postValue(updatedRecords.size)
-                                // Recursively process the next record
 
                                 HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size + draftTasksFailed)
                                 processNextRecord(updatedRecords, sessionManager)
@@ -670,8 +657,7 @@ class CreateNewTaskService : Service() {
                                 )
                                 // Remove the processed record from the list
                                 val updatedRecords = records - newTaskRequest
-                                draftRecordCallBack?.invoke(updatedRecords.size)
-                                _draftRecordObserver.postValue(updatedRecords.size)
+
 
                                 // Recursively process the next record
                                 HiltBaseViewModel.syncDraftRecords.postValue(updatedRecords.size + draftTasksFailed)
@@ -788,7 +774,7 @@ class CreateNewTaskService : Service() {
 
                 }.join()
                 val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed(Runnable {
+                handler.postDelayed({
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 }, 50)
@@ -803,7 +789,9 @@ class CreateNewTaskService : Service() {
 
     private suspend fun updateAllTasksLists(taskDao: TaskV2Dao): Boolean {
         GlobalScope.launch {
-            val toMeNewTask = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+
+            val toMeNewTask =
+                taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
             val toMeOngoingTask =
                 taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
             val toMeDoneTask =
@@ -900,7 +888,7 @@ class CreateNewTaskService : Service() {
                 }.join()
 
                 val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed(Runnable {
+                handler.postDelayed({
                     EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 }, 50)

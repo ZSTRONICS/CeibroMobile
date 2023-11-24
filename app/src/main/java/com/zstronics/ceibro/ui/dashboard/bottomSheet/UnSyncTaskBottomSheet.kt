@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.dashboard.BottomSheet
+package com.zstronics.ceibro.ui.dashboard.bottomSheet
 
 
 import android.app.Dialog
