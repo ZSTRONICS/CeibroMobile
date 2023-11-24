@@ -90,8 +90,7 @@ class UnSyncTasksAdapter @Inject constructor() :
                 }
 
             } else {        //else case will run when the cancelled task is shown for assignee, not a creator
-                binding.taskCardParentLayout.background =
-                    context.resources.getDrawable(R.drawable.task_card_cancel_outline_grey)
+                binding.taskCardParentLayout.background = null
                 binding.taskFailedText.visibility = View.GONE
                 val greyColor = ContextCompat.getColor(context, R.color.appGrey2)
                 ViewCompat.setBackgroundTintList(
