@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,6 +25,7 @@ import android.transition.Fade
 import android.transition.Slide
 import android.view.Menu
 import android.view.MenuInflater
+import android.webkit.MimeTypeMap
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
@@ -415,7 +417,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 //            requestManageAllFilesAccessPermission()
 //            return
 //        } else {
-//            pickFiles()
+//            pickImageFiles()
 //        }
 //    } else {
 //        if (ContextCompat.checkSelfPermission(
@@ -423,7 +425,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 //                Manifest.permission.READ_EXTERNAL_STORAGE
 //            ) == PackageManager.PERMISSION_GRANTED
 //        ) {
-//            pickFiles()
+//            pickImageFiles()
 //            return
 //        } else {
 //            requestPermissions(
@@ -432,6 +434,32 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 //            )
 //            return
 //        }
+
+    fun getFileExtension(context: Context, fileUri: Uri): String? {
+        val contentResolver: ContentResolver = context.contentResolver
+
+        // Try to get the file extension using the ContentResolver
+        val type = contentResolver.getType(fileUri)
+
+        if (type != null) {
+            // Extract file extension from the MIME type
+            return MimeTypeMap.getSingleton().getExtensionFromMimeType(type)
+        } else {
+            // If ContentResolver couldn't determine the type, try using MimeTypeMap with URI path
+            val pathSegments = fileUri.pathSegments
+            val lastPathSegment = pathSegments.lastOrNull()
+
+            if (lastPathSegment != null) {
+                val dotIndex = lastPathSegment.lastIndexOf('.')
+                if (dotIndex != -1 && dotIndex < lastPathSegment.length - 1) {
+                    return lastPathSegment.substring(dotIndex + 1)
+                }
+            }
+        }
+
+        // Unable to determine file extension
+        return null
+    }
 
     @SuppressLint("Range")
     fun getFileNameFromUri(context: Context, uri: Uri): String? {
@@ -447,14 +475,38 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         return fileName
     }
 
+    private fun ensureImageExtension(fileName: String): String? {
+        // List of common image extensions
+        val imageExtensions = listOf("jpg", "jpeg", "png", "gif", "bmp", "webp", "heic")
+
+        // Extract the extension from the file name
+        val lastDotIndex = fileName.lastIndexOf('.')
+        if (lastDotIndex != -1 && lastDotIndex < fileName.length - 1) {
+            val extension = fileName.substring(lastDotIndex + 1).toLowerCase()
+            if (extension in imageExtensions) {
+                // The file name already has a valid image extension
+                return extension
+            }
+        }
+        return null
+    }
 
     //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
-    fun createFileUriFromContentUri(context: Context, contentUri: Uri, fileName: String?): Uri? {
+    fun createFileUriFromContentUri(
+        context: Context,
+        contentUri: Uri,
+        fileName: String?,
+        fileExtension: String
+    ): Uri? {
         val outputPath = context.getExternalFilesDir(null)?.absolutePath
         val filename = if (fileName.isNullOrEmpty()) {
             System.currentTimeMillis().toString() + ".jpg"
         } else {
-            fileName
+            if (!ensureImageExtension(fileName).isNullOrEmpty()){
+                fileName
+            } else {
+                "$fileName.$fileExtension"
+            }
         }
 
         try {

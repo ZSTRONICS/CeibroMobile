@@ -455,7 +455,16 @@ class NewTaskV2Fragment :
                         for (i in 0 until clipData.itemCount) {
                             val fileUri = clipData.getItemAt(i).uri
                             val fileName = getFileNameFromUri(requireContext(), fileUri)
-                            val newUri = createFileUriFromContentUri(requireContext(), fileUri, fileName)
+                            var fileExtension = getFileExtension(requireContext(), fileUri)
+                            if (fileExtension.isNullOrEmpty()){
+                                fileExtension="jpg"
+                            }
+                            val newUri = createFileUriFromContentUri(
+                                requireContext(),
+                                fileUri,
+                                fileName,
+                                fileExtension!!
+                            )
                             val file = FileUtils.getFile(requireContext(), newUri)
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
@@ -485,7 +494,16 @@ class NewTaskV2Fragment :
                         val fileUri = data.data
                         fileUri?.let {
                             val fileName = getFileNameFromUri(requireContext(), it)
-                            val newUri = createFileUriFromContentUri(requireContext(), it, fileName)
+                            var fileExtension = getFileExtension(requireContext(), fileUri)
+                            if (fileExtension.isNullOrEmpty()){
+                                fileExtension="jpg"
+                            }
+                            val newUri = createFileUriFromContentUri(
+                                requireContext(),
+                                it,
+                                fileName,
+                                fileExtension!!
+                            )
                             val file = FileUtils.getFile(requireContext(), newUri)
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)

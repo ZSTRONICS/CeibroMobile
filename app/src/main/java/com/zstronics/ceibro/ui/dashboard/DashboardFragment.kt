@@ -41,8 +41,7 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadedEventResponse
 import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
-import com.zstronics.ceibro.ui.dashboard.BottomSheet.UnSyncTaskBottomSheet
-import com.zstronics.ceibro.ui.enums.EventType
+import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment
 import com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment
@@ -53,7 +52,6 @@ import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
