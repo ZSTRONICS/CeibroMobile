@@ -195,7 +195,7 @@ class NewTaskV2VM @Inject constructor(
                     loading(true)
                     taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
                         if (isSuccess) {
-                            updateCreatedTaskInLocal(task, taskDao, user?.id, sessionManager)
+                            updateCreatedTaskInLocal(task, taskDao, sessionManager)
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
                                 onBack.invoke("")

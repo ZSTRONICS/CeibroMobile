@@ -362,7 +362,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         eventData: EventV2Response.Data
     ): Boolean {
         GlobalScope.launch {
-            if (!eventData.oldTaskData.hiddenState.equals(TaskStatus.CANCELED.name.lowercase(), true)) {
+            if (!eventData.oldTaskData.hiddenState.equals(
+                    TaskStatus.CANCELED.name.lowercase(),
+                    true
+                )
+            ) {
 
                 if (eventData.newTaskData.isAssignedToMe) {
                     if (eventData.oldTaskData.userSubState.equals(TaskStatus.NEW.name, true)) {
@@ -414,7 +418,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 if (!eventData.oldTaskData.hiddenState.equals("NA", true)) {
                     if (eventData.oldTaskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
                         val hiddenOngoingTask =
-                            taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                            taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
                         CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
 
                     } else {
@@ -439,7 +444,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         taskSeen: TaskSeenResponse.TaskSeen
     ): Boolean {
         GlobalScope.launch {
-            if (!taskSeen.oldTaskData.hiddenState.equals(TaskStatus.CANCELED.name.lowercase(), true)) {
+            if (!taskSeen.oldTaskData.hiddenState.equals(
+                    TaskStatus.CANCELED.name.lowercase(),
+                    true
+                )
+            ) {
                 if (taskSeen.isAssignedToMe) {
                     if (taskSeen.stateChanged) {
                         val toMeNewTask =
@@ -463,8 +472,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             )
                         ) {
                             val toMeNewTask =
-                            taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
-                                .toMutableList()
+                                taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
+                                    .toMutableList()
                             CookiesManager.toMeNewTasks.postValue(toMeNewTask)
 
                             val toMeOngoingTask =
@@ -539,7 +548,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 if (!taskSeen.oldTaskData.hiddenState.equals("NA", true)) {
                     if (taskSeen.oldTaskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
                         val hiddenOngoingTask =
-                            taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                            taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
                         CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
 
                     } else {
@@ -580,7 +590,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     fun updateCreatedTaskInLocal(
-        task: CeibroTaskV2?, taskDao: TaskV2Dao, userId: String?, sessionManager: SessionManager
+        task: CeibroTaskV2?, taskDao: TaskV2Dao, sessionManager: SessionManager
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -588,6 +598,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
         task?.let { newTask ->
             GlobalScope.launch {
+
+                val dbTask = taskDao.getTaskByID(newTask.id)
+                if (dbTask != null) {
+                    return@launch
+                }
+
                 sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                 taskDao.insertTaskData(newTask)
 
