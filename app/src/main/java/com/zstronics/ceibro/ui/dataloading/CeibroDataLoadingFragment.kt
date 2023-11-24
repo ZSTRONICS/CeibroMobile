@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.launchActivity
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
@@ -128,30 +127,34 @@ class CeibroDataLoadingFragment :
     }
 
     private fun navigateToDashboard() {
-        if (viewModel.taskData != null) {
-            val bundle = Bundle()
-            bundle.putParcelable("notificationTaskData", viewModel.taskData)
-            launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                options = bundle,
-                clearPrevious = true
-            ) {
-                putExtra(NAVIGATION_Graph_ID, viewModel.navigationGraphId)
-                putExtra(
-                    NAVIGATION_Graph_START_DESTINATION_ID,
-                    viewModel.startDestinationId
-                )
+        try {
+            if (viewModel.taskData != null) {
+                val bundle = Bundle()
+                bundle.putParcelable("notificationTaskData", viewModel.taskData)
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = bundle,
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, viewModel.navigationGraphId)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        viewModel.startDestinationId
+                    )
+                }
+            } else {
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = Bundle(),
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        R.id.homeFragment
+                    )
+                }
             }
-        } else {
-            launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                options = Bundle(),
-                clearPrevious = true
-            ) {
-                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-                putExtra(
-                    NAVIGATION_Graph_START_DESTINATION_ID,
-                    R.id.homeFragment
-                )
-            }
+        } catch (e: Exception) {
+            println(e.toString())
         }
     }
 

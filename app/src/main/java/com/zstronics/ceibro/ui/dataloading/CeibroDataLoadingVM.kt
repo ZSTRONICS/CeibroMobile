@@ -91,6 +91,27 @@ class CeibroDataLoadingVM @Inject constructor(
     var apiSucceedCount = 0f
     suspend fun loadAppData(context: Context, callBack: () -> Unit) {
         Log.d("Data loading stared at ", DateUtils.getCurrentTimeStamp())
+
+        launch {
+            when (val response = remoteTask.getAllTopics()) {
+                is ApiResponse.Success -> {
+                    topicsV2Dao.insertTopicData(
+                        TopicsV2DatabaseEntity(
+                            0,
+                            topicsData = response.data
+                        )
+                    )
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+            }
+        }
+
         GlobalScope.launch {
             val lastUpdatedAt = sessionManager.getUpdatedAtTimeStamp()
             when (val response = remoteTask.getAllTaskWithEventsSeparately(lastUpdatedAt)) {
@@ -134,6 +155,7 @@ class CeibroDataLoadingVM @Inject constructor(
                 }
 
                 is ApiResponse.Error -> {
+                    println("DataLoading-Tasks Data error ${response.error.message}")
                     val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
                     val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
                     val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
@@ -160,17 +182,12 @@ class CeibroDataLoadingVM @Inject constructor(
                     callBack.invoke()
                 }
             }
-        }.join()
+        }
 
         launch {
-            when (val response = remoteTask.getAllTopics()) {
+            when (val response = dashboardRepository.getAllConnectionsV2()) {
                 is ApiResponse.Success -> {
-                    topicsV2Dao.insertTopicData(
-                        TopicsV2DatabaseEntity(
-                            0,
-                            topicsData = response.data
-                        )
-                    )
+                    connectionsV2Dao.insertAll(response.data.contacts)
                     apiSucceedCount++
                     callBack.invoke()
                 }
@@ -187,20 +204,6 @@ class CeibroDataLoadingVM @Inject constructor(
                     val data = response.data.allProjects
                     projectDao.insertMultipleProject(data)
 
-                    apiSucceedCount++
-                    callBack.invoke()
-                }
-
-                is ApiResponse.Error -> {
-                    apiSucceedCount++
-                    callBack.invoke()
-                }
-            }
-        }
-        launch {
-            when (val response = dashboardRepository.getAllConnectionsV2()) {
-                is ApiResponse.Success -> {
-                    connectionsV2Dao.insertAll(response.data.contacts)
                     apiSucceedCount++
                     callBack.invoke()
                 }
