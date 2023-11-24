@@ -130,7 +130,6 @@ class DashboardVM @Inject constructor(
                     updateCreatedTaskInLocal(
                         taskCreatedData.data,
                         taskDao,
-                        userId,
                         sessionManager
                     )
 
