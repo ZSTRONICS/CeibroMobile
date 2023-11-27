@@ -256,9 +256,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     if (!response.data.allTasks.isNullOrEmpty()) {
                         taskDaoInternal.insertMultipleTasks(response.data.allTasks)
                     }
-                    if (!response.data.allEvents.isNullOrEmpty()) {
-                        taskDaoInternal.insertMultipleEvents(response.data.allEvents)
+                    try {
+                        if (!response.data.allEvents.isNullOrEmpty()) {
+                            taskDaoInternal.insertMultipleEvents(response.data.allEvents)
+                        }
+                    } catch (e: Exception) {
+                        println("SyncException: ${e.toString()}")
                     }
+
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         GlobalScope.launch {
@@ -566,6 +571,26 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
         }.join()
         return true
+    }
+
+
+    private fun getTaskById(
+        taskId: String,
+        callBack: (isSuccess: Boolean, task: CeibroTaskV2?, taskEvents: List<Events>) -> Unit
+    ) {
+        launch {
+            when (val response = remoteTaskInternal.getTaskById(taskId)) {
+                is ApiResponse.Success -> {
+                    taskDaoInternal.insertTaskData(response.data.task)
+                    taskDaoInternal.insertMultipleEvents(response.data.taskEvents)
+                    callBack.invoke(true, response.data.task, response.data.taskEvents)
+                }
+
+                is ApiResponse.Error -> {
+                    callBack.invoke(false, null, emptyList())
+                }
+            }
+        }
     }
 
 
@@ -967,26 +992,56 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.eventsCount = task.eventsCount + 1
 
                         taskDao.updateTask(task)
-                    }
-                    taskDao.insertEventData(taskEvent)
+                        taskDao.insertEventData(taskEvent)
 
-                    if (eventData.newTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
-                        sharedViewModel?.isHiddenUnread?.value = true
-                        sessionManager.saveHiddenUnread(true)
-                    } else {
-                        if (eventData.newTaskData.isAssignedToMe) {
-                            sharedViewModel?.isToMeUnread?.value = true
-                            sessionManager.saveToMeUnread(true)
+                        if (eventData.newTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                            sharedViewModel?.isHiddenUnread?.value = true
+                            sessionManager.saveHiddenUnread(true)
+                        } else {
+                            if (eventData.newTaskData.isAssignedToMe) {
+                                sharedViewModel?.isToMeUnread?.value = true
+                                sessionManager.saveToMeUnread(true)
+                            }
+                            if (eventData.newTaskData.isCreator) {
+                                sharedViewModel?.isFromMeUnread?.value = true
+                                sessionManager.saveFromMeUnread(true)
+                            }
                         }
-                        if (eventData.newTaskData.isCreator) {
-                            sharedViewModel?.isFromMeUnread?.value = true
-                            sessionManager.saveFromMeUnread(true)
-                        }
-                    }
 
 //                    println("Heartbeat SocketEvent NEW_TASK_COMMENT DB operation started ${System.currentTimeMillis()}")
-                    updateAllTasksListForComment(taskDao, eventData)
+                        updateAllTasksListForComment(taskDao, eventData)
 //                    println("Heartbeat SocketEvent NEW_TASK_COMMENT DB operation ended ${System.currentTimeMillis()}")
+
+                    } else {
+                        getTaskById(eventData.taskId) { isSuccess, task, events ->
+                            if (isSuccess) {
+                                launch {
+                                    taskDao.insertEventData(taskEvent)
+
+                                    if (eventData.newTaskData.creatorState.equals(
+                                            TaskStatus.CANCELED.name,
+                                            true
+                                        )
+                                    ) {
+                                        sharedViewModel?.isHiddenUnread?.value = true
+                                        sessionManager.saveHiddenUnread(true)
+                                    } else {
+                                        if (eventData.newTaskData.isAssignedToMe) {
+                                            sharedViewModel?.isToMeUnread?.value = true
+                                            sessionManager.saveToMeUnread(true)
+                                        }
+                                        if (eventData.newTaskData.isCreator) {
+                                            sharedViewModel?.isFromMeUnread?.value = true
+                                            sessionManager.saveFromMeUnread(true)
+                                        }
+                                    }
+
+                                    updateAllTasksListForComment(taskDao, eventData)
+                                }
+                            } else { }
+                        }
+                    }
+
 
                 }.join()
                 val handler = Handler(Looper.getMainLooper())

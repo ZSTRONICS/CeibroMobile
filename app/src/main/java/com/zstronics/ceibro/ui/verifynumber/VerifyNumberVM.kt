@@ -27,6 +27,9 @@ class VerifyNumberVM @Inject constructor(
             previousFragment.value = bundle?.getString("fromFragment")
             phoneNumber.value = bundle?.getString("phoneNumber")
             phoneCode.value = bundle?.getString("phoneCode")
+            clientId.value = bundle?.getString("clientId")
+            authToken.value = bundle?.getString("authToken")
+            authTokenExpiry.value = bundle?.getString("authTokenExpiry")
         }
     }
 
@@ -71,7 +74,7 @@ class VerifyNumberVM @Inject constructor(
         val request = ForgetPasswordRequest(phoneNumber = phoneNumber)
         launch {
             loading(true)
-            when (val response = repository.resendOtp(request)) {
+            when (val response = repository.resendOtpBeforeLogin(request, viewState.authToken.value ?: "")) {
 
                 is ApiResponse.Success -> {
                     loading(false, response.data.message)

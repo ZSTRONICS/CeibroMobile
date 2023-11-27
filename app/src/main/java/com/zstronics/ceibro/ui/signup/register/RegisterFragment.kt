@@ -1,23 +1,18 @@
 package com.zstronics.ceibro.ui.signup.register
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
 import androidx.fragment.app.viewModels
-import com.google.android.material.textfield.TextInputEditText
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.encryption.encryptDataToAesCbcInHex
 import com.zstronics.ceibro.base.extensions.setupClearButtonWithAction
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.chat.room.ChatRoom
+import com.zstronics.ceibro.data.repos.auth.login.Access
 import com.zstronics.ceibro.databinding.FragmentRegisterBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,10 +41,15 @@ class RegisterFragment :
                         shortToastNow(resources.getString(R.string.error_message_phone_validation))
                     } else {
                         val formattedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.E164)
+
+                        val encryptedNumberAsClientId = encryptDataToAesCbcInHex(formattedNumber.toByteArray())
+                        println("Encrypted PhoneNumber: ${encryptedNumberAsClientId} ::: ${formattedNumber}")
+
                         viewState.phoneNumber.value = formattedNumber
                         viewState.phoneCode.value = phoneCode
-                        viewModel.registerNumber(formattedNumber) {
-                            navigateToVerifyNumber("RegisterFragment")
+
+                        viewModel.getAuthTokenAndThenRegister(formattedNumber, encryptedNumberAsClientId) { authToken ->
+                            navigateToVerifyNumber(encryptedNumberAsClientId, authToken)
                         }
                     }
                 } catch (e: NumberParseException) {
@@ -60,11 +60,17 @@ class RegisterFragment :
     }
 
 
-    private fun navigateToVerifyNumber(currentFragment: String) {
+    private fun navigateToVerifyNumber(
+        encryptedNumberAsClientId: String,
+        authToken: Access
+    ) {
         val bundle = Bundle()
-        bundle.putString("fromFragment", currentFragment)
+        bundle.putString("fromFragment", "RegisterFragment")
         bundle.putString("phoneNumber", viewState.phoneNumber.value.toString())
         bundle.putString("phoneCode", viewState.phoneCode.value.toString())
+        bundle.putString("clientId", encryptedNumberAsClientId)
+        bundle.putString("authToken", authToken.token)
+        bundle.putString("authTokenExpiry", authToken.expires)
         navigate(R.id.verifyNumberFragment, bundle)
     }
 

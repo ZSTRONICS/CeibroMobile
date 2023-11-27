@@ -28,7 +28,15 @@ interface AuthRepositoryService {
     suspend fun getUserProfile(): Response<LoginResponse>
 
     @POST("v2/auth/register")
-    suspend fun register(@Body registerRequest: RegisterRequest): Response<GenericResponse>
+    suspend fun register(
+        @Body registerRequest: RegisterRequest,
+        @Header("Authorization") token: String
+    ): Response<GenericResponse>
+
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("v2/auth/token")
+    suspend fun getAuthToken(@Field("clientId") clientId: String): Response<AuthTokenResponse>
 
     @POST("v2/auth/otp/verify")
     suspend fun registerVerifyOtp(@Body registerVerifyOtpRequest: RegisterVerifyOtpRequest): Response<GenericResponse>
@@ -41,13 +49,22 @@ interface AuthRepositoryService {
 
 
     @POST("v2/auth/forget-password")
-    suspend fun forgetPassword(@Body forgetPasswordRequest: ForgetPasswordRequest): Response<GenericResponse>
+    suspend fun forgetPassword(
+        @Body forgetPasswordRequest: ForgetPasswordRequest,
+        @Header("Authorization") token: String
+    ): Response<GenericResponse>
 
     @POST("v2/auth/otp/verify-nodel")
     suspend fun forgetPassVerifyOtp(@Body registerVerifyOtpRequest: RegisterVerifyOtpRequest): Response<GenericResponse>
 
     @POST("v2/auth/otp/resend")
     suspend fun resendOtp(@Body forgetPasswordRequest: ForgetPasswordRequest): Response<GenericResponse>
+
+    @POST("v2/auth/otp/resend")
+    suspend fun resendOtpBeforeLogin(
+        @Body forgetPasswordRequest: ForgetPasswordRequest,
+        @Header("Authorization") token: String
+    ): Response<GenericResponse>
 
     @POST("v2/auth/reset-password")
     suspend fun resetPassword(@Body resetPasswordRequest: ResetPasswordRequest): Response<GenericResponse>

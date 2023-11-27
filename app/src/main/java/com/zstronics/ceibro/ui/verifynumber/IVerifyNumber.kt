@@ -9,6 +9,9 @@ interface IVerifyNumber {
         var phoneNumber: MutableLiveData<String>
         var phoneCode: MutableLiveData<String>
         var otp: MutableLiveData<String>
+        var authToken: MutableLiveData<String>
+        var authTokenExpiry: MutableLiveData<String>
+        var clientId: MutableLiveData<String>
     }
 
     interface ViewModel : IBase.ViewModel<State> {

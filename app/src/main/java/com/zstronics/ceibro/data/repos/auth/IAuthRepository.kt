@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.repos.auth
 
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.repos.auth.login.AuthTokenResponse
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
@@ -16,12 +17,14 @@ interface IAuthRepository {
     suspend fun changePhoneNumber(changeNumberRequest: ChangeNumberRequest): ApiResponse<GenericResponse>
     suspend fun changePhoneNumberVerifyOtp(changeNumberVerifyOtpRequest: ChangeNumberVerifyOtpRequest): ApiResponse<GenericResponse>
     suspend fun getUserProfile(): ApiResponse<LoginResponse>
-    suspend fun register(registerRequest: RegisterRequest): ApiResponse<GenericResponse>
+    suspend fun register(registerRequest: RegisterRequest, token: String): ApiResponse<GenericResponse>
+    suspend fun getAuthToken(clientId: String): ApiResponse<AuthTokenResponse>
     suspend fun registerVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse>
     suspend fun signup(phoneNumber: String, signUpRequest: SignUpRequest): ApiResponse<LoginResponse>
-    suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse>
+    suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest, token: String): ApiResponse<GenericResponse>
     suspend fun forgetPassVerifyOtp(registerVerifyOtpRequest: RegisterVerifyOtpRequest): ApiResponse<GenericResponse>
     suspend fun resendOtp(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse>
+    suspend fun resendOtpBeforeLogin(forgetPasswordRequest: ForgetPasswordRequest, token: String): ApiResponse<GenericResponse>
     suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest): ApiResponse<GenericResponse>
     suspend fun uploadProfilePicture(fileUri: String): ApiResponse<UserProfilePicUpdateResponse>
     suspend fun refreshJWTToken(body: RefreshTokenRequest): ApiResponse<Tokens>

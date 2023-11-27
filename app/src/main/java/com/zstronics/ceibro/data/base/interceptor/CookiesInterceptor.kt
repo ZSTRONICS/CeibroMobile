@@ -1,4 +1,5 @@
 package com.zstronics.ceibro.data.base.interceptor
+
 import android.text.TextUtils
 import androidx.media.MediaSessionManager.getSessionManager
 import com.zstronics.ceibro.data.base.CookiesManager
@@ -31,8 +32,9 @@ class CookiesInterceptor @Inject constructor(_sessionManager: SessionManager) : 
         if (!CookiesManager.jwtToken.isNullOrEmpty()) {
             builder.addHeader(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
         } else {
-            sessionManager.isUserLoggedIn()
-            builder.addHeader(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
+            if (sessionManager.isUserLoggedIn()) {
+                builder.addHeader(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
+            }
         }
 //        builder.addHeader(KEY_ACCEPT, "*/*")
         return builder.build()
