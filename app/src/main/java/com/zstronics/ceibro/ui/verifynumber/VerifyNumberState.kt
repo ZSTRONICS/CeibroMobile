@@ -9,4 +9,7 @@ class VerifyNumberState @Inject constructor() : BaseState(), IVerifyNumber.State
     override var phoneNumber: MutableLiveData<String> = MutableLiveData("")
     override var phoneCode: MutableLiveData<String> = MutableLiveData("")
     override var otp: MutableLiveData<String> = MutableLiveData("")
+    override var authToken: MutableLiveData<String> = MutableLiveData("")
+    override var authTokenExpiry: MutableLiveData<String> = MutableLiveData("")
+    override var clientId: MutableLiveData<String> = MutableLiveData("")
 }

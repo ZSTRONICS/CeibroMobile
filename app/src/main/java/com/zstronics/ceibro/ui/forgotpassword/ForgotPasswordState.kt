@@ -6,4 +6,5 @@ import javax.inject.Inject
 
 class ForgotPasswordState @Inject constructor() : BaseState(), IForgotPassword.State {
     override var phoneNumber: MutableLiveData<String> = MutableLiveData("")
+    override var phoneCode: MutableLiveData<String> = MutableLiveData("")
 }

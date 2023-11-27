@@ -7,9 +7,11 @@ import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.encryption.encryptDataToAesCbcInHex
 import com.zstronics.ceibro.base.extensions.setupClearButtonWithAction
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.auth.login.Access
 import com.zstronics.ceibro.databinding.FragmentForgotPasswordBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,9 +45,13 @@ class ForgotPasswordFragment :
                             parsedNumber,
                             PhoneNumberUtil.PhoneNumberFormat.E164
                         )
+                        val encryptedNumberAsClientId = encryptDataToAesCbcInHex(formattedNumber.toByteArray())
+
                         viewState.phoneNumber.value = formattedNumber
-                        viewModel.forgetPasswordVerifyNumber(formattedNumber) {
-                            navigateToVerifyNumber("ForgotPasswordFragment")
+                        viewState.phoneCode.value = phoneCode
+
+                        viewModel.getAuthTokenAndThenNext(formattedNumber, encryptedNumberAsClientId) { authToken ->
+                            navigateToVerifyNumber(encryptedNumberAsClientId, authToken)
                         }
                     }
                 } catch (e: NumberParseException) {
@@ -55,10 +61,17 @@ class ForgotPasswordFragment :
         }
     }
 
-    private fun navigateToVerifyNumber(currentFragment: String) {
+    private fun navigateToVerifyNumber(
+        encryptedNumberAsClientId: String,
+        authToken: Access
+    ) {
         val bundle = Bundle()
-        bundle.putString("fromFragment", currentFragment)
+        bundle.putString("fromFragment", "ForgotPasswordFragment")
         bundle.putString("phoneNumber", viewState.phoneNumber.value.toString())
+        bundle.putString("phoneCode", viewState.phoneCode.value.toString())
+        bundle.putString("clientId", encryptedNumberAsClientId)
+        bundle.putString("authToken", authToken.token)
+        bundle.putString("authTokenExpiry", authToken.expires)
         navigate(R.id.verifyNumberFragment, bundle)
     }
 

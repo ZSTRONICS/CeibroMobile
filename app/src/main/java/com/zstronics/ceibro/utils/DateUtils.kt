@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.utils
 
 import android.text.format.DateUtils
+import java.lang.Math.abs
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -554,6 +555,28 @@ object DateUtils {
                 val differenceDays = differenceMillis / (24 * 60 * 60 * 1000)
 
                 differenceDays > 30
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+    }
+
+    fun isLessThan59MinutesApart(lastTime: String, currentTime: String): Boolean {
+        val dateFormat = SimpleDateFormat(SERVER_DATE_FULL_FORMAT_IN_UTC, Locale.getDefault())
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        try {
+            val lastDate = dateFormat.parse(lastTime)
+            val currentDate = dateFormat.parse(currentTime)
+
+            return if (lastDate != null && currentDate != null) {
+                val differenceMillis = kotlin.math.abs(currentDate.time - lastDate.time)
+                val differenceMinutes = differenceMillis / (60 * 1000)
+
+                differenceMinutes < 59
             } else {
                 false
             }

@@ -13,6 +13,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.databinding.FragmentVerifyNumberBinding
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,9 +30,11 @@ class VerifyNumberFragment :
             R.id.loginTextBtn -> {
                 navigateToLogin()
             }
+
             R.id.closeBtn -> {
                 mViewDataBinding.codeSentLayout.visibility = View.GONE
             }
+
             R.id.confirmBtn -> {
                 val phoneNumber = viewState.phoneNumber.value.toString()
                 val otp = viewState.otp.value.toString()
@@ -53,14 +56,47 @@ class VerifyNumberFragment :
                     shortToastNow(resources.getString(R.string.error_message_otp_length))
                 }
             }
+
             R.id.sendCodeAgainBtn -> {
-                viewModel.resendOtp(viewState.phoneNumber.value.toString()) {
-                    if (timeLeftInMillis <= 0) {
-                        startTimer()
+                val currentUTCTime =
+                    DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+
+                if (viewState.authTokenExpiry.value?.isNotEmpty() == true && DateUtils.isLessThan59MinutesApart(
+                        viewState.authTokenExpiry.value!!, currentUTCTime
+                    )
+                ) {
+                    viewModel.resendOtp(viewState.phoneNumber.value.toString()) {
+                        if (timeLeftInMillis <= 0) {
+                            startTimer()
+                        }
+                        mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
                     }
-                    mViewDataBinding.codeSentLayout.visibility = View.VISIBLE
+                } else {
+                    shortToastNow("Token for verification expired")
+                    navigateBack()
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val currentUTCTime =
+            DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+
+        try {
+            if ((!viewState.authTokenExpiry.value.isNullOrEmpty()) && DateUtils.isLessThan59MinutesApart(
+                    viewState.authTokenExpiry.value!!,
+                    currentUTCTime
+                )
+            ) {
+
+            } else {
+                shortToastNow("Token for verification expired")
+                navigateBack()
+            }
+        } catch (e: Exception) {
+            println("VerifyNumberFragment onResume Error: ${e.toString()}")
         }
     }
 
@@ -89,7 +125,11 @@ class VerifyNumberFragment :
         val sheet = CreateNewPasswordSheet()
 
         sheet.onNewPasswordCreation = { password ->
-            viewModel.resetPassword(viewState.phoneNumber.value.toString(), password, viewState.otp.value.toString()) {
+            viewModel.resetPassword(
+                viewState.phoneNumber.value.toString(),
+                password,
+                viewState.otp.value.toString()
+            ) {
                 navigateToLogin()
             }
         }

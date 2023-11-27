@@ -3,6 +3,7 @@ package com.zstronics.ceibro.data.repos.auth
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.repos.auth.login.AuthTokenResponse
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
@@ -91,11 +92,20 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun register(registerRequest: RegisterRequest): ApiResponse<GenericResponse> {
+    override suspend fun register(registerRequest: RegisterRequest, token: String): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {
-                service.register(registerRequest)
+                service.register(registerRequest, token)
+            }
+        )
+    }
+
+    override suspend fun getAuthToken(clientId: String): ApiResponse<AuthTokenResponse> {
+        return executeSafely(
+            call =
+            {
+                service.getAuthToken(clientId)
             }
         )
     }
@@ -119,11 +129,11 @@ class AuthRepository @Inject constructor(
     }
 
 
-    override suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest): ApiResponse<GenericResponse> {
+    override suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest, token: String): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {
-                service.forgetPassword(forgetPasswordRequest)
+                service.forgetPassword(forgetPasswordRequest, token)
             }
         )
     }
@@ -142,6 +152,15 @@ class AuthRepository @Inject constructor(
             call =
             {
                 service.resendOtp(forgetPasswordRequest)
+            }
+        )
+    }
+
+    override suspend fun resendOtpBeforeLogin(forgetPasswordRequest: ForgetPasswordRequest, token: String): ApiResponse<GenericResponse> {
+        return executeSafely(
+            call =
+            {
+                service.resendOtpBeforeLogin(forgetPasswordRequest, token)
             }
         )
     }
