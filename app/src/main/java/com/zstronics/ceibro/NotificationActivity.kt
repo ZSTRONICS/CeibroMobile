@@ -15,10 +15,10 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -67,30 +67,141 @@ class NotificationActivity : AppCompatActivity() {
         }
 
         if (sessionManager.isLoggedIn()) {
-            if (CookiesManager.jwtToken.isNullOrEmpty()) {
-                sessionManager.setUser()
-                sessionManager.setToken()
+            val currentFragmentID = CookiesManager.navigationGraphStartDestination
+            if (extrasType == 3 && currentFragmentID == R.id.taskDetailV2Fragment) {      // type 3 is when user taps open button in notification
 
-                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                    options = bundle, clearPrevious = true
-                ) {
-                    putExtra(NAVIGATION_Graph_ID, navigationGraphId)
-                    putExtra(
-                        NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
-                    )
-                }
-            } else {
-                launchActivity<NavHostPresenterActivity>(
-                    options = bundle, clearPrevious = true
-                ) {
-                    putExtra(NAVIGATION_Graph_ID, navigationGraphId)
-                    putExtra(
-                        NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
-                    )
-                }
-                Handler().postDelayed({
+                val detailViewTask: CeibroTaskV2? = CookiesManager.taskDataForDetails
+                if (taskData?.taskId == detailViewTask?.id) {
+                    //Do nothing, because user is already in detail view of same task whose notification has came
+                    //println("NotificationActivityFragmentCheck = Detail View And Same task")
+                    shortToastNow(resources.getString(R.string.task_already_opened))
                     finish()
-                }, 50)
+                } else {
+                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                        sessionManager.setUser()
+                        sessionManager.setToken()
+
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = bundle, clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                            )
+                        }
+                    } else {
+                        launchActivity<NavHostPresenterActivity>(
+                            options = bundle, clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
+                            )
+                        }
+                        Handler().postDelayed({
+                            finish()
+                        }, 50)
+                    }
+                }
+
+            } else if (extrasType == 1 && currentFragmentID == R.id.commentFragment) {      // type 1 is when user taps reply button in notification
+
+                val detailTaskId = CookiesManager.taskIdInDetails
+                if (taskData?.taskId == detailTaskId) {
+                    //Do nothing, because user is already in detail view of same task whose notification has came
+                    //println("NotificationActivityFragmentCheck = Detail View And Same task")
+                    shortToastNow(resources.getString(R.string.reply_screen_already_opened))
+                    finish()
+                } else {
+                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                        sessionManager.setUser()
+                        sessionManager.setToken()
+
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = bundle, clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                            )
+                        }
+                    } else {
+                        launchActivity<NavHostPresenterActivity>(
+                            options = bundle, clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
+                            )
+                        }
+                        Handler().postDelayed({
+                            finish()
+                        }, 50)
+                    }
+                }
+
+            } else if (extrasType == 2 && (currentFragmentID == R.id.forwardTaskFragment || currentFragmentID == R.id.forwardFragment)) {      // type 2 is when user taps forward button in notification
+
+                val detailTaskId = CookiesManager.taskIdInDetails
+                if (taskData?.taskId == detailTaskId) {
+                    //Do nothing, because user is already in detail view of same task whose notification has came
+                    //println("NotificationActivityFragmentCheck = Detail View And Same task")
+                    shortToastNow(resources.getString(R.string.forward_screen_already_opened))
+                    finish()
+                } else {
+                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                        sessionManager.setUser()
+                        sessionManager.setToken()
+
+                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                            options = bundle, clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                            )
+                        }
+                    } else {
+                        launchActivity<NavHostPresenterActivity>(
+                            options = bundle, clearPrevious = true
+                        ) {
+                            putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                            putExtra(
+                                NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
+                            )
+                        }
+                        Handler().postDelayed({
+                            finish()
+                        }, 50)
+                    }
+                }
+
+            } else {
+                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    sessionManager.setUser()
+                    sessionManager.setToken()
+
+                    launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                        options = bundle, clearPrevious = true
+                    ) {
+                        putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                        putExtra(
+                            NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                        )
+                    }
+                } else {
+                    launchActivity<NavHostPresenterActivity>(
+                        options = bundle, clearPrevious = true
+                    ) {
+                        putExtra(NAVIGATION_Graph_ID, navigationGraphId)
+                        putExtra(
+                            NAVIGATION_Graph_START_DESTINATION_ID, startDestinationId
+                        )
+                    }
+                    Handler().postDelayed({
+                        finish()
+                    }, 50)
+                }
             }
         } else {
             launchActivityWithFinishAffinity<NavHostPresenterActivity>(

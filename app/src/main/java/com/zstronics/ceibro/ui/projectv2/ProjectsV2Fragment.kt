@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.projectv2
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
@@ -73,6 +75,12 @@ class ProjectsV2Fragment :
             tab.text = list[position]
         }.attach()
 
+        val tabTextColors = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_selected), intArrayOf()),
+            intArrayOf(resources.getColor(R.color.black), resources.getColor(R.color.appBlue))
+        )
+        mViewDataBinding.tabLayout.tabTextColors = tabTextColors
+        mViewDataBinding.tabLayout.setSelectedTabIndicatorColor(Color.BLACK)
 
         mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
