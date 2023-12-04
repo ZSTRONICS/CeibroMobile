@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
@@ -39,7 +40,7 @@ class LocationsV2Fragment :
 
                 viewState.isFilterVisible.value?.let { currentValue ->
                     viewState.isFilterVisible.value = !currentValue
-                    updateCompoundDrawable()
+                    updateCompoundDrawable(mViewDataBinding.filter)
                 }
 
 
@@ -87,7 +88,7 @@ class LocationsV2Fragment :
                 checkLayoutsVisibility()
                 mViewDataBinding.projectSearchBar.requestFocus()
                 mViewDataBinding.projectsSearchCard.visibility = View.VISIBLE
-                mViewDataBinding.projectSearchBtn.visibility = View.GONE
+                mViewDataBinding.projectSearchBtn.visibility = View.INVISIBLE
             }
 
         }
@@ -194,12 +195,15 @@ class LocationsV2Fragment :
             mViewDataBinding.llHidden.visibility = View.GONE
     }
 
-    private fun updateCompoundDrawable() {
+    private fun updateCompoundDrawable(filter: TextView) {
         val drawableResId =
             if (viewState.isFilterVisible.value!!) R.drawable.icon_search else R.drawable.icon_back
+
+        if (viewState.isFilterVisible.value!!) filter.text =
+            filter.context.getString(R.string.filter) else filter.text = ""
         val drawable = ContextCompat.getDrawable(mViewDataBinding.root.context, drawableResId)
 
-        mViewDataBinding.filer.setCompoundDrawablesWithIntrinsicBounds(
+        filter.setCompoundDrawablesWithIntrinsicBounds(
             null,
             drawable,
             null,

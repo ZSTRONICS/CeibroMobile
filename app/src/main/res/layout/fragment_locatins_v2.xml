@@ -76,7 +76,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_bold"
                     android:maxLines="1"
-                    android:text="@string/profile_heading"
+                    android:text="Ceibro Drawing"
                     android:textColor="@color/appGrey3"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toStartOf="@id/saperaterTwo"
@@ -128,7 +128,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/icon_tick_mark"
+                android:src="@drawable/map"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/LocationHeader" />
 
@@ -187,13 +187,12 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:background="@drawable/allsideshadowfile"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@id/projectSearchBtn"
                 app:layout_constraintEnd_toEndOf="parent">
 
 
                 <TextView
-                    android:id="@+id/filer"
+                    android:id="@+id/filter"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clickable="false"
