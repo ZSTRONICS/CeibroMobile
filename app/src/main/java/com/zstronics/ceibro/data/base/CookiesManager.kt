@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 
 object CookiesManager {
@@ -27,8 +28,10 @@ object CookiesManager {
     var taskDetailEvents: List<Events>? = null
     var taskDetailRootState: String? = null
     var taskDetailSelectedSubState: String? = null
+    var taskIdInDetails: String = ""
     val appFirstStartForSocket: MutableLiveData<Boolean> = MutableLiveData(true)
     val socketOnceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
     var projectDataForDetails: CeibroProjectV2? = null
     var projectNameForDetails: String = ""
+    var notificationDataContent: MutableList<Pair<NotificationTaskData, Int>> = mutableListOf()
 }

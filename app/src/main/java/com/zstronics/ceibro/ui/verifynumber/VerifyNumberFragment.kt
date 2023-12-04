@@ -25,6 +25,7 @@ class VerifyNumberFragment :
     override val viewModel: VerifyNumberVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_verify_number
     override fun toolBarVisibility(): Boolean = false
+    private var screenFirstStart = true
     override fun onClick(id: Int) {
         when (id) {
             R.id.loginTextBtn -> {
@@ -81,22 +82,25 @@ class VerifyNumberFragment :
 
     override fun onResume() {
         super.onResume()
-        val currentUTCTime =
-            DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
+        if (!screenFirstStart) {
+            screenFirstStart = false
+            val currentUTCTime =
+                DateUtils.getCurrentUTCDateTime(DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC)
 
-        try {
-            if ((!viewState.authTokenExpiry.value.isNullOrEmpty()) && DateUtils.isLessThan59MinutesApart(
-                    viewState.authTokenExpiry.value!!,
-                    currentUTCTime
-                )
-            ) {
+            try {
+                if ((!viewState.authTokenExpiry.value.isNullOrEmpty()) && DateUtils.isLessThan59MinutesApart(
+                        viewState.authTokenExpiry.value!!,
+                        currentUTCTime
+                    )
+                ) {
 
-            } else {
-                shortToastNow("Token for verification expired")
-                navigateBack()
+                } else {
+                    shortToastNow("Token for verification expired")
+                    navigateBack()
+                }
+            } catch (e: Exception) {
+                println("VerifyNumberFragment onResume Error: ${e.toString()}")
             }
-        } catch (e: Exception) {
-            println("VerifyNumberFragment onResume Error: ${e.toString()}")
         }
     }
 

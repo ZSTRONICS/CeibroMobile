@@ -50,7 +50,7 @@ abstract class BaseNetworkRepository : INetwork {
                 return ApiResponse.Error(
                     ApiError(
                         getDefaultCode(),
-                        exception.localizedMessage
+                        exception.localizedMessage ?: "Unknown Error"
                     )
                 )
             }

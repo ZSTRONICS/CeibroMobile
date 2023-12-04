@@ -578,4 +578,7 @@
     <string name="commented_successfully">Commented successfully!</string>
     <string name="view_more">View More</string>
     <string name="view_less">View Less</string>
+    <string name="task_already_opened">Task already opened</string>
+    <string name="reply_screen_already_opened">Reply screen already opened for this task</string>
+    <string name="forward_screen_already_opened">Forward screen already opened for this task</string>
 </resources>
