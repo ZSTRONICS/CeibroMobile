@@ -42,9 +42,9 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventRes
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
+import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment
-import com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
@@ -72,7 +72,7 @@ class DashboardFragment :
     private var taskToMeFragmentInstance: TaskToMeFragment? = null
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
-    private var locationFragmentInstance: LocationV2Fragment? = null
+    private var locationFragmentInstance: LocationsV2Fragment? = null
     private var projectsV2FragmentInstance: ProjectsV2Fragment? = null
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
@@ -174,11 +174,11 @@ class DashboardFragment :
             }
 
             R.id.locationBtn -> {
+                viewState.projectsSelected.value = true
                 mViewDataBinding.createNewTaskBtn.visibility = View.GONE
-                viewState.locationSelected.value = true
 
                 if (locationFragmentInstance == null) {
-                    locationFragmentInstance = LocationV2Fragment()
+                    locationFragmentInstance = LocationsV2Fragment()
                 }
                 childFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, locationFragmentInstance!!)

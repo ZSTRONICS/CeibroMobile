@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.locationv2.LocationsV2State" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.locationv2.LocationsV2VM" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_2sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/LocationHeader"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@color/white"
+                android:elevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <ImageView
+                    android:id="@+id/backBtn"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="15dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="3dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/icon_back"
+                    app:tint="@color/appBlue" />
+
+                <View
+                    android:id="@+id/saperaterOne"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintStart_toEndOf="@id/backBtn" />
+
+
+                <TextView
+                    android:id="@+id/tvProjectName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="@string/profile_heading"
+                    android:textColor="@color/appGrey3"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/saperaterTwo"
+                    app:layout_constraintStart_toEndOf="@+id/saperaterOne"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/saperaterTwo"
+                    app:layout_constraintStart_toEndOf="@id/saperaterOne"
+                    app:layout_constraintTop_toBottomOf="@id/tvProjectName" />
+
+                <View
+                    android:id="@+id/saperaterTwo"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintEnd_toStartOf="@id/tvFloorName" />
+
+                <TextView
+                    android:id="@+id/tvFloorName"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="2 Floor"
+                    android:textColor="@color/appGrey3"
+                    android:textSize="19sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_tick_mark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/LocationHeader" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/projectSearchBtn"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginEnd="@dimen/_7sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:background="@drawable/allsideshadowfile"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:text="@string/search"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_10sdp"
+                    app:drawableTint="@color/appBlue"
+                    app:drawableTintMode="src_in"
+                    app:drawableTopCompat="@drawable/icon_search"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/projectFilterBtn"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginEnd="@dimen/_7sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:background="@drawable/allsideshadowfile"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@id/projectSearchBtn"
+                app:layout_constraintEnd_toEndOf="parent">
+
+
+                <TextView
+                    android:id="@+id/filer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:text="@string/filter"
+                    android:textColor="@color/appBlue"
+                    android:textSize="@dimen/_10sdp"
+                    app:drawableTint="@color/appBlue"
+                    app:drawableTintMode="src_in"
+                    app:drawableTopCompat="@drawable/icon_search"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/projectsSearchCard"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginHorizontal="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:background="@drawable/allsideshadowfile"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingVertical="@dimen/_3sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/ivSearch"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/_9sdp"
+                        android:src="@drawable/icon_search"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/black" />
+
+                    <View
+                        android:id="@+id/saperator"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_marginVertical="@dimen/_6sdp"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:background="@color/appGrey3"
+                        app:layout_constraintBottom_toBottomOf="@+id/projectSearchBar"
+                        app:layout_constraintStart_toEndOf="@id/ivSearch"
+                        app:layout_constraintTop_toTopOf="@+id/projectSearchBar" />
+
+                    <SearchView
+                        android:id="@+id/projectSearchBar"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="@dimen/_1sdp"
+                        android:closeIcon="@drawable/icon_close_round_grey"
+                        android:elevation="0dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:iconifiedByDefault="false"
+                        android:paddingStart="-2dp"
+                        android:paddingEnd="-4dp"
+                        android:queryBackground="@android:color/transparent"
+                        android:queryHint="Start typing"
+                        android:searchIcon="@null"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cancelSearch"
+                        app:layout_constraintStart_toEndOf="@+id/saperator"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:theme="@style/AppSearchView" />
+
+
+                    <TextView
+                        android:id="@+id/cancelSearch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_marginEnd="@dimen/_2sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:paddingHorizontal="@dimen/_5sdp"
+                        android:text="@string/cancel_btn_text"
+                        android:textColor="@color/appBlue"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/projectSearchBar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/projectSearchBar" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llFilter"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:elevation="5dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/_2sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:visibility="@{viewState.isFilterVisible()?View.GONE:View.VISIBLE}"
+                app:layout_constraintBottom_toTopOf="@+id/projectFilterBtn"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/tvTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:drawableEnd="@drawable/ccp_ic_arrow_drop_down"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="To"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/appYellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/llTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+
+                    <TextView
+                        android:id="@+id/ToNewStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/text_new"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/ToOngoingStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/ongoing_heading"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/ToDoneStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/done_heading"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvfrom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:drawableEnd="@drawable/ccp_ic_arrow_drop_down"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="From"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/appYellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+
+                    android:id="@+id/llFrom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/fromUnredStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="Unread"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/FromOngoingStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/ongoing_heading"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/FromDoneStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/done_heading"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvHidden"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_3sdp"
+                    android:drawableEnd="@drawable/ccp_ic_arrow_drop_down"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="center"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="5dp"
+                    android:text="Hidden"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/appYellow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+
+                    android:id="@+id/llHidden"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+
+                    <TextView
+                        android:id="@+id/hiddenOngoingStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/ongoing_heading"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/hiddenDoneStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/done_heading"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                    <TextView
+                        android:id="@+id/hiddenCancelledStateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_3sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_3sdp"
+                        android:background="@drawable/status_done_outline_new"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="5dp"
+                        android:text="@string/canceled"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

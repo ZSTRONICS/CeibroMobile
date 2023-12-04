@@ -10,8 +10,10 @@ class EncryptData {
 
     fun encryptToCbc256(data: ByteArray): String {
         try {
-            val secretKey: ByteArray = "C@|BR0@uthS@Cre+AUTHVYU*B&^%I*/+".toByteArray()
-            val secretIV: ByteArray = "C@|BR0@uthS@Cre+".toByteArray()
+           // val secretKey: ByteArray = "C@|BR0@uthS@Cre+AUTHVYU*B&^%I*/+".toByteArray()
+            val secretKey: ByteArray = "C++BR0@uthS@Cre+AUTHVYU*B++%I*%+".toByteArray()
+          //  val secretIV: ByteArray = "C@|BR0@uthS@Cre+".toByteArray()
+            val secretIV: ByteArray = "C++BR0@uthS@Cre+".toByteArray()
 
             // Create a SecretKey from the user-provided key
             val secretKeySpec: SecretKey = SecretKeySpec(secretKey, "AES")

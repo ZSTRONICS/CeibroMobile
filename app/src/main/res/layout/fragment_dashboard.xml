@@ -442,7 +442,7 @@
                     android:background="@color/transparent"
                     android:drawableTop="@drawable/icon_location"
                     android:drawableTint="@drawable/bottom_nav_color"
-                    android:enabled="false"
+                    android:enabled="true"
                     android:fontFamily="@font/inter_medium"
                     android:maxLines="1"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
