@@ -128,14 +128,7 @@ class LocationsV2Fragment :
             val heightDiff = screenHeight - rootView.height
             val thresholdPercentage = 0.30 // Adjust as needed
 
-            if (heightDiff < screenHeight * thresholdPercentage) {
-                // Keyboard is considered closed
-                isKeyboardShown = false
-
-            } else {
-                isKeyboardShown = true
-
-            }
+            isKeyboardShown = heightDiff >= screenHeight * thresholdPercentage
             true
         }
     }
