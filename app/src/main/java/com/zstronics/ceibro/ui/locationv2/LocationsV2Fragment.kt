@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LocationsV2Fragment :
-    BaseNavViewModelFragment<FragmentLocationsV2Binding, ILocations.State, LocationsV2VM>() {
+    BaseNavViewModelFragment<FragmentLocationsV2Binding, ILocationsV2.State, LocationsV2VM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -336,6 +336,7 @@ class LocationsV2Fragment :
     }
 
     private fun updateLayoutCompoundDrawable(tag: Boolean, filter: TextView) {
+
         val drawableResId = if (!tag) R.drawable.icon_drop_down else R.drawable.arrow_drop_up
 
         val drawable = ContextCompat.getDrawable(mViewDataBinding.root.context, drawableResId)

@@ -5,7 +5,7 @@ import com.zstronics.ceibro.base.state.BaseState
 import javax.inject.Inject
 
 class LocationsV2State @Inject constructor(
-) : BaseState(), ILocations.State {
+) : BaseState(), ILocationsV2.State {
 
     override var isFilterVisible: MutableLiveData<Boolean> = MutableLiveData(false)
 

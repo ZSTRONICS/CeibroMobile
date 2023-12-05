@@ -7,5 +7,5 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationsV2VM @Inject constructor(
     override val viewState: LocationsV2State,
-) : HiltBaseViewModel<ILocations.State>(), ILocations.ViewModel {
+) : HiltBaseViewModel<ILocationsV2.State>(), ILocationsV2.ViewModel {
 }
