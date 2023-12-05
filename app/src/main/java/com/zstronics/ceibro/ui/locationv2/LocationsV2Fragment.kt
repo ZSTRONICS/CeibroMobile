@@ -74,38 +74,88 @@ class LocationsV2Fragment :
             }
 
             R.id.ToNewStateText -> {
+
+                if (viewState.isToNewClicked.value == false) {
+                    viewState.isToOngoingClicked.value = false
+                    viewState.isToDoneClicked.value = false
+                }
                 viewState.isToNewClicked.value = !(viewState.isToNewClicked.value!!)
             }
 
             R.id.ToOngoingStateText -> {
+
+                if (viewState.isToOngoingClicked.value == false) {
+                    viewState.isToNewClicked.value = false
+                    viewState.isToDoneClicked.value = false
+                }
+
                 viewState.isToOngoingClicked.value = !(viewState.isToOngoingClicked.value!!)
             }
 
             R.id.ToDoneStateText -> {
+
+                if (viewState.isToDoneClicked.value == false) {
+                    viewState.isToNewClicked.value = false
+                    viewState.isToOngoingClicked.value = false
+                }
                 viewState.isToDoneClicked.value = !(viewState.isToDoneClicked.value!!)
             }
 
             R.id.fromUnredStateText -> {
+
+                if (viewState.isFromUnreadClicked.value == false) {
+                    viewState.isFromOngoingClicked.value = false
+                    viewState.isFromDoneClicked.value = false
+                }
                 viewState.isFromUnreadClicked.value = !(viewState.isFromUnreadClicked.value!!)
             }
 
             R.id.FromOngoingStateText -> {
+
+                if (viewState.isFromOngoingClicked.value == false) {
+                    viewState.isFromUnreadClicked.value = false
+                    viewState.isFromDoneClicked.value = false
+                }
+
                 viewState.isFromOngoingClicked.value = !(viewState.isFromOngoingClicked.value!!)
             }
 
             R.id.FromDoneStateText -> {
+
+                if (viewState.isFromDoneClicked.value == false) {
+                    viewState.isFromUnreadClicked.value = false
+                    viewState.isFromOngoingClicked.value = false
+                }
                 viewState.isFromDoneClicked.value = !(viewState.isFromDoneClicked.value!!)
             }
 
             R.id.hiddenOngoingStateText -> {
+
+                if (viewState.isHiddenOngoingClicked.value == false) {
+                    viewState.isHiddenDoneClicked.value = false
+                    viewState.isHiddenCancelled.value = false
+                }
                 viewState.isHiddenOngoingClicked.value = !(viewState.isHiddenOngoingClicked.value!!)
             }
 
             R.id.hiddenDoneStateText -> {
+
+
+                if (viewState.isHiddenDoneClicked.value == false) {
+                    viewState.isHiddenCancelled.value = false
+                    viewState.isFromOngoingClicked.value = false
+                }
+
                 viewState.isHiddenDoneClicked.value = !(viewState.isHiddenDoneClicked.value!!)
             }
 
             R.id.hiddenCancelledStateText -> {
+
+
+                if (viewState.isHiddenCancelled.value == false) {
+                    viewState.isHiddenOngoingClicked.value = false
+                    viewState.isHiddenDoneClicked.value = false
+                }
                 viewState.isHiddenCancelled.value = !(viewState.isHiddenCancelled.value!!)
             }
 
