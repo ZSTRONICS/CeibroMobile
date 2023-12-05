@@ -112,7 +112,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="15dp"
                     android:ellipsize="end"
-                    android:fontFamily="@font/inter_bold"
+                    android:fontFamily="@font/inter_regular"
                     android:gravity="center"
                     android:maxLines="1"
                     android:text="2 Floor"
@@ -312,7 +312,7 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:id="@+id/llFilter"
-                android:layout_width="@dimen/_80sdp"
+                android:layout_width="@dimen/_70sdp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:elevation="5dp"
@@ -322,7 +322,7 @@
                 android:paddingTop="@dimen/_4sdp"
                 android:paddingEnd="@dimen/_2sdp"
                 android:paddingBottom="@dimen/_5sdp"
-                android:visibility="@{viewState.isFilterVisible()?View.GONE:View.VISIBLE}"
+                android:visibility="@{viewState.isFilterVisible()?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toTopOf="@+id/projectFilterBtn"
                 app:layout_constraintEnd_toEndOf="parent">
 

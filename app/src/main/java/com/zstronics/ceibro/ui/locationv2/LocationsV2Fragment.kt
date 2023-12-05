@@ -330,8 +330,8 @@ class LocationsV2Fragment :
     }
 
     private fun updateCompoundDrawable(filter: TextView, ivFilter: ImageView, flag: Boolean) {
-        val drawableResId = if (flag) R.drawable.icon_filter_blue else R.drawable.ic_cross_blue
-        if (flag) filter.visibility = View.VISIBLE else filter.visibility = View.GONE
+        val drawableResId = if (!flag) R.drawable.icon_filter_blue else R.drawable.ic_cross_blue
+        if (!flag) filter.visibility = View.VISIBLE else filter.visibility = View.GONE
         ivFilter.setImageResource(drawableResId)
     }
 

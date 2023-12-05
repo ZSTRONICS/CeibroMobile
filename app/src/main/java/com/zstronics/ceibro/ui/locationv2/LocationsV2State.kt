@@ -7,7 +7,7 @@ import javax.inject.Inject
 class LocationsV2State @Inject constructor(
 ) : BaseState(), ILocations.State {
 
-    override var isFilterVisible: MutableLiveData<Boolean> = MutableLiveData(true)
+    override var isFilterVisible: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override var isToNewClicked: MutableLiveData<Boolean> = MutableLiveData(false)
     override var isToOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(false)
