@@ -142,8 +142,8 @@ class LocationsV2Fragment :
 
 
                 if (viewState.isHiddenDoneClicked.value == false) {
+                    viewState.isHiddenOngoingClicked.value = false
                     viewState.isHiddenCancelled.value = false
-                    viewState.isFromOngoingClicked.value = false
                 }
 
                 viewState.isHiddenDoneClicked.value = !(viewState.isHiddenDoneClicked.value!!)
