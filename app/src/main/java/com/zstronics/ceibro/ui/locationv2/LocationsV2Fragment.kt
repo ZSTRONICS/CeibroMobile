@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.locationv2
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -89,9 +90,11 @@ class LocationsV2Fragment :
             }
 
             R.id.projectSearchBtn -> {
-                isKeyboardShown = true
                 showKeyboard()
-                checkLayoutsVisibility()
+                isKeyboardShown = true
+                Handler().postDelayed({
+                    checkLayoutsVisibility()
+                }, 100)
                 mViewDataBinding.projectSearchBar.requestFocus()
                 mViewDataBinding.projectsSearchCard.visibility = View.VISIBLE
                 mViewDataBinding.projectSearchBtn.visibility = View.INVISIBLE
@@ -128,7 +131,13 @@ class LocationsV2Fragment :
             val heightDiff = screenHeight - rootView.height
             val thresholdPercentage = 0.30 // Adjust as needed
 
-            isKeyboardShown = heightDiff >= screenHeight * thresholdPercentage
+            if (heightDiff >= screenHeight * thresholdPercentage) {
+                isKeyboardShown = true
+                checkLayoutsVisibility()
+            } else {
+                isKeyboardShown = false
+            }
+
             true
         }
     }
