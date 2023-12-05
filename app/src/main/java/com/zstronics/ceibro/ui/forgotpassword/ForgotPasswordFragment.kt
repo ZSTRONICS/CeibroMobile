@@ -49,6 +49,7 @@ class ForgotPasswordFragment :
 
                         viewState.phoneNumber.value = formattedNumber
                         viewState.phoneCode.value = phoneCode
+                        //println("encryptedNumberAsClientId: $encryptedNumberAsClientId")
 
                         viewModel.getAuthTokenAndThenNext(formattedNumber, encryptedNumberAsClientId) { authToken ->
                             navigateToVerifyNumber(encryptedNumberAsClientId, authToken)

@@ -24,6 +24,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentCommentBinding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -57,6 +58,7 @@ class CommentFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> {
+                CookiesManager.taskIdInDetails = ""
                 val instances = countActivitiesInBackStack(requireContext())
                 if (viewModel.notificationTaskData.value != null) {
                     if (instances <= 1) {
@@ -188,6 +190,7 @@ class CommentFragment :
                         requireContext()
                     ) { eventData ->
                         if (viewModel.notificationTaskData.value != null) {
+                            CookiesManager.taskIdInDetails = ""
                             shortToastNow(getString(R.string.commented_successfully))
                             val instances = countActivitiesInBackStack(requireContext())
                             if (instances <= 1) {
@@ -206,7 +209,7 @@ class CommentFragment :
                                 finish()
                             }
                         } else {
-
+                            CookiesManager.taskIdInDetails = ""
                             val bundle = Bundle()
                             bundle.putParcelable("eventData", null)
                             navigateBackWithResult(Activity.RESULT_OK, bundle)
@@ -220,6 +223,7 @@ class CommentFragment :
                     viewModel.doneTask(
                         requireContext()
                     ) { eventData,isBeingDone ->
+                        CookiesManager.taskIdInDetails = ""
                         val bundle = Bundle()
                         bundle.putParcelable("eventData", eventData)
                         bundle.putBoolean("isBeingDone", isBeingDone)
@@ -230,6 +234,11 @@ class CommentFragment :
         }
     }
 
+    //This function is called when fragment is closed and detach from activity
+    override fun onDetach() {
+        CookiesManager.taskIdInDetails = ""
+        super.onDetach()
+    }
 
     @Inject
     lateinit var onlyImageAdapter: CeibroOnlyImageRVAdapter
@@ -242,6 +251,7 @@ class CommentFragment :
 
     val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
+            CookiesManager.taskIdInDetails = ""
             val instances = countActivitiesInBackStack(requireContext())
             if (instances <= 1) {
                 launchActivityWithFinishAffinity<NavHostPresenterActivity>(

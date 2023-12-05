@@ -55,10 +55,11 @@ class CommentVM @Inject constructor(
 
         val doneComment = bundle?.getBoolean("doneCommentsRequired")
         val doneImage = bundle?.getBoolean("doneImageRequired")
-        val tasksId = bundle?.getString("taskId")
+        val tasksID = bundle?.getString("taskId")
         val action = bundle?.getString("action")
-        if (tasksId != null) {
-            taskId = tasksId
+        if (tasksID != null) {
+            taskId = tasksID
+            CookiesManager.taskIdInDetails = tasksID
         }
         doneComment?.let { doneCommentsRequired = it }
         doneImage?.let { doneImageRequired = it }
@@ -75,6 +76,7 @@ class CommentVM @Inject constructor(
             actionToPerform.value = TaskDetailEvents.Comment.eventValue
             notificationTaskData.postValue(taskData2)
             taskId = taskData2.taskId
+            CookiesManager.taskIdInDetails = taskData2.taskId
         }
     }
 

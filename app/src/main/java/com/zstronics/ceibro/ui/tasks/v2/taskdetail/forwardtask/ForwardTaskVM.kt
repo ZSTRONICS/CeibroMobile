@@ -45,6 +45,7 @@ class ForwardTaskVM @Inject constructor(
         val tasksId = bundle?.getString("taskId")
         tasksId?.let {
             taskId = it
+            CookiesManager.taskIdInDetails = it
         }
         if (!selectedContact.isNullOrEmpty()) {
             oldSelectedContacts = selectedContact
@@ -60,6 +61,7 @@ class ForwardTaskVM @Inject constructor(
                 sessionManager.isUserLoggedIn()
             }
             taskId = it.taskId
+            CookiesManager.taskIdInDetails = it.taskId
             launch {
                 val task = taskDao.getTaskByID(it.taskId)
                 task?.let { task1 ->
