@@ -32,7 +32,8 @@ class LocationsV2Fragment :
     private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
 
     override fun toolBarVisibility(): Boolean = false
-    companion object{
+
+    companion object {
 
         private const val llTo = "llTo"
         private const val llFrom = "llFrom"
@@ -70,6 +71,42 @@ class LocationsV2Fragment :
                 } else {
                     manageLayoutsVisibilityWithKeyboardHidden()
                 }
+            }
+
+            R.id.ToNewStateText -> {
+                viewState.isToNewClicked.value = !(viewState.isToNewClicked.value!!)
+            }
+
+            R.id.ToOngoingStateText -> {
+                viewState.isToOngoingClicked.value = !(viewState.isToOngoingClicked.value!!)
+            }
+
+            R.id.ToDoneStateText -> {
+                viewState.isToDoneClicked.value = !(viewState.isToDoneClicked.value!!)
+            }
+
+            R.id.fromUnredStateText -> {
+                viewState.isFromUnreadClicked.value = !(viewState.isFromUnreadClicked.value!!)
+            }
+
+            R.id.FromOngoingStateText -> {
+                viewState.isFromOngoingClicked.value = !(viewState.isFromOngoingClicked.value!!)
+            }
+
+            R.id.FromDoneStateText -> {
+                viewState.isFromDoneClicked.value = !(viewState.isFromDoneClicked.value!!)
+            }
+
+            R.id.hiddenOngoingStateText -> {
+                viewState.isHiddenOngoingClicked.value = !(viewState.isHiddenOngoingClicked.value!!)
+            }
+
+            R.id.hiddenDoneStateText -> {
+                viewState.isHiddenDoneClicked.value = !(viewState.isHiddenDoneClicked.value!!)
+            }
+
+            R.id.hiddenCancelledStateText -> {
+                viewState.isHiddenCancelled.value = !(viewState.isHiddenCancelled.value!!)
             }
 
             R.id.tvHidden -> {
@@ -119,7 +156,7 @@ class LocationsV2Fragment :
                     position: Int,
                     id: Long
                 ) {
-                  //  val selectedItem = spinnerItems[position]
+                    //  val selectedItem = spinnerItems[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
