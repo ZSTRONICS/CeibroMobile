@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.locationv2
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -28,13 +29,15 @@ class LocationsV2Fragment :
     override val layoutResId: Int = R.layout.fragment_locations_v2
     private var layoutPressed = ""
     private var isKeyboardShown = false
-    private val llTo = "llTo"
-    private val llFrom = "llFrom"
-    private val llHidden = "llHidden"
     private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
 
     override fun toolBarVisibility(): Boolean = false
+    companion object{
 
+        private const val llTo = "llTo"
+        private const val llFrom = "llFrom"
+        private const val llHidden = "llHidden"
+    }
 
     override fun onClick(id: Int) {
         when (id) {
@@ -49,8 +52,6 @@ class LocationsV2Fragment :
                         updateFlag
                     )
                 }
-
-
             }
 
             R.id.tvTo -> {
@@ -92,7 +93,7 @@ class LocationsV2Fragment :
             R.id.projectSearchBtn -> {
                 showKeyboard()
                 isKeyboardShown = true
-                Handler().postDelayed({
+                Handler(Looper.getMainLooper()).postDelayed({
                     checkLayoutsVisibility()
                 }, 100)
                 mViewDataBinding.projectSearchBar.requestFocus()
@@ -118,7 +119,7 @@ class LocationsV2Fragment :
                     position: Int,
                     id: Long
                 ) {
-                    val selectedItem = spinnerItems[position]
+                  //  val selectedItem = spinnerItems[position]
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
