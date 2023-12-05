@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -13,23 +14,23 @@ import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.isVisible
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.databinding.FragmentLocatinsV2Binding
+import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LocationsV2Fragment :
-    BaseNavViewModelFragment<FragmentLocatinsV2Binding, ILocations.State, LocationsV2VM>() {
+    BaseNavViewModelFragment<FragmentLocationsV2Binding, ILocations.State, LocationsV2VM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: LocationsV2VM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_locatins_v2
+    override val layoutResId: Int = R.layout.fragment_locations_v2
     private var layoutPressed = ""
     private var isKeyboardShown = false
     private val llTo = "llTo"
     private val llFrom = "llFrom"
     private val llHidden = "llHidden"
-    private val spinnerItems = arrayOf("Item 1", "Item 2", "Item 3")
+    private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
 
     override fun toolBarVisibility(): Boolean = false
 
@@ -39,8 +40,13 @@ class LocationsV2Fragment :
             R.id.projectFilterBtn -> {
 
                 viewState.isFilterVisible.value?.let { currentValue ->
-                    viewState.isFilterVisible.value = !currentValue
-                    updateCompoundDrawable(mViewDataBinding.filter)
+                    val updateFlag = !currentValue
+                    viewState.isFilterVisible.value = updateFlag
+                    updateCompoundDrawable(
+                        mViewDataBinding.filter,
+                        mViewDataBinding.ivFilter,
+                        updateFlag
+                    )
                 }
 
 
@@ -116,6 +122,22 @@ class LocationsV2Fragment :
 
                 }
             }
+        val rootView = requireView()
+        rootView.viewTreeObserver.addOnPreDrawListener {
+            val screenHeight = rootView.rootView.height
+            val heightDiff = screenHeight - rootView.height
+            val thresholdPercentage = 0.30 // Adjust as needed
+
+            if (heightDiff < screenHeight * thresholdPercentage) {
+                // Keyboard is considered closed
+                isKeyboardShown = false
+
+            } else {
+                isKeyboardShown = true
+
+            }
+            true
+        }
     }
 
     private fun manageLayoutsVisibilityWithKeyboardShown() {
@@ -123,64 +145,83 @@ class LocationsV2Fragment :
         if (layoutPressed == llTo) {
             if (mViewDataBinding.llTo.isVisible()) {
                 mViewDataBinding.llTo.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
                 return
             } else {
                 mViewDataBinding.llTo.visibility = View.VISIBLE
+                updateLayoutCompoundDrawable(true, mViewDataBinding.tvTo)
             }
             mViewDataBinding.llFrom.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
             mViewDataBinding.llHidden.visibility = View.GONE
         } else if (layoutPressed == llFrom) {
             if (mViewDataBinding.llFrom.isVisible()) {
                 mViewDataBinding.llFrom.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
                 return
             } else {
                 mViewDataBinding.llFrom.visibility = View.VISIBLE
+                updateLayoutCompoundDrawable(true, mViewDataBinding.tvfrom)
             }
             mViewDataBinding.llTo.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
             mViewDataBinding.llHidden.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
         } else if (layoutPressed == llHidden) {
             if (mViewDataBinding.llHidden.isVisible()) {
                 mViewDataBinding.llHidden.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
                 return
             } else {
                 mViewDataBinding.llHidden.visibility = View.VISIBLE
+                updateLayoutCompoundDrawable(true, mViewDataBinding.tvHidden)
             }
 
             mViewDataBinding.llTo.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
             mViewDataBinding.llFrom.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
         }
 
     }
 
     private fun manageLayoutsVisibilityWithKeyboardHidden() {
         if (layoutPressed == llTo) {
-
             if (mViewDataBinding.llTo.isVisible()) {
                 mViewDataBinding.llTo.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvTo)
                 return
             }
             mViewDataBinding.llTo.visibility = View.VISIBLE
+            updateLayoutCompoundDrawable(true, mViewDataBinding.tvTo)
             if (mViewDataBinding.llHidden.visibility == View.VISIBLE && mViewDataBinding.llFrom.visibility == View.VISIBLE)
                 mViewDataBinding.llHidden.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
         } else if (layoutPressed == llFrom) {
             if (mViewDataBinding.llFrom.isVisible()) {
                 mViewDataBinding.llFrom.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
                 return
             }
 
             mViewDataBinding.llFrom.visibility = View.VISIBLE
+            updateLayoutCompoundDrawable(true, mViewDataBinding.tvfrom)
             if (mViewDataBinding.llTo.visibility == View.VISIBLE && mViewDataBinding.llFrom.visibility == View.VISIBLE) {
                 mViewDataBinding.llHidden.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
             }
         } else if (layoutPressed == llHidden) {
 
             if (mViewDataBinding.llHidden.isVisible()) {
                 mViewDataBinding.llHidden.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
                 return
             }
             mViewDataBinding.llHidden.visibility = View.VISIBLE
+            updateLayoutCompoundDrawable(true, mViewDataBinding.tvHidden)
             if (mViewDataBinding.llTo.visibility == View.VISIBLE && mViewDataBinding.llHidden.visibility == View.VISIBLE) {
                 mViewDataBinding.llFrom.visibility = View.GONE
+                updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
             }
         } else {
             return
@@ -190,23 +231,29 @@ class LocationsV2Fragment :
     private fun checkLayoutsVisibility() {
         if (mViewDataBinding.llTo.isVisible()) {
             mViewDataBinding.llFrom.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvfrom)
             mViewDataBinding.llHidden.visibility = View.GONE
+            updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
         } else if (mViewDataBinding.llFrom.isVisible() && mViewDataBinding.llHidden.isVisible())
             mViewDataBinding.llHidden.visibility = View.GONE
+        updateLayoutCompoundDrawable(false, mViewDataBinding.tvHidden)
     }
 
-    private fun updateCompoundDrawable(filter: TextView) {
-        val drawableResId =
-            if (viewState.isFilterVisible.value!!) R.drawable.icon_search else R.drawable.icon_back
+    private fun updateCompoundDrawable(filter: TextView, ivFilter: ImageView, flag: Boolean) {
+        val drawableResId = if (flag) R.drawable.icon_filter_blue else R.drawable.ic_cross_blue
+        if (flag) filter.visibility = View.VISIBLE else filter.visibility = View.GONE
+        ivFilter.setImageResource(drawableResId)
+    }
 
-        if (viewState.isFilterVisible.value!!) filter.text =
-            filter.context.getString(R.string.filter) else filter.text = ""
+    private fun updateLayoutCompoundDrawable(tag: Boolean, filter: TextView) {
+        val drawableResId = if (!tag) R.drawable.icon_drop_down else R.drawable.arrow_drop_up
+
         val drawable = ContextCompat.getDrawable(mViewDataBinding.root.context, drawableResId)
 
         filter.setCompoundDrawablesWithIntrinsicBounds(
             null,
-            drawable,
             null,
+            drawable,
             null
         )
     }

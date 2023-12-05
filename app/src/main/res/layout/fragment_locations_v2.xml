@@ -190,26 +190,35 @@
                 app:layout_constraintBottom_toTopOf="@id/projectSearchBtn"
                 app:layout_constraintEnd_toEndOf="parent">
 
+                <ImageView
+                    android:id="@+id/iv_filter"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/icon_filter_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/filter"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:visibility="visible"
+                    app:layout_goneMarginTop="@dimen/_15sdp"
+                    app:layout_constraintTop_toBottomOf="@id/iv_filter"
                     android:id="@+id/filter"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/_20sdp"
                     android:clickable="false"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
-                    android:paddingTop="@dimen/_6sdp"
-                    android:paddingBottom="@dimen/_6sdp"
                     android:text="@string/filter"
                     android:textColor="@color/appBlue"
                     android:textSize="@dimen/_10sdp"
-                    app:drawableTint="@color/appBlue"
-                    app:drawableTintMode="src_in"
-                    app:drawableTopCompat="@drawable/icon_search"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    />
+
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -300,8 +309,9 @@
 
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:id="@+id/llFilter"
-                android:layout_width="@dimen/_100sdp"
+                android:layout_width="@dimen/_80sdp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:elevation="5dp"
@@ -323,7 +333,6 @@
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginBottom="@dimen/_3sdp"
-                    android:drawableEnd="@drawable/ccp_ic_arrow_drop_down"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -331,7 +340,7 @@
                     android:text="To"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    app:drawableTint="@color/appYellow"
+                    app:drawableEndCompat="@drawable/icon_drop_down"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -421,7 +430,6 @@
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginBottom="@dimen/_3sdp"
-                    android:drawableEnd="@drawable/ccp_ic_arrow_drop_down"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -429,7 +437,7 @@
                     android:text="From"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    app:drawableTint="@color/appYellow"
+                    app:drawableEndCompat="@drawable/icon_drop_down"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -520,7 +528,6 @@
                     android:layout_marginTop="@dimen/_3sdp"
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginBottom="@dimen/_3sdp"
-                    android:drawableEnd="@drawable/ccp_ic_arrow_drop_down"
                     android:fontFamily="@font/inter_regular"
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -528,7 +535,7 @@
                     android:text="Hidden"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    app:drawableTint="@color/appYellow"
+                    app:drawableEndCompat="@drawable/icon_drop_down"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
