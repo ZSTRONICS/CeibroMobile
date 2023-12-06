@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
