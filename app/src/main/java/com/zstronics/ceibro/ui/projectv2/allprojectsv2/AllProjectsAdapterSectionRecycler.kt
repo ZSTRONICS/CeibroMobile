@@ -139,43 +139,44 @@ class AllProjectsAdapterSectionRecycler constructor(
                     }
 
 //                    if (item.projectPic.isNotEmpty()) {
-                        val circularProgressDrawable = CircularProgressDrawable(context)
-                        circularProgressDrawable.strokeWidth = 5f
-                        circularProgressDrawable.centerRadius = 30f
-                        circularProgressDrawable.start()
+                    val circularProgressDrawable = CircularProgressDrawable(context)
+                    circularProgressDrawable.strokeWidth = 5f
+                    circularProgressDrawable.centerRadius = 30f
+                    circularProgressDrawable.start()
 
-                        val requestOptions = RequestOptions()
-                            .placeholder(circularProgressDrawable)
-                            .error(R.drawable.app_icon)
-                            .skipMemoryCache(true)
-                            .centerCrop()
+                    val requestOptions = RequestOptions()
+                        .placeholder(circularProgressDrawable)
+                        .error(R.drawable.app_icon)
+                        .skipMemoryCache(true)
+                        .centerCrop()
 
-                        Glide.with(context)
-                            .load(item.projectPic)
-                            .apply(requestOptions)
-                            .listener(object : RequestListener<Drawable> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    circularProgressDrawable.stop()
-                                    return false
-                                }
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    dataSource: DataSource?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    circularProgressDrawable.stop()
-                                    return false
-                                }
-                            })
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .into(projectImg)
+                    Glide.with(context)
+                        .load(item.projectPic)
+                        .apply(requestOptions)
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                circularProgressDrawable.stop()
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                circularProgressDrawable.stop()
+                                return false
+                            }
+                        })
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(projectImg)
 //                    }
 
                     root.setOnClickListener {

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewState"
             type="com.zstronics.ceibro.ui.locationv2.drawing.DrawingsV2State" />
@@ -75,12 +77,26 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drawingsRV"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/drawingHeader"
+                tools:itemCount="10"
+                tools:listitem="@layout/layout_drawing_item_list" />
+
             <ExpandableListView
                 android:id="@+id/expandableListView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/drawingHeader"/>
+                app:layout_constraintTop_toBottomOf="@id/drawingHeader" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

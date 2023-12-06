@@ -560,6 +560,7 @@
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
     <string name="recent_projects">Recent used projects</string>
+    <string name="recently_used">Recently used</string>
     <string name="favorite_projects">Favorites</string>
     <string name="hidden_projects">Hidden Projects</string>
     <string name="project_name">Project Name</string>
