@@ -94,6 +94,15 @@
                 tools:node="remove" />
         </provider>
 
+        <receiver
+            android:name=".ui.locationv2.drawing.DownloadCompleteReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".ui.tasks.v2.newtask.CreateNewTaskService"
             android:enabled="true"

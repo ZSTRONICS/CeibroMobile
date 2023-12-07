@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
@@ -26,10 +25,10 @@ class AllDrawingsAdapterSectionRecycler constructor(
         sectionList
     ) {
 
-    var itemClickListener: ((view: View, position: Int, data: CeibroProjectV2, tag: String) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: String, tag: String) -> Unit)? =
         null
 
-    fun setCallBack(itemClickListener: ((view: View, position: Int, data: CeibroProjectV2, tag: String) -> Unit)?) {
+    fun setCallBack(itemClickListener: ((view: View, position: Int, data: String, tag: String) -> Unit)?) {
         this.itemClickListener = itemClickListener
 
     }
@@ -107,6 +106,9 @@ class AllDrawingsAdapterSectionRecycler constructor(
                     binding.llParent.visibility = View.VISIBLE
                 }
             }
+            binding.ivDownload.setOnClickListener {
+                itemClickListener?.invoke(it, 1, "", "")
+            }
             binding.llParent.removeAllViews()
 
             item?.stringList?.forEachIndexed { index, data ->
@@ -128,8 +130,4 @@ class AllDrawingsAdapterSectionRecycler constructor(
         }
     }
 
-    private fun dpToPx(context: Context, dp: Int): Int {
-        val scale = context.resources.displayMetrics.density
-        return (dp * scale + 0.5f).toInt()
-    }
 }
