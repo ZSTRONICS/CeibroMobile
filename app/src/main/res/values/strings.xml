@@ -560,6 +560,7 @@
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
     <string name="recent_projects">Recent used projects</string>
+    <string name="recently_used">Recently used</string>
     <string name="favorite_projects">Favorites</string>
     <string name="hidden_projects">Hidden Projects</string>
     <string name="project_name">Project Name</string>
@@ -581,4 +582,6 @@
     <string name="task_already_opened">Task already opened</string>
     <string name="reply_screen_already_opened">Reply screen already opened for this task</string>
     <string name="forward_screen_already_opened">Forward screen already opened for this task</string>
+    <string name="filter">Filter</string>
+    <string name="text_new">New</string>
 </resources>

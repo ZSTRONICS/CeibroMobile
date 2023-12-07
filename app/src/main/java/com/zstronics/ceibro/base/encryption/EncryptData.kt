@@ -10,11 +10,10 @@ class EncryptData {
 
     fun encryptToCbc256(data: ByteArray): String {
         try {
+           // val secretKey: ByteArray = "C@|BR0@uthS@Cre+AUTHVYU*B&^%I*/+".toByteArray()
             val secretKey: ByteArray = "C++BR0@uthS@Cre+AUTHVYU*B++%I*%+".toByteArray()
+          //  val secretIV: ByteArray = "C@|BR0@uthS@Cre+".toByteArray()
             val secretIV: ByteArray = "C++BR0@uthS@Cre+".toByteArray()
-//            JWT_AUTH_API_SECRET=C++BR0@uthS@Cre+AUTHVYU*B++%I*%+
-//            JWT_AUTH_API_SECRET_IV=C++BR0@uthS@Cre+
-//            ENCODED_ID_SECRET=C++BR0@uthS@Cre+ENCODEDID
 
             // Create a SecretKey from the user-provided key
             val secretKeySpec: SecretKey = SecretKeySpec(secretKey, "AES")

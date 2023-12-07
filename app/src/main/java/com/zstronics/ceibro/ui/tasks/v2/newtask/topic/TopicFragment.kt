@@ -255,7 +255,6 @@ class TopicFragment :
 
 
         val rootView = requireView()
-
         rootView.viewTreeObserver.addOnPreDrawListener {
             val screenHeight = rootView.rootView.height
             val heightDiff = screenHeight - rootView.height
