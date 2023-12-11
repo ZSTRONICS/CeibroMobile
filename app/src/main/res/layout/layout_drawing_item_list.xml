@@ -83,6 +83,7 @@
             app:layout_constraintTop_toTopOf="@id/ivFav" />
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/llParent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -91,6 +92,7 @@
             android:paddingHorizontal="@dimen/_3sdp"
             android:paddingVertical="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivFav"
             app:layout_constraintTop_toBottomOf="@id/tvFrom" />
     </androidx.constraintlayout.widget.ConstraintLayout>

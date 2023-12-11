@@ -34,7 +34,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/drawingHeader"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:background="@color/white"
                 android:elevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -57,6 +57,16 @@
                     app:tint="@color/appBlue" />
 
 
+                <View
+                    android:id="@+id/viewOne"
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/backBtn"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/tvProjectName"
                     android:layout_width="0dp"
@@ -66,13 +76,53 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_bold"
                     android:maxLines="1"
-                    android:text="Ceibro Drawing"
+                    android:text="Project Name"
+                    android:textColor="@color/black_01"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toTopOf="@id/tvCreatorName"
+                    app:layout_constraintEnd_toStartOf="@+id/viewTwo"
+                    app:layout_constraintStart_toEndOf="@+id/viewOne"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvCreatorName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_bold"
+                    android:maxLines="1"
+                    android:text="Creator Name"
                     android:textColor="@color/appGrey3"
-                    android:textSize="20sp"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/tvProjectName"
+                    app:layout_constraintStart_toStartOf="@id/tvProjectName"
+                    app:layout_constraintTop_toBottomOf="@id/tvProjectName" />
+
+
+                <View
+                    android:id="@+id/viewTwo"
+                    android:layout_width="1dp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:background="@color/appGrey3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ivForward"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ivForward"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="15dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:padding="3dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/backBtn"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/icon_forward"
+                    app:tint="@color/appBlue" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -89,14 +139,6 @@
                 app:layout_constraintTop_toBottomOf="@id/drawingHeader"
                 tools:itemCount="10"
                 tools:listitem="@layout/layout_drawing_item_list" />
-
-            <ExpandableListView
-                android:id="@+id/expandableListView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/drawingHeader" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
