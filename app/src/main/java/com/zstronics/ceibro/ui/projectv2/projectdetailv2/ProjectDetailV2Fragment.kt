@@ -8,7 +8,6 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,17 +20,21 @@ class ProjectDetailV2Fragment :
     override val viewModel: ProjectDetailV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_project_detail_v2
     override fun toolBarVisibility(): Boolean = false
+    private var tabTitles = listOf<String>()
+
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> {
                 navigateBack()
             }
         }
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        tabTitles = listOf(getString(R.string.detail), getString(R.string.drawing))
         val adapter = ProjectDetailTabLayoutAdapter(requireActivity())
         mViewDataBinding.viewPager.adapter = adapter
 
@@ -39,7 +42,7 @@ class ProjectDetailV2Fragment :
             mViewDataBinding.tabLayout,
             mViewDataBinding.viewPager
         ) { tab, position ->
-            tab.text = getString(R.string.detail)
+            tab.text = tabTitles[position]
         }.attach()
 
         mViewDataBinding.tvProjectName.text = CookiesManager.projectNameForDetails

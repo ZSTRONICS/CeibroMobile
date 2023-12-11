@@ -19,6 +19,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.hideKeyboard
+import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +49,22 @@ class DrawingsV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.projectFilterBtn -> {
+            }
+
+            R.id.cancelSearch -> {
+                mViewDataBinding.projectSearchBar.hideKeyboard()
+                mViewDataBinding.projectsSearchCard.visibility = View.GONE
+                mViewDataBinding.projectSearchBtn.visibility = View.VISIBLE
+                mViewDataBinding.projectSearchBar.setQuery("", false)
+             //   sharedViewModel?.projectSearchQuery?.postValue("")
+            }
+
+            R.id.projectSearchBtn -> {
+                showKeyboard()
+                mViewDataBinding.projectSearchBar.requestFocus()
+                mViewDataBinding.projectsSearchCard.visibility = View.VISIBLE
+                mViewDataBinding.projectSearchBtn.visibility = View.GONE
+
             }
         }
     }

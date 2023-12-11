@@ -549,7 +549,8 @@
     <string name="what_is_the_topic">What is the topic?</string>
     <string name="add_topics_to_your_tasks_to_save_and_organise_tasks">Add topics to your tasks to save and organise tasks around common themes and reuse them in future.</string>
     <string name="description">Description</string>
-    <string name="add_new_drawing">Add new drawing</string>
+    <string name="add_new_drawings">Add new drawings</string>
+    <string name="hidden_drawings">Hidden drawings</string>
     <string name="add_members">Add members</string>
     <string name="save">Save</string>
     <string name="projects">Projects</string>
@@ -568,6 +569,7 @@
     <string name="local">local</string>
     <string name="ceibro">ceibro</string>
     <string name="detail">Detail</string>
+    <string name="drawing">Drawing</string>
     <string name="no_projects_are_hidden">No projects are hidden.</string>
     <string name="project_name_is_required">Project name is required.</string>
     <string name="created_by">Created by</string>
