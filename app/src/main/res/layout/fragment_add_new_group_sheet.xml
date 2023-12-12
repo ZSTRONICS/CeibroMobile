@@ -90,9 +90,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_14sdp"
                     android:layout_marginTop="@dimen/_11sdp"
-                    android:layout_marginEnd="@dimen/_4sdp">
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:visibility="gone">
 
                     <EditText
+                        android:id="@+id/tvNewGroup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Start typing new Group"

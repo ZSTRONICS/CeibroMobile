@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,8 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupSheetBinding
-    private var selectedFloorList = ArrayList<String>();
-
+    val items = ArrayList<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,60 +54,32 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
             it.visibility = View.GONE
         }
         binding.addGroupBtn.setOnClickListener {
+            val text = binding.tvNewGroup.text.toString()
+            if (text.isNotEmpty()) {
+                if (!items.contains(binding.tvNewGroup.text.toString().toLowerCase())) {
+                    items.add(text)
+                    updateSelectionFloorsList(binding.llFloorsList, items)
+                    binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
+
+                }
+            }
             binding.tvAddFloors.visibility = View.VISIBLE
             binding.clAddGroup.visibility = View.GONE
         }
 
-        val item = ArrayList<String>()
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        item.add("Pipes")
-        item.add("electricity")
-        updateSelectionFloorsList(binding.llFloorsList, item)
+
+
+        items.add("Pipes")
+        items.add("electricity")
+        updateSelectionFloorsList(binding.llFloorsList, items)
 
 
     }
 
-    private fun updateSelectionFloorsList(llFloorsList: LinearLayout, item: ArrayList<String>) {
+    private fun updateSelectionFloorsList(llFloorsList: LinearLayout, items: ArrayList<String>) {
         llFloorsList.removeAllViews()
 
-        item.forEachIndexed { index, data ->
+        items.forEachIndexed { index, data ->
 
             val itemViewBinding: FloorCheckboxItemListBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(binding.root.context),
