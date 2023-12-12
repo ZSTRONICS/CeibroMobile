@@ -17,7 +17,7 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.databinding.LayoutCameraOrGalleryPickerDialogBinding
 import com.zstronics.ceibro.databinding.LayoutFeedbackDialogBinding
 
-class ImagePickerOrCaptureDialogSheet constructor() : DialogFragment() {
+class ImagePickerOrCaptureDialogSheet : DialogFragment() {
     lateinit var binding: LayoutCameraOrGalleryPickerDialogBinding
     var onCameraBtnClick: (() -> Unit)? = null
     var onGalleryBtnClick: (() -> Unit)? = null

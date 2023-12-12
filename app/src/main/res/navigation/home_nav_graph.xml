@@ -498,6 +498,10 @@
         android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.projectinfo.ProjectInfoV2Fragment"
         android:label="ProjectInfoV2Fragment"
         tools:layout="@layout/fragment_project_info_v2"/>
+    <fragment
+        android:id="@+id/newDrawingV2Fragment"
+        android:name="com.zstronics.ceibro.ui.locationv2.newdrawing.NewDrawingV2Fragment"
+        android:label="NewDrawingV2Fragment" />
 
 
 </navigation>

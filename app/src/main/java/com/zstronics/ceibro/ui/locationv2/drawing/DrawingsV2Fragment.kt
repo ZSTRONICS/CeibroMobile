@@ -15,14 +15,18 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
+import com.zstronics.ceibro.ui.profile.ImagePickerOrCaptureDialogSheet
+import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -46,9 +50,22 @@ class DrawingsV2Fragment :
     override fun toolBarVisibility(): Boolean = false
     private var sectionList: MutableList<DrawingSectionHeader> = mutableListOf()
 
+    private var fragmentManager: FragmentManager? = null
+
     override fun onClick(id: Int) {
         when (id) {
             R.id.projectFilterBtn -> {
+            }
+
+            R.id.taskCommentBtn -> {
+
+                fragmentManager?.let {
+
+                    choosePhoto(it){
+                        navigate(R.id.newDrawingV2Fragment)
+                    }
+                }
+
             }
 
             R.id.cancelSearch -> {
@@ -56,7 +73,7 @@ class DrawingsV2Fragment :
                 mViewDataBinding.projectsSearchCard.visibility = View.GONE
                 mViewDataBinding.projectSearchBtn.visibility = View.VISIBLE
                 mViewDataBinding.projectSearchBar.setQuery("", false)
-             //   sharedViewModel?.projectSearchQuery?.postValue("")
+                //   sharedViewModel?.projectSearchQuery?.postValue("")
             }
 
             R.id.projectSearchBtn -> {
@@ -71,6 +88,8 @@ class DrawingsV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fragmentManager = childFragmentManager
 
         mainActivityDownloader = mViewDataBinding.root.context
 
@@ -231,13 +250,27 @@ class DrawingsV2Fragment :
         }
 
         val request: DownloadManager.Request? =
-            DownloadManager.Request(uri)
+            DownloadManager
+                .Request(uri)
                 .setDestinationUri(Uri.fromFile(File(folder, fileName)))
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setVisibleInDownloadsUi(true)
 
         manager?.enqueue(request)
     }
+}
+
+private fun choosePhoto(fragmentManager: FragmentManager, callback: (String) -> Unit) {
+    val sheet = AddNewPhotoBottomSheet {
+        callback.invoke("")
+    }
+
+    sheet.isCancelable = true
+    sheet.setStyle(
+        BottomSheetDialogFragment.STYLE_NORMAL,
+        R.style.CustomBottomSheetDialogTheme
+    )
+    sheet.show(fragmentManager, "ImagePickerOrCaptureDialogSheet")
 }
 
 data class StringListData(
