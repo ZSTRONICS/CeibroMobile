@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.locationv2.newdrawing.NewDrawingsV2State" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.locationv2.newdrawing.NewDrawingV2VM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolbarHeader"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:elevation="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <TextView
+                android:id="@+id/tvProjectName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/new_project"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbarHeader">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/footerLine"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/TIfloorField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="2dp"
+                        android:textColorHint="@color/appTextGrey"
+                        app:boxStrokeColor="@color/transparent"
+                        app:boxStrokeWidth="0dp"
+                        app:endIconMode="custom"
+                        app:hintTextColor="@color/appGrey3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/floorText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/input_field_bottom_line"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/select_floor"
+                            android:inputType="text|textCapSentences"
+                            android:maxLines="1"
+                            android:maxLength="100"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:paddingStart="1dp"
+                            android:paddingEnd="1dp"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/groupField"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_14sdp"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="2dp"
+                        android:textColorHint="@color/appTextGrey"
+                        app:boxStrokeColor="@color/transparent"
+                        app:boxStrokeWidth="0dp"
+                        app:endIconMode="custom"
+                        app:hintTextColor="@color/appGrey3" app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/TIfloorField">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/groupText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/input_field_bottom_line"
+                            android:clickable="true"
+                            android:focusable="false"
+                            android:fontFamily="@font/inter_regular"
+                            android:hint="@string/select_group"
+                            android:inputType="text|textCapSentences"
+                            android:maxLines="1"
+                            android:maxLength="100"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                            android:paddingStart="1dp"
+                            android:paddingEnd="1dp"
+                            android:textSize="15sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <TextView
+                        android:id="@+id/tvInfo"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:text="@string/select_if_you_want_to_add_this_drawing_under_some_group"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/_10sdp"
+                        app:layout_constraintEnd_toEndOf="@+id/groupField"
+                        app:layout_constraintStart_toStartOf="@+id/groupField"
+                        app:layout_constraintTop_toBottomOf="@+id/groupField" />
+
+                    <TextView
+                        android:id="@+id/tvDrawingInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:text="@string/drawing_name"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/_10sdp"
+                        app:layout_constraintStart_toStartOf="@+id/groupField"
+                        app:layout_constraintTop_toBottomOf="@+id/tvInfo" />
+
+                    <View
+                        android:id="@+id/saperater"
+                        android:layout_width="1dp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:background="@color/appGrey3"
+                        app:layout_constraintBottom_toBottomOf="@id/tvDrawingInfo"
+                        app:layout_constraintStart_toEndOf="@id/tvDrawingInfo"
+                        app:layout_constraintTop_toTopOf="@id/tvDrawingInfo" />
+
+                    <TextView
+                        android:id="@+id/tvDrawingName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:text="Sample.pdf"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_10sdp"
+                        app:layout_constraintStart_toEndOf="@id/saperater"
+                        app:layout_constraintTop_toBottomOf="@+id/tvInfo" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cl_newPhoto"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_160sdp"
+                        android:layout_marginHorizontal="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_11sdp"
+                        android:layout_marginBottom="@dimen/_11sdp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvDrawingName">
+
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/projectImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/map"
+                            android:visibility="visible" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ScrollView>
+
+
+            <View
+                android:id="@+id/footerLine"
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toTopOf="@+id/cl_action"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/cancelBtn"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_13sdp"
+                    android:layout_marginBottom="@dimen/_14sdp"
+                    android:background="@drawable/skip_button_red"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/cancel_btn_text"
+                    android:textAllCaps="false"
+                    android:textColor="@color/red_color_picker"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/saveBtn"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:background="@drawable/signin_button_back"
+                    android:fontFamily="@font/inter_medium"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/cancelBtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/cancelBtn" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
