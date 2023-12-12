@@ -141,13 +141,13 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
         val view: View = inflater.inflate(R.layout.group_update_dialog, null)
         val delete: TextView = view.findViewById(R.id.updateGroupBtn)
         delete.setOnClickListener {
-            dismiss()
+
             updateGroup(it.context)
 
         }
         val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
         renameGroupBtn.setOnClickListener {
-            dismiss()
+
         }
 
         val popupWindow = PopupWindow(
