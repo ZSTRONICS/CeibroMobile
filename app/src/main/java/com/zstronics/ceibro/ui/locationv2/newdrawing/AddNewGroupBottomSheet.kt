@@ -88,7 +88,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
                 false
             )
             itemViewBinding.tvFloorName.text = data
-            itemViewBinding.ivFloor.setOnClickListener {
+            itemViewBinding.ivMenuBtn.setOnClickListener {
 
                 createPopupWindow(it)
             }
@@ -110,17 +110,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
     private fun createPopupWindow(v: View): PopupWindow {
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.group_update_dialog, null)
-        val delete: TextView = view.findViewById(R.id.updateGroupBtn)
-        delete.setOnClickListener {
-
-            updateGroup(it.context)
-
-        }
-        val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
-        renameGroupBtn.setOnClickListener {
-
-        }
+        val view: View = inflater.inflate(R.layout.group_menu_dialog, null)
 
         val popupWindow = PopupWindow(
             view,
@@ -128,14 +118,37 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
             WindowManager.LayoutParams.WRAP_CONTENT,
             true
         )
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupWindow.elevation = 13F
         popupWindow.isOutsideTouchable = true
 
+
+        val delete: TextView = view.findViewById(R.id.deleteGroupBtn)
+        val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
+
+        delete.setOnClickListener {
+            updateGroup(it.context)
+            popupWindow.dismiss()
+        }
+        renameGroupBtn.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
         val values = IntArray(2)
         v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
 
-        popupWindow.showAsDropDown(v, -110, -200)
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, -70, -200)
+        } else {
+            popupWindow.showAsDropDown(v, 0, 5)
+        }
+
+//        popupWindow.showAsDropDown(v, -110, -200)
 
         return popupWindow
     }

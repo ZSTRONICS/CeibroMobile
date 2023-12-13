@@ -26,13 +26,13 @@
             android:text="Floor Name"
             android:textColor="@color/black_01"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/ivFloor"
+            app:layout_constraintEnd_toStartOf="@id/ivMenuBtn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageView
-            android:id="@+id/ivFloor"
+            android:id="@+id/ivMenuBtn"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_10sdp"

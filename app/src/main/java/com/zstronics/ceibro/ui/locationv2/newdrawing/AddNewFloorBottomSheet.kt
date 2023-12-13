@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.locationv2.newdrawing
 
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -13,6 +14,8 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -76,6 +79,10 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
                 binding.llFloorsList,
                 false
             )
+            itemViewBinding.ivMenuBtn.setOnClickListener {
+
+                createPopupWindow(it)
+            }
             itemViewBinding.tvFloorName.text = data
             llFloorsList.addView(itemViewBinding.root)
 
@@ -90,6 +97,51 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
         return dialog
 
     }
+
+
+    private fun createPopupWindow(v: View): PopupWindow {
+
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.floor_menu_dialog, null)
+
+        val popupWindow = PopupWindow(
+            view,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+
+
+        val deleteFloorBtn: TextView = view.findViewById(R.id.deleteFloorBtn)
+        deleteFloorBtn.setOnClickListener {
+
+            popupWindow.dismiss()
+        }
+
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, -70, -100)
+        } else {
+            popupWindow.showAsDropDown(v, 0, 5)
+        }
+
+//        popupWindow.showAsDropDown(v, -110, -200)
+
+        return popupWindow
+    }
+
 
     private fun getFloorsList(
         context: Context,
