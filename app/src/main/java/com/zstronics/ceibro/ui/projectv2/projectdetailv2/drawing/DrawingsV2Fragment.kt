@@ -1,6 +1,7 @@
-package com.zstronics.ceibro.ui.locationv2.drawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
 
 import android.Manifest
+import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
@@ -22,13 +23,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
-import com.zstronics.ceibro.ui.profile.ImagePickerOrCaptureDialogSheet
+import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.AttachmentTypes
+import ee.zstronics.ceibro.camera.FileUtils
+import ee.zstronics.ceibro.camera.PickedImages
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 
 @AndroidEntryPoint
 class DrawingsV2Fragment :
@@ -57,12 +65,19 @@ class DrawingsV2Fragment :
             R.id.projectFilterBtn -> {
             }
 
-            R.id.taskCommentBtn -> {
+            R.id.addNewDrawingBtn -> {
 
                 fragmentManager?.let {
-
-                    choosePhoto(it){
-                        navigate(R.id.newDrawingV2Fragment)
+                    chooseFile(it) { fromLocation ->
+                        if (fromLocation.equals("local", true)) {
+                            chooseDocuments(
+                                mimeTypes = arrayOf(
+                                    "application/pdf"
+                                )
+                            )
+                        } else {
+                            shortToastNow("Coming Soon")
+                        }
                     }
                 }
 
@@ -258,19 +273,150 @@ class DrawingsV2Fragment :
 
         manager?.enqueue(request)
     }
-}
 
-private fun choosePhoto(fragmentManager: FragmentManager, callback: (String) -> Unit) {
-    val sheet = AddNewPhotoBottomSheet {
-        callback.invoke("")
+
+    private fun chooseFile(fragmentManager: FragmentManager, callback: (String) -> Unit) {
+        val sheet = AddNewPhotoBottomSheet {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.setStyle(
+            BottomSheetDialogFragment.STYLE_NORMAL,
+            R.style.CustomBottomSheetDialogTheme
+        )
+        sheet.show(fragmentManager, "ImagePickerOrCaptureDialogSheet")
     }
 
-    sheet.isCancelable = true
-    sheet.setStyle(
-        BottomSheetDialogFragment.STYLE_NORMAL,
-        R.style.CustomBottomSheetDialogTheme
-    )
-    sheet.show(fragmentManager, "ImagePickerOrCaptureDialogSheet")
+    private fun chooseDocuments(mimeTypes: Array<String>) {
+        requireActivity().openFilePicker(
+            mimeTypes = mimeTypes,
+            allowMultiple = false
+        ) { resultCode, data ->
+            val pickedDocuments = arrayListOf<PickedImages>()
+
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val clipData = data.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val fileUri = clipData.getItemAt(i).uri
+                        var fileName = getFileNameFromUri(requireContext(), fileUri)
+                        var fileExtension = getFileExtension(requireContext(), fileUri)
+                        if (fileExtension.isNullOrEmpty()){
+                            fileExtension="pdf"
+                        }
+                        fileName = if (fileName.isNullOrEmpty()) {
+                            System.currentTimeMillis().toString() + ".$fileExtension"
+                        } else {
+                            if (!ensurePdfExtension(fileName).isNullOrEmpty()) {
+                                fileName
+                            } else {
+                                "$fileName.$fileExtension"
+                            }
+                        }
+                        val pdfFilePath = copyFileToInternalStorage(fileUri, fileName)
+//                        val pdfFileUri = pdfFilePath?.let { it1 -> getFileUri(it1) }
+                        println("pdfFilePath1 ${pdfFilePath}")
+                        val bundle = Bundle()
+                        bundle.putString("pdfFilePath", pdfFilePath)
+                        navigate(R.id.newDrawingV2Fragment, bundle)
+                        break
+                    }
+                } else {
+                    val fileUri = data.data
+                    fileUri?.let {
+                        var fileName = getFileNameFromUri(requireContext(), it)
+                        var fileExtension = getFileExtension(requireContext(), it)
+                        if (fileExtension.isNullOrEmpty()){
+                            fileExtension="pdf"
+                        }
+                        fileName = if (fileName.isNullOrEmpty()) {
+                            System.currentTimeMillis().toString() + ".$fileExtension"
+                        } else {
+                            if (!ensurePdfExtension(fileName!!).isNullOrEmpty()) {
+                                fileName
+                            } else {
+                                "$fileName.$fileExtension"
+                            }
+                        }
+//                        val selectedDocDetail = getPickedFileDetail(requireContext(), it)
+                        val pdfFilePath = copyFileToInternalStorage(it, fileName!!)
+//                        val pdfFileUri= pdfFilePath?.let { it1 -> getFileUri(it1) }
+                        println("pdfFilePath ${pdfFilePath} fileName: $fileName")
+                        val bundle = Bundle()
+                        bundle.putString("pdfFilePath", pdfFilePath)
+                        navigate(R.id.newDrawingV2Fragment, bundle)
+                    }
+                }
+            }
+
+        }
+    }
+
+    private fun copyFileToInternalStorage(uri: Uri, fileName: String): String? {
+        val inputStream: InputStream? = requireContext().contentResolver.openInputStream(uri)
+        val outputStream: FileOutputStream
+
+        try {
+            // Create a file in the internal storage
+            val file = File(requireContext().filesDir, fileName)
+            outputStream = FileOutputStream(file)
+
+            // Copy the content of the input stream to the output stream
+            inputStream?.copyTo(outputStream)
+
+            inputStream?.close()
+            outputStream.close()
+
+            return file.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    private fun getFileUri(filePath: String): Uri? {
+        val file = File(filePath)
+
+        // If the file is within your app's internal or external storage, use FileProvider
+//        if (file.exists()) {
+//            println("pdfFilePath1 file.exists")
+//            return FileProvider.getUriForFile(
+//                requireContext(),
+//                "com.zstronics.ceibro.fileprovider",  // Use your app's authority
+//                file
+//            )
+//        }
+
+        // If the file is on external storage or not accessible to your app, use Uri.fromFile()
+        return Uri.fromFile(file)
+    }
+
+    private fun getPickedFileDetail(context: Context, fileUri: Uri?): PickedImages {
+        val mimeType = FileUtils.getMimeType(context, fileUri)
+        val fileName = FileUtils.getFileName(context, fileUri)
+        val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
+        val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+        val attachmentType = when {
+            mimeType == null -> {
+                AttachmentTypes.Doc
+            }
+
+            mimeType == "application/pdf" -> {
+                AttachmentTypes.Pdf
+            }
+
+            else -> AttachmentTypes.Doc
+        }
+        return PickedImages(
+            fileUri = fileUri,
+            attachmentType = attachmentType,
+            fileName = fileName,
+            fileSizeReadAble = fileSizeReadAble,
+            file = FileUtils.getFile(requireContext(), fileUri)
+        )
+    }
 }
 
 data class StringListData(

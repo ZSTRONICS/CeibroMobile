@@ -1,7 +1,9 @@
-package com.zstronics.ceibro.ui.locationv2.newdrawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 
 import android.content.Context
+import android.os.Bundle
+import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
@@ -17,7 +19,13 @@ class NewDrawingV2VM @Inject constructor(
     private val projectDao: ProjectsV2Dao,
 ) : HiltBaseViewModel<INewDrawingV2.State>(), INewDrawingV2.ViewModel {
     val user = sessionManager.getUser().value
+    var pdfFilePath = MutableLiveData<String>("")
 
+
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+        pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
+    }
 
     override fun getProjectName(context: Context) {
 

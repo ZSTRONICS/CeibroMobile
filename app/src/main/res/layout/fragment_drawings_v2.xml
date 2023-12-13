@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.locationv2.drawing.DrawingsV2State" />
+            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.locationv2.drawing.DrawingsV2VM" />
+            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2VM" />
 
         <import type="android.view.View" />
     </data>
@@ -290,7 +290,7 @@
 
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/taskCommentBtn"
+                    android:id="@+id/addNewDrawingBtn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_2sdp"

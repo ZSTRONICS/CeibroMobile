@@ -1,7 +1,6 @@
-package com.zstronics.ceibro.ui.locationv2.newdrawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -58,6 +57,7 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
                 binding.floorText.text =
                     Editable.Factory.getInstance().newEditable(list.size.toString())
 
+                callback.invoke(list.size.toString())
                 updateSelectionFloorsList(binding.llFloorsList, list)
             }
         }
@@ -81,7 +81,17 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
             )
             itemViewBinding.ivMenuBtn.setOnClickListener {
 
-                createPopupWindow(it)
+                createPopupWindow(it, index.toString()) {
+
+                    selectedFloorList.remove(itemViewBinding.tvFloorName.text.toString())
+                    binding.floorText.text = Editable.Factory.getInstance()
+                        .newEditable(selectedFloorList.size.toString())
+
+                    callback.invoke(selectedFloorList.size.toString())
+
+                    llFloorsList.removeView(itemViewBinding.root)
+                    llFloorsList.invalidate()
+                }
             }
             itemViewBinding.tvFloorName.text = data
             llFloorsList.addView(itemViewBinding.root)
@@ -99,7 +109,7 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
     }
 
 
-    private fun createPopupWindow(v: View): PopupWindow {
+    private fun createPopupWindow(v: View, index: String, callback: (String) -> Unit): PopupWindow {
 
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -118,7 +128,7 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
 
         val deleteFloorBtn: TextView = view.findViewById(R.id.deleteFloorBtn)
         deleteFloorBtn.setOnClickListener {
-
+            callback.invoke(index)
             popupWindow.dismiss()
         }
 

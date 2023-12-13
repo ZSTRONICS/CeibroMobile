@@ -43,7 +43,7 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
-import com.zstronics.ceibro.ui.locationv2.drawing.DrawingsV2Fragment
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -182,13 +182,13 @@ class DashboardFragment :
                 if (locationFragmentInstance == null) {
                     locationFragmentInstance = LocationsV2Fragment()
                 }
-//                childFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment_container, locationFragmentInstance!!)
-//                    .commit()
-
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, DrawingsV2Fragment())
+                    .replace(R.id.fragment_container, locationFragmentInstance!!)
                     .commit()
+//
+//                childFragmentManager.beginTransaction()
+//                    .replace(R.id.fragment_container, DrawingsV2Fragment())
+//                    .commit()
 
 
                 mViewDataBinding.locationLine.visibility = View.VISIBLE

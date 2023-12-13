@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.locationv2.newdrawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 
 import android.app.Dialog
@@ -58,7 +58,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
             if (text.isNotEmpty()) {
                 if (!items.contains(binding.tvNewGroup.text.toString().toLowerCase())) {
                     items.add(text)
-                    updateSelectionFloorsList(binding.llFloorsList, items)
+                    addFloorToList(binding.llFloorsList, text)
                     binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
 
                 }
@@ -76,6 +76,31 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
 
     }
 
+    private fun addFloorToList(llFloorsList: LinearLayout, item: String) {
+
+
+        val itemViewBinding: FloorCheckboxItemListBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(binding.root.context),
+            R.layout.floor_checkbox_item_list,
+            binding.llFloorsList,
+            false
+        )
+        itemViewBinding.tvFloorName.text = item
+        itemViewBinding.tvFloorName.setOnClickListener {
+            callback.invoke(item)
+            dismiss()
+        }
+        itemViewBinding.ivMenuBtn.setOnClickListener {
+
+            createPopupWindow(it) {
+
+            }
+        }
+        llFloorsList.addView(itemViewBinding.root)
+
+
+    }
+
     private fun updateSelectionFloorsList(llFloorsList: LinearLayout, items: ArrayList<String>) {
         llFloorsList.removeAllViews()
 
@@ -88,9 +113,13 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
                 false
             )
             itemViewBinding.tvFloorName.text = data
+            itemViewBinding.tvFloorName.setOnClickListener {
+                callback.invoke(data)
+                dismiss()
+            }
             itemViewBinding.ivMenuBtn.setOnClickListener {
 
-                createPopupWindow(it)
+                createPopupWindow(it) {}
             }
             llFloorsList.addView(itemViewBinding.root)
 
@@ -107,7 +136,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
     }
 
 
-    private fun createPopupWindow(v: View): PopupWindow {
+    private fun createPopupWindow(v: View, callback: (String) -> Unit): PopupWindow {
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.group_menu_dialog, null)
@@ -127,6 +156,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
         val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
 
         delete.setOnClickListener {
+            callback.invoke("")
             updateGroup(it.context)
             popupWindow.dismiss()
         }

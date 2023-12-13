@@ -6,11 +6,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.locationv2.newdrawing.NewDrawingsV2State" />
+            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.NewDrawingsV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.locationv2.newdrawing.NewDrawingV2VM" />
+            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.NewDrawingV2VM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -239,11 +239,10 @@
 
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/projectImg"
+                            android:id="@+id/locationImg"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/map"
                             android:visibility="visible" />
 
                     </com.google.android.material.card.MaterialCardView>

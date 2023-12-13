@@ -4,7 +4,7 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.zstronics.ceibro.ui.locationv2.drawing.DrawingsV2Fragment
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.projectinfo.ProjectInfoV2Fragment
 
 
