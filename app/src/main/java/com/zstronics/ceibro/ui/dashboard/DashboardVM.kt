@@ -106,7 +106,7 @@ class DashboardVM @Inject constructor(
 //            println("Heartbeat SocketEvent Calling => EXECUTING FUNCTION ${DataQueue[0].first.eventType}")
             isProcessing = true
             val data = DataQueue[0]
-            processScoketData(data.first, data.second)
+            processSocketData(data.first, data.second)
         }
     }
 
@@ -116,7 +116,7 @@ class DashboardVM @Inject constructor(
     }
 
 
-    private fun processScoketData(socketData: SocketEventTypeResponse, arguments: String) {
+    private fun processSocketData(socketData: SocketEventTypeResponse, arguments: String) {
         val gson = Gson()
         if (socketData.module == "task") {
             when (socketData.eventType) {

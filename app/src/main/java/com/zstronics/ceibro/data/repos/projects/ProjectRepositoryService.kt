@@ -1,19 +1,25 @@
 package com.zstronics.ceibro.data.repos.projects
 
+
 import com.zstronics.ceibro.data.base.BaseResponse
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderRequest
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
+import com.zstronics.ceibro.data.repos.projects.floor.CreateFloorResponseV2
+import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupResponseV2
+import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
+import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectFloorResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
@@ -196,6 +202,26 @@ interface ProjectRepositoryService {
         @Path("state") state: Boolean,
         @Path("projectId") projectId: String
     ): Response<UpdateProjectResponseV2>
+
+    // new APIs to get groups By Id
+    @GET("v2/project/{projectId}/group")
+    suspend fun getGroupsByProjectTid(@Path("projectId") projectId: String): Response<GetProjectGroupsResponseV2>
+
+    // new APIs to get groups By Id
+    @GET("v2/project/{projectId}/floor")
+    suspend fun getFloorsByProjectTid(@Path("projectId") projectId: String): Response<ProjectFloorResponseV2>
+
+    @POST("v2/project/{projectId}/group")
+    suspend fun createGroupV2(
+        @Path("projectId") projectId: String,
+        @Body requestBody: CreateNewGroupV2Request
+    ): Response<CreateGroupResponseV2>
+
+    @POST("v2/project/{projectId}/floor")
+    suspend fun createFloorV2(
+        @Path("projectId") projectId: String,
+        @Body requestBody: CreateNewFloorRequest
+    ): Response<CreateFloorResponseV2>
 
 
 }

@@ -76,6 +76,14 @@ class NewDrawingV2Fragment :
                 mViewDataBinding.locationImg.setImageBitmap(thumbnail)
             }
         }
+
+
+        viewModel.createFloorByProjectTid(viewModel.projectId.value.toString(), "15")
+        viewModel.getFloorsByProjectTid(viewModel.projectId.value.toString())
+        viewModel.createGroupByProjectTid(viewModel.projectId.value.toString(), "Mughal")
+        viewModel.getGroupsByProjectTid(viewModel.projectId.value.toString())
+
+        // viewModel.getFloorsByProjectTid("657ac771753eb1365aef682a")
     }
 
     private fun addNewFloorBottomSheet(callback: (String) -> Unit) {

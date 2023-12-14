@@ -194,6 +194,11 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
         item.add("18 Floor")
         item.add("19 Floor")
         item.add("20 Floor")
+        item.add("21 Floor")
+        item.add("22 Floor")
+        item.add("23 Floor")
+        item.add("24 Floor")
+        item.add("25 Floor")
 
 
         item.forEachIndexed { index, data ->

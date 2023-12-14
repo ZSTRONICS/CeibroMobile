@@ -4,7 +4,6 @@
     android:background="@color/transparent">
 
     <data>
-
         <import type="android.view.View" />
     </data>
 
@@ -39,6 +38,7 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingBottom="@dimen/_5sdp"
                     android:textColorHint="@color/appTextGrey"
+                    android:visibility="gone"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
                     app:endIconMode="clear_text"
@@ -79,8 +79,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_margin="@dimen/_10sdp"
-                    android:padding="@dimen/_6sdp"
                     android:fontFamily="@font/inter_regular"
+                    android:padding="@dimen/_6sdp"
                     android:text="@string/add_new_group"
                     android:textColor="@color/appBlue"
                     android:visibility="visible" />
@@ -96,9 +96,10 @@
 
                     <EditText
                         android:id="@+id/tvNewGroup"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="Start typing new Group"
+                        android:hint="@string/start_typing_new_group"
+                        app:layout_constraintEnd_toStartOf="@+id/addGroupBtn"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -106,12 +107,13 @@
                         android:id="@+id/addGroupBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
+                        android:layout_marginTop="@dimen/_3sdp"
                         android:layout_marginEnd="13dp"
                         android:background="@drawable/signin_button_back"
                         android:fontFamily="@font/inter_semibold"
                         android:paddingStart="20dp"
                         android:paddingEnd="20dp"
-                        android:text="Add"
+                        android:text="@string/save"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="14sp"
@@ -125,7 +127,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
-
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </ScrollView>

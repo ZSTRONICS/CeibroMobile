@@ -1,25 +1,36 @@
 package com.zstronics.ceibro.data.repos.projects
 
+
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseResponse
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateNewProjectResponse
 import com.zstronics.ceibro.data.repos.projects.createNewProject.CreateProjectRequest
 import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectResponse
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
+import com.zstronics.ceibro.data.repos.projects.floor.CreateFloorResponseV2
+import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupResponseV2
+import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
-import com.zstronics.ceibro.data.repos.projects.member.*
+import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.DeleteMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberRequest
+import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberResponse
+import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
-import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectFloorResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
 import com.zstronics.ceibro.data.repos.projects.role.ProjectRolesResponse
+import com.zstronics.ceibro.data.repos.projects.v2.AllProjectsResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.NewProjectResponseV2
 import com.zstronics.ceibro.data.repos.projects.v2.UpdateProjectResponseV2
 import okhttp3.MultipartBody
@@ -114,4 +125,24 @@ interface IProjectRepository {
         favorite: Boolean,
         projectId: String
     ): ApiResponse<UpdateProjectResponseV2>
+
+
+    //New APIS for groups module
+
+    suspend fun getGroupsByProjectTid(
+        projectId: String
+    ): ApiResponse<GetProjectGroupsResponseV2>
+
+    suspend fun getFloorsByProjectTid(
+        projectId: String
+    ): ApiResponse<ProjectFloorResponseV2>
+
+    suspend fun createGroupV2(
+        projectId: String,
+        groupName: CreateNewGroupV2Request,
+    ): ApiResponse<CreateGroupResponseV2>
+    suspend fun createFloorV2(
+        projectId: String,
+        floorName: CreateNewFloorRequest,
+    ): ApiResponse<CreateFloorResponseV2>
 }

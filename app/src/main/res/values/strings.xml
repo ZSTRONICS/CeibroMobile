@@ -599,4 +599,5 @@
     <string name="from">From</string>
     <string name="unread">Unread</string>
     <string name="hidden">Hidden</string>
+    <string name="start_typing_new_group">Start typing new group</string>
 </resources>

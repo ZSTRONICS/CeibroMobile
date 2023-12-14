@@ -123,11 +123,12 @@ class DashboardFragment :
     }
 
     private fun changeSelectedTab(btnID: Int, newTask: Boolean) {
+        viewState.locationSelected.value = false
+        viewState.projectsSelected.value = false
         viewState.toMeSelected.value = false
         viewState.fromMeSelected.value = false
         viewState.hiddenSelected.value = false
-        viewState.locationSelected.value = false
-        viewState.projectsSelected.value = false
+
 
         mViewDataBinding.toMeLine.visibility = View.GONE
         mViewDataBinding.fromMeLine.visibility = View.GONE

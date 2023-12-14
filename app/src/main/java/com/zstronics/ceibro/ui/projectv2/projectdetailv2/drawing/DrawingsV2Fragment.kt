@@ -70,11 +70,18 @@ class DrawingsV2Fragment :
                 fragmentManager?.let {
                     chooseFile(it) { fromLocation ->
                         if (fromLocation.equals("local", true)) {
-                            chooseDocuments(
-                                mimeTypes = arrayOf(
-                                    "application/pdf"
-                                )
-                            )
+
+
+                            val bundle = Bundle()
+                            bundle.putString("projectId",viewModel.projectData.value!!._id )
+                            navigate(R.id.newDrawingV2Fragment, bundle)
+
+
+//                            chooseDocuments(
+//                                mimeTypes = arrayOf(
+//                                    "application/pdf"
+//                                )
+//                            )
                         } else {
                             shortToastNow("Coming Soon")
                         }
