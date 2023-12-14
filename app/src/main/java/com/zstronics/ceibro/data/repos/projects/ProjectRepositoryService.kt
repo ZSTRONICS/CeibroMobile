@@ -14,6 +14,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
+import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.*
@@ -203,11 +204,10 @@ interface ProjectRepositoryService {
         @Path("projectId") projectId: String
     ): Response<UpdateProjectResponseV2>
 
-    // new APIs to get groups By Id
+    // new APIs for floor and groups
     @GET("v2/project/{projectId}/group")
     suspend fun getGroupsByProjectTid(@Path("projectId") projectId: String): Response<GetProjectGroupsResponseV2>
 
-    // new APIs to get groups By Id
     @GET("v2/project/{projectId}/floor")
     suspend fun getFloorsByProjectTid(@Path("projectId") projectId: String): Response<ProjectFloorResponseV2>
 
@@ -223,5 +223,16 @@ interface ProjectRepositoryService {
         @Body requestBody: CreateNewFloorRequest
     ): Response<CreateFloorResponseV2>
 
+    @DELETE("v2/project/group/{groupId}")
+    suspend fun deleteGroupByIdV2(
+        @Path("groupId") groupId: String
+    ): Response<DeleteGroupByIdResponseV2>
+
+
+    @PATCH("v2/project/group{groupId}")
+    suspend fun updateGroupByIdV2(
+        @Path("groupId") groupId: String,
+        @Body body: CreateNewGroupV2Request
+    ): Response<CreateGroupResponseV2>
 
 }

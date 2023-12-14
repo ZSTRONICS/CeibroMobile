@@ -15,6 +15,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
+import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
@@ -141,8 +142,18 @@ interface IProjectRepository {
         projectId: String,
         groupName: CreateNewGroupV2Request,
     ): ApiResponse<CreateGroupResponseV2>
+
+    suspend fun updateGroupByIdV2(
+        projectId: String,
+        groupName: CreateNewGroupV2Request,
+    ): ApiResponse<CreateGroupResponseV2>
+
     suspend fun createFloorV2(
         projectId: String,
         floorName: CreateNewFloorRequest,
     ): ApiResponse<CreateFloorResponseV2>
+
+    suspend fun deleteGroupByIdV2(
+        groupId: String
+    ): ApiResponse<DeleteGroupByIdResponseV2>
 }

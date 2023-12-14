@@ -17,9 +17,11 @@ interface INewDrawingV2 {
     interface ViewModel : IBase.ViewModel<State> {
 
         fun createGroupByProjectTid(projectId: String, groupName: String)
+        fun updateGroupByIdV2(groupId: String, groupName: String)
         fun createFloorByProjectTid(projectId: String, floorName: String)
         fun getGroupsByProjectTid(projectId: String)
         fun getFloorsByProjectTid(projectId: String)
-        fun addNewProject(context: Context, callBack: (isSuccess: Boolean) -> Unit)
+        fun deleteGroupByID(projectId: String)
+
     }
 }

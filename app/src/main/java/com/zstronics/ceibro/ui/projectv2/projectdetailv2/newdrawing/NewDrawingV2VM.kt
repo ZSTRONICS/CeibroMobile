@@ -26,6 +26,7 @@ class NewDrawingV2VM @Inject constructor(
 
     var pdfFilePath = MutableLiveData<String>("")
     var projectId = MutableLiveData<String>("")
+    var message = MutableLiveData<String?>("")
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -74,6 +75,24 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
+    override fun updateGroupByIdV2(groupId: String, groupName: String) {
+        val request = CreateNewGroupV2Request(groupName)
+        launch {
+            when (val response = projectRepository.updateGroupByIdV2(groupId, request)) {
+
+                is ApiResponse.Success -> {
+
+                    val floor = response.data.group
+                    floor?.projectId
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
 
     override fun createFloorByProjectTid(
         projectId: String,
@@ -105,7 +124,7 @@ class NewDrawingV2VM @Inject constructor(
 
                     val floor = response.data.floors
 
-                    if (!floor.isNullOrEmpty()){
+                    if (!floor.isNullOrEmpty()) {
                         floor.size
                     }
                 }
@@ -117,10 +136,23 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
+    override fun deleteGroupByID(groupID: String) {
+        launch {
+            when (val response = projectRepository.deleteGroupByIdV2(groupID)) {
 
-    override fun addNewProject(context: Context, callBack: (isSuccess: Boolean) -> Unit) {
+                is ApiResponse.Success -> {
+                    message.value=response.data.message
 
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
     }
+
+
 
 
 }

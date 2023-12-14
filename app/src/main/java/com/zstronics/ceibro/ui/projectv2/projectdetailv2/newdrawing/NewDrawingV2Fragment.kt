@@ -48,19 +48,7 @@ class NewDrawingV2Fragment :
                 navigateBack()
             }
 
-            R.id.saveBtn -> {
-                viewState.projectName.value?.let {
-                    if (it.isEmpty()) {
-                        showToast(getString(R.string.project_name_is_required))
-                    } else {
-                        viewModel.addNewProject(requireContext()) { isSuccess ->
-                            if (isSuccess) {
-                                navigateBack()
-                            }
-                        }
-                    }
-                }
-            }
+
 
         }
     }
@@ -82,6 +70,8 @@ class NewDrawingV2Fragment :
         viewModel.getFloorsByProjectTid(viewModel.projectId.value.toString())
         viewModel.createGroupByProjectTid(viewModel.projectId.value.toString(), "Mughal")
         viewModel.getGroupsByProjectTid(viewModel.projectId.value.toString())
+        viewModel.deleteGroupByID(viewModel.projectId.value.toString())
+        viewModel.updateGroupByIdV2(viewModel.projectId.value.toString(),"Mughal")
 
         // viewModel.getFloorsByProjectTid("657ac771753eb1365aef682a")
     }

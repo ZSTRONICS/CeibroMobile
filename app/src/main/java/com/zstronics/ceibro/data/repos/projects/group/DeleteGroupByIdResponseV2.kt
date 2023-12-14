@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.data.repos.projects.floor
+package com.zstronics.ceibro.data.repos.projects.group
 
 import android.os.Parcelable
 import androidx.annotation.Keep
@@ -8,8 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class CreateFloorResponseV2(
-    @SerializedName("floor")
-    var floor: FloorResponseV2? = null
+data class DeleteGroupByIdResponseV2(
+    @SerializedName("message")
+    var message: String? = null
 ) : BaseResponse(), Parcelable
-

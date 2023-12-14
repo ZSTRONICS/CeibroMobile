@@ -17,6 +17,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
+import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
@@ -39,6 +40,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.PATCH
+import retrofit2.http.Path
 import javax.inject.Inject
 
 class ProjectRepository @Inject constructor(
@@ -335,6 +341,18 @@ class ProjectRepository @Inject constructor(
         })
     }
 
+
+    override suspend fun updateGroupByIdV2(
+        @Path("groupId") groupId: String,
+        @Body body: CreateNewGroupV2Request
+    ): ApiResponse<CreateGroupResponseV2> {
+        return executeSafely(call = {
+            service.updateGroupByIdV2(
+               groupId,body
+            )
+        })
+    }
+
     override suspend fun createFloorV2(
         projectId: String,
         floorName: CreateNewFloorRequest,
@@ -342,6 +360,16 @@ class ProjectRepository @Inject constructor(
         return executeSafely(call = {
             service.createFloorV2(
                 projectId = projectId,floorName
+            )
+        })
+    }
+
+    override suspend fun deleteGroupByIdV2(
+        groupId: String,
+    ): ApiResponse<DeleteGroupByIdResponseV2> {
+        return executeSafely(call = {
+            service.deleteGroupByIdV2(
+                groupId = groupId
             )
         })
     }
