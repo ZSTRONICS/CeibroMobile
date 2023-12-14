@@ -595,4 +595,8 @@
     <string name="remove_floor">Remove floor</string>
     <string name="rename_group">Rename group</string>
     <string name="add_new_group">+ Add new group</string>
+    <string name="to">To</string>
+    <string name="from">From</string>
+    <string name="unread">Unread</string>
+    <string name="hidden">Hidden</string>
 </resources>

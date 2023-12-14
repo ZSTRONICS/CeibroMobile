@@ -10,6 +10,7 @@ interface IDashboard {
         val hiddenSelected: MutableLiveData<Boolean>
         val locationSelected: MutableLiveData<Boolean>
         val projectsSelected: MutableLiveData<Boolean>
+        val setAddTaskButtonVisibility: MutableLiveData<Boolean>
         val selectedItem: MutableLiveData<Int>
         var connectionCount: MutableLiveData<Int>
     }

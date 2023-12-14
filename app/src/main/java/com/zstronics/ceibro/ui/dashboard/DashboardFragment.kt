@@ -43,9 +43,9 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
@@ -128,6 +128,7 @@ class DashboardFragment :
         viewState.hiddenSelected.value = false
         viewState.locationSelected.value = false
         viewState.projectsSelected.value = false
+
         mViewDataBinding.toMeLine.visibility = View.GONE
         mViewDataBinding.fromMeLine.visibility = View.GONE
         mViewDataBinding.hiddenLine.visibility = View.GONE
@@ -176,6 +177,7 @@ class DashboardFragment :
             }
 
             R.id.locationBtn -> {
+                viewState.locationSelected.value = true
                 viewState.projectsSelected.value = true
                 mViewDataBinding.createNewTaskBtn.visibility = View.GONE
 
@@ -185,11 +187,6 @@ class DashboardFragment :
                 childFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, locationFragmentInstance!!)
                     .commit()
-//
-//                childFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment_container, DrawingsV2Fragment())
-//                    .commit()
-
 
                 mViewDataBinding.locationLine.visibility = View.VISIBLE
 
@@ -318,6 +315,14 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewState.projectsSelected.observe(viewLifecycleOwner) {
+            viewState.setAddTaskButtonVisibility.value = it
+        }
+
+        viewState.locationSelected.observe(viewLifecycleOwner) {
+            viewState.setAddTaskButtonVisibility.value = it
+        }
 //
 //        val callback = object : OnBackPressedCallback(true) {
 //            override fun handleOnBackPressed() {
