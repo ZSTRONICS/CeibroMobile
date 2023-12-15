@@ -36,7 +36,7 @@ class NewDrawingV2VM @Inject constructor(
     }
 
 
-    override fun getGroupsByProjectTid(projectId: String) {
+    override fun getGroupsByProjectTID(projectId: String) {
         launch {
             when (val response = projectRepository.getGroupsByProjectTid(projectId)) {
 
@@ -54,7 +54,7 @@ class NewDrawingV2VM @Inject constructor(
     }
 
 
-    override fun createGroupByProjectTid(
+    override fun createGroupByProjectTIDV2(
         projectId: String,
         groupName: String
     ) {
@@ -75,7 +75,7 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
-    override fun updateGroupByIdV2(groupId: String, groupName: String) {
+    override fun updateGroupByIDV2(groupId: String, groupName: String) {
         val request = CreateNewGroupV2Request(groupName)
         launch {
             when (val response = projectRepository.updateGroupByIdV2(groupId, request)) {
@@ -94,7 +94,7 @@ class NewDrawingV2VM @Inject constructor(
     }
 
 
-    override fun createFloorByProjectTid(
+    override fun createFloorByProjectTID(
         projectId: String,
         floorName: String
     ) {
@@ -116,7 +116,7 @@ class NewDrawingV2VM @Inject constructor(
     }
 
 
-    override fun getFloorsByProjectTid(projectId: String) {
+    override fun getFloorsByProjectTID(projectId: String) {
         launch {
             when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
 

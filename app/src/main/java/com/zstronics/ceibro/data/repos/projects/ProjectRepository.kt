@@ -40,11 +40,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.PATCH
-import retrofit2.http.Path
 import javax.inject.Inject
 
 class ProjectRepository @Inject constructor(
@@ -321,6 +316,7 @@ class ProjectRepository @Inject constructor(
             )
         })
     }
+
     override suspend fun getFloorsByProjectTid(
         projectId: String
     ): ApiResponse<ProjectFloorResponseV2> {
@@ -330,25 +326,26 @@ class ProjectRepository @Inject constructor(
             )
         })
     }
+
     override suspend fun createGroupV2(
         projectId: String,
         groupName: CreateNewGroupV2Request,
     ): ApiResponse<CreateGroupResponseV2> {
         return executeSafely(call = {
             service.createGroupV2(
-                projectId = projectId,groupName
+                projectId = projectId, groupName
             )
         })
     }
 
 
     override suspend fun updateGroupByIdV2(
-        @Path("groupId") groupId: String,
-        @Body body: CreateNewGroupV2Request
+        groupId: String,
+        body: CreateNewGroupV2Request
     ): ApiResponse<CreateGroupResponseV2> {
         return executeSafely(call = {
             service.updateGroupByIdV2(
-               groupId,body
+                groupId, body
             )
         })
     }
@@ -359,7 +356,7 @@ class ProjectRepository @Inject constructor(
     ): ApiResponse<CreateFloorResponseV2> {
         return executeSafely(call = {
             service.createFloorV2(
-                projectId = projectId,floorName
+                projectId = projectId, floorName
             )
         })
     }

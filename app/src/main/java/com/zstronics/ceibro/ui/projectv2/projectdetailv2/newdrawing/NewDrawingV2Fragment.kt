@@ -66,12 +66,12 @@ class NewDrawingV2Fragment :
         }
 
 
-        viewModel.createFloorByProjectTid(viewModel.projectId.value.toString(), "15")
-        viewModel.getFloorsByProjectTid(viewModel.projectId.value.toString())
-        viewModel.createGroupByProjectTid(viewModel.projectId.value.toString(), "Mughal")
-        viewModel.getGroupsByProjectTid(viewModel.projectId.value.toString())
+        viewModel.createFloorByProjectTID(viewModel.projectId.value.toString(), "15")
+        viewModel.getFloorsByProjectTID(viewModel.projectId.value.toString())
+        viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), "Mughal")
+        viewModel.getGroupsByProjectTID(viewModel.projectId.value.toString())
         viewModel.deleteGroupByID(viewModel.projectId.value.toString())
-        viewModel.updateGroupByIdV2(viewModel.projectId.value.toString(),"Mughal")
+        viewModel.updateGroupByIDV2(viewModel.projectId.value.toString(),"Mughal")
 
         // viewModel.getFloorsByProjectTid("657ac771753eb1365aef682a")
     }

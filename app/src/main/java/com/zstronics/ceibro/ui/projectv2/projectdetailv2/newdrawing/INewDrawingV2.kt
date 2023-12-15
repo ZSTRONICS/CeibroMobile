@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
 
@@ -16,11 +15,11 @@ interface INewDrawingV2 {
 
     interface ViewModel : IBase.ViewModel<State> {
 
-        fun createGroupByProjectTid(projectId: String, groupName: String)
-        fun updateGroupByIdV2(groupId: String, groupName: String)
-        fun createFloorByProjectTid(projectId: String, floorName: String)
-        fun getGroupsByProjectTid(projectId: String)
-        fun getFloorsByProjectTid(projectId: String)
+        fun createGroupByProjectTIDV2(projectId: String, groupName: String)
+        fun updateGroupByIDV2(groupId: String, groupName: String)
+        fun createFloorByProjectTID(projectId: String, floorName: String)
+        fun getGroupsByProjectTID(projectId: String)
+        fun getFloorsByProjectTID(projectId: String)
         fun deleteGroupByID(projectId: String)
 
     }
