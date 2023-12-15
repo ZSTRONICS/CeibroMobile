@@ -103,6 +103,7 @@ class NewDrawingV2Fragment :
                 viewModel.updateGroupByIDV2(groupName = name, groupId = it) {
                    viewModel.groupList.value?.let {
                        sheet.groupAdapter.setList(it)
+                       sheet.binding.addGroupBtn.text="Save"
                    }
                 }
             }

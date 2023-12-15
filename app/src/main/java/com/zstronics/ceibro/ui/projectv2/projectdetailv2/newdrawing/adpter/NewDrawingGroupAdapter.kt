@@ -18,11 +18,12 @@ import javax.inject.Inject
 
 class NewDrawingGroupAdapter @Inject constructor() :
     RecyclerView.Adapter<NewDrawingGroupAdapter.NewDrawingGroupViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: GroupResponseV2) -> Unit)? =
-        null
+
 
     var deleteClickListener: ((GroupResponseV2) -> Unit)? = null
     var renameClickListener: ((GroupResponseV2) -> Unit)? = null
+
+    var itemClickListener: ((GroupResponseV2) -> Unit)? = null
 
 
     var listItems: MutableList<GroupResponseV2> = mutableListOf()
@@ -68,8 +69,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
 
             binding.tvFloorName.text = data.groupName
             binding.tvFloorName.setOnClickListener {
-                //  callback.invoke(data)
-                //   dismiss()
+                itemClickListener?.invoke(data)
             }
             binding.ivMenuBtn.setOnClickListener {
 

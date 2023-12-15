@@ -29,7 +29,7 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResp
     lateinit var groupAdapter: NewDrawingGroupAdapter
     val items = ArrayList<String>()
     var onAddGroup: ((groupName: String) -> Unit)? = null
-     var onRenameGroup: ((String, GroupResponseV2) -> Unit)? = null
+    var onRenameGroup: ((String, GroupResponseV2) -> Unit)? = null
 
 
     var groupDataToUpdate: GroupResponseV2? = null
@@ -73,8 +73,13 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResp
                 binding.tvAddFloors.visibility = View.GONE
                 binding.clAddGroup.visibility = View.VISIBLE
                 binding.addGroupBtn.text = "Rename"
-                groupDataToUpdate=data
+                binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
+                groupDataToUpdate = data
             }
+        }
+        groupAdapter.itemClickListener = { data ->
+            callback.invoke(data)
+
         }
 
         binding.rvFloorsList.adapter = groupAdapter
@@ -89,16 +94,17 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResp
             if (text.isNotEmpty()) {
                 if (!items.contains(binding.tvNewGroup.text.toString().toLowerCase(Locale.ROOT))) {
 
-                 if (binding.addGroupBtn.text=="addGroupBtnrename"){
-                     groupDataToUpdate?.let{
-                         onRenameGroup?.invoke(text,it)
-                     }
+                    if (binding.addGroupBtn.text == "Rename") {
+                        groupDataToUpdate?.let {
+                            onRenameGroup?.invoke(text, it)
+                        }
 
-                 }
+                    }
 
                     onAddGroup?.invoke(text)
                     binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
                 }
+            } else {
             }
             binding.tvAddFloors.visibility = View.VISIBLE
             binding.clAddGroup.visibility = View.GONE
