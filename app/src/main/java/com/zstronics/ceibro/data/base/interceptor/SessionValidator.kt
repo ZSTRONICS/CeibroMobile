@@ -48,6 +48,7 @@ open class SessionValidator :
                         response = chain.proceed(builder.build())
                     }
                     is ApiResponse.Error -> {
+                        println("RefreshJWTError: ${response.message}")
 
                     }
                 }

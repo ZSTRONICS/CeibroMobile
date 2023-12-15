@@ -5,7 +5,10 @@ import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
@@ -20,17 +23,22 @@ class NewDrawingV2VM @Inject constructor(
     private val projectRepository: IProjectRepository,
     private val sessionManager: SessionManager,
     private val projectDao: ProjectsV2Dao,
+    private val groupsV2Dao: GroupsV2Dao,
+    private val floorsV2Dao: FloorsV2Dao,
 ) : HiltBaseViewModel<INewDrawingV2.State>(), INewDrawingV2.ViewModel {
     val user = sessionManager.getUser().value
 
+    val _groupList: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(arrayListOf())
+    val groupList: MutableLiveData<MutableList<CeibroGroupsV2>> = _groupList
 
-    val _groupList: MutableLiveData<ArrayList<CeibroGroupsV2>> = MutableLiveData()
-    val groupList: MutableLiveData<ArrayList<CeibroGroupsV2>> = _groupList
+    val _floorList: MutableLiveData<MutableList<CeibroFloorV2>> = MutableLiveData(arrayListOf())
+    val floorList: MutableLiveData<MutableList<CeibroFloorV2>> = _floorList
 
     var pdfFilePath = MutableLiveData<String>("")
     var projectId = MutableLiveData<String>("")
     var message = MutableLiveData<String?>("")
 
+    var selectedGroup: CeibroGroupsV2? = null
     var floor = MutableLiveData<String?>("")
 
 
@@ -38,20 +46,55 @@ class NewDrawingV2VM @Inject constructor(
         super.onFirsTimeUiCreate(bundle)
         pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
         projectId.value = bundle?.getString("projectId").toString()
+
+        getFloorsByProjectID(projectId.value.toString())
+        getGroupsByProjectID(projectId.value.toString())
     }
 
 
-    override fun getGroupsByProjectTID(projectId: String) {
+    override fun getGroupsByProjectID(projectId: String) {
         launch {
-            when (val response = projectRepository.getGroupsByProjectTid(projectId)) {
+            loading(true)
+            val groupsList = groupsV2Dao.getAllProjectGroups(projectId)
+            if (groupsList.isNotEmpty()) {
+                _groupList.value = groupsList.toMutableList()
+                loading(false, "")
+            } else {
+                when (val response = projectRepository.getGroupsByProjectId(projectId)) {
 
-                is ApiResponse.Success -> {
+                    is ApiResponse.Success -> {
+                        groupsV2Dao.insertMultipleGroups(response.data.groups)
+                        _groupList.value = response.data.groups.toMutableList()
+                        loading(false, "")
+                    }
 
-                    _groupList.value = response.data.groups
+                    is ApiResponse.Error -> {
+                        loading(false, response.error.message)
+                    }
                 }
+            }
+        }
+    }
 
-                is ApiResponse.Error -> {
-                    loading(false, response.error.message)
+    override fun getFloorsByProjectID(projectId: String) {
+        launch {
+            loading(true)
+            val floorList = floorsV2Dao.getAllProjectFloors(projectId)
+            if (floorList.isNotEmpty()) {
+                _floorList.value = floorList.toMutableList()
+                loading(false, "")
+            } else {
+                when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
+                    is ApiResponse.Success -> {
+                        floorsV2Dao.insertMultipleFloors(response.data.floors)
+                        _floorList.value = response.data.floors.toMutableList()
+
+                        loading(false, "")
+                    }
+
+                    is ApiResponse.Error -> {
+                        loading(false, response.error.message)
+                    }
                 }
             }
         }
@@ -65,15 +108,13 @@ class NewDrawingV2VM @Inject constructor(
     ) {
         val request = CreateNewGroupV2Request(groupName)
         launch {
-            loading(true,"")
+            loading(true, "")
             when (val response = projectRepository.createGroupV2(projectId, request)) {
                 is ApiResponse.Success -> {
-
-                    response.data.group?.let {
-                        _groupList.value?.add(it)
-                        callback.invoke(it)
-                    }
-                    loading(false,"")
+                    groupsV2Dao.insertGroup(response.data.group)
+                    _groupList.value?.add(response.data.group)
+                    callback.invoke(response.data.group)
+                    loading(false, "")
                 }
 
                 is ApiResponse.Error -> {
@@ -83,30 +124,31 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
-    override fun updateGroupByIDV2(groupId: String, groupName: String, callback: () -> Unit) {
+    override fun updateGroupByIDV2(
+        groupId: String,
+        groupName: String,
+        callback: (group: CeibroGroupsV2) -> Unit
+    ) {
         val request = CreateNewGroupV2Request(groupName)
         launch {
             loading(true)
             when (val response = projectRepository.updateGroupByIdV2(groupId, request)) {
 
                 is ApiResponse.Success -> {
-
+                    groupsV2Dao.insertGroup(response.data.group)
                     val group = response.data.group
-                    group?.let{
-                        _groupList.value?.let { currentList ->
-                            val iterator = currentList.iterator()
-                            while (iterator.hasNext()) {
-                                val item = iterator.next()
-                                if (group._id == item._id) {
-                                    item.groupName=group.groupName
-                                }
-                            }
-                            _groupList.value = currentList
+                    val list = groupList.value
+                    list?.forEachIndexed { index, ceibroGroupsV2 ->
+                        if (ceibroGroupsV2._id == group._id) {
+                            ceibroGroupsV2.groupName = group.groupName
                         }
                     }
 
-
-                    loading(false,"")
+                    list?.let {
+                        _groupList.value = it
+                    }
+                    loading(false, "")
+                    callback.invoke(group)
                 }
 
                 is ApiResponse.Error -> {
@@ -117,7 +159,7 @@ class NewDrawingV2VM @Inject constructor(
     }
 
 
-    override fun createFloorByProjectTID(
+    override fun createFloorByProjectID(
         projectId: String,
         floorName: String,
     ) {
@@ -130,7 +172,7 @@ class NewDrawingV2VM @Inject constructor(
 
                     val floor = response.data.floor
                     floor?.projectId
-                    loading(false,"")
+                    loading(false, "")
                 }
 
                 is ApiResponse.Error -> {
@@ -141,49 +183,27 @@ class NewDrawingV2VM @Inject constructor(
     }
 
 
-    override fun getFloorsByProjectTID(projectId: String) {
+
+
+    override fun deleteGroupByID(groupId: String, callback: () -> Unit) {
         launch {
             loading(true)
-            when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
+            when (val response = projectRepository.deleteGroupByIdV2(groupId)) {
 
                 is ApiResponse.Success -> {
-
-                    val floor = response.data.floors
-
-                    if (!floor.isNullOrEmpty()) {
-                        floor.size
-                    }
-                    loading(false,"")
-                }
-
-                is ApiResponse.Error -> {
-                    loading(false, response.error.message)
-                }
-            }
-        }
-    }
-
-    override fun deleteGroupByID(groupID: String, callback: () -> Unit) {
-        launch {
-            loading(true)
-            when (val response = projectRepository.deleteGroupByIdV2(groupID)) {
-
-                is ApiResponse.Success -> {
-                    message.value = response.data.message
+                    groupsV2Dao.deleteGroupById(groupId)
                     _groupList.value?.let { currentList ->
                         val iterator = currentList.iterator()
                         while (iterator.hasNext()) {
                             val item = iterator.next()
-                            if (groupID == item._id) {
+                            if (groupId == item._id) {
                                 iterator.remove()
                             }
                         }
                         _groupList.value = currentList
                     }
-                    loading(false,"")
+                    loading(false, response.data.message)
                     callback.invoke()
-
-
                 }
 
                 is ApiResponse.Error -> {

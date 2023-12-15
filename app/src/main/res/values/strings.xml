@@ -601,4 +601,5 @@
     <string name="hidden">Hidden</string>
     <string name="start_typing_new_group">Start typing new group</string>
     <string name="floor">Floor</string>
+    <string name="add_new_floor">+ Add new floor</string>
 </resources>

@@ -22,11 +22,11 @@ interface INewDrawingV2 {
             callback: (CeibroGroupsV2) -> Unit
         )
 
-        fun updateGroupByIDV2(groupId: String, groupName: String,callback: () -> Unit)
-        fun createFloorByProjectTID(projectId: String, floorName: String)
-        fun getGroupsByProjectTID(projectId: String)
-        fun getFloorsByProjectTID(projectId: String)
-        fun deleteGroupByID(projectId: String, callback: () -> Unit)
+        fun updateGroupByIDV2(groupId: String, groupName: String,callback: (group: CeibroGroupsV2) -> Unit)
+        fun createFloorByProjectID(projectId: String, floorName: String)
+        fun getGroupsByProjectID(projectId: String)
+        fun getFloorsByProjectID(projectId: String)
+        fun deleteGroupByID(groupId: String, callback: () -> Unit)
 
     }
 }

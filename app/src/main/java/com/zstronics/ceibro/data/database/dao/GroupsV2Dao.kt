@@ -26,6 +26,9 @@ interface GroupsV2Dao {
 //    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isFavoriteByMe = :isFavoriteByMe ORDER BY updatedAt DESC")
 //    suspend fun getAllFavoriteProjects(isHiddenByMe: Boolean = false, isFavoriteByMe: Boolean = true): List<CeibroProjectV2>
 
+    @Query("DELETE FROM groups_v2 WHERE _id = :groupId")
+    suspend fun deleteGroupById(groupId: String)
+
     @Query("DELETE FROM groups_v2")
     suspend fun deleteAll()
 }

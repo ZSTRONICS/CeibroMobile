@@ -11,5 +11,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class GetProjectGroupsResponseV2(
     @SerializedName("groups")
-    var groups: ArrayList<CeibroGroupsV2> = arrayListOf()
+    var groups: List<CeibroGroupsV2> = listOf()
 ) : BaseResponse(), Parcelable
