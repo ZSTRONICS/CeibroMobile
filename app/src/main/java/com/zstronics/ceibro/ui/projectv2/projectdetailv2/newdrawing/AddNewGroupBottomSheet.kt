@@ -19,17 +19,18 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListBinding
 import com.zstronics.ceibro.databinding.FragmentAddNewGroupSheetBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
+class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResponseV2) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupSheetBinding
     val items = ArrayList<String>()
-
+    var onAddGroup: ((groupName: String) -> Unit)? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,8 +58,9 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
             val text = binding.tvNewGroup.text.toString()
             if (text.isNotEmpty()) {
                 if (!items.contains(binding.tvNewGroup.text.toString().toLowerCase())) {
-                    items.add(text)
-                    addFloorToList(binding.llFloorsList, text)
+                    onAddGroup?.invoke(text)
+                 //   items.add(text)
+                    //addFloorToList(binding.llFloorsList, text)
                     binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
 
                 }
@@ -69,9 +71,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
 
 
 
-        items.add("Pipes")
-        items.add("electricity")
-        updateSelectionFloorsList(binding.llFloorsList, items)
+        updateSelectionFloorsList(binding.llFloorsList, model)
 
 
     }
@@ -87,7 +87,7 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
         )
         itemViewBinding.tvFloorName.text = item
         itemViewBinding.tvFloorName.setOnClickListener {
-            callback.invoke(item)
+           // callback.invoke(item)
             dismiss()
         }
         itemViewBinding.ivMenuBtn.setOnClickListener {
@@ -101,29 +101,33 @@ class AddNewGroupBottomSheet(val callback: (String) -> Unit) :
 
     }
 
-    private fun updateSelectionFloorsList(llFloorsList: LinearLayout, items: ArrayList<String>) {
+    private fun updateSelectionFloorsList(llFloorsList: LinearLayout, model: NewDrawingV2VM) {
         llFloorsList.removeAllViews()
 
-        items.forEachIndexed { index, data ->
+        model.groupList.observe(viewLifecycleOwner) { items ->
+            items.forEachIndexed { index, data ->
 
-            val itemViewBinding: FloorCheckboxItemListBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(binding.root.context),
-                R.layout.floor_checkbox_item_list,
-                binding.llFloorsList,
-                false
-            )
-            itemViewBinding.tvFloorName.text = data
-            itemViewBinding.tvFloorName.setOnClickListener {
-                callback.invoke(data)
-                dismiss()
+                val itemViewBinding: FloorCheckboxItemListBinding = DataBindingUtil.inflate(
+                    LayoutInflater.from(binding.root.context),
+                    R.layout.floor_checkbox_item_list,
+                    binding.llFloorsList,
+                    false
+                )
+                itemViewBinding.tvFloorName.text = data.groupName
+                itemViewBinding.tvFloorName.setOnClickListener {
+                    callback.invoke(data)
+                    dismiss()
+                }
+                itemViewBinding.ivMenuBtn.setOnClickListener {
+
+                    createPopupWindow(it) {}
+                }
+                llFloorsList.addView(itemViewBinding.root)
+
             }
-            itemViewBinding.ivMenuBtn.setOnClickListener {
-
-                createPopupWindow(it) {}
-            }
-            llFloorsList.addView(itemViewBinding.root)
-
         }
+
+
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

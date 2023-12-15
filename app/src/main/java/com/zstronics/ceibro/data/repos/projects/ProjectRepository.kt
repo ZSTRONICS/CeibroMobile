@@ -311,7 +311,7 @@ class ProjectRepository @Inject constructor(
         projectId: String
     ): ApiResponse<GetProjectGroupsResponseV2> {
         return executeSafely(call = {
-            service.getGroupsByProjectTid(
+            service.getGroupsByProjectTIdV2(
                 projectId = projectId
             )
         })
@@ -321,7 +321,7 @@ class ProjectRepository @Inject constructor(
         projectId: String
     ): ApiResponse<ProjectFloorResponseV2> {
         return executeSafely(call = {
-            service.getFloorsByProjectTid(
+            service.getFloorsByProjectTIDV2(
                 projectId = projectId
             )
         })

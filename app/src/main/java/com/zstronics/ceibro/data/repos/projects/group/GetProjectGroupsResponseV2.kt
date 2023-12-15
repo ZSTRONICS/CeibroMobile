@@ -9,8 +9,6 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 data class GetProjectGroupsResponseV2(
-
     @SerializedName("groups")
     var groups: ArrayList<GroupResponseV2> = arrayListOf()
-
 ) : BaseResponse(), Parcelable

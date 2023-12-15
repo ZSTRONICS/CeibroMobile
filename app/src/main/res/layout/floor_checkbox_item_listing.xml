@@ -2,10 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_35sdp"
         android:background="@color/white"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/_3sdp"
         android:paddingVertical="@dimen/_4sdp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -14,17 +15,25 @@
 
         <CheckBox
             android:id="@+id/cbFloorName"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:fontFamily="@font/inter_bold"
-            android:text="Floor Name"
-            android:textColor="@color/black_01"
+            android:fontFamily="@font/inter_medium"
             android:lines="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="B1"
+            android:textColor="@color/black_01" />
+
+        <TextView
+
+            android:id="@+id/tvAddFloors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:fontFamily="@font/inter_medium"
+            android:text="@string/floor"
+            android:textColor="@color/black_01" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

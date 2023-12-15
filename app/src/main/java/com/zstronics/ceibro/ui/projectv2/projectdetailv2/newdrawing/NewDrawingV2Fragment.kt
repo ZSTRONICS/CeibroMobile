@@ -9,6 +9,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,6 +27,7 @@ class NewDrawingV2Fragment :
             R.id.floorText -> {
 
                 addNewFloorBottomSheet {
+
                     mViewDataBinding.floorText.text = Editable.Factory.getInstance().newEditable(it)
                 }
 
@@ -33,9 +35,9 @@ class NewDrawingV2Fragment :
 
             R.id.groupText -> {
 
-                addNewGroupBottomSheet {
+                addNewGroupBottomSheet(viewModel) {
 
-                    mViewDataBinding.groupText.text = Editable.Factory.getInstance().newEditable(it)
+                    mViewDataBinding.groupText.text = Editable.Factory.getInstance().newEditable(it.groupName)
                 }
 
             }
@@ -47,7 +49,6 @@ class NewDrawingV2Fragment :
             R.id.cancelBtn -> {
                 navigateBack()
             }
-
 
 
         }
@@ -66,12 +67,12 @@ class NewDrawingV2Fragment :
         }
 
 
-        viewModel.createFloorByProjectTID(viewModel.projectId.value.toString(), "15")
+        //  viewModel.createFloorByProjectTID(viewModel.projectId.value.toString(), "15")
         viewModel.getFloorsByProjectTID(viewModel.projectId.value.toString())
-        viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), "Mughal")
+        //   viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), "Mughal")
         viewModel.getGroupsByProjectTID(viewModel.projectId.value.toString())
-        viewModel.deleteGroupByID(viewModel.projectId.value.toString())
-        viewModel.updateGroupByIDV2(viewModel.projectId.value.toString(),"Mughal")
+        //  viewModel.deleteGroupByID(viewModel.projectId.value.toString())
+        //  viewModel.updateGroupByIDV2(viewModel.projectId.value.toString(),"Mughal")
 
         // viewModel.getFloorsByProjectTid("657ac771753eb1365aef682a")
     }
@@ -85,10 +86,16 @@ class NewDrawingV2Fragment :
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
 
-    private fun addNewGroupBottomSheet(callback: (String) -> Unit) {
+    private fun addNewGroupBottomSheet(model:NewDrawingV2VM,callback: (GroupResponseV2) -> Unit ) {
 
-        val sheet = AddNewGroupBottomSheet {
+        val sheet = AddNewGroupBottomSheet(model) {
             callback.invoke(it)
+        }
+
+
+
+        sheet.onAddGroup = { groupName ->
+            viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), groupName)
         }
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")

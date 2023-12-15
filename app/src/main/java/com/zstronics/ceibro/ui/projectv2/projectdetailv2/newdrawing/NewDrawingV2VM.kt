@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 
-import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -10,6 +9,7 @@ import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
+import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,9 +24,14 @@ class NewDrawingV2VM @Inject constructor(
     val user = sessionManager.getUser().value
 
 
+    val _groupList: MutableLiveData<ArrayList<GroupResponseV2>> = MutableLiveData()
+    val groupList: MutableLiveData<ArrayList<GroupResponseV2>> = _groupList
+
     var pdfFilePath = MutableLiveData<String>("")
     var projectId = MutableLiveData<String>("")
     var message = MutableLiveData<String?>("")
+
+    var floor = MutableLiveData<String?>("")
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -42,8 +47,7 @@ class NewDrawingV2VM @Inject constructor(
 
                 is ApiResponse.Success -> {
 
-                    val groups = response.data.groups
-                    groups.size
+                    _groupList.value = response.data.groups
                 }
 
                 is ApiResponse.Error -> {
@@ -64,8 +68,11 @@ class NewDrawingV2VM @Inject constructor(
 
                 is ApiResponse.Success -> {
 
-                    val floor = response.data.group
-                    floor?.projectId
+
+                    response.data.group?.let {
+                        _groupList.value?.add(it)
+                    }
+
                 }
 
                 is ApiResponse.Error -> {
@@ -141,7 +148,7 @@ class NewDrawingV2VM @Inject constructor(
             when (val response = projectRepository.deleteGroupByIdV2(groupID)) {
 
                 is ApiResponse.Success -> {
-                    message.value=response.data.message
+                    message.value = response.data.message
 
                 }
 
@@ -151,8 +158,6 @@ class NewDrawingV2VM @Inject constructor(
             }
         }
     }
-
-
 
 
 }
