@@ -12,7 +12,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentAddNewGroupSheetBinding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewDrawingGroupAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResponseV2) -> Unit) :
+class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (CeibroGroupsV2) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupSheetBinding
 
@@ -29,10 +29,9 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResp
     lateinit var groupAdapter: NewDrawingGroupAdapter
     val items = ArrayList<String>()
     var onAddGroup: ((groupName: String) -> Unit)? = null
-    var onRenameGroup: ((String, GroupResponseV2) -> Unit)? = null
+    var onRenameGroup: ((String, CeibroGroupsV2) -> Unit)? = null
+    var groupDataToUpdate: CeibroGroupsV2? = null
 
-
-    var groupDataToUpdate: GroupResponseV2? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,23 +58,22 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (GroupResp
             groupAdapter.setList(it)
         }
         groupAdapter.deleteClickListener = { data ->
-            data.Id?.let {
-                model.deleteGroupByID(it) {
-                    model.groupList.value?.let {
-                        groupAdapter.setList(it)
-                    }
+
+            model.deleteGroupByID(data._id) {
+                model.groupList.value?.let {
+                    groupAdapter.setList(it)
                 }
             }
+
         }
         groupAdapter.renameClickListener = { data ->
-            data.Id?.let {
 
-                binding.tvAddFloors.visibility = View.GONE
-                binding.clAddGroup.visibility = View.VISIBLE
-                binding.addGroupBtn.text = "Rename"
-                binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
-                groupDataToUpdate = data
-            }
+            binding.tvAddFloors.visibility = View.GONE
+            binding.clAddGroup.visibility = View.VISIBLE
+            binding.addGroupBtn.text = "Rename"
+            binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
+            groupDataToUpdate = data
+
         }
         groupAdapter.itemClickListener = { data ->
             callback.invoke(data)

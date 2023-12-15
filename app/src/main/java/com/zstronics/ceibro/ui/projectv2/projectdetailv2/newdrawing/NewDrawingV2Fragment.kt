@@ -9,7 +9,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -87,7 +87,7 @@ class NewDrawingV2Fragment :
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
 
-    private fun addNewGroupBottomSheet(model: NewDrawingV2VM, callback: (GroupResponseV2) -> Unit) {
+    private fun addNewGroupBottomSheet(model:NewDrawingV2VM,callback: (CeibroGroupsV2) -> Unit ) {
 
         val sheet = AddNewGroupBottomSheet(model) {
             callback.invoke(it)
@@ -99,14 +99,12 @@ class NewDrawingV2Fragment :
         }
 
         sheet.onRenameGroup = { name,data->
-            data.Id?.let {
-                viewModel.updateGroupByIDV2(groupName = name, groupId = it) {
+                viewModel.updateGroupByIDV2(groupName = name, groupId = data._id) {
                    viewModel.groupList.value?.let {
                        sheet.groupAdapter.setList(it)
                        sheet.binding.addGroupBtn.text="Save"
                    }
                 }
-            }
         }
 
         sheet.isCancelable = true

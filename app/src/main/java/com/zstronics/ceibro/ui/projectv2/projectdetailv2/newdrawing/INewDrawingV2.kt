@@ -2,7 +2,7 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
-import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 
 interface INewDrawingV2 {
     interface State : IBase.State {
@@ -19,7 +19,7 @@ interface INewDrawingV2 {
         fun createGroupByProjectTIDV2(
             projectId: String,
             groupName: String,
-            callback: (GroupResponseV2) -> Unit
+            callback: (CeibroGroupsV2) -> Unit
         )
 
         fun updateGroupByIDV2(groupId: String, groupName: String,callback: () -> Unit)

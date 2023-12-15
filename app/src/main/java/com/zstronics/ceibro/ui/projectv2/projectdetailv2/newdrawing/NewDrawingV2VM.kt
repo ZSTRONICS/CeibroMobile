@@ -9,7 +9,7 @@ import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
-import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,8 +24,8 @@ class NewDrawingV2VM @Inject constructor(
     val user = sessionManager.getUser().value
 
 
-    val _groupList: MutableLiveData<ArrayList<GroupResponseV2>> = MutableLiveData()
-    val groupList: MutableLiveData<ArrayList<GroupResponseV2>> = _groupList
+    val _groupList: MutableLiveData<ArrayList<CeibroGroupsV2>> = MutableLiveData()
+    val groupList: MutableLiveData<ArrayList<CeibroGroupsV2>> = _groupList
 
     var pdfFilePath = MutableLiveData<String>("")
     var projectId = MutableLiveData<String>("")
@@ -61,7 +61,7 @@ class NewDrawingV2VM @Inject constructor(
     override fun createGroupByProjectTIDV2(
         projectId: String,
         groupName: String,
-        callback: (GroupResponseV2) -> Unit
+        callback: (CeibroGroupsV2) -> Unit
     ) {
         val request = CreateNewGroupV2Request(groupName)
         launch {
@@ -97,7 +97,7 @@ class NewDrawingV2VM @Inject constructor(
                             val iterator = currentList.iterator()
                             while (iterator.hasNext()) {
                                 val item = iterator.next()
-                                if (group.Id == item.Id) {
+                                if (group._id == item._id) {
                                     item.groupName=group.groupName
                                 }
                             }
@@ -174,7 +174,7 @@ class NewDrawingV2VM @Inject constructor(
                         val iterator = currentList.iterator()
                         while (iterator.hasNext()) {
                             val item = iterator.next()
-                            if (groupID == item.Id) {
+                            if (groupID == item._id) {
                                 iterator.remove()
                             }
                         }

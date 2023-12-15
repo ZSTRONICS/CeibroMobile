@@ -12,21 +12,20 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.repos.projects.group.GroupResponseV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListBinding
 import javax.inject.Inject
 
 class NewDrawingGroupAdapter @Inject constructor() :
     RecyclerView.Adapter<NewDrawingGroupAdapter.NewDrawingGroupViewHolder>() {
 
+    var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
 
-    var deleteClickListener: ((GroupResponseV2) -> Unit)? = null
-    var renameClickListener: ((GroupResponseV2) -> Unit)? = null
-
-    var itemClickListener: ((GroupResponseV2) -> Unit)? = null
+    var itemClickListener: ((CeibroGroupsV2) -> Unit)? = null
 
 
-    var listItems: MutableList<GroupResponseV2> = mutableListOf()
+    var listItems: MutableList<CeibroGroupsV2> = mutableListOf()
 
 
     override fun onCreateViewHolder(
@@ -50,13 +49,13 @@ class NewDrawingGroupAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<GroupResponseV2>) {
+    fun setList(list: List<CeibroGroupsV2>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
     }
 
-    fun addiItem(item: GroupResponseV2) {
+    fun addiItem(item: CeibroGroupsV2) {
         this.listItems.add(item)
         notifyDataSetChanged()
     }
@@ -64,7 +63,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
     inner class NewDrawingGroupViewHolder(private val binding: FloorCheckboxItemListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(data: GroupResponseV2) {
+        fun bind(data: CeibroGroupsV2) {
 
 
             binding.tvFloorName.text = data.groupName
@@ -75,16 +74,10 @@ class NewDrawingGroupAdapter @Inject constructor() :
 
                 createPopupWindow(it, data) { tag, data ->
                     if (tag == "delete") {
+                        deleteClickListener?.invoke(data)
+                    } else if (tag == "rename") {
+                        renameClickListener?.invoke(data)
 
-                        data.Id?.let {
-                            deleteClickListener?.invoke(data)
-                        }
-
-                    }
-                    else if (tag == "rename"){
-                        data.Id?.let {
-                            renameClickListener?.invoke(data)
-                        }
                     }
                 }
             }
@@ -95,8 +88,8 @@ class NewDrawingGroupAdapter @Inject constructor() :
 
     private fun createPopupWindow(
         v: View,
-        groupResponseV2: GroupResponseV2,
-        callback: (String, GroupResponseV2) -> Unit
+        groupResponseV2: CeibroGroupsV2,
+        callback: (String, CeibroGroupsV2) -> Unit
     ): PopupWindow {
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -150,8 +143,8 @@ class NewDrawingGroupAdapter @Inject constructor() :
 
     private fun updateGroup(
         context: Context,
-        groupResponseV2: GroupResponseV2,
-        callback: (String, GroupResponseV2) -> Unit
+        groupResponseV2: CeibroGroupsV2,
+        callback: (String, CeibroGroupsV2) -> Unit
     ) {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
