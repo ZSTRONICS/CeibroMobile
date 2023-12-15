@@ -37,7 +37,8 @@ class NewDrawingV2Fragment :
 
                 addNewGroupBottomSheet(viewModel) {
 
-                    mViewDataBinding.groupText.text = Editable.Factory.getInstance().newEditable(it.groupName)
+                    mViewDataBinding.groupText.text =
+                        Editable.Factory.getInstance().newEditable(it.groupName)
                 }
 
             }
@@ -86,17 +87,27 @@ class NewDrawingV2Fragment :
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
 
-    private fun addNewGroupBottomSheet(model:NewDrawingV2VM,callback: (GroupResponseV2) -> Unit ) {
+    private fun addNewGroupBottomSheet(model: NewDrawingV2VM, callback: (GroupResponseV2) -> Unit) {
 
         val sheet = AddNewGroupBottomSheet(model) {
             callback.invoke(it)
         }
-
-
-
-        sheet.onAddGroup = { groupName ->
-            viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), groupName)
+        sheet.onAddGroup = {
+            viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), it) {
+                sheet.groupAdapter.addiItem(it)
+            }
         }
+
+        sheet.onRenameGroup = { name,data->
+            data.Id?.let {
+                viewModel.updateGroupByIDV2(groupName = name, groupId = it) {
+                   viewModel.groupList.value?.let {
+                       sheet.groupAdapter.setList(it)
+                   }
+                }
+            }
+        }
+
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }

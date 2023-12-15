@@ -60,19 +60,20 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun createGroupByProjectTIDV2(
         projectId: String,
-        groupName: String
+        groupName: String,
+        callback: (GroupResponseV2) -> Unit
     ) {
         val request = CreateNewGroupV2Request(groupName)
         launch {
+            loading(true,"")
             when (val response = projectRepository.createGroupV2(projectId, request)) {
-
                 is ApiResponse.Success -> {
-
 
                     response.data.group?.let {
                         _groupList.value?.add(it)
+                        callback.invoke(it)
                     }
-
+                    loading(false,"")
                 }
 
                 is ApiResponse.Error -> {
@@ -82,15 +83,30 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
-    override fun updateGroupByIDV2(groupId: String, groupName: String) {
+    override fun updateGroupByIDV2(groupId: String, groupName: String, callback: () -> Unit) {
         val request = CreateNewGroupV2Request(groupName)
         launch {
+            loading(true)
             when (val response = projectRepository.updateGroupByIdV2(groupId, request)) {
 
                 is ApiResponse.Success -> {
 
-                    val floor = response.data.group
-                    floor?.projectId
+                    val group = response.data.group
+                    group?.let{
+                        _groupList.value?.let { currentList ->
+                            val iterator = currentList.iterator()
+                            while (iterator.hasNext()) {
+                                val item = iterator.next()
+                                if (group.Id == item.Id) {
+                                    item.groupName=group.groupName
+                                }
+                            }
+                            _groupList.value = currentList
+                        }
+                    }
+
+
+                    loading(false,"")
                 }
 
                 is ApiResponse.Error -> {
@@ -103,16 +119,18 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun createFloorByProjectTID(
         projectId: String,
-        floorName: String
+        floorName: String,
     ) {
         val request = CreateNewFloorRequest(floorName)
         launch {
+            loading(true)
             when (val response = projectRepository.createFloorV2(projectId, request)) {
 
                 is ApiResponse.Success -> {
 
                     val floor = response.data.floor
                     floor?.projectId
+                    loading(false,"")
                 }
 
                 is ApiResponse.Error -> {
@@ -125,6 +143,7 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun getFloorsByProjectTID(projectId: String) {
         launch {
+            loading(true)
             when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
 
                 is ApiResponse.Success -> {
@@ -134,6 +153,7 @@ class NewDrawingV2VM @Inject constructor(
                     if (!floor.isNullOrEmpty()) {
                         floor.size
                     }
+                    loading(false,"")
                 }
 
                 is ApiResponse.Error -> {
@@ -143,12 +163,26 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
-    override fun deleteGroupByID(groupID: String) {
+    override fun deleteGroupByID(groupID: String, callback: () -> Unit) {
         launch {
+            loading(true)
             when (val response = projectRepository.deleteGroupByIdV2(groupID)) {
 
                 is ApiResponse.Success -> {
                     message.value = response.data.message
+                    _groupList.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupID == item.Id) {
+                                iterator.remove()
+                            }
+                        }
+                        _groupList.value = currentList
+                    }
+                    loading(false,"")
+                    callback.invoke()
+
 
                 }
 

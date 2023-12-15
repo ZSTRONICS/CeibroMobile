@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/transparent">
 
     <data>
@@ -122,11 +123,24 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-                <LinearLayout
-                    android:id="@+id/llFloorsList"
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvFloorsList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/layout_ceibro_files" />
+
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </ScrollView>
