@@ -16,12 +16,13 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentAddNewGroupSheetBinding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewDrawingGroupAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.shortToastNow
 import java.util.Locale
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (CeibroGroupsV2) -> Unit) :
+class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: CeibroGroupsV2) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupSheetBinding
 
@@ -29,7 +30,8 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (CeibroGro
     lateinit var groupAdapter: NewDrawingGroupAdapter
     val items = ArrayList<String>()
     var onAddGroup: ((groupName: String) -> Unit)? = null
-    var onRenameGroup: ((String, CeibroGroupsV2) -> Unit)? = null
+    var onRenameGroup: ((updatedName: String, groupData: CeibroGroupsV2) -> Unit)? = null
+    var onDeleteGroup: ((groupData: CeibroGroupsV2) -> Unit)? = null
     var groupDataToUpdate: CeibroGroupsV2? = null
 
     override fun onCreateView(
@@ -51,61 +53,49 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (CeibroGro
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model._groupList.observe(viewLifecycleOwner) {
-            groupAdapter.setList(it)
-        }
         model._groupList.value?.let {
             groupAdapter.setList(it)
         }
+        binding.rvGroupList.adapter = groupAdapter
+
         groupAdapter.deleteClickListener = { data ->
-
-            model.deleteGroupByID(data._id) {
-                model.groupList.value?.let {
-                    groupAdapter.setList(it)
-                }
-            }
-
+            onDeleteGroup?.invoke(data)
         }
-        groupAdapter.renameClickListener = { data ->
 
-            binding.tvAddFloors.visibility = View.GONE
-            binding.clAddGroup.visibility = View.VISIBLE
+        groupAdapter.renameClickListener = { data ->
+            binding.tvAddNewGroup.visibility = View.GONE
             binding.addGroupBtn.text = "Rename"
+            binding.clAddGroup.visibility = View.VISIBLE
             binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
             groupDataToUpdate = data
 
         }
+
         groupAdapter.itemClickListener = { data ->
             callback.invoke(data)
-
+            dismiss()
         }
 
-        binding.rvFloorsList.adapter = groupAdapter
 
-
-        binding.tvAddFloors.setOnClickListener {
+        binding.tvAddNewGroup.setOnClickListener {
+            binding.tvAddNewGroup.visibility = View.GONE
             binding.clAddGroup.visibility = View.VISIBLE
-            it.visibility = View.GONE
         }
+
         binding.addGroupBtn.setOnClickListener {
-            val text = binding.tvNewGroup.text.toString()
+            val text = binding.tvNewGroup.text.toString().trim()
             if (text.isNotEmpty()) {
-                if (!items.contains(binding.tvNewGroup.text.toString().toLowerCase(Locale.ROOT))) {
-
-                    if (binding.addGroupBtn.text == "Rename") {
+                    if (binding.addGroupBtn.text.toString().equals("Rename", true)) {
                         groupDataToUpdate?.let {
-                            onRenameGroup?.invoke(text, it)
+                            if (!it.groupName.equals(text, true))
+                                onRenameGroup?.invoke(text, it)
                         }
-
+                    } else {
+                        onAddGroup?.invoke(text)
                     }
-
-                    onAddGroup?.invoke(text)
-                    binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
-                }
             } else {
+                shortToastNow("Group name cannot be empty")
             }
-            binding.tvAddFloors.visibility = View.VISIBLE
-            binding.clAddGroup.visibility = View.GONE
         }
     }
 

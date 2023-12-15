@@ -130,7 +130,7 @@ interface IProjectRepository {
 
     //New APIS for groups module
 
-    suspend fun getGroupsByProjectTid(
+    suspend fun getGroupsByProjectId(
         projectId: String
     ): ApiResponse<GetProjectGroupsResponseV2>
 

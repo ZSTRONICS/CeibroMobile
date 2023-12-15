@@ -206,7 +206,7 @@ interface ProjectRepositoryService {
 
     // new APIs for floor and groups
     @GET("v2/project/{projectId}/group")
-    suspend fun getGroupsByProjectTIdV2(@Path("projectId") projectId: String): Response<GetProjectGroupsResponseV2>
+    suspend fun getGroupsByProjectIdV2(@Path("projectId") projectId: String): Response<GetProjectGroupsResponseV2>
 
     @GET("v2/project/{projectId}/floor")
     suspend fun getFloorsByProjectTIDV2(@Path("projectId") projectId: String): Response<ProjectFloorResponseV2>
@@ -229,7 +229,7 @@ interface ProjectRepositoryService {
     ): Response<DeleteGroupByIdResponseV2>
 
 
-    @PATCH("v2/project/group{groupId}")
+    @PATCH("v2/project/group/{groupId}")
     suspend fun updateGroupByIdV2(
         @Path("groupId") groupId: String,
         @Body body: CreateNewGroupV2Request

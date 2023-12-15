@@ -12,5 +12,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ProjectFloorResponseV2(
     @SerializedName("floors")
-    val floors: List<CeibroFloorV2>?= arrayListOf()
+    val floors: List<CeibroFloorV2> = listOf()
 ) : BaseResponse(), Parcelable

@@ -27,7 +27,6 @@ class NewDrawingV2Fragment :
             R.id.floorText -> {
 
                 addNewFloorBottomSheet {
-
                     mViewDataBinding.floorText.text = Editable.Factory.getInstance().newEditable(it)
                 }
 
@@ -35,10 +34,10 @@ class NewDrawingV2Fragment :
 
             R.id.groupText -> {
 
-                addNewGroupBottomSheet(viewModel) {
-
+                addNewGroupBottomSheet(viewModel) { groupData ->
+                    viewModel.selectedGroup = groupData
                     mViewDataBinding.groupText.text =
-                        Editable.Factory.getInstance().newEditable(it.groupName)
+                        Editable.Factory.getInstance().newEditable(groupData.groupName)
                 }
 
             }
@@ -69,9 +68,9 @@ class NewDrawingV2Fragment :
 
 
         //  viewModel.createFloorByProjectTID(viewModel.projectId.value.toString(), "15")
-        viewModel.getFloorsByProjectTID(viewModel.projectId.value.toString())
+//        viewModel.getFloorsByProjectID(viewModel.projectId.value.toString())
         //   viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), "Mughal")
-        viewModel.getGroupsByProjectTID(viewModel.projectId.value.toString())
+//        viewModel.getGroupsByProjectTID(viewModel.projectId.value.toString())
         //  viewModel.deleteGroupByID(viewModel.projectId.value.toString())
         //  viewModel.updateGroupByIDV2(viewModel.projectId.value.toString(),"Mughal")
 
@@ -87,24 +86,40 @@ class NewDrawingV2Fragment :
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
 
-    private fun addNewGroupBottomSheet(model:NewDrawingV2VM,callback: (CeibroGroupsV2) -> Unit ) {
+    private fun addNewGroupBottomSheet(model: NewDrawingV2VM, callback: (group: CeibroGroupsV2) -> Unit) {
 
-        val sheet = AddNewGroupBottomSheet(model) {
-            callback.invoke(it)
+        val sheet = AddNewGroupBottomSheet(model) { groupData ->
+            callback.invoke(groupData)
         }
         sheet.onAddGroup = {
             viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), it) {
-                sheet.groupAdapter.addiItem(it)
+                sheet.groupAdapter.addItem(it)
+                sheet.binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
+                sheet.binding.addGroupBtn.text = "Save"
+                sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
+                sheet.binding.clAddGroup.visibility = View.GONE
             }
         }
 
-        sheet.onRenameGroup = { name,data->
-                viewModel.updateGroupByIDV2(groupName = name, groupId = data._id) {
-                   viewModel.groupList.value?.let {
-                       sheet.groupAdapter.setList(it)
-                       sheet.binding.addGroupBtn.text="Save"
-                   }
+        sheet.onRenameGroup = { name, data ->
+            viewModel.updateGroupByIDV2(groupId = data._id, groupName = name) { group ->
+                sheet.groupAdapter.updateItem(group)
+                sheet.binding.addGroupBtn.text = "Save"
+                sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
+                sheet.binding.clAddGroup.visibility = View.GONE
+            }
+        }
+
+        sheet.onDeleteGroup = { data ->
+            viewModel.deleteGroupByID(groupId = data._id) {
+                sheet.groupAdapter.deleteItem(data._id)
+                if (!sheet.binding.addGroupBtn.text.toString().equals("Save", true)) {
+                    sheet.binding.addGroupBtn.text = "Save"
+                    sheet.binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
+                    sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
+                    sheet.binding.clAddGroup.visibility = View.GONE
                 }
+            }
         }
 
         sheet.isCancelable = true

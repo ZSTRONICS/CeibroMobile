@@ -75,13 +75,14 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/tvAddFloors"
+                    android:id="@+id/tvAddNewGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_margin="@dimen/_10sdp"
                     android:fontFamily="@font/inter_regular"
                     android:padding="@dimen/_6sdp"
+                    android:textSize="@dimen/_11sdp"
                     android:text="@string/add_new_group"
                     android:textColor="@color/appBlue"
                     android:visibility="visible" />
@@ -95,10 +96,11 @@
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:visibility="gone">
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/tvNewGroup"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:maxLength="50"
                         android:hint="@string/start_typing_new_group"
                         app:layout_constraintEnd_toStartOf="@+id/addGroupBtn"
                         app:layout_constraintStart_toStartOf="parent"
@@ -125,7 +127,7 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvFloorsList"
+                    android:id="@+id/rvGroupList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -138,7 +140,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
                     tools:itemCount="2"
-                    tools:listitem="@layout/layout_ceibro_files" />
+                    tools:listitem="@layout/floor_checkbox_item_list" />
 
 
 

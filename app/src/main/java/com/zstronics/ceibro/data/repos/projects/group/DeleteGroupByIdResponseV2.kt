@@ -10,5 +10,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class DeleteGroupByIdResponseV2(
     @SerializedName("message")
-    var message: String? = null
+    var message: String = ""
 ) : BaseResponse(), Parcelable

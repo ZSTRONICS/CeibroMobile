@@ -65,7 +65,6 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
         val item = ArrayList<String>()
         updateSelectionFloorsList(binding.llFloorsList, item)
 
-
     }
 
     private fun updateSelectionFloorsList(llFloorsList: LinearLayout, item: ArrayList<String>) {

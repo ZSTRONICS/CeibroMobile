@@ -72,16 +72,16 @@ class DrawingsV2Fragment :
                         if (fromLocation.equals("local", true)) {
 
 
-                            val bundle = Bundle()
-                            bundle.putString("projectId",viewModel.projectData.value!!._id )
-                            navigate(R.id.newDrawingV2Fragment, bundle)
+//                            val bundle = Bundle()
+//                            bundle.putString("projectId",viewModel.projectData.value!!._id )
+//                            navigate(R.id.newDrawingV2Fragment, bundle)
 
 
-//                            chooseDocuments(
-//                                mimeTypes = arrayOf(
-//                                    "application/pdf"
-//                                )
-//                            )
+                            chooseDocuments(
+                                mimeTypes = arrayOf(
+                                    "application/pdf"
+                                )
+                            )
                         } else {
                             shortToastNow("Coming Soon")
                         }
@@ -326,6 +326,7 @@ class DrawingsV2Fragment :
                         println("pdfFilePath1 ${pdfFilePath}")
                         val bundle = Bundle()
                         bundle.putString("pdfFilePath", pdfFilePath)
+                        bundle.putString("projectId",viewModel.projectData.value!!._id )
                         navigate(R.id.newDrawingV2Fragment, bundle)
                         break
                     }
@@ -352,6 +353,7 @@ class DrawingsV2Fragment :
                         println("pdfFilePath ${pdfFilePath} fileName: $fileName")
                         val bundle = Bundle()
                         bundle.putString("pdfFilePath", pdfFilePath)
+                        bundle.putString("projectId",viewModel.projectData.value!!._id )
                         navigate(R.id.newDrawingV2Fragment, bundle)
                     }
                 }

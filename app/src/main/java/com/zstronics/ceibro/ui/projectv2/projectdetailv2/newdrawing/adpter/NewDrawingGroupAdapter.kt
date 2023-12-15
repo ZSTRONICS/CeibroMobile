@@ -21,9 +21,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
 
     var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
     var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
-
     var itemClickListener: ((CeibroGroupsV2) -> Unit)? = null
-
 
     var listItems: MutableList<CeibroGroupsV2> = mutableListOf()
 
@@ -55,9 +53,31 @@ class NewDrawingGroupAdapter @Inject constructor() :
         notifyDataSetChanged()
     }
 
-    fun addiItem(item: CeibroGroupsV2) {
+    fun addItem(item: CeibroGroupsV2) {
         this.listItems.add(item)
         notifyDataSetChanged()
+    }
+    fun updateItem(item: CeibroGroupsV2) {
+        val allItems = this.listItems
+        val foundItem = allItems.find { it._id == item._id }
+        if (foundItem != null) {
+            val index = allItems.indexOf(foundItem)
+            allItems[index] = item
+//            this.listItems.clear()
+            this.listItems = allItems
+            notifyDataSetChanged()
+        }
+    }
+    fun deleteItem(groupId: String) {
+        val allItems = this.listItems
+        val foundItem = allItems.find { it._id == groupId }
+        if (foundItem != null) {
+            val index = allItems.indexOf(foundItem)
+            allItems.removeAt(index)
+//            this.listItems.clear()
+            this.listItems = allItems
+            notifyDataSetChanged()
+        }
     }
 
     inner class NewDrawingGroupViewHolder(private val binding: FloorCheckboxItemListBinding) :

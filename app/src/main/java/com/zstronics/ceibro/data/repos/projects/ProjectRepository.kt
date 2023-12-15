@@ -307,11 +307,11 @@ class ProjectRepository @Inject constructor(
 
 
     //New APIS for project
-    override suspend fun getGroupsByProjectTid(
+    override suspend fun getGroupsByProjectId(
         projectId: String
     ): ApiResponse<GetProjectGroupsResponseV2> {
         return executeSafely(call = {
-            service.getGroupsByProjectTIdV2(
+            service.getGroupsByProjectIdV2(
                 projectId = projectId
             )
         })
