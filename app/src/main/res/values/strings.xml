@@ -407,6 +407,8 @@
     <string name="failed">Failed</string>
     <string name="topic_required">Topic <font color="#D9000D">*</font></string>
     <string name="project_name_required">Project name <font color="#D9000D">*</font></string>
+    <string name="select_floor">Select Floor  <font color="#D9000D">*</font></string>
+    <string name="select_group">Select Group  <font color="#D9000D">*</font></string>
     <string name="assign_to_required_heading">Assign to <font color="#D9000D">*</font></string>
     <string name="forward_to_required_heading">Forward to <font color="#D9000D">*</font></string>
     <string name="attach_heading">Attach</string>
@@ -536,6 +538,7 @@
     <string name="contacts_sync_count">Last contact sync count</string>
     <string name="close_app">Close App</string>
     <string name="are_you_sure_you_want_to_close_the_app">Are you sure you want to close the app?</string>
+    <string name="are_you_sure_you_want_to_delete_this_group">Are you sure you want to delete this group?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="logout">Logout</string>
@@ -549,7 +552,8 @@
     <string name="what_is_the_topic">What is the topic?</string>
     <string name="add_topics_to_your_tasks_to_save_and_organise_tasks">Add topics to your tasks to save and organise tasks around common themes and reuse them in future.</string>
     <string name="description">Description</string>
-    <string name="add_new_drawing">Add new drawing</string>
+    <string name="add_new_drawings">Add new drawings</string>
+    <string name="hidden_drawings">Hidden drawings</string>
     <string name="add_members">Add members</string>
     <string name="save">Save</string>
     <string name="projects">Projects</string>
@@ -568,6 +572,7 @@
     <string name="local">local</string>
     <string name="ceibro">ceibro</string>
     <string name="detail">Detail</string>
+    <string name="drawing">Drawing</string>
     <string name="no_projects_are_hidden">No projects are hidden.</string>
     <string name="project_name_is_required">Project name is required.</string>
     <string name="created_by">Created by</string>
@@ -584,4 +589,16 @@
     <string name="forward_screen_already_opened">Forward screen already opened for this task</string>
     <string name="filter">Filter</string>
     <string name="text_new">New</string>
+    <string name="select_if_you_want_to_add_this_drawing_under_some_group">Select if you want to add this drawing under some group</string>
+    <string name="drawing_name">Drawing name</string>
+    <string name="delete_group">Delete group</string>
+    <string name="remove_floor">Remove floor</string>
+    <string name="rename_group">Rename group</string>
+    <string name="add_new_group">+ Add new group</string>
+    <string name="to">To</string>
+    <string name="from">From</string>
+    <string name="unread">Unread</string>
+    <string name="hidden">Hidden</string>
+    <string name="start_typing_new_group">Start typing new group</string>
+    <string name="floor">Floor</string>
 </resources>

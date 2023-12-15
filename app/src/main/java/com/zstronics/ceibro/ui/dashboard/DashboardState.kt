@@ -11,6 +11,7 @@ class DashboardState @Inject constructor() : BaseState(), IDashboard.State {
     override val hiddenSelected: MutableLiveData<Boolean> = MutableLiveData(false)
     override val locationSelected: MutableLiveData<Boolean> = MutableLiveData(false)
     override val projectsSelected: MutableLiveData<Boolean> = MutableLiveData(false)
+    override val setAddTaskButtonVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
     override val selectedItem: MutableLiveData<Int> = MutableLiveData(R.id.nav_home)
     override var connectionCount: MutableLiveData<Int> = MutableLiveData(0)
 }

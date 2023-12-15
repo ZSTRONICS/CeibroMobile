@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.data.repos.projects
 
+
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
 import com.zstronics.ceibro.data.base.BaseResponse
@@ -10,9 +11,15 @@ import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderReq
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
+import com.zstronics.ceibro.data.repos.projects.floor.CreateFloorResponseV2
+import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateGroupResponseV2
+import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
+import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
+import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.member.DeleteMemberResponse
@@ -21,6 +28,7 @@ import com.zstronics.ceibro.data.repos.projects.member.EditProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.member.GetProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
+import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectFloorResponseV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleRequest
 import com.zstronics.ceibro.data.repos.projects.role.CreateRoleResponse
@@ -293,6 +301,72 @@ class ProjectRepository @Inject constructor(
             service.updateFavoriteProjectStatus(
                 state = favorite,
                 projectId = projectId
+            )
+        })
+    }
+
+
+    //New APIS for project
+    override suspend fun getGroupsByProjectTid(
+        projectId: String
+    ): ApiResponse<GetProjectGroupsResponseV2> {
+        return executeSafely(call = {
+            service.getGroupsByProjectTIdV2(
+                projectId = projectId
+            )
+        })
+    }
+
+    override suspend fun getFloorsByProjectTid(
+        projectId: String
+    ): ApiResponse<ProjectFloorResponseV2> {
+        return executeSafely(call = {
+            service.getFloorsByProjectTIDV2(
+                projectId = projectId
+            )
+        })
+    }
+
+    override suspend fun createGroupV2(
+        projectId: String,
+        groupName: CreateNewGroupV2Request,
+    ): ApiResponse<CreateGroupResponseV2> {
+        return executeSafely(call = {
+            service.createGroupV2(
+                projectId = projectId, groupName
+            )
+        })
+    }
+
+
+    override suspend fun updateGroupByIdV2(
+        groupId: String,
+        body: CreateNewGroupV2Request
+    ): ApiResponse<CreateGroupResponseV2> {
+        return executeSafely(call = {
+            service.updateGroupByIdV2(
+                groupId, body
+            )
+        })
+    }
+
+    override suspend fun createFloorV2(
+        projectId: String,
+        floorName: CreateNewFloorRequest,
+    ): ApiResponse<CreateFloorResponseV2> {
+        return executeSafely(call = {
+            service.createFloorV2(
+                projectId = projectId, floorName
+            )
+        })
+    }
+
+    override suspend fun deleteGroupByIdV2(
+        groupId: String,
+    ): ApiResponse<DeleteGroupByIdResponseV2> {
+        return executeSafely(call = {
+            service.deleteGroupByIdV2(
+                groupId = groupId
             )
         })
     }

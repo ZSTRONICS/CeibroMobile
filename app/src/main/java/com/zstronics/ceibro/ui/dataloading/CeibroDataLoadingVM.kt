@@ -13,6 +13,8 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -53,7 +55,8 @@ class CeibroDataLoadingVM @Inject constructor(
     private val taskDao: TaskV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
-    private val projectDao: ProjectsV2Dao,
+    private val floorsV2Dao: FloorsV2Dao,
+    private val groupsV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<ICeibroDataLoading.State>(), ICeibroDataLoading.ViewModel {
     var taskData: NotificationTaskData? = null
@@ -201,8 +204,9 @@ class CeibroDataLoadingVM @Inject constructor(
         launch {
             when (val response = projectRepository.getProjectsV2()) {
                 is ApiResponse.Success -> {
-                    val data = response.data.allProjects
-                    projectDao.insertMultipleProject(data)
+                    projectsV2Dao.insertMultipleProject(response.data.allProjects)
+                    floorsV2Dao.insertMultipleFloors(response.data.allFloors)
+                    groupsV2Dao.insertMultipleGroups(response.data.allGroups)
 
                     apiSucceedCount++
                     callBack.invoke()

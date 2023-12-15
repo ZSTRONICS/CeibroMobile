@@ -7,6 +7,8 @@ import com.zstronics.ceibro.data.database.converters.*
 import com.zstronics.ceibro.data.database.converters.v2.*
 import com.zstronics.ceibro.data.database.dao.*
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
+import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.subtask.*
 import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
@@ -39,10 +41,12 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         Events::class,
         TopicsV2DatabaseEntity::class,
         CeibroProjectV2::class,
+        CeibroFloorV2::class,
+        CeibroGroupsV2::class,
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 81,
+    version = 82,
     exportSchema = false
 )
 @TypeConverters(
@@ -83,6 +87,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     TopicsResponseTypeConverter::class,
     TopicDataListTypeConverter::class,
     ProjectsV2ListTypeConverter::class,
+    FloorsV2ListTypeConverter::class,
+    GroupsV2ListTypeConverter::class,
     UserCeibroDataTypeConverter::class,
     AssignedToStateTypeConverter::class,
     LocalFilesToStoreTypeConverter::class,
@@ -100,6 +106,8 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getTaskV2sDao(): TaskV2Dao
     abstract fun getTopicsV2Dao(): TopicsV2Dao
     abstract fun getProjectsV2Dao(): ProjectsV2Dao
+    abstract fun getFloorsV2Dao(): FloorsV2Dao
+    abstract fun getGroupsV2Dao(): GroupsV2Dao
     abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
     abstract fun getDraftNewTaskV2Dao(): DraftNewTaskV2Dao
 

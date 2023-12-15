@@ -4,11 +4,11 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.projectinfo.ProjectInfoV2Fragment
 
 
-private const val NUM_TABS = 1
+private const val NUM_TABS = 2
 
 
 class ProjectDetailTabLayoutAdapter(
@@ -20,8 +20,12 @@ class ProjectDetailTabLayoutAdapter(
 
         val projectInfoV2Fragment = ProjectInfoV2Fragment()
 
+        val drawingsV2Fragment = DrawingsV2Fragment()
+
         return when (position) {
             0 -> projectInfoV2Fragment
+
+            1 -> drawingsV2Fragment
 
             else -> projectInfoV2Fragment
         }

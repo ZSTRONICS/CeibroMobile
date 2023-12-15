@@ -491,6 +491,22 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         return null
     }
 
+    fun ensurePdfExtension(fileName: String): String? {
+        // List of common image extensions
+        val pdfExtensions = listOf("pdf")
+
+        // Extract the extension from the file name
+        val lastDotIndex = fileName.lastIndexOf('.')
+        if (lastDotIndex != -1 && lastDotIndex < fileName.length - 1) {
+            val extension = fileName.substring(lastDotIndex + 1).toLowerCase()
+            if (extension in pdfExtensions) {
+                // The file name already has a valid image extension
+                return extension
+            }
+        }
+        return null
+    }
+
     //converting -> content://com.android.providers.media.documents/document/image%3A17     into next file format so that name would be accurate in all devices    file:///storage/emulated/0/Android/data/com.zstronics.ceibro.dev/files/1695738659642.jpg
     fun createFileUriFromContentUri(
         context: Context,

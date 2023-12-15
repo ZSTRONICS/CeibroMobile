@@ -1,0 +1,197 @@
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
+
+
+import android.os.Bundle
+import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
+import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.data.sessions.SessionManager
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class NewDrawingV2VM @Inject constructor(
+    override val viewState: NewDrawingsV2State,
+    private val projectRepository: IProjectRepository,
+    private val sessionManager: SessionManager,
+    private val projectDao: ProjectsV2Dao,
+) : HiltBaseViewModel<INewDrawingV2.State>(), INewDrawingV2.ViewModel {
+    val user = sessionManager.getUser().value
+
+
+    val _groupList: MutableLiveData<ArrayList<CeibroGroupsV2>> = MutableLiveData()
+    val groupList: MutableLiveData<ArrayList<CeibroGroupsV2>> = _groupList
+
+    var pdfFilePath = MutableLiveData<String>("")
+    var projectId = MutableLiveData<String>("")
+    var message = MutableLiveData<String?>("")
+
+    var floor = MutableLiveData<String?>("")
+
+
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+        pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
+        projectId.value = bundle?.getString("projectId").toString()
+    }
+
+
+    override fun getGroupsByProjectTID(projectId: String) {
+        launch {
+            when (val response = projectRepository.getGroupsByProjectTid(projectId)) {
+
+                is ApiResponse.Success -> {
+
+                    _groupList.value = response.data.groups
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
+    override fun createGroupByProjectTIDV2(
+        projectId: String,
+        groupName: String,
+        callback: (CeibroGroupsV2) -> Unit
+    ) {
+        val request = CreateNewGroupV2Request(groupName)
+        launch {
+            loading(true,"")
+            when (val response = projectRepository.createGroupV2(projectId, request)) {
+                is ApiResponse.Success -> {
+
+                    response.data.group?.let {
+                        _groupList.value?.add(it)
+                        callback.invoke(it)
+                    }
+                    loading(false,"")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun updateGroupByIDV2(groupId: String, groupName: String, callback: () -> Unit) {
+        val request = CreateNewGroupV2Request(groupName)
+        launch {
+            loading(true)
+            when (val response = projectRepository.updateGroupByIdV2(groupId, request)) {
+
+                is ApiResponse.Success -> {
+
+                    val group = response.data.group
+                    group?.let{
+                        _groupList.value?.let { currentList ->
+                            val iterator = currentList.iterator()
+                            while (iterator.hasNext()) {
+                                val item = iterator.next()
+                                if (group._id == item._id) {
+                                    item.groupName=group.groupName
+                                }
+                            }
+                            _groupList.value = currentList
+                        }
+                    }
+
+
+                    loading(false,"")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
+    override fun createFloorByProjectTID(
+        projectId: String,
+        floorName: String,
+    ) {
+        val request = CreateNewFloorRequest(floorName)
+        launch {
+            loading(true)
+            when (val response = projectRepository.createFloorV2(projectId, request)) {
+
+                is ApiResponse.Success -> {
+
+                    val floor = response.data.floor
+                    floor?.projectId
+                    loading(false,"")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
+    override fun getFloorsByProjectTID(projectId: String) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
+
+                is ApiResponse.Success -> {
+
+                    val floor = response.data.floors
+
+                    if (!floor.isNullOrEmpty()) {
+                        floor.size
+                    }
+                    loading(false,"")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun deleteGroupByID(groupID: String, callback: () -> Unit) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.deleteGroupByIdV2(groupID)) {
+
+                is ApiResponse.Success -> {
+                    message.value = response.data.message
+                    _groupList.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupID == item._id) {
+                                iterator.remove()
+                            }
+                        }
+                        _groupList.value = currentList
+                    }
+                    loading(false,"")
+                    callback.invoke()
+
+
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
+}

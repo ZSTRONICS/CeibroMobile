@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.locationv2.drawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
 
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase

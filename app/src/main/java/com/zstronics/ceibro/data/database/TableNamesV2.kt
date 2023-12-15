@@ -7,6 +7,8 @@ object TableNamesV2 {
     const val TaskEvents = "tasks_v2_events"
     const val Topics = "topics_v2"
     const val Projects = "projects_v2"
+    const val Floors = "floors_v2"
+    const val Groups = "groups_v2"
     const val Connections = "connections_v2"
     const val DraftNewTask = "draft_new_task_v2"
 }

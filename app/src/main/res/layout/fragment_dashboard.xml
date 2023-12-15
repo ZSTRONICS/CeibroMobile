@@ -227,7 +227,7 @@
             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
             android:src="@drawable/ic_add"
             android:tooltipText="@string/new_task_heading"
-            android:visibility="@{viewState.projectsSelected ?View.GONE :View.VISIBLE}"
+            android:visibility="@{viewState.setAddTaskButtonVisibility ?View.GONE :View.VISIBLE}"
             app:elevation="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
