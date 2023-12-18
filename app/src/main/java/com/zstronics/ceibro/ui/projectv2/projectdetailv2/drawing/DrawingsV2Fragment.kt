@@ -41,6 +41,11 @@ import java.io.InputStream
 @AndroidEntryPoint
 class DrawingsV2Fragment :
     BaseNavViewModelFragment<FragmentDrawingsV2Binding, IDrawingV2.State, DrawingsV2VM>() {
+    override val bindingVariableId = BR.viewModel
+    override val bindingViewStateVariableId = BR.viewState
+    override val viewModel: DrawingsV2VM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_drawings_v2
+    override fun toolBarVisibility(): Boolean = false
 
     private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
     private var manager: DownloadManager? = null
@@ -51,12 +56,6 @@ class DrawingsV2Fragment :
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
-    override val bindingVariableId = BR.viewModel
-    override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: DrawingsV2VM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_drawings_v2
-    override fun toolBarVisibility(): Boolean = false
-    private var sectionList: MutableList<DrawingSectionHeader> = mutableListOf()
 
     private var fragmentManager: FragmentManager? = null
 
@@ -108,6 +107,11 @@ class DrawingsV2Fragment :
         }
     }
 
+
+    lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
+    private var sectionList: MutableList<DrawingSectionHeader> = mutableListOf()
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -124,42 +128,99 @@ class DrawingsV2Fragment :
         )
 
 
-        val stringListData =
-            StringListData(listOf("Group 1", "Group 2", "Group 3", "Group 4", "Group 5"))
-
         sectionList.add(
             0,
             DrawingSectionHeader(
-                listOf(stringListData, stringListData, stringListData, stringListData),
+                mutableListOf(),
                 getString(R.string.favorite_projects)
             )
         )
         sectionList.add(
             1,
             DrawingSectionHeader(
-                listOf(stringListData, stringListData, stringListData, stringListData),
-                getString(R.string.recently_used)
+                mutableListOf(),
+                getString(R.string.all_groups)
             )
         )
 
 
         sectionedAdapter = AllDrawingsAdapterSectionRecycler(requireContext(), sectionList)
         retrieveFilesFromCeibroFolder()
-        sectionedAdapter?.setCallBack { view, postitoin, data, tag ->
+
+        sectionedAdapter.setCallBack { view, postitoin, data, tag ->
             checkDownloadFilePermission(data)
         }
+
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.drawingsRV.layoutManager = linearLayoutManager
         mViewDataBinding.drawingsRV.setHasFixedSize(true)
         mViewDataBinding.drawingsRV.adapter = sectionedAdapter
 
 
+
+        viewModel.favoriteGroups.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                sectionList.removeAt(0)
+                sectionList.add(
+                    0, DrawingSectionHeader(it, getString(R.string.favorite_projects))
+                )
+                sectionedAdapter.insertNewSection(
+                    DrawingSectionHeader(
+                        it,
+                        getString(R.string.favorite_projects)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+
+            } else {
+                sectionList.removeAt(0)
+                sectionList.add(
+                    0, DrawingSectionHeader(mutableListOf(), getString(R.string.favorite_projects))
+                )
+                sectionedAdapter.insertNewSection(
+                    DrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.favorite_projects)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.groupData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                sectionList.removeAt(1)
+                sectionList.add(
+                    1, DrawingSectionHeader(it, getString(R.string.all_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    DrawingSectionHeader(
+                        it,
+                        getString(R.string.all_groups)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+
+            } else {
+                sectionList.removeAt(0)
+                sectionList.add(
+                    0, DrawingSectionHeader(mutableListOf(), getString(R.string.all_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    DrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.all_groups)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
     }
 
     override fun onDestroy() {
         mainActivityDownloader?.unregisterReceiver(downloadCompleteReceiver)
         mainActivityDownloader = null
-        sectionedAdapter = null
 
         super.onDestroy()
     }
@@ -170,7 +231,6 @@ class DrawingsV2Fragment :
         const val permissionRequestCode = 123
         var mainActivityDownloader: Context? = null
 
-        var sectionedAdapter: AllDrawingsAdapterSectionRecycler? = null
         fun retrieveFilesFromCeibroFolder() {
             val folder = File(
                 mainActivityDownloader?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
@@ -182,7 +242,7 @@ class DrawingsV2Fragment :
                     println("File Path: $file")
                 }
 
-                sectionedAdapter?.notifyDataSetChanged()
+//                sectionedAdapter?.notifyDataSetChanged()
             }
         }
     }

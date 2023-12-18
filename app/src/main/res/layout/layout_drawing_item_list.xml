@@ -6,84 +6,120 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivFav"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:src="@drawable/add_to_fav"
+            android:layout_width="32dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:padding="4dp"
+            android:src="@drawable/non_favorite"
+            app:layout_constraintBottom_toBottomOf="@+id/groupLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/groupLayout" />
 
-
-        <TextView
-            android:layout_marginStart="@dimen/_10sdp"
-            android:id="@+id/tvProjectName"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/groupLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:text="Project Name"
-            app:layout_constraintEnd_toStartOf="@id/ivDropDown"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/viewTwo"
+            app:layout_constraintEnd_toStartOf="@+id/viewOne"
             app:layout_constraintStart_toEndOf="@+id/ivFav"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvFrom"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="From :Jaanus Kuston"
-            app:layout_constraintEnd_toEndOf="@id/tvProjectName"
-            app:layout_constraintStart_toStartOf="@id/tvProjectName"
-            app:layout_constraintTop_toBottomOf="@id/tvProjectName" />
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ivDropDown"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+                <TextView
+                    android:id="@+id/tvGroupName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="1"
+                    android:text="@string/group_name_heading1"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
 
-            android:id="@+id/ivDropDown"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:src="@drawable/icon_drop_down"
-            app:layout_constraintBottom_toBottomOf="@id/ivFav"
-            app:layout_constraintEnd_toStartOf="@id/viewOne"
-            app:layout_constraintTop_toTopOf="@id/ivFav" />
+                <TextView
+                    android:id="@+id/tvGroupBy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:maxLines="1"
+                    android:text="From :Jaanus Kuston"
+                    android:textColor="@color/appTextGrey"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivDropDown"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_drop_down"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <View
-
             android:id="@+id/viewOne"
-            android:layout_width="2dp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_6sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_11sdp"
             android:background="@color/appGrey3"
+            app:layout_constraintBottom_toBottomOf="@+id/groupLayout"
             app:layout_constraintEnd_toStartOf="@id/ivDownload"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/groupLayout" />
 
-        <ImageView
-
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivDownload"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:padding="2dp"
             android:src="@drawable/download"
             app:layout_constraintBottom_toBottomOf="@id/ivFav"
             app:layout_constraintEnd_toStartOf="@id/ivOptions"
             app:layout_constraintTop_toTopOf="@id/ivFav" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivOptions"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:backgroundTint="#F1B740"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/_7sdp"
+            android:padding="1dp"
             android:src="@drawable/ic_menu_dots"
             app:layout_constraintBottom_toBottomOf="@id/ivFav"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ivFav" />
+            app:layout_constraintTop_toTopOf="@id/ivFav"
+            app:tint="@color/appBlue" />
+
+        <View
+            android:id="@+id/viewTwo"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:background="@color/appGrey2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ivOptions"
+            app:layout_constraintStart_toStartOf="@+id/ivFav" />
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/llParent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -91,9 +127,10 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/_3sdp"
             android:paddingVertical="@dimen/_4sdp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivFav"
-            app:layout_constraintTop_toBottomOf="@id/tvFrom" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/groupLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
