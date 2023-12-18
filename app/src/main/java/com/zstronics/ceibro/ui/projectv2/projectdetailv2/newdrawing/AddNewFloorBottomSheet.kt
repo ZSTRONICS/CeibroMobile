@@ -19,19 +19,24 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListBinding
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListingBinding
 import com.zstronics.ceibro.databinding.FragmentAddFloorBinding
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewFloorGroupAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
+class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (String) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddFloorBinding
-    private var selectedFloorList = ArrayList<String>();
+    private var selectedFloorList: MutableList<CeibroFloorV2> = mutableListOf()
+    var deleteClickListener: ((String) -> Unit)? = null
 
-
+    @Inject
+    lateinit var floorAdapter: NewFloorGroupAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,50 +56,33 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.tvAddFloors.setOnClickListener {
-            getFloorsList(it.context, selectedFloorList) { list ->
-                selectedFloorList = list
-                binding.floorText.text =
-                    Editable.Factory.getInstance().newEditable(list.size.toString())
 
-                callback.invoke(list.size.toString())
-                updateSelectionFloorsList(binding.llFloorsList, list)
+        model.floorList.value?.let {
+            floorAdapter.setList(it)
+            selectedFloorList = it
+        }
+        binding.rvFloorList.adapter = floorAdapter
+
+
+        floorAdapter.itemClickListener = { data ->
+            callback.invoke(data)
+            dismiss()
+        }
+
+        floorAdapter.deleteClickListener = { data ->
+            if (data._id.isEmpty()) {
+                floorAdapter.deleteItem(data.floorName)
+            }else{
+                deleteClickListener?.invoke(data._id)
             }
         }
 
-        val item = ArrayList<String>()
-        updateSelectionFloorsList(binding.llFloorsList, item)
+        binding.tvAddFloors.setOnClickListener {
 
-    }
-
-    private fun updateSelectionFloorsList(llFloorsList: LinearLayout, item: ArrayList<String>) {
-        llFloorsList.removeAllViews()
-
-        item.forEachIndexed { index, data ->
-
-            val itemViewBinding: FloorCheckboxItemListBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(binding.root.context),
-                R.layout.floor_checkbox_item_list,
-                binding.llFloorsList,
-                false
-            )
-            itemViewBinding.ivMenuBtn.setOnClickListener {
-
-                createPopupWindow(it, index.toString()) {
-
-                    selectedFloorList.remove(itemViewBinding.tvFloorName.text.toString())
-                    binding.floorText.text = Editable.Factory.getInstance()
-                        .newEditable(selectedFloorList.size.toString())
-
-                    callback.invoke(selectedFloorList.size.toString())
-
-                    llFloorsList.removeView(itemViewBinding.root)
-                    llFloorsList.invalidate()
-                }
+            getFloorsList(it.context, selectedFloorList) { list ->
+                floorAdapter.setList(list)
+                selectedFloorList = list
             }
-            itemViewBinding.tvFloorName.text = data
-            llFloorsList.addView(itemViewBinding.root)
-
         }
     }
 
@@ -106,70 +94,24 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
         return dialog
 
     }
-
-
-    private fun createPopupWindow(v: View, index: String, callback: (String) -> Unit): PopupWindow {
-
-        val context: Context = v.context
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.floor_menu_dialog, null)
-
-        val popupWindow = PopupWindow(
-            view,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            true
-        )
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupWindow.elevation = 13F
-        popupWindow.isOutsideTouchable = true
-
-
-        val deleteFloorBtn: TextView = view.findViewById(R.id.deleteFloorBtn)
-        deleteFloorBtn.setOnClickListener {
-            callback.invoke(index)
-            popupWindow.dismiss()
-        }
-
-
-        val values = IntArray(2)
-        v.getLocationInWindow(values)
-        val positionOfIcon = values[1]
-
-        //Get the height of 2/3rd of the height of the screen
-        val displayMetrics = context.resources.displayMetrics
-        val height = displayMetrics.heightPixels * 2 / 3
-
-        if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -70, -100)
-        } else {
-            popupWindow.showAsDropDown(v, 0, 5)
-        }
-
-//        popupWindow.showAsDropDown(v, -110, -200)
-
-        return popupWindow
-    }
-
-
     private fun getFloorsList(
         context: Context,
-        selectedFloorList: ArrayList<String>,
-        callback: (ArrayList<String>) -> Unit
+        selectedFloorList: MutableList<CeibroFloorV2>,
+        callback: (MutableList<CeibroFloorV2>) -> Unit
     ) {
 
-        val floorsList = ArrayList<String>()
+        val floorsList: MutableList<CeibroFloorV2> = mutableListOf()
         floorsList.clear()
+        floorsList.addAll(selectedFloorList)
+
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.floor_list_dialog)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val llFloorsList = dialog.findViewById<View>(R.id.llFloorsList) as LinearLayout
-
         llFloorsList.removeAllViews()
         val item = ArrayList<String>()
-
 
         item.add("B3")
         item.add("B2")
@@ -213,25 +155,52 @@ class AddNewFloorBottomSheet(val callback: (String) -> Unit) :
             itemViewBinding.cbFloorName.text = data
 
             if (selectedFloorList.isNotEmpty()) {
-                if (selectedFloorList.contains(data)) {
+
+                val existingFloor = selectedFloorList.find { it.floorName.equals(data, true) }
+
+                if (existingFloor != null) {
                     itemViewBinding.cbFloorName.isChecked = true
-                    floorsList.add(data)
+                    if (existingFloor._id.isNotEmpty()) {
+                        itemViewBinding.cbFloorName.isClickable = false
+                        itemViewBinding.cbFloorName.isEnabled = false
+                    } else {
+                        itemViewBinding.cbFloorName.isClickable = true
+                        itemViewBinding.cbFloorName.isEnabled = true
+                    }
                 } else {
                     itemViewBinding.cbFloorName.isChecked = false
+                    itemViewBinding.cbFloorName.isClickable = true
+                    itemViewBinding.cbFloorName.isEnabled = true
                 }
             }
+
             itemViewBinding.cbFloorName.setOnClickListener {
+                val floorName1 = itemViewBinding.cbFloorName.text.toString()
+                val existingFloor =
+                    selectedFloorList.find { it.floorName.equals(floorName1, true) }
                 if (itemViewBinding.cbFloorName.isChecked) {
-                    floorsList.add(data)
+                    if (existingFloor != null) {
+                        floorsList.add(existingFloor)
+                    } else {
+                        val floor = CeibroFloorV2(
+                            _id = "",
+                            createdAt = "",
+                            updatedAt = "",
+                            creator = "",
+                            deleted = false,
+                            drawings = listOf(),
+                            projectId = "",
+                            floorName = floorName1
+                        )
+                        floorsList.add(floor)
+                    }
                 } else {
-                    floorsList.remove(data)
+                    floorsList.remove(existingFloor)
                 }
                 callback.invoke(floorsList)
             }
             llFloorsList.addView(itemViewBinding.root)
-
         }
         dialog.show()
     }
-
 }

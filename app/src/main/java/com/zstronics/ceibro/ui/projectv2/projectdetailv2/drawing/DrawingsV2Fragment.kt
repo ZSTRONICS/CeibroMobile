@@ -72,16 +72,16 @@ class DrawingsV2Fragment :
                         if (fromLocation.equals("local", true)) {
 
 
-//                            val bundle = Bundle()
-//                            bundle.putString("projectId",viewModel.projectData.value!!._id )
-//                            navigate(R.id.newDrawingV2Fragment, bundle)
+                            val bundle = Bundle()
+                            bundle.putString("projectId",viewModel.projectData.value!!._id )
+                            navigate(R.id.newDrawingV2Fragment, bundle)
 
-
-                            chooseDocuments(
-                                mimeTypes = arrayOf(
-                                    "application/pdf"
-                                )
-                            )
+//
+//                            chooseDocuments(
+//                                mimeTypes = arrayOf(
+//                                    "application/pdf"
+//                                )
+//                            )
                         } else {
                             shortToastNow("Coming Soon")
                         }

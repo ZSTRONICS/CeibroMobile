@@ -9,10 +9,10 @@ import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
-import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -33,6 +33,7 @@ class NewDrawingV2VM @Inject constructor(
 
     val _floorList: MutableLiveData<MutableList<CeibroFloorV2>> = MutableLiveData(arrayListOf())
     val floorList: MutableLiveData<MutableList<CeibroFloorV2>> = _floorList
+
 
     var pdfFilePath = MutableLiveData<String>("")
     var projectId = MutableLiveData<String>("")
@@ -163,15 +164,25 @@ class NewDrawingV2VM @Inject constructor(
         projectId: String,
         floorName: String,
     ) {
+
+        floorList.value?.forEach {
+            if (floorName == it.floorName) {
+                return
+            }
+        }
+
         val request = CreateNewFloorRequest(floorName)
         launch {
             loading(true)
             when (val response = projectRepository.createFloorV2(projectId, request)) {
 
                 is ApiResponse.Success -> {
-
                     val floor = response.data.floor
-                    floor?.projectId
+                    floor?.let {
+                        floorsV2Dao.insertFloor(it)
+                        _floorList.value?.add(it)
+                    }
+
                     loading(false, "")
                 }
 
@@ -181,8 +192,6 @@ class NewDrawingV2VM @Inject constructor(
             }
         }
     }
-
-
 
 
     override fun deleteGroupByID(groupId: String, callback: () -> Unit) {

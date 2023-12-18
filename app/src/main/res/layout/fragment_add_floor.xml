@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/transparent">
 
     <data>
@@ -27,6 +28,7 @@
                 android:paddingBottom="@dimen/_8sdp">
 
                 <com.google.android.material.textfield.TextInputLayout
+                  android:visibility="gone"
                     android:id="@+id/floorField"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
@@ -86,10 +88,30 @@
                     android:textColor="@color/appBlue" />
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:id="@+id/llFloorsList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvFloorList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/floor_checkbox_item_list" />
+
+
+
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>
