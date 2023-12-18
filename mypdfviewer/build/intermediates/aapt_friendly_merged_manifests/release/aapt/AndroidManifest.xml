@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zstronics.mypdfviewer" >
 
-    <uses-sdk android:minSdkVersion="25" />
+    <uses-sdk
+        android:minSdkVersion="25"
+        android:targetSdkVersion="34" />
 
 </manifest>
