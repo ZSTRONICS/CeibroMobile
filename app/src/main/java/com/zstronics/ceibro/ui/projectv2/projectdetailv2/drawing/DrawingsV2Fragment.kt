@@ -76,7 +76,7 @@ class DrawingsV2Fragment :
 //                            bundle.putString("projectId",viewModel.projectData.value!!._id )
 //                            navigate(R.id.newDrawingV2Fragment, bundle)
 
-
+//
                             chooseDocuments(
                                 mimeTypes = arrayOf(
                                     "application/pdf"

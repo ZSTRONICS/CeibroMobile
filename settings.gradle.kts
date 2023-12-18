@@ -14,3 +14,4 @@ include(
     "app"
 )
 include(":ceibrocamera")
+include(":mypdfviewer")

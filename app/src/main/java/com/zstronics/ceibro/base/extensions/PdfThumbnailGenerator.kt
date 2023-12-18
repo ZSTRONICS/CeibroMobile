@@ -23,9 +23,10 @@ class PdfThumbnailGenerator {
             val pdfPage = pdfRenderer.openPage(pageNumber)
 
             // Create a bitmap for the thumbnail
+            val size = Size(pdfPage.width, pdfPage.height)
             val thumbnailBitmap = Bitmap.createBitmap(
-                thumbnailSize.width,
-                thumbnailSize.height,
+                size.width,
+                size.height,
                 Bitmap.Config.ARGB_8888
             )
 
@@ -33,6 +34,7 @@ class PdfThumbnailGenerator {
             pdfPage.render(thumbnailBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
             // Close the page and the renderer
+            fileDescriptor.close()
             pdfPage.close()
             pdfRenderer.close()
 

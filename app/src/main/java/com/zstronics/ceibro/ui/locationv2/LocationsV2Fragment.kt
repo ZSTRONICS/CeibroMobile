@@ -197,8 +197,8 @@ class LocationsV2Fragment :
         val adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spinnerItems)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        mViewDataBinding.spinner.adapter = adapter
-        mViewDataBinding.spinner.onItemSelectedListener =
+        mViewDataBinding.locationSpinner.adapter = adapter
+        mViewDataBinding.locationSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?,

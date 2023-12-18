@@ -26,8 +26,14 @@ class NewDrawingV2Fragment :
         when (id) {
             R.id.floorText -> {
 
-                addNewFloorBottomSheet {
-                    mViewDataBinding.floorText.text = Editable.Factory.getInstance().newEditable(it)
+                addNewFloorBottomSheet(viewModel) { floorName ->
+
+                    viewModel.createFloorByProjectID(
+                        viewModel.projectId.value.toString(),
+                        floorName
+                    )
+                    mViewDataBinding.floorText.text =
+                        Editable.Factory.getInstance().newEditable(floorName)
                 }
 
             }
@@ -65,29 +71,25 @@ class NewDrawingV2Fragment :
                 mViewDataBinding.locationImg.setImageBitmap(thumbnail)
             }
         }
-
-
-        //  viewModel.createFloorByProjectTID(viewModel.projectId.value.toString(), "15")
-//        viewModel.getFloorsByProjectID(viewModel.projectId.value.toString())
-        //   viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), "Mughal")
-//        viewModel.getGroupsByProjectTID(viewModel.projectId.value.toString())
-        //  viewModel.deleteGroupByID(viewModel.projectId.value.toString())
-        //  viewModel.updateGroupByIDV2(viewModel.projectId.value.toString(),"Mughal")
-
-        // viewModel.getFloorsByProjectTid("657ac771753eb1365aef682a")
     }
 
-    private fun addNewFloorBottomSheet(callback: (String) -> Unit) {
+    private fun addNewFloorBottomSheet(model: NewDrawingV2VM, callback: (String) -> Unit) {
 
-        val sheet = AddNewFloorBottomSheet {
+        val sheet = AddNewFloorBottomSheet(model) {
             callback.invoke(it)
+        }
+
+        sheet.deleteClickListener = { data ->
+            showToast("Coming Soon")
         }
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
 
-    private fun addNewGroupBottomSheet(model: NewDrawingV2VM, callback: (group: CeibroGroupsV2) -> Unit) {
-
+    private fun addNewGroupBottomSheet(
+        model: NewDrawingV2VM,
+        callback: (group: CeibroGroupsV2) -> Unit
+    ) {
         val sheet = AddNewGroupBottomSheet(model) { groupData ->
             callback.invoke(groupData)
         }
@@ -121,9 +123,7 @@ class NewDrawingV2Fragment :
                 }
             }
         }
-
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
-
 }
