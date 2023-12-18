@@ -18,8 +18,8 @@ import javax.inject.Inject
 class NewFloorGroupAdapter @Inject constructor() :
     RecyclerView.Adapter<NewFloorGroupAdapter.NewFloorGroupViewHolder>() {
 
-    var deleteClickListener: ((CeibroFloorV2) -> Unit)? = null
-    var itemClickListener: ((String) -> Unit)? = null
+    var deleteClickListener: ((data: CeibroFloorV2) -> Unit)? = null
+    var itemClickListener: ((data: CeibroFloorV2) -> Unit)? = null
     var listItems: MutableList<CeibroFloorV2> = mutableListOf()
 
     override fun onCreateViewHolder(
@@ -67,7 +67,7 @@ class NewFloorGroupAdapter @Inject constructor() :
 
             binding.tvFloorName.text = data.floorName
             binding.tvFloorName.setOnClickListener {
-                itemClickListener?.invoke(data.floorName)
+                itemClickListener?.invoke(data)
             }
 
             binding.ivMenuBtn.setOnClickListener {

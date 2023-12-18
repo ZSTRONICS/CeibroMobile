@@ -7,6 +7,9 @@ import javax.inject.Inject
 class NewDrawingsV2State @Inject constructor(
 ) : BaseState(), INewDrawingV2.State {
 
+    override var floorName: MutableLiveData<String> = MutableLiveData("")
+    override var groupName: MutableLiveData<String> = MutableLiveData("")
+
     override var projectName: MutableLiveData<String> = MutableLiveData("")
     override var projectPhoto: MutableLiveData<String> = MutableLiveData("")
     override var projectDescription: MutableLiveData<String> = MutableLiveData("")

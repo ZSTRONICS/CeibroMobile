@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderReq
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
+import com.zstronics.ceibro.data.repos.projects.drawing.UploadDrawingV2Response
 import com.zstronics.ceibro.data.repos.projects.floor.CreateFloorResponseV2
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
@@ -234,5 +235,17 @@ interface ProjectRepositoryService {
         @Path("groupId") groupId: String,
         @Body body: CreateNewGroupV2Request
     ): Response<CreateGroupResponseV2>
+
+
+    @Multipart
+    @POST("v2/docs/upload/drawing")
+    suspend fun uploadDrawing(
+        @Part("projectId") projectId: RequestBody,
+        @Part("floorId") floorId: RequestBody,
+        @Part("groupId") groupId: RequestBody,
+        @Part("metadata") metadata: RequestBody,
+        @Part files: List<MultipartBody.Part>
+    ): Response<UploadDrawingV2Response>
+
 
 }

@@ -25,27 +25,18 @@ class NewDrawingV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.floorText -> {
-
-                addNewFloorBottomSheet(viewModel) { floorName ->
-
-                    viewModel.createFloorByProjectID(
-                        viewModel.projectId.value.toString(),
-                        floorName
-                    )
-                    mViewDataBinding.floorText.text =
-                        Editable.Factory.getInstance().newEditable(floorName)
-                }
-
+                addNewFloorBottomSheet(viewModel)
             }
 
             R.id.groupText -> {
-
                 addNewGroupBottomSheet(viewModel) { groupData ->
                     viewModel.selectedGroup = groupData
-                    mViewDataBinding.groupText.text =
-                        Editable.Factory.getInstance().newEditable(groupData.groupName)
-                }
 
+                    viewState.groupName.value = groupData.groupName
+//                    mViewDataBinding.groupText.text =
+//                        Editable.Factory.getInstance().newEditable(groupData.groupName)
+//
+                }
             }
 
             R.id.closeBtn -> {
@@ -54,6 +45,26 @@ class NewDrawingV2Fragment :
 
             R.id.cancelBtn -> {
                 navigateBack()
+            }
+
+
+            R.id.saveBtn -> {
+                val floorName: String = viewState.floorName.value.toString()
+                //mViewDataBinding.floorText.text.toString().trim()
+                val groupName: String = viewState.groupName.value.toString()
+                //mViewDataBinding.groupText.text.toString().trim()
+
+                if (floorName.isEmpty() || viewModel.selectedFloor == null || viewModel.selectedFloor?._id?.isEmpty() == true) {
+                    showToast("Floor is required")
+                } else if (groupName.isEmpty() || viewModel.selectedGroup == null || viewModel.selectedGroup?._id?.isEmpty() == true) {
+                    showToast("Group is required")
+                } else {
+                    viewModel.uploadDrawing(
+                        mViewDataBinding.root.context,
+                        floorName,
+                        groupName
+                    )
+                }
             }
 
 
@@ -73,10 +84,37 @@ class NewDrawingV2Fragment :
         }
     }
 
-    private fun addNewFloorBottomSheet(model: NewDrawingV2VM, callback: (String) -> Unit) {
+    private fun addNewFloorBottomSheet(
+        model: NewDrawingV2VM
+    ) {
 
         val sheet = AddNewFloorBottomSheet(model) {
-            callback.invoke(it)
+        }
+
+        sheet.selectItemClickListener = { floorData ->
+            val existingFloor =
+                viewModel.floorList.value?.find { floorData.floorName == it.floorName }
+
+            if (existingFloor != null && existingFloor._id.isNotEmpty()) {
+                viewModel.selectedFloor = floorData
+                sheet.dismiss()
+            } else {
+                viewModel.createFloorByProjectID(
+                    viewModel.projectId.value.toString(),
+                    floorData.floorName
+                ) { newFloor ->
+                    viewModel.selectedFloor = newFloor
+                    sheet.dismiss()
+                }
+            }
+
+
+            viewState.floorName.value = floorData.floorName
+//
+//            mViewDataBinding.floorText.text =
+//                Editable.Factory.getInstance().newEditable(
+//                    floorData.floorName
+//                )
         }
 
         sheet.deleteClickListener = { data ->

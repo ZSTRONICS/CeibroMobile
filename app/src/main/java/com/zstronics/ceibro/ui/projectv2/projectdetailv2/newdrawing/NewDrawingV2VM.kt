@@ -1,8 +1,10 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
@@ -10,11 +12,18 @@ import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.drawing.UploadDrawingV2FileMetaData
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateNewGroupV2Request
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,16 +45,19 @@ class NewDrawingV2VM @Inject constructor(
 
 
     var pdfFilePath = MutableLiveData<String>("")
+    var pdfFileName = ""
     var projectId = MutableLiveData<String>("")
     var message = MutableLiveData<String?>("")
 
     var selectedGroup: CeibroGroupsV2? = null
+    var selectedFloor: CeibroFloorV2? = null
     var floor = MutableLiveData<String?>("")
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
+        pdfFileName = bundle?.getString("pdfFileName").toString()
         projectId.value = bundle?.getString("projectId").toString()
 
         getFloorsByProjectID(projectId.value.toString())
@@ -96,6 +108,67 @@ class NewDrawingV2VM @Inject constructor(
                     is ApiResponse.Error -> {
                         loading(false, response.error.message)
                     }
+                }
+            }
+        }
+    }
+
+    override fun uploadDrawing(
+        context: Context,
+        floorId: String,
+        groupId: String
+    ) {
+
+        val filePath = pdfFilePath.value ?: ""
+        val projectId = projectId.value.toString()
+
+        val file = File(filePath)
+        val fileList: MutableList<File> = mutableListOf()
+        fileList.add(file)
+
+        val projectID = projectId.toRequestBody("text/plain".toMediaTypeOrNull())
+        val floorID = floorId.toRequestBody("text/plain".toMediaTypeOrNull())
+        val groupID = groupId.toRequestBody("text/plain".toMediaTypeOrNull())
+        val uploaderLocalId = System.currentTimeMillis().toString()
+
+        val fileParts = fileList.map { file1 ->
+            val reqFile =
+                file1.asRequestBody(("image/" + file1.extension).toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("files", pdfFileName, reqFile)
+        }
+
+        val metaData = fileList.map { file1 ->
+            val tag = AttachmentTags.Drawing.tagValue
+
+            UploadDrawingV2FileMetaData(
+                fileName = pdfFileName,
+                tag = tag,
+                uploaderLocalFilePath = filePath,
+                uploaderLocalId = uploaderLocalId
+            )
+        }
+        val metadataString = Gson().toJson(metaData)
+        val metadataString2 = Gson().toJson(metadataString)
+
+        val metadataString2RequestBody =
+            metadataString2.toRequestBody("text/plain".toMediaTypeOrNull())
+
+
+        launch {
+            loading(true)
+            when (val response = projectRepository.uploadDrawing(
+                projectId = projectID,
+                floorId = floorID,
+                groupId = groupID,
+                metadata = metadataString2RequestBody,
+                files = fileParts
+            )) {
+                is ApiResponse.Success -> {
+                    loading(false, "")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
                 }
             }
         }
@@ -163,14 +236,8 @@ class NewDrawingV2VM @Inject constructor(
     override fun createFloorByProjectID(
         projectId: String,
         floorName: String,
+        callback: (floor: CeibroFloorV2) -> Unit
     ) {
-
-        floorList.value?.forEach {
-            if (floorName == it.floorName) {
-                return
-            }
-        }
-
         val request = CreateNewFloorRequest(floorName)
         launch {
             loading(true)
@@ -181,6 +248,7 @@ class NewDrawingV2VM @Inject constructor(
                     floor?.let {
                         floorsV2Dao.insertFloor(it)
                         _floorList.value?.add(it)
+                        callback.invoke(floor)
                     }
 
                     loading(false, "")

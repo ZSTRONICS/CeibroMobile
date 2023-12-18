@@ -326,6 +326,7 @@ class DrawingsV2Fragment :
                         println("pdfFilePath1 ${pdfFilePath}")
                         val bundle = Bundle()
                         bundle.putString("pdfFilePath", pdfFilePath)
+                        bundle.putString("pdfFileName", fileName)
                         bundle.putString("projectId",viewModel.projectData.value!!._id )
                         navigate(R.id.newDrawingV2Fragment, bundle)
                         break
@@ -353,6 +354,7 @@ class DrawingsV2Fragment :
                         println("pdfFilePath ${pdfFilePath} fileName: $fileName")
                         val bundle = Bundle()
                         bundle.putString("pdfFilePath", pdfFilePath)
+                        bundle.putString("pdfFileName", fileName)
                         bundle.putString("projectId",viewModel.projectData.value!!._id )
                         navigate(R.id.newDrawingV2Fragment, bundle)
                     }

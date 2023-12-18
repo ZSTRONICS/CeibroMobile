@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderReq
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
+import com.zstronics.ceibro.data.repos.projects.drawing.UploadDrawingV2Response
 import com.zstronics.ceibro.data.repos.projects.floor.CreateFloorResponseV2
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
@@ -89,6 +90,7 @@ class ProjectRepository @Inject constructor(
             }
         )
     }
+
 
     override suspend fun updateProject(
         createProjectRequest: CreateProjectRequest,
@@ -370,4 +372,24 @@ class ProjectRepository @Inject constructor(
             )
         })
     }
+
+
+    override suspend fun uploadDrawing(
+        projectId: RequestBody,
+        floorId: RequestBody,
+        groupId: RequestBody,
+        metadata: RequestBody,
+        files: List<MultipartBody.Part>
+    ): ApiResponse<UploadDrawingV2Response> {
+        return executeSafely(call = {
+            service.uploadDrawing(
+                projectId = projectId,
+                floorId = floorId,
+                groupId = groupId,
+                metadata = metadata,
+                files = files
+            )
+        })
+    }
+
 }
