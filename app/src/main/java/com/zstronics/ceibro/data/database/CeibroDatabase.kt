@@ -46,7 +46,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 82,
+    version = 84,
     exportSchema = false
 )
 @TypeConverters(
@@ -89,6 +89,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     ProjectsV2ListTypeConverter::class,
     FloorsV2ListTypeConverter::class,
     GroupsV2ListTypeConverter::class,
+    DrawingsV2ListTypeConverter::class,
     UserCeibroDataTypeConverter::class,
     AssignedToStateTypeConverter::class,
     LocalFilesToStoreTypeConverter::class,

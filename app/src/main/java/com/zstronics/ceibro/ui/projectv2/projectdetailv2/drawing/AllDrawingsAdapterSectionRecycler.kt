@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
@@ -25,17 +26,16 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 class AllDrawingsAdapterSectionRecycler constructor(
     val context: Context,
     sectionList: MutableList<DrawingSectionHeader>
-) :
-    SectionRecyclerViewAdapter<
-            DrawingSectionHeader,
-            StringListData,
-            AllDrawingsAdapterSectionRecycler.ConnectionsSectionViewHolder,
-            AllDrawingsAdapterSectionRecycler.ConnectionsChildViewHolder>(
-        context,
-        sectionList
-    ) {
-    var popupMenu : PopupMenu?=null
-    private var isPopupMenuShowing=false
+) : SectionRecyclerViewAdapter<
+        DrawingSectionHeader,
+        CeibroGroupsV2,
+        AllDrawingsAdapterSectionRecycler.ConnectionsSectionViewHolder,
+        AllDrawingsAdapterSectionRecycler.ConnectionsChildViewHolder>(
+    context,
+    sectionList
+) {
+    var popupMenu: PopupMenu? = null
+    private var isPopupMenuShowing = false
     var itemClickListener: ((view: View, position: Int, data: String, tag: String) -> Unit)? =
         null
 
@@ -82,7 +82,7 @@ class AllDrawingsAdapterSectionRecycler constructor(
         holder: ConnectionsChildViewHolder?,
         sectionPosition: Int,
         childPostitoin: Int,
-        p3: StringListData?
+        p3: CeibroGroupsV2?
     ) {
         holder?.bind(p3)
     }
@@ -105,8 +105,7 @@ class AllDrawingsAdapterSectionRecycler constructor(
 
     inner class ConnectionsChildViewHolder constructor(val binding: LayoutDrawingItemListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: StringListData?) {
-
+        fun bind(item: CeibroGroupsV2?) {
 
             binding.root.setOnClickListener {
                 if (binding.llParent.visibility == View.VISIBLE) {
@@ -118,19 +117,23 @@ class AllDrawingsAdapterSectionRecycler constructor(
                 }
             }
 
+            binding.tvGroupName.text = item?.groupName
+            binding.tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
-            binding.ivDownload.setOnClickListener {
-                itemClickListener?.invoke(it, 1, "", "")
-            }
+
+//            binding.ivDownload.setOnClickListener {
+//                itemClickListener?.invoke(it, 1, "", "")
+//            }
 
             binding.ivOptions.setOnClickListener {
-          togglePopupMenu(it)
+                togglePopupMenu(it)
             }
-
 
             binding.llParent.removeAllViews()
 
-            item?.stringList?.forEachIndexed { index, data ->
+            val stringListData = listOf("Group 1", "Group 2", "Group 3", "Group 4", "Group 5")
+
+            stringListData.forEachIndexed { index, data ->
 
 
                 val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
@@ -148,11 +151,12 @@ class AllDrawingsAdapterSectionRecycler constructor(
             }
         }
     }
+
     private fun togglePopupMenu(view: View) {
 //        if (isPopupMenuShowing) {
 //            popupMenu?.dismiss()
 //        } else {
-            popUpMenu(view)
+        popUpMenu(view)
 //        }
 //        isPopupMenuShowing = !isPopupMenuShowing
     }

@@ -29,11 +29,12 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (String) -> Unit) :
+class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: CeibroFloorV2) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddFloorBinding
     private var selectedFloorList: MutableList<CeibroFloorV2> = mutableListOf()
     var deleteClickListener: ((String) -> Unit)? = null
+    var selectItemClickListener: ((data: CeibroFloorV2) -> Unit)? = null
 
     @Inject
     lateinit var floorAdapter: NewFloorGroupAdapter
@@ -65,8 +66,8 @@ class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (String) -
 
 
         floorAdapter.itemClickListener = { data ->
-            callback.invoke(data)
-            dismiss()
+            selectItemClickListener?.invoke(data)
+//            dismiss()
         }
 
         floorAdapter.deleteClickListener = { data ->

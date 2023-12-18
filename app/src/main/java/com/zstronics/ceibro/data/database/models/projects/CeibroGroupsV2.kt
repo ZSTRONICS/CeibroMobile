@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.TableNamesV2
 import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import kotlinx.parcelize.Parcelize
 
 
@@ -22,8 +23,8 @@ data class CeibroGroupsV2(
     var creator: TaskMemberDetail,
     @SerializedName("deleted")
     val deleted: Boolean,
-//    @SerializedName("drawings")
-//    var drawings: List<String> = listOf(),
+    @SerializedName("drawings")
+    var drawings: List<DrawingV2> = listOf(),
     @SerializedName("groupName")
     var groupName: String,
     @SerializedName("projectId")

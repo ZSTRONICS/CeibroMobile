@@ -1,14 +1,15 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
 
 import com.intrusoft.sectionedrecyclerview.Section
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 
 
 class DrawingSectionHeader(
-    private val childList: List<StringListData>,
+    private val childList: MutableList<CeibroGroupsV2>,
     private val sectionText: String,
-) : Section<StringListData> {
+) : Section<CeibroGroupsV2> {
 
-    override fun getChildItems(): List<StringListData> {
+    override fun getChildItems(): MutableList<CeibroGroupsV2> {
         return childList
     }
 

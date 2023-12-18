@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.projects.createNewProject.UpdateProjectRe
 import com.zstronics.ceibro.data.repos.projects.documents.CreateProjectFolderResponse
 import com.zstronics.ceibro.data.repos.projects.documents.ManageProjectDocumentAccessRequest
 import com.zstronics.ceibro.data.repos.projects.documents.ProjectDocumentsResponse
+import com.zstronics.ceibro.data.repos.projects.drawing.UploadDrawingV2Response
 import com.zstronics.ceibro.data.repos.projects.floor.CreateFloorResponseV2
 import com.zstronics.ceibro.data.repos.projects.floor.CreateNewFloorRequest
 import com.zstronics.ceibro.data.repos.projects.group.CreateGroupRequest
@@ -156,4 +157,13 @@ interface IProjectRepository {
     suspend fun deleteGroupByIdV2(
         groupId: String
     ): ApiResponse<DeleteGroupByIdResponseV2>
+
+    suspend fun uploadDrawing(
+        projectId: RequestBody,
+        floorId: RequestBody,
+        groupId: RequestBody,
+        metadata: RequestBody,
+        files: List<MultipartBody.Part>
+    ): ApiResponse<UploadDrawingV2Response>
+
 }
