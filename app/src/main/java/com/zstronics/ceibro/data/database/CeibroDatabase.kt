@@ -89,6 +89,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     ProjectsV2ListTypeConverter::class,
     FloorsV2ListTypeConverter::class,
     GroupsV2ListTypeConverter::class,
+    DrawingsV2ListTypeConverter::class,
     UserCeibroDataTypeConverter::class,
     AssignedToStateTypeConverter::class,
     LocalFilesToStoreTypeConverter::class,
