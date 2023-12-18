@@ -107,7 +107,7 @@ class AllDrawingsAdapterSectionRecycler constructor(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CeibroGroupsV2?) {
 
-            binding.root.setOnClickListener {
+            binding.groupLayout.setOnClickListener {
                 if (binding.llParent.visibility == View.VISIBLE) {
                     binding.ivDropDown.setImageResource(R.drawable.icon_drop_down)
                     binding.llParent.visibility = View.GONE
@@ -131,9 +131,8 @@ class AllDrawingsAdapterSectionRecycler constructor(
 
             binding.llParent.removeAllViews()
 
-            val stringListData = listOf("Group 1", "Group 2", "Group 3", "Group 4", "Group 5")
 
-            stringListData.forEachIndexed { index, data ->
+            item?.drawings?.forEachIndexed { index, data ->
 
 
                 val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
@@ -142,8 +141,8 @@ class AllDrawingsAdapterSectionRecycler constructor(
                     binding.llParent,
                     false
                 )
-                itemViewBinding.tvSample.text = "$data .pdf"
-                itemViewBinding.tvFloor.text = "Floor ${index + 1}"
+                itemViewBinding.tvSample.text = "${data.fileName}"
+                itemViewBinding.tvFloor.text = "${data.floor.floorName} Floor"
 
 
                 binding.llParent.addView(itemViewBinding.root)
