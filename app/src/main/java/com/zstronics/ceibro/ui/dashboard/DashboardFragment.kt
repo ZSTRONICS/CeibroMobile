@@ -179,7 +179,6 @@ class DashboardFragment :
 
             R.id.locationBtn -> {
                 viewState.locationSelected.value = true
-                viewState.projectsSelected.value = true
                 mViewDataBinding.createNewTaskBtn.visibility = View.GONE
 
                 if (locationFragmentInstance == null) {

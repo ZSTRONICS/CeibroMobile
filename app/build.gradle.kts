@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation(project(mapOf("path" to ":permissionx")))
     implementation(project(mapOf("path" to ":ceibrocamera")))
+    implementation(project(mapOf("path" to ":mypdfviewer")))
     implementation("androidx.camera:camera-core:1.2.3")
 
     kapt(DependenciesManager.hiltKapt)

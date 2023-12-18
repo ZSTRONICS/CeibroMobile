@@ -23,7 +23,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/_2sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,10 +44,12 @@
                     android:id="@+id/backBtn"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="3dp"
+                    android:padding="4dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -57,81 +58,108 @@
 
                 <View
                     android:id="@+id/saperaterOne"
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginVertical="@dimen/_10sdp"
-                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="@dimen/_2sdp"
+                    android:layout_marginStart="@dimen/_5sdp"
                     android:background="@color/appGrey3"
-                    app:layout_constraintStart_toEndOf="@id/backBtn" />
+                    app:layout_constraintBottom_toBottomOf="@+id/backBtn"
+                    app:layout_constraintStart_toEndOf="@id/backBtn"
+                    app:layout_constraintTop_toTopOf="@+id/backBtn" />
 
-
-                <TextView
-                    android:id="@+id/tvProjectName"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearLayoutCompat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="15dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_bold"
-                    android:maxLines="1"
-                    android:text="Ceibro Drawing"
-                    android:textColor="@color/appGrey3"
-                    android:textSize="12sp"
+                    android:layout_marginHorizontal="@dimen/_6sdp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="@+id/backBtn"
                     app:layout_constraintEnd_toStartOf="@id/saperaterTwo"
                     app:layout_constraintStart_toEndOf="@+id/saperaterOne"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/backBtn">
 
-                <Spinner
-                    android:id="@+id/spinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginBottom="10dp"
-                    app:layout_constraintEnd_toStartOf="@+id/saperaterTwo"
-                    app:layout_constraintStart_toEndOf="@id/saperaterOne"
-                    app:layout_constraintTop_toBottomOf="@id/tvProjectName" />
+                    <TextView
+                        android:id="@+id/tvProjectName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_bold"
+                        android:maxLines="1"
+                        android:text="Ceibro Drawing"
+                        android:textColor="@color/appGrey3"
+                        android:textSize="12sp" />
+
+                    <Spinner
+                        android:id="@+id/locationSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                 <View
                     android:id="@+id/saperaterTwo"
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="@dimen/_2sdp"
                     android:layout_marginEnd="@dimen/_4sdp"
                     android:background="@color/appGrey3"
-                    app:layout_constraintEnd_toStartOf="@id/tvFloorName" />
+                    app:layout_constraintBottom_toBottomOf="@+id/backBtn"
+                    app:layout_constraintEnd_toStartOf="@id/tvFloorName"
+                    app:layout_constraintTop_toTopOf="@+id/backBtn" />
 
 
                 <TextView
                     android:id="@+id/tvFloorName"
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
                     android:ellipsize="end"
-                    android:fontFamily="@font/inter_regular"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="center"
                     android:maxLines="1"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
                     android:text="2 Floor"
                     android:textColor="@color/appGrey3"
-                    android:textSize="19sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-            <ImageView
+            <RelativeLayout
+                android:id="@+id/cl_main"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/map"
+                android:background="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/LocationHeader" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/LocationHeader">
+
+                <com.zstronics.mypdfviewer.PDFView
+                    android:id="@+id/mypdfView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/map"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@android:style/Widget.Material.ProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@android:color/black" />
+            </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
