@@ -22,8 +22,8 @@ data class CeibroGroupsV2(
     var creator: TaskMemberDetail,
     @SerializedName("deleted")
     val deleted: Boolean,
-//    @SerializedName("drawings")
-//    var drawings: List<DrawingV2> = listOf(),
+    @SerializedName("drawings")
+    var drawings: List<DrawingV2> = listOf(),
     @SerializedName("groupName")
     var groupName: String,
     @SerializedName("projectId")
