@@ -79,7 +79,7 @@
                     app:layout_constraintTop_toTopOf="@+id/backBtn">
 
                     <TextView
-                        android:id="@+id/tvProjectName"
+                        android:id="@+id/tvGroupName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/_4sdp"
@@ -93,7 +93,20 @@
                     <Spinner
                         android:id="@+id/locationSpinner"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/tvFileName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="1"
+                        android:text="@string/files_heading"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -121,7 +134,7 @@
                     android:paddingStart="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_5sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
-                    android:text="2 Floor"
+                    android:text="Floor"
                     android:textColor="@color/appGrey3"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat"
@@ -142,7 +155,7 @@
                 app:layout_constraintTop_toBottomOf="@id/LocationHeader">
 
                 <com.zstronics.mypdfviewer.PDFView
-                    android:id="@+id/mypdfView"
+                    android:id="@+id/pdfView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
@@ -157,6 +170,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:visibility="visible"
                     android:indeterminate="true"
                     android:indeterminateTint="@android:color/black" />
             </RelativeLayout>

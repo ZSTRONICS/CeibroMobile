@@ -81,9 +81,17 @@
                 style="@style/MyTabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_2sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/tabLine"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appGrey2"
+                app:layout_constraintEnd_toEndOf="@+id/tabLayout"
+                app:layout_constraintStart_toStartOf="@+id/tabLayout"
+                app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
 
 
             <androidx.viewpager2.widget.ViewPager2
@@ -95,7 +103,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/tabLine" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

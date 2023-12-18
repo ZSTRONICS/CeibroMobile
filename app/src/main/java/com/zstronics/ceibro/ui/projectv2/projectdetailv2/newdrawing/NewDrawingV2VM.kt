@@ -164,7 +164,7 @@ class NewDrawingV2VM @Inject constructor(
                 files = fileParts
             )) {
                 is ApiResponse.Success -> {
-                    loading(false, "")
+                    loading(false, response.data.message)
                 }
 
                 is ApiResponse.Error -> {

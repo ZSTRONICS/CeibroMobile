@@ -26,6 +26,7 @@ import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
@@ -56,6 +57,10 @@ class DrawingsV2Fragment :
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
+
+
+    var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+        null
 
     private var fragmentManager: FragmentManager? = null
 
@@ -147,8 +152,10 @@ class DrawingsV2Fragment :
         sectionedAdapter = AllDrawingsAdapterSectionRecycler(requireContext(), sectionList)
         retrieveFilesFromCeibroFolder()
 
-        sectionedAdapter.setCallBack { view, postitoin, data, tag ->
-            checkDownloadFilePermission(data)
+        sectionedAdapter.setCallBack { view, data, tag ->
+            println("data.uploaderLocalFilePath1: ${data.fileName}")
+            drawingFileClickListener?.invoke(view,data,tag)
+//            checkDownloadFilePermission(data)
         }
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
@@ -369,8 +376,8 @@ class DrawingsV2Fragment :
                         val fileUri = clipData.getItemAt(i).uri
                         var fileName = getFileNameFromUri(requireContext(), fileUri)
                         var fileExtension = getFileExtension(requireContext(), fileUri)
-                        if (fileExtension.isNullOrEmpty()){
-                            fileExtension="pdf"
+                        if (fileExtension.isNullOrEmpty()) {
+                            fileExtension = "pdf"
                         }
                         fileName = if (fileName.isNullOrEmpty()) {
                             System.currentTimeMillis().toString() + ".$fileExtension"
@@ -387,7 +394,7 @@ class DrawingsV2Fragment :
                         val bundle = Bundle()
                         bundle.putString("pdfFilePath", pdfFilePath)
                         bundle.putString("pdfFileName", fileName)
-                        bundle.putString("projectId",viewModel.projectData.value!!._id )
+                        bundle.putString("projectId", viewModel.projectData.value!!._id)
                         navigate(R.id.newDrawingV2Fragment, bundle)
                         break
                     }
@@ -396,8 +403,8 @@ class DrawingsV2Fragment :
                     fileUri?.let {
                         var fileName = getFileNameFromUri(requireContext(), it)
                         var fileExtension = getFileExtension(requireContext(), it)
-                        if (fileExtension.isNullOrEmpty()){
-                            fileExtension="pdf"
+                        if (fileExtension.isNullOrEmpty()) {
+                            fileExtension = "pdf"
                         }
                         fileName = if (fileName.isNullOrEmpty()) {
                             System.currentTimeMillis().toString() + ".$fileExtension"
@@ -415,7 +422,7 @@ class DrawingsV2Fragment :
                         val bundle = Bundle()
                         bundle.putString("pdfFilePath", pdfFilePath)
                         bundle.putString("pdfFileName", fileName)
-                        bundle.putString("projectId",viewModel.projectData.value!!._id )
+                        bundle.putString("projectId", viewModel.projectData.value!!._id)
                         navigate(R.id.newDrawingV2Fragment, bundle)
                     }
                 }

@@ -4,24 +4,23 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.PopupMenu
 import android.widget.PopupWindow
-import android.widget.TextView
-import androidx.core.content.ContextCompat
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import java.io.File
 
 class AllDrawingsAdapterSectionRecycler constructor(
     val context: Context,
@@ -36,12 +35,11 @@ class AllDrawingsAdapterSectionRecycler constructor(
 ) {
     var popupMenu: PopupMenu? = null
     private var isPopupMenuShowing = false
-    var itemClickListener: ((view: View, position: Int, data: String, tag: String) -> Unit)? =
+    var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
         null
 
-    fun setCallBack(itemClickListener: ((view: View, position: Int, data: String, tag: String) -> Unit)?) {
-        this.itemClickListener = itemClickListener
-
+    fun setCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+        this.drawingFileClickListener = itemClickListener
     }
 
     override fun onCreateSectionViewHolder(
@@ -143,6 +141,14 @@ class AllDrawingsAdapterSectionRecycler constructor(
                 )
                 itemViewBinding.tvSample.text = "${data.fileName}"
                 itemViewBinding.tvFloor.text = "${data.floor.floorName} Floor"
+                itemViewBinding.root.setOnClickListener{
+                    val file = File(data.uploaderLocalFilePath)
+                    if (file.exists()) {
+                        drawingFileClickListener?.invoke(it, data, "")
+                    } else {
+                        cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+                    }
+                }
 
 
                 binding.llParent.addView(itemViewBinding.root)

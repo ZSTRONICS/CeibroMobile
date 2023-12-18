@@ -316,6 +316,11 @@ class DashboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
+            println("CookiesManager.drawingFileForLocation: $it")
+            changeSelectedTab(R.id.locationBtn, false)
+        }
+
         viewState.projectsSelected.observe(viewLifecycleOwner) {
             viewState.setAddTaskButtonVisibility.value = it
         }
