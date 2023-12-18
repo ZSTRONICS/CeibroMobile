@@ -8,6 +8,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,6 +22,7 @@ class ProjectDetailV2Fragment :
     override val layoutResId: Int = R.layout.fragment_project_detail_v2
     override fun toolBarVisibility(): Boolean = false
     private var tabTitles = listOf<String>()
+    val drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? = null
 
     override fun onClick(id: Int) {
         when (id) {
@@ -35,7 +37,10 @@ class ProjectDetailV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tabTitles = listOf(getString(R.string.detail), getString(R.string.drawing))
-        val adapter = ProjectDetailTabLayoutAdapter(requireActivity())
+        val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, tag ->
+            CookiesManager.drawingFileForLocation.value = data
+            navigateBack()
+        }
         mViewDataBinding.viewPager.adapter = adapter
 
         TabLayoutMediator(
