@@ -311,6 +311,10 @@ class DashboardFragment :
                 updateDraftRecord(unSyncedTasks.size)
             }
         }
+
+        if (viewState.projectsSelected.value == true || viewState.locationSelected.value == true) {
+            viewState.setAddTaskButtonVisibility.value = true
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -337,6 +341,8 @@ class DashboardFragment :
 //
 //        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
+
+
 
 
 
@@ -814,4 +820,5 @@ class DashboardFragment :
             }
             .show()
     }
+
 }
