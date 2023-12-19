@@ -9,6 +9,9 @@ interface IDashboard {
         val fromMeSelected: MutableLiveData<Boolean>
         val hiddenSelected: MutableLiveData<Boolean>
         val locationSelected: MutableLiveData<Boolean>
+        val locationProjectSelected: MutableLiveData<Boolean>
+        val locationDrawingSelected: MutableLiveData<Boolean>
+        val locationViewSelected: MutableLiveData<Boolean>
         val projectsSelected: MutableLiveData<Boolean>
         val setAddTaskButtonVisibility: MutableLiveData<Boolean>
         val selectedItem: MutableLiveData<Int>

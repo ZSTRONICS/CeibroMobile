@@ -56,8 +56,8 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
-        pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
         pdfFileName = bundle?.getString("pdfFileName").toString()
+        pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
         projectId.value = bundle?.getString("projectId").toString()
 
         getFloorsByProjectID(projectId.value.toString())
@@ -116,7 +116,8 @@ class NewDrawingV2VM @Inject constructor(
     override fun uploadDrawing(
         context: Context,
         floorId: String,
-        groupId: String
+        groupId: String,
+        callback: (projectId:String) -> Unit
     ) {
 
         val filePath = pdfFilePath.value ?: ""
@@ -164,7 +165,26 @@ class NewDrawingV2VM @Inject constructor(
                 files = fileParts
             )) {
                 is ApiResponse.Success -> {
+
+                    val newDrawingList = response.data.drawings
+                    val group = groupsV2Dao.getGroupByGroupId(groupId)
+                    val allDrawings = group.drawings.toMutableList()
+                    allDrawings.addAll(newDrawingList)
+                    group.drawings = allDrawings
+                    group.updatedAt = response.data.groupUpdatedAt
+                    groupsV2Dao.insertGroup(group)
+
+                    val newDrawingIdsList = response.data.drawings.map { it._id }
+                    val floor = floorsV2Dao.getFloorByFloorId(floorId)
+                    floor.updatedAt = response.data.floorUpdatedAt
+                    val allDrawingsIDs = floor.drawings.toMutableList()
+                    allDrawingsIDs.addAll(newDrawingIdsList)
+                    floor.drawings = allDrawingsIDs
+                    floorsV2Dao.insertFloor(floor)
+
                     loading(false, response.data.message)
+                    callback.invoke(projectId)
+
                 }
 
                 is ApiResponse.Error -> {
@@ -275,6 +295,12 @@ class NewDrawingV2VM @Inject constructor(
                             val item = iterator.next()
                             if (groupId == item._id) {
                                 iterator.remove()
+                            }
+                            selectedGroup?.let {
+                                if (it._id == groupId) {
+                                    selectedGroup = null
+                                    viewState.groupName.value = ""
+                                }
                             }
                         }
                         _groupList.value = currentList

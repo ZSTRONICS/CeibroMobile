@@ -20,12 +20,7 @@ interface INewDrawingV2 {
 
     interface ViewModel : IBase.ViewModel<State> {
 
-        fun uploadDrawing(
-            context: Context,
-            floorId: String,
-            groupId: String
-        )
-
+        fun uploadDrawing(context: Context, floorId: String, groupId: String, callback: (projectId:String) -> Unit)
 
         fun createGroupByProjectTIDV2(
             projectId: String,

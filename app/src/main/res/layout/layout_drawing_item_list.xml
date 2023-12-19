@@ -21,7 +21,7 @@
             android:id="@+id/groupLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:layout_marginHorizontal="@dimen/_7sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toStartOf="@+id/viewOne"

@@ -19,6 +19,7 @@ class LocationsV2VM @Inject constructor(
     val _drawingFile: MutableLiveData<DrawingV2> =
         MutableLiveData()
     val drawingFile: LiveData<DrawingV2> = _drawingFile
+    var cameFromProject: Boolean = true
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)

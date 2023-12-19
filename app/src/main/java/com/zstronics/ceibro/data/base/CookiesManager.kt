@@ -34,6 +34,11 @@ object CookiesManager {
     val socketOnceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
     var projectDataForDetails: CeibroProjectV2? = null
     var projectNameForDetails: String = ""
+    var locationProjectDataForDetails: CeibroProjectV2? = null
+    var locationProjectNameForDetails: String = ""
     var notificationDataContent: MutableList<Pair<NotificationTaskData, Int>> = mutableListOf()
     var drawingFileForLocation: MutableLiveData<DrawingV2> = MutableLiveData()
+    var drawingFileNameForLocation: String = ""
+    var cameToLocationViewFromProject: Boolean = false
+    var openingNewLocationFile: Boolean = false
 }

@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2State" />
+            type="com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2VM" />
+            type="com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2VM" />
 
         <import type="android.view.View" />
     </data>
@@ -24,7 +24,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/_2sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,26 +33,26 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/drawingHeader"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:elevation="4dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/backBtn"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="13dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:padding="3dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/linearLayout3"
                     app:srcCompat="@drawable/icon_back"
                     app:tint="@color/appBlue" />
 
@@ -61,44 +60,61 @@
                 <View
                     android:id="@+id/viewOne"
                     android:layout_width="1dp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_height="0dp"
                     android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginVertical="@dimen/_1sdp"
                     android:background="@color/appGrey3"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/backBtn"
                     app:layout_constraintStart_toEndOf="@id/backBtn"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/backBtn" />
 
-                <TextView
-                    android:id="@+id/tvProjectName"
+                <LinearLayout
+                    android:id="@+id/linearLayout3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_bold"
-                    android:maxLines="1"
-                    android:text="Project Name"
-                    android:textColor="@color/black_01"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/tvCreatorName"
-                    app:layout_constraintEnd_toStartOf="@+id/viewTwo"
-                    app:layout_constraintStart_toEndOf="@+id/viewOne"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tvCreatorName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_bold"
-                    android:maxLines="1"
-                    android:text="Creator Name"
-                    android:textColor="@color/appGrey3"
-                    android:textSize="12sp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/tvProjectName"
-                    app:layout_constraintStart_toStartOf="@id/tvProjectName"
-                    app:layout_constraintTop_toBottomOf="@id/tvProjectName" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/viewOne"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/tvProjectName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="1"
+                        android:padding="@dimen/_1sdp"
+                        android:text="@string/project_name"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toTopOf="@id/tvCreatorName"
+                        app:layout_constraintEnd_toStartOf="@+id/viewTwo"
+                        app:layout_constraintStart_toEndOf="@+id/viewOne"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvCreatorName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="1"
+                        android:padding="@dimen/_1sdp"
+                        android:layout_marginTop="@dimen/_1sdp"
+                        android:text="@string/creator_heading"
+                        android:textColor="@color/appGrey3"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/tvProjectName"
+                        app:layout_constraintStart_toStartOf="@id/tvProjectName"
+                        app:layout_constraintTop_toBottomOf="@id/tvProjectName" />
+                </LinearLayout>
 
 
                 <View
@@ -107,11 +123,12 @@
                     android:layout_height="@dimen/_30sdp"
                     android:layout_marginEnd="@dimen/_15sdp"
                     android:background="@color/appGrey3"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/ivForward"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivForward"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
@@ -119,6 +136,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="3dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -133,7 +151,7 @@
                 android:id="@+id/drawingsRV"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@id/drawingFooterLayout"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -279,6 +297,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/shadowfile"
                 android:gravity="center"
+                android:visibility="gone"
                 android:orientation="horizontal"
                 android:paddingStart="@dimen/_1sdp"
                 android:paddingTop="@dimen/_5sdp"

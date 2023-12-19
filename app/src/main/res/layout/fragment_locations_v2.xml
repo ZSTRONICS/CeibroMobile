@@ -40,7 +40,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/backBtn"
                     android:layout_width="34dp"
                     android:layout_height="34dp"

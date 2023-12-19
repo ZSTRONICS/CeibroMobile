@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
+package com.zstronics.ceibro.ui.locationv2.locationdrawing
 
 import android.Manifest
 import android.app.Activity
@@ -26,8 +26,10 @@ import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
+import com.zstronics.ceibro.databinding.FragmentLocationDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -44,15 +46,15 @@ import java.io.IOException
 import java.io.InputStream
 
 @AndroidEntryPoint
-class DrawingsV2Fragment :
-    BaseNavViewModelFragment<FragmentDrawingsV2Binding, IDrawingV2.State, DrawingsV2VM>() {
+class LocationDrawingV2Fragment :
+    BaseNavViewModelFragment<FragmentLocationDrawingsV2Binding, ILocationDrawingV2.State, LocationDrawingV2VM>() {
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: DrawingsV2VM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_drawings_v2
+    override val viewModel: LocationDrawingV2VM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_location_drawings_v2
     override fun toolBarVisibility(): Boolean = false
 
-    private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
+//    private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
     private var manager: DownloadManager? = null
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -70,21 +72,18 @@ class DrawingsV2Fragment :
 
     override fun onClick(id: Int) {
         when (id) {
+            R.id.backBtn -> {
+                EventBus.getDefault().post(LocalEvents.LoadLocationProjectFragmentInLocation())
+            }
+
             R.id.projectFilterBtn -> {
             }
 
             R.id.addNewDrawingBtn -> {
-
                 fragmentManager?.let {
                     chooseFile(it) { fromLocation ->
                         if (fromLocation.equals("local", true)) {
 
-
-//                            val bundle = Bundle()
-//                            bundle.putString("projectId",viewModel.projectData.value!!._id )
-//                            navigate(R.id.newDrawingV2Fragment, bundle)
-
-//
                             chooseDocuments(
                                 mimeTypes = arrayOf(
                                     "application/pdf"
@@ -117,8 +116,8 @@ class DrawingsV2Fragment :
     }
 
 
-    lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
-    private var sectionList: MutableList<DrawingSectionHeader> = mutableListOf()
+    lateinit var sectionedAdapter: LocationDrawingAdapterSectionRecycler
+    private var sectionList: MutableList<LocationDrawingSectionHeader> = mutableListOf()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -130,39 +129,45 @@ class DrawingsV2Fragment :
 
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        downloadCompleteReceiver = DownloadCompleteReceiver()
-        mainActivityDownloader?.registerReceiver(
-            downloadCompleteReceiver,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        )
+
+//        downloadCompleteReceiver = DownloadCompleteReceiver()
+//        mainActivityDownloader?.registerReceiver(
+//            downloadCompleteReceiver,
+//            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+//        )
 
 
         sectionList.add(
             0,
-            DrawingSectionHeader(
+            LocationDrawingSectionHeader(
                 mutableListOf(),
                 getString(R.string.favorite_projects)
             )
         )
         sectionList.add(
             1,
-            DrawingSectionHeader(
+            LocationDrawingSectionHeader(
                 mutableListOf(),
                 getString(R.string.all_groups)
             )
         )
 
 
-        sectionedAdapter = AllDrawingsAdapterSectionRecycler(requireContext(), sectionList)
+        sectionedAdapter = LocationDrawingAdapterSectionRecycler(requireContext(), sectionList)
         retrieveFilesFromCeibroFolder()
 
         sectionedAdapter.setCallBack { view, data, tag ->
-            println("data.uploaderLocalFilePath1: ${data.fileName}")
-            drawingFileClickListener?.invoke(view, data, tag)
+            CookiesManager.drawingFileNameForLocation = data.fileName
+            CookiesManager.drawingFileForLocation.value = data
+            CookiesManager.cameToLocationViewFromProject = false
+            CookiesManager.openingNewLocationFile = true
+            EventBus.getDefault().post(LocalEvents.LoadViewDrawingFragmentInLocation())
+//            drawingFileClickListener?.invoke(view, data, tag)
 //            checkDownloadFilePermission(data)
         }
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
+//        mViewDataBinding.drawingsRV.removeAllViews()
         mViewDataBinding.drawingsRV.layoutManager = linearLayoutManager
         mViewDataBinding.drawingsRV.setHasFixedSize(true)
         mViewDataBinding.drawingsRV.adapter = sectionedAdapter
@@ -170,61 +175,82 @@ class DrawingsV2Fragment :
 
 
         viewModel.favoriteGroups.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                sectionList.removeAt(0)
-                sectionList.add(
-                    0, DrawingSectionHeader(it, getString(R.string.favorite_projects))
-                )
-                sectionedAdapter.insertNewSection(
-                    DrawingSectionHeader(
-                        it,
-                        getString(R.string.favorite_projects)
-                    ), 0
-                )
-                sectionedAdapter.notifyDataSetChanged()
 
-            } else {
-                sectionList.removeAt(0)
-                sectionList.add(
-                    0, DrawingSectionHeader(mutableListOf(), getString(R.string.favorite_projects))
-                )
-                sectionedAdapter.insertNewSection(
-                    DrawingSectionHeader(
-                        mutableListOf(),
-                        getString(R.string.favorite_projects)
-                    ), 0
-                )
-                sectionedAdapter.notifyDataSetChanged()
-            }
+                if (it.isNotEmpty()) {
+                    if (!viewModel.favoriteGroupsOnceSet) {
+                        viewModel.favoriteGroupsOnceSet = true
+                        sectionList.removeAt(0)
+                        sectionList.add(
+                            0,
+                            LocationDrawingSectionHeader(it, getString(R.string.favorite_projects))
+                        )
+//                sectionedAdapter.removeSection(0)
+                        sectionedAdapter.insertNewSection(
+                            LocationDrawingSectionHeader(
+                                it,
+                                getString(R.string.favorite_projects)
+                            ), 0
+                        )
+                        sectionedAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    sectionList.removeAt(0)
+                    sectionList.add(
+                        0,
+                        LocationDrawingSectionHeader(
+                            mutableListOf(),
+                            getString(R.string.favorite_projects)
+                        )
+                    )
+//                sectionedAdapter.removeSection(0)
+                    sectionedAdapter.insertNewSection(
+                        LocationDrawingSectionHeader(
+                            mutableListOf(),
+                            getString(R.string.favorite_projects)
+                        ), 0
+                    )
+                    sectionedAdapter.notifyDataSetChanged()
+                }
+
         }
 
         viewModel.groupData.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                sectionList.removeAt(1)
-                sectionList.add(
-                    1, DrawingSectionHeader(it, getString(R.string.all_groups))
-                )
-                sectionedAdapter.insertNewSection(
-                    DrawingSectionHeader(
-                        it,
-                        getString(R.string.all_groups)
-                    ), 0
-                )
-                sectionedAdapter.notifyDataSetChanged()
 
-            } else {
-                sectionList.removeAt(0)
-                sectionList.add(
-                    0, DrawingSectionHeader(mutableListOf(), getString(R.string.all_groups))
-                )
-                sectionedAdapter.insertNewSection(
-                    DrawingSectionHeader(
-                        mutableListOf(),
-                        getString(R.string.all_groups)
-                    ), 0
-                )
-                sectionedAdapter.notifyDataSetChanged()
-            }
+                if (it.isNotEmpty()) {
+                    if (!viewModel.allGroupsOnceSet) {
+                        viewModel.allGroupsOnceSet = true
+                        sectionList.removeAt(1)
+                        sectionList.add(
+                            1, LocationDrawingSectionHeader(it, getString(R.string.all_groups))
+                        )
+//                sectionedAdapter.removeSection(1)
+                        sectionedAdapter.insertNewSection(
+                            LocationDrawingSectionHeader(
+                                it,
+                                getString(R.string.all_groups)
+                            ), 1
+                        )
+                        sectionedAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    sectionList.removeAt(1)
+                    sectionList.add(
+                        1,
+                        LocationDrawingSectionHeader(
+                            mutableListOf(),
+                            getString(R.string.all_groups)
+                        )
+                    )
+//                sectionedAdapter.removeSection(1)
+                    sectionedAdapter.insertNewSection(
+                        LocationDrawingSectionHeader(
+                            mutableListOf(),
+                            getString(R.string.all_groups)
+                        ), 1
+                    )
+                    sectionedAdapter.notifyDataSetChanged()
+                }
+
         }
 
         viewModel.originalGroups.observe(viewLifecycleOwner) {
@@ -235,11 +261,18 @@ class DrawingsV2Fragment :
             }
         }
 
+        viewModel.projectData.observe(viewLifecycleOwner) {
+            if (it != null) {
+                mViewDataBinding.tvProjectName.text = it.title
+                mViewDataBinding.tvCreatorName.text = "${resources.getString(R.string.creator_heading)}: ${it.creator.firstName} ${it.creator.surName}"
+            }
+        }
+
     }
 
     override fun onDestroy() {
-        mainActivityDownloader?.unregisterReceiver(downloadCompleteReceiver)
-        mainActivityDownloader = null
+//        mainActivityDownloader?.unregisterReceiver(downloadCompleteReceiver)
+//        mainActivityDownloader = null
 
         super.onDestroy()
     }
@@ -511,9 +544,9 @@ class DrawingsV2Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUpdateGroupDrawings(event: LocalEvents.UpdateGroupDrawings?) {
-        event?.let {
-            viewModel.getGroupsByProjectID(it.projectID)
-        }
+//        event?.let {
+//            viewModel.getGroupsByProjectID(it.projectID)
+//        }
     }
 
     override fun onStart() {

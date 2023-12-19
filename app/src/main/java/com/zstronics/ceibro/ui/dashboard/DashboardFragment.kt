@@ -43,6 +43,8 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
 import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
+import com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment
+import com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectV2Fragment
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
@@ -74,7 +76,8 @@ class DashboardFragment :
     private var taskFromMeFragmentInstance: TaskFromMeFragment? = null
     private var taskHiddenFragmentInstance: TaskHiddenFragment? = null
     private var locationFragmentInstance: LocationsV2Fragment? = null
-    private var drawingFragmentInstance: DrawingsV2Fragment? = null
+    private var locationProjectFragmentInstance: LocationProjectV2Fragment? = null
+    private var locationDrawingFragmentInstance: LocationDrawingV2Fragment? = null
     private var projectsV2FragmentInstance: ProjectsV2Fragment? = null
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
@@ -124,6 +127,9 @@ class DashboardFragment :
 
     private fun changeSelectedTab(btnID: Int, newTask: Boolean) {
         viewState.locationSelected.value = false
+//        viewState.locationProjectSelected.value = false
+//        viewState.locationDrawingSelected.value = false
+//        viewState.locationViewSelected.value = false
         viewState.projectsSelected.value = false
         viewState.toMeSelected.value = false
         viewState.fromMeSelected.value = false
@@ -138,6 +144,7 @@ class DashboardFragment :
 
         when (btnID) {
             R.id.toMeBtn -> {
+                locationProjectFragmentInstance = null
                 mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
                 viewState.toMeSelected.value = true
                 if (taskToMeFragmentInstance == null) {
@@ -150,6 +157,7 @@ class DashboardFragment :
             }
 
             R.id.fromMeBtn -> {
+                locationProjectFragmentInstance = null
                 mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
                 viewState.fromMeSelected.value = true
                 if (newTask) {
@@ -166,6 +174,7 @@ class DashboardFragment :
             }
 
             R.id.hiddenBtn -> {
+                locationProjectFragmentInstance = null
                 mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
                 viewState.hiddenSelected.value = true
                 if (taskHiddenFragmentInstance == null) {
@@ -180,20 +189,49 @@ class DashboardFragment :
             R.id.locationBtn -> {
                 viewState.locationSelected.value = true
                 mViewDataBinding.createNewTaskBtn.visibility = View.GONE
-
-                if (locationFragmentInstance == null) {
-                    locationFragmentInstance = LocationsV2Fragment()
-                }
-                childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, locationFragmentInstance!!)
-                    .commit()
-
                 mViewDataBinding.locationLine.visibility = View.VISIBLE
 
+                if (viewState.locationProjectSelected.value == true) {
+                    viewState.locationProjectSelected.value = true
+                    if (locationProjectFragmentInstance == null) {
+                        locationProjectFragmentInstance = LocationProjectV2Fragment()
+                    }
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
+                        .commit()
 
+                } else if (viewState.locationDrawingSelected.value == true) {
+                    viewState.locationDrawingSelected.value = true
+                    if (locationDrawingFragmentInstance == null) {
+                        locationDrawingFragmentInstance = LocationDrawingV2Fragment()
+                    }
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, locationDrawingFragmentInstance!!)
+                        .commit()
+
+                } else if (viewState.locationViewSelected.value == true) {
+                    viewState.locationViewSelected.value = true
+                    if (locationFragmentInstance == null) {
+                        locationFragmentInstance = LocationsV2Fragment()
+                    }
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, locationFragmentInstance!!)
+                        .commit()
+
+                } else {
+                    viewState.locationProjectSelected.value = true
+                    if (locationProjectFragmentInstance == null) {
+                        locationProjectFragmentInstance = LocationProjectV2Fragment()
+                    }
+                    childFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
+                        .commit()
+
+                }
             }
 
             R.id.projectsBtn -> {
+                locationProjectFragmentInstance = null
                 viewState.projectsSelected.value = true
                 mViewDataBinding.createNewTaskBtn.visibility = View.GONE
 
@@ -311,15 +349,19 @@ class DashboardFragment :
                 updateDraftRecord(unSyncedTasks.size)
             }
         }
+
+        if (viewState.projectsSelected.value == true || viewState.locationSelected.value == true) {
+            viewState.setAddTaskButtonVisibility.value = true
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
-            println("CookiesManager.drawingFileForLocation: $it")
-            changeSelectedTab(R.id.locationBtn, false)
-        }
+//        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
+//            println("CookiesManager.drawingFileForLocation: $it")
+//            changeSelectedTab(R.id.locationBtn, false)
+//        }
 
         viewState.projectsSelected.observe(viewLifecycleOwner) {
             viewState.setAddTaskButtonVisibility.value = it
@@ -337,6 +379,8 @@ class DashboardFragment :
 //
 //        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
+
+
 
 
 
@@ -769,10 +813,55 @@ class DashboardFragment :
         handleSocketReSyncDataEvent()
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onLoadDrawingInLocation(event: LocalEvents.LoadDrawingInLocation) {
+        CookiesManager.cameToLocationViewFromProject = true
+        CookiesManager.openingNewLocationFile = true
+        viewState.locationProjectSelected.value = false
+        viewState.locationDrawingSelected.value = false
+        viewState.locationViewSelected.value = true
+        locationDrawingFragmentInstance = null
+
+        changeSelectedTab(R.id.locationBtn, false)
+        EventBus.getDefault().removeStickyEvent(event)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLoadLocationProjectFragmentInLocation(event: LocalEvents.LoadLocationProjectFragmentInLocation) {
+        viewState.locationProjectSelected.value = true
+        viewState.locationDrawingSelected.value = false
+        viewState.locationViewSelected.value = false
+        locationDrawingFragmentInstance = null
+        locationFragmentInstance = null
+        changeSelectedTab(R.id.locationBtn, false)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLoadDrawingFragmentInLocation(event: LocalEvents.LoadDrawingFragmentInLocation) {
+        viewState.locationProjectSelected.value = false
+        viewState.locationDrawingSelected.value = true
+        viewState.locationViewSelected.value = false
+        locationProjectFragmentInstance = null
+        locationFragmentInstance = null
+        changeSelectedTab(R.id.locationBtn, false)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLoadViewDrawingFragmentInLocation(event: LocalEvents.LoadViewDrawingFragmentInLocation) {
+        viewState.locationProjectSelected.value = false
+        viewState.locationDrawingSelected.value = false
+        viewState.locationViewSelected.value = true
+        changeSelectedTab(R.id.locationBtn, false)
+    }
+
     override fun onStart() {
         super.onStart()
-        EventBus.getDefault().register(this)
+        try {
+            EventBus.getDefault().register(this)
+        } catch (exception: Exception) {
+        }
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -804,4 +893,5 @@ class DashboardFragment :
             }
             .show()
     }
+
 }

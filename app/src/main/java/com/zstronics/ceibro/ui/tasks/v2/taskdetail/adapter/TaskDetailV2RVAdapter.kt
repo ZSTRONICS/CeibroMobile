@@ -6,8 +6,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -102,7 +100,11 @@ class TaskDetailV2RVAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setTaskAndEventList(listItems: MutableList<Any>, userId: String, descriptionExpanded: Boolean) {
+    fun setTaskAndEventList(
+        listItems: MutableList<Any>,
+        userId: String,
+        descriptionExpanded: Boolean
+    ) {
         this.loggedInUserId = userId
         this.descriptionExpanded = descriptionExpanded
         this.listItems.clear()
@@ -110,7 +112,11 @@ class TaskDetailV2RVAdapter @Inject constructor() :
         notifyDataSetChanged()
     }
 
-    fun updateTaskAndEventList(listItems: MutableList<Any>, userId: String, descriptionExpanded: Boolean) {
+    fun updateTaskAndEventList(
+        listItems: MutableList<Any>,
+        userId: String,
+        descriptionExpanded: Boolean
+    ) {
         this.loggedInUserId = userId
         this.descriptionExpanded = descriptionExpanded
         this.listItems.clear()
@@ -141,6 +147,7 @@ class TaskDetailV2RVAdapter @Inject constructor() :
 
             binding.onlyImagesRV.isNestedScrollingEnabled = false
             binding.imagesWithCommentRV.isNestedScrollingEnabled = false
+
             binding.filesRV.isNestedScrollingEnabled = false
 
             val context = binding.taskDetailStatusName.context
@@ -384,6 +391,11 @@ class TaskDetailV2RVAdapter @Inject constructor() :
             val filesAdapter = FilesRVAdapter()
             filesAdapter.setList(document)
             binding.filesRV.adapter = filesAdapter
+            if (filesAdapter.itemCount <= 1) {
+                binding.filesCount.text = "${filesAdapter.itemCount} File"
+            } else {
+                binding.filesCount.text = "${filesAdapter.itemCount} Files"
+            }
             filesAdapter.fileClickListener = { _: View, position: Int, data: TaskFiles ->
                 val bundle = Bundle()
                 bundle.putParcelable("taskFile", data)

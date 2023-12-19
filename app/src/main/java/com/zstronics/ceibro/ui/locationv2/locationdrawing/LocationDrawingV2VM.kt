@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
+package com.zstronics.ceibro.ui.locationv2.locationdrawing
 
 import android.os.Bundle
 import androidx.lifecycle.LiveData
@@ -13,11 +13,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DrawingsV2VM @Inject constructor(
-    override val viewState: DrawingsV2State,
+class LocationDrawingV2VM @Inject constructor(
+    override val viewState: LocationDrawingV2State,
     private val projectRepository: IProjectRepository,
     private val groupsV2Dao: GroupsV2Dao,
-) : HiltBaseViewModel<IDrawingV2.State>(), IDrawingV2.ViewModel {
+) : HiltBaseViewModel<ILocationDrawingV2.State>(), ILocationDrawingV2.ViewModel {
 
     private val _projectData: MutableLiveData<CeibroProjectV2> = MutableLiveData()
     val projectData: LiveData<CeibroProjectV2> = _projectData
@@ -32,12 +32,14 @@ class DrawingsV2VM @Inject constructor(
     )
     val favoriteGroups: LiveData<MutableList<CeibroGroupsV2>> = _favoriteGroups
     var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
+    var favoriteGroupsOnceSet = false
+    var allGroupsOnceSet = false
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-        val project = CookiesManager.projectDataForDetails
+        val project = CookiesManager.locationProjectDataForDetails
         project?.let {
             _projectData.postValue(it)
             getGroupsByProjectID(it._id)

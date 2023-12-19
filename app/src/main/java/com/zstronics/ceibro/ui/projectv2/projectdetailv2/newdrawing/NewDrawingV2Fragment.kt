@@ -11,7 +11,9 @@ import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 
 @AndroidEntryPoint
 class NewDrawingV2Fragment :
@@ -59,13 +61,17 @@ class NewDrawingV2Fragment :
                 } else if (groupName.isEmpty() || viewModel.selectedGroup == null || viewModel.selectedGroup?._id?.isEmpty() == true) {
                     showToast("Group is required")
                 } else {
-                    viewModel.selectedFloor?._id?.let {floorId->
+                    viewModel.selectedFloor?._id?.let { floorId ->
                         viewModel.uploadDrawing(
                             mViewDataBinding.root.context,
                             floorId,
                             viewModel.selectedGroup?._id ?: ""
-                        )
-                    }?: kotlin.run {
+                        ) { projectId ->
+                            navigateBack()
+                            EventBus.getDefault()
+                                .post(LocalEvents.UpdateGroupDrawings(projectID = projectId))
+                        }
+                    } ?: kotlin.run {
                         showToast("Floor is required")
                     }
                 }
@@ -85,6 +91,7 @@ class NewDrawingV2Fragment :
                     PdfThumbnailGenerator().generateThumbnail(filePath, 0, Size(150, 300))
                 mViewDataBinding.locationImg.setImageBitmap(thumbnail)
             }
+            mViewDataBinding.tvDrawingName.text = viewModel.pdfFileName
         }
     }
 

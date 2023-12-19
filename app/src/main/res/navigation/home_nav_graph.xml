@@ -445,10 +445,6 @@
         android:label="NewProjectV2Fragment"
         tools:layout="@layout/fragment_new_project_v2"/>
     <fragment
-        android:id="@+id/locationV2Fragment"
-        android:name="com.zstronics.ceibro.ui.projectv2.locationv2.LocationV2Fragment"
-        android:label="LocationV2Fragment" />
-    <fragment
         android:id="@+id/projectsV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment"
         android:label="ProjectsV2Fragment"
@@ -502,6 +498,21 @@
         android:id="@+id/newDrawingV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.NewDrawingV2Fragment"
         android:label="NewDrawingV2Fragment" />
+    <fragment
+        android:id="@+id/locationsV2Fragment"
+        android:name="com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment"
+        android:label="LocationsV2Fragment"
+        tools:layout="@layout/fragment_locations_v2"/>
+    <fragment
+        android:id="@+id/locationProjectV2Fragment"
+        android:name="com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectV2Fragment"
+        android:label="LocationProjectV2Fragment"
+        tools:layout="@layout/fragment_location_projects_v2"/>
+    <fragment
+        android:id="@+id/locationDrawingV2Fragment"
+        android:name="com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment"
+        android:label="LocationDrawingV2Fragment"
+        tools:layout="@layout/fragment_location_drawings_v2" />
 
 
 </navigation>
