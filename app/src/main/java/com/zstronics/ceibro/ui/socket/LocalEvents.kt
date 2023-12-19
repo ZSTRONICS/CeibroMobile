@@ -118,6 +118,9 @@ object LocalEvents {
 
     class InitSocketEventCallBack
     class LoadDrawingInLocation
+    class LoadLocationProjectFragmentInLocation
+    class LoadDrawingFragmentInLocation
+    class LoadViewDrawingFragmentInLocation
     data class UpdateGroupDrawings(val projectID: String)
 
 }

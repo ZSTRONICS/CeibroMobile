@@ -91,6 +91,7 @@ class NewDrawingV2Fragment :
                     PdfThumbnailGenerator().generateThumbnail(filePath, 0, Size(150, 300))
                 mViewDataBinding.locationImg.setImageBitmap(thumbnail)
             }
+            mViewDataBinding.tvDrawingName.text = viewModel.pdfFileName
         }
     }
 

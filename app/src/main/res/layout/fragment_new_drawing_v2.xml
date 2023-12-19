@@ -210,7 +210,7 @@
 
                     <TextView
                         android:id="@+id/tvDrawingName"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_20sdp"
@@ -218,9 +218,12 @@
                         android:focusable="false"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="start"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:text="Sample.pdf"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_10sdp"
+                        app:layout_constraintEnd_toEndOf="@+id/groupField"
                         app:layout_constraintStart_toEndOf="@id/saperater"
                         app:layout_constraintTop_toBottomOf="@+id/tvInfo" />
 

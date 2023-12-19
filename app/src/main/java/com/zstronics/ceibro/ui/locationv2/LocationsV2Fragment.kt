@@ -38,7 +38,9 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
 import com.zstronics.ceibro.ui.locationv2.usage.PinPointsData
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 import stkq.draw.FiveTuple
 import stkq.draw.FourTuple
 import java.io.File
@@ -73,8 +75,15 @@ class LocationsV2Fragment :
 
     override fun onClick(id: Int) {
         when (id) {
-            R.id.projectFilterBtn -> {
+            R.id.backBtn -> {
+                if (viewModel.cameFromProject) {
+                    EventBus.getDefault().post(LocalEvents.LoadLocationProjectFragmentInLocation())
+                } else {
+                    EventBus.getDefault().post(LocalEvents.LoadDrawingFragmentInLocation())
+                }
+            }
 
+            R.id.projectFilterBtn -> {
                 viewState.isFilterVisible.value?.let { currentValue ->
                     val updateFlag = !currentValue
                     viewState.isFilterVisible.value = updateFlag
@@ -724,7 +733,9 @@ class LocationsV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.drawingFile.value == null) {
+        if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
+            CookiesManager.openingNewLocationFile = false
+            viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
             CookiesManager.drawingFileForLocation.value?.let {
                 viewModel._drawingFile.postValue(it)
             }

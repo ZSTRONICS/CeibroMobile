@@ -56,8 +56,8 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
-        pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
         pdfFileName = bundle?.getString("pdfFileName").toString()
+        pdfFilePath.value = bundle?.getString("pdfFilePath").toString()
         projectId.value = bundle?.getString("projectId").toString()
 
         getFloorsByProjectID(projectId.value.toString())
