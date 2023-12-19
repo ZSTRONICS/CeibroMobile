@@ -590,7 +590,7 @@
     <string name="forward_screen_already_opened">Forward screen already opened for this task</string>
     <string name="filter">Filter</string>
     <string name="text_new">New</string>
-    <string name="select_if_you_want_to_add_this_drawing_under_some_group">Select if you want to add this drawing under some group</string>
+    <string name="select_if_you_want_to_add_this_drawing_under_some_group">Select to add this drawing under some group</string>
     <string name="drawing_name">Drawing name</string>
     <string name="delete_group">Delete group</string>
     <string name="remove_floor">Remove floor</string>
@@ -603,4 +603,5 @@
     <string name="start_typing_new_group">Start typing new group</string>
     <string name="floor">Floor</string>
     <string name="add_new_floor">+ Add new floor</string>
+    <string name="new_drawing">New Drawing</string>
 </resources>

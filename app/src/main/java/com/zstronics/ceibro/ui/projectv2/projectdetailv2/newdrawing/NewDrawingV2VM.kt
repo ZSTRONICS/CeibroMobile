@@ -116,7 +116,8 @@ class NewDrawingV2VM @Inject constructor(
     override fun uploadDrawing(
         context: Context,
         floorId: String,
-        groupId: String
+        groupId: String,
+        callback: () -> Unit
     ) {
 
         val filePath = pdfFilePath.value ?: ""
@@ -165,6 +166,7 @@ class NewDrawingV2VM @Inject constructor(
             )) {
                 is ApiResponse.Success -> {
                     loading(false, response.data.message)
+                    callback.invoke()
                 }
 
                 is ApiResponse.Error -> {
@@ -275,6 +277,12 @@ class NewDrawingV2VM @Inject constructor(
                             val item = iterator.next()
                             if (groupId == item._id) {
                                 iterator.remove()
+                            }
+                            selectedGroup?.let {
+                                if (it._id == groupId) {
+                                    selectedGroup = null
+                                    viewState.groupName.value = ""
+                                }
                             }
                         }
                         _groupList.value = currentList

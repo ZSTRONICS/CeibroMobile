@@ -59,13 +59,15 @@ class NewDrawingV2Fragment :
                 } else if (groupName.isEmpty() || viewModel.selectedGroup == null || viewModel.selectedGroup?._id?.isEmpty() == true) {
                     showToast("Group is required")
                 } else {
-                    viewModel.selectedFloor?._id?.let {floorId->
+                    viewModel.selectedFloor?._id?.let { floorId ->
                         viewModel.uploadDrawing(
                             mViewDataBinding.root.context,
                             floorId,
                             viewModel.selectedGroup?._id ?: ""
-                        )
-                    }?: kotlin.run {
+                        ) {
+                            navigateBack()
+                        }
+                    } ?: kotlin.run {
                         showToast("Floor is required")
                     }
                 }
