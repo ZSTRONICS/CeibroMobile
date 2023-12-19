@@ -30,10 +30,14 @@ import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -154,7 +158,7 @@ class DrawingsV2Fragment :
 
         sectionedAdapter.setCallBack { view, data, tag ->
             println("data.uploaderLocalFilePath1: ${data.fileName}")
-            drawingFileClickListener?.invoke(view,data,tag)
+            drawingFileClickListener?.invoke(view, data, tag)
 //            checkDownloadFilePermission(data)
         }
 
@@ -495,9 +499,23 @@ class DrawingsV2Fragment :
             file = FileUtils.getFile(requireContext(), fileUri)
         )
     }
-}
 
-data class StringListData(
-    val stringList: List<String>
-)
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateGroupDrawings(event: LocalEvents.UpdateGroupDrawings?) {
+        event?.let {
+            viewModel.getGroupsByProjectID(it.projectID)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+}
 

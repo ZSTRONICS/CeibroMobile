@@ -11,7 +11,9 @@ import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 
 @AndroidEntryPoint
 class NewDrawingV2Fragment :
@@ -64,8 +66,10 @@ class NewDrawingV2Fragment :
                             mViewDataBinding.root.context,
                             floorId,
                             viewModel.selectedGroup?._id ?: ""
-                        ) {
+                        ) { projectId ->
                             navigateBack()
+                            EventBus.getDefault()
+                                .post(LocalEvents.UpdateGroupDrawings(projectID = projectId))
                         }
                     } ?: kotlin.run {
                         showToast("Floor is required")

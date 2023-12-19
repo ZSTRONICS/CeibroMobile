@@ -539,6 +539,7 @@
     <string name="close_app">Close App</string>
     <string name="are_you_sure_you_want_to_close_the_app">Are you sure you want to close the app?</string>
     <string name="are_you_sure_you_want_to_delete_this_group">Are you sure you want to delete this group?</string>
+    <string name="cannot_delete_group">You can`t delete this group, because there is drawing under that group?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="logout">Logout</string>
@@ -604,4 +605,5 @@
     <string name="floor">Floor</string>
     <string name="add_new_floor">+ Add new floor</string>
     <string name="new_drawing">New Drawing</string>
+    <string name="ok">Ok</string>
 </resources>

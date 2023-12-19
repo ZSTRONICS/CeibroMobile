@@ -23,12 +23,12 @@ data class CeibroFloorV2(
     @SerializedName("deleted")
     val deleted: Boolean,
     @SerializedName("drawings")
-    val drawings: List<String> = listOf(),
+    var drawings: List<String> = listOf(),
     @SerializedName("floorName")
     val floorName: String,
     @SerializedName("projectId")
     val projectId: String,
     @SerializedName("updatedAt")
-    val updatedAt: String
+    var updatedAt: String
 
 ) : BaseResponse(), Parcelable

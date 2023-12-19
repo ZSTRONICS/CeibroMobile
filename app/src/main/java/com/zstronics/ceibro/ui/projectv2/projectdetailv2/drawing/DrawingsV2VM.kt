@@ -45,7 +45,7 @@ class DrawingsV2VM @Inject constructor(
         }
     }
 
-    private fun getGroupsByProjectID(projectId: String) {
+    fun getGroupsByProjectID(projectId: String) {
         launch {
 //            loading(true)
             val groupsList = groupsV2Dao.getAllProjectGroups(projectId)

@@ -14,6 +14,9 @@ interface FloorsV2Dao {
     @Query("SELECT * FROM floors_v2 WHERE projectId = :projectId ORDER BY updatedAt DESC")
     suspend fun getAllProjectFloors(projectId: String): List<CeibroFloorV2>
 
+    @Query("SELECT * FROM floors_v2 WHERE _id = :floorId")
+    suspend fun getFloorByFloorId(floorId: String): CeibroFloorV2
+
 //    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe ORDER BY updatedAt DESC")
 //    suspend fun getAllHiddenProjects(isHiddenByMe: Boolean = true): List<CeibroProjectV2>
 //

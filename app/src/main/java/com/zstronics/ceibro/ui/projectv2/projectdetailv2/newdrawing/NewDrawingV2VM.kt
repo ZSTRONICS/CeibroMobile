@@ -117,7 +117,7 @@ class NewDrawingV2VM @Inject constructor(
         context: Context,
         floorId: String,
         groupId: String,
-        callback: () -> Unit
+        callback: (projectId:String) -> Unit
     ) {
 
         val filePath = pdfFilePath.value ?: ""
@@ -165,8 +165,26 @@ class NewDrawingV2VM @Inject constructor(
                 files = fileParts
             )) {
                 is ApiResponse.Success -> {
+
+                    val newDrawingList = response.data.drawings
+                    val group = groupsV2Dao.getGroupByGroupId(groupId)
+                    val allDrawings = group.drawings.toMutableList()
+                    allDrawings.addAll(newDrawingList)
+                    group.drawings = allDrawings
+                    group.updatedAt = response.data.groupUpdatedAt
+                    groupsV2Dao.insertGroup(group)
+
+                    val newDrawingIdsList = response.data.drawings.map { it._id }
+                    val floor = floorsV2Dao.getFloorByFloorId(floorId)
+                    floor.updatedAt = response.data.floorUpdatedAt
+                    val allDrawingsIDs = floor.drawings.toMutableList()
+                    allDrawingsIDs.addAll(newDrawingIdsList)
+                    floor.drawings = allDrawingsIDs
+                    floorsV2Dao.insertFloor(floor)
+
                     loading(false, response.data.message)
-                    callback.invoke()
+                    callback.invoke(projectId)
+
                 }
 
                 is ApiResponse.Error -> {

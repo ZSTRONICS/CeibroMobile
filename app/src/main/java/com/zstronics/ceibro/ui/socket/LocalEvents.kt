@@ -117,5 +117,6 @@ object LocalEvents {
     data class TaskEvent(val events: Events)
 
     class InitSocketEventCallBack
+    data class UpdateGroupDrawings(val projectID: String)
 
 }

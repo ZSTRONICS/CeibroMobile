@@ -57,6 +57,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
         this.listItems.add(item)
         notifyDataSetChanged()
     }
+
     fun updateItem(item: CeibroGroupsV2) {
         val allItems = this.listItems
         val foundItem = allItems.find { it._id == item._id }
@@ -68,6 +69,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
             notifyDataSetChanged()
         }
     }
+
     fun deleteItem(groupId: String) {
         val allItems = this.listItems
         val foundItem = allItems.find { it._id == groupId }
@@ -130,11 +132,16 @@ class NewDrawingGroupAdapter @Inject constructor() :
         val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
 
         delete.setOnClickListener {
-            // callback.invoke("delete", groupResponseV2)
-            updateGroup(it.context, groupResponseV2) { tag, data ->
-                callback.invoke(tag, data)
+
+            if (groupResponseV2.drawings.isEmpty()) {
+                updateGroup(it.context, groupResponseV2) { tag, data ->
+                    callback.invoke(tag, data)
+                }
+                popupWindow.dismiss()
+            } else {
+                cannotDeleteAlertBox(it.context)
             }
-            popupWindow.dismiss()
+
         }
         renameGroupBtn.setOnClickListener {
             callback.invoke("rename", groupResponseV2)
@@ -191,4 +198,38 @@ class NewDrawingGroupAdapter @Inject constructor() :
             alertDialog.dismiss()
         }
     }
+
+
+    private fun cannotDeleteAlertBox(
+        context: Context,
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        yesBtn.text = context.getString(R.string.ok)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val saperater = view.findViewById<View>(R.id.viewSaperator)
+        saperater.visibility = View.GONE
+        noBtn.visibility = View.GONE
+
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text =
+            context.resources.getString(R.string.cannot_delete_group)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
 }
