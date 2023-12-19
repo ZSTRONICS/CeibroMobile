@@ -316,10 +316,10 @@ class DashboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
-            println("CookiesManager.drawingFileForLocation: $it")
-            changeSelectedTab(R.id.locationBtn, false)
-        }
+//        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
+//            println("CookiesManager.drawingFileForLocation: $it")
+//            changeSelectedTab(R.id.locationBtn, false)
+//        }
 
         viewState.projectsSelected.observe(viewLifecycleOwner) {
             viewState.setAddTaskButtonVisibility.value = it
@@ -769,10 +769,20 @@ class DashboardFragment :
         handleSocketReSyncDataEvent()
     }
 
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onLoadDrawingInLocation(event: LocalEvents.LoadDrawingInLocation) {
+        changeSelectedTab(R.id.locationBtn, false)
+        EventBus.getDefault().removeStickyEvent(event)
+    }
+
     override fun onStart() {
         super.onStart()
-        EventBus.getDefault().register(this)
+        try {
+            EventBus.getDefault().register(this)
+        } catch (exception: Exception) {
+        }
     }
+
 
     override fun onStop() {
         super.onStop()

@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -32,7 +31,7 @@ class DrawingsV2VM @Inject constructor(
         mutableListOf()
     )
     val favoriteGroups: LiveData<MutableList<CeibroGroupsV2>> = _favoriteGroups
-
+    var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -49,6 +48,7 @@ class DrawingsV2VM @Inject constructor(
         launch {
 //            loading(true)
             val groupsList = groupsV2Dao.getAllProjectGroups(projectId)
+            originalGroups.value = groupsList.toMutableList()
             if (groupsList.isNotEmpty()) {
                 val favorites = groupsList.filter { it.isFavoriteByMe } ?: listOf()
                 _favoriteGroups.value = favorites.toMutableList()

@@ -10,7 +10,9 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
 
 @AndroidEntryPoint
 class ProjectDetailV2Fragment :
@@ -40,6 +42,7 @@ class ProjectDetailV2Fragment :
         val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, tag ->
             CookiesManager.drawingFileForLocation.value = data
             navigateBack()
+            EventBus.getDefault().postSticky(LocalEvents.LoadDrawingInLocation())
         }
         mViewDataBinding.viewPager.adapter = adapter
 

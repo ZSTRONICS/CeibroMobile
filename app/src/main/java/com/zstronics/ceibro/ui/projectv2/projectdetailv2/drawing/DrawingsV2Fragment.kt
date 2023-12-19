@@ -227,6 +227,14 @@ class DrawingsV2Fragment :
             }
         }
 
+        viewModel.originalGroups.observe(viewLifecycleOwner) {
+            if (it.size > 1) {
+                mViewDataBinding.clSearch.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.clSearch.visibility = View.GONE
+            }
+        }
+
     }
 
     override fun onDestroy() {
