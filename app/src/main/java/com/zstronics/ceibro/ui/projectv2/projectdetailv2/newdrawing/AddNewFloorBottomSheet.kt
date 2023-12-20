@@ -58,8 +58,44 @@ class AddNewFloorBottomSheet(
 
 
         model.floorList.value?.let {
-            floorAdapter.setList(it)
-            selectedFloorList = it
+
+            val enumOrder = listOf(
+                "B3",
+                "B2",
+                "B1",
+                "G",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25"
+            )
+            val sortedList =
+                it.sortedWith(compareBy { enumOrder.indexOf(it.floorName) }).toMutableList()
+
+
+            floorAdapter.setList(sortedList)
+            selectedFloorList = sortedList
         }
         binding.rvFloorList.adapter = floorAdapter
 
@@ -101,9 +137,17 @@ class AddNewFloorBottomSheet(
         callback: (MutableList<CeibroFloorV2>) -> Unit
     ) {
 
+        val enumOrder = listOf(
+            "B3", "B2", "B1", "G", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25"
+        )
+
+        val sortedList = selectedFloorList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
+            .toMutableList()
+
         var floorsList: MutableList<CeibroFloorV2> = mutableListOf()
         floorsList.clear()
-        floorsList.addAll(selectedFloorList)
+        floorsList.addAll(sortedList)
 
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -150,14 +194,14 @@ class AddNewFloorBottomSheet(
             val itemViewBinding: FloorCheckboxItemListingBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(binding.root.context),
                 R.layout.floor_checkbox_item_listing,
-                binding.llFloorsList,
+                null,
                 false
             )
             itemViewBinding.cbFloorName.text = data
 
-            if (selectedFloorList.isNotEmpty()) {
+            if (floorsList.isNotEmpty()) {
 
-                val existingFloor = selectedFloorList.find { it.floorName.equals(data, true) }
+                val existingFloor = floorsList.find { it.floorName.equals(data, true) }
 
                 if (existingFloor != null) {
                     itemViewBinding.cbFloorName.isChecked = true
@@ -176,7 +220,7 @@ class AddNewFloorBottomSheet(
             }
 
             itemViewBinding.tvAddFloors.setOnClickListener {
-                itemViewBinding.cbFloorName.isChecked=!(itemViewBinding.cbFloorName.isChecked)
+                itemViewBinding.cbFloorName.isChecked = !(itemViewBinding.cbFloorName.isChecked)
                 val floorName1 = itemViewBinding.cbFloorName.text.toString()
                 val existingFloor = floorsList.find { it.floorName.equals(floorName1, true) }
 
@@ -205,6 +249,8 @@ class AddNewFloorBottomSheet(
                     }
                 }
                 floorsList = floorsList.distinctBy { it.floorName }.toMutableList()
+                floorsList = floorsList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
+                    .toMutableList()
                 callback.invoke(floorsList)
             }
             itemViewBinding.cbFloorName.setOnClickListener {
@@ -235,6 +281,8 @@ class AddNewFloorBottomSheet(
                     }
                 }
                 floorsList = floorsList.distinctBy { it.floorName }.toMutableList()
+                floorsList = floorsList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
+                    .toMutableList()
                 callback.invoke(floorsList)
             }
             llFloorsList.addView(itemViewBinding.root)
