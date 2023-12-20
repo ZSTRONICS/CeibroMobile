@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-v16\\values-v16.xml",
+            "outputFile": "com.zstronics.mypdfviewer-merged_res-17:/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\adacc4bbdca3c037c01e5031782c646c\\transformed\\core-1.7.0\\res\\values-v16\\values-v16.xml",
+                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\a291191da95448ec3717250b078ae44a\\transformed\\core-1.7.0\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\values-v16\\values-v16.xml",
+                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\bc070e6b2efec2118016f1648d1b3062\\transformed\\appcompat-1.4.1\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -35,10 +35,10 @@
             ]
         },
         {
-            "outputFile": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\values-v16\\values-v16.xml",
+            "outputFile": "com.zstronics.mypdfviewer-mergeReleaseResources-15:/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\adacc4bbdca3c037c01e5031782c646c\\transformed\\core-1.7.0\\res\\values-v16\\values-v16.xml",
+                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\a291191da95448ec3717250b078ae44a\\transformed\\core-1.7.0\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -48,7 +48,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\values-v16\\values-v16.xml",
+                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\bc070e6b2efec2118016f1648d1b3062\\transformed\\appcompat-1.4.1\\res\\values-v16\\values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

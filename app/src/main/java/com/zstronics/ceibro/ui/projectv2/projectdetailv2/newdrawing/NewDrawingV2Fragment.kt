@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.util.Size
 import android.view.View
@@ -13,6 +15,10 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 
 @AndroidEntryPoint
@@ -86,11 +92,21 @@ class NewDrawingV2Fragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.pdfFilePath.observe(viewLifecycleOwner) { filePath ->
-            if (!filePath.isNullOrEmpty()) {
-                val thumbnail =
-                    PdfThumbnailGenerator().generateThumbnail(filePath, 0, Size(150, 300))
-                mViewDataBinding.locationImg.setImageBitmap(thumbnail)
-            }
+            Handler(Looper.getMainLooper()).postDelayed({
+                GlobalScope.launch {
+                    if (!filePath.isNullOrEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            mViewDataBinding.pdfImgLoader.visibility = View.VISIBLE
+                        }
+                        val thumbnail = PdfThumbnailGenerator().generateThumbnail(filePath, 0)
+                        withContext(Dispatchers.Main) {
+                            mViewDataBinding.pdfImgLoader.visibility = View.GONE
+                            mViewDataBinding.locationImg.setImageBitmap(thumbnail)
+                        }
+                    }
+                }
+            }, 600)
+
             mViewDataBinding.tvDrawingName.text = viewModel.pdfFileName
         }
     }

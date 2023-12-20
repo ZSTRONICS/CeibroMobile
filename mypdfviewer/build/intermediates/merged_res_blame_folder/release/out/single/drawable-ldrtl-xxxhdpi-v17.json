@@ -1,6 +1,6 @@
 [
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\drawable-ldrtl-xxxhdpi-v17\\abc_spinner_mtrl_am_alpha.9.png",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\drawable-ldrtl-xxxhdpi-v17\\abc_spinner_mtrl_am_alpha.9.png"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/drawable-ldrtl-xxxhdpi-v17/abc_spinner_mtrl_am_alpha.9.png",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/drawable-ldrtl-xxxhdpi-v17/abc_spinner_mtrl_am_alpha.9.png"
     }
 ]

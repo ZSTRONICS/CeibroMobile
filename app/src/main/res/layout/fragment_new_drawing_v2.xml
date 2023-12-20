@@ -190,6 +190,7 @@
                         android:layout_marginTop="@dimen/_20sdp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:paddingVertical="@dimen/_1sdp"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="start"
                         android:text="@string/drawing_name"
@@ -201,7 +202,7 @@
                     <View
                         android:id="@+id/saperater"
                         android:layout_width="1dp"
-                        android:layout_height="@dimen/_18sdp"
+                        android:layout_height="0dp"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:background="@color/appGrey3"
                         app:layout_constraintBottom_toBottomOf="@id/tvDrawingInfo"
@@ -216,6 +217,7 @@
                         android:layout_marginTop="@dimen/_20sdp"
                         android:clickable="false"
                         android:focusable="false"
+                        android:paddingVertical="@dimen/_1sdp"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="start"
                         android:maxLines="1"
@@ -242,13 +244,19 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvDrawingName">
 
+                        <ProgressBar
+                            android:id="@+id/pdfImgLoader"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:visibility="gone"
+                            android:layout_gravity="center"
+                            android:indeterminate="true"/>
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/locationImg"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/map"
                             android:visibility="visible" />
 
                     </com.google.android.material.card.MaterialCardView>

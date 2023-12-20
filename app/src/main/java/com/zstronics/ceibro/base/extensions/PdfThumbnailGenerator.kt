@@ -10,7 +10,7 @@ import java.io.IOException
 
 class PdfThumbnailGenerator {
 
-    fun generateThumbnail(pdfFilePath: String, pageNumber: Int, thumbnailSize: Size): Bitmap? {
+    fun generateThumbnail(pdfFilePath: String, pageNumber: Int): Bitmap? {
         val file = File(pdfFilePath)
 
         try {

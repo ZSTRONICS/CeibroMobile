@@ -1,6 +1,6 @@
 [
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\drawable-v23\\abc_control_background_material.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\drawable-v23\\abc_control_background_material.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/drawable-v23/abc_control_background_material.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/drawable-v23/abc_control_background_material.xml"
     }
 ]
