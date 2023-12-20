@@ -7,10 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -401,13 +403,18 @@ class DrawingsV2Fragment :
                             }
                         }
                         val pdfFilePath = copyFileToInternalStorage(fileUri, fileName)
-//                        val pdfFileUri = pdfFilePath?.let { it1 -> getFileUri(it1) }
-                        println("pdfFilePath1 ${pdfFilePath}")
-                        val bundle = Bundle()
-                        bundle.putString("pdfFilePath", pdfFilePath)
-                        bundle.putString("pdfFileName", fileName)
-                        bundle.putString("projectId", viewModel.projectData.value!!._id)
-                        navigate(R.id.newDrawingV2Fragment, bundle)
+                        val pdfFileObj = pdfFilePath?.let { it1 -> File(it1) }
+                        if (pdfFileObj?.let { it1 -> checkIfPDFHasMultiplePages(it1) } == true) {
+                            shortToastNow("Multi page drawing file is not allowed yet")
+                        } else {
+                            println("pdfFilePath1 ${pdfFilePath} fileName1: $fileName")
+                            val bundle = Bundle()
+                            bundle.putString("pdfFilePath", pdfFilePath)
+                            bundle.putString("pdfFileName", fileName)
+                            bundle.putString("projectId", viewModel.projectData.value!!._id)
+                            navigate(R.id.newDrawingV2Fragment, bundle)
+                        }
+
                         break
                     }
                 } else {
@@ -429,18 +436,42 @@ class DrawingsV2Fragment :
                         }
 //                        val selectedDocDetail = getPickedFileDetail(requireContext(), it)
                         val pdfFilePath = copyFileToInternalStorage(it, fileName!!)
+                        val pdfFileObj = pdfFilePath?.let { it1 -> File(it1) }
+                        if (pdfFileObj?.let { it1 -> checkIfPDFHasMultiplePages(it1) } == true) {
+                            shortToastNow("Multi page drawing file is not allowed yet")
+                        } else {
+                            println("pdfFilePath ${pdfFilePath} fileName: $fileName")
+                            val bundle = Bundle()
+                            bundle.putString("pdfFilePath", pdfFilePath)
+                            bundle.putString("pdfFileName", fileName)
+                            bundle.putString("projectId", viewModel.projectData.value!!._id)
+                            navigate(R.id.newDrawingV2Fragment, bundle)
+                        }
+
 //                        val pdfFileUri= pdfFilePath?.let { it1 -> getFileUri(it1) }
-                        println("pdfFilePath ${pdfFilePath} fileName: $fileName")
-                        val bundle = Bundle()
-                        bundle.putString("pdfFilePath", pdfFilePath)
-                        bundle.putString("pdfFileName", fileName)
-                        bundle.putString("projectId", viewModel.projectData.value!!._id)
-                        navigate(R.id.newDrawingV2Fragment, bundle)
                     }
                 }
             }
 
         }
+    }
+
+    private fun checkIfPDFHasMultiplePages(pdfFile: File): Boolean {
+        try {
+            val parcelFileDescriptor: ParcelFileDescriptor = ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
+            val pdfRenderer = PdfRenderer(parcelFileDescriptor)
+
+            // Assuming the PDF file has at least one page
+            val pageCount = pdfRenderer.pageCount
+
+            pdfRenderer.close()
+            parcelFileDescriptor.close()
+
+            return pageCount > 1
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return false
     }
 
     private fun copyFileToInternalStorage(uri: Uri, fileName: String): String? {

@@ -283,7 +283,7 @@ class LocationsV2Fragment :
 
 
             val file = File(it.uploaderLocalFilePath)
-            val fileUri = Uri.fromFile(file)
+//            val fileUri = Uri.fromFile(file)
             mViewDataBinding.pdfView.fromFile(file)
                 .defaultPage(0)
                 .enableSwipe(true)
@@ -522,6 +522,12 @@ class LocationsV2Fragment :
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
             taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
+            for (marker in markers) {
+                if (marker.first == point.x && marker.second == point.y) {
+                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
+                    markers[index] = Triple(marker.first, marker.second, "")
+                }
+            }
         }
         mViewDataBinding.pdfView.matrix.mapPoints(matrixValues)
         mViewDataBinding.pdfView.matrix.set(canvas.matrix)
@@ -573,12 +579,12 @@ class LocationsV2Fragment :
         popupWindow.contentView = view
         popupWindow.setOnDismissListener {
 //            shortToastNow("Dismiss Listener")
-            for (marker in markers) {
-                if (marker.first == point.x && marker.second == point.y) {
-                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
-                    markers[index] = Triple(marker.first, marker.second, "")
-                }
-            }
+//            for (marker in markers) {
+//                if (marker.first == point.x && marker.second == point.y) {
+//                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
+//                    markers[index] = Triple(marker.first, marker.second, "")
+//                }
+//            }
         }
         val values = IntArray(2)
         v.getLocationInWindow(values)
@@ -734,8 +740,9 @@ class LocationsV2Fragment :
     override fun onResume() {
         super.onResume()
         if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
-            CookiesManager.openingNewLocationFile = false
             viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
+            CookiesManager.openingNewLocationFile = false
+            CookiesManager.cameToLocationViewFromProject = false
             CookiesManager.drawingFileForLocation.value?.let {
                 viewModel._drawingFile.postValue(it)
             }

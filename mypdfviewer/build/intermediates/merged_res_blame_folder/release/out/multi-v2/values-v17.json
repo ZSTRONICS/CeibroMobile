@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-v17\\values-v17.xml",
+            "outputFile": "com.zstronics.mypdfviewer-merged_res-17:/values-v17/values-v17.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\values-v17\\values-v17.xml",
+                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\bc070e6b2efec2118016f1648d1b3062\\transformed\\appcompat-1.4.1\\res\\values-v17\\values-v17.xml",
                     "from": {
                         "startLines": "2,5,9,12,15,18,22,25,29,33,37,40,43,46,50,53,57",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -17,10 +17,10 @@
             ]
         },
         {
-            "outputFile": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\values-v17\\values-v17.xml",
+            "outputFile": "com.zstronics.mypdfviewer-mergeReleaseResources-15:/values-v17/values-v17.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\values-v17\\values-v17.xml",
+                    "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\bc070e6b2efec2118016f1648d1b3062\\transformed\\appcompat-1.4.1\\res\\values-v17\\values-v17.xml",
                     "from": {
                         "startLines": "2,5,9,12,15,18,22,25,29,33,37,40,43,46,50,53,57",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

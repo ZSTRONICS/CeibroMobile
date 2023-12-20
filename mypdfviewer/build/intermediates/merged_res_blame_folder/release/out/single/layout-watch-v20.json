@@ -1,10 +1,10 @@
 [
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\layout-watch-v20\\abc_alert_dialog_button_bar_material.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\layout-watch-v20\\abc_alert_dialog_button_bar_material.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/layout-watch-v20/abc_alert_dialog_button_bar_material.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\layout-watch-v20\\abc_alert_dialog_title_material.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\layout-watch-v20\\abc_alert_dialog_title_material.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/layout-watch-v20/abc_alert_dialog_title_material.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/layout-watch-v20/abc_alert_dialog_title_material.xml"
     }
 ]

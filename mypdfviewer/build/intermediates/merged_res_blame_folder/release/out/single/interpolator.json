@@ -1,30 +1,30 @@
 [
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\btn_radio_to_off_mtrl_animation_interpolator_0.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\btn_radio_to_off_mtrl_animation_interpolator_0.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/btn_radio_to_off_mtrl_animation_interpolator_0.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/btn_radio_to_off_mtrl_animation_interpolator_0.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\btn_checkbox_unchecked_mtrl_animation_interpolator_0.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\btn_checkbox_unchecked_mtrl_animation_interpolator_0.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/btn_radio_to_on_mtrl_animation_interpolator_0.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/btn_radio_to_on_mtrl_animation_interpolator_0.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\btn_checkbox_checked_mtrl_animation_interpolator_1.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\btn_checkbox_checked_mtrl_animation_interpolator_1.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_1.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_1.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\btn_checkbox_unchecked_mtrl_animation_interpolator_1.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\btn_checkbox_unchecked_mtrl_animation_interpolator_1.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_0.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/btn_checkbox_checked_mtrl_animation_interpolator_0.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\btn_checkbox_checked_mtrl_animation_interpolator_0.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\btn_checkbox_checked_mtrl_animation_interpolator_0.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_1.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_1.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\fast_out_slow_in.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\fast_out_slow_in.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/fast_out_slow_in.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/fast_out_slow_in.xml"
     },
     {
-        "merged": "E:\\old_base\\android-drawboard\\mypdfviewer\\build\\intermediates\\merged_res\\release\\interpolator\\btn_radio_to_on_mtrl_animation_interpolator_0.xml",
-        "source": "C:\\Users\\Android\\.gradle\\caches\\transforms-3\\d2be0a07ac682004ffbddd9c163a1cf7\\transformed\\appcompat-1.4.1\\res\\interpolator\\btn_radio_to_on_mtrl_animation_interpolator_0.xml"
+        "merged": "com.zstronics.mypdfviewer-merged_res-17:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_0.xml",
+        "source": "com.zstronics.mypdfviewer-appcompat-1.4.1-11:/interpolator/btn_checkbox_unchecked_mtrl_animation_interpolator_0.xml"
     }
 ]

@@ -820,7 +820,7 @@ class DashboardFragment :
         viewState.locationProjectSelected.value = false
         viewState.locationDrawingSelected.value = false
         viewState.locationViewSelected.value = true
-        locationDrawingFragmentInstance = null
+//        locationDrawingFragmentInstance = null
 
         changeSelectedTab(R.id.locationBtn, false)
         EventBus.getDefault().removeStickyEvent(event)

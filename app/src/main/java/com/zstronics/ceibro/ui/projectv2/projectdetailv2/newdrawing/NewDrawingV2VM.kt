@@ -67,48 +67,50 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun getGroupsByProjectID(projectId: String) {
         launch {
-            loading(true)
+//            loading(true)
             val groupsList = groupsV2Dao.getAllProjectGroups(projectId)
             if (groupsList.isNotEmpty()) {
+//                loading(false, "")
                 _groupList.value = groupsList.toMutableList()
-                loading(false, "")
             } else {
-                when (val response = projectRepository.getGroupsByProjectId(projectId)) {
-
-                    is ApiResponse.Success -> {
-                        groupsV2Dao.insertMultipleGroups(response.data.groups)
-                        _groupList.value = response.data.groups.toMutableList()
-                        loading(false, "")
-                    }
-
-                    is ApiResponse.Error -> {
-                        loading(false, response.error.message)
-                    }
-                }
+//                when (val response = projectRepository.getGroupsByProjectId(projectId)) {
+//
+//                    is ApiResponse.Success -> {
+//                        groupsV2Dao.insertMultipleGroups(response.data.groups)
+//                        _groupList.value = response.data.groups.toMutableList()
+//                        loading(false, "")
+//                    }
+//
+//                    is ApiResponse.Error -> {
+//                        loading(false, response.error.message)
+//                    }
+//                }
+//                loading(false, "")
             }
         }
     }
 
     override fun getFloorsByProjectID(projectId: String) {
         launch {
-            loading(true)
+//            loading(true)
             val floorList = floorsV2Dao.getAllProjectFloors(projectId)
             if (floorList.isNotEmpty()) {
+//                loading(false, "")
                 _floorList.value = floorList.toMutableList()
-                loading(false, "")
             } else {
-                when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
-                    is ApiResponse.Success -> {
-                        floorsV2Dao.insertMultipleFloors(response.data.floors)
-                        _floorList.value = response.data.floors.toMutableList()
-
-                        loading(false, "")
-                    }
-
-                    is ApiResponse.Error -> {
-                        loading(false, response.error.message)
-                    }
-                }
+//                when (val response = projectRepository.getFloorsByProjectTid(projectId)) {
+//                    is ApiResponse.Success -> {
+//                        floorsV2Dao.insertMultipleFloors(response.data.floors)
+//                        _floorList.value = response.data.floors.toMutableList()
+//
+//                        loading(false, "")
+//                    }
+//
+//                    is ApiResponse.Error -> {
+//                        loading(false, response.error.message)
+//                    }
+//                }
+//                loading(false, "")
             }
         }
     }
