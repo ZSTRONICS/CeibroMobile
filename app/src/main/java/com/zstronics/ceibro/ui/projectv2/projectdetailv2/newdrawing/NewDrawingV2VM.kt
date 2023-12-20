@@ -119,7 +119,7 @@ class NewDrawingV2VM @Inject constructor(
         context: Context,
         floorId: String,
         groupId: String,
-        callback: (projectId:String) -> Unit
+        callback: (projectId: String) -> Unit
     ) {
 
         val filePath = pdfFilePath.value ?: ""
@@ -258,6 +258,7 @@ class NewDrawingV2VM @Inject constructor(
     override fun createFloorByProjectID(
         projectId: String,
         floorName: String,
+        list: List<CeibroFloorV2>,
         callback: (floor: CeibroFloorV2) -> Unit
     ) {
         val request = CreateNewFloorRequest(floorName)
@@ -272,8 +273,41 @@ class NewDrawingV2VM @Inject constructor(
                         _floorList.value?.add(it)
                         callback.invoke(floor)
                     }
+                    list.forEach { data ->
+                        val item = floorList.value?.find { it.floorName == data.floorName }
+                        if (item == null) {
+                            createFloorsByProjectID(projectId, data.floorName)
+                        }
+                    }
+
 
                     loading(false, "")
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+    override fun createFloorsByProjectID(
+        projectId: String,
+        floorName: String,
+    ) {
+        val request = CreateNewFloorRequest(floorName)
+        launch {
+
+            when (val response = projectRepository.createFloorV2(projectId, request)) {
+
+                is ApiResponse.Success -> {
+
+                    print("created new floor:${response.data.floor?.floorName}")
+                    val floor = response.data.floor
+                    floor?.let {
+                        floorsV2Dao.insertFloor(it)
+                        _floorList.value?.add(it)
+                    }
                 }
 
                 is ApiResponse.Error -> {

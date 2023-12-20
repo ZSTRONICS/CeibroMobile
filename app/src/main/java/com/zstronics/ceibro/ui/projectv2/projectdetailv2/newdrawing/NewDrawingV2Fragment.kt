@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
-import android.util.Size
 import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -33,7 +33,7 @@ class NewDrawingV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.floorText -> {
-                addNewFloorBottomSheet(viewModel)
+                addNewFloorBottomSheet(viewModel,viewModel.selectedFloor)
             }
 
             R.id.groupText -> {
@@ -112,23 +112,36 @@ class NewDrawingV2Fragment :
     }
 
     private fun addNewFloorBottomSheet(
-        model: NewDrawingV2VM
+        model: NewDrawingV2VM,
+        selectedFloor: CeibroFloorV2?
     ) {
 
         val sheet = AddNewFloorBottomSheet(model) {
         }
 
-        sheet.selectItemClickListener = { floorData ->
+        sheet.selectItemClickListener = { floorData, list ->
             val existingFloor =
                 viewModel.floorList.value?.find { floorData.floorName == it.floorName }
 
             if (existingFloor != null && existingFloor._id.isNotEmpty()) {
                 viewModel.selectedFloor = floorData
+
+
+                list.forEach { data ->
+                    val item = viewModel.floorList.value?.find { it.floorName == data.floorName }
+                    if (item == null) {
+                        viewModel.createFloorsByProjectID(
+                            viewModel.projectId.value.toString(), data.floorName
+                        )
+                    }
+                }
                 sheet.dismiss()
+
             } else {
                 viewModel.createFloorByProjectID(
                     viewModel.projectId.value.toString(),
-                    floorData.floorName
+                    floorData.floorName,
+                    list
                 ) { newFloor ->
                     viewModel.selectedFloor = newFloor
                     sheet.dismiss()
