@@ -25,7 +25,6 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
     @SuppressLint("Range")
     override fun onReceive(context: Context?, intent: Intent?) {
 
-
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == intent?.action) {
             val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             println("downloadId: ${downloadId} Folder name")
@@ -41,20 +40,25 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                             Uri.parse(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)))
                         val fileName = getFileNameFromUri(uri)
                         fileName?.let {
-                            val fileUri = copyFileToInternalStorage(it, uri, context)
+                            val fileAbsolutePath = copyFileToInternalStorage(it, uri, context)
                             GlobalScope.launch {
                                 val downloadedDrawing =
                                     downloadedDrawingV2Dao.getDownloadedDrawingByDownloadId(
                                         downloadId
                                     )
-                                downloadedDrawing?.let {
-                                    it.apply {
-                                        downloading = false
-                                        isDownloaded = true
-                                        localUri = fileUri.toString()
+                                fileAbsolutePath?.let { fileAbsolutePath ->
+                                    downloadedDrawing?.let {
+                                        it.apply {
+                                            downloading = false
+                                            isDownloaded = true
+                                            localUri = fileAbsolutePath
+                                        }
+                                        downloadedDrawingV2Dao.insertDownloadDrawing(
+                                            downloadedDrawing
+                                        )
                                     }
-                                    downloadedDrawingV2Dao.insertDownloadDrawing(downloadedDrawing)
                                 }
+
 
                             }
 
@@ -64,6 +68,7 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                 }
                 cursor.close()
             }
+            DrawingsV2Fragment.updateAdapter()
         }
 
 
@@ -74,7 +79,7 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
         fileName: String,
         uri: Uri,
         context: Context
-    ): Uri? {
+    ): String? {
         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
         val outputStream: FileOutputStream
 
@@ -89,7 +94,7 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
             inputStream?.close()
             outputStream.close()
 
-            return Uri.fromFile(file)
+            return file.absolutePath
         } catch (e: IOException) {
             e.printStackTrace()
         }

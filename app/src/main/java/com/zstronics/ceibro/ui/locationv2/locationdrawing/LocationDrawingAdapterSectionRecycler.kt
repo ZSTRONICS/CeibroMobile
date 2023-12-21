@@ -115,7 +115,9 @@ class LocationDrawingAdapterSectionRecycler constructor(
                 if (binding.llParent.visibility == View.VISIBLE) {
                     binding.ivDropDown.setImageResource(R.drawable.icon_drop_down)
                     binding.llParent.visibility = View.GONE
+                    binding.viewThree.visibility = View.GONE
                 } else {
+                    binding.viewThree.visibility = View.VISIBLE
                     binding.ivDropDown.setImageResource(R.drawable.arrow_drop_up)
                     binding.llParent.visibility = View.VISIBLE
                 }
@@ -160,14 +162,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
         }
     }
 
-    private fun togglePopupMenu(view: View) {
-//        if (isPopupMenuShowing) {
-//            popupMenu?.dismiss()
-//        } else {
-        popUpMenu(view)
-//        }
-//        isPopupMenuShowing = !isPopupMenuShowing
-    }
+
 
     private fun popUpMenu(v: View): PopupWindow {
         val popupWindow = PopupWindow(v.context)

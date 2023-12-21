@@ -70,6 +70,8 @@ class DrawingsV2Fragment :
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
+    private lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
+
 
     var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
         null
@@ -125,7 +127,6 @@ class DrawingsV2Fragment :
     }
 
 
-    lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
     private var sectionList: MutableList<DrawingSectionHeader> = mutableListOf()
 
 
@@ -161,17 +162,16 @@ class DrawingsV2Fragment :
         )
 
 
-        sectionedAdapter = AllDrawingsAdapterSectionRecycler(requireContext(), sectionList)
-        retrieveFilesFromCeibroFolder()
+        sectionedAdapter = AllDrawingsAdapterSectionRecycler(requireContext(), sectionList,viewModel.downloadedDrawingV2Dao)
+        referenceSectionedAdapter=sectionedAdapter
 
-        sectionedAdapter.setCallBack { view, data, tag ->
+
+        sectionedAdapter.drawingFileClickListenerCallBack { view, data, tag ->
             println("data.uploaderLocalFilePath1: ${data.fileName}")
             drawingFileClickListener?.invoke(view, data, tag)
             //   checkDownloadFilePermission(data.fileUrl)
         }
         sectionedAdapter.downloadFileCallBack { view, data, tag ->
-            // println("data.uploaderLocalFilePath1: ${data.fileName}")
-            //  drawingFileClickListener?.invoke(view, data, tag)
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao)
         }
 
@@ -283,19 +283,11 @@ class DrawingsV2Fragment :
         const val permissionRequestCode = 123
         var mainActivityDownloader: Context? = null
 
-        fun retrieveFilesFromCeibroFolder() {
-            val folder = File(
-                mainActivityDownloader?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                folderName
-            )
-            if (folder.exists()) {
-                val files: Array<File> = folder.listFiles() ?: arrayOf()
-                for (file in files) {
-                    println("File Path: $file")
-                }
+        var referenceSectionedAdapter: AllDrawingsAdapterSectionRecycler? = null
 
-//                sectionedAdapter?.notifyDataSetChanged()
-            }
+        fun updateAdapter() {
+            referenceSectionedAdapter?.notifyDataSetChanged()
+
         }
     }
 
@@ -378,10 +370,10 @@ class DrawingsV2Fragment :
         if (!folder.exists()) {
             folder.mkdirs()
         }
-        val existingFile = File(folder, fileName)
-        if (existingFile.exists()) {
-            existingFile.delete()
-        }
+//        val existingFile = File(folder, fileName)
+//        if (existingFile.exists()) {
+//            existingFile.delete()
+//        }
         val destinationUri = Uri.fromFile(File(folder, fileName))
 
         val request: DownloadManager.Request? =

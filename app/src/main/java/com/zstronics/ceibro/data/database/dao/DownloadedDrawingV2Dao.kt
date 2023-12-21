@@ -2,7 +2,6 @@ package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.*
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
-import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 
 @Dao
 interface DownloadedDrawingV2Dao {
@@ -12,8 +11,14 @@ interface DownloadedDrawingV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleDownloadDrawing(drawingData: List<CeibroDownloadDrawingV2>)
 
-        @Query("SELECT * FROM downloaded_drawing_v2 WHERE downloadId = :downloadId")
+    @Query("SELECT * FROM downloaded_drawing_v2 WHERE downloadId = :downloadId")
     suspend fun getDownloadedDrawingByDownloadId(downloadId: Long): CeibroDownloadDrawingV2?
+
+    @Query("SELECT * FROM downloaded_drawing_v2 WHERE groupId = :groupId")
+    suspend fun getDownloadedDrawingByGroupId(groupId: String): CeibroDownloadDrawingV2?
+
+    @Query("SELECT * FROM downloaded_drawing_v2 WHERE drawingId = :drawingId")
+    suspend fun getDownloadedDrawingByDrawingId(drawingId: String): CeibroDownloadDrawingV2?
 
 //    @Query("SELECT * FROM floors_v2 WHERE projectId = :projectId ORDER BY updatedAt DESC")
 //    suspend fun getAllProjectFloors(projectId: String): List<CeibroFloorV2>

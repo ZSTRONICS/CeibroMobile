@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingVertical="@dimen/_7sdp"
-        android:paddingStart="@dimen/_15sdp"
+        android:paddingStart="@dimen/_5sdp"
         android:paddingEnd="@dimen/_5sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,6 +19,7 @@
             android:id="@+id/tvSample"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
@@ -34,8 +35,7 @@
         <View
             android:id="@+id/viewOne"
             android:layout_width="2dp"
-            android:layout_height="0dp"
-            android:layout_marginVertical="@dimen/_1sdp"
+            android:layout_height="@dimen/_18sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:background="@color/appGrey3"
             app:layout_constraintBottom_toBottomOf="@+id/tvFloor"
@@ -46,25 +46,27 @@
             android:id="@+id/tvFloor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:fontFamily="@font/inter_regular"
-           android:layout_marginEnd="@dimen/_10sdp"
             android:text="b2 Floor"
             android:textColor="@color/appGrey3"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivDownload"
+            app:layout_constraintEnd_toStartOf="@+id/ivDownloadFile"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivDownload"
+            android:id="@+id/ivDownloadFile"
             android:layout_width="30sp"
             android:layout_height="30sp"
-            android:src="@drawable/download"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
             android:paddingVertical="@dimen/_2sdp"
+            android:src="@drawable/download"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginEnd="@dimen/_5sdp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
