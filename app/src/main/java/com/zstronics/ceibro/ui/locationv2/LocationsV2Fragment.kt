@@ -61,7 +61,7 @@ class LocationsV2Fragment :
     private var markers: MutableList<Triple<Float, Float, String>> = mutableListOf()
     private var sampleMarkerPoints1: MutableList<FiveTuple<Float, Float, Float, Float, Float>> = mutableListOf()
     private var loadMarkerPoints: MutableList<FourTuple<Int, Int, Float, Float>> = mutableListOf()
-    private val PIN_TAP_THRESHOLD = 5
+    private val PIN_TAP_THRESHOLD = 6
     private var loadingOldData = true
 
     override fun toolBarVisibility(): Boolean = false
@@ -503,22 +503,23 @@ class LocationsV2Fragment :
         val scaledY = (point.y * currentZoom)
 //        println("PDFView scaledX: ${scaledX} -> scaledY: ${scaledY} -> currentZoom: ${currentZoom}")
 
-        val vectorDrawable = ResourcesCompat.getDrawable(resources, R.drawable.icon_pin_point, null)
-        val bitmap1 = Bitmap.createBitmap(vectorDrawable!!.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val vectorDrawable = ResourcesCompat.getDrawable(resources, R.drawable.icon_pin_point_circle, null)
+        val bitmap1 = Bitmap.createBitmap(55, 55, Bitmap.Config.ARGB_8888)
         val tempCanvas = Canvas(bitmap1)
-        vectorDrawable.setBounds(0, 0, tempCanvas.width, tempCanvas.height)
-        vectorDrawable.draw(tempCanvas)
+        vectorDrawable?.setBounds(0, 0, tempCanvas.width, tempCanvas.height)
+        vectorDrawable?.draw(tempCanvas)
 
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap1, ((30 + (currentZoom * 3.5) + 5).toInt()), ((30 + (currentZoom * 3.5) + 5).toInt()), true)
 
         val adjustedX = scaledX - scaledBitmap.width / 2
         val adjustedY = scaledY - scaledBitmap.height / 2
 
+//        canvas.drawCircle(adjustedX, adjustedY, 50, paint)
         canvas.drawBitmap(scaledBitmap, adjustedX, adjustedY, null)
 
         if (isNew.equals("new", true)) {
-            val newX = adjustedX + transX + 30
-            val newY = adjustedY + transY + 30
+            val newX = adjustedX + transX + (scaledBitmap.width - 17)
+            val newY = adjustedY + transY + (scaledBitmap.height - 17)
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
             taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
