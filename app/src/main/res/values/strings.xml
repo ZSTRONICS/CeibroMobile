@@ -608,4 +608,6 @@
     <string name="add_new_floor">+ Add new floor</string>
     <string name="new_drawing">New Drawing</string>
     <string name="ok">Ok</string>
+    <string name="select_pin_type">Select pin type</string>
+    <string name="add_task">Add task</string>
 </resources>

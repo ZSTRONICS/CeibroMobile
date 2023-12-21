@@ -9,7 +9,6 @@ import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,11 +21,9 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
-import com.google.gson.Gson
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
@@ -37,7 +34,7 @@ import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
-import com.zstronics.ceibro.ui.locationv2.usage.PinPointsData
+import com.zstronics.ceibro.ui.profile.editprofile.ChangePasswordSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -346,7 +343,7 @@ class LocationsV2Fragment :
                     }, 500)
 
                 }
-                .onTap { event ->
+                .onLongPress { event ->
                     if (event.action == MotionEvent.ACTION_DOWN) {
 
                         val pageWidth = mViewDataBinding.pdfView.measuredWidth
@@ -371,9 +368,11 @@ class LocationsV2Fragment :
 //                    }
 
                     }
-                    false
+//                    false
                 }
                 .onDraw { canvas, pageWidth, pageHeight, displayedPage ->
+                    println("PDFView pageWidth: ${pageWidth} pageHeight: ${pageHeight} zoom: ${mViewDataBinding.pdfView.zoom}")
+
                     mViewDataBinding.progressBar.visibility = View.INVISIBLE
                     val matrixValues = FloatArray(9)
                     canvas.matrix.getValues(matrixValues)
@@ -471,11 +470,14 @@ class LocationsV2Fragment :
                     loadingOldData = false
 
 
-                    for (marker in markers) {
+                    markers.mapIndexed { index, marker ->
                         val point = PointF(marker.first, marker.second)
-                        mapPdfCoordinatesToCanvas(point, canvas, marker.third)
-//                    canvas.drawCircle(point.x, point.y, 10f, paint)
+                        mapPdfCoordinatesToCanvas(point, canvas, marker, index)
                     }
+//                    for (marker in markers) {
+//
+////                    canvas.drawCircle(point.x, point.y, 10f, paint)
+//                    }
 
                 }
                 .enableAnnotationRendering(true)
@@ -488,7 +490,8 @@ class LocationsV2Fragment :
     private fun mapPdfCoordinatesToCanvas(
         point: PointF,
         canvas: Canvas,
-        isNew: String
+        marker: Triple<Float, Float, String>,
+        markerIndex: Int
     ) {
         val currentZoom = mViewDataBinding.pdfView.zoom // Use your method to get the current zoom level
 
@@ -517,18 +520,20 @@ class LocationsV2Fragment :
 //        canvas.drawCircle(adjustedX, adjustedY, 50, paint)
         canvas.drawBitmap(scaledBitmap, adjustedX, adjustedY, null)
 
-        if (isNew.equals("new", true)) {
+        if (marker.third.equals("new", true)) {
             val newX = adjustedX + transX + (scaledBitmap.width - 17)
             val newY = adjustedY + transY + (scaledBitmap.height - 17)
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
-            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
-            for (marker in markers) {
-                if (marker.first == point.x && marker.second == point.y) {
-                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
-                    markers[index] = Triple(marker.first, marker.second, "")
-                }
-            }
+//            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
+            showNewItemBottomSheet()
+
+//            for (marker in markers) {
+//                if (marker.first == point.x && marker.second == point.y) {
+//                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
+                    markers[markerIndex] = Triple(marker.first, marker.second, "")
+//                }
+//            }
         }
         mViewDataBinding.pdfView.matrix.mapPoints(matrixValues)
         mViewDataBinding.pdfView.matrix.set(canvas.matrix)
@@ -557,6 +562,22 @@ class LocationsV2Fragment :
 
         return RectF(left, top, right, bottom)
     }
+
+
+    private fun showNewItemBottomSheet() {
+        val sheet = LocationNewItemBottomSheet()
+        sheet.dialog?.window?.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+        )
+
+//        sheet.onChangePasswordDismiss = {
+//
+//        }
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "ChangePasswordSheet")
+    }
+
 
     @SuppressLint("SuspiciousIndentation")
     private fun taskPopupMenu(
