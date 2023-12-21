@@ -408,7 +408,9 @@
     <string name="topic_required">Topic <font color="#D9000D">*</font></string>
     <string name="project_name_required">Project name <font color="#D9000D">*</font></string>
     <string name="select_floor">Select Floor  <font color="#D9000D">*</font></string>
+    <string name="select_floor_">Select Floor</string>
     <string name="select_group">Select Group  <font color="#D9000D">*</font></string>
+    <string name="select_group_">Select Group</string>
     <string name="assign_to_required_heading">Assign to <font color="#D9000D">*</font></string>
     <string name="forward_to_required_heading">Forward to <font color="#D9000D">*</font></string>
     <string name="attach_heading">Attach</string>

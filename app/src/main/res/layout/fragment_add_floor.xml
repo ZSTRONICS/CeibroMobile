@@ -5,7 +5,6 @@
     android:background="@color/transparent">
 
     <data>
-
         <import type="android.view.View" />
     </data>
 
@@ -13,109 +12,58 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <androidx.appcompat.widget.LinearLayoutCompat
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_1sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_1sdp"
+            android:paddingBottom="@dimen/_8sdp">
+            <TextView
+                android:id="@+id/tvAddFloors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:padding="@dimen/_6sdp"
+                android:textSize="@dimen/_11sdp"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/add_new_floor"
+                android:textColor="@color/appBlue" />
+            <TextView
+                android:id="@+id/tvSelectFloor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:padding="@dimen/_6sdp"
+                android:textSize="@dimen/_13sdp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/select_floor_"
+                android:textColor="@color/black" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFloorList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:nestedScrollingEnabled="true"
                 android:orientation="vertical"
-                android:paddingStart="@dimen/_1sdp"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_1sdp"
-                android:paddingBottom="@dimen/_8sdp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                  android:visibility="gone"
-                    android:id="@+id/floorField"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_14sdp"
-                    android:layout_marginTop="@dimen/_11sdp"
-                    android:layout_marginEnd="@dimen/_24sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:hint="@string/select_floor"
-                    android:paddingStart="0dp"
-                    android:textColorHint="@color/appTextGrey"
-                    app:boxStrokeColor="@color/transparent"
-                    app:boxStrokeWidth="0dp"
-                    app:endIconMode="clear_text"
-                    app:endIconTint="@color/appTextGrey"
-                    app:hintTextColor="@color/appGrey3"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:id="@+id/floorText"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/input_field_bottom_line"
-                        android:drawableEnd="@drawable/icon_drop_down"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="top|start"
-                        android:inputType="none"
-                        android:maxLength="100"
-                        android:paddingTop="10dp"
-                        android:text="0"
-                        android:maxLines="5"
-                        android:overScrollMode="always"
-                        android:paddingStart="1dp"
-                        android:scrollbarStyle="insideInset"
-                        android:scrollbars="none"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/tvAddFloors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_margin="@dimen/_10sdp"
-                    android:padding="@dimen/_6sdp"
-                    android:textSize="@dimen/_11sdp"
-                    android:fontFamily="@font/inter_regular"
-                    android:text="@string/add_new_floor"
-                    android:textColor="@color/appBlue" />
-
-                <LinearLayout
-                    android:visibility="gone"
-                    android:id="@+id/llFloorsList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvFloorList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/_3sdp"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="vertical"
-                    android:visibility="visible"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/floor_checkbox_item_list" />
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/filesHeaderLayout"
+                tools:itemCount="22"
+                tools:listitem="@layout/floor_checkbox_item_list" />
 
 
 
-
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </ScrollView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

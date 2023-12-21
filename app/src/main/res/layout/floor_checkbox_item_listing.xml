@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="@dimen/_4sdp"
             android:fontFamily="@font/inter_medium"
-            android:paddingVertical="@dimen/_2sdp"
+            android:paddingVertical="@dimen/_6sdp"
             android:text="@string/floor"
             android:textColor="@color/black_01" />
 

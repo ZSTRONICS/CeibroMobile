@@ -37,7 +37,12 @@ interface INewDrawingV2 {
         fun createFloorByProjectID(
             projectId: String,
             floorName: String,
+            list: List<CeibroFloorV2>,
             callback: (floor: CeibroFloorV2) -> Unit
+        )
+        fun createFloorsByProjectID(
+            projectId: String,
+            floorName: String,
         )
 
         fun getGroupsByProjectID(projectId: String)

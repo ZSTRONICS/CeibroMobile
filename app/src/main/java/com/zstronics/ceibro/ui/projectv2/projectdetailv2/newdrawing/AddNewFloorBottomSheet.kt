@@ -6,21 +6,17 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
-import com.zstronics.ceibro.databinding.FloorCheckboxItemListBinding
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListingBinding
 import com.zstronics.ceibro.databinding.FragmentAddFloorBinding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewFloorGroupAdapter
@@ -29,12 +25,15 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: CeibroFloorV2) -> Unit) :
+class AddNewFloorBottomSheet(
+    val model: NewDrawingV2VM,
+    val callback: (data: CeibroFloorV2) -> Unit
+) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddFloorBinding
     private var selectedFloorList: MutableList<CeibroFloorV2> = mutableListOf()
     var deleteClickListener: ((String) -> Unit)? = null
-    var selectItemClickListener: ((data: CeibroFloorV2) -> Unit)? = null
+    var selectItemClickListener: ((data: CeibroFloorV2, list: List<CeibroFloorV2>) -> Unit)? = null
 
     @Inject
     lateinit var floorAdapter: NewFloorGroupAdapter
@@ -59,28 +58,64 @@ class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: Cei
 
 
         model.floorList.value?.let {
-            floorAdapter.setList(it)
-            selectedFloorList = it
+
+            val enumOrder = listOf(
+                "B3",
+                "B2",
+                "B1",
+                "G",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25"
+            )
+            val sortedList =
+                it.sortedWith(compareBy { enumOrder.indexOf(it.floorName) }).toMutableList()
+
+
+            floorAdapter.setList(sortedList)
+            selectedFloorList = sortedList
         }
         binding.rvFloorList.adapter = floorAdapter
 
 
-        floorAdapter.itemClickListener = { data ->
-            selectItemClickListener?.invoke(data)
-//            dismiss()
+        floorAdapter.itemClickListener = { data, list ->
+
+            selectItemClickListener?.invoke(data, list)
         }
 
         floorAdapter.deleteClickListener = { data ->
             if (data._id.isEmpty()) {
                 floorAdapter.deleteItem(data.floorName)
-            }else{
+            } else {
                 deleteClickListener?.invoke(data._id)
             }
         }
 
         binding.tvAddFloors.setOnClickListener {
 
-            getFloorsList(it.context, selectedFloorList) { list ->
+            getFloorsList(it.context, floorAdapter.listItems) { list ->
                 floorAdapter.setList(list)
                 selectedFloorList = list
             }
@@ -95,15 +130,24 @@ class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: Cei
         return dialog
 
     }
+
     private fun getFloorsList(
         context: Context,
         selectedFloorList: MutableList<CeibroFloorV2>,
         callback: (MutableList<CeibroFloorV2>) -> Unit
     ) {
 
-        val floorsList: MutableList<CeibroFloorV2> = mutableListOf()
+        val enumOrder = listOf(
+            "B3", "B2", "B1", "G", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25"
+        )
+
+        val sortedList = selectedFloorList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
+            .toMutableList()
+
+        var floorsList: MutableList<CeibroFloorV2> = mutableListOf()
         floorsList.clear()
-        floorsList.addAll(selectedFloorList)
+        floorsList.addAll(sortedList)
 
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -150,14 +194,14 @@ class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: Cei
             val itemViewBinding: FloorCheckboxItemListingBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(binding.root.context),
                 R.layout.floor_checkbox_item_listing,
-                binding.llFloorsList,
+                null,
                 false
             )
             itemViewBinding.cbFloorName.text = data
 
-            if (selectedFloorList.isNotEmpty()) {
+            if (floorsList.isNotEmpty()) {
 
-                val existingFloor = selectedFloorList.find { it.floorName.equals(data, true) }
+                val existingFloor = floorsList.find { it.floorName.equals(data, true) }
 
                 if (existingFloor != null) {
                     itemViewBinding.cbFloorName.isChecked = true
@@ -175,13 +219,17 @@ class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: Cei
                 }
             }
 
-            itemViewBinding.cbFloorName.setOnClickListener {
+            itemViewBinding.tvAddFloors.setOnClickListener {
+                itemViewBinding.cbFloorName.isChecked = !(itemViewBinding.cbFloorName.isChecked)
                 val floorName1 = itemViewBinding.cbFloorName.text.toString()
-                val existingFloor =
-                    selectedFloorList.find { it.floorName.equals(floorName1, true) }
+                val existingFloor = floorsList.find { it.floorName.equals(floorName1, true) }
+
                 if (itemViewBinding.cbFloorName.isChecked) {
                     if (existingFloor != null) {
-                        floorsList.add(existingFloor)
+                        // Check if the floor is not already in the list before adding
+                        if (!floorsList.contains(existingFloor)) {
+                            floorsList.add(existingFloor)
+                        }
                     } else {
                         val floor = CeibroFloorV2(
                             _id = "",
@@ -196,8 +244,45 @@ class AddNewFloorBottomSheet(val model: NewDrawingV2VM, val callback: (data: Cei
                         floorsList.add(floor)
                     }
                 } else {
-                    floorsList.remove(existingFloor)
+                    existingFloor?.let {
+                        floorsList.remove(it)
+                    }
                 }
+                floorsList = floorsList.distinctBy { it.floorName }.toMutableList()
+                floorsList = floorsList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
+                    .toMutableList()
+                callback.invoke(floorsList)
+            }
+            itemViewBinding.cbFloorName.setOnClickListener {
+                val floorName1 = itemViewBinding.cbFloorName.text.toString()
+                val existingFloor = floorsList.find { it.floorName.equals(floorName1, true) }
+
+                if (itemViewBinding.cbFloorName.isChecked) {
+                    if (existingFloor != null) {
+                        if (!floorsList.contains(existingFloor)) {
+                            floorsList.add(existingFloor)
+                        }
+                    } else {
+                        val floor = CeibroFloorV2(
+                            _id = "",
+                            createdAt = "",
+                            updatedAt = "",
+                            creator = "",
+                            deleted = false,
+                            drawings = listOf(),
+                            projectId = "",
+                            floorName = floorName1
+                        )
+                        floorsList.add(floor)
+                    }
+                } else {
+                    existingFloor?.let {
+                        floorsList.remove(it)
+                    }
+                }
+                floorsList = floorsList.distinctBy { it.floorName }.toMutableList()
+                floorsList = floorsList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
+                    .toMutableList()
                 callback.invoke(floorsList)
             }
             llFloorsList.addView(itemViewBinding.root)
