@@ -114,7 +114,6 @@ class AddNewFloorBottomSheet(
         }
 
         binding.tvAddFloors.setOnClickListener {
-
             getFloorsList(it.context, floorAdapter.listItems) { list ->
                 floorAdapter.setList(list)
                 selectedFloorList = list

@@ -42,6 +42,13 @@ class AllDrawingsAdapterSectionRecycler constructor(
         this.drawingFileClickListener = itemClickListener
     }
 
+    var downloadFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+        null
+
+    fun downloadFileCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+        this.downloadFileClickListener = itemClickListener
+    }
+
     override fun onCreateSectionViewHolder(
         sectionViewGroup: ViewGroup?,
         viewType: Int
@@ -149,6 +156,17 @@ class AllDrawingsAdapterSectionRecycler constructor(
                         cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
                     }
                 }
+
+                itemViewBinding.ivDownload.setOnClickListener {
+                    val file = File(data.fileName)
+                    if (file.exists()) {
+                        //openFile
+                    } else {
+                        downloadFileClickListener?.invoke(it, data, "")
+                        //  cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+                    }
+                }
+
 
 
                 binding.llParent.addView(itemViewBinding.root)

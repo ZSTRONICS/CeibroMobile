@@ -84,6 +84,7 @@
             app:layout_constraintTop_toTopOf="@+id/groupLayout" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:visibility="gone"
             android:id="@+id/ivDownload"
             android:layout_width="@dimen/_22sdp"
             android:layout_height="0dp"

@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
@@ -15,6 +16,7 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import android.view.View
+import android.widget.SearchView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,9 +27,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
+import com.zstronics.ceibro.base.extensions.isVisible
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -37,6 +42,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -53,7 +60,6 @@ class DrawingsV2Fragment :
     override val viewModel: DrawingsV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_drawings_v2
     override fun toolBarVisibility(): Boolean = false
-
     private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
     private var manager: DownloadManager? = null
 
@@ -161,8 +167,33 @@ class DrawingsV2Fragment :
         sectionedAdapter.setCallBack { view, data, tag ->
             println("data.uploaderLocalFilePath1: ${data.fileName}")
             drawingFileClickListener?.invoke(view, data, tag)
-//            checkDownloadFilePermission(data)
+            //   checkDownloadFilePermission(data.fileUrl)
         }
+        sectionedAdapter.downloadFileCallBack { view, data, tag ->
+            // println("data.uploaderLocalFilePath1: ${data.fileName}")
+            //  drawingFileClickListener?.invoke(view, data, tag)
+            checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao)
+        }
+
+
+
+        mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.filterAllProjects(query.trim())
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.filterAllProjects(newText.trim())
+                }
+                return true
+            }
+        })
+
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.drawingsRV.layoutManager = linearLayoutManager
@@ -210,20 +241,20 @@ class DrawingsV2Fragment :
                     DrawingSectionHeader(
                         it,
                         getString(R.string.all_groups)
-                    ), 0
+                    ), 1
                 )
                 sectionedAdapter.notifyDataSetChanged()
 
             } else {
-                sectionList.removeAt(0)
+                sectionList.removeAt(1)
                 sectionList.add(
-                    0, DrawingSectionHeader(mutableListOf(), getString(R.string.all_groups))
+                    1, DrawingSectionHeader(mutableListOf(), getString(R.string.all_groups))
                 )
                 sectionedAdapter.insertNewSection(
                     DrawingSectionHeader(
                         mutableListOf(),
                         getString(R.string.all_groups)
-                    ), 0
+                    ), 1
                 )
                 sectionedAdapter.notifyDataSetChanged()
             }
@@ -269,16 +300,19 @@ class DrawingsV2Fragment :
     }
 
 
-    private fun checkDownloadFilePermission(url: String) {
+    private fun checkDownloadFilePermission(
+        url: DrawingV2,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkPermissions(permissionList13)) {
-                downloadFile(url)
+                downloadFile(url, downloadedDrawingV2Dao)
             } else {
                 requestPermissions(permissionList13)
             }
         } else {
             if (checkPermissions(permissionList12)) {
-                downloadFile(url)
+                downloadFile(url, downloadedDrawingV2Dao)
             } else {
                 requestPermissions(permissionList12)
             }
@@ -337,31 +371,76 @@ class DrawingsV2Fragment :
         startActivity(intent)
     }
 
-    private fun downloadFile(fileUrl: String) {
-
-        val url =
-            "https://ceibro-development.s3.eu-north-1.amazonaws.com/task/task/2023-11-30/Chemistry_Full_Book_Punjab_-_Copy__2__1701341788337.pdf"
-
-
-        val uri =
-            Uri.parse(url)
-
-        val fileName = "downloaded_file.pdf"
+    private fun downloadFile(drawing: DrawingV2, downloadedDrawingV2Dao: DownloadedDrawingV2Dao) {
+        val uri = Uri.parse(drawing.fileUrl)
+        val fileName = drawing.fileName
         val folder = File(context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName)
         if (!folder.exists()) {
             folder.mkdirs()
         }
+        val existingFile = File(folder, fileName)
+        if (existingFile.exists()) {
+            existingFile.delete()
+        }
+        val destinationUri = Uri.fromFile(File(folder, fileName))
 
         val request: DownloadManager.Request? =
             DownloadManager
                 .Request(uri)
-                .setDestinationUri(Uri.fromFile(File(folder, fileName)))
+                .setDestinationUri(destinationUri)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setVisibleInDownloadsUi(true)
 
-        manager?.enqueue(request)
+        val downloadId = manager?.enqueue(request)
+
+        val ceibroDownloadDrawingV2 = downloadId?.let {
+            CeibroDownloadDrawingV2(
+                downloading = true,
+                isDownloaded = false,
+                downloadId = it,
+                drawing = drawing,
+                drawingId = drawing._id,
+                groupId = drawing.groupId,
+                localUri = ""
+            )
+        }
+
+
+        GlobalScope.launch {
+            ceibroDownloadDrawingV2?.let {
+                downloadedDrawingV2Dao.insertDownloadDrawing(it)
+            }
+        }
+
+        //   getDownloadProgress(context,downloadId!!)
+
+
+        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+
     }
 
+    @SuppressLint("Range")
+    private fun getDownloadProgress(context: Context?, downloadId: Long): Int {
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val cursor = manager.query(query)
+
+        if (cursor.moveToFirst()) {
+            val bytesDownloaded =
+                cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+            val bytesTotal =
+                cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+
+            cursor.close()
+
+            if (bytesTotal > 0) {
+                return ((bytesDownloaded * 100L) / bytesTotal).toInt()
+            }
+        }
+
+        cursor.close()
+        return 0
+    }
 
     private fun chooseFile(fragmentManager: FragmentManager, callback: (String) -> Unit) {
         val sheet = AddNewPhotoBottomSheet {
@@ -458,7 +537,8 @@ class DrawingsV2Fragment :
 
     private fun checkIfPDFHasMultiplePages(pdfFile: File): Boolean {
         try {
-            val parcelFileDescriptor: ParcelFileDescriptor = ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
+            val parcelFileDescriptor: ParcelFileDescriptor =
+                ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
             val pdfRenderer = PdfRenderer(parcelFileDescriptor)
 
             // Assuming the PDF file has at least one page
@@ -496,6 +576,7 @@ class DrawingsV2Fragment :
 
         return null
     }
+
 
     private fun getFileUri(filePath: String): Uri? {
         val file = File(filePath)
@@ -555,6 +636,14 @@ class DrawingsV2Fragment :
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mViewDataBinding.projectsSearchCard.isVisible()) {
+            showKeyboard()
+            mViewDataBinding.projectSearchBar.requestFocus()
+        }
     }
 }
 
