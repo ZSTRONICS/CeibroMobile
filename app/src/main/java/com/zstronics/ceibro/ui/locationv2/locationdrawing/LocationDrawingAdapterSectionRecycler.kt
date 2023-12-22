@@ -115,9 +115,9 @@ class LocationDrawingAdapterSectionRecycler constructor(
                 if (binding.llParent.visibility == View.VISIBLE) {
                     binding.ivDropDown.setImageResource(R.drawable.icon_drop_down)
                     binding.llParent.visibility = View.GONE
-                    binding.viewThree.visibility = View.GONE
+                 //   binding.viewThree.visibility = View.GONE
                 } else {
-                    binding.viewThree.visibility = View.VISIBLE
+                  //  binding.viewThree.visibility = View.VISIBLE
                     binding.ivDropDown.setImageResource(R.drawable.arrow_drop_up)
                     binding.llParent.visibility = View.VISIBLE
                 }

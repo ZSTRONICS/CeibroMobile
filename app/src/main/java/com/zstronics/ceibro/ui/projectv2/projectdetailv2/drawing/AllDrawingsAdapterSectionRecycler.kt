@@ -126,7 +126,7 @@ class AllDrawingsAdapterSectionRecycler(
                 }
             }
 
-            binding.tvGroupName.text = item?.groupName
+            binding.tvGroupName.text = "${item?.groupName} (${item?.drawings?.size?:"0"})"
             binding.tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
 
