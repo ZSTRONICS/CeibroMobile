@@ -19,7 +19,7 @@
             android:id="@+id/tvSample"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_18sdp"
+            android:layout_marginStart="@dimen/_14sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
@@ -39,7 +39,7 @@
             android:layout_marginEnd="@dimen/_80sdp"
             android:background="@color/appGrey3"
             app:layout_constraintBottom_toBottomOf="@+id/tvFloor"
-           app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvFloor" />
 
         <TextView
@@ -52,7 +52,7 @@
             android:textColor="@color/appGrey3"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintStart_toEndOf="@id/viewOne"
+            app:layout_constraintStart_toEndOf="@id/viewOne"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView

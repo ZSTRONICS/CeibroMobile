@@ -15,14 +15,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
-import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
-import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
+import com.zstronics.ceibro.databinding.LayoutlocationdrawingitemlistingBinding
+import com.zstronics.ceibro.databinding.LayoutlocationdrawinglistBinding
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 class LocationDrawingAdapterSectionRecycler constructor(
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
     val context: Context,
     sectionList: MutableList<LocationDrawingSectionHeader>
 ) : SectionRecyclerViewAdapter<
@@ -40,6 +44,13 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
     fun setCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
         this.drawingFileClickListener = itemClickListener
+    }
+
+    var downloadFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+        null
+
+    fun downloadFileCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+        this.downloadFileClickListener = itemClickListener
     }
 
     override fun onCreateSectionViewHolder(
@@ -68,7 +79,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
         viewType: Int
     ): ConnectionsChildViewHolder {
         return ConnectionsChildViewHolder(
-            LayoutDrawingItemListBinding.inflate(
+            LayoutlocationdrawinglistBinding.inflate(
                 LayoutInflater.from(context),
                 childViewGroup,
                 false
@@ -101,7 +112,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
         }
     }
 
-    inner class ConnectionsChildViewHolder constructor(val binding: LayoutDrawingItemListBinding) :
+    inner class ConnectionsChildViewHolder constructor(val binding: LayoutlocationdrawinglistBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CeibroGroupsV2?) {
 
@@ -115,9 +126,9 @@ class LocationDrawingAdapterSectionRecycler constructor(
                 if (binding.llParent.visibility == View.VISIBLE) {
                     binding.ivDropDown.setImageResource(R.drawable.icon_drop_down)
                     binding.llParent.visibility = View.GONE
-                 //   binding.viewThree.visibility = View.GONE
+                    //   binding.viewThree.visibility = View.GONE
                 } else {
-                  //  binding.viewThree.visibility = View.VISIBLE
+                    //  binding.viewThree.visibility = View.VISIBLE
                     binding.ivDropDown.setImageResource(R.drawable.arrow_drop_up)
                     binding.llParent.visibility = View.VISIBLE
                 }
@@ -127,28 +138,21 @@ class LocationDrawingAdapterSectionRecycler constructor(
             binding.tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
 
-//            binding.ivDownload.setOnClickListener {
-//                itemClickListener?.invoke(it, 1, "", "")
-//            }
-
-//            binding.ivOptions.setOnClickListener {
-//                togglePopupMenu(it)
-//            }
-
             binding.llParent.removeAllViews()
 
 
             item?.drawings?.forEachIndexed { index, data ->
 
-                val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
-                    LayoutInflater.from(binding.root.context),
-                    R.layout.drawing_detail_item_list,
-                    binding.llParent,
-                    false
-                )
+                val itemViewBinding: LayoutlocationdrawingitemlistingBinding =
+                    DataBindingUtil.inflate(
+                        LayoutInflater.from(binding.root.context),
+                        R.layout.layoutlocationdrawingitemlisting,
+                        null,
+                        false
+                    )
                 itemViewBinding.tvSample.text = "${data.fileName}"
                 itemViewBinding.tvFloor.text = "${data.floor.floorName} Floor"
-                itemViewBinding.root.setOnClickListener{
+                itemViewBinding.root.setOnClickListener {
                     val file = File(data.uploaderLocalFilePath)
                     if (file.exists()) {
                         drawingFileClickListener?.invoke(it, data, "")
@@ -156,12 +160,33 @@ class LocationDrawingAdapterSectionRecycler constructor(
                         cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
                     }
                 }
+                itemViewBinding.ivDownloadFile.setOnClickListener {
+                    val file = File(data.fileName)
+                    if (file.exists()) {
+                        //openFile
+                    } else {
+                        downloadFileClickListener?.invoke(it, data, "")
+                        //  cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+                    }
+                }
+
+                MainScope().launch {
+                    val drawingObject =
+                        downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                    drawingObject?.let {
+
+                        itemViewBinding.ivDownloadFile.visibility = View.INVISIBLE
+                        itemViewBinding.ivDownloadFile.isClickable = false
+                    } ?: kotlin.run {
+                        itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
+                    }
+                }
+
 
                 binding.llParent.addView(itemViewBinding.root)
             }
         }
     }
-
 
 
     private fun popUpMenu(v: View): PopupWindow {
