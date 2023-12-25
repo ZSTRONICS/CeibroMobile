@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -23,6 +25,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 @AndroidEntryPoint
 class NewDrawingV2Fragment :
@@ -66,9 +70,9 @@ class NewDrawingV2Fragment :
                 //mViewDataBinding.groupText.text.toString().trim()
 
                 if (floorName.isEmpty() || viewModel.selectedFloor == null || viewModel.selectedFloor?._id?.isEmpty() == true) {
-                    showToast("Floor is required")
+                    shortToastNow("Floor is required")
                 } else if (groupName.isEmpty() || viewModel.selectedGroup == null || viewModel.selectedGroup?._id?.isEmpty() == true) {
-                    showToast("Group is required")
+                    shortToastNow("Group is required")
                 } else {
                     viewModel.selectedFloor?._id?.let { floorId ->
                         viewModel.uploadDrawing(
@@ -81,7 +85,7 @@ class NewDrawingV2Fragment :
                                 .post(LocalEvents.UpdateGroupDrawings(projectID = projectId))
                         }
                     } ?: kotlin.run {
-                        showToast("Floor is required")
+                        shortToastNow("Floor is required")
                     }
                 }
             }
@@ -162,7 +166,7 @@ class NewDrawingV2Fragment :
         }
 
         sheet.deleteClickListener = { data ->
-            showToast("Coming Soon")
+            shortToastNow("Coming Soon")
         }
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
@@ -208,4 +212,45 @@ class NewDrawingV2Fragment :
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "AddPhotoBottomSheet")
     }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshFloorsData(event: LocalEvents.RefreshFloorsData?) {
+        val projectID = event?.projectId
+        if (!viewModel.projectId.value.isNullOrEmpty() && viewModel.projectId.value == projectID) {
+//            println("floorList.onRefreshFloorsData")
+            viewModel.getFloorsByProjectID(viewModel.projectId.value.toString())
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshGroupsData(event: LocalEvents.RefreshGroupsData?) {
+        val projectID = event?.projectId
+        if (!viewModel.projectId.value.isNullOrEmpty() && viewModel.projectId.value == projectID) {
+//            println("floorList.onRefreshGroupsData")
+            viewModel.getGroupsByProjectID(viewModel.projectId.value.toString())
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshDeletedGroupData(event: LocalEvents.RefreshDeletedGroupData?) {
+        val groupId = event?.groupId
+        if (viewModel.selectedGroup != null && viewModel.selectedGroup!!._id == groupId) {
+            viewModel.selectedGroup = null
+            viewState.groupName.value = ""
+        }
+//        println("floorList.onRefreshDeletedGroupData")
+        viewModel.getGroupsByProjectID(viewModel.projectId.value.toString())
+    }
+
 }

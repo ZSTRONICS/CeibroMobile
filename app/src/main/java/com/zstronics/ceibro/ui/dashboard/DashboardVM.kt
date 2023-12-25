@@ -13,6 +13,8 @@ import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -25,17 +27,11 @@ import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeRespo
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
-import com.zstronics.ceibro.data.repos.projects.documents.RefreshFolderSocketResponse
-import com.zstronics.ceibro.data.repos.projects.documents.RefreshRootDocumentSocketResponse
-import com.zstronics.ceibro.data.repos.projects.group.GroupCreatedSocketResponse
-import com.zstronics.ceibro.data.repos.projects.group.GroupRefreshSocketResponse
-import com.zstronics.ceibro.data.repos.projects.member.MemberAddedSocketResponse
-import com.zstronics.ceibro.data.repos.projects.member.MemberRefreshSocketResponse
-import com.zstronics.ceibro.data.repos.projects.member.MemberUpdatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2CreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.floor.ProjectFloorV2CreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2DeletedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectV2CreatedUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
-import com.zstronics.ceibro.data.repos.projects.role.RoleCreatedSocketResponse
-import com.zstronics.ceibro.data.repos.projects.role.RoleRefreshSocketResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
@@ -72,6 +68,8 @@ class DashboardVM @Inject constructor(
     private val taskDao: TaskV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
+    private val floorV2Dao: FloorsV2Dao,
+    private val groupV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     var user = sessionManager.getUser().value
@@ -267,7 +265,8 @@ class DashboardVM @Inject constructor(
                     }
                 }
             }
-        } else if (socketData.module == "project") {
+        }
+        else if (socketData.module == "project") {
             when (socketData.eventType) {
                 SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
                     val newProject = gson.fromJson<ProjectV2CreatedUpdatedSocketResponse>(
@@ -293,136 +292,57 @@ class DashboardVM @Inject constructor(
 
                 }
 
-                SocketHandler.ProjectEvent.ROLE_CREATED.name -> {
-                    val newRole =
-                        gson.fromJson<RoleCreatedSocketResponse>(
+
+                SocketHandler.ProjectEvent.PROJECT_FLOOR_CREATED.name -> {
+                    val newFloor =
+                        gson.fromJson<ProjectFloorV2CreatedSocketResponse>(
                             arguments,
-                            object : TypeToken<RoleCreatedSocketResponse>() {}.type
+                            object : TypeToken<ProjectFloorV2CreatedSocketResponse>() {}.type
                         ).data
 
-                    EventBus.getDefault().post(LocalEvents.RoleCreatedEvent(newRole))
-                }
-
-                SocketHandler.ProjectEvent.ROLE_UPDATED.name -> {
-                    try {
-                        val updatedRole =
-                            gson.fromJson<RoleCreatedSocketResponse>(
-                                arguments,
-                                object : TypeToken<RoleCreatedSocketResponse>() {}.type
-                            ).data
-
-                        EventBus.getDefault()
-                            .post(LocalEvents.RoleCreatedEvent(updatedRole))
-                    } catch (e: Exception) {
-                        print("Some data error")
-                    }
-                }
-
-                SocketHandler.ProjectEvent.REFRESH_ROLES.name -> {
-                    val refreshRole =
-                        gson.fromJson<RoleRefreshSocketResponse>(
-                            arguments,
-                            object : TypeToken<RoleRefreshSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault()
-                        .post(LocalEvents.RoleRefreshEvent(refreshRole.projectId))
+                    addCreatedFloorInLocal(newFloor, floorV2Dao)
+//                    EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
                 }
 
                 SocketHandler.ProjectEvent.PROJECT_GROUP_CREATED.name -> {
                     val newGroup =
-                        gson.fromJson<GroupCreatedSocketResponse>(
+                        gson.fromJson<ProjectGroupV2CreatedSocketResponse>(
                             arguments,
-                            object : TypeToken<GroupCreatedSocketResponse>() {}.type
+                            object : TypeToken<ProjectGroupV2CreatedSocketResponse>() {}.type
                         ).data
-
-                    EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
+                    addGroupCreatedInLocal(newGroup, groupV2Dao)
+//                    EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
                 }
 
                 SocketHandler.ProjectEvent.PROJECT_GROUP_UPDATED.name -> {
                     try {
                         val updatedGroup =
-                            gson.fromJson<GroupCreatedSocketResponse>(
+                            gson.fromJson<ProjectGroupV2CreatedSocketResponse>(
                                 arguments,
-                                object : TypeToken<GroupCreatedSocketResponse>() {}.type
+                                object : TypeToken<ProjectGroupV2CreatedSocketResponse>() {}.type
                             ).data
 
-                        EventBus.getDefault()
-                            .post(LocalEvents.GroupCreatedEvent(updatedGroup))
+                        addGroupCreatedInLocal(updatedGroup, groupV2Dao)
+//                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
                     } catch (e: Exception) {
                         print("Some data error")
                     }
                 }
 
-                SocketHandler.ProjectEvent.REFRESH_PROJECT_GROUP.name -> {
-                    val refreshGroup =
-                        gson.fromJson<GroupRefreshSocketResponse>(
-                            arguments,
-                            object : TypeToken<GroupRefreshSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault()
-                        .post(LocalEvents.GroupRefreshEvent(refreshGroup.projectId))
+                SocketHandler.ProjectEvent.PROJECT_GROUP_DELETED.name -> {
+                    try {
+                        val groupIdToDelete =
+                            gson.fromJson<ProjectGroupV2DeletedSocketResponse>(
+                                arguments,
+                                object : TypeToken<ProjectGroupV2DeletedSocketResponse>() {}.type
+                            ).data
+                        deleteGroupInLocal(groupIdToDelete, groupV2Dao)
+//                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
+                    } catch (e: Exception) {
+                        print("Some data error")
+                    }
                 }
 
-                SocketHandler.ProjectEvent.PROJECT_MEMBERS_ADDED.name -> {
-                    val newMember =
-                        gson.fromJson<MemberAddedSocketResponse>(
-                            arguments,
-                            object : TypeToken<MemberAddedSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault()
-                        .post(LocalEvents.ProjectMemberAddedEvent(newMember))
-                }
-
-                SocketHandler.ProjectEvent.PROJECT_MEMBERS_UPDATED.name -> {
-                    val updatedMember =
-                        gson.fromJson<MemberUpdatedSocketResponse>(
-                            arguments,
-                            object : TypeToken<MemberUpdatedSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault()
-                        .post(LocalEvents.ProjectMemberUpdatedEvent(updatedMember))
-                }
-
-                SocketHandler.ProjectEvent.REFRESH_PROJECT_MEMBERS.name -> {
-                    val refreshMember =
-                        gson.fromJson<MemberRefreshSocketResponse>(
-                            arguments,
-                            object : TypeToken<MemberRefreshSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault()
-                        .post(LocalEvents.ProjectMemberRefreshEvent(refreshMember.projectId))
-                }
-
-                SocketHandler.ProjectEvent.REFRESH_ROOT_DOCUMENTS.name -> {
-                    val refreshRootDoc =
-                        gson.fromJson<RefreshRootDocumentSocketResponse>(
-                            arguments,
-                            object : TypeToken<RefreshRootDocumentSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault()
-                        .post(LocalEvents.RefreshRootDocumentEvent(refreshRootDoc.projectId))
-                }
-
-                SocketHandler.ProjectEvent.REFRESH_FOLDER.name -> {
-                    val refreshFolder =
-                        gson.fromJson<RefreshFolderSocketResponse>(
-                            arguments,
-                            object : TypeToken<RefreshFolderSocketResponse>() {}.type
-                        ).data
-
-                    EventBus.getDefault().post(
-                        LocalEvents.RefreshFolderEvent(
-                            refreshFolder.projectId,
-                            refreshFolder.folderId
-                        )
-                    )
-                }
             }
         } else if (socketData.module == "user") {
             when (socketData.eventType) {

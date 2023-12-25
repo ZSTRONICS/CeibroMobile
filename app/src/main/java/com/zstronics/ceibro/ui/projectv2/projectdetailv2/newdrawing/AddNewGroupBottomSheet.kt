@@ -53,7 +53,8 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: Ce
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model._groupList.value?.let {
+        model.groupList.observe(viewLifecycleOwner) {
+//            println("floorList. groupList observer called")
             groupAdapter.setList(it)
         }
         binding.rvGroupList.adapter = groupAdapter

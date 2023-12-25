@@ -34,6 +34,37 @@ class AddNewFloorBottomSheet(
     private var selectedFloorList: MutableList<CeibroFloorV2> = mutableListOf()
     var deleteClickListener: ((String) -> Unit)? = null
     var selectItemClickListener: ((data: CeibroFloorV2, list: List<CeibroFloorV2>) -> Unit)? = null
+    private val enumOrder = listOf(
+        "B3",
+        "B2",
+        "B1",
+        "G",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25"
+    )
 
     @Inject
     lateinit var floorAdapter: NewFloorGroupAdapter
@@ -57,39 +88,8 @@ class AddNewFloorBottomSheet(
         super.onViewCreated(view, savedInstanceState)
 
 
-        model.floorList.value?.let {
-
-            val enumOrder = listOf(
-                "B3",
-                "B2",
-                "B1",
-                "G",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "13",
-                "14",
-                "15",
-                "16",
-                "17",
-                "18",
-                "19",
-                "20",
-                "21",
-                "22",
-                "23",
-                "24",
-                "25"
-            )
+        model.floorList.observe(viewLifecycleOwner) {
+//            println("floorList.observer called")
             val sortedList =
                 it.sortedWith(compareBy { enumOrder.indexOf(it.floorName) }).toMutableList()
 
@@ -97,6 +97,8 @@ class AddNewFloorBottomSheet(
             floorAdapter.setList(sortedList)
             selectedFloorList = sortedList
         }
+
+
         binding.rvFloorList.adapter = floorAdapter
 
 
@@ -235,7 +237,6 @@ class AddNewFloorBottomSheet(
                             createdAt = "",
                             updatedAt = "",
                             creator = "",
-                            deleted = false,
                             drawings = listOf(),
                             projectId = "",
                             floorName = floorName1
@@ -267,7 +268,6 @@ class AddNewFloorBottomSheet(
                             createdAt = "",
                             updatedAt = "",
                             creator = "",
-                            deleted = false,
                             drawings = listOf(),
                             projectId = "",
                             floorName = floorName1

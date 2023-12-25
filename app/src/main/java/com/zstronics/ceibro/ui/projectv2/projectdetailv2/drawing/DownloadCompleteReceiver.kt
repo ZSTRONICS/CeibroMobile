@@ -26,9 +26,17 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
     @SuppressLint("Range")
     override fun onReceive(context: Context?, intent: Intent?) {
 
+        val downloadId1 = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+        val query1 = downloadId1?.let { DownloadManager.Query().setFilterById(it) }
+        val manager1 = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val cursor1 = manager1.query(query1)
+        cursor1.moveToFirst()
+        val status = cursor1.getInt(cursor1.getColumnIndex(DownloadManager.COLUMN_STATUS))
+        println("downloadStatus : $status ")
+
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == intent?.action) {
             val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            println("downloadId: ${downloadId} Folder name")
+            println("downloadId: $downloadId Folder name")
             if (downloadId != -1L) {
                 // Retrieve the downloaded file information
                 val query = DownloadManager.Query().setFilterById(downloadId)
@@ -69,8 +77,8 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                 }
                 cursor.close()
             }
-            DrawingsV2Fragment.updateAdapter()
-            LocationDrawingV2Fragment.updateLocationDrawingAdapterSectionRecyclerAdapter()
+        //    DrawingsV2Fragment.updateAdapter()
+        //    LocationDrawingV2Fragment.updateLocationDrawingAdapterSectionRecyclerAdapter()
         }
 
 

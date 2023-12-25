@@ -20,8 +20,6 @@ data class CeibroFloorV2(
     val createdAt: String,
     @SerializedName("creator")
     val creator: String?,
-    @SerializedName("deleted")
-    val deleted: Boolean,
     @SerializedName("drawings")
     var drawings: List<String> = listOf(),
     @SerializedName("floorName")
