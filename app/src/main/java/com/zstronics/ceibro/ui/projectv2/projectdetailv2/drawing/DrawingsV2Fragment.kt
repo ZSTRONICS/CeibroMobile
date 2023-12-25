@@ -182,10 +182,11 @@ class DrawingsV2Fragment :
                         ivDownloaded.visibility = View.VISIBLE
                         tv.text = it
                     } else if (it == "retry" || it == "failed") {
-
                         ivDownloaded.visibility = View.GONE
                         tv.visibility = View.GONE
                         ivDownloadFile.visibility = View.VISIBLE
+                    }else{
+                        tv.text = it
                     }
                 }
             }
