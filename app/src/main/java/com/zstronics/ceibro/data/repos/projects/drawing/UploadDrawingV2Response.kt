@@ -43,7 +43,7 @@ data class DrawingV2(
     @SerializedName("fileType")
     val fileType: String,
     @SerializedName("fileUrl")
-    val fileUrl: String = "",
+    var fileUrl: String = "",
     @SerializedName("floor")
     val floor: Floor,
     @SerializedName("groupId")
@@ -61,7 +61,7 @@ data class DrawingV2(
     @SerializedName("uploadedBy")
     val uploadedBy: TaskMemberDetail,
     @SerializedName("uploaderlocalFilePath")
-    val uploaderLocalFilePath: String,
+    var uploaderLocalFilePath: String,
     @SerializedName("uploaderLocalId")
     val uploaderLocalId: String,
     @SerializedName("version")

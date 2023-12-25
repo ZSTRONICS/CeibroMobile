@@ -567,6 +567,7 @@
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
     <string name="all_groups">All Groups</string>
+    <string name="my_groups">My Groups</string>
     <string name="recent_projects">Recent used projects</string>
     <string name="recently_used">Recently used</string>
     <string name="favorite_projects">Favorites</string>
@@ -610,4 +611,6 @@
     <string name="ok">Ok</string>
     <string name="select_pin_type">Select pin type</string>
     <string name="add_task">Add task</string>
+    <string name="floor_list">Floor List</string>
+    <string name="group_list">Group List</string>
 </resources>

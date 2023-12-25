@@ -27,7 +27,6 @@ class ProjectDetailTabLayoutAdapter(
 
         drawingsV2Fragment.drawingFileClickListener = { view, data, tag ->
             drawingFileClickListener?.invoke(view, data, tag)
-
         }
 
 

@@ -72,6 +72,25 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+
+            <View
+                android:backgroundTint="@color/black_01"
+                android:background="@drawable/round_grey"
+                android:layout_gravity="center"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_3sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8sp"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/group_list"
+                android:textColor="@color/black" />
+
+
             <TextView
                 android:id="@+id/tvAddNewGroup"
                 android:layout_width="wrap_content"

@@ -183,6 +183,9 @@ class NetworkModule {
     fun provideFloorsV2Dao(database: CeibroDatabase) = database.getFloorsV2Dao()
 
     @Provides
+    fun provideDownloadDrawingDao(database: CeibroDatabase) = database.getDownloadDrawingDao()
+
+    @Provides
     fun provideGroupsV2Dao(database: CeibroDatabase) = database.getGroupsV2Dao()
 
     @Provides

@@ -15,16 +15,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.io.File
 
-class AllDrawingsAdapterSectionRecycler constructor(
+class AllDrawingsAdapterSectionRecycler(
     val context: Context,
-    sectionList: MutableList<DrawingSectionHeader>
+    sectionList: MutableList<DrawingSectionHeader>,
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
 ) : SectionRecyclerViewAdapter<
         DrawingSectionHeader,
         CeibroGroupsV2,
@@ -38,8 +42,15 @@ class AllDrawingsAdapterSectionRecycler constructor(
     var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
         null
 
-    fun setCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+    fun drawingFileClickListenerCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
         this.drawingFileClickListener = itemClickListener
+    }
+
+    var downloadFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+        null
+
+    fun downloadFileCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+        this.downloadFileClickListener = itemClickListener
     }
 
     override fun onCreateSectionViewHolder(
@@ -115,7 +126,7 @@ class AllDrawingsAdapterSectionRecycler constructor(
                 }
             }
 
-            binding.tvGroupName.text = item?.groupName
+            binding.tvGroupName.text = "${item?.groupName} (${item?.drawings?.size?:"0"})"
             binding.tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
 
@@ -141,14 +152,61 @@ class AllDrawingsAdapterSectionRecycler constructor(
                 )
                 itemViewBinding.tvSample.text = "${data.fileName}"
                 itemViewBinding.tvFloor.text = "${data.floor.floorName} Floor"
-                itemViewBinding.root.setOnClickListener{
-                    val file = File(data.uploaderLocalFilePath)
-                    if (file.exists()) {
-                        drawingFileClickListener?.invoke(it, data, "")
-                    } else {
-                        cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+
+                /*
+                   itemViewBinding.root.setOnClickListener{
+                       val file = File(data.uploaderLocalFilePath)
+                       if (file.exists()) {
+                           drawingFileClickListener?.invoke(it, data, "")
+                       } else {
+                           cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+                       }
+                   }*/
+
+                itemViewBinding.root.setOnClickListener { view ->
+                    MainScope().launch {
+                        val drawingObject =
+                            downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                        drawingObject?.let {
+
+                            val file = File(it.localUri)
+                            if (file.exists()) {
+                                drawingFileClickListener?.invoke(view, data, it.localUri)
+                            } else {
+                                cancelAndMakeToast(
+                                    view.context,
+                                    "File not downloaded",
+                                    Toast.LENGTH_SHORT
+                                )
+                            }
+                        }
+                    }
+
+
+                }
+
+
+                MainScope().launch {
+                    val drawingObject =
+                        downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                    drawingObject?.let {
+
+                        itemViewBinding.ivDownloadFile.visibility = View.INVISIBLE
+                        itemViewBinding.ivDownloadFile.isClickable =false
+                    }?: kotlin.run {
+                        itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
                     }
                 }
+                itemViewBinding.ivDownloadFile.setOnClickListener {
+                    val file = File(data.fileName)
+                    if (file.exists()) {
+                        //openFile
+                    } else {
+                        downloadFileClickListener?.invoke(it, data, "")
+                        //  cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+                    }
+                }
+
 
 
                 binding.llParent.addView(itemViewBinding.root)

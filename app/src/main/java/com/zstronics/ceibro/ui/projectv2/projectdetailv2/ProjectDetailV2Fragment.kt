@@ -40,6 +40,7 @@ class ProjectDetailV2Fragment :
         super.onViewCreated(view, savedInstanceState)
         tabTitles = listOf(getString(R.string.detail), getString(R.string.drawing))
         val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, tag ->
+            data.uploaderLocalFilePath=tag
             CookiesManager.drawingFileForLocation.value = data
             CookiesManager.cameToLocationViewFromProject = true
             CookiesManager.openingNewLocationFile = true

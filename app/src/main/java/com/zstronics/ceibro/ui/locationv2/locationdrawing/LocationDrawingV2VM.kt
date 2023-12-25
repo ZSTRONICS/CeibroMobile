@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationDrawingV2VM @Inject constructor(
     override val viewState: LocationDrawingV2State,
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
     private val projectRepository: IProjectRepository,
     private val groupsV2Dao: GroupsV2Dao,
 ) : HiltBaseViewModel<ILocationDrawingV2.State>(), ILocationDrawingV2.ViewModel {

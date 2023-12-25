@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -27,16 +26,20 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
-import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
 import com.zstronics.ceibro.databinding.FragmentLocationDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -54,7 +57,7 @@ class LocationDrawingV2Fragment :
     override val layoutResId: Int = R.layout.fragment_location_drawings_v2
     override fun toolBarVisibility(): Boolean = false
 
-//    private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
+    //    private lateinit var downloadCompleteReceiver: DownloadCompleteReceiver
     private var manager: DownloadManager? = null
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -153,8 +156,12 @@ class LocationDrawingV2Fragment :
         )
 
 
-        sectionedAdapter = LocationDrawingAdapterSectionRecycler(requireContext(), sectionList)
-        retrieveFilesFromCeibroFolder()
+        sectionedAdapter = LocationDrawingAdapterSectionRecycler(
+            viewModel.downloadedDrawingV2Dao,
+            requireContext(),
+            sectionList
+        )
+        referenceSectionedAdapter = sectionedAdapter
 
         sectionedAdapter.setCallBack { view, data, tag ->
             CookiesManager.drawingFileNameForLocation = data.fileName
@@ -166,6 +173,11 @@ class LocationDrawingV2Fragment :
 //            checkDownloadFilePermission(data)
         }
 
+        sectionedAdapter.downloadFileCallBack { view, data, tag ->
+            checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao)
+        }
+
+
         val linearLayoutManager = LinearLayoutManager(requireContext())
 //        mViewDataBinding.drawingsRV.removeAllViews()
         mViewDataBinding.drawingsRV.layoutManager = linearLayoutManager
@@ -176,80 +188,80 @@ class LocationDrawingV2Fragment :
 
         viewModel.favoriteGroups.observe(viewLifecycleOwner) {
 
-                if (it.isNotEmpty()) {
-                    if (!viewModel.favoriteGroupsOnceSet) {
-                        viewModel.favoriteGroupsOnceSet = true
-                        sectionList.removeAt(0)
-                        sectionList.add(
-                            0,
-                            LocationDrawingSectionHeader(it, getString(R.string.favorite_projects))
-                        )
-//                sectionedAdapter.removeSection(0)
-                        sectionedAdapter.insertNewSection(
-                            LocationDrawingSectionHeader(
-                                it,
-                                getString(R.string.favorite_projects)
-                            ), 0
-                        )
-                        sectionedAdapter.notifyDataSetChanged()
-                    }
-                } else {
+            if (it.isNotEmpty()) {
+                if (!viewModel.favoriteGroupsOnceSet) {
+                    viewModel.favoriteGroupsOnceSet = true
                     sectionList.removeAt(0)
                     sectionList.add(
                         0,
-                        LocationDrawingSectionHeader(
-                            mutableListOf(),
-                            getString(R.string.favorite_projects)
-                        )
+                        LocationDrawingSectionHeader(it, getString(R.string.favorite_projects))
                     )
 //                sectionedAdapter.removeSection(0)
                     sectionedAdapter.insertNewSection(
                         LocationDrawingSectionHeader(
-                            mutableListOf(),
+                            it,
                             getString(R.string.favorite_projects)
                         ), 0
                     )
                     sectionedAdapter.notifyDataSetChanged()
                 }
+            } else {
+                sectionList.removeAt(0)
+                sectionList.add(
+                    0,
+                    LocationDrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.favorite_projects)
+                    )
+                )
+//                sectionedAdapter.removeSection(0)
+                sectionedAdapter.insertNewSection(
+                    LocationDrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.favorite_projects)
+                    ), 0
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
 
         }
 
         viewModel.groupData.observe(viewLifecycleOwner) {
 
-                if (it.isNotEmpty()) {
-                    if (!viewModel.allGroupsOnceSet) {
-                        viewModel.allGroupsOnceSet = true
-                        sectionList.removeAt(1)
-                        sectionList.add(
-                            1, LocationDrawingSectionHeader(it, getString(R.string.all_groups))
-                        )
-//                sectionedAdapter.removeSection(1)
-                        sectionedAdapter.insertNewSection(
-                            LocationDrawingSectionHeader(
-                                it,
-                                getString(R.string.all_groups)
-                            ), 1
-                        )
-                        sectionedAdapter.notifyDataSetChanged()
-                    }
-                } else {
+            if (it.isNotEmpty()) {
+                if (!viewModel.allGroupsOnceSet) {
+                    viewModel.allGroupsOnceSet = true
                     sectionList.removeAt(1)
                     sectionList.add(
-                        1,
-                        LocationDrawingSectionHeader(
-                            mutableListOf(),
-                            getString(R.string.all_groups)
-                        )
+                        1, LocationDrawingSectionHeader(it, getString(R.string.all_groups))
                     )
 //                sectionedAdapter.removeSection(1)
                     sectionedAdapter.insertNewSection(
                         LocationDrawingSectionHeader(
-                            mutableListOf(),
+                            it,
                             getString(R.string.all_groups)
                         ), 1
                     )
                     sectionedAdapter.notifyDataSetChanged()
                 }
+            } else {
+                sectionList.removeAt(1)
+                sectionList.add(
+                    1,
+                    LocationDrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.all_groups)
+                    )
+                )
+//                sectionedAdapter.removeSection(1)
+                sectionedAdapter.insertNewSection(
+                    LocationDrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.all_groups)
+                    ), 1
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
 
         }
 
@@ -264,7 +276,8 @@ class LocationDrawingV2Fragment :
         viewModel.projectData.observe(viewLifecycleOwner) {
             if (it != null) {
                 mViewDataBinding.tvProjectName.text = it.title
-                mViewDataBinding.tvCreatorName.text = "${resources.getString(R.string.creator_heading)}: ${it.creator.firstName} ${it.creator.surName}"
+                mViewDataBinding.tvCreatorName.text =
+                    "${resources.getString(R.string.creator_heading)}: ${it.creator.firstName} ${it.creator.surName}"
             }
         }
 
@@ -282,34 +295,27 @@ class LocationDrawingV2Fragment :
         const val folderName = "Ceibro"
         const val permissionRequestCode = 123
         var mainActivityDownloader: Context? = null
+        var referenceSectionedAdapter: LocationDrawingAdapterSectionRecycler? = null
 
-        fun retrieveFilesFromCeibroFolder() {
-            val folder = File(
-                mainActivityDownloader?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-                folderName
-            )
-            if (folder.exists()) {
-                val files: Array<File> = folder.listFiles() ?: arrayOf()
-                for (file in files) {
-                    println("File Path: $file")
-                }
+        fun updateLocationDrawingAdapterSectionRecyclerAdapter() {
+            referenceSectionedAdapter?.notifyDataSetChanged()
 
-//                sectionedAdapter?.notifyDataSetChanged()
-            }
         }
     }
 
-
-    private fun checkDownloadFilePermission(url: String) {
+    private fun checkDownloadFilePermission(
+        url: DrawingV2,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkPermissions(permissionList13)) {
-                downloadFile(url)
+                downloadFile(url, downloadedDrawingV2Dao)
             } else {
                 requestPermissions(permissionList13)
             }
         } else {
             if (checkPermissions(permissionList12)) {
-                downloadFile(url)
+                downloadFile(url, downloadedDrawingV2Dao)
             } else {
                 requestPermissions(permissionList12)
             }
@@ -326,7 +332,10 @@ class LocationDrawingV2Fragment :
     }
 
     private fun requestPermissions(permissions: Array<String>) {
-        ActivityCompat.requestPermissions(requireActivity(), permissions, permissionRequestCode)
+        ActivityCompat.requestPermissions(
+            requireActivity(), permissions,
+            DrawingsV2Fragment.permissionRequestCode
+        )
     }
 
     override fun onRequestPermissionsResult(
@@ -335,7 +344,7 @@ class LocationDrawingV2Fragment :
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == permissionRequestCode) {
+        if (requestCode == DrawingsV2Fragment.permissionRequestCode) {
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 // Permissions granted
             } else {
@@ -367,6 +376,58 @@ class LocationDrawingV2Fragment :
         intent.data = uri
         startActivity(intent)
     }
+
+    private fun downloadFile(drawing: DrawingV2, downloadedDrawingV2Dao: DownloadedDrawingV2Dao) {
+        val uri = Uri.parse(drawing.fileUrl)
+        val fileName = drawing.fileName
+        val folder = File(
+            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+            DrawingsV2Fragment.folderName
+        )
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+//        val existingFile = File(folder, fileName)
+//        if (existingFile.exists()) {
+//            existingFile.delete()
+//        }
+        val destinationUri = Uri.fromFile(File(folder, fileName))
+
+        val request: DownloadManager.Request? =
+            DownloadManager
+                .Request(uri)
+                .setDestinationUri(destinationUri)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setVisibleInDownloadsUi(true)
+
+        val downloadId = manager?.enqueue(request)
+
+        val ceibroDownloadDrawingV2 = downloadId?.let {
+            CeibroDownloadDrawingV2(
+                downloading = true,
+                isDownloaded = false,
+                downloadId = it,
+                drawing = drawing,
+                drawingId = drawing._id,
+                groupId = drawing.groupId,
+                localUri = ""
+            )
+        }
+
+
+        GlobalScope.launch {
+            ceibroDownloadDrawingV2?.let {
+                downloadedDrawingV2Dao.insertDownloadDrawing(it)
+            }
+        }
+
+        //   getDownloadProgress(context,downloadId!!)
+
+
+        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+
+    }
+
 
     private fun downloadFile(fileUrl: String) {
 
@@ -558,5 +619,7 @@ class LocationDrawingV2Fragment :
         super.onStop()
         EventBus.getDefault().unregister(this)
     }
+
+
 }
 
