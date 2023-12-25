@@ -23,8 +23,12 @@ import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -593,6 +597,36 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
+
+    fun addCreatedFloorInLocal(
+        floor: CeibroFloorV2, floorV2Dao: FloorsV2Dao
+    ) {
+        GlobalScope.launch {
+            floorV2Dao.insertFloor(floor)
+
+            EventBus.getDefault().post(LocalEvents.RefreshFloorsData(floor.projectId))
+        }
+    }
+
+    fun addGroupCreatedInLocal(
+        group: CeibroGroupsV2, groupV2Dao: GroupsV2Dao
+    ) {
+        GlobalScope.launch {
+            groupV2Dao.insertGroup(group)
+
+            EventBus.getDefault().post(LocalEvents.RefreshGroupsData(group.projectId))
+        }
+    }
+
+    fun deleteGroupInLocal(
+        groupId: String, groupV2Dao: GroupsV2Dao
+    ) {
+        GlobalScope.launch {
+            groupV2Dao.deleteGroupById(groupId)
+
+            EventBus.getDefault().post(LocalEvents.RefreshDeletedGroupData(groupId))
+        }
+    }
 
     fun addCreatedProjectInLocal(
         project: CeibroProjectV2, projectDao: ProjectsV2Dao

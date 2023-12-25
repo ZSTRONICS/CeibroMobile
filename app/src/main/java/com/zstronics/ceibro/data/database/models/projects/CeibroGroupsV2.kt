@@ -25,6 +25,8 @@ data class CeibroGroupsV2(
     val deleted: Boolean,
     @SerializedName("drawings")
     var drawings: List<DrawingV2> = listOf(),
+    @SerializedName("sharedWith")
+    var sharedWith: List<String>? = listOf(),
     @SerializedName("groupName")
     var groupName: String,
     @SerializedName("projectId")
@@ -32,6 +34,8 @@ data class CeibroGroupsV2(
     @SerializedName("updatedAt")
     var updatedAt: String,
     @SerializedName("isFavoriteByMe")
-    var isFavoriteByMe: Boolean
+    var isFavoriteByMe: Boolean,
+    @SerializedName("isPublicGroup")
+    var isPublicGroup: Boolean?
 
 ) : BaseResponse(), Parcelable

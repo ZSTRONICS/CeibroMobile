@@ -110,6 +110,9 @@ object LocalEvents {
     object UpdateConnections
     class RefreshTasksData
     class RefreshProjectsData
+    data class RefreshFloorsData(val projectId: String)
+    data class RefreshGroupsData(val projectId: String)
+    data class RefreshDeletedGroupData(val groupId: String)
     class RefreshAllEvents
     class TaskFailedToDone
     data class TaskSeenEvent(val task: CeibroTaskV2?)
