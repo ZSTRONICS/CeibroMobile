@@ -13,6 +13,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import android.view.View
@@ -43,6 +45,8 @@ import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -162,8 +166,12 @@ class DrawingsV2Fragment :
         )
 
 
-        sectionedAdapter = AllDrawingsAdapterSectionRecycler(requireContext(), sectionList,viewModel.downloadedDrawingV2Dao)
-        referenceSectionedAdapter=sectionedAdapter
+        sectionedAdapter = AllDrawingsAdapterSectionRecycler(
+            requireContext(),
+            sectionList,
+            viewModel.downloadedDrawingV2Dao
+        )
+        referenceSectionedAdapter = sectionedAdapter
 
 
         sectionedAdapter.drawingFileClickListenerCallBack { view, data, tag ->
@@ -171,8 +179,16 @@ class DrawingsV2Fragment :
             drawingFileClickListener?.invoke(view, data, tag)
             //   checkDownloadFilePermission(data.fileUrl)
         }
-        sectionedAdapter.downloadFileCallBack { view, data, tag ->
-            checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao)
+        sectionedAdapter.downloadFileCallBack { tv, iv, data, tag ->
+            checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
+                MainScope().launch {
+                    if (it.trim().equals("100%", true)) {
+                        tv.visibility = View.GONE
+                        iv.visibility = View.VISIBLE
+                    }
+                    tv.text = it
+                }
+            }
         }
 
 
@@ -294,17 +310,22 @@ class DrawingsV2Fragment :
 
     private fun checkDownloadFilePermission(
         url: DrawingV2,
-        downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        itemClickListener: ((tag: String) -> Unit)?
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkPermissions(permissionList13)) {
-                downloadFile(url, downloadedDrawingV2Dao)
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
             } else {
                 requestPermissions(permissionList13)
             }
         } else {
             if (checkPermissions(permissionList12)) {
-                downloadFile(url, downloadedDrawingV2Dao)
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
             } else {
                 requestPermissions(permissionList12)
             }
@@ -363,7 +384,11 @@ class DrawingsV2Fragment :
         startActivity(intent)
     }
 
-    private fun downloadFile(drawing: DrawingV2, downloadedDrawingV2Dao: DownloadedDrawingV2Dao) {
+    private fun downloadFile(
+        drawing: DrawingV2,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
         val uri = Uri.parse(drawing.fileUrl)
         val fileName = drawing.fileName
         val folder = File(context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName)
@@ -404,7 +429,13 @@ class DrawingsV2Fragment :
             }
         }
 
-        //   getDownloadProgress(context,downloadId!!)
+
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            getDownloadProgress(context, downloadId!!) {
+                itemClickListener?.invoke(it)
+            }
+        }, 2000)
 
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
@@ -412,26 +443,56 @@ class DrawingsV2Fragment :
     }
 
     @SuppressLint("Range")
-    private fun getDownloadProgress(context: Context?, downloadId: Long): Int {
-        val query = DownloadManager.Query().setFilterById(downloadId)
-        val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val cursor = manager.query(query)
+    private fun getDownloadProgress(
+        context: Context?,
+        downloadId: Long,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        GlobalScope.launch {
+            while (true) {
+                val query = DownloadManager.Query().setFilterById(downloadId)
+                val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val cursor = manager.query(query)
 
-        if (cursor.moveToFirst()) {
-            val bytesDownloaded =
-                cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-            val bytesTotal =
-                cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                if (cursor.moveToFirst()) {
+                    val bytesDownloaded =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val bytesTotal =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
 
-            cursor.close()
+                    val status =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    println("Status: $status")
 
-            if (bytesTotal > 0) {
-                return ((bytesDownloaded * 100L) / bytesTotal).toInt()
+                    if (status.toInt() == DownloadManager.STATUS_FAILED) {
+                        println("Status failed: $status")
+                        itemClickListener?.invoke("0%")
+                        break
+                    } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
+
+                        itemClickListener?.invoke("100%")
+                        //    println("Status completed")
+                        break
+                    }
+
+                    val downloadedPercent = ((bytesDownloaded * 100L) / bytesTotal).toInt()
+
+                    println("StatusProgress %: $downloadedPercent")
+                    println("StatusDownloaded: $bytesDownloaded")
+                    println("StatusTotal: $bytesTotal")
+
+                    itemClickListener?.invoke("$downloadedPercent %")
+                    if (bytesTotal > 0) {
+                        println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                    }
+                }
+
+                cursor.close()
+
+                // Add a delay before the next iteration
+                delay(500)
             }
         }
-
-        cursor.close()
-        return 0
     }
 
     private fun chooseFile(fragmentManager: FragmentManager, callback: (String) -> Unit) {

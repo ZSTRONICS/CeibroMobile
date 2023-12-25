@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.PopupMenu
 import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
@@ -46,10 +48,10 @@ class AllDrawingsAdapterSectionRecycler(
         this.drawingFileClickListener = itemClickListener
     }
 
-    var downloadFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+    var downloadFileClickListener: ((view: TextView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)? =
         null
 
-    fun downloadFileCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+    fun downloadFileCallBack(itemClickListener: ((view: TextView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
 
@@ -126,7 +128,7 @@ class AllDrawingsAdapterSectionRecycler(
                 }
             }
 
-            binding.tvGroupName.text = "${item?.groupName} (${item?.drawings?.size?:"0"})"
+            binding.tvGroupName.text = "${item?.groupName} (${item?.drawings?.size ?: "0"})"
             binding.tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
 
@@ -191,9 +193,22 @@ class AllDrawingsAdapterSectionRecycler(
                         downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
                     drawingObject?.let {
 
-                        itemViewBinding.ivDownloadFile.visibility = View.INVISIBLE
-                        itemViewBinding.ivDownloadFile.isClickable =false
-                    }?: kotlin.run {
+                        if (it.isDownloaded) {
+                            itemViewBinding.ivDownloaded.visibility = View.VISIBLE
+                            itemViewBinding.tvDownloadProgress.visibility = View.GONE
+                            itemViewBinding.ivDownloadFile.visibility = View.GONE
+                        } else if (it.downloading) {
+                            itemViewBinding.ivDownloaded.visibility = View.GONE
+                            itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
+                            itemViewBinding.ivDownloadFile.visibility = View.GONE
+                        } else {
+                            itemViewBinding.ivDownloaded.visibility = View.GONE
+                            itemViewBinding.tvDownloadProgress.visibility = View.GONE
+                            itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
+                        }
+                    } ?: kotlin.run {
+                        itemViewBinding.ivDownloaded.visibility = View.GONE
+                        itemViewBinding.tvDownloadProgress.visibility = View.GONE
                         itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
                     }
                 }
@@ -202,7 +217,14 @@ class AllDrawingsAdapterSectionRecycler(
                     if (file.exists()) {
                         //openFile
                     } else {
-                        downloadFileClickListener?.invoke(it, data, "")
+                        it.visibility = View.GONE
+                        itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
+                        downloadFileClickListener?.invoke(
+                            itemViewBinding.tvDownloadProgress,
+                            itemViewBinding.ivDownloaded,
+                            data,
+                            ""
+                        )
                         //  cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
                     }
                 }
