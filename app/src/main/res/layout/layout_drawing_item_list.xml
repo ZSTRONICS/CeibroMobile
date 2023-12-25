@@ -90,7 +90,7 @@
             android:layout_marginEnd="@dimen/_8sdp"
             android:padding="2dp"
             android:src="@drawable/download"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/ivFav"
             app:layout_constraintEnd_toStartOf="@id/ivOptions"
             app:layout_constraintTop_toTopOf="@id/ivFav" />
