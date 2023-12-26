@@ -39,8 +39,8 @@ class ProjectDetailV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tabTitles = listOf(getString(R.string.detail), getString(R.string.drawing))
-        val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, tag ->
-            data.uploaderLocalFilePath=tag
+        val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, absolutePath ->
+            data.uploaderLocalFilePath=absolutePath
             CookiesManager.drawingFileForLocation.value = data
             CookiesManager.cameToLocationViewFromProject = true
             CookiesManager.openingNewLocationFile = true

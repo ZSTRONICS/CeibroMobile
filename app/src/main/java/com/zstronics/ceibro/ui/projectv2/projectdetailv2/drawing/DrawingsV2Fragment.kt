@@ -77,7 +77,7 @@ class DrawingsV2Fragment :
     private lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
 
 
-    var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+    var drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)? =
         null
 
     private var fragmentManager: FragmentManager? = null
@@ -169,9 +169,9 @@ class DrawingsV2Fragment :
         referenceSectionedAdapter = sectionedAdapter
 
 
-        sectionedAdapter.drawingFileClickListenerCallBack { view, data, tag ->
+        sectionedAdapter.drawingFileClickListenerCallBack { view, data, absolutePath ->
             println("data.uploaderLocalFilePath1: ${data.fileName}")
-            drawingFileClickListener?.invoke(view, data, tag)
+            drawingFileClickListener?.invoke(view, data, absolutePath)
             //   checkDownloadFilePermission(data.fileUrl)
         }
         sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->

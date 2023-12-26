@@ -169,15 +169,12 @@ class LocationDrawingV2Fragment :
         )
         referenceSectionedAdapter = sectionedAdapter
 
-        sectionedAdapter.setCallBack { view, data, tag ->
-            data.uploaderLocalFilePath = tag
-            CookiesManager.drawingFileNameForLocation = data.fileName
+        sectionedAdapter.setCallBack { view, data, absolutePath ->
+            data.uploaderLocalFilePath = absolutePath
             CookiesManager.drawingFileForLocation.value = data
             CookiesManager.cameToLocationViewFromProject = false
             CookiesManager.openingNewLocationFile = true
             EventBus.getDefault().post(LocalEvents.LoadViewDrawingFragmentInLocation())
-//            drawingFileClickListener?.invoke(view, data, tag)
-//            checkDownloadFilePermission(data)
         }
 
         sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->

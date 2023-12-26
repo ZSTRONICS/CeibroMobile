@@ -63,10 +63,10 @@ class AllDrawingsAdapterSectionRecycler(
     )
     var popupMenu: PopupMenu? = null
     private var isPopupMenuShowing = false
-    var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+    var drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)? =
         null
 
-    fun drawingFileClickListenerCallBack(itemClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?) {
+    fun drawingFileClickListenerCallBack(itemClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)?) {
         this.drawingFileClickListener = itemClickListener
     }
 
