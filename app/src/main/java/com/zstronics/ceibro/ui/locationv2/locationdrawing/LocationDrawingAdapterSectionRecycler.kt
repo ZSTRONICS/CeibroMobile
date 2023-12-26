@@ -23,7 +23,6 @@ import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
-import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
 import com.zstronics.ceibro.databinding.LayoutlocationdrawingitemlistingBinding
 import com.zstronics.ceibro.databinding.LayoutlocationdrawinglistBinding
@@ -131,10 +130,10 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
 
             binding.apply {
-                ivOptions.visibility=View.GONE
-                ivDownload.visibility=View.GONE
-                ivFav.visibility=View.GONE
-                viewOne.visibility=View.GONE
+                ivOptions.visibility = View.GONE
+                ivDownload.visibility = View.GONE
+                ivFav.visibility = View.GONE
+                viewOne.visibility = View.GONE
 
 
 
@@ -158,12 +157,13 @@ class LocationDrawingAdapterSectionRecycler constructor(
                 item?.drawings?.forEachIndexed { index, data ->
 
 
-                    val itemViewBinding: LayoutlocationdrawingitemlistingBinding = DataBindingUtil.inflate(
-                        LayoutInflater.from(binding.root.context),
-                        R.layout.layoutlocationdrawingitemlisting,
-                        binding.llParent,
-                        false
-                    )
+                    val itemViewBinding: LayoutlocationdrawingitemlistingBinding =
+                        DataBindingUtil.inflate(
+                            LayoutInflater.from(binding.root.context),
+                            R.layout.layoutlocationdrawingitemlisting,
+                            binding.llParent,
+                            false
+                        )
 
                     itemViewBinding.apply {
 
@@ -185,7 +185,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
                                             Toast.LENGTH_SHORT
                                         )
                                     }
-                                }?: kotlin.run {
+                                } ?: kotlin.run {
                                     cancelAndMakeToast(
                                         view.context,
                                         "File not downloaded",
@@ -260,15 +260,17 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
                             } else {
                                 if (networkConnectivityObserver.isNetworkAvailable()) {
-                                    it.visibility = View.GONE
-                                    tvDownloadProgress.visibility = View.VISIBLE
-                                    downloadFileClickListener?.invoke(
-                                        tvDownloadProgress,
-                                        ivDownloadFile,
-                                        ivDownloaded,
-                                        data,
-                                        ""
-                                    )
+                                    if (data.fileUrl.isNotEmpty()) {
+                                        it.visibility = View.GONE
+                                        tvDownloadProgress.visibility = View.VISIBLE
+                                        downloadFileClickListener?.invoke(
+                                            tvDownloadProgress,
+                                            ivDownloadFile,
+                                            ivDownloaded,
+                                            data,
+                                            ""
+                                        )
+                                    }
                                 } else {
                                     cancelAndMakeToast(
                                         it.context,
@@ -335,7 +337,11 @@ class LocationDrawingAdapterSectionRecycler constructor(
                                         )
                                     }
                                 }
-                                itemClickListener?.invoke("downloaded", fileAbsolutePath ?: "", "100%")
+                                itemClickListener?.invoke(
+                                    "downloaded",
+                                    fileAbsolutePath ?: "",
+                                    "100%"
+                                )
                             }
                         }
 

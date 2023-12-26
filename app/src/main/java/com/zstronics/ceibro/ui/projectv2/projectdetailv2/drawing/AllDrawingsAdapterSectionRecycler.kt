@@ -253,15 +253,17 @@ class AllDrawingsAdapterSectionRecycler(
 
                             } else {
                                 if (networkConnectivityObserver.isNetworkAvailable()) {
-                                    it.visibility = View.GONE
-                                    tvDownloadProgress.visibility = View.VISIBLE
-                                    downloadFileClickListener?.invoke(
-                                        tvDownloadProgress,
-                                        ivDownloadFile,
-                                        ivDownloaded,
-                                        data,
-                                        ""
-                                    )
+                                    if (data.fileUrl.isNotEmpty()) {
+                                        it.visibility = View.GONE
+                                        tvDownloadProgress.visibility = View.VISIBLE
+                                        downloadFileClickListener?.invoke(
+                                            tvDownloadProgress,
+                                            ivDownloadFile,
+                                            ivDownloaded,
+                                            data,
+                                            ""
+                                        )
+                                    }
                                 } else {
                                     cancelAndMakeToast(
                                         it.context,
