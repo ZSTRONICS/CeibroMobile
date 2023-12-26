@@ -38,8 +38,8 @@ data class CeibroGroupsV2(
     @SerializedName("hasAccess")
     var hasAccess: Boolean,
     @SerializedName("isHiddenByMe")
-    var isHiddenByMe: Boolean
-//    @SerializedName("isPublicGroup")
-//    var isPublicGroup: Boolean
+    var isHiddenByMe: Boolean,
+    @SerializedName("publicGroup")
+    var publicGroup: Boolean = false
 
 ) : BaseResponse(), Parcelable

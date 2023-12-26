@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
@@ -78,6 +79,33 @@ class DrawingsV2VM @Inject constructor(
         }
     }
 
+
+    fun publicOrPrivateGroup(group: CeibroGroupsV2) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.makeGroupPublicOrPrivate(
+                state = !group.publicGroup,
+                groupId = group._id
+            )) {
+
+                is ApiResponse.Success -> {
+                    groupsV2Dao.insertGroup(response.data.group)
+                    projectData.value?.let { getGroupsByProjectID(it._id) }
+                    if (response.data.group.publicGroup) {
+                        loading(false, "Group is now public")
+                    } else {
+                        loading(false, "Group is now private")
+                    }
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
+
+
     fun filterAllProjects(search: String) {
         if (search.isEmpty()) {
             if (originalAllGroups.isNotEmpty()) {
@@ -102,12 +130,11 @@ class DrawingsV2VM @Inject constructor(
     private fun isDrawingNameExist(drawings: List<DrawingV2>, search: String): Boolean {
 
         val found = drawings.filter {
-            it.fileName.contains(search,true)
+            it.fileName.contains(search, true)
         }
 
         return (found.isNotEmpty())
     }
-
 
 
 }

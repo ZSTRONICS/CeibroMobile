@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -21,6 +22,7 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -122,6 +124,8 @@ class NewDrawingV2VM @Inject constructor(
         callback: (projectId: String) -> Unit
     ) {
 
+        loading(true)
+
         val filePath = pdfFilePath.value ?: ""
         val projectId = projectId.value.toString()
 
@@ -156,8 +160,29 @@ class NewDrawingV2VM @Inject constructor(
         val metadataString2RequestBody =
             metadataString2.toRequestBody("text/plain".toMediaTypeOrNull())
 
+        uploadDataClass = UploadData(
+            projectId = projectID,
+            floorId = floorID,
+            groupId = groupID,
+            metadata = metadataString2RequestBody,
+            files = fileParts
+        )
 
-        launch {
+        uploadDataParams = UploadDataParams(
+            projectId = projectId,
+            floorId = floorId,
+            groupId = groupId,
+            filePath=filePath
+        )
+
+        val serviceIntent = Intent(context, UploadDrawingService::class.java)
+        serviceIntent.putExtra("uploadRequest", "uploadRequest")
+        context.startService(serviceIntent)
+
+
+        loading(false,"")
+        callback.invoke(projectId)
+        /*launch {
             loading(true)
             when (val response = projectRepository.uploadDrawing(
                 projectId = projectID,
@@ -195,7 +220,7 @@ class NewDrawingV2VM @Inject constructor(
                     loading(false, response.error.message)
                 }
             }
-        }
+        }*/
     }
 
 
@@ -354,6 +379,26 @@ class NewDrawingV2VM @Inject constructor(
         }
     }
 
+    companion object {
 
+        var uploadDataClass: UploadData? = null
+        var uploadDataParams: UploadDataParams? = null
+
+        data class UploadData(
+            val projectId: RequestBody,
+            val floorId: RequestBody,
+            val groupId: RequestBody,
+            val metadata: RequestBody,
+            val files: List<MultipartBody.Part>
+        )
+
+        data class UploadDataParams(
+            val projectId: String,
+            val floorId: String,
+            val groupId: String,
+            val filePath: String
+        )
+
+    }
 }
 

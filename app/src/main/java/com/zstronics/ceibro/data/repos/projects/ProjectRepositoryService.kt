@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
+import com.zstronics.ceibro.data.repos.projects.group.PublicPrivateGroupResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.*
 import com.zstronics.ceibro.data.repos.projects.projectsmain.AllProjectsResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.GetAvailableMemberResponse
@@ -217,6 +218,12 @@ interface ProjectRepositoryService {
         @Path("projectId") projectId: String,
         @Body requestBody: CreateNewGroupV2Request
     ): Response<CreateGroupResponseV2>
+
+    @POST("v2/project/group/public/{state}/{groupId}")
+    suspend fun makeGroupPublicOrPrivate(
+        @Path("state") state: Boolean,
+        @Path("groupId") groupId: String
+    ): Response<PublicPrivateGroupResponseV2>
 
     @POST("v2/project/{projectId}/floor")
     suspend fun createFloorV2(

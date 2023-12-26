@@ -15,7 +15,7 @@ private const val NUM_TABS = 2
 
 class ProjectDetailTabLayoutAdapter(
     fragmentManager: FragmentActivity,
-    val drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)?=null
+    val drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)?=null
 ) : FragmentStateAdapter(fragmentManager) {
     override fun getItemCount(): Int = NUM_TABS
 
@@ -25,8 +25,8 @@ class ProjectDetailTabLayoutAdapter(
 
         val drawingsV2Fragment = DrawingsV2Fragment()
 
-        drawingsV2Fragment.drawingFileClickListener = { view, data, tag ->
-            drawingFileClickListener?.invoke(view, data, tag)
+        drawingsV2Fragment.drawingFileClickListener = { view, data, absolutePath ->
+            drawingFileClickListener?.invoke(view, data, absolutePath)
         }
 
 

@@ -541,6 +541,8 @@
     <string name="close_app">Close App</string>
     <string name="are_you_sure_you_want_to_close_the_app">Are you sure you want to close the app?</string>
     <string name="are_you_sure_you_want_to_delete_this_group">Are you sure you want to delete this group?</string>
+    <string name="are_you_sure_you_want_to_make_this_group_public">Are you sure you want to make this group public?</string>
+    <string name="are_you_sure_you_want_to_make_this_group_private">Are you sure you want to make this group private?</string>
     <string name="cannot_delete_group">You can`t delete this group, because there is drawing under that group?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -555,7 +557,7 @@
     <string name="what_is_the_topic">What is the topic?</string>
     <string name="add_topics_to_your_tasks_to_save_and_organise_tasks">Add topics to your tasks to save and organise tasks around common themes and reuse them in future.</string>
     <string name="description">Description</string>
-    <string name="add_new_drawings">Add new drawings</string>
+    <string name="add_new_drawings">Add new drawing</string>
     <string name="hidden_drawings">Hidden drawings</string>
     <string name="add_members">Add members</string>
     <string name="save">Save</string>
@@ -613,4 +615,8 @@
     <string name="add_task">Add task</string>
     <string name="floor_list">Floor List</string>
     <string name="group_list">Group List</string>
+    <string name="delete_drawing">Delete drawing</string>
+    <string name="share_group">Share group</string>
+    <string name="public_group">Public group</string>
+    <string name="private_group">Private group</string>
 </resources>

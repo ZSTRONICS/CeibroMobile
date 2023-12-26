@@ -69,7 +69,7 @@ class DrawingsV2Fragment :
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
-    private val permissionList12 = arrayOf(
+    private val permissionList10 = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
@@ -77,7 +77,7 @@ class DrawingsV2Fragment :
     private lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
 
 
-    var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
+    var drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)? =
         null
 
     private var fragmentManager: FragmentManager? = null
@@ -169,9 +169,9 @@ class DrawingsV2Fragment :
         referenceSectionedAdapter = sectionedAdapter
 
 
-        sectionedAdapter.drawingFileClickListenerCallBack { view, data, tag ->
+        sectionedAdapter.drawingFileClickListenerCallBack { view, data, absolutePath ->
             println("data.uploaderLocalFilePath1: ${data.fileName}")
-            drawingFileClickListener?.invoke(view, data, tag)
+            drawingFileClickListener?.invoke(view, data, absolutePath)
             //   checkDownloadFilePermission(data.fileUrl)
         }
         sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->
@@ -185,7 +185,7 @@ class DrawingsV2Fragment :
                         ivDownloaded.visibility = View.GONE
                         tv.visibility = View.GONE
                         ivDownloadFile.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         tv.text = it
                     }
                 }
@@ -193,6 +193,15 @@ class DrawingsV2Fragment :
         }
 
 
+        sectionedAdapter.requestPermissionCallBack {
+            checkDownloadFilePermission()
+        }
+
+        sectionedAdapter.publicGroupCallBack { tag, group ->
+            if (group != null) {
+                viewModel.publicOrPrivateGroup(group)
+            }
+        }
 
         mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
@@ -308,6 +317,19 @@ class DrawingsV2Fragment :
         }
     }
 
+    private fun checkDownloadFilePermission(
+
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(permissionList13)
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+
+        } else {
+            requestPermissions(permissionList10)
+        }
+    }
 
     private fun checkDownloadFilePermission(
         url: DrawingV2,
@@ -322,13 +344,22 @@ class DrawingsV2Fragment :
             } else {
                 requestPermissions(permissionList13)
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+            downloadFile(url, downloadedDrawingV2Dao) {
+                itemClickListener?.invoke(it)
+            }
         } else {
-            if (checkPermissions(permissionList12)) {
+            if (checkPermissions(permissionList10)) {
                 downloadFile(url, downloadedDrawingV2Dao) {
                     itemClickListener?.invoke(it)
                 }
             } else {
-                requestPermissions(permissionList12)
+
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
+                requestPermissions(permissionList10)
             }
         }
     }

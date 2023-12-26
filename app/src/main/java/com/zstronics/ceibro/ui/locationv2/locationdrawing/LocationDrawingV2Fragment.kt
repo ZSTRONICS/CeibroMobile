@@ -67,7 +67,7 @@ class LocationDrawingV2Fragment :
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
-    private val permissionList12 = arrayOf(
+    private val permissionList10 = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
@@ -169,14 +169,12 @@ class LocationDrawingV2Fragment :
         )
         referenceSectionedAdapter = sectionedAdapter
 
-        sectionedAdapter.setCallBack { view, data, tag ->
-            CookiesManager.drawingFileNameForLocation = data.fileName
+        sectionedAdapter.setCallBack { view, data, absolutePath ->
+            data.uploaderLocalFilePath = absolutePath
             CookiesManager.drawingFileForLocation.value = data
             CookiesManager.cameToLocationViewFromProject = false
             CookiesManager.openingNewLocationFile = true
             EventBus.getDefault().post(LocalEvents.LoadViewDrawingFragmentInLocation())
-//            drawingFileClickListener?.invoke(view, data, tag)
-//            checkDownloadFilePermission(data)
         }
 
         sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->
@@ -195,6 +193,10 @@ class LocationDrawingV2Fragment :
                     }
                 }
             }
+        }
+        sectionedAdapter.requestPermissionCallBack {
+
+            checkDownloadFilePermission()
         }
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
@@ -322,6 +324,7 @@ class LocationDrawingV2Fragment :
         }
     }
 
+
     private fun checkDownloadFilePermission(
         url: DrawingV2,
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
@@ -335,14 +338,37 @@ class LocationDrawingV2Fragment :
             } else {
                 requestPermissions(permissionList13)
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+            downloadFile(url, downloadedDrawingV2Dao) {
+                itemClickListener?.invoke(it)
+            }
         } else {
-            if (checkPermissions(permissionList12)) {
+            if (checkPermissions(permissionList10)) {
                 downloadFile(url, downloadedDrawingV2Dao) {
                     itemClickListener?.invoke(it)
                 }
             } else {
-                requestPermissions(permissionList12)
+
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
+                requestPermissions(permissionList10)
             }
+        }
+    }
+
+    private fun checkDownloadFilePermission(
+
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(permissionList13)
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+
+        } else {
+            requestPermissions(permissionList10)
         }
     }
 
