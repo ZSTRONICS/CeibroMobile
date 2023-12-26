@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.locationv2.locationdrawing
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
@@ -10,6 +11,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -39,6 +42,8 @@ import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -159,7 +164,8 @@ class LocationDrawingV2Fragment :
         sectionedAdapter = LocationDrawingAdapterSectionRecycler(
             viewModel.downloadedDrawingV2Dao,
             requireContext(),
-            sectionList
+            sectionList,
+            networkConnectivityObserver
         )
         referenceSectionedAdapter = sectionedAdapter
 
@@ -173,10 +179,23 @@ class LocationDrawingV2Fragment :
 //            checkDownloadFilePermission(data)
         }
 
-        sectionedAdapter.downloadFileCallBack { view, data, tag ->
-            checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao)
+        sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->
+            checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
+                MainScope().launch {
+                    if (it.trim().equals("100%", true)) {
+                        tv.visibility = View.GONE
+                        ivDownloaded.visibility = View.VISIBLE
+                        tv.text = it
+                    } else if (it == "retry" || it == "failed") {
+                        ivDownloaded.visibility = View.GONE
+                        tv.visibility = View.GONE
+                        ivDownloadFile.visibility = View.VISIBLE
+                    } else {
+                        tv.text = it
+                    }
+                }
+            }
         }
-
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
 //        mViewDataBinding.drawingsRV.removeAllViews()
@@ -305,17 +324,22 @@ class LocationDrawingV2Fragment :
 
     private fun checkDownloadFilePermission(
         url: DrawingV2,
-        downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        itemClickListener: ((tag: String) -> Unit)?
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkPermissions(permissionList13)) {
-                downloadFile(url, downloadedDrawingV2Dao)
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
             } else {
                 requestPermissions(permissionList13)
             }
         } else {
             if (checkPermissions(permissionList12)) {
-                downloadFile(url, downloadedDrawingV2Dao)
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
             } else {
                 requestPermissions(permissionList12)
             }
@@ -377,7 +401,11 @@ class LocationDrawingV2Fragment :
         startActivity(intent)
     }
 
-    private fun downloadFile(drawing: DrawingV2, downloadedDrawingV2Dao: DownloadedDrawingV2Dao) {
+    private fun downloadFile(
+        drawing: DrawingV2,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
         val uri = Uri.parse(drawing.fileUrl)
         val fileName = drawing.fileName
         val folder = File(
@@ -387,10 +415,6 @@ class LocationDrawingV2Fragment :
         if (!folder.exists()) {
             folder.mkdirs()
         }
-//        val existingFile = File(folder, fileName)
-//        if (existingFile.exists()) {
-//            existingFile.delete()
-//        }
         val destinationUri = Uri.fromFile(File(folder, fileName))
 
         val request: DownloadManager.Request? =
@@ -421,39 +445,68 @@ class LocationDrawingV2Fragment :
             }
         }
 
-        //   getDownloadProgress(context,downloadId!!)
-
+        Handler(Looper.getMainLooper()).postDelayed({
+            getDownloadProgress(context, downloadId!!) {
+                itemClickListener?.invoke(it)
+            }
+        }, 1000)
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
     }
 
+    @SuppressLint("Range")
+    private fun getDownloadProgress(
+        context: Context?,
+        downloadId: Long,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        GlobalScope.launch {
+            while (true) {
+                val query = DownloadManager.Query().setFilterById(downloadId)
+                val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val cursor = manager.query(query)
 
-    private fun downloadFile(fileUrl: String) {
+                if (cursor.moveToFirst()) {
+                    val bytesDownloaded =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val bytesTotal =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
 
-        val url =
-            "https://ceibro-development.s3.eu-north-1.amazonaws.com/task/task/2023-11-30/Chemistry_Full_Book_Punjab_-_Copy__2__1701341788337.pdf"
+                    val status =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    println("Status: $status")
 
+                    if (status.toInt() == DownloadManager.STATUS_FAILED) {
 
-        val uri =
-            Uri.parse(url)
+                        println("Status failed: $status")
+                        itemClickListener?.invoke("failed")
+                        break
+                    } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
+                        itemClickListener?.invoke("100%")
+                        break
+                    }
 
-        val fileName = "downloaded_file.pdf"
-        val folder = File(context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName)
-        if (!folder.exists()) {
-            folder.mkdirs()
+                    val downloadedPercent = ((bytesDownloaded * 100L) / bytesTotal).toInt()
+
+                    println("StatusProgress %: $downloadedPercent")
+                    println("StatusDownloaded: $bytesDownloaded")
+                    println("StatusTotal: $bytesTotal")
+
+                    itemClickListener?.invoke("$downloadedPercent %")
+                    if (bytesTotal > 0) {
+                        println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                    }
+                } else {
+                    itemClickListener?.invoke("retry")
+                    break
+                }
+                cursor.close()
+
+                delay(500)
+            }
         }
-
-        val request: DownloadManager.Request? =
-            DownloadManager
-                .Request(uri)
-                .setDestinationUri(Uri.fromFile(File(folder, fileName)))
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setVisibleInDownloadsUi(true)
-
-        manager?.enqueue(request)
     }
-
 
     private fun chooseFile(fragmentManager: FragmentManager, callback: (String) -> Unit) {
         val sheet = AddNewPhotoBottomSheet {

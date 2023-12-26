@@ -19,7 +19,7 @@
             android:id="@+id/tvSample"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginStart="@dimen/_18sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
@@ -34,9 +34,9 @@
 
         <View
             android:id="@+id/viewOne"
-            android:layout_width="2dp"
+            android:layout_width="1dp"
             android:layout_height="@dimen/_18sdp"
-            android:layout_marginEnd="@dimen/_80sdp"
+            android:layout_marginEnd="@dimen/_82sdp"
             android:background="@color/appGrey3"
             app:layout_constraintBottom_toBottomOf="@+id/tvFloor"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,8 +46,9 @@
             android:id="@+id/tvFloor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_7sdp"
             android:fontFamily="@font/inter_regular"
+            android:gravity="center"
             android:text="b2 Floor"
             android:textColor="@color/appGrey3"
             android:textSize="13sp"
@@ -59,15 +60,48 @@
             android:id="@+id/ivDownloadFile"
             android:layout_width="30sp"
             android:layout_height="30sp"
-            android:layout_marginEnd="@dimen/_3sdp"
             android:layout_marginStart="@dimen/_2sdp"
-            android:paddingVertical="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_3sdp"
+            android:padding="@dimen/_2sdp"
             android:src="@drawable/download"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginEnd="@dimen/_5sdp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivDownloaded"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_3sdp"
+            android:padding="@dimen/_2sdp"
+            android:src="@drawable/icon_tick_mark"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginEnd="@dimen/_5sdp" />
+
+        <TextView
+            android:id="@+id/tvDownloadProgress"
+            android:layout_width="0dp"
+            android:layout_height="30sp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_1sdp"
+            android:clickable="false"
+            android:focusable="false"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center|end"
+            android:text="0%"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tvFloor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvFloor"
+            app:layout_constraintTop_toTopOf="@+id/tvFloor" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
