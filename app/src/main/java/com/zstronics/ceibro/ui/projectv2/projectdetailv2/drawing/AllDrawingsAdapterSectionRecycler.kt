@@ -1,5 +1,7 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
 
+import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -23,14 +25,18 @@ import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
 class AllDrawingsAdapterSectionRecycler(
     val context: Context,
     sectionList: MutableList<DrawingSectionHeader>,
-    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+    val networkConnectivityObserver: NetworkConnectivityObserver
 ) : SectionRecyclerViewAdapter<
         DrawingSectionHeader,
         CeibroGroupsV2,
@@ -48,10 +54,10 @@ class AllDrawingsAdapterSectionRecycler(
         this.drawingFileClickListener = itemClickListener
     }
 
-    var downloadFileClickListener: ((view: TextView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)? =
+    var downloadFileClickListener: ((view: TextView, ivDownloadFile: AppCompatImageView, ivDownloaded: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)? =
         null
 
-    fun downloadFileCallBack(itemClickListener: ((view: TextView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
+    fun downloadFileCallBack(itemClickListener: ((view: TextView,  ivDownload: AppCompatImageView,iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
 
@@ -183,10 +189,7 @@ class AllDrawingsAdapterSectionRecycler(
                             }
                         }
                     }
-
-
                 }
-
 
                 MainScope().launch {
                     val drawingObject =
@@ -201,6 +204,25 @@ class AllDrawingsAdapterSectionRecycler(
                             itemViewBinding.ivDownloaded.visibility = View.GONE
                             itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
                             itemViewBinding.ivDownloadFile.visibility = View.GONE
+                            getDownloadProgress(
+                                itemViewBinding.tvDownloadProgress.context,
+                                it.downloadId
+                            ) {
+                                MainScope().launch {
+                                    if (it.trim().equals("100%", true)) {
+                                        itemViewBinding.tvDownloadProgress.visibility = View.GONE
+                                        itemViewBinding.ivDownloaded.visibility = View.VISIBLE
+                                        itemViewBinding.tvDownloadProgress.text = it
+                                    } else if (it == "retry" || it == "failed") {
+
+                                        downloadedDrawingV2Dao.deleteByDrawingID(data._id)
+
+                                        itemViewBinding.ivDownloaded.visibility = View.GONE
+                                        itemViewBinding.tvDownloadProgress.visibility = View.GONE
+                                        itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
                         } else {
                             itemViewBinding.ivDownloaded.visibility = View.GONE
                             itemViewBinding.tvDownloadProgress.visibility = View.GONE
@@ -217,15 +239,24 @@ class AllDrawingsAdapterSectionRecycler(
                     if (file.exists()) {
                         //openFile
                     } else {
-                        it.visibility = View.GONE
-                        itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
-                        downloadFileClickListener?.invoke(
-                            itemViewBinding.tvDownloadProgress,
-                            itemViewBinding.ivDownloaded,
-                            data,
-                            ""
-                        )
-                        //  cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
+                        if (networkConnectivityObserver.isNetworkAvailable()) {
+                            it.visibility = View.GONE
+                            itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
+                            downloadFileClickListener?.invoke(
+                                itemViewBinding.tvDownloadProgress,
+                                itemViewBinding.ivDownloadFile,
+                                itemViewBinding.ivDownloaded,
+                                data,
+                                ""
+                            )
+                        } else {
+                            cancelAndMakeToast(
+                                it.context,
+                                "No Internet Available.",
+                                Toast.LENGTH_SHORT
+                            )
+                        }
+
                     }
                 }
 
@@ -290,5 +321,58 @@ class AllDrawingsAdapterSectionRecycler(
         return popupWindow
     }
 
+    @SuppressLint("Range")
+    private fun getDownloadProgress(
+        context: Context?,
+        downloadId: Long,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        GlobalScope.launch {
+            while (true) {
+                val query = DownloadManager.Query().setFilterById(downloadId)
+                val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val cursor = manager.query(query)
+
+                if (cursor.moveToFirst()) {
+                    val bytesDownloaded =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val bytesTotal =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+
+                    val status =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    println("Status: $status")
+
+                    if (status.toInt() == DownloadManager.STATUS_FAILED) {
+                        println("Status failed: $status")
+                        itemClickListener?.invoke("failed")
+                        break
+                    } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
+                        itemClickListener?.invoke("100%")
+                        break
+                    }
+
+                    val downloadedPercent = ((bytesDownloaded * 100L) / bytesTotal).toInt()
+
+                    println("StatusProgress %: $downloadedPercent")
+                    println("StatusDownloaded: $bytesDownloaded")
+                    println("StatusTotal: $bytesTotal")
+
+                    itemClickListener?.invoke("$downloadedPercent %")
+                    if (bytesTotal > 0) {
+                        println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                    }
+                } else {
+                    itemClickListener?.invoke("retry")
+                    break
+                }
+
+                cursor.close()
+
+                // Add a delay before the next iteration
+                delay(500)
+            }
+        }
+    }
 
 }

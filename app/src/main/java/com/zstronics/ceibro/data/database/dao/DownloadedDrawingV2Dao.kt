@@ -38,6 +38,10 @@ interface DownloadedDrawingV2Dao {
 //    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isFavoriteByMe = :isFavoriteByMe ORDER BY updatedAt DESC")
 //    suspend fun getAllFavoriteProjects(isHiddenByMe: Boolean = false, isFavoriteByMe: Boolean = true): List<CeibroProjectV2>
 
+    @Query("DELETE FROM downloaded_drawing_v2 WHERE drawingId = :drawingId")
+    suspend fun deleteByDrawingID(drawingId: String)
+
+
     @Query("DELETE FROM downloaded_drawing_v2")
     suspend fun deleteAll()
 }

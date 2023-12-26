@@ -93,12 +93,6 @@ class DrawingsV2Fragment :
                     chooseFile(it) { fromLocation ->
                         if (fromLocation.equals("local", true)) {
 
-
-//                            val bundle = Bundle()
-//                            bundle.putString("projectId",viewModel.projectData.value!!._id )
-//                            navigate(R.id.newDrawingV2Fragment, bundle)
-
-//
                             chooseDocuments(
                                 mimeTypes = arrayOf(
                                     "application/pdf"
@@ -169,7 +163,8 @@ class DrawingsV2Fragment :
         sectionedAdapter = AllDrawingsAdapterSectionRecycler(
             requireContext(),
             sectionList,
-            viewModel.downloadedDrawingV2Dao
+            viewModel.downloadedDrawingV2Dao,
+            networkConnectivityObserver
         )
         referenceSectionedAdapter = sectionedAdapter
 
@@ -179,14 +174,20 @@ class DrawingsV2Fragment :
             drawingFileClickListener?.invoke(view, data, tag)
             //   checkDownloadFilePermission(data.fileUrl)
         }
-        sectionedAdapter.downloadFileCallBack { tv, iv, data, tag ->
+        sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
                     if (it.trim().equals("100%", true)) {
                         tv.visibility = View.GONE
-                        iv.visibility = View.VISIBLE
+                        ivDownloaded.visibility = View.VISIBLE
+                        tv.text = it
+                    } else if (it == "retry" || it == "failed") {
+                        ivDownloaded.visibility = View.GONE
+                        tv.visibility = View.GONE
+                        ivDownloadFile.visibility = View.VISIBLE
+                    }else{
+                        tv.text = it
                     }
-                    tv.text = it
                 }
             }
         }
@@ -395,10 +396,6 @@ class DrawingsV2Fragment :
         if (!folder.exists()) {
             folder.mkdirs()
         }
-//        val existingFile = File(folder, fileName)
-//        if (existingFile.exists()) {
-//            existingFile.delete()
-//        }
         val destinationUri = Uri.fromFile(File(folder, fileName))
 
         val request: DownloadManager.Request? =
@@ -429,14 +426,11 @@ class DrawingsV2Fragment :
             }
         }
 
-
-
         Handler(Looper.getMainLooper()).postDelayed({
             getDownloadProgress(context, downloadId!!) {
                 itemClickListener?.invoke(it)
             }
-        }, 2000)
-
+        }, 1000)
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
@@ -465,13 +459,12 @@ class DrawingsV2Fragment :
                     println("Status: $status")
 
                     if (status.toInt() == DownloadManager.STATUS_FAILED) {
+
                         println("Status failed: $status")
-                        itemClickListener?.invoke("0%")
+                        itemClickListener?.invoke("failed")
                         break
                     } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
-
                         itemClickListener?.invoke("100%")
-                        //    println("Status completed")
                         break
                     }
 
@@ -485,11 +478,12 @@ class DrawingsV2Fragment :
                     if (bytesTotal > 0) {
                         println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
                     }
+                } else {
+                    itemClickListener?.invoke("retry")
+                    break
                 }
-
                 cursor.close()
 
-                // Add a delay before the next iteration
                 delay(500)
             }
         }
@@ -673,11 +667,38 @@ class DrawingsV2Fragment :
         )
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUpdateGroupDrawings(event: LocalEvents.UpdateGroupDrawings?) {
         event?.let {
             viewModel.getGroupsByProjectID(it.projectID)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshGroupsData(event: LocalEvents.RefreshGroupsData?) {
+        val projectID = event?.projectId
+        val projectData = viewModel.projectData.value
+        if (projectData != null) {
+            if (projectData._id == projectID) {
+//            println("floorList.onRefreshGroupsData")
+                viewModel.getGroupsByProjectID(projectData._id)
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshDeletedGroupData(event: LocalEvents.RefreshDeletedGroupData?) {
+        val groupId = event?.groupId
+        val allGroups = viewModel.groupData.value
+        val projectData = viewModel.projectData.value
+
+        if (allGroups != null) {
+            val foundGroup = allGroups.find { it._id == groupId }
+            if (foundGroup != null) {
+                if (projectData != null) {
+                    viewModel.getGroupsByProjectID(projectData._id)
+                }
+            }
         }
     }
 
@@ -699,4 +720,3 @@ class DrawingsV2Fragment :
         }
     }
 }
-

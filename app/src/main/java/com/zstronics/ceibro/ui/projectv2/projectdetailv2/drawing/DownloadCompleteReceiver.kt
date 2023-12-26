@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
-import com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -67,18 +66,14 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                                         )
                                     }
                                 }
-
-
                             }
-
-
                         }
                     }
                 }
                 cursor.close()
             }
-        //    DrawingsV2Fragment.updateAdapter()
-        //    LocationDrawingV2Fragment.updateLocationDrawingAdapterSectionRecyclerAdapter()
+            //    DrawingsV2Fragment.updateAdapter()
+            //    LocationDrawingV2Fragment.updateLocationDrawingAdapterSectionRecyclerAdapter()
         }
 
 
