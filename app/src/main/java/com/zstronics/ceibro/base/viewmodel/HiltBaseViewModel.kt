@@ -650,7 +650,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                 groupV2Dao.insertGroup(group)
             }
-            floorV2Dao.updateFloorUpdatedAtByFloorId(uploadedFile.floorUpdatedAt, uploadedFile.floorId)
+
+            val newDrawingIdsList = uploadedFile.drawings.map { it._id }
+            val floor = floorV2Dao.getFloorByFloorId(uploadedFile.floorId)
+            floor.updatedAt = uploadedFile.floorUpdatedAt
+            val allDrawingsIDs = floor.drawings.toMutableList()
+            allDrawingsIDs.addAll(newDrawingIdsList)
+            floor.drawings = allDrawingsIDs
+            floorV2Dao.insertFloor(floor)
+//            floorV2Dao.updateFloorUpdatedAtByFloorId(uploadedFile.floorUpdatedAt, uploadedFile.floorId)
 
             Handler(Looper.getMainLooper()).postDelayed({
                 EventBus.getDefault().post(LocalEvents.RefreshGroupsData(uploadedFile.projectId))

@@ -6,9 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.view.View
-import android.widget.SearchView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
@@ -17,7 +15,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentNewDrawingV2Binding
-import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +37,7 @@ class NewDrawingV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.floorText -> {
-                addNewFloorBottomSheet(viewModel,viewModel.selectedFloor)
+                addNewFloorBottomSheet(viewModel, viewModel.selectedFloor)
             }
 
             R.id.groupText -> {
@@ -74,18 +71,21 @@ class NewDrawingV2Fragment :
                 } else if (groupName.isEmpty() || viewModel.selectedGroup == null || viewModel.selectedGroup?._id?.isEmpty() == true) {
                     shortToastNow("Group is required")
                 } else {
-                    viewModel.selectedFloor?._id?.let { floorId ->
-                        viewModel.uploadDrawing(
-                            mViewDataBinding.root.context,
-                            floorId,
-                            viewModel.selectedGroup?._id ?: ""
-                        ) { projectId ->
-                            navigateBack()
-                            EventBus.getDefault()
-                                .post(LocalEvents.UpdateGroupDrawings(projectID = projectId))
+                    if (networkConnectivityObserver.isNetworkAvailable()) {
+                        viewModel.selectedFloor?._id?.let { floorId ->
+                            viewModel.uploadDrawing(
+                                mViewDataBinding.root.context,
+                                floorId,
+                                viewModel.selectedGroup?._id ?: ""
+                            ) { projectId ->
+                                navigateBack()
+                                // EventBus.getDefault().post(LocalEvents.UpdateGroupDrawings(projectID = projectId))
+                            }
+                        } ?: kotlin.run {
+                            shortToastNow("Floor is required.")
                         }
-                    } ?: kotlin.run {
-                        shortToastNow("Floor is required")
+                    } else {
+                        shortToastNow("No Internet Connection.")
                     }
                 }
             }
@@ -114,7 +114,6 @@ class NewDrawingV2Fragment :
 
             mViewDataBinding.tvDrawingName.text = viewModel.pdfFileName
         }
-
 
 
     }
