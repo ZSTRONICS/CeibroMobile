@@ -273,16 +273,19 @@ class LocationDrawingAdapterSectionRecycler constructor(
                             }
                         }
                         ivDownloadFile.setOnClickListener {
-                            val file = File(data.fileName)
-                            if (file.exists()) {
-
+                            if (data.fileUrl.isEmpty()) {
+                                cancelAndMakeToast(
+                                    it.context,
+                                    "File address is invalid or file is corrupted",
+                                    Toast.LENGTH_SHORT
+                                )
                             } else {
                                 if (networkConnectivityObserver.isNetworkAvailable()) {
-                                    if (data.fileUrl.isNotEmpty()) {
 
-                                   if ( checkDownloadFilePermission(
+                                    if (checkDownloadFilePermission(
                                             context
-                                        )){
+                                        )
+                                    ) {
 
                                         it.visibility = View.GONE
                                         tvDownloadProgress.visibility = View.VISIBLE
@@ -292,11 +295,12 @@ class LocationDrawingAdapterSectionRecycler constructor(
                                             ivDownloaded,
                                             data,
                                             ""
-                                        )}else{
+                                        )
+                                    } else {
 
-                                            requestPermissionClickListener?.invoke("getpermissoin")
-                                        }
+                                        requestPermissionClickListener?.invoke("getpermissoin")
                                     }
+
                                 } else {
                                     cancelAndMakeToast(
                                         it.context,
