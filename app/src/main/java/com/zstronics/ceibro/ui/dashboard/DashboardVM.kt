@@ -27,6 +27,7 @@ import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeRespo
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.drawing.ProjectDrawingUploadedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2CreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.floor.ProjectFloorV2CreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2DeletedSocketResponse
@@ -325,7 +326,7 @@ class DashboardVM @Inject constructor(
                         addGroupCreatedInLocal(updatedGroup, groupV2Dao)
 //                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
                     } catch (e: Exception) {
-                        print("Some data error")
+                        println("Some data error")
                     }
                 }
 
@@ -339,7 +340,21 @@ class DashboardVM @Inject constructor(
                         deleteGroupInLocal(groupIdToDelete, groupV2Dao)
 //                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
                     } catch (e: Exception) {
-                        print("Some data error")
+                        println("Some data error")
+                    }
+                }
+
+                SocketHandler.ProjectEvent.DRAWING_FILE_UPLOADED.name -> {
+                    try {
+                        val uploadedFile =
+                            gson.fromJson<ProjectDrawingUploadedSocketResponse>(
+                                arguments,
+                                object : TypeToken<ProjectDrawingUploadedSocketResponse>() {}.type
+                            ).data
+
+                        addUploadedDrawingInLocal(uploadedFile, groupV2Dao, floorV2Dao)
+                    } catch (e: Exception) {
+                        println("Some data error")
                     }
                 }
 

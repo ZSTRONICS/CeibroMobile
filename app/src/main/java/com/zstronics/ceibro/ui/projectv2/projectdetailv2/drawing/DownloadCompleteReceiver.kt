@@ -24,14 +24,22 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
 
     @SuppressLint("Range")
     override fun onReceive(context: Context?, intent: Intent?) {
+        println("downloadId: intent.action ${intent?.action} ")
 
-        val downloadId1 = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-        val query1 = downloadId1?.let { DownloadManager.Query().setFilterById(it) }
-        val manager1 = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val cursor1 = manager1.query(query1)
-        cursor1.moveToFirst()
-        val status = cursor1.getInt(cursor1.getColumnIndex(DownloadManager.COLUMN_STATUS))
-        println("downloadStatus : $status ")
+
+        try {
+            val downloadId1 = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            val query1 = downloadId1?.let { DownloadManager.Query().setFilterById(it) }
+            val manager1 = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val cursor1 = manager1.query(query1)
+            cursor1.moveToFirst()
+            val status = cursor1.getInt(cursor1.getColumnIndex(DownloadManager.COLUMN_STATUS))
+            println("downloadId: downloadStatus : $status ")
+        } catch (e: Exception) {
+            println("downloadId: Exception ${e.toString()} ")
+        }
+
+
 
         if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == intent?.action) {
             val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
