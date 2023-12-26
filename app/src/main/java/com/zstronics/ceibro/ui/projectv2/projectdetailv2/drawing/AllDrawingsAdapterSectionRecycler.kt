@@ -13,12 +13,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -80,6 +82,11 @@ class AllDrawingsAdapterSectionRecycler(
 
     fun requestPermissionCallBack(requestPermissionClickListener: (tag: String) -> Unit) {
         this.requestPermissionClickListener = requestPermissionClickListener
+    }
+    var publicGroupClickListener: ((tag: String, CeibroGroupsV2?) -> Unit)? = null
+
+    fun publicGroupCallBack(publicGroupClickListener: (tag: String, CeibroGroupsV2?) -> Unit) {
+        this.publicGroupClickListener = publicGroupClickListener
     }
     override fun onCreateSectionViewHolder(
         sectionViewGroup: ViewGroup?,
@@ -159,7 +166,7 @@ class AllDrawingsAdapterSectionRecycler(
                 tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
                 ivOptions.setOnClickListener {
-                    togglePopupMenu(it)
+                    togglePopupMenu(it, item)
                 }
 
                 llParent.removeAllViews()
@@ -305,11 +312,11 @@ class AllDrawingsAdapterSectionRecycler(
         }
     }
 
-    private fun togglePopupMenu(view: View) {
-        popUpMenu(view)
+    private fun togglePopupMenu(view: View, item: CeibroGroupsV2?) {
+        popUpMenu(view, item)
     }
 
-    private fun popUpMenu(v: View): PopupWindow {
+    private fun popUpMenu(v: View, item: CeibroGroupsV2?): PopupWindow {
         val popupWindow = PopupWindow(v.context)
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -333,11 +340,60 @@ class AllDrawingsAdapterSectionRecycler(
         val height = displayMetrics.heightPixels * 2 / 3
 
         //ShowAsDropDown statement at bottom, according to the view visibilities
-        //////////////////////
         popupWindow.showAsDropDown(v, 0, 5)
 
+        val publicGroup = view.findViewById<AppCompatTextView>(R.id.publicGroup)
+        if (item?.publicGroup == true) {
+            publicGroup.text = context.resources.getString(R.string.private_group)
+        } else {
+            publicGroup.text = context.resources.getString(R.string.public_group)
+        }
+
+        publicGroup.setOnClickListener {
+            popupWindow.dismiss()
+            publicGroupDialog(it.context, item) { tag, group ->
+                if (tag.equals("yes", true)){
+                    publicGroupClickListener?.invoke(tag, group)
+                }
+            }
+        }
 
         return popupWindow
+    }
+
+    private fun publicGroupDialog(
+        context: Context,
+        group: CeibroGroupsV2?,
+        callback: (String, CeibroGroupsV2?) -> Unit
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        if (group?.publicGroup == true) {
+            dialogText.text =
+                context.resources.getString(R.string.are_you_sure_you_want_to_make_this_group_private)
+        } else {
+            dialogText.text =
+                context.resources.getString(R.string.are_you_sure_you_want_to_make_this_group_public)
+        }
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            alertDialog.dismiss()
+            callback.invoke("yes", group)
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
     }
 
     @SuppressLint("Range")

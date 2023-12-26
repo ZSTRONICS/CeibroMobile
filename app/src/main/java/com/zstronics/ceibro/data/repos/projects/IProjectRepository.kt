@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
+import com.zstronics.ceibro.data.repos.projects.group.PublicPrivateGroupResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.member.DeleteMemberResponse
@@ -143,6 +144,11 @@ interface IProjectRepository {
         projectId: String,
         groupName: CreateNewGroupV2Request,
     ): ApiResponse<CreateGroupResponseV2>
+
+    suspend fun makeGroupPublicOrPrivate(
+        state: Boolean,
+        groupId: String
+    ): ApiResponse<PublicPrivateGroupResponseV2>
 
     suspend fun updateGroupByIdV2(
         projectId: String,

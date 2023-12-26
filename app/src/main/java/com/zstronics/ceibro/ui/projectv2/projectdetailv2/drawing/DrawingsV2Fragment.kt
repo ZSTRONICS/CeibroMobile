@@ -194,8 +194,13 @@ class DrawingsV2Fragment :
 
 
         sectionedAdapter.requestPermissionCallBack {
-
             checkDownloadFilePermission()
+        }
+
+        sectionedAdapter.publicGroupCallBack { tag, group ->
+            if (group != null) {
+                viewModel.publicOrPrivateGroup(group)
+            }
         }
 
         mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :

@@ -21,6 +21,7 @@ import com.zstronics.ceibro.data.repos.projects.group.CreateProjectGroupResponse
 import com.zstronics.ceibro.data.repos.projects.group.DeleteGroupByIdResponseV2
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponse
 import com.zstronics.ceibro.data.repos.projects.group.GetProjectGroupsResponseV2
+import com.zstronics.ceibro.data.repos.projects.group.PublicPrivateGroupResponseV2
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberRequest
 import com.zstronics.ceibro.data.repos.projects.member.CreateProjectMemberResponse
 import com.zstronics.ceibro.data.repos.projects.member.DeleteMemberResponse
@@ -340,6 +341,17 @@ class ProjectRepository @Inject constructor(
         })
     }
 
+    override suspend fun makeGroupPublicOrPrivate(
+        state: Boolean,
+        groupId: String
+    ): ApiResponse<PublicPrivateGroupResponseV2> {
+        return executeSafely(call = {
+            service.makeGroupPublicOrPrivate(
+                state = state,
+                groupId = groupId
+            )
+        })
+    }
 
     override suspend fun updateGroupByIdV2(
         groupId: String,
