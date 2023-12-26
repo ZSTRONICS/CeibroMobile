@@ -170,11 +170,13 @@ class NewDrawingV2VM @Inject constructor(
 
                     val newDrawingList = response.data.drawings
                     val group = groupsV2Dao.getGroupByGroupId(groupId)
-                    val allDrawings = group.drawings.toMutableList()
-                    allDrawings.addAll(newDrawingList)
-                    group.drawings = allDrawings
-                    group.updatedAt = response.data.groupUpdatedAt
-                    groupsV2Dao.insertGroup(group)
+                    if (group != null) {
+                        val allDrawings = group.drawings.toMutableList()
+                        allDrawings.addAll(newDrawingList)
+                        group.drawings = allDrawings
+                        group.updatedAt = response.data.groupUpdatedAt
+                        groupsV2Dao.insertGroup(group)
+                    }
 
                     val newDrawingIdsList = response.data.drawings.map { it._id }
                     val floor = floorsV2Dao.getFloorByFloorId(floorId)

@@ -16,7 +16,7 @@ interface GroupsV2Dao {
 
 
     @Query("SELECT * FROM groups_v2 WHERE _id = :groupId")
-    suspend fun getGroupByGroupId(groupId: String): CeibroGroupsV2
+    suspend fun getGroupByGroupId(groupId: String): CeibroGroupsV2?
 
 //    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe ORDER BY updatedAt DESC")
 //    suspend fun getAllHiddenProjects(isHiddenByMe: Boolean = true): List<CeibroProjectV2>

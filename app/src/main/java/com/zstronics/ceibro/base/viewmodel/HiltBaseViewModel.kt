@@ -38,6 +38,7 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentUploadRequest
+import com.zstronics.ceibro.data.repos.projects.drawing.UploadedFileResponse
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
@@ -628,6 +629,35 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
+    fun addUploadedDrawingInLocal(
+        uploadedFile: UploadedFileResponse, groupV2Dao: GroupsV2Dao, floorV2Dao: FloorsV2Dao
+    ) {
+        GlobalScope.launch {
+            val group = groupV2Dao.getGroupByGroupId(uploadedFile.groupId)
+            if (group != null) {
+                val allDrawings = group.drawings.toMutableList()
+                uploadedFile.drawings.forEach { newDrawing ->
+                    val index =
+                        allDrawings.indexOfFirst { oldDrawing -> oldDrawing._id == newDrawing._id }
+                    if (index > -1) {
+                        allDrawings[index] = newDrawing
+                    } else {
+                        allDrawings.add(newDrawing)
+                    }
+                }
+                group.drawings = allDrawings
+                group.updatedAt = uploadedFile.groupUpdatedAt
+
+                groupV2Dao.insertGroup(group)
+            }
+            floorV2Dao.updateFloorUpdatedAtByFloorId(uploadedFile.floorUpdatedAt, uploadedFile.floorId)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                EventBus.getDefault().post(LocalEvents.RefreshGroupsData(uploadedFile.projectId))
+            }, 150)
+        }
+    }
+
     fun addCreatedProjectInLocal(
         project: CeibroProjectV2, projectDao: ProjectsV2Dao
     ) {
@@ -1028,7 +1058,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         taskDao.updateTask(task)
                         taskDao.insertEventData(taskEvent)
 
-                        if (eventData.newTaskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                        if (eventData.newTaskData.creatorState.equals(
+                                TaskStatus.CANCELED.name,
+                                true
+                            )
+                        ) {
                             sharedViewModel?.isHiddenUnread?.value = true
                             sessionManager.saveHiddenUnread(true)
                         } else {
@@ -1072,7 +1106,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                                     updateAllTasksListForComment(taskDao, eventData)
                                 }
-                            } else { }
+                            } else {
+                            }
                         }
                     }
 
