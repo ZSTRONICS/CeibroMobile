@@ -1,11 +1,14 @@
 package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +17,9 @@ import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
@@ -49,6 +54,13 @@ class AllDrawingsAdapterSectionRecycler(
     context,
     sectionList
 ) {
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+    private val permissionList10 = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
     var popupMenu: PopupMenu? = null
     private var isPopupMenuShowing = false
     var drawingFileClickListener: ((view: View, data: DrawingV2, tag: String) -> Unit)? =
@@ -64,7 +76,11 @@ class AllDrawingsAdapterSectionRecycler(
     fun downloadFileCallBack(itemClickListener: ((view: TextView, ivDownload: AppCompatImageView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
+    var requestPermissionClickListener: ((tag: String) -> Unit)? = null
 
+    fun requestPermissionCallBack(requestPermissionClickListener: (tag: String) -> Unit) {
+        this.requestPermissionClickListener = requestPermissionClickListener
+    }
     override fun onCreateSectionViewHolder(
         sectionViewGroup: ViewGroup?,
         viewType: Int
@@ -254,15 +270,23 @@ class AllDrawingsAdapterSectionRecycler(
                             } else {
                                 if (networkConnectivityObserver.isNetworkAvailable()) {
                                     if (data.fileUrl.isNotEmpty()) {
-                                        it.visibility = View.GONE
-                                        tvDownloadProgress.visibility = View.VISIBLE
-                                        downloadFileClickListener?.invoke(
-                                            tvDownloadProgress,
-                                            ivDownloadFile,
-                                            ivDownloaded,
-                                            data,
-                                            ""
-                                        )
+
+                                        if ( checkDownloadFilePermission(
+                                                context
+                                            )){
+
+                                            it.visibility = View.GONE
+                                            tvDownloadProgress.visibility = View.VISIBLE
+                                            downloadFileClickListener?.invoke(
+                                                tvDownloadProgress,
+                                                ivDownloadFile,
+                                                ivDownloaded,
+                                                data,
+                                                ""
+                                            )}else{
+
+                                            requestPermissionClickListener?.invoke("getpermissoin")
+                                        }
                                     }
                                 } else {
                                     cancelAndMakeToast(
@@ -426,4 +450,24 @@ class AllDrawingsAdapterSectionRecycler(
         val file = File(uri.path ?: "")
         return file.name
     }
+
+    private fun checkDownloadFilePermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkPermissions(permissionList13, context)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            true
+        } else {
+            checkPermissions(permissionList10, context)
+        }
+    }
+
+    private fun checkPermissions(permissions: Array<String>, context: Context): Boolean {
+        return permissions.all {
+            ContextCompat.checkSelfPermission(
+                context,
+                it
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
 }

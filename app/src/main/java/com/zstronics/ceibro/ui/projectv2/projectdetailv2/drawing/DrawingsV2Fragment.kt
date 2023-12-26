@@ -69,7 +69,7 @@ class DrawingsV2Fragment :
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
-    private val permissionList12 = arrayOf(
+    private val permissionList10 = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
@@ -185,7 +185,7 @@ class DrawingsV2Fragment :
                         ivDownloaded.visibility = View.GONE
                         tv.visibility = View.GONE
                         ivDownloadFile.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         tv.text = it
                     }
                 }
@@ -193,6 +193,10 @@ class DrawingsV2Fragment :
         }
 
 
+        sectionedAdapter.requestPermissionCallBack {
+
+            checkDownloadFilePermission()
+        }
 
         mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
@@ -308,6 +312,19 @@ class DrawingsV2Fragment :
         }
     }
 
+    private fun checkDownloadFilePermission(
+
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(permissionList13)
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+
+        } else {
+            requestPermissions(permissionList10)
+        }
+    }
 
     private fun checkDownloadFilePermission(
         url: DrawingV2,
@@ -322,13 +339,22 @@ class DrawingsV2Fragment :
             } else {
                 requestPermissions(permissionList13)
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+            downloadFile(url, downloadedDrawingV2Dao) {
+                itemClickListener?.invoke(it)
+            }
         } else {
-            if (checkPermissions(permissionList12)) {
+            if (checkPermissions(permissionList10)) {
                 downloadFile(url, downloadedDrawingV2Dao) {
                     itemClickListener?.invoke(it)
                 }
             } else {
-                requestPermissions(permissionList12)
+
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
+                requestPermissions(permissionList10)
             }
         }
     }
