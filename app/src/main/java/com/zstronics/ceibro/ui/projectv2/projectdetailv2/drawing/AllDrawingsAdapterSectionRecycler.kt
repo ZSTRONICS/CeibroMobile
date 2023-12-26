@@ -5,6 +5,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,9 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 
 class AllDrawingsAdapterSectionRecycler(
     val context: Context,
@@ -57,7 +61,7 @@ class AllDrawingsAdapterSectionRecycler(
     var downloadFileClickListener: ((view: TextView, ivDownloadFile: AppCompatImageView, ivDownloaded: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)? =
         null
 
-    fun downloadFileCallBack(itemClickListener: ((view: TextView,  ivDownload: AppCompatImageView,iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
+    fun downloadFileCallBack(itemClickListener: ((view: TextView, ivDownload: AppCompatImageView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
 
@@ -124,157 +128,152 @@ class AllDrawingsAdapterSectionRecycler(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CeibroGroupsV2?) {
 
-            binding.groupLayout.setOnClickListener {
-                if (binding.llParent.visibility == View.VISIBLE) {
-                    binding.ivDropDown.setImageResource(R.drawable.icon_drop_down)
-                    binding.llParent.visibility = View.GONE
-                } else {
-                    binding.ivDropDown.setImageResource(R.drawable.arrow_drop_up)
-                    binding.llParent.visibility = View.VISIBLE
-                }
-            }
-
-            binding.tvGroupName.text = "${item?.groupName} (${item?.drawings?.size ?: "0"})"
-            binding.tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
-
-
-//            binding.ivDownload.setOnClickListener {
-//                itemClickListener?.invoke(it, 1, "", "")
-//            }
-
-            binding.ivOptions.setOnClickListener {
-                togglePopupMenu(it)
-            }
-
-            binding.llParent.removeAllViews()
-
-
-            item?.drawings?.forEachIndexed { index, data ->
-
-
-                val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
-                    LayoutInflater.from(binding.root.context),
-                    R.layout.drawing_detail_item_list,
-                    binding.llParent,
-                    false
-                )
-                itemViewBinding.tvSample.text = "${data.fileName}"
-                itemViewBinding.tvFloor.text = "${data.floor.floorName} Floor"
-
-                /*
-                   itemViewBinding.root.setOnClickListener{
-                       val file = File(data.uploaderLocalFilePath)
-                       if (file.exists()) {
-                           drawingFileClickListener?.invoke(it, data, "")
-                       } else {
-                           cancelAndMakeToast(it.context, "File not downloaded", Toast.LENGTH_SHORT)
-                       }
-                   }*/
-
-                itemViewBinding.root.setOnClickListener { view ->
-                    MainScope().launch {
-                        val drawingObject =
-                            downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
-                        drawingObject?.let {
-
-                            val file = File(it.localUri)
-                            if (file.exists()) {
-                                drawingFileClickListener?.invoke(view, data, it.localUri)
-                            } else {
-                                cancelAndMakeToast(
-                                    view.context,
-                                    "File not downloaded",
-                                    Toast.LENGTH_SHORT
-                                )
-                            }
-                        }
+            binding.apply {
+                groupLayout.setOnClickListener {
+                    if (llParent.visibility == View.VISIBLE) {
+                        ivDropDown.setImageResource(R.drawable.icon_drop_down)
+                        llParent.visibility = View.GONE
+                    } else {
+                        ivDropDown.setImageResource(R.drawable.arrow_drop_up)
+                        llParent.visibility = View.VISIBLE
                     }
                 }
 
-                MainScope().launch {
-                    val drawingObject =
-                        downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
-                    drawingObject?.let {
+                tvGroupName.text = "${item?.groupName} (${item?.drawings?.size ?: "0"})"
+                tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
-                        if (it.isDownloaded) {
-                            itemViewBinding.ivDownloaded.visibility = View.VISIBLE
-                            itemViewBinding.tvDownloadProgress.visibility = View.GONE
-                            itemViewBinding.ivDownloadFile.visibility = View.GONE
-                        } else if (it.downloading) {
-                            itemViewBinding.ivDownloaded.visibility = View.GONE
-                            itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
-                            itemViewBinding.ivDownloadFile.visibility = View.GONE
-                            getDownloadProgress(
-                                itemViewBinding.tvDownloadProgress.context,
-                                it.downloadId
-                            ) {
-                                MainScope().launch {
-                                    if (it.trim().equals("100%", true)) {
-                                        itemViewBinding.tvDownloadProgress.visibility = View.GONE
-                                        itemViewBinding.ivDownloaded.visibility = View.VISIBLE
-                                        itemViewBinding.tvDownloadProgress.text = it
-                                    } else if (it == "retry" || it == "failed") {
+                ivOptions.setOnClickListener {
+                    togglePopupMenu(it)
+                }
 
-                                        downloadedDrawingV2Dao.deleteByDrawingID(data._id)
+                llParent.removeAllViews()
 
-                                        itemViewBinding.ivDownloaded.visibility = View.GONE
-                                        itemViewBinding.tvDownloadProgress.visibility = View.GONE
-                                        itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
+                item?.drawings?.forEachIndexed { index, data ->
+
+
+                    val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
+                        LayoutInflater.from(binding.root.context),
+                        R.layout.drawing_detail_item_list,
+                        binding.llParent,
+                        false
+                    )
+
+                    itemViewBinding.apply {
+                        tvSample.text = "${data.fileName}"
+                        tvFloor.text = "${data.floor.floorName} Floor"
+                        root.setOnClickListener { view ->
+                            MainScope().launch {
+                                val drawingObject =
+                                    downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                                drawingObject?.let {
+
+                                    val file = File(it.localUri)
+                                    if (file.exists()) {
+                                        drawingFileClickListener?.invoke(view, data, it.localUri)
+                                    } else {
+                                        cancelAndMakeToast(
+                                            view.context,
+                                            "File not downloaded",
+                                            Toast.LENGTH_SHORT
+                                        )
                                     }
                                 }
                             }
-                        } else {
-                            itemViewBinding.ivDownloaded.visibility = View.GONE
-                            itemViewBinding.tvDownloadProgress.visibility = View.GONE
-                            itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
-                        }
-                    } ?: kotlin.run {
-                        itemViewBinding.ivDownloaded.visibility = View.GONE
-                        itemViewBinding.tvDownloadProgress.visibility = View.GONE
-                        itemViewBinding.ivDownloadFile.visibility = View.VISIBLE
-                    }
-                }
-                itemViewBinding.ivDownloadFile.setOnClickListener {
-                    val file = File(data.fileName)
-                    if (file.exists()) {
-                        //openFile
-                    } else {
-                        if (networkConnectivityObserver.isNetworkAvailable()) {
-                            it.visibility = View.GONE
-                            itemViewBinding.tvDownloadProgress.visibility = View.VISIBLE
-                            downloadFileClickListener?.invoke(
-                                itemViewBinding.tvDownloadProgress,
-                                itemViewBinding.ivDownloadFile,
-                                itemViewBinding.ivDownloaded,
-                                data,
-                                ""
-                            )
-                        } else {
-                            cancelAndMakeToast(
-                                it.context,
-                                "No Internet Available.",
-                                Toast.LENGTH_SHORT
-                            )
                         }
 
+                        MainScope().launch {
+                            val drawingObject =
+                                downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                            drawingObject?.let {
+
+                                if (it.isDownloaded && it.localUri.isNotEmpty()) {
+                                    ivDownloaded.visibility = View.VISIBLE
+                                    tvDownloadProgress.visibility = View.GONE
+                                    ivDownloadFile.visibility = View.GONE
+                                } else if (it.downloading) {
+                                    ivDownloaded.visibility = View.GONE
+                                    tvDownloadProgress.visibility = View.VISIBLE
+                                    ivDownloadFile.visibility = View.GONE
+                                    getDownloadProgress(
+                                        tvDownloadProgress.context,
+                                        it.downloadId
+                                    ) { status, filepath, progress ->
+                                        MainScope().launch {
+                                            if (status.equals("100%", true)) {
+                                                if (filepath.isNotEmpty()) {
+                                                    ivDownloadFile.visibility =
+                                                        View.GONE
+                                                    tvDownloadProgress.visibility =
+                                                        View.GONE
+                                                    ivDownloaded.visibility =
+                                                        View.VISIBLE
+                                                    tvDownloadProgress.text = progress
+                                                } else {
+                                                    downloadedDrawingV2Dao.deleteByDrawingID(data._id)
+                                                    ivDownloaded.visibility = View.GONE
+                                                    tvDownloadProgress.visibility =
+                                                        View.GONE
+                                                    ivDownloadFile.visibility =
+                                                        View.VISIBLE
+                                                }
+                                            } else if (status == "retry" || status == "failed") {
+                                                downloadedDrawingV2Dao.deleteByDrawingID(data._id)
+                                                tvDownloadProgress.text = "0%"
+                                                ivDownloaded.visibility = View.GONE
+                                                tvDownloadProgress.visibility = View.GONE
+                                                ivDownloadFile.visibility = View.VISIBLE
+                                            } else if (status == "downloading") {
+                                                ivDownloadFile.visibility = View.GONE
+                                                tvDownloadProgress.visibility = View.VISIBLE
+                                                tvDownloadProgress.text = progress
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    ivDownloaded.visibility = View.GONE
+                                    tvDownloadProgress.visibility = View.GONE
+                                    ivDownloadFile.visibility = View.VISIBLE
+                                }
+                            } ?: kotlin.run {
+                                ivDownloaded.visibility = View.GONE
+                                tvDownloadProgress.visibility = View.GONE
+                                ivDownloadFile.visibility = View.VISIBLE
+                            }
+                        }
+                        ivDownloadFile.setOnClickListener {
+                            val file = File(data.fileName)
+                            if (file.exists()) {
+
+                            } else {
+                                if (networkConnectivityObserver.isNetworkAvailable()) {
+                                    it.visibility = View.GONE
+                                    tvDownloadProgress.visibility = View.VISIBLE
+                                    downloadFileClickListener?.invoke(
+                                        tvDownloadProgress,
+                                        ivDownloadFile,
+                                        ivDownloaded,
+                                        data,
+                                        ""
+                                    )
+                                } else {
+                                    cancelAndMakeToast(
+                                        it.context,
+                                        "No Internet Available.",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
+                            }
+                        }
+
+                        binding.llParent.addView(itemViewBinding.root)
                     }
                 }
-
-
-
-                binding.llParent.addView(itemViewBinding.root)
-
             }
         }
     }
 
     private fun togglePopupMenu(view: View) {
-//        if (isPopupMenuShowing) {
-//            popupMenu?.dismiss()
-//        } else {
         popUpMenu(view)
-//        }
-//        isPopupMenuShowing = !isPopupMenuShowing
     }
 
     private fun popUpMenu(v: View): PopupWindow {
@@ -304,20 +303,7 @@ class AllDrawingsAdapterSectionRecycler(
         //////////////////////
         popupWindow.showAsDropDown(v, 0, 5)
 
-//        val editTask = view.findViewById<View>(R.id.editTask)
-//        val deleteTask = view.findViewById<View>(R.id.deleteTask)
 
-
-//        if (positionOfIcon > height) {
-//            if (deleteTask.visibility == View.GONE) {
-//                popupWindow.showAsDropDown(v, -135, -245)
-//            }
-//            else {
-//                popupWindow.showAsDropDown(v, -170, -405)
-//            }
-//        } else {
-//            popupWindow.showAsDropDown(v, 0, 5)
-//        }
         return popupWindow
     }
 
@@ -325,7 +311,7 @@ class AllDrawingsAdapterSectionRecycler(
     private fun getDownloadProgress(
         context: Context?,
         downloadId: Long,
-        itemClickListener: ((tag: String) -> Unit)?
+        itemClickListener: ((tag: String, fileAbsolutePath: String, progress: String) -> Unit)?
     ) {
         GlobalScope.launch {
             while (true) {
@@ -345,10 +331,35 @@ class AllDrawingsAdapterSectionRecycler(
 
                     if (status.toInt() == DownloadManager.STATUS_FAILED) {
                         println("Status failed: $status")
-                        itemClickListener?.invoke("failed")
+                        itemClickListener?.invoke("failed", "", "")
                         break
                     } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
-                        itemClickListener?.invoke("100%")
+                        val uri =
+                            Uri.parse(cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)))
+                        val fileName = getFileNameFromUri(uri)
+                        fileName?.let {
+                            val fileAbsolutePath = copyFileToInternalStorage(it, uri, context)
+                            GlobalScope.launch {
+                                val downloadedDrawing =
+                                    downloadedDrawingV2Dao.getDownloadedDrawingByDownloadId(
+                                        downloadId
+                                    )
+                                fileAbsolutePath?.let { fileAbsolutePath ->
+                                    downloadedDrawing?.let {
+                                        it.apply {
+                                            downloading = false
+                                            isDownloaded = true
+                                            localUri = fileAbsolutePath
+                                        }
+                                        downloadedDrawingV2Dao.insertDownloadDrawing(
+                                            downloadedDrawing
+                                        )
+                                    }
+                                }
+                                itemClickListener?.invoke("100%", fileAbsolutePath ?: "", "")
+                            }
+                        }
+
                         break
                     }
 
@@ -358,12 +369,12 @@ class AllDrawingsAdapterSectionRecycler(
                     println("StatusDownloaded: $bytesDownloaded")
                     println("StatusTotal: $bytesTotal")
 
-                    itemClickListener?.invoke("$downloadedPercent %")
+                    itemClickListener?.invoke("downloading", "", "$downloadedPercent%")
                     if (bytesTotal > 0) {
                         println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
                     }
                 } else {
-                    itemClickListener?.invoke("retry")
+                    itemClickListener?.invoke("retry", "", "")
                     break
                 }
 
@@ -375,4 +386,35 @@ class AllDrawingsAdapterSectionRecycler(
         }
     }
 
+    private fun copyFileToInternalStorage(
+        fileName: String,
+        uri: Uri,
+        context: Context
+    ): String? {
+        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+        val outputStream: FileOutputStream
+
+        try {
+            // Create a file in the internal storage
+            val file = File(context.filesDir, fileName)
+            outputStream = FileOutputStream(file)
+
+            // Copy the content of the input stream to the output stream
+            inputStream?.copyTo(outputStream)
+
+            inputStream?.close()
+            outputStream.close()
+
+            return file.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    private fun getFileNameFromUri(uri: Uri): String? {
+        val file = File(uri.path ?: "")
+        return file.name
+    }
 }
