@@ -159,6 +159,7 @@ class AllDrawingsAdapterSectionRecycler(
                     )
 
                     itemViewBinding.apply {
+
                         tvSample.text = "${data.fileName}"
                         tvFloor.text = "${data.floor.floorName} Floor"
                         root.setOnClickListener { view ->
@@ -177,6 +178,12 @@ class AllDrawingsAdapterSectionRecycler(
                                             Toast.LENGTH_SHORT
                                         )
                                     }
+                                }?: kotlin.run {
+                                    cancelAndMakeToast(
+                                        view.context,
+                                        "File not downloaded",
+                                        Toast.LENGTH_SHORT
+                                    )
                                 }
                             }
                         }
@@ -199,7 +206,7 @@ class AllDrawingsAdapterSectionRecycler(
                                         it.downloadId
                                     ) { status, filepath, progress ->
                                         MainScope().launch {
-                                            if (status.equals("100%", true)) {
+                                            if (status.equals("downloaded", true)) {
                                                 if (filepath.isNotEmpty()) {
                                                     ivDownloadFile.visibility =
                                                         View.GONE
@@ -356,7 +363,7 @@ class AllDrawingsAdapterSectionRecycler(
                                         )
                                     }
                                 }
-                                itemClickListener?.invoke("100%", fileAbsolutePath ?: "", "")
+                                itemClickListener?.invoke("downloaded", fileAbsolutePath ?: "", "100%")
                             }
                         }
 
