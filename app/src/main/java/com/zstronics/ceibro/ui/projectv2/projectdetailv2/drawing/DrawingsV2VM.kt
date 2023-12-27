@@ -44,10 +44,12 @@ class DrawingsV2VM @Inject constructor(
         MutableLiveData(mutableListOf())
 
 
-    var originalAllGroups: MutableList<CeibroGroupsV2> = mutableListOf()
-    var originalFavouriteGroups: MutableList<CeibroGroupsV2> = mutableListOf()
-    var originalOtherGroups: MutableList<CeibroGroupsV2> = mutableListOf()
-    var orignalMyGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+    private var originalAllGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+
+    private var originalFavouriteGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+    private var originalOtherGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+    private var orignalMyGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
