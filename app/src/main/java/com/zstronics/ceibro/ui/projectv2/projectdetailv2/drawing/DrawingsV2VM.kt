@@ -62,7 +62,9 @@ class DrawingsV2VM @Inject constructor(
                 _favoriteGroups.value = favorites.toMutableList()
                 _groupData.value = groupsList.toMutableList()
 //                loading(false, "")
+                viewState.isVisible.value = false
             } else {
+                viewState.isVisible.value = true
 //                when (val response = projectRepository.getGroupsByProjectId(projectId)) {
 //
 //                    is ApiResponse.Success -> {

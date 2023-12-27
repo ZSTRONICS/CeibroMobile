@@ -6,6 +6,7 @@ import com.zstronics.ceibro.base.interfaces.IBase
 interface IDrawingV2 {
     interface State : IBase.State {
         var isFilterVisible: MutableLiveData<Boolean>
+        var isVisible: MutableLiveData<Boolean>
 
 
     }

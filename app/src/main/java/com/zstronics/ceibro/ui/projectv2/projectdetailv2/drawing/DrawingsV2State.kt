@@ -8,6 +8,7 @@ class DrawingsV2State @Inject constructor(
 ) : BaseState(), IDrawingV2.State {
 
     override var isFilterVisible: MutableLiveData<Boolean> = MutableLiveData(false)
+    override var isVisible: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
 }

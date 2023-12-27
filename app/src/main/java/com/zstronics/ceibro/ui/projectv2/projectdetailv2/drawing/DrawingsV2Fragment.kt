@@ -103,7 +103,24 @@ class DrawingsV2Fragment :
                         }
                     }
                 }
+            }
 
+            R.id.clAddNewDrawing -> {
+
+                fragmentManager?.let {
+                    chooseFile(it) { fromLocation ->
+                        if (fromLocation.equals("local", true)) {
+
+                            chooseDocuments(
+                                mimeTypes = arrayOf(
+                                    "application/pdf"
+                                )
+                            )
+                        } else {
+                            shortToastNow("Coming Soon")
+                        }
+                    }
+                }
             }
 
             R.id.cancelSearch -> {
