@@ -39,6 +39,8 @@ data class CeibroGroupsV2(
     var hasAccess: Boolean,
     @SerializedName("isHiddenByMe")
     var isHiddenByMe: Boolean,
+    @SerializedName("isCreator")
+    var isCreator: Boolean,
     @SerializedName("publicGroup")
     var publicGroup: Boolean = false
 

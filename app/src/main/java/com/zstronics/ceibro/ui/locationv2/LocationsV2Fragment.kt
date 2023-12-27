@@ -34,7 +34,6 @@ import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
-import com.zstronics.ceibro.ui.profile.editprofile.ChangePasswordSheet
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -280,7 +279,7 @@ class LocationsV2Fragment :
 
 
             val file = File(it.uploaderLocalFilePath)
-//            val fileUri = Uri.fromFile(file)
+
             mViewDataBinding.pdfView.fromFile(file)
                 .defaultPage(0)
                 .enableSwipe(true)
@@ -526,7 +525,7 @@ class LocationsV2Fragment :
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
 //            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
-            showNewItemBottomSheet()
+            showNewItemBottomSheet(markerIndex)
 
 //            for (marker in markers) {
 //                if (marker.first == point.x && marker.second == point.y) {
@@ -564,16 +563,17 @@ class LocationsV2Fragment :
     }
 
 
-    private fun showNewItemBottomSheet() {
+    private fun showNewItemBottomSheet(markerIndex: Int) {
         val sheet = LocationNewItemBottomSheet()
         sheet.dialog?.window?.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
                     WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         )
 
-//        sheet.onChangePasswordDismiss = {
-//
-//        }
+        sheet.onSheetDismiss = {
+            markers.removeAt(markerIndex)
+            mViewDataBinding.pdfView.invalidate()
+        }
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "ChangePasswordSheet")
     }

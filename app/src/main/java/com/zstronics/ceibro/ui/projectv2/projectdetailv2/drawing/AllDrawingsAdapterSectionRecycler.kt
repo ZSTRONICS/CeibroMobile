@@ -168,6 +168,11 @@ class AllDrawingsAdapterSectionRecycler(
                 tvGroupName.text = "${item?.groupName} (${item?.drawings?.size ?: "0"})"
                 tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
+                if (item?.isCreator == true) {
+                    ivOptions.visibility = View.VISIBLE
+                } else {
+                    ivOptions.visibility = View.GONE
+                }
                 ivOptions.setOnClickListener {
                     togglePopupMenu(it, item)
                 }

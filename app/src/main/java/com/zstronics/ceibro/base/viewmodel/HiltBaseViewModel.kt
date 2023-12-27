@@ -610,10 +610,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     fun addGroupCreatedInLocal(
-        group: CeibroGroupsV2, groupV2Dao: GroupsV2Dao
+        group: CeibroGroupsV2, groupV2Dao: GroupsV2Dao, projectsV2Dao: ProjectsV2Dao
     ) {
         GlobalScope.launch {
             groupV2Dao.insertGroup(group)
+            val project = projectsV2Dao.getProjectByProjectId(group.projectId)
+            if (project == null) {
+
+            }
 
             EventBus.getDefault().post(LocalEvents.RefreshGroupsData(group.projectId))
         }
