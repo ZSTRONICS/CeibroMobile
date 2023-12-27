@@ -338,6 +338,8 @@ class CeibroDataLoadingVM @Inject constructor(
             taskDao.deleteAllTasksData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
+            groupsV2Dao.deleteAll()
+            floorsV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }
