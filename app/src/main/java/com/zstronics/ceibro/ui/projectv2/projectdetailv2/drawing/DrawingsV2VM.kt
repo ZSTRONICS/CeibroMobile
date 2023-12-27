@@ -65,22 +65,21 @@ class DrawingsV2VM @Inject constructor(
             originalAllGroups = groupsList.toMutableList()
             originalGroups.value = groupsList.toMutableList()
             if (groupsList.isNotEmpty()) {
+
                 val favoriteGroups = groupsList.filter { it.isFavoriteByMe } ?: listOf()
-                originalFavouriteGroups=favoriteGroups.toMutableList()
+                originalFavouriteGroups = favoriteGroups.toMutableList()
 
-                val creatorGroups =
-                    groupsList.filter { (!it.isFavoriteByMe) && (it.isCreator) } ?: listOf()
+                val creatorGroups = groupsList.filter { (!it.isFavoriteByMe) && (it.isCreator) } ?: listOf()
+                orignalMyGroups = creatorGroups.toMutableList()
 
-                val otherGroups =
-                    groupsList.filter { (!it.isFavoriteByMe) && (!it.isCreator) } ?: listOf()
-                orignalMyGroups=otherGroups.toMutableList()
-
-                originalOtherGroups=otherGroups.toMutableList()
+                val otherGroups = groupsList.filter { (!it.isFavoriteByMe) && (!it.isCreator) } ?: listOf()
+                originalOtherGroups = otherGroups.toMutableList()
 
 
                 _favoriteGroups.value = favoriteGroups.toMutableList()
                 _groupData.value = creatorGroups.toMutableList()
                 _otherGroupsData.value = otherGroups.toMutableList()
+
 //                loading(false, "")
                 viewState.isVisible.value = false
             } else {
@@ -128,14 +127,14 @@ class DrawingsV2VM @Inject constructor(
     }
 
 
-    fun filterAllProjects(search: String) {
+    fun filterMyGroups(search: String) {
         if (search.isEmpty()) {
-            if (originalAllGroups.isNotEmpty()) {
-                _groupData.postValue(originalAllGroups)
+            if (orignalMyGroups.isNotEmpty()) {
+                _groupData.postValue(orignalMyGroups)
             }
             return
         }
-        val filtered = originalAllGroups.filter {
+        val filtered = orignalMyGroups.filter {
             (it.groupName.isNotEmpty() && it.groupName.contains(search, true)) ||
                     (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
                         .contains(search, true)) ||
@@ -167,6 +166,7 @@ class DrawingsV2VM @Inject constructor(
         else
             _favoriteGroups.postValue(mutableListOf())
     }
+
     fun filterOtherGroups(search: String) {
         if (search.isEmpty()) {
             if (originalOtherGroups.isNotEmpty()) {

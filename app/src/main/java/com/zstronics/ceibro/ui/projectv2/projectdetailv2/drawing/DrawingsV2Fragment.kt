@@ -231,16 +231,21 @@ class DrawingsV2Fragment :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    viewModel.filterAllProjects(query.trim())
+
+                    viewModel.filterMyGroups(query.trim())
+                    viewModel.filterFavouriteGroups(query.trim())
+                    viewModel.filterOtherGroups(query.trim())
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    viewModel.filterAllProjects(newText.trim())
-                  //  viewModel.filterFavouriteGroups(newText.trim())
-                   // viewModel.filterOtherGroups(newText.trim())
+
+                    viewModel.filterMyGroups(newText.trim())
+                    viewModel.filterFavouriteGroups(newText.trim())
+                    viewModel.filterOtherGroups(newText.trim())
+
                 }
                 return true
             }
@@ -314,31 +319,43 @@ class DrawingsV2Fragment :
 
         viewModel.otherGroupsData.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                val groupedByCreatorId = it.groupBy { group-> group.creator.id }
+                val groupedByCreatorId = it.groupBy { group -> group.creator.id }
 
                 // Creating an array of arrays where each inner array contains groups with the same creator._id
                 val result = groupedByCreatorId.values.toList()
 
-                if (sectionList.size>2){
-                    sectionList.mapIndexed { index,drawingSectionHeader->
-                        if (index>1) {
-                            sectionList.removeAt(index)
+
+
+                if (sectionList.size > 2) {
+                    val iterator = sectionList.iterator()
+                    var count = 0
+
+                    while (iterator.hasNext()) {
+                        if (count > 1) {
+                            iterator.remove()
                         }
+
+                        iterator.next()
+                        count++
                     }
                 }
 
-                result.mapIndexed {index, creatorGroups->
+                result.mapIndexed { index, creatorGroups ->
                     println("otherGroupsData: ${creatorGroups.size} groups: ${creatorGroups}")
 
-                        sectionList.add(
-                            index + 2, DrawingSectionHeader(creatorGroups.toMutableList(), "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}")
+                    sectionList.add(
+                        index + 2,
+                        DrawingSectionHeader(
+                            creatorGroups.toMutableList(),
+                            "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
                         )
-                        sectionedAdapter.insertNewSection(
-                            DrawingSectionHeader(
-                                creatorGroups.toMutableList(),
-                                "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
-                            ), index + 2
-                        )
+                    )
+                    sectionedAdapter.insertNewSection(
+                        DrawingSectionHeader(
+                            creatorGroups.toMutableList(),
+                            "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
+                        ), index + 2
+                    )
                 }
                 sectionedAdapter.notifyDataSetChanged()
 
@@ -356,12 +373,17 @@ class DrawingsV2Fragment :
                 sectionedAdapter.notifyDataSetChanged()*/
 
             } else {
-//                sectionList.removeAt(2)
-                if (sectionList.size>2){
-                    sectionList.mapIndexed { index,drawingSectionHeader->
-                        if (index>1) {
-                            sectionList.removeAt(index)
+                if (sectionList.size > 2) {
+                    val iterator = sectionList.iterator()
+                    var count = 0
+
+                    while (iterator.hasNext()) {
+                        if (count > 1) {
+                            iterator.remove()
                         }
+
+                        iterator.next()
+                        count++
                     }
                 }
                 sectionList.add(
