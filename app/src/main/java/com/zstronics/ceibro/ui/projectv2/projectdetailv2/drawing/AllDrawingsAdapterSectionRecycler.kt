@@ -139,8 +139,6 @@ class AllDrawingsAdapterSectionRecycler(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DrawingSectionHeader?) {
             binding.headerTitle.text = item?.getSectionText()
-            binding.headerTitle.textSize = 14f
-            binding.headerTitle.setTextColor(context.getColor(R.color.appGrey3))
 
             if (item?.childItems.isNullOrEmpty()) {
                 binding.headerTitle.visibility = View.GONE
