@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.locationv2
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
     lateinit var binding: LayoutLocationNewItemBinding
+    var onSheetDismiss: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +38,13 @@ class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
 
         binding.closeBtn.setOnClickListener {
             dismiss()
+//            onSheetDismiss?.invoke()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onSheetDismiss?.invoke()
     }
 
 }

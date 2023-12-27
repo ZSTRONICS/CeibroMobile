@@ -155,7 +155,10 @@ class NewTaskV2VM @Inject constructor(
                 )
                 sessionManager.saveNewTaskData(newTaskToSave)
                 if (networkConnectivityObserver.isNetworkAvailable().not()) {
-                    saveDataInLocal(newTaskRequest, list, onBack)
+                    saveDataInLocal(newTaskRequest, list) {
+                        onBack.invoke("taskCreatedLocally")
+                    }
+
                     return@launch
                 }
 

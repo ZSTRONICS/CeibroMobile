@@ -11,6 +11,9 @@ interface ProjectsV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleProject(projectsData: List<CeibroProjectV2>)
 
+    @Query("SELECT * FROM projects_v2 WHERE _id = :projectId")
+    suspend fun getProjectByProjectId(projectId: String): CeibroProjectV2?
+
     @Query("SELECT * FROM projects_v2 ORDER BY updatedAt DESC")
     suspend fun getAllProjectsForTask(): List<CeibroProjectV2>
 

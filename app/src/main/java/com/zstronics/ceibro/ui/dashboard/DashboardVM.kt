@@ -311,7 +311,7 @@ class DashboardVM @Inject constructor(
                             arguments,
                             object : TypeToken<ProjectGroupV2CreatedSocketResponse>() {}.type
                         ).data
-                    addGroupCreatedInLocal(newGroup, groupV2Dao)
+                    addGroupCreatedInLocal(newGroup, groupV2Dao, projectsV2Dao)
 //                    EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(newGroup))
                 }
 
@@ -323,7 +323,7 @@ class DashboardVM @Inject constructor(
                                 object : TypeToken<ProjectGroupV2CreatedSocketResponse>() {}.type
                             ).data
 
-                        addGroupCreatedInLocal(updatedGroup, groupV2Dao)
+                        addGroupCreatedInLocal(updatedGroup, groupV2Dao, projectsV2Dao)
 //                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
                     } catch (e: Exception) {
                         println("Some data error")

@@ -78,16 +78,19 @@ class AllDrawingsAdapterSectionRecycler(
     fun downloadFileCallBack(itemClickListener: ((view: TextView, ivDownload: AppCompatImageView, iv: AppCompatImageView, data: DrawingV2, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
+
     var requestPermissionClickListener: ((tag: String) -> Unit)? = null
 
     fun requestPermissionCallBack(requestPermissionClickListener: (tag: String) -> Unit) {
         this.requestPermissionClickListener = requestPermissionClickListener
     }
+
     var publicGroupClickListener: ((tag: String, CeibroGroupsV2?) -> Unit)? = null
 
     fun publicGroupCallBack(publicGroupClickListener: (tag: String, CeibroGroupsV2?) -> Unit) {
         this.publicGroupClickListener = publicGroupClickListener
     }
+
     override fun onCreateSectionViewHolder(
         sectionViewGroup: ViewGroup?,
         viewType: Int
@@ -165,6 +168,11 @@ class AllDrawingsAdapterSectionRecycler(
                 tvGroupName.text = "${item?.groupName} (${item?.drawings?.size ?: "0"})"
                 tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
+                if (item?.isCreator == true) {
+                    ivOptions.visibility = View.VISIBLE
+                } else {
+                    ivOptions.visibility = View.GONE
+                }
                 ivOptions.setOnClickListener {
                     togglePopupMenu(it, item)
                 }
@@ -191,6 +199,7 @@ class AllDrawingsAdapterSectionRecycler(
                                     downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
                                 drawingObject?.let {
 
+
                                     val file = File(it.localUri)
                                     if (file.exists()) {
                                         drawingFileClickListener?.invoke(view, data, it.localUri)
@@ -201,7 +210,7 @@ class AllDrawingsAdapterSectionRecycler(
                                             Toast.LENGTH_SHORT
                                         )
                                     }
-                                }?: kotlin.run {
+                                } ?: kotlin.run {
                                     cancelAndMakeToast(
                                         view.context,
                                         "File not downloaded",
@@ -271,30 +280,34 @@ class AllDrawingsAdapterSectionRecycler(
                             }
                         }
                         ivDownloadFile.setOnClickListener {
-                            val file = File(data.fileName)
-                            if (file.exists()) {
-
+                            if (data.fileUrl.isEmpty()) {
+                                cancelAndMakeToast(
+                                    it.context,
+                                    "File address is invalid or file is corrupted",
+                                    Toast.LENGTH_SHORT
+                                )
                             } else {
                                 if (networkConnectivityObserver.isNetworkAvailable()) {
-                                    if (data.fileUrl.isNotEmpty()) {
 
-                                        if ( checkDownloadFilePermission(
-                                                context
-                                            )){
+                                    if (checkDownloadFilePermission(
+                                            context
+                                        )
+                                    ) {
 
-                                            it.visibility = View.GONE
-                                            tvDownloadProgress.visibility = View.VISIBLE
-                                            downloadFileClickListener?.invoke(
-                                                tvDownloadProgress,
-                                                ivDownloadFile,
-                                                ivDownloaded,
-                                                data,
-                                                ""
-                                            )}else{
+                                        it.visibility = View.GONE
+                                        tvDownloadProgress.visibility = View.VISIBLE
+                                        downloadFileClickListener?.invoke(
+                                            tvDownloadProgress,
+                                            ivDownloadFile,
+                                            ivDownloaded,
+                                            data,
+                                            ""
+                                        )
+                                    } else {
 
-                                            requestPermissionClickListener?.invoke("getpermissoin")
-                                        }
+                                        requestPermissionClickListener?.invoke("getpermissoin")
                                     }
+
                                 } else {
                                     cancelAndMakeToast(
                                         it.context,
@@ -352,7 +365,7 @@ class AllDrawingsAdapterSectionRecycler(
         publicGroup.setOnClickListener {
             popupWindow.dismiss()
             publicGroupDialog(it.context, item) { tag, group ->
-                if (tag.equals("yes", true)){
+                if (tag.equals("yes", true)) {
                     publicGroupClickListener?.invoke(tag, group)
                 }
             }
@@ -445,7 +458,11 @@ class AllDrawingsAdapterSectionRecycler(
                                         )
                                     }
                                 }
-                                itemClickListener?.invoke("downloaded", fileAbsolutePath ?: "", "100%")
+                                itemClickListener?.invoke(
+                                    "downloaded",
+                                    fileAbsolutePath ?: "",
+                                    "100%"
+                                )
                             }
                         }
 

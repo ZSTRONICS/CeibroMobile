@@ -85,6 +85,8 @@ class NewTaskV2Fragment :
                             context.startService(serviceIntent)
                             navigateBack()
                         }
+                    } else if(it.equals("taskCreatedLocally",true))  {
+                        navigateBack()
                     } else {
                         val bundle = Bundle()
                         bundle.putBoolean("createdNewTask", true)
