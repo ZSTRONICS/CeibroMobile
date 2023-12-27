@@ -570,6 +570,7 @@
     <string name="all_projects">All Projects</string>
     <string name="all_groups">All Groups</string>
     <string name="my_groups">My Groups</string>
+    <string name="other_groups">Other Groups</string>
     <string name="recent_projects">Recent used projects</string>
     <string name="recently_used">Recently used</string>
     <string name="favorite_projects">Favorites</string>

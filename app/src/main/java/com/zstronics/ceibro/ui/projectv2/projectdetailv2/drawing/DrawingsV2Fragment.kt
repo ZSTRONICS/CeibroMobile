@@ -172,7 +172,14 @@ class DrawingsV2Fragment :
             1,
             DrawingSectionHeader(
                 mutableListOf(),
-                getString(R.string.all_groups)
+                getString(R.string.my_groups)
+            )
+        )
+        sectionList.add(
+            2,
+            DrawingSectionHeader(
+                mutableListOf(),
+                getString(R.string.other_groups)
             )
         )
 
@@ -232,6 +239,8 @@ class DrawingsV2Fragment :
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.filterAllProjects(newText.trim())
+                  //  viewModel.filterFavouriteGroups(newText.trim())
+                   // viewModel.filterOtherGroups(newText.trim())
                 }
                 return true
             }
@@ -278,12 +287,12 @@ class DrawingsV2Fragment :
             if (it.isNotEmpty()) {
                 sectionList.removeAt(1)
                 sectionList.add(
-                    1, DrawingSectionHeader(it, getString(R.string.all_groups))
+                    1, DrawingSectionHeader(it, getString(R.string.my_groups))
                 )
                 sectionedAdapter.insertNewSection(
                     DrawingSectionHeader(
                         it,
-                        getString(R.string.all_groups)
+                        getString(R.string.my_groups)
                     ), 1
                 )
                 sectionedAdapter.notifyDataSetChanged()
@@ -291,13 +300,78 @@ class DrawingsV2Fragment :
             } else {
                 sectionList.removeAt(1)
                 sectionList.add(
-                    1, DrawingSectionHeader(mutableListOf(), getString(R.string.all_groups))
+                    1, DrawingSectionHeader(mutableListOf(), getString(R.string.my_groups))
                 )
                 sectionedAdapter.insertNewSection(
                     DrawingSectionHeader(
                         mutableListOf(),
-                        getString(R.string.all_groups)
+                        getString(R.string.my_groups)
                     ), 1
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.otherGroupsData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                val groupedByCreatorId = it.groupBy { group-> group.creator.id }
+
+                // Creating an array of arrays where each inner array contains groups with the same creator._id
+                val result = groupedByCreatorId.values.toList()
+
+                if (sectionList.size>2){
+                    sectionList.mapIndexed { index,drawingSectionHeader->
+                        if (index>1) {
+                            sectionList.removeAt(index)
+                        }
+                    }
+                }
+
+                result.mapIndexed {index, creatorGroups->
+                    println("otherGroupsData: ${creatorGroups.size} groups: ${creatorGroups}")
+
+                        sectionList.add(
+                            index + 2, DrawingSectionHeader(creatorGroups.toMutableList(), "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}")
+                        )
+                        sectionedAdapter.insertNewSection(
+                            DrawingSectionHeader(
+                                creatorGroups.toMutableList(),
+                                "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
+                            ), index + 2
+                        )
+                }
+                sectionedAdapter.notifyDataSetChanged()
+
+
+                /*sectionList.removeAt(2)
+                sectionList.add(
+                    2, DrawingSectionHeader(it, getString(R.string.my_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    DrawingSectionHeader(
+                        it,
+                        getString(R.string.my_groups)
+                    ), 2
+                )
+                sectionedAdapter.notifyDataSetChanged()*/
+
+            } else {
+//                sectionList.removeAt(2)
+                if (sectionList.size>2){
+                    sectionList.mapIndexed { index,drawingSectionHeader->
+                        if (index>1) {
+                            sectionList.removeAt(index)
+                        }
+                    }
+                }
+                sectionList.add(
+                    2, DrawingSectionHeader(mutableListOf(), getString(R.string.other_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    DrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.other_groups)
+                    ), 2
                 )
                 sectionedAdapter.notifyDataSetChanged()
             }
