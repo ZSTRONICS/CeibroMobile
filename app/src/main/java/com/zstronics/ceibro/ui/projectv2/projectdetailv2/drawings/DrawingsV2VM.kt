@@ -60,7 +60,7 @@ class DrawingsV2VM @Inject constructor(
             originalGroups.value = groupsList.toMutableList()
             if (groupsList.isNotEmpty()) {
 
-                val favoriteGroups = groupsList.filter { !it.isFavoriteByMe } ?: listOf()
+                val favoriteGroups = groupsList.filter { it.isFavoriteByMe } ?: listOf()
                 originalFavouriteGroups = favoriteGroups.toMutableList()
 
                 val creatorGroups = groupsList.filter { (!it.isFavoriteByMe) && (it.isCreator) } ?: listOf()

@@ -17,12 +17,14 @@ import com.zstronics.ceibro.databinding.FragmentAddNewGroupSheetBinding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewDrawingGroupAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.shortToastNow
-import java.util.Locale
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: CeibroGroupsV2) -> Unit) :
+class AddNewGroupBottomSheet(
+    val model: NewDrawingV2VM,
+    val callback: (group: CeibroGroupsV2) -> Unit
+) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupSheetBinding
 
@@ -87,14 +89,26 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: Ce
         binding.addGroupBtn.setOnClickListener {
             val text = binding.tvNewGroup.text.toString().trim()
             if (text.isNotEmpty()) {
-                    if (binding.addGroupBtn.text.toString().equals("Rename", true)) {
-                        groupDataToUpdate?.let {
-                            if (!it.groupName.equals(text, true))
-                                onRenameGroup?.invoke(text, it)
-                        }
-                    } else {
-                        onAddGroup?.invoke(text)
+                if (binding.addGroupBtn.text.toString().equals("Rename", true)) {
+                    groupDataToUpdate?.let {
+                        if (!it.groupName.equals(text, true))
+                            model.groupList.value?.forEachIndexed { index, ceibroGroupsV2 ->
+                                if (ceibroGroupsV2.groupName.trim() == text.trim()) {
+                                    shortToastNow("Group name Already exist")
+                                    return@setOnClickListener
+                                }
+                            }
+                        onRenameGroup?.invoke(text, it)
                     }
+                } else {
+                    model.groupList.value?.forEachIndexed { index, ceibroGroupsV2 ->
+                        if (ceibroGroupsV2.groupName.trim() == text.trim()) {
+                            shortToastNow("Group name Already exist")
+                            return@setOnClickListener
+                        }
+                    }
+                    onAddGroup?.invoke(text)
+                }
             } else {
                 shortToastNow("Group name cannot be empty")
             }
