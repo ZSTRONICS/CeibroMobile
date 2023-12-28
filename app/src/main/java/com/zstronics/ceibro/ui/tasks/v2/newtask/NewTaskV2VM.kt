@@ -9,7 +9,9 @@ import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
@@ -18,6 +20,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +37,7 @@ class NewTaskV2VM @Inject constructor(
     private val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
     private val taskDao: TaskV2Dao,
+    private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
     private val draftNewTaskV2Dao: DraftNewTaskV2Dao,
     private var networkConnectivityObserver: NetworkConnectivityObserver
@@ -45,6 +49,7 @@ class NewTaskV2VM @Inject constructor(
         MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
 
+    var locationTaskData: MutableLiveData<AddLocationTask?> = MutableLiveData()
     var taskId = ""
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -89,6 +94,20 @@ class NewTaskV2VM @Inject constructor(
 
             if (!oldCreatedTask.dueDate.isNullOrEmpty()) {
                 viewState.dueDate.value = oldCreatedTask.dueDate
+            }
+        }
+
+        val locationTask = bundle?.getParcelable<AddLocationTask>("locationTaskData")
+        launch {
+            if (locationTask != null) {
+                locationTaskData.value = locationTask
+                val project = locationTask.projectId?.let { projectDao.getProjectByProjectId(it) }
+                if (project != null) {
+                    viewState.selectedProject.value = project
+                    viewState.projectText.value = project.title
+                }
+
+
             }
         }
     }

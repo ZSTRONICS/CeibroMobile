@@ -267,12 +267,29 @@ class NewTaskV2Fragment :
             } else {
                 mViewDataBinding.newTaskProjectClearBtn.visibility = View.VISIBLE
             }
+            if (viewModel.locationTaskData.value != null) {
+                mViewDataBinding.newTaskProjectClearBtn.visibility = View.GONE
+                mViewDataBinding.newTaskProjectText.isClickable = false
+            }
         }
         viewState.dueDate.observe(viewLifecycleOwner) {
             if (it == "") {
                 mViewDataBinding.newTaskDueDateClearBtn.visibility = View.GONE
             } else {
                 mViewDataBinding.newTaskDueDateClearBtn.visibility = View.VISIBLE
+            }
+        }
+        viewModel.locationTaskData.observe(viewLifecycleOwner) {
+            if (it != null) {
+                mViewDataBinding.locationLayout.visibility = View.VISIBLE
+
+                mViewDataBinding.newTaskProjectClearBtn.visibility = View.GONE
+                mViewDataBinding.newTaskProjectText.isClickable = false
+                mViewDataBinding.newTaskProjectText.isEnabled = false
+                mViewDataBinding.newTaskProjectField.alpha = 0.6f
+
+                mViewDataBinding.drawingName.text = it.drawingName
+                mViewDataBinding.drawingImg.setImageBitmap(it.locationImgBitmap)
             }
         }
 
