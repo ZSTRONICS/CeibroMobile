@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings
 
 import com.intrusoft.sectionedrecyclerview.Section
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2

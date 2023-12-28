@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2State" />
+            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing.DrawingsV2VM" />
+            type="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2VM" />
 
         <import type="android.view.View" />
     </data>

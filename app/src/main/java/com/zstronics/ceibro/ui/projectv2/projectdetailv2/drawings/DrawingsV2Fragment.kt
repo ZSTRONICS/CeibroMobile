@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -288,7 +288,7 @@ class DrawingsV2Fragment :
             }
         }
 
-        viewModel.groupData.observe(viewLifecycleOwner) {
+        viewModel.myGroupData.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 sectionList.removeAt(1)
                 sectionList.add(
@@ -331,7 +331,7 @@ class DrawingsV2Fragment :
                     var count = 0
 
                     while (iterator.hasNext()) {
-                        if (count > 1) {
+                        if (count > 2) {
                             iterator.remove()
                         }
 
@@ -378,7 +378,7 @@ class DrawingsV2Fragment :
                     var count = 0
 
                     while (iterator.hasNext()) {
-                        if (count > 1) {
+                        if (count > 2) {
                             iterator.remove()
                         }
 
@@ -833,7 +833,7 @@ class DrawingsV2Fragment :
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshDeletedGroupData(event: LocalEvents.RefreshDeletedGroupData?) {
         val groupId = event?.groupId
-        val allGroups = viewModel.groupData.value
+        val allGroups = viewModel.myGroupData.value
         val projectData = viewModel.projectData.value
 
         if (allGroups != null) {

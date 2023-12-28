@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager

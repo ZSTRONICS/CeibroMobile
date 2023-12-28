@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawing
+package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings
 
 import android.os.Bundle
 import androidx.lifecycle.LiveData
@@ -26,22 +26,15 @@ class DrawingsV2VM @Inject constructor(
     private val _projectData: MutableLiveData<CeibroProjectV2> = MutableLiveData()
     val projectData: LiveData<CeibroProjectV2> = _projectData
 
-    private val _groupData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(
-        mutableListOf()
-    )
-    val groupData: LiveData<MutableList<CeibroGroupsV2>> = _groupData
+    private val _myGroupData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
+    val myGroupData: LiveData<MutableList<CeibroGroupsV2>> = _myGroupData
 
-    private val _otherGroupsData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(
-        mutableListOf()
-    )
+    private val _otherGroupsData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
     val otherGroupsData: LiveData<MutableList<CeibroGroupsV2>> = _otherGroupsData
 
-    private val _favoriteGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(
-        mutableListOf()
-    )
+    private val _favoriteGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
     val favoriteGroups: LiveData<MutableList<CeibroGroupsV2>> = _favoriteGroups
-    var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> =
-        MutableLiveData(mutableListOf())
+    var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
 
 
     private var originalAllGroups: MutableList<CeibroGroupsV2> = mutableListOf()
@@ -62,13 +55,12 @@ class DrawingsV2VM @Inject constructor(
 
     fun getGroupsByProjectID(projectId: String) {
         launch {
-//            loading(true)
             val groupsList = groupsV2Dao.getAllProjectGroups(projectId)
             originalAllGroups = groupsList.toMutableList()
             originalGroups.value = groupsList.toMutableList()
             if (groupsList.isNotEmpty()) {
 
-                val favoriteGroups = groupsList.filter { it.isFavoriteByMe } ?: listOf()
+                val favoriteGroups = groupsList.filter { !it.isFavoriteByMe } ?: listOf()
                 originalFavouriteGroups = favoriteGroups.toMutableList()
 
                 val creatorGroups = groupsList.filter { (!it.isFavoriteByMe) && (it.isCreator) } ?: listOf()
@@ -79,10 +71,9 @@ class DrawingsV2VM @Inject constructor(
 
 
                 _favoriteGroups.value = favoriteGroups.toMutableList()
-                _groupData.value = creatorGroups.toMutableList()
+                _myGroupData.value = creatorGroups.toMutableList()
                 _otherGroupsData.value = otherGroups.toMutableList()
 
-//                loading(false, "")
                 viewState.isVisible.value = false
             } else {
                 viewState.isVisible.value = true
@@ -132,7 +123,7 @@ class DrawingsV2VM @Inject constructor(
     fun filterMyGroups(search: String) {
         if (search.isEmpty()) {
             if (orignalMyGroups.isNotEmpty()) {
-                _groupData.postValue(orignalMyGroups)
+                _myGroupData.postValue(orignalMyGroups)
             }
             return
         }
@@ -144,9 +135,9 @@ class DrawingsV2VM @Inject constructor(
         }
 
         if (filtered.isNotEmpty())
-            _groupData.postValue(filtered.toMutableList())
+            _myGroupData.postValue(filtered.toMutableList())
         else
-            _groupData.postValue(mutableListOf())
+            _myGroupData.postValue(mutableListOf())
     }
 
     fun filterFavouriteGroups(search: String) {

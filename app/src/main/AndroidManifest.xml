@@ -95,7 +95,7 @@
         </provider>
 
         <receiver
-            android:name=".ui.projectv2.projectdetailv2.drawing.DownloadCompleteReceiver"
+            android:name=".ui.projectv2.projectdetailv2.drawings.DownloadCompleteReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
