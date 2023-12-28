@@ -55,7 +55,8 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: Ce
 
         model.groupList.observe(viewLifecycleOwner) {
 //            println("floorList. groupList observer called")
-            groupAdapter.setList(it)
+            val otherGroups = it.filter { it.isCreator }.toMutableList() ?: mutableListOf()
+            groupAdapter.setList(otherGroups)
         }
         binding.rvGroupList.adapter = groupAdapter
 

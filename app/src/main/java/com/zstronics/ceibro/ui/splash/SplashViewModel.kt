@@ -8,6 +8,8 @@ import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -28,6 +30,8 @@ class SplashViewModel @Inject constructor(
     private val taskDao: TaskV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
+    private val floorV2Dao: FloorsV2Dao,
+    private val groupV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
     val sessionManager: SessionManager
 ) : HiltBaseViewModel<ISplash.State>(), ISplash.ViewModel, IValidator {
@@ -62,6 +66,8 @@ class SplashViewModel @Inject constructor(
             taskDao.deleteAllTasksData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
+            groupV2Dao.deleteAll()
+            floorV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }

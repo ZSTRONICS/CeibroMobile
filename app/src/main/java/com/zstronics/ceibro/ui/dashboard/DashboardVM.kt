@@ -570,6 +570,8 @@ class DashboardVM @Inject constructor(
             taskDao.deleteAllTasksData()
             topicsV2Dao.deleteAllData()
             projectsV2Dao.deleteAll()
+            groupV2Dao.deleteAll()
+            floorV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
         }
