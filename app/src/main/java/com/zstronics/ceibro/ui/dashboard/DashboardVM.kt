@@ -13,6 +13,7 @@ import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
@@ -67,6 +68,7 @@ class DashboardVM @Inject constructor(
     private val authRepository: IAuthRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource,
     private val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
     private val floorV2Dao: FloorsV2Dao,
@@ -129,7 +131,8 @@ class DashboardVM @Inject constructor(
                     updateCreatedTaskInLocal(
                         taskCreatedData.data,
                         taskDao,
-                        sessionManager
+                        sessionManager,
+                        drawingPinsDao
                     )
 
 //                    val notificationTitle: String =

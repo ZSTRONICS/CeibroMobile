@@ -22,6 +22,7 @@ import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -35,12 +36,14 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.dashboard.TaskEventsList
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService.NotificationUtils.CHANNEL_ID
 import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService.NotificationUtils.CHANNEL_NAME
+import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.locationPinData
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskList
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskRequest
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentVM.Companion.eventWithFileUploadV2RequestData
@@ -61,6 +64,7 @@ class CreateNewTaskService : Service() {
     private var apiCounter = 0
     private var draftTasksFailed = 0
     private var taskObjectData: NewTaskV2Entity? = null
+    private var taskLocationPinData: AddLocationTask? = null
     private var taskListData: ArrayList<PickedImages>? = null
     private var sessionManager: SessionManager? = null
     private var mContext: Context? = null
@@ -83,6 +87,9 @@ class CreateNewTaskService : Service() {
     lateinit var taskDaoInternal: TaskV2Dao
 
     @Inject
+    lateinit var drawingPinsDaoInternal: DrawingPinsV2Dao
+
+    @Inject
     lateinit var networkConnectivityObserver: NetworkConnectivityObserver
 
     override fun onCreate() {
@@ -90,6 +97,7 @@ class CreateNewTaskService : Service() {
         super.onCreate()
         println("Service Status .. onCreate state...")
         taskObjectData = taskRequest
+        taskLocationPinData = locationPinData
         taskListData = taskList
         mContext = this
 
@@ -230,7 +238,10 @@ class CreateNewTaskService : Service() {
 
 
     private fun updateCreatedTaskInLocal(
-        task: CeibroTaskV2?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        task: CeibroTaskV2?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDaoInternal: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -243,6 +254,9 @@ class CreateNewTaskService : Service() {
                 if (dbTask == null) {
                     sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                     taskDao.insertTaskData(newTask)
+                    if (newTask.pinData != null) {
+                        drawingPinsDaoInternal.insertSinglePinData(newTask.pinData!!)
+                    }
 
                     if (newTask.isCreator) {
                         when (newTask.fromMeState) {
@@ -460,13 +474,19 @@ class CreateNewTaskService : Service() {
         apiCounter++
         taskRepository.newTaskV2WithFiles(
             newTask,
-            list
+            list,
+            taskLocationPinData,
+            sessionManager.getUserId()
         ) { isSuccess, task, errorMessage ->
             if (isSuccess) {
-                val room = providesAppDatabase(context)
-                val taskDao = room.getTaskV2sDao()
+
                 this.sessionManager?.let {
-                    updateCreatedTaskInLocal(task, taskDao, sessionManager)
+                    updateCreatedTaskInLocal(
+                        task,
+                        taskDaoInternal,
+                        sessionManager,
+                        drawingPinsDaoInternal
+                    )
                 }
                 hideIndeterminateNotifications(context, createTaskNotificationID)
                 println("Service Status...:Create task with success")
@@ -604,7 +624,10 @@ class CreateNewTaskService : Service() {
                 if (list.isNotEmpty()) {
 
                     taskRepository.newTaskV2WithFiles(
-                        newTaskRequest, list
+                        newTaskRequest,
+                        list,
+                        newTaskRequest.locationTaskData,
+                        sessionManager.getUserId()
                     ) { isSuccess, task, errorMessage ->
                         if (isSuccess) {
 
@@ -613,7 +636,8 @@ class CreateNewTaskService : Service() {
 
                                 updateCreatedTaskInLocal(
                                     task, taskDaoInternal,
-                                    sessionManager
+                                    sessionManager,
+                                    drawingPinsDaoInternal
                                 )
                                 // Remove the processed record from the list
                                 val updatedRecords = records - newTaskRequest
@@ -663,7 +687,8 @@ class CreateNewTaskService : Service() {
 
                                 updateCreatedTaskInLocal(
                                     task, taskDaoInternal,
-                                    sessionManager
+                                    sessionManager,
+                                    drawingPinsDaoInternal
                                 )
                                 // Remove the processed record from the list
                                 val updatedRecords = records - newTaskRequest

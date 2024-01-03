@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
@@ -37,6 +38,7 @@ class NewTaskV2VM @Inject constructor(
     private val sessionManager: SessionManager,
     private val taskRepository: ITaskRepository,
     private val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
     private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
     private val draftNewTaskV2Dao: DraftNewTaskV2Dao,
@@ -49,7 +51,7 @@ class NewTaskV2VM @Inject constructor(
         MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
 
-    var locationTaskData: MutableLiveData<AddLocationTask?> = MutableLiveData()
+    var locationTaskData: MutableLiveData<AddLocationTask?> = MutableLiveData(null)
     var taskId = ""
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -174,7 +176,7 @@ class NewTaskV2VM @Inject constructor(
                 )
                 sessionManager.saveNewTaskData(newTaskToSave)
                 if (networkConnectivityObserver.isNetworkAvailable().not()) {
-                    saveDataInLocal(newTaskRequest, list) {
+                    saveDataInLocal(newTaskRequest, list, locationTaskData.value) {
                         onBack.invoke("taskCreatedLocally")
                     }
 
@@ -193,6 +195,9 @@ class NewTaskV2VM @Inject constructor(
 
                     taskRequest = newTaskRequest
                     taskList = list
+                    if (locationTaskData.value != null) {
+                        locationPinData = locationTaskData.value
+                    }
                     onBack.invoke("ServiceCall")
                     loading(false, "")
 
@@ -217,7 +222,7 @@ class NewTaskV2VM @Inject constructor(
                     loading(true)
                     taskRepository.newTaskV2WithoutFiles(newTaskRequest) { isSuccess, task, errorMessage ->
                         if (isSuccess) {
-                            updateCreatedTaskInLocal(task, taskDao, sessionManager)
+                            updateCreatedTaskInLocal(task, taskDao, sessionManager, drawingPinsDao)
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed({
                                 onBack.invoke("")
@@ -236,6 +241,7 @@ class NewTaskV2VM @Inject constructor(
     private suspend fun saveDataInLocal(
         newTaskRequest: NewTaskV2Entity,
         list: java.util.ArrayList<PickedImages>,
+        locationTaskData: AddLocationTask?,
         onBack: (String) -> Unit
     ) {
         val localFilesData = list.map {
@@ -250,6 +256,7 @@ class NewTaskV2VM @Inject constructor(
         }
         newTaskRequest.apply {
             this.filesData = localFilesData
+            this.locationTaskData = locationTaskData
         }
         // Use the IO dispatcher for database operations
         withContext(Dispatchers.IO) {
@@ -318,6 +325,7 @@ class NewTaskV2VM @Inject constructor(
 
     companion object {
         var taskRequest: NewTaskV2Entity? = null
+        var locationPinData: AddLocationTask? = null
         var taskList: ArrayList<PickedImages>? = null
     }
 }

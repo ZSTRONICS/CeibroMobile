@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.database.TableNamesV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import ee.zstronics.ceibro.camera.AttachmentTypes
 
 // We will use this request as a DB table as well.
@@ -31,6 +32,7 @@ data class NewTaskV2Entity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "task_id") @Transient val taskId: Int = 0,
     @ColumnInfo(name = "files_data") @Transient var filesData: List<LocalFilesToStore>? = null,
+    @ColumnInfo(name = "location_pin_data") @Transient var locationTaskData: AddLocationTask? = null,
     @ColumnInfo(name = "isNewTaskCreationFailed") @Transient var isNewTaskCreationFailed: Boolean = false,
     @ColumnInfo(name = "isDraftTaskCreationFailed") @Transient var isDraftTaskCreationFailed: Boolean = false,
     @ColumnInfo(name = "taskCreationFailedError") @Transient var taskCreationFailedError: String = ""

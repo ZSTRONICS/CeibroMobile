@@ -13,6 +13,7 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.subtask.*
 import com.zstronics.ceibro.data.database.models.tasks.AdvanceOptions
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -45,10 +46,11 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         CeibroFloorV2::class,
         CeibroGroupsV2::class,
         CeibroDownloadDrawingV2::class,
+        CeibroDrawingPins::class,
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 90,
+    version = 94,
     exportSchema = false
 )
 @TypeConverters(
@@ -97,6 +99,9 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     LocalFilesToStoreTypeConverter::class,
     AttachmentTypesConverter::class,
     DrawingV2TypeConverter::class,
+    AddLocationTaskTypeConverter::class,
+    CeibroDrawingPinsTypeConverter::class,
+    PinTaskDataTypeConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")
@@ -113,6 +118,7 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getFloorsV2Dao(): FloorsV2Dao
     abstract fun getDownloadDrawingDao(): DownloadedDrawingV2Dao
     abstract fun getGroupsV2Dao(): GroupsV2Dao
+    abstract fun getDrawingPinsV2Dao(): DrawingPinsV2Dao
     abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
     abstract fun getDraftNewTaskV2Dao(): DraftNewTaskV2Dao
 

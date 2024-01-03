@@ -358,6 +358,12 @@ class LocationsV2Fragment :
                         val normalizedY =
                             event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
 
+//                        if (zoom == 12.0f) {
+//                            mViewDataBinding.pdfView.zoomCenteredTo(14.0f, PointF(event.x, event.y))
+//                        } else {
+//                            mViewDataBinding.pdfView.zoomCenteredTo(12.0f, PointF(event.x, event.y))
+//                        }
+
                         println("normalizedX ${normalizedX} PDFView onTap : ${event.x} / ${mViewDataBinding.pdfView.width} * ${pageWidth} / ${zoom}")
                         println("normalizedY${normalizedY} PDFView onTap : ${event.y} / ${mViewDataBinding.pdfView.height} * ${pageHeight} / ${zoom}")
 
@@ -550,8 +556,8 @@ class LocationsV2Fragment :
 
         val scaledBitmap = Bitmap.createScaledBitmap(
             bitmap1,
-            ((30 + (currentZoom * 3.5) + 5).toInt()),
-            ((30 + (currentZoom * 3.5) + 5).toInt()),
+            ((30 + (currentZoom * 3.5) + 3).toInt()),
+            ((30 + (currentZoom * 3.5) + 3).toInt()),
             true
         )
 
@@ -567,12 +573,22 @@ class LocationsV2Fragment :
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
 //            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
+
+            markers[markerIndex] = Triple(marker.first, marker.second, "")
+//            val currentXOffset = mViewDataBinding.pdfView.currentXOffset
+//            val currentYOffset = mViewDataBinding.pdfView.currentYOffset
+//            val xMovementPoint = currentXOffset - (point.x / currentZoom)
+//            val yMovementPoint = currentYOffset - (point.y / currentZoom)
+//
+//            println("PDFView SETTING-OFFSET-> XOffset= ${currentXOffset} / YOffset= ${currentYOffset} / point= ${point} / xMovementPoint= ${xMovementPoint} = ${yMovementPoint}")
+//
+//            mViewDataBinding.pdfView.zoomCenteredTo(currentZoom, point)
+
             showNewItemBottomSheet(markerIndex, point, pageWidth, pageHeight)
 
 //            for (marker in markers) {
 //                if (marker.first == point.x && marker.second == point.y) {
 //                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
-            markers[markerIndex] = Triple(marker.first, marker.second, "")
 //                }
 //            }
         }
@@ -628,39 +644,42 @@ class LocationsV2Fragment :
         }
 
         sheet.onAddTaskBtnClicked = {
-            shortToastNow("Coming Soon")
-//            val bitmap = Bitmap.createBitmap(
-//                mViewDataBinding.pdfView.width,
-//                mViewDataBinding.pdfView.height,
-//                Bitmap.Config.ARGB_8888
-//            )
-//            val canvas = Canvas(bitmap)
-//            mViewDataBinding.pdfView.draw(canvas)
-//
-//            // Save the bitmap to a file
-//            val file = File(context?.externalCacheDir, "pdf_view_screenshot.png")
-//            val fileOutputStream = FileOutputStream(file)
-//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
-//            fileOutputStream.flush()
-//            fileOutputStream.close()
-//
-//            val locationTask = AddLocationTask(
-//                xCord = point.x,
-//                yCord = point.y,
-//                pageWidth = pageWidth,
-//                pageHeight = pageHeight,
-//                locationImgBitmap = bitmap,
-//                locationImgFile = file,
-//                drawingId = viewModel.drawingFile.value?._id,
-//                drawingName = viewModel.drawingFile.value?.fileName ?: "Unknown",
-//                projectId = viewModel.drawingFile.value?.projectId,
-//                groupId = viewModel.drawingFile.value?.groupId
-//            )
-//
-//            val bundle = Bundle()
-//            bundle.putParcelable("locationTaskData", locationTask)
-//            navigate(R.id.newTaskV2Fragment, bundle)
-//            sheet.dismiss()
+//            shortToastNow("Coming Soon")
+            val actualPageWidth = pageWidth / mViewDataBinding.pdfView.zoom
+            val actualPageHeight = pageHeight / mViewDataBinding.pdfView.zoom
+
+            val bitmap = Bitmap.createBitmap(
+                mViewDataBinding.pdfView.width,
+                mViewDataBinding.pdfView.height,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            mViewDataBinding.pdfView.draw(canvas)
+
+            // Save the bitmap to a file
+            val file = File(context?.externalCacheDir, "pdf_view_SS_${System.currentTimeMillis()}.png")
+            val fileOutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+            fileOutputStream.flush()
+            fileOutputStream.close()
+
+            val locationTask = AddLocationTask(
+                xCord = point.x,
+                yCord = point.y,
+                pageWidth = actualPageWidth,
+                pageHeight = actualPageHeight,
+                locationImgBitmap = bitmap,
+                locationImgFile = file,
+                drawingId = viewModel.drawingFile.value?._id,
+                drawingName = viewModel.drawingFile.value?.fileName ?: "Unknown",
+                projectId = viewModel.drawingFile.value?.projectId,
+                groupId = viewModel.drawingFile.value?.groupId
+            )
+
+            val bundle = Bundle()
+            bundle.putParcelable("locationTaskData", locationTask)
+            navigate(R.id.newTaskV2Fragment, bundle)
+            sheet.dismiss()
         }
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "ChangePasswordSheet")

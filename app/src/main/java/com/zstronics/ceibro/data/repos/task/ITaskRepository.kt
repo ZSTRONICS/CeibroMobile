@@ -27,6 +27,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import ee.zstronics.ceibro.camera.PickedImages
 
 interface ITaskRepository {
@@ -57,6 +58,8 @@ interface ITaskRepository {
     suspend fun newTaskV2WithFiles(
         newTask: NewTaskV2Entity,
         list: ArrayList<PickedImages>,
+        taskLocationPinData: AddLocationTask?,
+        userId: String,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     )
 

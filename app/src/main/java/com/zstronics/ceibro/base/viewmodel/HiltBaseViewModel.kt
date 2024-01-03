@@ -23,6 +23,7 @@ import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
@@ -691,7 +692,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     fun updateCreatedTaskInLocal(
-        task: CeibroTaskV2?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        task: CeibroTaskV2?, taskDao: TaskV2Dao, sessionManager: SessionManager, drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -707,6 +708,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                 sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                 taskDao.insertTaskData(newTask)
+                if (newTask.pinData != null) {
+                    drawingPinsDao.insertSinglePinData(newTask.pinData!!)
+                }
 
                 if (newTask.isCreator) {
                     when (newTask.fromMeState) {

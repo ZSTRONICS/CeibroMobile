@@ -14,6 +14,7 @@ data class PickedImages(
     val fileName: String = "",
     val fileSizeReadAble: String = "",
     val editingApplied: Boolean = false,
+    val locationImage: Boolean = false,
     val attachmentType: AttachmentTypes,
     var file: File
 ) : Parcelable

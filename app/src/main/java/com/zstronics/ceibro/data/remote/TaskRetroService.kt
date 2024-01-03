@@ -164,6 +164,24 @@ interface TaskRetroService {
 
     @Multipart
     @POST("v2/task/files")
+    suspend fun newTaskV2WithFilesWithPinData(
+        @Query("hasFiles") hasFiles: Boolean,
+        @Part("dueDate") dueDate: RequestBody,
+        @Part("topic") topic: RequestBody,
+        @Part("project") project: RequestBody,
+        @Part("assignedToState") assignedToState: RequestBody,
+        @Part("creator") creator: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("doneImageRequired") doneImageRequired: RequestBody,
+        @Part("doneCommentsRequired") doneCommentsRequired: RequestBody,
+        @Part("pinData") pinData: RequestBody,
+        @Part("invitedNumbers") invitedNumbers: RequestBody,
+        @Part files: List<MultipartBody.Part>?,
+        @Part("metadata") metadata: RequestBody
+    ): Response<NewTaskV2Response>
+
+    @Multipart
+    @POST("v2/task/files")
     suspend fun newTaskV2WithoutFiles(
         @Query("hasFiles") hasFiles: Boolean,
         @Part("dueDate") dueDate: RequestBody,

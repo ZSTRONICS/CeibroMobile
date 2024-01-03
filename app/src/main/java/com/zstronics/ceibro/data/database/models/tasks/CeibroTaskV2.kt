@@ -78,6 +78,10 @@ data class CeibroTaskV2(
     var hiddenState: String,
     @SerializedName("eventsCount")
     var eventsCount: Int,
+    @SerializedName("hasPinData")
+    var hasPinData: Boolean,
+    @SerializedName("pinData")
+    val pinData: CeibroDrawingPins?,
 
     //only for room DB Column
     @ColumnInfo(name = "isBeingDoneByAPI") @Transient var isBeingDoneByAPI: Boolean = false

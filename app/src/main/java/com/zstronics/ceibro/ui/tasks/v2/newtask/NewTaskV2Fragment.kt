@@ -40,6 +40,7 @@ import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -281,6 +282,22 @@ class NewTaskV2Fragment :
         }
         viewModel.locationTaskData.observe(viewLifecycleOwner) {
             if (it != null) {
+                val fileUri = Uri.fromFile(it.locationImgFile)
+                val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
+                val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+
+                val locationImgData = PickedImages(
+                    fileUri = fileUri,
+                    attachmentType = AttachmentTypes.Drawing,
+                    fileName = it.drawingName,
+                    fileSizeReadAble = fileSizeReadAble,
+                    locationImage = true,
+                    file = it.locationImgFile
+                )
+                val allOldImages = viewModel.listOfImages.value
+                allOldImages?.add(locationImgData)
+                viewModel.listOfImages.postValue(allOldImages)
+
                 mViewDataBinding.locationLayout.visibility = View.VISIBLE
 
                 mViewDataBinding.newTaskProjectClearBtn.visibility = View.GONE
@@ -290,6 +307,8 @@ class NewTaskV2Fragment :
 
                 mViewDataBinding.drawingName.text = it.drawingName
                 mViewDataBinding.drawingImg.setImageBitmap(it.locationImgBitmap)
+            } else {
+                mViewDataBinding.locationLayout.visibility = View.GONE
             }
         }
 
@@ -329,7 +348,9 @@ class NewTaskV2Fragment :
                 val onlyImages1 = arrayListOf<PickedImages>()
                 val imagesWithComment1 = arrayListOf<PickedImages>()
                 for (item in allImages) {
-                    if (item.comment.isNotEmpty()) {
+                    if (item.attachmentType == AttachmentTypes.Drawing) {
+                        //do nothing because file is already displayed in location image section
+                    } else if (item.comment.isNotEmpty()) {
                         imagesWithComment1.add(item)
                     } else {
                         onlyImages1.add(item)
