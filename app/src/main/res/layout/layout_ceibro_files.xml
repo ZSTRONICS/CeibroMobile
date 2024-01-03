@@ -113,7 +113,7 @@
                 android:id="@+id/tvDownloadProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="30sp"
-                android:layout_marginEnd="@dimen/_7sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center|end"
                 android:maxLines="1"
