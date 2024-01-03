@@ -20,7 +20,7 @@ data class CeibroDownloadDrawingV2(
     @SerializedName("downloadId")
     var downloadId: Long,
     @SerializedName("drawing")
-    var drawing: DrawingV2,
+    var drawing: DrawingV2?,
     @SerializedName("groupId")
     val groupId: String,
     @SerializedName("drawingId")

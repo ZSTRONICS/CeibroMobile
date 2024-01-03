@@ -70,6 +70,22 @@ interface ITaskRemoteDataSource {
         metadata: RequestBody
     ): ApiResponse<NewTaskV2Response>
 
+    suspend fun newTaskV2WithFilesWithPinData(
+        hasFiles: Boolean,
+        dueDate: RequestBody,
+        topic: RequestBody,
+        project: RequestBody,
+        assignedToState: RequestBody,
+        creator: RequestBody,
+        description: RequestBody,
+        doneImageRequired: RequestBody,
+        doneCommentsRequired: RequestBody,
+        pinData: RequestBody,
+        invitedNumbers: RequestBody,
+        files: List<MultipartBody.Part>?,
+        metadata: RequestBody
+    ): ApiResponse<NewTaskV2Response>
+
     suspend fun newTaskV2WithoutFiles(
         hasFiles: Boolean,
         dueDate: RequestBody,

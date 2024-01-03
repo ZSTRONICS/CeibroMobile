@@ -35,8 +35,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.PinsMetaData
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -143,6 +145,8 @@ class TaskRepository @Inject constructor(
     override suspend fun newTaskV2WithFiles(
         newTask: NewTaskV2Entity,
         list: ArrayList<PickedImages>,
+        taskLocationPinData: AddLocationTask?,
+        userId: String,
         callBack: (isSuccess: Boolean, task: CeibroTaskV2?, errorMessage: String) -> Unit
     ) {
 
@@ -171,7 +175,9 @@ class TaskRepository @Inject constructor(
         }
         val metaData = list.map { file ->
             var tag = ""
-            if (file.attachmentType == AttachmentTypes.Image) {
+            if (file.attachmentType == AttachmentTypes.Drawing) {
+                tag = AttachmentTags.Drawing.tagValue
+            } else if (file.attachmentType == AttachmentTypes.Image) {
                 tag = if (file.comment.isNotEmpty()) {
                     AttachmentTags.ImageWithComment.tagValue
                 } else {
@@ -194,26 +200,68 @@ class TaskRepository @Inject constructor(
         val metadataString2RequestBody =
             metadataString2.toRequestBody("text/plain".toMediaTypeOrNull())
 
-        when (val response = remoteTask.newTaskV2WithFiles(
-            hasFiles = true,
-            dueDate = dueDate,
-            topic = topic,
-            project = project,
-            assignedToState = assignedToState,
-            creator = creator,
-            description = description,
-            doneImageRequired = doneImageRequired,
-            doneCommentsRequired = doneCommentsRequired,
-            invitedNumbers = invitedNumbers,
-            files = parts,
-            metadata = metadataString2RequestBody
-        )) {
-            is ApiResponse.Success -> {
-                callBack(true, response.data.newTask, "")
+        if (taskLocationPinData != null) {
+            val pinData = PinsMetaData(
+                page_width = taskLocationPinData.pageWidth,
+                page_height = taskLocationPinData.pageHeight,
+                x_coord = taskLocationPinData.xCord,
+                y_coord = taskLocationPinData.yCord,
+                creator = userId,
+                drawingId = taskLocationPinData.drawingId ?: ""
+            )
+            val pinDataString = Gson().toJson(pinData)
+            val pinDataString2 = Gson().toJson(pinDataString)
+
+            val pinDataString2RequestBody =
+                pinDataString2.toRequestBody("text/plain".toMediaTypeOrNull())
+
+            when (val response = remoteTask.newTaskV2WithFilesWithPinData(
+                hasFiles = true,
+                dueDate = dueDate,
+                topic = topic,
+                project = project,
+                assignedToState = assignedToState,
+                creator = creator,
+                description = description,
+                doneImageRequired = doneImageRequired,
+                doneCommentsRequired = doneCommentsRequired,
+                pinData = pinDataString2RequestBody,
+                invitedNumbers = invitedNumbers,
+                files = parts,
+                metadata = metadataString2RequestBody
+            )) {
+                is ApiResponse.Success -> {
+                    callBack(true, response.data.newTask, "")
+                }
+
+                is ApiResponse.Error -> {
+                    callBack(false, null, response.error.message)
+                }
             }
 
-            is ApiResponse.Error -> {
-                callBack(false, null, response.error.message)
+        } else {
+
+            when (val response = remoteTask.newTaskV2WithFiles(
+                hasFiles = true,
+                dueDate = dueDate,
+                topic = topic,
+                project = project,
+                assignedToState = assignedToState,
+                creator = creator,
+                description = description,
+                doneImageRequired = doneImageRequired,
+                doneCommentsRequired = doneCommentsRequired,
+                invitedNumbers = invitedNumbers,
+                files = parts,
+                metadata = metadataString2RequestBody
+            )) {
+                is ApiResponse.Success -> {
+                    callBack(true, response.data.newTask, "")
+                }
+
+                is ApiResponse.Error -> {
+                    callBack(false, null, response.error.message)
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ object TableNamesV2 {
     const val Floors = "floors_v2"
     const val Groups = "groups_v2"
     const val DownloadDrawing = "downloaded_drawing_v2"
+    const val DrawingPins = "drawing_pins_v2"
     const val Connections = "connections_v2"
     const val DraftNewTask = "draft_new_task_v2"
 }

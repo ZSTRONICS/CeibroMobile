@@ -1,12 +1,17 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
@@ -14,20 +19,40 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskEventsBinding
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
-class EventsRVAdapter @Inject constructor() :
+class EventsRVAdapter constructor(
+    val networkConnectivityObserver: NetworkConnectivityObserver,
+    val context: Context,
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+) :
     RecyclerView.Adapter<EventsRVAdapter.EventsViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: Events) -> Unit)? =
         null
     var openEventImageClickListener: ((view: View, position: Int, imageFiles: List<TaskFiles>) -> Unit)? =
         null
 
-    var fileClickListener: ((view: View, position: Int, data: EventFiles) -> Unit)? =
+    var fileClickListener: ((view: View, position: Int, data: EventFiles, downloadedData: CeibroDownloadDrawingV2) -> Unit)? =
         null
     var listItems: MutableList<Events> = mutableListOf()
     var loggedInUserId: String = ""
+
+
+    var requestPermissionClickListener: ((tag: String) -> Unit)? = null
+
+    fun requestPermissionCallBack(requestPermissionClickListener: (tag: String) -> Unit) {
+        this.requestPermissionClickListener = requestPermissionClickListener
+    }
+
+
+    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String,String,String>, tag: String) -> Unit)? =
+        null
+
+    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String,String,String>, tag: String) -> Unit)?) {
+        this.downloadFileClickListener = itemClickListener
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -438,12 +463,19 @@ class EventsRVAdapter @Inject constructor() :
                 binding.imagesWithCommentRV.visibility = View.VISIBLE
             }
             if (document.isNotEmpty()) {
-                val filesAdapter = EventsFilesRVAdapter()
+                val filesAdapter = EventsFilesRVAdapter(networkConnectivityObserver, context, downloadedDrawingV2Dao)
 
-                filesAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
+                filesAdapter.fileClickListener = { view: View, position: Int, data: EventFiles,drawingFile ->
 
-                    fileClickListener?.invoke(view, position, data)
+                    fileClickListener?.invoke(view, position, data,drawingFile)
 
+                }
+                filesAdapter.requestPermissionCallBack {
+
+                    requestPermissionClickListener?.invoke("")
+                }
+                filesAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
+                    downloadFileClickListener?.invoke(textView,ivDownload,downloaded,triplet,tag)
                 }
                 binding.filesRV.adapter = filesAdapter
                 filesAdapter.setList(document)

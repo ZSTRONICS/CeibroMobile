@@ -44,10 +44,10 @@ class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
             onAddTaskBtnClicked?.invoke()
         }
         binding.addPhotoBtn.setOnClickListener {
-            onAddTaskBtnClicked?.invoke()
+//            onAddTaskBtnClicked?.invoke()
         }
         binding.addCommentBtn.setOnClickListener {
-            onAddTaskBtnClicked?.invoke()
+//            onAddTaskBtnClicked?.invoke()
         }
     }
 
