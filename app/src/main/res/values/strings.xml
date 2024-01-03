@@ -20,6 +20,7 @@
     <string name="error_message_phone_validation">Invalid phone number</string>
     <string name="error_message_otp_length">Invalid OTP length</string>
     <string name="error_message_password_length">Invalid password length</string>
+    <string name="error_message_no_password_length">Please enter password</string>
     <string name="error_message_password_regex_validation">Password must be a minimum of 8 and max 20 characters long and include a combination of uppercase and lowercase letters, and numbers for increased security.</string>
     <string name="error_message_note_password_regex_validation">Note: Password must be a minimum of 8 and max 20 characters long and include a combination of uppercase and lowercase letters, and numbers for increased security.</string>
     <string name="error_message_credit_card_validation">Invalid Credit Card format</string>

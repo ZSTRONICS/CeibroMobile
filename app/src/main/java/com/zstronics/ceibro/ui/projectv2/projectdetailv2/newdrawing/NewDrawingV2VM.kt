@@ -264,6 +264,7 @@ class NewDrawingV2VM @Inject constructor(
                     list?.forEachIndexed { index, ceibroGroupsV2 ->
                         if (ceibroGroupsV2._id == group._id) {
                             ceibroGroupsV2.groupName = group.groupName
+                            viewState.groupName.value=group.groupName
                         }
                     }
 

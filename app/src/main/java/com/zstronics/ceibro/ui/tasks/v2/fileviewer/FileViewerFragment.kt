@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.tasks.v2.fileviewer
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -23,6 +25,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentFileViewerBinding
+import com.zstronics.ceibro.ui.socket.SocketHandler.handler
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -91,13 +94,41 @@ class FileViewerFragment :
         mViewDataBinding.webView.webViewClient = object : WebViewClient() {
             override fun onReceivedSslError(
                 view: WebView?,
+                handler: SslErrorHandler,
+                error: SslError
+            ) {
+                val builder: androidx.appcompat.app.AlertDialog.Builder =  androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                var message: String = when (error.primaryError) {
+                    SslError.SSL_EXPIRED -> "The certificate has expired."
+                    SslError.SSL_IDMISMATCH -> "The certificate Hostname mismatch."
+                    SslError.SSL_NOTYETVALID -> "The certificate is not yet valid."
+                    SslError.SSL_UNTRUSTED -> "The certificate authority is not trusted."
+                    else -> "Unknown SSL error."
+                }
+                message += " Do you want to continue anyway?"
+                builder.setTitle("SSL Certificate Error")
+                builder.setMessage(message)
+                builder.setPositiveButton("continue",
+                    { dialog, which -> handler.proceed() })
+                builder.setNegativeButton("cancel",
+                    { dialog, which -> handler.cancel() })
+                if (error.primaryError != SslError.SSL_IDMISMATCH) {
+                    val dialog: androidx.appcompat.app.AlertDialog = builder.create()
+                    dialog.show()
+                } else {
+                    handler.proceed()
+                }
+            }
+
+         /*   override fun onReceivedSslError(
+                view: WebView?,
                 handler: SslErrorHandler?,
                 error: SslError?
             ) {
                 println("webView-onReceivedSslError: $error")
                 handler?.proceed()
             }
-
+*/
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 println("webView-onPageStarted: $url")
@@ -132,4 +163,21 @@ class FileViewerFragment :
         println("webView-FileUrl: ${viewModel.fileUrl}")
 
     }
+   /* private fun showError(){
+        val builder: androidx.appcompat.app.AlertDialog.Builder =  androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        var message="The certificate has expired."
+        message += " Do you want to continue anyway?"
+        builder.setTitle("SSL Certificate Error")
+        builder.setMessage(message)
+        builder.setPositiveButton("continue"
+        ) { dialog, which ->
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("cancel"
+        ) { dialog, which ->
+            dialog.dismiss()
+        }
+        builder.show()
+
+    }*/
 }

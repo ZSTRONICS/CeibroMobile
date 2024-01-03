@@ -12,17 +12,21 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.hideKeyboard
+import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.databinding.FragmentAddNewGroupSheetBinding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewDrawingGroupAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.shortToastNow
-import java.util.Locale
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: CeibroGroupsV2) -> Unit) :
+class AddNewGroupBottomSheet(
+    val model: NewDrawingV2VM,
+    val callback: (group: CeibroGroupsV2) -> Unit
+) :
     BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupSheetBinding
 
@@ -68,8 +72,11 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: Ce
             binding.tvAddNewGroup.visibility = View.GONE
             binding.addGroupBtn.text = "Rename"
             binding.clAddGroup.visibility = View.VISIBLE
-            binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
+            binding.etNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
             groupDataToUpdate = data
+            binding.etNewGroup.requestFocus()
+            requireContext().showKeyboard()
+            requireContext().showKeyboard()
 
         }
 
@@ -77,24 +84,56 @@ class AddNewGroupBottomSheet(val model: NewDrawingV2VM, val callback: (group: Ce
             callback.invoke(data)
             dismiss()
         }
+        groupAdapter.hideKeyboardListener = {
+            binding.etNewGroup.clearFocus()
+            binding.etNewGroup.hideKeyboard()
+            requireContext().hideKeyboard()
+            context?.hideKeyboard()
+
+
+        }
 
 
         binding.tvAddNewGroup.setOnClickListener {
+            binding.etNewGroup.text = Editable.Factory.getInstance().newEditable("")
             binding.tvAddNewGroup.visibility = View.GONE
             binding.clAddGroup.visibility = View.VISIBLE
+            binding.etNewGroup.requestFocus()
+            requireContext().showKeyboard()
+            requireContext().showKeyboard()
         }
 
         binding.addGroupBtn.setOnClickListener {
-            val text = binding.tvNewGroup.text.toString().trim()
+            val text = binding.etNewGroup.text.toString().trim()
             if (text.isNotEmpty()) {
-                    if (binding.addGroupBtn.text.toString().equals("Rename", true)) {
-                        groupDataToUpdate?.let {
-                            if (!it.groupName.equals(text, true))
+                if (binding.addGroupBtn.text.toString().equals("Rename", true)) {
+                    groupDataToUpdate?.let {
+                        if (!it.groupName.equals(text, true)) {
+
+                            if (model.groupList.value?.any {
+                                    it.groupName.equals(
+                                        text,
+                                        true
+                                    )
+                                } == true) {
+                                shortToastNow("Group name already exists")
+                            } else {
                                 onRenameGroup?.invoke(text, it)
+                            }
+
+                        } else {
+                            shortToastNow("Group name is same as old group")
                         }
+                    }
+                } else {
+
+                    if (model.groupList.value?.any { it.groupName.equals(text, true) } == true) {
+                        shortToastNow("Group name already exists")
                     } else {
                         onAddGroup?.invoke(text)
                     }
+
+                }
             } else {
                 shortToastNow("Group name cannot be empty")
             }

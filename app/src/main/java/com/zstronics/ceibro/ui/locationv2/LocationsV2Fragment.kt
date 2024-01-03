@@ -34,12 +34,14 @@ import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import stkq.draw.FiveTuple
 import stkq.draw.FourTuple
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.pow
 
 @AndroidEntryPoint
@@ -55,7 +57,8 @@ class LocationsV2Fragment :
     private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
 
     private var markers: MutableList<Triple<Float, Float, String>> = mutableListOf()
-    private var sampleMarkerPoints1: MutableList<FiveTuple<Float, Float, Float, Float, Float>> = mutableListOf()
+    private var sampleMarkerPoints1: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
+        mutableListOf()
     private var loadMarkerPoints: MutableList<FourTuple<Int, Int, Float, Float>> = mutableListOf()
     private val PIN_TAP_THRESHOLD = 6
     private var loadingOldData = true
@@ -350,8 +353,10 @@ class LocationsV2Fragment :
 
                         val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
 
-                        val normalizedX = event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
-                        val normalizedY = event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
+                        val normalizedX =
+                            event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
+                        val normalizedY =
+                            event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
 
                         println("normalizedX ${normalizedX} PDFView onTap : ${event.x} / ${mViewDataBinding.pdfView.width} * ${pageWidth} / ${zoom}")
                         println("normalizedY${normalizedY} PDFView onTap : ${event.y} / ${mViewDataBinding.pdfView.height} * ${pageHeight} / ${zoom}")
@@ -361,7 +366,15 @@ class LocationsV2Fragment :
 //                        pdfView.invalidate()
 //
 //                    } else {
-                        sampleMarkerPoints1.add(FiveTuple(normalizedX, normalizedY, zoom, event.x, event.y))
+                        sampleMarkerPoints1.add(
+                            FiveTuple(
+                                normalizedX,
+                                normalizedY,
+                                zoom,
+                                event.x,
+                                event.y
+                            )
+                        )
 //                        sampleMarkerPoints.add(Triple(normalizedX, normalizedY, zoom))
                         mViewDataBinding.pdfView.invalidate()
 //                    }
@@ -387,17 +400,26 @@ class LocationsV2Fragment :
                             transY = matrixValues[Matrix.MTRANS_Y]
 
                             //Store these x and y points to DB to load the points again on the file
-                            val xPoint = samplePoints.actualX - (transX / samplePoints.zoomLevel)         // we are doing minus because transX or transY are always in negative if zoomed
-                            val yPoint = samplePoints.actualY - (transY / samplePoints.zoomLevel)        //so, minus minus becomes plus (+), so we are actually doing addition
+                            val xPoint =
+                                samplePoints.actualX - (transX / samplePoints.zoomLevel)         // we are doing minus because transX or transY are always in negative if zoomed
+                            val yPoint =
+                                samplePoints.actualY - (transY / samplePoints.zoomLevel)        //so, minus minus becomes plus (+), so we are actually doing addition
 
                             println("${samplePoints.zoomLevel} PDFView pdfCanvas.transX: ${samplePoints.actualX} = ${transX} = ${xPoint} -> pdfCanvas.transY: ${samplePoints.actualY} = ${transY} = ${yPoint} -> EVENT.X: ${samplePoints.eventX} EVENT.Y= ${samplePoints.eventY}")
 
-                            val pdfBounds = calculatePDFBounds(pageWidth, pageHeight, transX, transY)
+                            val pdfBounds =
+                                calculatePDFBounds(pageWidth, pageHeight, transX, transY)
                             if (samplePoints.eventX >= pdfBounds.left && samplePoints.eventX <= pdfBounds.right &&
-                                samplePoints.eventY >= pdfBounds.top && samplePoints.eventY <= pdfBounds.bottom) {      //if in bounds then marker is placed
+                                samplePoints.eventY >= pdfBounds.top && samplePoints.eventY <= pdfBounds.bottom
+                            ) {      //if in bounds then marker is placed
                                 var isExistingPinTapped = false
                                 for (existingPin in markers) {
-                                    val distance = calculateDistance(existingPin.first, existingPin.second, xPoint, yPoint)
+                                    val distance = calculateDistance(
+                                        existingPin.first,
+                                        existingPin.second,
+                                        xPoint,
+                                        yPoint
+                                    )
                                     if (distance < PIN_TAP_THRESHOLD) {
                                         println("PDFView distance: ${distance}")
                                         isExistingPinTapped = true
@@ -408,15 +430,14 @@ class LocationsV2Fragment :
                                 }
                                 if (loadingOldData) {
                                     markers.add(Triple(xPoint, yPoint, ""))
-                                }
-                                else if (!isExistingPinTapped) {
+                                } else if (!isExistingPinTapped) {
                                     markers.add(Triple(xPoint, yPoint, "new"))
                                 }
 
                             }
 
                             val index = samplePointsMark.indexOf(samplePoints)
-                            if (index == samplePointsMark.size-1) {
+                            if (index == samplePointsMark.size - 1) {
                                 sampleMarkerPoints1.clear()
 //                            pdfView.invalidate()
                             }
@@ -447,20 +468,25 @@ class LocationsV2Fragment :
 
 
                             val actualX = pointXOfCurrentDevice + transX
-                            val actualY = pointYOfCurrentDevice + transY        // this will give actual y point because we were saving yPoint after zoom calculation
+                            val actualY =
+                                pointYOfCurrentDevice + transY        // this will give actual y point because we were saving yPoint after zoom calculation
 
-                            val normalizedX = actualX / mViewDataBinding.pdfView.width * mViewDataBinding.pdfView.measuredWidth / zoom
-                            val normalizedY = actualY / mViewDataBinding.pdfView.height * mViewDataBinding.pdfView.measuredHeight / zoom
+                            val normalizedX =
+                                actualX / mViewDataBinding.pdfView.width * mViewDataBinding.pdfView.measuredWidth / zoom
+                            val normalizedY =
+                                actualY / mViewDataBinding.pdfView.height * mViewDataBinding.pdfView.measuredHeight / zoom
 
-                            val xPoint = normalizedX - (transX / zoom)         // we are doing minus because transX or transY are always in negative if zoomed
-                            val yPoint = normalizedY - (transY / zoom)        //so, minus minus becomes plus (+), so we are actually doing addition
+                            val xPoint =
+                                normalizedX - (transX / zoom)         // we are doing minus because transX or transY are always in negative if zoomed
+                            val yPoint =
+                                normalizedY - (transY / zoom)        //so, minus minus becomes plus (+), so we are actually doing addition
 
                             println("PDFView pdfCanvas.transX: ${actualX} = ${normalizedX} = ${xPoint} = ${transX} -> pdfCanvas.transY: ${actualY} = ${normalizedY} = ${yPoint} = ${transY}")
 
                             markers.add(Triple(xPoint, yPoint, ""))
 
                             val index = loadPointsMark.indexOf(loadPoints)
-                            if (index == loadPointsMark.size-1) {
+                            if (index == loadPointsMark.size - 1) {
                                 loadMarkerPoints.clear()
 //                            pdfView.invalidate()
                             }
@@ -471,7 +497,14 @@ class LocationsV2Fragment :
 
                     markers.mapIndexed { index, marker ->
                         val point = PointF(marker.first, marker.second)
-                        mapPdfCoordinatesToCanvas(point, canvas, marker, index)
+                        mapPdfCoordinatesToCanvas(
+                            point,
+                            canvas,
+                            marker,
+                            index,
+                            pageWidth,
+                            pageHeight
+                        )
                     }
 //                    for (marker in markers) {
 //
@@ -490,9 +523,12 @@ class LocationsV2Fragment :
         point: PointF,
         canvas: Canvas,
         marker: Triple<Float, Float, String>,
-        markerIndex: Int
+        markerIndex: Int,
+        pageWidth: Float,
+        pageHeight: Float
     ) {
-        val currentZoom = mViewDataBinding.pdfView.zoom // Use your method to get the current zoom level
+        val currentZoom =
+            mViewDataBinding.pdfView.zoom // Use your method to get the current zoom level
 
         val matrixValues = FloatArray(9)
         canvas.matrix.getValues(matrixValues)
@@ -505,13 +541,19 @@ class LocationsV2Fragment :
         val scaledY = (point.y * currentZoom)
 //        println("PDFView scaledX: ${scaledX} -> scaledY: ${scaledY} -> currentZoom: ${currentZoom}")
 
-        val vectorDrawable = ResourcesCompat.getDrawable(resources, R.drawable.icon_pin_point_circle, null)
+        val vectorDrawable =
+            ResourcesCompat.getDrawable(resources, R.drawable.icon_pin_point_circle, null)
         val bitmap1 = Bitmap.createBitmap(55, 55, Bitmap.Config.ARGB_8888)
         val tempCanvas = Canvas(bitmap1)
         vectorDrawable?.setBounds(0, 0, tempCanvas.width, tempCanvas.height)
         vectorDrawable?.draw(tempCanvas)
 
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap1, ((30 + (currentZoom * 3.5) + 5).toInt()), ((30 + (currentZoom * 3.5) + 5).toInt()), true)
+        val scaledBitmap = Bitmap.createScaledBitmap(
+            bitmap1,
+            ((30 + (currentZoom * 3.5) + 5).toInt()),
+            ((30 + (currentZoom * 3.5) + 5).toInt()),
+            true
+        )
 
         val adjustedX = scaledX - scaledBitmap.width / 2
         val adjustedY = scaledY - scaledBitmap.height / 2
@@ -525,12 +567,12 @@ class LocationsV2Fragment :
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
 //            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
-            showNewItemBottomSheet(markerIndex)
+            showNewItemBottomSheet(markerIndex, point, pageWidth, pageHeight)
 
 //            for (marker in markers) {
 //                if (marker.first == point.x && marker.second == point.y) {
 //                    val index = markers.indexOf(Triple(marker.first, marker.second, "new"))
-                    markers[markerIndex] = Triple(marker.first, marker.second, "")
+            markers[markerIndex] = Triple(marker.first, marker.second, "")
 //                }
 //            }
         }
@@ -542,7 +584,12 @@ class LocationsV2Fragment :
         return kotlin.math.sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
     }
 
-    private fun calculatePDFBounds(pageWidth: Float, pageHeight: Float, transX: Float, transY: Float): RectF {
+    private fun calculatePDFBounds(
+        pageWidth: Float,
+        pageHeight: Float,
+        transX: Float,
+        transY: Float
+    ): RectF {
         val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
 
         println("PDFView calculatePDFBounds : pdfWidth=${pageWidth} -- pdfHeight=${pageHeight} -- zoom=${zoom} -- transX=${transX} -- transY=${transY}")
@@ -563,7 +610,12 @@ class LocationsV2Fragment :
     }
 
 
-    private fun showNewItemBottomSheet(markerIndex: Int) {
+    private fun showNewItemBottomSheet(
+        markerIndex: Int,
+        point: PointF,
+        pageWidth: Float,
+        pageHeight: Float
+    ) {
         val sheet = LocationNewItemBottomSheet()
         sheet.dialog?.window?.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or
@@ -573,6 +625,42 @@ class LocationsV2Fragment :
         sheet.onSheetDismiss = {
             markers.removeAt(markerIndex)
             mViewDataBinding.pdfView.invalidate()
+        }
+
+        sheet.onAddTaskBtnClicked = {
+            shortToastNow("Coming Soon")
+//            val bitmap = Bitmap.createBitmap(
+//                mViewDataBinding.pdfView.width,
+//                mViewDataBinding.pdfView.height,
+//                Bitmap.Config.ARGB_8888
+//            )
+//            val canvas = Canvas(bitmap)
+//            mViewDataBinding.pdfView.draw(canvas)
+//
+//            // Save the bitmap to a file
+//            val file = File(context?.externalCacheDir, "pdf_view_screenshot.png")
+//            val fileOutputStream = FileOutputStream(file)
+//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+//            fileOutputStream.flush()
+//            fileOutputStream.close()
+//
+//            val locationTask = AddLocationTask(
+//                xCord = point.x,
+//                yCord = point.y,
+//                pageWidth = pageWidth,
+//                pageHeight = pageHeight,
+//                locationImgBitmap = bitmap,
+//                locationImgFile = file,
+//                drawingId = viewModel.drawingFile.value?._id,
+//                drawingName = viewModel.drawingFile.value?.fileName ?: "Unknown",
+//                projectId = viewModel.drawingFile.value?.projectId,
+//                groupId = viewModel.drawingFile.value?.groupId
+//            )
+//
+//            val bundle = Bundle()
+//            bundle.putParcelable("locationTaskData", locationTask)
+//            navigate(R.id.newTaskV2Fragment, bundle)
+//            sheet.dismiss()
         }
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "ChangePasswordSheet")
@@ -771,5 +859,52 @@ class LocationsV2Fragment :
 
             println("CookiesManager.drawingFileForLocation11: ${CookiesManager.drawingFileForLocation.value}")
         }
+    }
+
+
+    // Capture screenshot of the view with zoom
+    fun captureScreenshotWithZoom(point: PointF): File {
+//        mViewDataBinding.pdfView.zoomCenteredTo(13.0f, point) // Adjust the zoom level as needed
+        val bitmapWithZoom = Bitmap.createBitmap(
+            mViewDataBinding.pdfView.width,
+            mViewDataBinding.pdfView.height,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmapWithZoom)
+        mViewDataBinding.pdfView.draw(canvas)
+
+        val imageFile = captureAndSaveScreenshot(
+            bitmapWithZoom,
+            "pdf_view_with_zoom_${System.currentTimeMillis()}.png"
+        )
+        return imageFile
+    }
+
+    // Capture screenshot of the full view without zoom
+    fun captureScreenshotWithoutZoom(): File {
+        mViewDataBinding.pdfView.zoomTo(1.1f)
+        val bitmapWithoutZoom = Bitmap.createBitmap(
+            mViewDataBinding.pdfView.width,
+            mViewDataBinding.pdfView.height,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmapWithoutZoom)
+        mViewDataBinding.pdfView.draw(canvas)
+
+        val imageFile = captureAndSaveScreenshot(
+            bitmapWithoutZoom,
+            "pdf_view_without_zoom_${System.currentTimeMillis()}.png"
+        )
+        return imageFile
+    }
+
+    // Function to capture screenshot and save as file
+    private fun captureAndSaveScreenshot(bitmap: Bitmap, fileName: String): File {
+        val file = File(context?.externalCacheDir, fileName)
+        val fileOutputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+        fileOutputStream.flush()
+        fileOutputStream.close()
+        return file
     }
 }

@@ -52,6 +52,8 @@ class LoginFragment :
 
                     if (!phoneNumberUtil.isValidNumber(parsedNumber)) {
                         shortToastNow(resources.getString(R.string.error_message_phone_validation))
+                    } else if (password.trim().isEmpty()) {
+                        shortToastNow(resources.getString(R.string.error_message_no_password_length))
                     } else if (!validatePassword(password)) {
                         shortToastNow(resources.getString(R.string.error_message_password_length))
                     } else {
@@ -59,7 +61,12 @@ class LoginFragment :
                             parsedNumber,
                             PhoneNumberUtil.PhoneNumberFormat.E164
                         )
-                        viewModel.doLogin(requireContext(), formattedNumber, password, rememberMe ?: false) {
+                        viewModel.doLogin(
+                            requireContext(),
+                            formattedNumber,
+                            password,
+                            rememberMe ?: false
+                        ) {
                             navigateToAppLoadingScreen()
                         }
                     }

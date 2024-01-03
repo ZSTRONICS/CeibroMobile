@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.PdfThumbnailGenerator
+import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
@@ -181,10 +182,11 @@ class NewDrawingV2Fragment :
         sheet.onAddGroup = {
             viewModel.createGroupByProjectTIDV2(viewModel.projectId.value.toString(), it) {
                 sheet.groupAdapter.addItem(it)
-                sheet.binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
+                sheet.binding.etNewGroup.text = Editable.Factory.getInstance().newEditable("")
                 sheet.binding.addGroupBtn.text = "Save"
                 sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
                 sheet.binding.clAddGroup.visibility = View.GONE
+                hideKeyboard()
             }
         }
 
@@ -202,9 +204,10 @@ class NewDrawingV2Fragment :
                 sheet.groupAdapter.deleteItem(data._id)
                 if (!sheet.binding.addGroupBtn.text.toString().equals("Save", true)) {
                     sheet.binding.addGroupBtn.text = "Save"
-                    sheet.binding.tvNewGroup.text = Editable.Factory.getInstance().newEditable("")
+                    sheet.binding.etNewGroup.text = Editable.Factory.getInstance().newEditable("")
                     sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
                     sheet.binding.clAddGroup.visibility = View.GONE
+                    hideKeyboard()
                 }
             }
         }

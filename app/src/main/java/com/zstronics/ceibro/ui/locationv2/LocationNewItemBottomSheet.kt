@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
     lateinit var binding: LayoutLocationNewItemBinding
     var onSheetDismiss: (() -> Unit)? = null
+    var onAddTaskBtnClicked: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +39,15 @@ class LocationNewItemBottomSheet() : BottomSheetDialogFragment() {
 
         binding.closeBtn.setOnClickListener {
             dismiss()
-//            onSheetDismiss?.invoke()
+        }
+        binding.addTaskBtn.setOnClickListener {
+            onAddTaskBtnClicked?.invoke()
+        }
+        binding.addPhotoBtn.setOnClickListener {
+            onAddTaskBtnClicked?.invoke()
+        }
+        binding.addCommentBtn.setOnClickListener {
+            onAddTaskBtnClicked?.invoke()
         }
     }
 

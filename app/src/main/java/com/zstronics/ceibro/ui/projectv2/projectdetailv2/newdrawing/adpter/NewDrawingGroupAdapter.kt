@@ -22,6 +22,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
     var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
     var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
     var itemClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var hideKeyboardListener: (() -> Unit)? = null
 
     var listItems: MutableList<CeibroGroupsV2> = mutableListOf()
 
@@ -93,7 +94,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
                 itemClickListener?.invoke(data)
             }
             binding.ivMenuBtn.setOnClickListener {
-
+                hideKeyboardListener?.invoke()
                 createPopupWindow(it, data) { tag, data ->
                     if (tag == "delete") {
                         deleteClickListener?.invoke(data)
@@ -103,8 +104,6 @@ class NewDrawingGroupAdapter @Inject constructor() :
                     }
                 }
             }
-
-
         }
     }
 
