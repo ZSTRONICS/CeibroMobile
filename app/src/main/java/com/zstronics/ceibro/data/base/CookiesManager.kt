@@ -39,7 +39,6 @@ object CookiesManager {
     var locationProjectNameForDetails: String = ""
     var notificationDataContent: MutableList<Pair<NotificationTaskData, Int>> = mutableListOf()
     var drawingFileForLocation: MutableLiveData<DrawingV2> = MutableLiveData()
-    var drawingFileForTaskFiles: MutableLiveData<TaskFiles> = MutableLiveData()
     var cameToLocationViewFromProject: Boolean = false
     var openingNewLocationFile: Boolean = false
 }
