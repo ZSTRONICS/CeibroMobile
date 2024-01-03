@@ -1,14 +1,26 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.zstronics.ceibro.BR
@@ -24,31 +36,41 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskDetailV2Binding
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.TaskDetailV2RVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import javax.inject.Inject
+import java.io.File
 
 @AndroidEntryPoint
 class TaskDetailV2Fragment :
     BaseNavViewModelFragment<FragmentTaskDetailV2Binding, ITaskDetailV2.State, TaskDetailV2VM>(),
     BackNavigationResultListener {
     var isScrollingWithDelay = false
+    private var manager: DownloadManager? = null
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+    private val permissionList10 = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -143,7 +165,6 @@ class TaskDetailV2Fragment :
     }
 
 
-    @Inject
     lateinit var detailAdapter: TaskDetailV2RVAdapter
     private var eventAdapterIsSet = false
 
@@ -180,7 +201,41 @@ class TaskDetailV2Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        manager =
+            mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         mViewDataBinding.confirmNeededBtn.visibility = View.GONE
+
+        detailAdapter = TaskDetailV2RVAdapter(
+            networkConnectivityObserver,
+            mViewDataBinding.root.context,
+            viewModel.downloadedDrawingV2Dao
+        )
+        detailAdapter.requestPermissionCallBack {
+            checkDownloadFilePermission()
+        }
+
+        detailAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
+            checkDownloadFilePermission(triplet, viewModel.downloadedDrawingV2Dao) {
+                MainScope().launch {
+                    if (it.trim().equals("100%", true)) {
+                        textView.visibility = View.GONE
+                        downloaded.visibility = View.VISIBLE
+                        textView.text = it
+                        detailAdapter.notifyDataSetChanged()
+                    } else if (it == "retry" || it == "failed") {
+                        downloaded.visibility = View.GONE
+                        textView.visibility = View.GONE
+                        ivDownload.visibility = View.VISIBLE
+                    } else {
+
+                        println("progress: $it textView.text = ${textView.text}")
+                        textView.text = it
+                        textView.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+
 
         mViewDataBinding.parentRV.adapter = detailAdapter
         mViewDataBinding.parentRV.itemAnimator = DefaultItemAnimator()
@@ -936,4 +991,216 @@ class TaskDetailV2Fragment :
 
         return activityCount
     }
+
+
+    private fun checkDownloadFilePermission(
+        url: Triple<String, String, String>,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkPermissions(permissionList13)) {
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
+            } else {
+                requestPermissions(permissionList13)
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+            downloadFile(url, downloadedDrawingV2Dao) {
+                itemClickListener?.invoke(it)
+            }
+        } else {
+            if (checkPermissions(permissionList10)) {
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
+            } else {
+
+                downloadFile(url, downloadedDrawingV2Dao) {
+                    itemClickListener?.invoke(it)
+                }
+                requestPermissions(permissionList10)
+            }
+        }
+    }
+
+    private fun checkDownloadFilePermission(
+
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(permissionList13)
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+
+
+        } else {
+            requestPermissions(permissionList10)
+        }
+    }
+
+    private fun checkPermissions(permissions: Array<String>): Boolean {
+        return permissions.all {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                it
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun requestPermissions(permissions: Array<String>) {
+        ActivityCompat.requestPermissions(
+            requireActivity(), permissions,
+            DrawingsV2Fragment.permissionRequestCode
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == DrawingsV2Fragment.permissionRequestCode) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // Permissions granted
+            } else {
+                handleDeniedPermissions(permissions, grantResults)
+            }
+        }
+    }
+
+    private fun handleDeniedPermissions(permissions: Array<out String>, grantResults: IntArray) {
+        for (i in permissions.indices) {
+            val permission = permissions[i]
+            val result = grantResults[i]
+
+            if (result == PackageManager.PERMISSION_DENIED) {
+                if (shouldShowRequestPermissionRationale(permission)) {
+                    showToast("Permission denied: $permission")
+                } else {
+                    showToast("Permission denied: $permission. Please enable it in the app settings.")
+                    navigateToAppSettings(context)
+                    return
+                }
+            }
+        }
+    }
+
+    private fun navigateToAppSettings(context: Context?) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", context?.packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private fun downloadFile(
+        triplet: Triple<String, String, String>,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        val uri = Uri.parse(triplet.third)
+        val fileName = triplet.second
+        val folder = File(
+            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+            DrawingsV2Fragment.folderName
+        )
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+        val destinationUri = Uri.fromFile(File(folder, fileName))
+
+        val request: DownloadManager.Request? =
+            DownloadManager
+                .Request(uri)
+                .setDestinationUri(destinationUri)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setVisibleInDownloadsUi(true)
+
+        val downloadId = manager?.enqueue(request)
+
+        val ceibroDownloadDrawingV2 = downloadId?.let {
+            CeibroDownloadDrawingV2(
+                downloading = true,
+                isDownloaded = false,
+                downloadId = it,
+                drawing = null,
+                drawingId = triplet.first,
+                groupId = "",
+                localUri = ""
+            )
+        }
+
+
+        GlobalScope.launch {
+            ceibroDownloadDrawingV2?.let {
+                downloadedDrawingV2Dao.insertDownloadDrawing(it)
+            }
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            getDownloadProgress(context, downloadId!!) {
+                itemClickListener?.invoke(it)
+            }
+        }, 1000)
+
+        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+
+    }
+
+    @SuppressLint("Range")
+    private fun getDownloadProgress(
+        context: Context?,
+        downloadId: Long,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        GlobalScope.launch {
+            while (true) {
+                val query = DownloadManager.Query().setFilterById(downloadId)
+                val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val cursor = manager.query(query)
+
+                if (cursor.moveToFirst()) {
+                    val bytesDownloaded =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val bytesTotal =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+
+                    val status =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    println("Status: $status")
+
+                    if (status.toInt() == DownloadManager.STATUS_FAILED) {
+
+                        println("Status failed: $status")
+                        itemClickListener?.invoke("failed")
+                        break
+                    } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
+                        itemClickListener?.invoke("100%")
+                        break
+                    }
+
+                    val downloadedPercent = ((bytesDownloaded * 100L) / bytesTotal).toInt()
+
+                    println("StatusProgress %: $downloadedPercent")
+                    println("StatusDownloaded: $bytesDownloaded")
+                    println("StatusTotal: $bytesTotal")
+
+                    itemClickListener?.invoke("$downloadedPercent %")
+                    if (bytesTotal > 0) {
+                        println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                    }
+                } else {
+                    itemClickListener?.invoke("retry")
+                    break
+                }
+                cursor.close()
+
+                delay(500)
+            }
+        }
+    }
+
+
 }

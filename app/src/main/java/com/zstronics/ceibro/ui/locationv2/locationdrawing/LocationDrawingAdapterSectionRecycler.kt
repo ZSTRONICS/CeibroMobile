@@ -66,7 +66,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
     var drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)? =
         null
 
-    fun setCallBack(itemClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)?) {
+    fun drawingFileBack(itemClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)?) {
         this.drawingFileClickListener = itemClickListener
     }
 
@@ -187,6 +187,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
                         tvSample.text = "${data.fileName}"
                         tvFloor.text = "${data.floor.floorName} Floor"
+
                         root.setOnClickListener { view ->
                             MainScope().launch {
                                 val drawingObject =

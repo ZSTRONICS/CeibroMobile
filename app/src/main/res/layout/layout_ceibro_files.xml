@@ -32,8 +32,6 @@
             app:tint="@color/appBlue" />
 
         <TextView
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:id="@+id/fileName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -41,6 +39,8 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:ellipsize="end"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
             android:maxLines="1"
@@ -48,19 +48,19 @@
             android:text="my-new-cover.pdf"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@+id/clearIcon"
+            app:layout_constraintEnd_toStartOf="@+id/ivDownloadFile"
             app:layout_constraintStart_toEndOf="@+id/uploadImg"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:id="@+id/fileSize"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginBottom="@dimen/_3sdp"
             android:ellipsize="end"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
             android:maxLines="1"
@@ -74,16 +74,76 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:id="@+id/clearIcon"
             android:layout_width="@dimen/_26sdp"
             android:layout_height="@dimen/_26sdp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:padding="@dimen/_4sdp"
+            android:visibility="gone"
             android:src="@drawable/icon_close_round_grey"
             app:layout_constraintBottom_toBottomOf="@+id/fileSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/fileName" />
+
+        <!-- <androidx.appcompat.widget.AppCompatImageView
+             android:id="@+id/downloadIcon"
+             android:layout_width="@dimen/_26sdp"
+             android:layout_height="@dimen/_26sdp"
+             android:focusable="false"
+             android:layout_marginEnd="@dimen/_7sdp"
+             android:focusableInTouchMode="false"
+             android:padding="4dp"
+             android:visibility="visible"
+             android:src="@drawable/download"
+             app:layout_constraintBottom_toBottomOf="@+id/fileSize"
+             app:layout_constraintEnd_toStartOf="@+id/clearIcon"
+             app:layout_constraintTop_toTopOf="@+id/fileName" />-->
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivDownloadFile"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
+            android:layout_marginEnd="@dimen/_7sdp"
+            android:padding="@dimen/_2sdp"
+            android:src="@drawable/download"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fileSize"
+            app:layout_constraintEnd_toStartOf="@+id/clearIcon"
+            app:layout_constraintTop_toTopOf="@+id/fileName"
+            app:layout_goneMarginEnd="@dimen/_5sdp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivDownloaded"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:layout_marginStart="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_3sdp"
+            android:padding="@dimen/_2sdp"
+            android:src="@drawable/icon_tick_mark"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fileSize"
+            app:layout_constraintEnd_toStartOf="@+id/clearIcon"
+            app:layout_constraintTop_toTopOf="@+id/fileName"
+            app:layout_goneMarginEnd="@dimen/_5sdp" />
+
+        <TextView
+            android:id="@+id/tvDownloadProgress"
+            android:layout_width="0dp"
+            android:layout_height="30sp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_1sdp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center|end"
+            android:text="100%"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fileSize"
+            app:layout_constraintEnd_toStartOf="@+id/clearIcon"
+            app:layout_constraintTop_toTopOf="@+id/fileName" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

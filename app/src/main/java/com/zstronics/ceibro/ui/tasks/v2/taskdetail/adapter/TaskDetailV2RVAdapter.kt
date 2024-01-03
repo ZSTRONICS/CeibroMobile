@@ -1,26 +1,39 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailBinding
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailEventsBinding
+import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
-import javax.inject.Inject
+import org.greenrobot.eventbus.EventBus
 
-class TaskDetailV2RVAdapter @Inject constructor() :
+class TaskDetailV2RVAdapter(
+    val networkConnectivityObserver: NetworkConnectivityObserver,
+    val context: Context,
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: Events) -> Unit)? =
         null
@@ -33,7 +46,19 @@ class TaskDetailV2RVAdapter @Inject constructor() :
         null
     var listItems: MutableList<Any> = mutableListOf()
 
+    var requestPermissionClickListener: (() -> Unit)? = null
 
+    fun requestPermissionCallBack(requestPermissionClickListener: () -> Unit) {
+        this.requestPermissionClickListener = requestPermissionClickListener
+    }
+
+
+    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String,String,String>, tag: String) -> Unit)? =
+        null
+
+    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView,  triplet: Triple<String,String,String>, tag: String) -> Unit)?) {
+        this.downloadFileClickListener = itemClickListener
+    }
     var loggedInUserId: String = ""
     var rootState: String = ""
     var selectedState: String = ""
@@ -388,7 +413,29 @@ class TaskDetailV2RVAdapter @Inject constructor() :
                 } else {
                     View.GONE
                 }
-            val filesAdapter = FilesRVAdapter()
+            val filesAdapter =
+                FilesRVAdapter(networkConnectivityObserver, context, downloadedDrawingV2Dao)
+
+            filesAdapter.requestPermissionCallBack {
+
+                requestPermissionClickListener?.invoke()
+            }
+
+
+            filesAdapter.downloadFileCallBack { textView, ivDownload, downloaded, data, tag->
+
+
+                val triplet=  Triple(data.id,data.fileName,data.fileUrl)
+                downloadFileClickListener?.invoke(
+                    textView,
+                    ivDownload,
+                    downloaded,
+                    triplet,
+                    ""
+                )
+            }
+
+
             filesAdapter.setList(document)
             binding.filesRV.adapter = filesAdapter
             if (filesAdapter.itemCount <= 1) {
@@ -396,9 +443,10 @@ class TaskDetailV2RVAdapter @Inject constructor() :
             } else {
                 binding.filesCount.text = "${filesAdapter.itemCount} Files"
             }
-            filesAdapter.fileClickListener = { _: View, position: Int, data: TaskFiles ->
+            filesAdapter.fileClickListener = { _: View, position: Int, data: TaskFiles, downloadedData: CeibroDownloadDrawingV2 ->
                 val bundle = Bundle()
                 bundle.putParcelable("taskFile", data)
+                bundle.putParcelable("downloadedFile", downloadedData)
                 fileViewerClickListener?.invoke(position, bundle)
 //                navigate(R.id.fileViewerFragment, bundle)
 //            val pdfUrl = data.fileUrl             // This following code downloads the file
@@ -416,7 +464,14 @@ class TaskDetailV2RVAdapter @Inject constructor() :
         fun bind(events: MutableList<*>) {
             val eventsList = events as MutableList<Events>
 
-            val eventsAdapter = EventsRVAdapter()
+            val eventsAdapter = EventsRVAdapter(networkConnectivityObserver, context, downloadedDrawingV2Dao)
+            eventsAdapter.requestPermissionCallBack {
+                requestPermissionClickListener?.invoke()
+            }
+            eventsAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
+                downloadFileClickListener?.invoke(textView,ivDownload,downloaded,triplet,tag)
+            }
+
             eventsAdapter.setList(eventsList, loggedInUserId)
             binding.eventsRV.adapter = eventsAdapter
 
@@ -427,9 +482,10 @@ class TaskDetailV2RVAdapter @Inject constructor() :
                     View.GONE
                 }
 
-            eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles ->
+            eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles,drawingFile ->
                 val bundle = Bundle()
                 bundle.putParcelable("eventFile", data)
+                bundle.putParcelable("downloadedFile", drawingFile)
                 fileViewerClickListener?.invoke(position, bundle)
             }
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
@@ -38,6 +39,7 @@ object CookiesManager {
     var locationProjectNameForDetails: String = ""
     var notificationDataContent: MutableList<Pair<NotificationTaskData, Int>> = mutableListOf()
     var drawingFileForLocation: MutableLiveData<DrawingV2> = MutableLiveData()
+    var drawingFileForTaskFiles: MutableLiveData<TaskFiles> = MutableLiveData()
     var cameToLocationViewFromProject: Boolean = false
     var openingNewLocationFile: Boolean = false
 }

@@ -169,7 +169,7 @@ class LocationDrawingV2Fragment :
         )
         referenceSectionedAdapter = sectionedAdapter
 
-        sectionedAdapter.setCallBack { view, data, absolutePath ->
+        sectionedAdapter.drawingFileBack { view, data, absolutePath ->
             data.uploaderLocalFilePath = absolutePath
             CookiesManager.drawingFileForLocation.value = data
             CookiesManager.cameToLocationViewFromProject = false
