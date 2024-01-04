@@ -414,6 +414,7 @@ class CreateNewTaskService : Service() {
         channelId: String,
         channelName: String,
         notificationTitle: String,
+        notificationDescription: String,
         isOngoing: Boolean = false,
         indeterminate: Boolean = false,
         notificationIcon: Int = R.drawable.icon_upload
@@ -426,6 +427,7 @@ class CreateNewTaskService : Service() {
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(notificationIcon)
             .setContentTitle(notificationTitle)
+            .setContentText(notificationDescription)
             .setOngoing(isOngoing)
             .setOnlyAlertOnce(true)
         if (isOngoing) {
@@ -439,7 +441,8 @@ class CreateNewTaskService : Service() {
     private suspend fun saveFailedTaskInDraft(
         newTaskRequest: NewTaskV2Entity,
         list: ArrayList<PickedImages>,
-        errorMessage: String
+        errorMessage: String,
+        taskLocationPinData: AddLocationTask?
     ) {
         val localFilesData = list.map {
             LocalFilesToStore(
@@ -453,6 +456,7 @@ class CreateNewTaskService : Service() {
         }
         newTaskRequest.apply {
             this.filesData = localFilesData
+            this.locationTaskData = taskLocationPinData
             this.isNewTaskCreationFailed = true
             this.taskCreationFailedError = errorMessage
         }
@@ -499,13 +503,14 @@ class CreateNewTaskService : Service() {
                 hideIndeterminateNotifications(context, createTaskNotificationID)
 
                 GlobalScope.launch {
-                    saveFailedTaskInDraft(newTask, list, errorMessage)
+                    saveFailedTaskInDraft(newTask, list, errorMessage, taskLocationPinData)
                 }
                 createSimpleNotification(
                     context = this,
                     channelId = CHANNEL_ID,
                     channelName = CHANNEL_NAME,
-                    notificationTitle = "Task creation un-successful"
+                    notificationTitle = "Task creation un-successful",
+                    notificationDescription = errorMessage
                 )
 
                 println("Service Status...:Create task with failure -> $errorMessage")

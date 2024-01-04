@@ -374,6 +374,10 @@ class LocationsV2Fragment :
                     }, 500)
 
                 }
+                .onTap { event ->
+
+                    false
+                }
                 .onLongPress { event ->
                     if (event.action == MotionEvent.ACTION_DOWN) {
 
