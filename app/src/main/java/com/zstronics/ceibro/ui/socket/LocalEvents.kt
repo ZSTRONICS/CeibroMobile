@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.socket
 
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
@@ -126,4 +127,5 @@ object LocalEvents {
     class LoadViewDrawingFragmentInLocation
     data class UpdateGroupDrawings(val projectID: String)
 
+    data class RefreshDrawingPins(val pinData: CeibroDrawingPins?)
 }

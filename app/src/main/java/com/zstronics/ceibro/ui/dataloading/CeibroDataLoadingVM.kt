@@ -13,11 +13,13 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
@@ -53,6 +55,7 @@ class CeibroDataLoadingVM @Inject constructor(
     val fileAttachmentsDataSource: FileAttachmentsDataSource,
     private val remoteTask: TaskRemoteDataSource,
     private val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
     private val floorsV2Dao: FloorsV2Dao,
@@ -125,9 +128,11 @@ class CeibroDataLoadingVM @Inject constructor(
 
                     val allTasks = response.data.newData.allTasks ?: taskDao.getAllTasks()?.toMutableList() ?: mutableListOf<CeibroTaskV2>()
                     val allEvents = response.data.newData.allEvents ?: taskDao.getAllEvents()?.toMutableList() ?: mutableListOf<Events>()
+                    val allDrawingPins = response.data.newData.allPins ?: mutableListOf<CeibroDrawingPins>()
 
                     taskDao.insertMultipleTasks(allTasks)
                     taskDao.insertMultipleEvents(allEvents)
+                    drawingPinsDao.insertMultiplePins(allDrawingPins)
 
                     val toMeNewTask = allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
                     val toMeOngoingTask = allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()

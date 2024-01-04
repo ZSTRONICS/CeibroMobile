@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.CommentData
 import com.zstronics.ceibro.data.database.models.tasks.EventData
@@ -28,6 +29,8 @@ data class AllTasksV2NewResponse(
         val allTasks: List<CeibroTaskV2>?,
         @SerializedName("allEvents")
         val allEvents: List<Events>?,
+        @SerializedName("allPins")
+        val allPins: List<CeibroDrawingPins>?,
         @SerializedName("latestUpdatedAt")
         val latestUpdatedAt: String
     ) : BaseResponse(), Parcelable

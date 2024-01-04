@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -94,7 +95,7 @@
                         android:id="@+id/locationSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tvFileName"
@@ -127,13 +128,13 @@
                     android:id="@+id/tvFloorName"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
+                    android:layout_marginEnd="@dimen/_5sdp"
                     android:ellipsize="end"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
                     android:maxLines="1"
                     android:paddingStart="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
                     android:text="Floor"
                     android:textColor="@color/appGrey3"
                     android:textSize="15sp"
@@ -173,6 +174,57 @@
                     android:indeterminate="true"
                     android:indeterminateTint="@android:color/black"
                     android:visibility="visible" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/taskSmallView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/taskSmallViewLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dp"
+                        android:background="@drawable/round_orange"
+                        android:backgroundTint="@color/white"
+                        android:elevation="2dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/taskRootState"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="2dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="center"
+                            android:padding="2dp"
+                            android:text="From me"
+                            android:textColor="@color/appBlue"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/taskUID"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/round_orange"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="center"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:text="C101-202"
+                            android:textColor="@color/black"
+                            android:textSize="11.5sp" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -238,15 +290,12 @@
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:src="@drawable/icon_filter_blue"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/filter"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:visibility="visible"
-                    app:layout_goneMarginTop="@dimen/_15sdp"
-                    app:layout_constraintTop_toBottomOf="@id/iv_filter"
                     android:id="@+id/filter"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_20sdp"
@@ -256,11 +305,12 @@
                     android:text="@string/filter"
                     android:textColor="@color/appBlue"
                     android:textSize="@dimen/_10sdp"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    />
-
+                    app:layout_constraintTop_toBottomOf="@id/iv_filter"
+                    app:layout_goneMarginTop="@dimen/_15sdp" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -352,10 +402,10 @@
 
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_marginBottom="@dimen/_10sdp"
                 android:id="@+id/llFilter"
                 android:layout_width="@dimen/_75sdp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:background="@color/white"
                 android:elevation="5dp"
                 android:gravity="center"
@@ -427,7 +477,6 @@
                         android:layout_marginTop="@dimen/_3sdp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:background="@{viewState.isToOngoingClicked() ? @drawable/status_ongoing_filled_new : @drawable/status_ongoing_outline_new}"
-                        app:drawableTint="@color/appYellow"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -435,6 +484,7 @@
                         android:text="@string/ongoing_heading"
                         android:textColor="@color/black"
                         android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -521,7 +571,6 @@
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:layout_marginBottom="@dimen/_3sdp"
                         android:background="@{viewState.isFromOngoingClicked()? @drawable/status_ongoing_filled_new : @drawable/status_ongoing_outline_new}"
-                        app:drawableTint="@color/appYellow"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -529,6 +578,7 @@
                         android:text="@string/ongoing_heading"
                         android:textColor="@color/black"
                         android:textSize="13sp"
+                        app:drawableTint="@color/appYellow"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
