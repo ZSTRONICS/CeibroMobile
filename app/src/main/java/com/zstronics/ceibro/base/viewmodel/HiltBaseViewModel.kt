@@ -709,7 +709,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                 taskDao.insertTaskData(newTask)
                 if (newTask.pinData != null) {
-                    drawingPinsDao.insertSinglePinData(newTask.pinData!!)
+                    drawingPinsDao.insertSinglePinData(newTask.pinData)
                 }
 
                 if (newTask.isCreator) {
@@ -810,7 +810,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 }
 
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
-
+                EventBus.getDefault().post(LocalEvents.RefreshDrawingPins(newTask.pinData))
             }
         }
 

@@ -20,7 +20,6 @@ import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
-import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.LayoutCeibroFilesBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import kotlinx.coroutines.GlobalScope
@@ -124,7 +123,7 @@ class FilesRVAdapter constructor(
                 }
             }
 
-            binding.mainLayout.setOnClickListener {view->
+            binding.mainLayout.setOnClickListener { view ->
                 MainScope().launch {
                     val drawingObject =
                         downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.id)
@@ -134,7 +133,7 @@ class FilesRVAdapter constructor(
 
                         if (file.exists()) {
 
-                            fileClickListener?.invoke(view, absoluteAdapterPosition, item,it)
+                            fileClickListener?.invoke(view, absoluteAdapterPosition, item, it)
                         } else {
                             cancelAndMakeToast(
                                 view.context,
@@ -152,7 +151,7 @@ class FilesRVAdapter constructor(
                 }
             }
 
-            binding.fileName.setOnClickListener {view->
+            binding.fileName.setOnClickListener { view ->
                 MainScope().launch {
                     val drawingObject =
                         downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.id)
@@ -161,7 +160,7 @@ class FilesRVAdapter constructor(
                         val file = File(it.localUri)
 
                         if (file.exists()) {
-                            fileClickListener?.invoke(view, absoluteAdapterPosition, item,it)
+                            fileClickListener?.invoke(view, absoluteAdapterPosition, item, it)
                         } else {
                             cancelAndMakeToast(
                                 view.context,
@@ -178,7 +177,7 @@ class FilesRVAdapter constructor(
                     }
                 }
             }
-            binding.fileSize.setOnClickListener {view->
+            binding.fileSize.setOnClickListener { view ->
                 MainScope().launch {
                     val drawingObject =
                         downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.id)
@@ -187,7 +186,7 @@ class FilesRVAdapter constructor(
                         val file = File(it.localUri)
 
                         if (file.exists()) {
-                            fileClickListener?.invoke(view, absoluteAdapterPosition, item,it)
+                            fileClickListener?.invoke(view, absoluteAdapterPosition, item, it)
                         } else {
                             cancelAndMakeToast(
                                 view.context,
@@ -289,6 +288,18 @@ class FilesRVAdapter constructor(
                                 item,
                                 ""
                             )
+
+                            checkDownloadStatus(
+                                item.id,
+                                binding.ivDownloaded,
+                                binding.tvDownloadProgress,
+                                binding.ivDownloadFile,
+                                position
+                            ) {
+
+                                notifyItemChanged(position)
+                            }
+
                         } else {
 
                             requestPermissionClickListener?.invoke("getpermissoin")
@@ -389,7 +400,7 @@ class FilesRVAdapter constructor(
                                 itemClickListener?.invoke(
                                     "downloaded",
                                     fileAbsolutePath ?: "",
-                                    "100%"
+                                    "100 %"
                                 )
                             }
                         }
@@ -403,7 +414,7 @@ class FilesRVAdapter constructor(
                     println("StatusDownloaded: $bytesDownloaded")
                     println("StatusTotal: $bytesTotal")
 
-                    itemClickListener?.invoke("downloading", "", "$downloadedPercent%")
+                    itemClickListener?.invoke("downloading", "", "$downloadedPercent %")
                     if (bytesTotal > 0) {
                         println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
                     }
@@ -447,4 +458,74 @@ class FilesRVAdapter constructor(
         return null
     }
 
+    fun checkDownloadStatus(
+        id: String,
+        ivDownloaded: AppCompatImageView,
+        tvDownloadProgress: TextView,
+        ivDownloadFile: AppCompatImageView,
+        position: Int,
+        callBack: (Int) -> Unit
+    ) {
+        MainScope().launch {
+            delay(500)
+            val drawingObject =
+                downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(id)
+            drawingObject?.let {
+
+                if (it.isDownloaded && it.localUri.isNotEmpty()) {
+                    ivDownloaded.visibility = View.VISIBLE
+                    tvDownloadProgress.visibility = View.GONE
+                    ivDownloadFile.visibility = View.GONE
+                } else if (it.downloading) {
+                    ivDownloaded.visibility = View.GONE
+                    tvDownloadProgress.visibility = View.VISIBLE
+                    ivDownloadFile.visibility = View.GONE
+                    getDownloadProgress(
+                        tvDownloadProgress.context,
+                        it.downloadId
+                    ) { status, filepath, progress ->
+                        MainScope().launch {
+                            if (status.equals("downloaded", true)) {
+                                callBack.invoke(position)
+                                if (filepath.isNotEmpty()) {
+                                    ivDownloadFile.visibility =
+                                        View.GONE
+                                    tvDownloadProgress.visibility =
+                                        View.GONE
+                                    ivDownloaded.visibility =
+                                        View.VISIBLE
+                                    tvDownloadProgress.text = progress
+                                } else {
+                                    downloadedDrawingV2Dao.deleteByDrawingID(id)
+                                    ivDownloaded.visibility = View.GONE
+                                    tvDownloadProgress.visibility =
+                                        View.GONE
+                                    ivDownloadFile.visibility =
+                                        View.VISIBLE
+                                }
+                            } else if (status == "retry" || status == "failed") {
+                                downloadedDrawingV2Dao.deleteByDrawingID(id)
+                                tvDownloadProgress.text = "0%"
+                                ivDownloaded.visibility = View.GONE
+                                tvDownloadProgress.visibility = View.GONE
+                                ivDownloadFile.visibility = View.VISIBLE
+                            } else if (status == "downloading") {
+                                ivDownloadFile.visibility = View.GONE
+                                tvDownloadProgress.visibility = View.VISIBLE
+                                tvDownloadProgress.text = progress
+                            }
+                        }
+                    }
+                } else {
+                    ivDownloaded.visibility = View.GONE
+                    tvDownloadProgress.visibility = View.GONE
+                    ivDownloadFile.visibility = View.VISIBLE
+                }
+            } ?: kotlin.run {
+                ivDownloaded.visibility = View.GONE
+                tvDownloadProgress.visibility = View.GONE
+                ivDownloadFile.visibility = View.VISIBLE
+            }
+        }
+    }
 }

@@ -3,11 +3,12 @@ package com.zstronics.ceibro.data.database.models.tasks
 import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.Entity
+import androidx.room.Index
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.database.TableNamesV2
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = TableNamesV2.DrawingPins, primaryKeys = ["_id"])
+@Entity(tableName = TableNamesV2.DrawingPins, primaryKeys = ["_id"], indices = [Index(value = ["_id"]), Index(value = ["drawingId"])])
 @Parcelize
 @Keep
 data class CeibroDrawingPins(

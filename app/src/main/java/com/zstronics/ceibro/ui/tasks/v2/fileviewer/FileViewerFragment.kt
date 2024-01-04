@@ -21,19 +21,32 @@ class FileViewerFragment :
     override val layoutResId: Int = R.layout.fragment_file_viewer
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
+        when (id) {
+            R.id.backBtn -> {
+                mViewDataBinding.pdfView.recycle()
+                navigateBack()
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel.fileData.observe(viewLifecycleOwner) {
+
+            mViewDataBinding.pdfView.useBestQuality(true)
             val file = File(it.localUri)
+            mViewDataBinding.fileName.text=it.fileName
             mViewDataBinding.pdfView.fromFile(file)
                 .defaultPage(0)
                 .enableSwipe(true)
                 .enableDoubletap(true)
                 .enableAntialiasing(true)
+                .enableAnnotationRendering(true)
                 .load()
         }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mViewDataBinding.pdfView.recycle()
     }
 }

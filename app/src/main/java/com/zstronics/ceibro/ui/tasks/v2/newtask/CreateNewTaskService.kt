@@ -255,7 +255,7 @@ class CreateNewTaskService : Service() {
                     sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                     taskDao.insertTaskData(newTask)
                     if (newTask.pinData != null) {
-                        drawingPinsDaoInternal.insertSinglePinData(newTask.pinData!!)
+                        drawingPinsDaoInternal.insertSinglePinData(newTask.pinData)
                     }
 
                     if (newTask.isCreator) {
@@ -359,6 +359,7 @@ class CreateNewTaskService : Service() {
                     }
 
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.RefreshDrawingPins(newTask.pinData))
                 }
             }
         }

@@ -134,6 +134,7 @@ class UploadDrawingService : Service() {
                                 if (newDrawingList.isNotEmpty()) {
                                     val ceibroDownloadDrawingV2 =
                                         CeibroDownloadDrawingV2(
+                                            fileName = response.data.drawings[0].fileName,
                                             downloading = false,
                                             isDownloaded = true,
                                             downloadId = 0L,

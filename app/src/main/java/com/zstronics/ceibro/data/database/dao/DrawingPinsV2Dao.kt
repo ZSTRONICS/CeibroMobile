@@ -12,9 +12,9 @@ interface DrawingPinsV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultiplePins(drawingPins: List<CeibroDrawingPins>)
 
-//    @Query("SELECT * FROM groups_v2 WHERE projectId = :projectId ORDER BY updatedAt DESC")
-//    suspend fun getAllProjectGroups(projectId: String): List<CeibroGroupsV2>
-//
+    @Query("SELECT * FROM drawing_pins_v2 WHERE drawingId = :drawingId")
+    suspend fun getAllDrawingPins(drawingId: String): List<CeibroDrawingPins>
+
 //
 //    @Query("SELECT * FROM groups_v2 WHERE _id = :groupId")
 //    suspend fun getGroupByGroupId(groupId: String): CeibroGroupsV2?
