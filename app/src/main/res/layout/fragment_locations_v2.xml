@@ -170,9 +170,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:visibility="visible"
                     android:indeterminate="true"
-                    android:indeterminateTint="@android:color/black" />
+                    android:indeterminateTint="@android:color/black"
+                    android:visibility="visible" />
             </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

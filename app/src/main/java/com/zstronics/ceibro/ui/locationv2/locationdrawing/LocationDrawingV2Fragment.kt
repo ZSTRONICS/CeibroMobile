@@ -454,6 +454,7 @@ class LocationDrawingV2Fragment :
 
         val ceibroDownloadDrawingV2 = downloadId?.let {
             CeibroDownloadDrawingV2(
+                fileName = drawing.fileName,
                 downloading = true,
                 isDownloaded = false,
                 downloadId = it,

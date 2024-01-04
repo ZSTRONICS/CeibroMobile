@@ -13,6 +13,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = TableNamesV2.DownloadDrawing, primaryKeys = ["drawingId"])
 data class CeibroDownloadDrawingV2(
+    @SerializedName("fileName")
+    var fileName: String,
     @SerializedName("downloading")
     var downloading: Boolean = false,
     @SerializedName("isDownloaded")

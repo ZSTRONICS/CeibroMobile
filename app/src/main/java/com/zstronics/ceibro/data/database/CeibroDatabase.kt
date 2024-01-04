@@ -50,7 +50,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 94,
+    version = 95,
     exportSchema = false
 )
 @TypeConverters(

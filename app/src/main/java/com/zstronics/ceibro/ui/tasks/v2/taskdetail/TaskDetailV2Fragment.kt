@@ -221,7 +221,7 @@ class TaskDetailV2Fragment :
                         textView.visibility = View.GONE
                         downloaded.visibility = View.VISIBLE
                         textView.text = it
-                    //    detailAdapter.notifyDataSetChanged()
+                        //    detailAdapter.notifyDataSetChanged()
                     } else if (it == "retry" || it == "failed") {
                         downloaded.visibility = View.GONE
                         textView.visibility = View.GONE
@@ -1122,6 +1122,7 @@ class TaskDetailV2Fragment :
 
         val ceibroDownloadDrawingV2 = downloadId?.let {
             CeibroDownloadDrawingV2(
+                fileName = triplet.second,
                 downloading = true,
                 isDownloaded = false,
                 downloadId = it,
@@ -1139,11 +1140,11 @@ class TaskDetailV2Fragment :
             }
         }
 
-       /* Handler(Looper.getMainLooper()).postDelayed({
-            getDownloadProgress(context, downloadId!!) {
-                itemClickListener?.invoke(it)
-            }
-        }, 1000)*/
+        /* Handler(Looper.getMainLooper()).postDelayed({
+             getDownloadProgress(context, downloadId!!) {
+                 itemClickListener?.invoke(it)
+             }
+         }, 1000)*/
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
