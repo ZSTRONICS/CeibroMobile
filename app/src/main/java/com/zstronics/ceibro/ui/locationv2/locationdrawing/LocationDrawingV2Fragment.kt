@@ -15,6 +15,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.View
+import android.widget.SearchView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -35,6 +36,7 @@ import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentLocationDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingSectionHeader
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
@@ -138,12 +140,6 @@ class LocationDrawingV2Fragment :
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-//        downloadCompleteReceiver = DownloadCompleteReceiver()
-//        mainActivityDownloader?.registerReceiver(
-//            downloadCompleteReceiver,
-//            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-//        )
-
 
         sectionList.add(
             0,
@@ -156,9 +152,150 @@ class LocationDrawingV2Fragment :
             1,
             LocationDrawingSectionHeader(
                 mutableListOf(),
-                getString(R.string.all_groups)
+                getString(R.string.my_groups)
             )
         )
+        sectionList.add(
+            2,
+            LocationDrawingSectionHeader(
+                mutableListOf(),
+                getString(R.string.other_groups)
+            )
+        )
+
+
+
+        viewModel.myGroupData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                sectionList.removeAt(1)
+                sectionList.add(
+                    1, LocationDrawingSectionHeader(it, getString(R.string.my_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    LocationDrawingSectionHeader(
+                        it,
+                        getString(R.string.my_groups)
+                    ), 1
+                )
+                sectionedAdapter.notifyDataSetChanged()
+
+            } else {
+                sectionList.removeAt(1)
+                sectionList.add(
+                    1, LocationDrawingSectionHeader(mutableListOf(), getString(R.string.my_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    LocationDrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.my_groups)
+                    ), 1
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.otherGroupsData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                val groupedByCreatorId = it.groupBy { group -> group.creator.id }
+
+                // Creating an array of arrays where each inner array contains groups with the same creator._id
+                val result = groupedByCreatorId.values.toList()
+
+
+
+                if (sectionList.size > 2) {
+                    val iterator = sectionList.iterator()
+                    var count = 0
+
+                    while (iterator.hasNext()) {
+                        if (count > 2) {
+                            iterator.remove()
+                        }
+
+                        iterator.next()
+                        count++
+                    }
+                }
+
+                result.mapIndexed { index, creatorGroups ->
+                    println("otherGroupsData: ${creatorGroups.size} groups: ${creatorGroups}")
+
+                    sectionList.add(
+                        index + 2,
+                        LocationDrawingSectionHeader(
+                            creatorGroups.toMutableList(),
+                            "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
+                        )
+                    )
+                    sectionedAdapter.insertNewSection(
+                        LocationDrawingSectionHeader(
+                            creatorGroups.toMutableList(),
+                            "Group shared by: ${creatorGroups[0].creator.firstName} ${creatorGroups[0].creator.surName}"
+                        ), index + 2
+                    )
+                }
+                sectionedAdapter.notifyDataSetChanged()
+
+
+            } else {
+                if (sectionList.size > 2) {
+                    val iterator = sectionList.iterator()
+                    var count = 0
+
+                    while (iterator.hasNext()) {
+                        if (count > 2) {
+                            iterator.remove()
+                        }
+
+                        iterator.next()
+                        count++
+                    }
+                }
+                sectionList.add(
+                    2, LocationDrawingSectionHeader(mutableListOf(), getString(R.string.other_groups))
+                )
+                sectionedAdapter.insertNewSection(
+                    LocationDrawingSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.other_groups)
+                    ), 2
+                )
+                sectionedAdapter.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.originalGroups.observe(viewLifecycleOwner) {
+            if (it.size > 1) {
+                mViewDataBinding.clSearch.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.clSearch.visibility = View.GONE
+            }
+        }
+
+        mViewDataBinding.projectSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+
+                    viewModel.filterMyGroups(query.trim())
+                    viewModel.filterFavouriteGroups(query.trim())
+                    viewModel.filterOtherGroups(query.trim())
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+
+                    viewModel.filterMyGroups(newText.trim())
+                    viewModel.filterFavouriteGroups(newText.trim())
+                    viewModel.filterOtherGroups(newText.trim())
+
+                }
+                return true
+            }
+        })
+
 
 
         sectionedAdapter = LocationDrawingAdapterSectionRecycler(
@@ -247,45 +384,6 @@ class LocationDrawingV2Fragment :
 
         }
 
-        viewModel.groupData.observe(viewLifecycleOwner) {
-
-            if (it.isNotEmpty()) {
-                if (!viewModel.allGroupsOnceSet) {
-                    viewModel.allGroupsOnceSet = true
-                    sectionList.removeAt(1)
-                    sectionList.add(
-                        1, LocationDrawingSectionHeader(it, getString(R.string.all_groups))
-                    )
-//                sectionedAdapter.removeSection(1)
-                    sectionedAdapter.insertNewSection(
-                        LocationDrawingSectionHeader(
-                            it,
-                            getString(R.string.all_groups)
-                        ), 1
-                    )
-                    sectionedAdapter.notifyDataSetChanged()
-                }
-            } else {
-                sectionList.removeAt(1)
-                sectionList.add(
-                    1,
-                    LocationDrawingSectionHeader(
-                        mutableListOf(),
-                        getString(R.string.all_groups)
-                    )
-                )
-//                sectionedAdapter.removeSection(1)
-                sectionedAdapter.insertNewSection(
-                    LocationDrawingSectionHeader(
-                        mutableListOf(),
-                        getString(R.string.all_groups)
-                    ), 1
-                )
-                sectionedAdapter.notifyDataSetChanged()
-            }
-
-        }
-
         viewModel.originalGroups.observe(viewLifecycleOwner) {
             if (it.size > 1) {
                 mViewDataBinding.clSearch.visibility = View.VISIBLE
@@ -302,13 +400,6 @@ class LocationDrawingV2Fragment :
             }
         }
 
-    }
-
-    override fun onDestroy() {
-//        mainActivityDownloader?.unregisterReceiver(downloadCompleteReceiver)
-//        mainActivityDownloader = null
-
-        super.onDestroy()
     }
 
 
@@ -699,7 +790,5 @@ class LocationDrawingV2Fragment :
         super.onStop()
         EventBus.getDefault().unregister(this)
     }
-
-
 }
 

@@ -10,6 +10,7 @@ import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,22 +21,30 @@ class LocationDrawingV2VM @Inject constructor(
     private val projectRepository: IProjectRepository,
     private val groupsV2Dao: GroupsV2Dao,
 ) : HiltBaseViewModel<ILocationDrawingV2.State>(), ILocationDrawingV2.ViewModel {
+    var favoriteGroupsOnceSet = false
+    var allGroupsOnceSet = false
+
 
     private val _projectData: MutableLiveData<CeibroProjectV2> = MutableLiveData()
     val projectData: LiveData<CeibroProjectV2> = _projectData
 
-    private val _groupData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(
-        mutableListOf()
-    )
-    val groupData: LiveData<MutableList<CeibroGroupsV2>> = _groupData
+    private val _myGroupData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
+    val myGroupData: LiveData<MutableList<CeibroGroupsV2>> = _myGroupData
 
-    private val _favoriteGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(
-        mutableListOf()
-    )
+    private val _otherGroupsData: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
+    val otherGroupsData: LiveData<MutableList<CeibroGroupsV2>> = _otherGroupsData
+
+    private val _favoriteGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
     val favoriteGroups: LiveData<MutableList<CeibroGroupsV2>> = _favoriteGroups
     var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
-    var favoriteGroupsOnceSet = false
-    var allGroupsOnceSet = false
+
+
+    private var originalAllGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+
+    private var originalFavouriteGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+    private var originalOtherGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+    private var orignalMyGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -50,14 +59,25 @@ class LocationDrawingV2VM @Inject constructor(
 
     fun getGroupsByProjectID(projectId: String) {
         launch {
-//            loading(true)
             val groupsList = groupsV2Dao.getAllProjectGroups(projectId)
+            originalAllGroups = groupsList.toMutableList()
             originalGroups.value = groupsList.toMutableList()
             if (groupsList.isNotEmpty()) {
-                val favorites = groupsList.filter { it.isFavoriteByMe } ?: listOf()
-                _favoriteGroups.value = favorites.toMutableList()
-                _groupData.value = groupsList.toMutableList()
-//                loading(false, "")
+
+                val favoriteGroups = groupsList.filter { it.isFavoriteByMe } ?: listOf()
+                originalFavouriteGroups = favoriteGroups.toMutableList()
+
+                val creatorGroups = groupsList.filter { (!it.isFavoriteByMe) && (it.isCreator) } ?: listOf()
+                orignalMyGroups = creatorGroups.toMutableList()
+
+                val otherGroups = groupsList.filter { (!it.isFavoriteByMe) && (!it.isCreator) } ?: listOf()
+                originalOtherGroups = otherGroups.toMutableList()
+
+
+                _favoriteGroups.value = favoriteGroups.toMutableList()
+                _myGroupData.value = creatorGroups.toMutableList()
+                _otherGroupsData.value = otherGroups.toMutableList()
+
             } else {
 //                when (val response = projectRepository.getGroupsByProjectId(projectId)) {
 //
@@ -73,6 +93,73 @@ class LocationDrawingV2VM @Inject constructor(
 //                }
             }
         }
+    }
+    fun filterMyGroups(search: String) {
+        if (search.isEmpty()) {
+            if (orignalMyGroups.isNotEmpty()) {
+                _myGroupData.postValue(orignalMyGroups)
+            }
+            return
+        }
+        val filtered = orignalMyGroups.filter {
+            (it.groupName.isNotEmpty() && it.groupName.contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (it.drawings.isNotEmpty() && isDrawingNameExist(it.drawings, search))
+        }
+
+        if (filtered.isNotEmpty())
+            _myGroupData.postValue(filtered.toMutableList())
+        else
+            _myGroupData.postValue(mutableListOf())
+    }
+
+    fun filterFavouriteGroups(search: String) {
+        if (search.isEmpty()) {
+            if (originalFavouriteGroups.isNotEmpty()) {
+                _favoriteGroups.postValue(originalFavouriteGroups)
+            }
+            return
+        }
+        val filtered = originalFavouriteGroups.filter {
+            (it.groupName.isNotEmpty() && it.groupName.contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (it.drawings.isNotEmpty() && isDrawingNameExist(it.drawings, search))
+        }
+
+        if (filtered.isNotEmpty())
+            _favoriteGroups.postValue(filtered.toMutableList())
+        else
+            _favoriteGroups.postValue(mutableListOf())
+    }
+
+    fun filterOtherGroups(search: String) {
+        if (search.isEmpty()) {
+            if (originalOtherGroups.isNotEmpty()) {
+                _otherGroupsData.postValue(originalOtherGroups)
+            }
+            return
+        }
+        val filtered = originalOtherGroups.filter {
+            (it.groupName.isNotEmpty() && it.groupName.contains(search, true)) ||
+                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
+                        .contains(search, true)) ||
+                    (it.drawings.isNotEmpty() && isDrawingNameExist(it.drawings, search))
+        }
+
+        if (filtered.isNotEmpty())
+            _otherGroupsData.postValue(filtered.toMutableList())
+        else
+            _otherGroupsData.postValue(mutableListOf())
+    }
+    private fun isDrawingNameExist(drawings: List<DrawingV2>, search: String): Boolean {
+
+        val found = drawings.filter {
+            it.fileName.contains(search, true)
+        }
+
+        return (found.isNotEmpty())
     }
 
 }
