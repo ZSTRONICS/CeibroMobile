@@ -158,9 +158,9 @@ class CommentFragment :
                         "application/vnd.ms-excel.sheet.macroEnabled.12",                           // .xls
                         "application/vnd.ms-powerpoint",
                         "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
-                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",                 // .ppt
-                        "image/vnd.dwg",    // AutoCAD Drawing Database (DWG)
-                        "application/acad"  // AutoCAD Drawing
+                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12"                 // .ppt
+//                        "image/vnd.dwg",    // AutoCAD Drawing Database (DWG)
+//                        "application/acad"  // AutoCAD Drawing
 //                        "image/vnd.adobe.photoshop", // Photoshop Document (PSD)
                     )
                 )
