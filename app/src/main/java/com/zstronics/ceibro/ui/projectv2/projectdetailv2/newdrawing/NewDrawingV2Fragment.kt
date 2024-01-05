@@ -186,7 +186,13 @@ class NewDrawingV2Fragment :
                 sheet.binding.addGroupBtn.text = "Save"
                 sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
                 sheet.binding.clAddGroup.visibility = View.GONE
-                hideKeyboard()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    hideKeyboard()
+                },200)
+
+
+
             }
         }
 
@@ -196,6 +202,9 @@ class NewDrawingV2Fragment :
                 sheet.binding.addGroupBtn.text = "Save"
                 sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
                 sheet.binding.clAddGroup.visibility = View.GONE
+                Handler(Looper.getMainLooper()).postDelayed({
+                    hideKeyboard()
+                },200)
             }
         }
 
@@ -207,7 +216,10 @@ class NewDrawingV2Fragment :
                     sheet.binding.etNewGroup.text = Editable.Factory.getInstance().newEditable("")
                     sheet.binding.tvAddNewGroup.visibility = View.VISIBLE
                     sheet.binding.clAddGroup.visibility = View.GONE
-                    hideKeyboard()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        hideKeyboard()
+                    },200)
                 }
             }
         }

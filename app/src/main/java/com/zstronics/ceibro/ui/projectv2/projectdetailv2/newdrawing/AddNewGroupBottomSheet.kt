@@ -3,6 +3,8 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing
 
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
@@ -74,9 +76,13 @@ class AddNewGroupBottomSheet(
             binding.clAddGroup.visibility = View.VISIBLE
             binding.etNewGroup.text = Editable.Factory.getInstance().newEditable(data.groupName)
             groupDataToUpdate = data
-            binding.etNewGroup.requestFocus()
-            requireContext().showKeyboard()
-            requireContext().showKeyboard()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.etNewGroup.requestFocus()
+                requireContext().showKeyboard()
+                requireContext().showKeyboard()
+            },200)
+
 
         }
 
@@ -85,10 +91,12 @@ class AddNewGroupBottomSheet(
             dismiss()
         }
         groupAdapter.hideKeyboardListener = {
-            binding.etNewGroup.clearFocus()
-            binding.etNewGroup.hideKeyboard()
-            requireContext().hideKeyboard()
-            context?.hideKeyboard()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.etNewGroup.clearFocus()
+                binding.etNewGroup.hideKeyboard()
+                requireContext().hideKeyboard()
+                context?.hideKeyboard()
+            },200)
 
 
         }
