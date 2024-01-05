@@ -161,12 +161,11 @@ class NewDrawingGroupAdapter @Inject constructor() :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -70, -200)
+            popupWindow.showAsDropDown(v, -200, -170)
         } else {
-            popupWindow.showAsDropDown(v, 0, 5)
+            popupWindow.showAsDropDown(v, -200, -170)
         }
 
-//        popupWindow.showAsDropDown(v, -110, -200)
 
         return popupWindow
     }
