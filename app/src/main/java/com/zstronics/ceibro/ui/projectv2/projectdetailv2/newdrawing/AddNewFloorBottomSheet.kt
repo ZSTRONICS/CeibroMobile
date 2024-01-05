@@ -19,7 +19,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListingBinding
 import com.zstronics.ceibro.databinding.FragmentAddFloorBinding
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewFloorGroupAdapter
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewDrawingFloorAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -67,7 +67,7 @@ class AddNewFloorBottomSheet(
     )
 
     @Inject
-    lateinit var floorAdapter: NewFloorGroupAdapter
+    lateinit var floorAdapter: NewDrawingFloorAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

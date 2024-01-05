@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
-import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
@@ -26,7 +25,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
@@ -37,8 +35,8 @@ import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
+import com.zstronics.ceibro.data.repos.location.MarkerPointsData
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
-import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +44,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import stkq.draw.FiveTuple
-import stkq.draw.FourTuple
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.pow
@@ -63,7 +60,7 @@ class LocationsV2Fragment :
     private var isKeyboardShown = false
     private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
 
-    private var inViewPinsList: MutableList<FourTuple<Float, Float, String, CeibroDrawingPins?>> = mutableListOf()
+    private var inViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
     private var sampleMarkerPoints1: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
         mutableListOf()
     private var loadExistingMarkerPoints: MutableList<CeibroDrawingPins> = mutableListOf()
@@ -375,7 +372,32 @@ class LocationsV2Fragment :
 
                 }
                 .onTap { event ->
-
+//                    if (event.action == MotionEvent.ACTION_DOWN) {
+//                        val x = event.x
+//                        val y = event.y
+//
+//                        for (pinInfo in inViewPinsList) {
+//                            val distance = calculateDistance(
+//                                pinInfo.actualEventX,
+//                                pinInfo.actualEventY,
+//                                x,
+//                                y
+//                            )
+//                            if (distance < PIN_TAP_THRESHOLD) {
+//                                shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
+//                                break
+//                            }
+//
+//
+////                            if (pinInfo.loadedBitmap != null) {
+////                                if (x >= pinInfo.actualEventX && x <= pinInfo.actualEventX &&
+////                                    y >= pinInfo.actualEventY && y <= pinInfo.actualEventY
+////                                ) {
+////                                    shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
+////                                }
+////                            }
+//                        }
+//                    }
                     false
                 }
                 .onLongPress { event ->
@@ -455,8 +477,8 @@ class LocationsV2Fragment :
                                 var isExistingPinTapped = false
                                 for (existingPin in inViewPinsList) {
                                     val distance = calculateDistance(
-                                        existingPin.xPoint,
-                                        existingPin.yPoint,
+                                        existingPin.xPointToDisplay,
+                                        existingPin.yPointToDisplay,
                                         xPoint,
                                         yPoint
                                     )
@@ -469,9 +491,29 @@ class LocationsV2Fragment :
                                     }
                                 }
                                 if (loadingOldData) {
-                                    inViewPinsList.add(FourTuple(xPoint, yPoint, "", null))
+                                    inViewPinsList.add(
+                                        MarkerPointsData(
+                                            xPointToDisplay = xPoint,
+                                            yPointToDisplay = yPoint,
+                                            actualEventX = samplePoints.eventX,
+                                            actualEventY = samplePoints.eventY,
+                                            isNewPoint = "",
+                                            loadedPinData = null,
+                                            loadedBitmap = null
+                                        )
+                                    )
                                 } else if (!isExistingPinTapped) {
-                                    inViewPinsList.add(FourTuple(xPoint, yPoint, "new", null))
+                                    inViewPinsList.add(
+                                        MarkerPointsData(
+                                            xPointToDisplay = xPoint,
+                                            yPointToDisplay = yPoint,
+                                            actualEventX = samplePoints.eventX,
+                                            actualEventY = samplePoints.eventY,
+                                            isNewPoint = "new",
+                                            loadedPinData = null,
+                                            loadedBitmap = null
+                                        )
+                                    )
                                 }
 
                             }
@@ -501,15 +543,18 @@ class LocationsV2Fragment :
                             val xScaleFactor = pageWidth / originalPageWidth
                             val yScaleFactor = pageHeight / originalPageHeight
 
-                            val pointXOfCurrentDevice = (loadPoints.x_coord * xScaleFactor).toFloat()
-                            val pointYOfCurrentDevice = (loadPoints.y_coord * yScaleFactor).toFloat()
+                            val pointXOfCurrentDevice =
+                                (loadPoints.x_coord * xScaleFactor).toFloat()
+                            val pointYOfCurrentDevice =
+                                (loadPoints.y_coord * yScaleFactor).toFloat()
 
                             println("PDFView currentPageWidth: ${pageWidth} currentPageHeight= ${pageHeight} originalPointWidth= ${originalPageWidth} originalPointHeight= ${originalPageHeight}")
                             println("PDFView x and y ScaleFactor: ${xScaleFactor} = ${yScaleFactor} pointXOfCurrentDevice= ${pointXOfCurrentDevice} ${loadPoints.x_coord} pointYOfCurrentDevice= ${pointYOfCurrentDevice} ${loadPoints.y_coord}")
 
 
                             val actualX = pointXOfCurrentDevice + transX
-                            val actualY = pointYOfCurrentDevice + transY        // this will give actual y point because we were saving yPoint after zoom calculation
+                            val actualY =
+                                pointYOfCurrentDevice + transY        // this will give actual y point because we were saving yPoint after zoom calculation
 
                             val normalizedX =
                                 actualX / mViewDataBinding.pdfView.width * mViewDataBinding.pdfView.measuredWidth / zoom
@@ -523,7 +568,17 @@ class LocationsV2Fragment :
 
                             println("PDFView pdfCanvas.transX: ${actualX} = ${normalizedX} = ${xPoint} = ${transX} -> pdfCanvas.transY: ${actualY} = ${normalizedY} = ${yPoint} = ${transY}")
 
-                            inViewPinsList.add(FourTuple(xPoint, yPoint, "", loadPoints))
+                            inViewPinsList.add(
+                                MarkerPointsData(
+                                    xPointToDisplay = xPoint,
+                                    yPointToDisplay = yPoint,
+                                    actualEventX = actualX,
+                                    actualEventY = actualY,
+                                    isNewPoint = "",
+                                    loadedPinData = loadPoints,
+                                    loadedBitmap = null
+                                )
+                            )
 
                             val index = loadPointsMark.indexOf(loadPoints)
                             if (index == loadPointsMark.size - 1) {
@@ -536,15 +591,13 @@ class LocationsV2Fragment :
 
 
                     inViewPinsList.mapIndexed { index, marker ->
-                        val point = PointF(marker.xPoint, marker.yPoint)
                         mapPdfCoordinatesToCanvas(
-                            point,
                             canvas,
                             marker,
                             index,
                             pageWidth,
                             pageHeight,
-                            marker.pinData
+                            marker.loadedPinData
                         )
                     }
 //                    for (marker in markers) {
@@ -561,9 +614,8 @@ class LocationsV2Fragment :
 
     //First Solution
     private fun mapPdfCoordinatesToCanvas(
-        point: PointF,
         canvas: Canvas,
-        marker: FourTuple<Float, Float, String, CeibroDrawingPins?>,
+        marker: MarkerPointsData,
         markerIndex: Int,
         pageWidth: Float,
         pageHeight: Float,
@@ -579,8 +631,8 @@ class LocationsV2Fragment :
 //        println("PDFView transX: ${transX} -> transY: ${transY}")
 
         // Scale the point's coordinates by the zoom level
-        val scaledX = (point.x * currentZoom)
-        val scaledY = (point.y * currentZoom)
+        val scaledX = (marker.xPointToDisplay * currentZoom)
+        val scaledY = (marker.yPointToDisplay * currentZoom)
 //        println("PDFView scaledX: ${scaledX} -> scaledY: ${scaledY} -> currentZoom: ${currentZoom}")
 
         val vectorDrawable =
@@ -611,20 +663,38 @@ class LocationsV2Fragment :
                 val taskAdjustedX = scaledX - taskBitmap.width / 2
                 val taskAdjustedY = scaledY - taskBitmap.height / 2
                 canvas.drawBitmap(taskBitmap, taskAdjustedX, taskAdjustedY, null)
-
+                inViewPinsList[markerIndex] =
+                    MarkerPointsData(
+                        xPointToDisplay = marker.xPointToDisplay,
+                        yPointToDisplay = marker.yPointToDisplay,
+                        actualEventX = marker.actualEventX,
+                        actualEventY = marker.actualEventY,
+                        isNewPoint = "",
+                        loadedPinData = marker.loadedPinData,
+                        loadedBitmap = taskBitmap
+                    )
             }
-        }else {
+        } else {
             canvas.drawBitmap(scaledBitmap, adjustedX, adjustedY, null)
         }
 
-        if (marker.isNewPin.equals("new", true)) {
+        if (marker.isNewPoint.equals("new", true)) {
             val newX = adjustedX + transX + (scaledBitmap.width - 17)
             val newY = adjustedY + transY + (scaledBitmap.height - 17)
 
             println("PDFView adjustedX: ${scaledX}/ ${adjustedX}/ ${newX}/ ${transX} -> adjustedY: ${scaledY}/ ${adjustedY}/ ${newY}/ ${transY}")
 //            taskPopupMenu(mViewDataBinding.pdfView, newX, newY, point)
 
-            inViewPinsList[markerIndex] = FourTuple(marker.xPoint, marker.yPoint, "", marker.pinData)
+            inViewPinsList[markerIndex] =
+                MarkerPointsData(
+                    xPointToDisplay = marker.xPointToDisplay,
+                    yPointToDisplay = marker.yPointToDisplay,
+                    actualEventX = marker.actualEventX,
+                    actualEventY = marker.actualEventY,
+                    isNewPoint = "",
+                    loadedPinData = marker.loadedPinData,
+                    loadedBitmap = marker.loadedBitmap
+                )
 //            val currentXOffset = mViewDataBinding.pdfView.currentXOffset
 //            val currentYOffset = mViewDataBinding.pdfView.currentYOffset
 //            val xMovementPoint = currentXOffset - (point.x / currentZoom)
@@ -634,7 +704,7 @@ class LocationsV2Fragment :
 //
 //            mViewDataBinding.pdfView.zoomCenteredTo(currentZoom, point)
 
-            showNewItemBottomSheet(markerIndex, point, pageWidth, pageHeight)
+            showNewItemBottomSheet(markerIndex, marker, pageWidth, pageHeight)
 
 //            for (marker in markers) {
 //                if (marker.first == point.x && marker.second == point.y) {
@@ -704,7 +774,7 @@ class LocationsV2Fragment :
 
     private fun showNewItemBottomSheet(
         markerIndex: Int,
-        point: PointF,
+        marker: MarkerPointsData,
         pageWidth: Float,
         pageHeight: Float
     ) {
@@ -733,15 +803,16 @@ class LocationsV2Fragment :
             mViewDataBinding.pdfView.draw(canvas)
 
             // Save the bitmap to a file
-            val file = File(context?.externalCacheDir, "pdf_view_SS_${System.currentTimeMillis()}.png")
+            val file =
+                File(context?.externalCacheDir, "pdf_view_SS_${System.currentTimeMillis()}.png")
             val fileOutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
             fileOutputStream.flush()
             fileOutputStream.close()
 
             val locationTask = AddLocationTask(
-                xCord = point.x,
-                yCord = point.y,
+                xCord = marker.xPointToDisplay,
+                yCord = marker.yPointToDisplay,
                 pageWidth = actualPageWidth,
                 pageHeight = actualPageHeight,
                 locationImgBitmap = bitmap,
@@ -816,11 +887,6 @@ class LocationsV2Fragment :
 
         return popupWindow
     }
-
-
-
-
-
 
 
     private fun manageLayoutsVisibilityWithKeyboardShown() {
@@ -1006,7 +1072,6 @@ class LocationsV2Fragment :
         fileOutputStream.close()
         return file
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)

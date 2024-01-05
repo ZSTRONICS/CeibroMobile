@@ -351,7 +351,11 @@ class AllDrawingsAdapterSectionRecycler(
         val height = displayMetrics.heightPixels * 2 / 3
 
         //ShowAsDropDown statement at bottom, according to the view visibilities
-        popupWindow.showAsDropDown(v, 0, 5)
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, -250, -55)
+        } else {
+            popupWindow.showAsDropDown(v, -250, -55)
+        }
 
         val publicGroup = view.findViewById<AppCompatTextView>(R.id.publicGroup)
         if (item?.publicGroup == true) {
