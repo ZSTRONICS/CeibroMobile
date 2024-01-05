@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -95,14 +97,17 @@ class NewDrawingGroupAdapter @Inject constructor() :
             }
             binding.ivMenuBtn.setOnClickListener {
                 hideKeyboardListener?.invoke()
-                createPopupWindow(it, data) { tag, data ->
-                    if (tag == "delete") {
-                        deleteClickListener?.invoke(data)
-                    } else if (tag == "rename") {
-                        renameClickListener?.invoke(data)
+                Handler().postDelayed({
+                    createPopupWindow(it, data) { tag, data ->
+                        if (tag == "delete") {
+                            deleteClickListener?.invoke(data)
+                        } else if (tag == "rename") {
+                            renameClickListener?.invoke(data)
 
+                        }
                     }
-                }
+                },200)
+
             }
         }
     }
