@@ -15,8 +15,8 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListBinding
 import javax.inject.Inject
 
-class NewFloorGroupAdapter @Inject constructor() :
-    RecyclerView.Adapter<NewFloorGroupAdapter.NewFloorGroupViewHolder>() {
+class NewDrawingFloorAdapter @Inject constructor() :
+    RecyclerView.Adapter<NewDrawingFloorAdapter.NewFloorGroupViewHolder>() {
 
     var deleteClickListener: ((data: CeibroFloorV2) -> Unit)? = null
     var itemClickListener: ((data: CeibroFloorV2, list: List<CeibroFloorV2>) -> Unit)? = null
@@ -112,9 +112,9 @@ class NewFloorGroupAdapter @Inject constructor() :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -220, -150)
+            popupWindow.showAsDropDown(v, -215, -80)
         } else {
-            popupWindow.showAsDropDown(v, -220, -150)
+            popupWindow.showAsDropDown(v, -215, -80)
         }
         return popupWindow
     }

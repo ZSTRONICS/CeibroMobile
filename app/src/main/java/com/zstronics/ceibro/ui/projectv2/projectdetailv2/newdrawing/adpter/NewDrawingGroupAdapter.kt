@@ -163,7 +163,7 @@ class NewDrawingGroupAdapter @Inject constructor() :
         if (positionOfIcon > height) {
             popupWindow.showAsDropDown(v, -200, -170)
         } else {
-            popupWindow.showAsDropDown(v, -200, -170)
+            popupWindow.showAsDropDown(v, -205, -60)
         }
 
 
