@@ -41,7 +41,7 @@ class DrawingsV2VM @Inject constructor(
 
     private var originalFavouriteGroups: MutableList<CeibroGroupsV2> = mutableListOf()
     private var originalOtherGroups: MutableList<CeibroGroupsV2> = mutableListOf()
-    private var orignalMyGroups: MutableList<CeibroGroupsV2> = mutableListOf()
+    private var originalMyGroups: MutableList<CeibroGroupsV2> = mutableListOf()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -64,7 +64,7 @@ class DrawingsV2VM @Inject constructor(
                 originalFavouriteGroups = favoriteGroups.toMutableList()
 
                 val creatorGroups = groupsList.filter { (!it.isFavoriteByMe) && (it.isCreator) } ?: listOf()
-                orignalMyGroups = creatorGroups.toMutableList()
+                originalMyGroups = creatorGroups.toMutableList()
 
                 val otherGroups = groupsList.filter { (!it.isFavoriteByMe) && (!it.isCreator) } ?: listOf()
                 originalOtherGroups = otherGroups.toMutableList()
@@ -122,12 +122,12 @@ class DrawingsV2VM @Inject constructor(
 
     fun filterMyGroups(search: String) {
         if (search.isEmpty()) {
-            if (orignalMyGroups.isNotEmpty()) {
-                _myGroupData.postValue(orignalMyGroups)
+            if (originalMyGroups.isNotEmpty()) {
+                _myGroupData.postValue(originalMyGroups)
             }
             return
         }
-        val filtered = orignalMyGroups.filter {
+        val filtered = originalMyGroups.filter {
             (it.groupName.isNotEmpty() && it.groupName.contains(search, true)) ||
                     (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
                         .contains(search, true)) ||
