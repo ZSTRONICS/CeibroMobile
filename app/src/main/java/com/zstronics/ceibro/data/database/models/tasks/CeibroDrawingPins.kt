@@ -21,9 +21,9 @@ data class CeibroDrawingPins(
     @SerializedName("drawingId")
     val drawingId: String,
     @SerializedName("page_height")
-    val page_height: Int,
+    val page_height: Float,
     @SerializedName("page_width")
-    val page_width: Int,
+    val page_width: Float,
     @SerializedName("pinPhotoUrl")
     val pinPhotoUrl: String,
     @SerializedName("pinUID")
