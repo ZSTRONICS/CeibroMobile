@@ -63,6 +63,8 @@ class LocationsV2Fragment :
     private var inViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
     private var sampleMarkerPoints1: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
         mutableListOf()
+    private var existingPointTapped: MutableList<Triple<Float, Float, Float>> =
+        mutableListOf()
     private var loadExistingMarkerPoints: MutableList<CeibroDrawingPins> = mutableListOf()
     private val PIN_TAP_THRESHOLD = 6
     private var loadingOldData = true
@@ -372,32 +374,31 @@ class LocationsV2Fragment :
 
                 }
                 .onTap { event ->
-//                    if (event.action == MotionEvent.ACTION_DOWN) {
-//                        val x = event.x
-//                        val y = event.y
-//
-//                        for (pinInfo in inViewPinsList) {
-//                            val distance = calculateDistance(
-//                                pinInfo.actualEventX,
-//                                pinInfo.actualEventY,
-//                                x,
-//                                y
-//                            )
-//                            if (distance < PIN_TAP_THRESHOLD) {
-//                                shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
-//                                break
-//                            }
-//
-//
-////                            if (pinInfo.loadedBitmap != null) {
-////                                if (x >= pinInfo.actualEventX && x <= pinInfo.actualEventX &&
-////                                    y >= pinInfo.actualEventY && y <= pinInfo.actualEventY
-////                                ) {
-////                                    shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
-////                                }
-////                            }
-//                        }
-//                    }
+                    if (event.action == MotionEvent.ACTION_DOWN) {
+
+                        existingPointTapped.clear()
+
+                        val pageWidth = mViewDataBinding.pdfView.measuredWidth
+                        val pageHeight = mViewDataBinding.pdfView.measuredHeight
+
+                        val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
+
+                        val normalizedX =
+                            event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
+                        val normalizedY =
+                            event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
+
+                        existingPointTapped.add(
+                            Triple(
+                                normalizedX,
+                                normalizedY,
+                                zoom
+                            )
+                        )
+
+                        mViewDataBinding.pdfView.invalidate()
+
+                    }
                     false
                 }
                 .onLongPress { event ->
@@ -422,11 +423,6 @@ class LocationsV2Fragment :
                         println("normalizedX ${normalizedX} PDFView onTap : ${event.x} / ${mViewDataBinding.pdfView.width} * ${pageWidth} / ${zoom}")
                         println("normalizedY${normalizedY} PDFView onTap : ${event.y} / ${mViewDataBinding.pdfView.height} * ${pageHeight} / ${zoom}")
 
-//                    if (zoom > 1.0) {
-//                        sampleMarkerPoints.add(Triple(normalizedX, normalizedY, zoom))
-//                        pdfView.invalidate()
-//
-//                    } else {
                         sampleMarkerPoints1.add(
                             FiveTuple(
                                 normalizedX,
@@ -436,12 +432,10 @@ class LocationsV2Fragment :
                                 event.y
                             )
                         )
-//                        sampleMarkerPoints.add(Triple(normalizedX, normalizedY, zoom))
+
                         mViewDataBinding.pdfView.invalidate()
-//                    }
 
                     }
-//                    false
                 }
                 .onDraw { canvas, pageWidth, pageHeight, displayedPage ->
                     println("PDFView pageWidth: ${pageWidth} pageHeight: ${pageHeight} zoom: ${mViewDataBinding.pdfView.zoom}")
@@ -452,6 +446,35 @@ class LocationsV2Fragment :
                     canvas.matrix.getValues(matrixValues)
                     var transX = matrixValues[Matrix.MTRANS_X]
                     var transY = matrixValues[Matrix.MTRANS_Y]
+
+                    if (existingPointTapped.isNotEmpty()) {
+                        val tappedPoints = existingPointTapped
+                        for (tappedPoint in tappedPoints) {
+                            existingPointTapped.clear()
+                            existingPointTapped = mutableListOf()
+
+                            canvas.matrix.getValues(matrixValues)
+                            transX = matrixValues[Matrix.MTRANS_X]
+                            transY = matrixValues[Matrix.MTRANS_Y]
+
+                            //Store these x and y points to DB to load the points again on the file
+                            val xPoint = tappedPoint.first - (transX / tappedPoint.third)         // we are doing minus because transX or transY are always in negative if zoomed
+                            val yPoint = tappedPoint.second - (transY / tappedPoint.third)        //so, minus minus becomes plus (+), so we are actually doing addition
+
+
+                            for (pinInfo in inViewPinsList) {
+
+                                if (pinInfo.loadedBitmap != null) {
+                                    if (xPoint >= (pinInfo.xPointToDisplay - (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) && xPoint <= (pinInfo.xPointToDisplay + (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) &&
+                                        yPoint >= (pinInfo.yPointToDisplay - (pinInfo.loadedBitmap.height / 2) / tappedPoint.third) && yPoint <= (pinInfo.yPointToDisplay + (pinInfo.loadedBitmap.height / 2) / tappedPoint.third)
+                                    ) {
+                                        shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
+                                    }
+                                }
+                            }
+                        }
+                    }
+
 
                     if (sampleMarkerPoints1.isNotEmpty()) {
                         val samplePointsMark = sampleMarkerPoints1
