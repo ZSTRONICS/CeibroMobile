@@ -96,4 +96,5 @@ dependencies {
     implementation("com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1")
     implementation("com.gu.android:toolargetool:0.3.0")
     implementation("com.google.android.gms:play-services-base:17.6.0")
+    implementation("com.github.ahmadullahpk:all-documents-reader:1.0.7")
 }

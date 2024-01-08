@@ -40,7 +40,7 @@ class TaskDetailV2RVAdapter(
     var openEventImageClickListener: ((position: Int, bundle: Bundle) -> Unit)? =
         null
 
-    var fileViewerClickListener: ((position: Int, bundle: Bundle) -> Unit)? =
+    var fileViewerClickListener: ((position: Int, bundle: Bundle, downloadedData: CeibroDownloadDrawingV2) -> Unit)? =
         null
     var descriptionExpendedListener: ((descriptionExpanded: Boolean) -> Unit)? =
         null
@@ -447,7 +447,7 @@ class TaskDetailV2RVAdapter(
                 val bundle = Bundle()
                 bundle.putParcelable("taskFile", data)
                 bundle.putParcelable("downloadedFile", downloadedData)
-                fileViewerClickListener?.invoke(position, bundle)
+                fileViewerClickListener?.invoke(position, bundle, downloadedData)
 //                navigate(R.id.fileViewerFragment, bundle)
 //            val pdfUrl = data.fileUrl             // This following code downloads the file
 //            val intent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
@@ -486,7 +486,7 @@ class TaskDetailV2RVAdapter(
                 val bundle = Bundle()
                 bundle.putParcelable("eventFile", data)
                 bundle.putParcelable("downloadedFile", drawingFile)
-                fileViewerClickListener?.invoke(position, bundle)
+                fileViewerClickListener?.invoke(position, bundle, drawingFile)
             }
 
 
