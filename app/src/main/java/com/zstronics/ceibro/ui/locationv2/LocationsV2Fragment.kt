@@ -36,6 +36,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.location.MarkerPointsData
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
 import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -680,6 +681,11 @@ class LocationsV2Fragment :
             if (pinData.type.equals("task", true)) {
                 mViewDataBinding.taskRootState.text = pinData.taskData.rootState.toCamelCase()
                 mViewDataBinding.taskUID.text = pinData.taskData.taskUID
+
+                if (pinData.taskData.rootState.equals(TaskRootStateTags.FromMe.tagValue, true)){
+//                    if (pinData.taskData.fromMeState.equals())
+                }
+
 
                 val taskBitmap = createBitmapForTaskView(mViewDataBinding.taskSmallView)
 
