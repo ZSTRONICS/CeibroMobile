@@ -202,6 +202,7 @@ class DrawingsV2Fragment :
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
                     if (it.trim().equals("100%", true)) {
+                        sectionedAdapter.notifyDataSetChanged()
                         tv.visibility = View.GONE
                         ivDownloaded.visibility = View.VISIBLE
                         tv.text = it
