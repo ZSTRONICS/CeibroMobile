@@ -4,11 +4,10 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -23,8 +22,15 @@ class LocationsV2VM @Inject constructor(
         MutableLiveData()
     val drawingFile: LiveData<DrawingV2> = _drawingFile
 
-    private val _existingDrawingPins: MutableLiveData<MutableList<CeibroDrawingPins>> = MutableLiveData()
+    private val _existingDrawingPins: MutableLiveData<MutableList<CeibroDrawingPins>> =
+        MutableLiveData()
     val existingDrawingPins: LiveData<MutableList<CeibroDrawingPins>> = _existingDrawingPins
+
+
+    private val _filterExistingDrawingPins: MutableLiveData<MutableList<CeibroDrawingPins>> =
+        MutableLiveData()
+    val filterExistingDrawingPins: LiveData<MutableList<CeibroDrawingPins>> =
+        _filterExistingDrawingPins
 
     var cameFromProject: Boolean = true
 
@@ -42,6 +48,48 @@ class LocationsV2VM @Inject constructor(
                 _existingDrawingPins.postValue(mutableListOf())
             }
         }
+    }
+
+    fun checkFilter(filterList: ArrayList<Pair<String, String>>) {
+        return
+        val list: ArrayList<CeibroDrawingPins> = arrayListOf()
+
+        if (filterList.isEmpty() || existingDrawingPins.value?.isEmpty() == true) {
+            _filterExistingDrawingPins.value = mutableListOf()
+            return
+        }
+
+        existingDrawingPins.value?.forEach {
+            val rootState = it.taskData.rootState
+            val toMeState = it.taskData.toMeState.lowercase()
+            val fromMeState = it.taskData.fromMeState.lowercase()
+            val hiddenState = it.taskData.hiddenState.lowercase()
+
+            when {
+                rootState.equals(TaskRootStateTags.ToMe.tagValue,true) -> {
+                    val pair = Pair(rootState, toMeState)
+                    if (filterList.contains(pair)) {
+                        list.add(it)
+                    }
+                }
+
+                rootState.equals(TaskRootStateTags.FromMe.tagValue, true) -> {
+                    val pair = Pair(rootState, fromMeState)
+                    if (filterList.contains(pair)) {
+                        list.add(it)
+                    }
+                }
+
+                rootState.equals(TaskRootStateTags.Hidden.tagValue, true) -> {
+                    val pair = Pair(rootState, hiddenState)
+                    if (filterList.contains(pair)) {
+                        list.add(it)
+                    }
+                }
+            }
+        }
+
+        _filterExistingDrawingPins.value = list
     }
 
 }
