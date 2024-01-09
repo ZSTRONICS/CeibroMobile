@@ -9,19 +9,6 @@ class LocationsV2State @Inject constructor(
 
     override var isFilterVisible: MutableLiveData<Boolean> = MutableLiveData(false)
 
-    /*override var isToNewClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    override var isToOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    override var isToDoneClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-
-    override var isFromUnreadClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    override var isFromOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    override var isFromDoneClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-
-    override var isHiddenOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    override var isHiddenDoneClicked: MutableLiveData<Boolean> = MutableLiveData(false)
-    override var isHiddenCancelled: MutableLiveData<Boolean> = MutableLiveData(false)*/
-
-
     override var isToNewClicked: MutableLiveData<Boolean> = MutableLiveData(true)
     override var isToOngoingClicked: MutableLiveData<Boolean> = MutableLiveData(true)
     override var isToDoneClicked: MutableLiveData<Boolean> = MutableLiveData(true)
