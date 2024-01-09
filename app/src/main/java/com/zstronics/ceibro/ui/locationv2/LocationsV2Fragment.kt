@@ -40,6 +40,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
 import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -60,6 +61,8 @@ class LocationsV2Fragment :
     private var layoutPressed = ""
     private var isKeyboardShown = false
     private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
+    private val filtersList: ArrayList<Pair<String, String>> = arrayListOf()
+
 
     private var inViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
     private var addNewMarkerPoints: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
@@ -79,6 +82,7 @@ class LocationsV2Fragment :
         private const val llFrom = "llFrom"
         private const val llHidden = "llHidden"
     }
+
 
     override fun onClick(id: Int) {
         when (id) {
@@ -123,87 +127,203 @@ class LocationsV2Fragment :
             R.id.ToNewStateText -> {
 
                 if (viewState.isToNewClicked.value == false) {
-                    viewState.isToOngoingClicked.value = false
-                    viewState.isToDoneClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.ToMe.tagValue.lowercase(),
+                            TaskStatus.NEW.name.lowercase()
+                        )
+                    )
+
+                } else {
+
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.ToMe.tagValue.lowercase(),
+                            TaskStatus.NEW.name.lowercase()
+                        )
+                    )
                 }
                 viewState.isToNewClicked.value = !(viewState.isToNewClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.ToOngoingStateText -> {
 
                 if (viewState.isToOngoingClicked.value == false) {
-                    viewState.isToNewClicked.value = false
-                    viewState.isToDoneClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.ToMe.tagValue.lowercase(),
+                            TaskStatus.ONGOING.name.lowercase()
+                        )
+                    )
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.ToMe.tagValue.lowercase(),
+                            TaskStatus.ONGOING.name.lowercase()
+                        )
+                    )
                 }
 
                 viewState.isToOngoingClicked.value = !(viewState.isToOngoingClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.ToDoneStateText -> {
 
                 if (viewState.isToDoneClicked.value == false) {
-                    viewState.isToNewClicked.value = false
-                    viewState.isToOngoingClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.ToMe.tagValue.lowercase(),
+                            TaskStatus.DONE.name.lowercase()
+                        )
+                    )
+
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.ToMe.tagValue.lowercase(),
+                            TaskStatus.DONE.name.lowercase()
+                        )
+                    )
                 }
                 viewState.isToDoneClicked.value = !(viewState.isToDoneClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.fromUnredStateText -> {
 
                 if (viewState.isFromUnreadClicked.value == false) {
-                    viewState.isFromOngoingClicked.value = false
-                    viewState.isFromDoneClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.FromMe.tagValue.lowercase(),
+                            TaskStatus.UNREAD.name.lowercase()
+                        )
+                    )
+
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.FromMe.tagValue.lowercase(),
+                            TaskStatus.UNREAD.name.lowercase()
+                        )
+                    )
                 }
                 viewState.isFromUnreadClicked.value = !(viewState.isFromUnreadClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.FromOngoingStateText -> {
 
                 if (viewState.isFromOngoingClicked.value == false) {
-                    viewState.isFromUnreadClicked.value = false
-                    viewState.isFromDoneClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.FromMe.tagValue.lowercase(),
+                            TaskStatus.ONGOING.name.lowercase()
+                        )
+                    )
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.FromMe.tagValue.lowercase(),
+                            TaskStatus.ONGOING.name.lowercase()
+                        )
+                    )
                 }
 
                 viewState.isFromOngoingClicked.value = !(viewState.isFromOngoingClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.FromDoneStateText -> {
 
                 if (viewState.isFromDoneClicked.value == false) {
-                    viewState.isFromUnreadClicked.value = false
-                    viewState.isFromOngoingClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.FromMe.tagValue.lowercase(),
+                            TaskStatus.DONE.name.lowercase()
+                        )
+                    )
+
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.FromMe.tagValue.lowercase(),
+                            TaskStatus.DONE.name.lowercase()
+                        )
+                    )
                 }
                 viewState.isFromDoneClicked.value = !(viewState.isFromDoneClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.hiddenOngoingStateText -> {
 
                 if (viewState.isHiddenOngoingClicked.value == false) {
-                    viewState.isHiddenDoneClicked.value = false
-                    viewState.isHiddenCancelled.value = false
+
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.Hidden.tagValue.lowercase(),
+                            TaskStatus.ONGOING.name.lowercase()
+                        )
+                    )
+
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.Hidden.tagValue.lowercase(),
+                            TaskStatus.ONGOING.name.lowercase()
+                        )
+                    )
                 }
                 viewState.isHiddenOngoingClicked.value = !(viewState.isHiddenOngoingClicked.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.hiddenDoneStateText -> {
 
 
                 if (viewState.isHiddenDoneClicked.value == false) {
-                    viewState.isHiddenOngoingClicked.value = false
-                    viewState.isHiddenCancelled.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.Hidden.tagValue.lowercase(),
+                            TaskStatus.DONE.name.lowercase()
+                        )
+                    )
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.Hidden.tagValue.lowercase(),
+                            TaskStatus.DONE.name.lowercase()
+                        )
+                    )
                 }
 
                 viewState.isHiddenDoneClicked.value = !(viewState.isHiddenDoneClicked.value!!)
+
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.hiddenCancelledStateText -> {
 
 
                 if (viewState.isHiddenCancelled.value == false) {
-                    viewState.isHiddenOngoingClicked.value = false
-                    viewState.isHiddenDoneClicked.value = false
+                    filtersList.add(
+                        Pair(
+                            TaskRootStateTags.Hidden.tagValue.lowercase(),
+                            TaskStatus.CANCELED.name.lowercase()
+                        )
+                    )
+                } else {
+                    filtersList.remove(
+                        Pair(
+                            TaskRootStateTags.Hidden.tagValue.lowercase(),
+                            TaskStatus.CANCELED.name.lowercase()
+                        )
+                    )
                 }
                 viewState.isHiddenCancelled.value = !(viewState.isHiddenCancelled.value!!)
+                viewModel.checkFilter(filtersList);
             }
 
             R.id.tvHidden -> {
@@ -240,6 +360,8 @@ class LocationsV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        addFiltersToList()
 
         val adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spinnerItems)
@@ -299,6 +421,21 @@ class LocationsV2Fragment :
                     e.printStackTrace()
                 }
             }
+        }
+        viewModel.filterExistingDrawingPins.observe(viewLifecycleOwner) {
+//            if (it.isNotEmpty()) {
+            try {
+                inViewPinsList.clear()
+                inViewPinsList = mutableListOf()
+                loadExistingMarkerPoints.addAll(it)
+                if (pdfFileLoaded) {
+                    mViewDataBinding.pdfView.invalidate()
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+//            }
         }
 
 
@@ -459,8 +596,10 @@ class LocationsV2Fragment :
                             transY = matrixValues[Matrix.MTRANS_Y]
 
                             //Store these x and y points to DB to load the points again on the file
-                            val xPoint = tappedPoint.first - (transX / tappedPoint.third)         // we are doing minus because transX or transY are always in negative if zoomed
-                            val yPoint = tappedPoint.second - (transY / tappedPoint.third)        //so, minus minus becomes plus (+), so we are actually doing addition
+                            val xPoint =
+                                tappedPoint.first - (transX / tappedPoint.third)         // we are doing minus because transX or transY are always in negative if zoomed
+                            val yPoint =
+                                tappedPoint.second - (transY / tappedPoint.third)        //so, minus minus becomes plus (+), so we are actually doing addition
 
 
                             for (pinInfo in inViewPinsList) {
@@ -683,7 +822,7 @@ class LocationsV2Fragment :
                 mViewDataBinding.taskRootState.text = pinData.taskData.rootState.toCamelCase()
                 mViewDataBinding.taskUID.text = pinData.taskData.taskUID
 
-                if (pinData.taskData.rootState.equals(TaskRootStateTags.FromMe.tagValue, true)){
+                if (pinData.taskData.rootState.equals(TaskRootStateTags.FromMe.tagValue, true)) {
 //                    if (pinData.taskData.fromMeState.equals())
                 }
 
@@ -1125,5 +1264,63 @@ class LocationsV2Fragment :
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    private fun addFiltersToList() {
+        filtersList.clear()
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.ToMe.tagValue.lowercase(),
+                TaskStatus.NEW.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.ToMe.tagValue.lowercase(),
+                TaskStatus.ONGOING.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.ToMe.tagValue.lowercase(),
+                TaskStatus.DONE.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.FromMe.tagValue.lowercase(),
+                TaskStatus.UNREAD.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.FromMe.tagValue.lowercase(),
+                TaskStatus.ONGOING.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.FromMe.tagValue.lowercase(),
+                TaskStatus.DONE.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.Hidden.tagValue.lowercase(),
+                TaskStatus.ONGOING.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.Hidden.tagValue.lowercase(),
+                TaskStatus.DONE.name.lowercase()
+            )
+        )
+        filtersList.add(
+            Pair(
+                TaskRootStateTags.Hidden.tagValue.lowercase(),
+                TaskStatus.CANCELED.name.lowercase()
+            )
+        )
     }
 }
