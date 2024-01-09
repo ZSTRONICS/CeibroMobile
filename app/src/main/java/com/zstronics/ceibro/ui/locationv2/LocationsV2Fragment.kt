@@ -62,7 +62,7 @@ class LocationsV2Fragment :
     private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
 
     private var inViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
-    private var sampleMarkerPoints1: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
+    private var addNewMarkerPoints: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
         mutableListOf()
     private var existingPointTapped: MutableList<Triple<Float, Float, Float>> =
         mutableListOf()
@@ -424,7 +424,7 @@ class LocationsV2Fragment :
                         println("normalizedX ${normalizedX} PDFView onTap : ${event.x} / ${mViewDataBinding.pdfView.width} * ${pageWidth} / ${zoom}")
                         println("normalizedY${normalizedY} PDFView onTap : ${event.y} / ${mViewDataBinding.pdfView.height} * ${pageHeight} / ${zoom}")
 
-                        sampleMarkerPoints1.add(
+                        addNewMarkerPoints.add(
                             FiveTuple(
                                 normalizedX,
                                 normalizedY,
@@ -470,15 +470,15 @@ class LocationsV2Fragment :
                                         yPoint >= (pinInfo.yPointToDisplay - (pinInfo.loadedBitmap.height / 2) / tappedPoint.third) && yPoint <= (pinInfo.yPointToDisplay + (pinInfo.loadedBitmap.height / 2) / tappedPoint.third)
                                     ) {
                                         shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
+                                        break
                                     }
                                 }
                             }
                         }
                     }
 
-
-                    if (sampleMarkerPoints1.isNotEmpty()) {
-                        val samplePointsMark = sampleMarkerPoints1
+                    if (addNewMarkerPoints.isNotEmpty()) {
+                        val samplePointsMark = addNewMarkerPoints
                         for (samplePoints in samplePointsMark) {
 
                             canvas.matrix.getValues(matrixValues)
@@ -544,7 +544,7 @@ class LocationsV2Fragment :
 
                             val index = samplePointsMark.indexOf(samplePoints)
                             if (index == samplePointsMark.size - 1) {
-                                sampleMarkerPoints1.clear()
+                                addNewMarkerPoints.clear()
 //                            pdfView.invalidate()
                             }
                         }
@@ -611,6 +611,7 @@ class LocationsV2Fragment :
                             }
                         }
                     }
+
                     loadingOldData = false
 
 

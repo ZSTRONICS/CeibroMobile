@@ -36,7 +36,6 @@ import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentLocationDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.newprojectv2.AddNewPhotoBottomSheet
-import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingSectionHeader
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
@@ -252,7 +251,8 @@ class LocationDrawingV2Fragment :
                     }
                 }
                 sectionList.add(
-                    2, LocationDrawingSectionHeader(mutableListOf(), getString(R.string.other_groups))
+                    2,
+                    LocationDrawingSectionHeader(mutableListOf(), getString(R.string.other_groups))
                 )
                 sectionedAdapter.insertNewSection(
                     LocationDrawingSectionHeader(
@@ -318,6 +318,7 @@ class LocationDrawingV2Fragment :
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
                     if (it.trim().equals("100%", true)) {
+                        sectionedAdapter.notifyDataSetChanged()
                         tv.visibility = View.GONE
                         ivDownloaded.visibility = View.VISIBLE
                         tv.text = it
