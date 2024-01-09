@@ -454,7 +454,7 @@ class DashboardVM @Inject constructor(
             if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
             }
-            println("Heartbeat SocketEvent: ${socketData.eventType}")
+            println("Heartbeat SocketEvent: ${socketData.eventType}: ${arguments}")
             if (socketData.eventType.equals(SocketHandler.TaskEvent.TASK_SEEN.name, true)) {
                 println("Heartbeat SocketEvent TASK_SEEN DATA_RECEIVED: ${arguments}")
             }
