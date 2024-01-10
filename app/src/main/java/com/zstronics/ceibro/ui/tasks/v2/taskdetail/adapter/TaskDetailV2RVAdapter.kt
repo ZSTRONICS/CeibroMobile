@@ -157,7 +157,9 @@ class TaskDetailV2RVAdapter(
 
     fun updateTaskData(task: CeibroTaskV2, descriptionExpanded: Boolean) {
         this.descriptionExpanded = descriptionExpanded
-        this.listItems[0] = task
+        if (this.listItems.isNotEmpty()) {
+            this.listItems[0] = task
+        }
         notifyDataSetChanged()
     }
 
