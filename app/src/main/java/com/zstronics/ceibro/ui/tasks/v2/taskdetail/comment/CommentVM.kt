@@ -14,6 +14,7 @@ import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -37,6 +38,7 @@ class CommentVM @Inject constructor(
     val sessionManager: SessionManager,
     val dashboardRepository: IDashboardRepository,
     private val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<IComment.State>(), IComment.ViewModel {
     val user = sessionManager.getUser().value
     val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
@@ -187,7 +189,13 @@ class CommentVM @Inject constructor(
                         }
                     }
                 }
-                updateTaskCommentInLocal(eventData, taskDao, user?.id, sessionManager)
+                updateTaskCommentInLocal(
+                    eventData,
+                    taskDao,
+                    user?.id,
+                    sessionManager,
+                    drawingPinsDao
+                )
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     loading(false, "")
@@ -316,7 +324,7 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                updateTaskDoneInLocal(eventData, taskDao, sessionManager)
+                updateTaskDoneInLocal(eventData, taskDao, sessionManager, drawingPinsDao)
 
                 loading(false, "")
                 if (isSuccess) {

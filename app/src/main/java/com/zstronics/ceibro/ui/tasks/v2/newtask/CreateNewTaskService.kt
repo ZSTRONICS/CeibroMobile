@@ -254,9 +254,8 @@ class CreateNewTaskService : Service() {
                 if (dbTask == null) {
                     sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                     taskDao.insertTaskData(newTask)
-                    if (newTask.pinData != null) {
-                        drawingPinsDaoInternal.insertSinglePinData(newTask.pinData)
-                    }
+                    newTask.pinData?.let { drawingPinsDaoInternal.insertSinglePinData(it) }
+
 
                     if (newTask.isCreator) {
                         when (newTask.fromMeState) {
@@ -547,7 +546,7 @@ class CreateNewTaskService : Service() {
                         println("Service Status...:Upload comment with success")
                         updateTaskCommentInLocal(
                             response.data.data, taskDao,
-                            sessionManager
+                            sessionManager, drawingPinsDaoInternal
                         )
                         hideIndeterminateNotifications(context, commentNotificationID)
                     } else if (event == "doneTask") {
@@ -747,7 +746,8 @@ class CreateNewTaskService : Service() {
     private suspend fun updateTaskCommentInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        drawingPinsDaoInternal: DrawingPinsV2Dao
     ) {
         if (eventData != null) {
             val isExists = TaskEventsList.isExists(
@@ -815,12 +815,15 @@ class CreateNewTaskService : Service() {
                     }
 
                     updateAllTasksLists(taskDao)
-
+                    if (eventData.pinData != null) {
+                        drawingPinsDaoInternal.insertSinglePinData(eventData.pinData)
+                    }
                 }.join()
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
                 }, 50)
 
                 TaskEventsList.removeEvent(

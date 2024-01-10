@@ -13,6 +13,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
@@ -26,7 +27,8 @@ class TaskFromMeVM @Inject constructor(
     override val viewState: TaskFromMeState,
     private val remoteTask: TaskRemoteDataSource,
     val sessionManager: SessionManager,
-    val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<ITaskFromMe.State>(), ITaskFromMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.UNREAD.name.lowercase()
@@ -232,7 +234,13 @@ class TaskFromMeVM @Inject constructor(
             loading(true)
             when (val response = remoteTask.cancelTask(taskId)) {
                 is ApiResponse.Success -> {
-                    updateTaskCanceledInLocal(response.data.data, taskDao, user?.id, sessionManager)
+                    updateTaskCanceledInLocal(
+                        response.data.data,
+                        taskDao,
+                        user?.id,
+                        sessionManager,
+                        drawingPinsDao
+                    )
                     val handler = Handler()
                     handler.postDelayed({
                         loading(false, "")

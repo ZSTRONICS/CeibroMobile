@@ -708,9 +708,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                 sessionManager.saveUpdatedAtTimeStamp(newTask.updatedAt)
                 taskDao.insertTaskData(newTask)
-                if (newTask.pinData != null) {
-                    drawingPinsDao.insertSinglePinData(newTask.pinData)
-                }
+                newTask.pinData?.let { drawingPinsDao.insertSinglePinData(it) }
+
 
                 if (newTask.isCreator) {
                     when (newTask.fromMeState) {
@@ -820,7 +819,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         completeData: ForwardedToMeNewTaskV2Response?,
         taskDao: TaskV2Dao,
         userId: String?,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -830,6 +830,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 sessionManager.saveUpdatedAtTimeStamp(newData.task.updatedAt)
                 taskDao.insertTaskData(newData.task)
                 taskDao.insertMultipleEvents(newData.taskEvents)
+                newData.task.pinData?.let { drawingPinsDao.insertSinglePinData(it) }
 
                 if (newData.task.isAssignedToMe) {
                     sharedViewModel?.isToMeUnread?.value = true
@@ -841,6 +842,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
 //                updateAllTasksLists(taskDao)
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                if (newData.task.pinData != null) {
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(newData.task.pinData))
+                }
+
 
             }.join()
         }
@@ -851,7 +856,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
         userId: String?,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -898,8 +904,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
+                    }
+                    if (eventData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(eventData.pinData)
                     }
                     taskDao.insertEventData(taskEvent)
 
@@ -920,6 +930,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
                 }, 50)
 
                 TaskEventsList.removeEvent(
@@ -935,7 +946,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         taskSeen: TaskSeenResponse.TaskSeen?,
         taskDao: TaskV2Dao,
         userId: String?,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         if (taskSeen != null) {
             val exist = TaskEventsList.isExists(
@@ -985,6 +997,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.fromMeState = taskSeen.newTaskData.fromMeState
                             task.toMeState = taskSeen.newTaskData.toMeState
                             task.hiddenState = taskSeen.newTaskData.hiddenState
+                            task.pinData = taskSeen.pinData
 
                             taskDao.updateTask(task)
                         } else {
@@ -992,19 +1005,23 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.fromMeState = taskSeen.newTaskData.fromMeState
                             task.toMeState = taskSeen.newTaskData.toMeState
                             task.hiddenState = taskSeen.newTaskData.hiddenState
+                            task.pinData = taskSeen.pinData
 
                             taskDao.updateTask(task)
                         }
                     }
                     updatedTask = task
-//                    println("Heartbeat SocketEvent TASK_SEEN DB update started3 ${System.currentTimeMillis()}")
+                    if (taskSeen.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(taskSeen.pinData)
+                    }
+
                     updateAllTasksListForTaskSeen(taskDao, taskSeen)
-//                    println("Heartbeat SocketEvent TASK_SEEN DB update ended3 ${System.currentTimeMillis()}")
 
                 }.join()
                 EventBus.getDefault()
                     .post(LocalEvents.TaskSeenEvent(updatedTask))
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(taskSeen.pinData))
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_SEEN.name,
@@ -1021,7 +1038,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
         userId: String?,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         if (eventData != null) {
             val isExists = TaskEventsList.isExists(
@@ -1070,6 +1088,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
                         taskDao.insertEventData(taskEvent)
@@ -1092,15 +1111,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             }
                         }
 
-//                    println("Heartbeat SocketEvent NEW_TASK_COMMENT DB operation started ${System.currentTimeMillis()}")
                         updateAllTasksListForComment(taskDao, eventData)
-//                    println("Heartbeat SocketEvent NEW_TASK_COMMENT DB operation ended ${System.currentTimeMillis()}")
 
-                    } else {
-                        getTaskById(eventData.taskId) { isSuccess, task, events ->
+                    }
+                    else {
+                        getTaskById(eventData.taskId) { isSuccess, taskData, events ->
                             if (isSuccess) {
                                 launch {
                                     taskDao.insertEventData(taskEvent)
+                                    taskData?.pinData?.let { drawingPinsDao.insertSinglePinData(it) }
+
 
                                     if (eventData.newTaskData.creatorState.equals(
                                             TaskStatus.CANCELED.name,
@@ -1127,12 +1147,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         }
                     }
 
+                    if (eventData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(eventData.pinData)
+                    }
 
                 }.join()
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
                 }, 50)
 
                 TaskEventsList.removeEvent(
@@ -1145,7 +1169,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     suspend fun updateTaskUnCanceledInLocal(
-        eventData: EventV2Response.Data?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -1187,10 +1214,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.isCanceled = false
                         task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
                     }
                     taskDao.insertEventData(taskEvent)
+                    if (eventData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(eventData.pinData)
+                    }
 
                     if (eventData.newTaskData.isAssignedToMe) {
                         sharedViewModel?.isToMeUnread?.value = true
@@ -1206,6 +1237,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
                 }.join()
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.UN_CANCEL_TASK.name,
@@ -1219,7 +1251,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
         userId: String?,
-        sessionManager: SessionManager
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -1261,10 +1294,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.isCanceled = true
                         task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
                     }
                     taskDao.insertEventData(taskEvent)
+                    if (eventData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(eventData.pinData)
+                    }
 
                     if (task?.creator?.id != userId) {
                         sharedViewModel?.isHiddenUnread?.postValue(true)
@@ -1277,6 +1314,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 }.join()
 
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.CANCELED_TASK.name,
                     eventData.taskId
@@ -1286,7 +1324,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     suspend fun updateTaskDoneInLocal(
-        eventData: EventV2Response.Data?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ): CeibroTaskV2? {
         var updatedTask: CeibroTaskV2? = null
         if (eventData != null) {
@@ -1327,10 +1368,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.fromMeState = eventData.newTaskData.fromMeState
                         task.hiddenState = eventData.newTaskData.hiddenState
                         task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
 
                         taskDao.updateTask(task)
                     }
                     taskDao.insertEventData(taskEvent)
+                    if (eventData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(eventData.pinData)
+                    }
+
                     updatedTask = task
 
                     if (eventData.newTaskData.isAssignedToMe) {
@@ -1350,6 +1396,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 handler.postDelayed(Runnable {
                     EventBus.getDefault().post(LocalEvents.TaskDoneEvent(updatedTask, taskEvent))
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
                 }, 50)
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId
@@ -1360,7 +1407,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     suspend fun updateTaskJoinedInLocal(
-        eventData: EventV2Response.Data?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -1392,6 +1442,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     task.fromMeState = eventData.newTaskData.fromMeState
                     task.hiddenState = eventData.newTaskData.hiddenState
                     task.eventsCount = task.eventsCount + 1
+                    task.pinData = eventData.pinData
 
                     val invitedList = task.invitedNumbers.toMutableList()
                     val invited =
@@ -1419,6 +1470,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     taskDao.updateTask(task)
                 }
                 taskDao.insertEventData(taskEvent)
+                if (eventData.pinData != null) {
+                    drawingPinsDao.insertSinglePinData(eventData.pinData)
+                }
 
                 if (eventData.newTaskData.isAssignedToMe) {
                     sharedViewModel?.isToMeUnread?.value = true
@@ -1435,12 +1489,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
             EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
             EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+            EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
         }
     }
 
 
     suspend fun updateTaskHideInLocal(
-        hideData: HideTaskResponse?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        hideData: HideTaskResponse?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         if (hideData != null) {
             val isExists = TaskEventsList.isExists(
@@ -1456,8 +1514,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         updatedAt = hideData.taskUpdatedAt,
                         toMeState = hideData.toMeState,
                         fromMeState = hideData.fromMeState,
-                        hiddenState = hideData.hiddenState
+                        hiddenState = hideData.hiddenState,
+                        pinData = hideData.pinData
                     )
+                    if (hideData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(hideData.pinData)
+                    }
 
                     val toMeOngoingTask =
                         taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
@@ -1478,6 +1540,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 //                    updateAllTasksLists(taskDao)
                 }.join()
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(hideData.pinData))
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_HIDDEN.name, hideData.taskId
@@ -1487,7 +1550,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     suspend fun updateTaskUnHideInLocal(
-        hideData: HideTaskResponse?, taskDao: TaskV2Dao, sessionManager: SessionManager
+        hideData: HideTaskResponse?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         if (hideData != null) {
             val isExists = TaskEventsList.isExists(
@@ -1503,8 +1569,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         updatedAt = hideData.taskUpdatedAt,
                         toMeState = hideData.toMeState,
                         fromMeState = hideData.fromMeState,
-                        hiddenState = hideData.hiddenState
+                        hiddenState = hideData.hiddenState,
+                        pinData = hideData.pinData
                     )
+                    if (hideData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(hideData.pinData)
+                    }
 
                     val toMeOngoingTask =
                         taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
@@ -1526,6 +1596,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                 }.join()
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(hideData.pinData))
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_SHOWN.name, hideData.taskId
