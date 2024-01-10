@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CommentData
 import com.zstronics.ceibro.data.database.models.tasks.EventData
 import com.zstronics.ceibro.data.database.models.tasks.ForwardData
@@ -49,6 +50,8 @@ data class EventV2Response(
         val updatedAt: String,
         @SerializedName("taskUpdatedAt")
         val taskUpdatedAt: String,
+        @SerializedName("pinData")
+        val pinData: CeibroDrawingPins?,
         @SerializedName("eventNumber")
         val eventNumber: Int
     ) : Parcelable {

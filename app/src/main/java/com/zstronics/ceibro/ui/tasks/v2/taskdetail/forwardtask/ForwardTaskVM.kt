@@ -1,12 +1,10 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -16,10 +14,8 @@ import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +25,7 @@ class ForwardTaskVM @Inject constructor(
     private val taskRepository: ITaskRepository,
     val dashboardRepository: IDashboardRepository,
     private val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<IForwardTask.State>(), IForwardTask.ViewModel {
     val user = sessionManager.getUser().value
     var taskData: CeibroTaskV2? = null
@@ -115,7 +112,8 @@ class ForwardTaskVM @Inject constructor(
                                 forwardEvent,
                                 taskDao,
                                 user?.id,
-                                sessionManager
+                                sessionManager,
+                                drawingPinsDao
                             )
                             loading(false, "")
                             if (forwardEvent != null) {

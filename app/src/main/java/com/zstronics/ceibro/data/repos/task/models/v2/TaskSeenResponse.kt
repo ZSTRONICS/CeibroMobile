@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
 import com.zstronics.ceibro.data.database.models.tasks.AssignedToState
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -43,7 +44,9 @@ data class TaskSeenResponse(
         @SerializedName("newTaskData")
         val newTaskData: EventV2Response.Data.TaskStatesData,
         @SerializedName("oldTaskData")
-        val oldTaskData: EventV2Response.Data.TaskStatesData
+        val oldTaskData: EventV2Response.Data.TaskStatesData,
+        @SerializedName("pinData")
+        val pinData: CeibroDrawingPins?
     ) : Parcelable
 
 }

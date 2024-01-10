@@ -81,7 +81,7 @@ data class CeibroTaskV2(
     @SerializedName("hasPinData")
     var hasPinData: Boolean,
     @SerializedName("pinData")
-    val pinData: CeibroDrawingPins?,
+    var pinData: CeibroDrawingPins?,
 
     //only for room DB Column
     @ColumnInfo(name = "isBeingDoneByAPI") @Transient var isBeingDoneByAPI: Boolean = false

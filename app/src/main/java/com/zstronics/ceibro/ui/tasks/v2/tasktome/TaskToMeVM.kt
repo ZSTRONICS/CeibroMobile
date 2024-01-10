@@ -12,6 +12,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
@@ -25,7 +26,8 @@ class TaskToMeVM @Inject constructor(
     override val viewState: TaskToMeState,
     private val remoteTask: TaskRemoteDataSource,
     val sessionManager: SessionManager,
-    val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao,
+    val drawingPinsDao: DrawingPinsV2Dao
 ) : HiltBaseViewModel<ITaskToMe.State>(), ITaskToMe.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.NEW.name.lowercase()
@@ -350,7 +352,7 @@ class TaskToMeVM @Inject constructor(
             when (val response = remoteTask.hideTask(taskId)) {
                 is ApiResponse.Success -> {
                     val hideResponse = response.data
-                    updateTaskHideInLocal(hideResponse, taskDao, sessionManager)
+                    updateTaskHideInLocal(hideResponse, taskDao, sessionManager, drawingPinsDao)
                     loading(false, "")
                     callBack.invoke(true)
                 }

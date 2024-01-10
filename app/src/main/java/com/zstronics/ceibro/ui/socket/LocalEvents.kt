@@ -128,4 +128,5 @@ object LocalEvents {
     data class UpdateGroupDrawings(val projectID: String)
 
     data class RefreshDrawingPins(val pinData: CeibroDrawingPins?)
+    data class UpdateDrawingPins(val pinData: CeibroDrawingPins?)
 }

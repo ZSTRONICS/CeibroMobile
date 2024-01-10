@@ -166,7 +166,7 @@ class DashboardVM @Inject constructor(
                         object : TypeToken<SocketNewTaskEventV2Response>() {}.type
                     ).data
                     launch {
-                        updateForwardTaskInLocal(eventData, taskDao, userId, sessionManager)
+                        updateForwardTaskInLocal(eventData, taskDao, userId, sessionManager, drawingPinsDao)
                     }
                 }
 
@@ -176,7 +176,7 @@ class DashboardVM @Inject constructor(
                         object : TypeToken<SocketForwardedToMeNewTaskEventV2Response>() {}.type
                     ).data
                     launch {
-                        updateForwardedToMeNewTaskInLocal(eventData, taskDao, userId, sessionManager)
+                        updateForwardedToMeNewTaskInLocal(eventData, taskDao, userId, sessionManager, drawingPinsDao)
                     }
                 }
 
@@ -186,7 +186,7 @@ class DashboardVM @Inject constructor(
                         object : TypeToken<SocketTaskSeenV2Response>() {}.type
                     ).data
                     launch {
-                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId, sessionManager)
+                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId, sessionManager, drawingPinsDao)
                     }
                 }
 
@@ -204,7 +204,7 @@ class DashboardVM @Inject constructor(
                                 commentData,
                                 taskDao,
                                 userId,
-                                sessionManager
+                                sessionManager, drawingPinsDao
                             )
                         }
                     }
@@ -215,7 +215,7 @@ class DashboardVM @Inject constructor(
                                     commentData,
                                     taskDao,
                                     userId,
-                                    sessionManager
+                                    sessionManager, drawingPinsDao
                                 )
                             }
                         }
@@ -226,7 +226,7 @@ class DashboardVM @Inject constructor(
                                 updateTaskUnCanceledInLocal(
                                     commentData,
                                     taskDao,
-                                    sessionManager
+                                    sessionManager, drawingPinsDao
                                 )
                             }
                         }
@@ -234,13 +234,13 @@ class DashboardVM @Inject constructor(
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
                         if (commentData != null) {
                             launch {
-                                updateTaskDoneInLocal(commentData, taskDao, sessionManager)
+                                updateTaskDoneInLocal(commentData, taskDao, sessionManager, drawingPinsDao)
                             }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
                         launch {
-                            updateTaskJoinedInLocal(commentData, taskDao, sessionManager)
+                            updateTaskJoinedInLocal(commentData, taskDao, sessionManager, drawingPinsDao)
                         }
                         updateContactsInDB {
 
@@ -256,14 +256,14 @@ class DashboardVM @Inject constructor(
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
                         if (hideData != null) {
                             launch {
-                                updateTaskHideInLocal(hideData, taskDao, sessionManager)
+                                updateTaskHideInLocal(hideData, taskDao, sessionManager, drawingPinsDao)
                             }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
                         if (hideData != null) {
                             launch {
-                                updateTaskUnHideInLocal(hideData, taskDao, sessionManager)
+                                updateTaskUnHideInLocal(hideData, taskDao, sessionManager, drawingPinsDao)
                             }
                         }
                     }
@@ -454,7 +454,7 @@ class DashboardVM @Inject constructor(
             if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
             }
-            println("Heartbeat SocketEvent: ${socketData.eventType}: ${arguments}")
+            println("Heartbeat SocketEvent: ${socketData.eventType}")
             if (socketData.eventType.equals(SocketHandler.TaskEvent.TASK_SEEN.name, true)) {
                 println("Heartbeat SocketEvent TASK_SEEN DATA_RECEIVED: ${arguments}")
             }

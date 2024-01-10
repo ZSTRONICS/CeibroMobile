@@ -5,6 +5,7 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -27,5 +28,7 @@ data class HideTaskResponse(
     @SerializedName("toMeState")
     val toMeState: String,
     @SerializedName("hiddenState")
-    val hiddenState: String
+    val hiddenState: String,
+    @SerializedName("pinData")
+    val pinData: CeibroDrawingPins?
 ) : BaseResponse(), Parcelable

@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.data.database.dao
 
 import androidx.room.*
+import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 
@@ -42,8 +43,8 @@ interface TaskV2Dao {
     @Query("UPDATE tasks_v2_basic SET seenBy = :seenBy, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, creatorState = :creatorState WHERE id = :taskId")
     suspend fun updateTaskOnEvent(taskId: String, seenBy: List<String>, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, creatorState: String)
 
-    @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState WHERE id = :taskId")
-    suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String)
+    @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, pinData = :pinData WHERE id = :taskId")
+    suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, pinData: CeibroDrawingPins?)
 
     @Update
     suspend fun updateTask(task: CeibroTaskV2)

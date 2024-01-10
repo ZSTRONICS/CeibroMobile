@@ -822,43 +822,76 @@ class LocationsV2Fragment :
                 mViewDataBinding.taskRootState.text = pinData.taskData.rootState.toCamelCase()
                 mViewDataBinding.taskUID.text = pinData.taskData.taskUID
 
-                mViewDataBinding.taskUID.background = if (pinData.taskData.rootState.equals(TaskRootStateTags.FromMe.tagValue, true)){
-                    if (pinData.taskData.fromMeState.equals(TaskStatus.UNREAD.name, true)) {
-                        resources.getDrawable(R.drawable.status_new_filled_with_border)
-                    }
-                    else if (pinData.taskData.fromMeState.equals(TaskStatus.ONGOING.name, true)) {
-                        resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
-                    }
-                    else if (pinData.taskData.fromMeState.equals(TaskStatus.DONE.name, true)) {
-                        resources.getDrawable(R.drawable.status_done_filled_with_border)
-                    }
-                    else {
-                        resources.getDrawable(R.drawable.status_draft_outline)
-                    }
-                } else if (pinData.taskData.rootState.equals(TaskRootStateTags.ToMe.tagValue, true)){
-                    if (pinData.taskData.toMeState.equals(TaskStatus.NEW.name, true)) {
-                        resources.getDrawable(R.drawable.status_new_filled_with_border)
-                    }
-                    else if (pinData.taskData.toMeState.equals(TaskStatus.ONGOING.name, true)) {
-                        resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
-                    }
-                    else if (pinData.taskData.toMeState.equals(TaskStatus.DONE.name, true)) {
-                        resources.getDrawable(R.drawable.status_done_filled_with_border)
-                    }
-                    else {
-                        resources.getDrawable(R.drawable.status_draft_outline)
-                    }
-                } else if (pinData.taskData.rootState.equals(TaskRootStateTags.Hidden.tagValue, true)){
-                    if (pinData.taskData.toMeState.equals(TaskStatus.CANCELED.name, true)) {
+                mViewDataBinding.taskUID.background = if (pinData.taskData.rootState.equals(
+                        TaskRootStateTags.FromMe.tagValue,
+                        true
+                    )
+                ) {
+                    if (pinData.taskData.isHiddenByMe) {
+                        mViewDataBinding.taskRootState.text = TaskRootStateTags.Hidden.tagValue.toCamelCase()
+                        if (pinData.taskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
+                            resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
+                        } else if (pinData.taskData.hiddenState.equals(TaskStatus.DONE.name, true)) {
+                            resources.getDrawable(R.drawable.status_done_filled_with_border)
+                        } else {
+                            resources.getDrawable(R.drawable.status_draft_outline)
+                        }
+                    } else if (pinData.taskData.creatorState.equals(TaskStatus.CANCELED.name, true)) {
+                        mViewDataBinding.taskRootState.text = TaskRootStateTags.Canceled.tagValue.toCamelCase()
                         resources.getDrawable(R.drawable.status_cancelled_filled_with_border)
+                    } else {
+                        mViewDataBinding.taskRootState.text = pinData.taskData.rootState.toCamelCase()
+                        if (pinData.taskData.fromMeState.equals(TaskStatus.UNREAD.name, true)) {
+                            resources.getDrawable(R.drawable.status_new_filled_with_border)
+                        } else if (pinData.taskData.fromMeState.equals(TaskStatus.ONGOING.name, true)) {
+                            resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
+                        } else if (pinData.taskData.fromMeState.equals(TaskStatus.DONE.name, true)) {
+                            resources.getDrawable(R.drawable.status_done_filled_with_border)
+                        } else {
+                            resources.getDrawable(R.drawable.status_draft_outline)
+                        }
                     }
-                    else if (pinData.taskData.toMeState.equals(TaskStatus.ONGOING.name, true)) {
+                } else if (pinData.taskData.rootState.equals(
+                        TaskRootStateTags.ToMe.tagValue,
+                        true
+                    )
+                ) {
+                    if (pinData.taskData.isHiddenByMe) {
+                        mViewDataBinding.taskRootState.text = TaskRootStateTags.Hidden.tagValue.toCamelCase()
+                        if (pinData.taskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
+                            resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
+                        } else if (pinData.taskData.hiddenState.equals(TaskStatus.DONE.name, true)) {
+                            resources.getDrawable(R.drawable.status_done_filled_with_border)
+                        } else {
+                            resources.getDrawable(R.drawable.status_draft_outline)
+                        }
+                    } else if (pinData.taskData.userSubState.equals(TaskStatus.CANCELED.name, true)) {
+                        mViewDataBinding.taskRootState.text = TaskRootStateTags.Canceled.tagValue.toCamelCase()
+                        resources.getDrawable(R.drawable.status_cancelled_filled_with_border)
+                    } else {
+                        mViewDataBinding.taskRootState.text = pinData.taskData.rootState.toCamelCase()
+                        if (pinData.taskData.toMeState.equals(TaskStatus.NEW.name, true)) {
+                            resources.getDrawable(R.drawable.status_new_filled_with_border)
+                        } else if (pinData.taskData.toMeState.equals(TaskStatus.ONGOING.name, true)) {
+                            resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
+                        } else if (pinData.taskData.toMeState.equals(TaskStatus.DONE.name, true)) {
+                            resources.getDrawable(R.drawable.status_done_filled_with_border)
+                        } else {
+                            resources.getDrawable(R.drawable.status_draft_outline)
+                        }
+                    }
+                } else if (pinData.taskData.rootState.equals(
+                        TaskRootStateTags.Hidden.tagValue,
+                        true
+                    )
+                ) {
+                    if (pinData.taskData.hiddenState.equals(TaskStatus.CANCELED.name, true)) {
+                        resources.getDrawable(R.drawable.status_cancelled_filled_with_border)
+                    } else if (pinData.taskData.hiddenState.equals(TaskStatus.ONGOING.name, true)) {
                         resources.getDrawable(R.drawable.status_ongoing_filled_with_border)
-                    }
-                    else if (pinData.taskData.toMeState.equals(TaskStatus.DONE.name, true)) {
+                    } else if (pinData.taskData.hiddenState.equals(TaskStatus.DONE.name, true)) {
                         resources.getDrawable(R.drawable.status_done_filled_with_border)
-                    }
-                    else {
+                    } else {
                         resources.getDrawable(R.drawable.status_draft_outline)
                     }
                 } else {
@@ -1284,6 +1317,19 @@ class LocationsV2Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshDrawingPins(event: LocalEvents.RefreshDrawingPins?) {
+        val pinData = event?.pinData
+        if (pinData != null) {
+            val drawingFile = viewModel.drawingFile.value
+            if (drawingFile != null) {
+                if (drawingFile._id == pinData.drawingId) {
+                    viewModel.getDrawingPins(drawingFile._id)
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateDrawingPins(event: LocalEvents.UpdateDrawingPins?) {
         val pinData = event?.pinData
         if (pinData != null) {
             val drawingFile = viewModel.drawingFile.value
