@@ -236,6 +236,24 @@
                 tools:listitem="@layout/layout_ceibro_only_image" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/onlyDrawingRV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingStart="2dp"
+                android:paddingEnd="1dp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_ceibro_only_image" />
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/imagesWithCommentRV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -19,15 +18,12 @@ import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
-import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailBinding
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailEventsBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
-import org.greenrobot.eventbus.EventBus
 
 class TaskDetailV2RVAdapter(
     val networkConnectivityObserver: NetworkConnectivityObserver,
@@ -53,12 +49,13 @@ class TaskDetailV2RVAdapter(
     }
 
 
-    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String,String,String>, tag: String) -> Unit)? =
+    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String, String, String>, tag: String) -> Unit)? =
         null
 
-    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView,  triplet: Triple<String,String,String>, tag: String) -> Unit)?) {
+    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String, String, String>, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
+
     var loggedInUserId: String = ""
     var rootState: String = ""
     var selectedState: String = ""
@@ -170,9 +167,11 @@ class TaskDetailV2RVAdapter(
             binding.viewMoreLessLayout.visibility = View.GONE
             binding.filesLayout.visibility = View.GONE
             binding.onlyImagesRV.visibility = View.GONE
+            binding.onlyDrawingRV.visibility = View.GONE
             binding.imagesWithCommentRV.visibility = View.GONE
 
             binding.onlyImagesRV.isNestedScrollingEnabled = false
+            binding.onlyDrawingRV.isNestedScrollingEnabled = false
             binding.imagesWithCommentRV.isNestedScrollingEnabled = false
 
             binding.filesRV.isNestedScrollingEnabled = false
@@ -343,6 +342,7 @@ class TaskDetailV2RVAdapter(
 
         private fun separateFiles(files: List<TaskFiles>) {
             val onlyImage: ArrayList<TaskFiles> = arrayListOf()
+            val onlyDrawingImage: ArrayList<TaskFiles> = arrayListOf()
             val imagesWithComment: ArrayList<TaskFiles> = arrayListOf()
             val document: ArrayList<TaskFiles> = arrayListOf()
 
@@ -350,6 +350,9 @@ class TaskDetailV2RVAdapter(
                 when (item.fileTag) {
                     AttachmentTags.Image.tagValue -> {
                         onlyImage.add(item)
+                    }
+                  AttachmentTags.Drawing.tagValue -> {
+                        onlyDrawingImage.add(item)
                     }
 
                     AttachmentTags.ImageWithComment.tagValue -> {
@@ -377,6 +380,26 @@ class TaskDetailV2RVAdapter(
 //                viewModel.openImageViewer(requireContext(), fileUrls, position)
                     val bundle = Bundle()
                     bundle.putParcelableArray("images", onlyImage.toTypedArray())
+                    bundle.putInt("position", position)
+                    bundle.putBoolean("fromServerUrl", true)
+                    openEventImageClickListener?.invoke(position, bundle)
+//                    navigate(R.id.imageViewerFragment, bundle)
+                }
+            binding.onlyDrawingRV.visibility =
+                if (onlyDrawingImage.isNotEmpty()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            val onlyDrawingAdapter = OnlyImageRVAdapter()
+            onlyDrawingAdapter.setList(onlyDrawingImage)
+            binding.onlyDrawingRV.adapter = onlyDrawingAdapter
+            onlyDrawingAdapter.openImageClickListener =
+                { _: View, position: Int, fileUrl: String ->
+//                val fileUrls: ArrayList<String> = viewModel.onlyImages.value?.map { it.fileUrl } as ArrayList<String>
+//                viewModel.openImageViewer(requireContext(), fileUrls, position)
+                    val bundle = Bundle()
+                    bundle.putParcelableArray("images", onlyDrawingImage.toTypedArray())
                     bundle.putInt("position", position)
                     bundle.putBoolean("fromServerUrl", true)
                     openEventImageClickListener?.invoke(position, bundle)
@@ -424,10 +447,10 @@ class TaskDetailV2RVAdapter(
             }
 
 
-            filesAdapter.downloadFileCallBack { textView, ivDownload, downloaded, data, tag->
+            filesAdapter.downloadFileCallBack { textView, ivDownload, downloaded, data, tag ->
 
 
-                val triplet=  Triple(data.id,data.fileName,data.fileUrl)
+                val triplet = Triple(data.id, data.fileName, data.fileUrl)
                 downloadFileClickListener?.invoke(
                     textView,
                     ivDownload,
@@ -445,18 +468,19 @@ class TaskDetailV2RVAdapter(
             } else {
                 binding.filesCount.text = "${filesAdapter.itemCount} Files"
             }
-            filesAdapter.fileClickListener = { _: View, position: Int, data: TaskFiles, downloadedData: CeibroDownloadDrawingV2 ->
-                val bundle = Bundle()
-                bundle.putParcelable("taskFile", data)
-                bundle.putParcelable("downloadedFile", downloadedData)
-                fileViewerClickListener?.invoke(position, bundle, downloadedData)
+            filesAdapter.fileClickListener =
+                { _: View, position: Int, data: TaskFiles, downloadedData: CeibroDownloadDrawingV2 ->
+                    val bundle = Bundle()
+                    bundle.putParcelable("taskFile", data)
+                    bundle.putParcelable("downloadedFile", downloadedData)
+                    fileViewerClickListener?.invoke(position, bundle, downloadedData)
 //                navigate(R.id.fileViewerFragment, bundle)
 //            val pdfUrl = data.fileUrl             // This following code downloads the file
 //            val intent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
 //                .addCategory(Intent.CATEGORY_BROWSABLE)
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 //            context?.startActivity(intent)
-            }
+                }
         }
     }
 
@@ -466,12 +490,13 @@ class TaskDetailV2RVAdapter(
         fun bind(events: MutableList<*>) {
             val eventsList = events as MutableList<Events>
 
-            val eventsAdapter = EventsRVAdapter(networkConnectivityObserver, context, downloadedDrawingV2Dao)
+            val eventsAdapter =
+                EventsRVAdapter(networkConnectivityObserver, context, downloadedDrawingV2Dao)
             eventsAdapter.requestPermissionCallBack {
                 requestPermissionClickListener?.invoke()
             }
             eventsAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
-                downloadFileClickListener?.invoke(textView,ivDownload,downloaded,triplet,tag)
+                downloadFileClickListener?.invoke(textView, ivDownload, downloaded, triplet, tag)
             }
 
             eventsAdapter.setList(eventsList, loggedInUserId)
@@ -484,12 +509,13 @@ class TaskDetailV2RVAdapter(
                     View.GONE
                 }
 
-            eventsAdapter.fileClickListener = { view: View, position: Int, data: EventFiles,drawingFile ->
-                val bundle = Bundle()
-                bundle.putParcelable("eventFile", data)
-                bundle.putParcelable("downloadedFile", drawingFile)
-                fileViewerClickListener?.invoke(position, bundle, drawingFile)
-            }
+            eventsAdapter.fileClickListener =
+                { view: View, position: Int, data: EventFiles, drawingFile ->
+                    val bundle = Bundle()
+                    bundle.putParcelable("eventFile", data)
+                    bundle.putParcelable("downloadedFile", drawingFile)
+                    fileViewerClickListener?.invoke(position, bundle, drawingFile)
+                }
 
 
             eventsAdapter.openEventImageClickListener =
