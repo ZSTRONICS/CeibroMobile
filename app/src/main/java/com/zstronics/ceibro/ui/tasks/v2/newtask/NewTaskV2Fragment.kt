@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -86,7 +87,7 @@ class NewTaskV2Fragment :
                             context.startService(serviceIntent)
                             navigateBack()
                         }
-                    } else if(it.equals("taskCreatedLocally",true))  {
+                    } else if (it.equals("taskCreatedLocally", true)) {
                         navigateBack()
                     } else {
                         val bundle = Bundle()
@@ -306,7 +307,13 @@ class NewTaskV2Fragment :
                 mViewDataBinding.newTaskProjectField.alpha = 0.6f
 
                 mViewDataBinding.drawingName.text = it.drawingName
-                mViewDataBinding.drawingImg.setImageBitmap(it.locationImgBitmap)
+
+                val file = it.locationImgFile;
+                if (file.exists()) {
+                    val bitmap = getBitmapFromFile(file.absolutePath)
+                    mViewDataBinding.drawingImg.setImageBitmap(bitmap)
+                }
+
             } else {
                 mViewDataBinding.locationLayout.visibility = View.GONE
             }
@@ -496,8 +503,8 @@ class NewTaskV2Fragment :
                             val fileUri = clipData.getItemAt(i).uri
                             val fileName = getFileNameFromUri(requireContext(), fileUri)
                             var fileExtension = getFileExtension(requireContext(), fileUri)
-                            if (fileExtension.isNullOrEmpty()){
-                                fileExtension="jpg"
+                            if (fileExtension.isNullOrEmpty()) {
+                                fileExtension = "jpg"
                             }
                             val newUri = createFileUriFromContentUri(
                                 requireContext(),
@@ -509,7 +516,8 @@ class NewTaskV2Fragment :
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
 
-                            val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
+                            val foundImage =
+                                oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                             if (foundImage != null) {
                                 viewModel.launch(Dispatcher.Main) {
                                     shortToastNow("You selected an already-added image")
@@ -535,8 +543,8 @@ class NewTaskV2Fragment :
                         fileUri?.let {
                             val fileName = getFileNameFromUri(requireContext(), it)
                             var fileExtension = getFileExtension(requireContext(), fileUri)
-                            if (fileExtension.isNullOrEmpty()){
-                                fileExtension="jpg"
+                            if (fileExtension.isNullOrEmpty()) {
+                                fileExtension = "jpg"
                             }
                             val newUri = createFileUriFromContentUri(
                                 requireContext(),
@@ -548,7 +556,8 @@ class NewTaskV2Fragment :
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
 
-                            val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
+                            val foundImage =
+                                oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                             if (foundImage != null) {
                                 viewModel.launch(Dispatcher.Main) {
                                     shortToastNow("You selected an already-added image")
@@ -812,4 +821,12 @@ class NewTaskV2Fragment :
         fileLayout.layoutParams = params
     }
 
+    private fun getBitmapFromFile(filePath: String): Bitmap? {
+        val file = File(filePath)
+        if (file.exists()) {
+            // Decode the file into a Bitmap
+            return BitmapFactory.decodeFile(file.absolutePath)
+        }
+        return null
+    }
 }

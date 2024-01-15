@@ -113,6 +113,10 @@ class TaskDetailV2Fragment :
             }
 
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
+            R.id.DrawingOpenBtn -> {
+                showToast("Coming soon !!!")
+            }
+
             R.id.taskCommentBtn -> {
                 val bundle = Bundle()
                 val taskData = viewModel.taskDetail.value
@@ -293,6 +297,11 @@ class TaskDetailV2Fragment :
         }
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
+            if (item.hasPinData) {
+                mViewDataBinding.DrawingOpenBtn.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.DrawingOpenBtn.visibility = View.GONE
+            }
 
             if (taskSeenRequest) {
                 taskSeenRequest = false

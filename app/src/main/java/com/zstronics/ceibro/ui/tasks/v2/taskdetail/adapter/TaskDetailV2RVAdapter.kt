@@ -166,9 +166,15 @@ class TaskDetailV2RVAdapter(
         fun bind(task: CeibroTaskV2) {
             binding.viewMoreLessLayout.visibility = View.GONE
             binding.filesLayout.visibility = View.GONE
+
             binding.onlyImagesRV.visibility = View.GONE
+            binding.onlyImages.visibility = View.GONE
+
             binding.onlyDrawingRV.visibility = View.GONE
+            binding.onlyDrawings.visibility = View.GONE
+
             binding.imagesWithCommentRV.visibility = View.GONE
+            binding.imagesWithComment.visibility = View.GONE
 
             binding.onlyImagesRV.isNestedScrollingEnabled = false
             binding.onlyDrawingRV.isNestedScrollingEnabled = false
@@ -351,7 +357,8 @@ class TaskDetailV2RVAdapter(
                     AttachmentTags.Image.tagValue -> {
                         onlyImage.add(item)
                     }
-                  AttachmentTags.Drawing.tagValue -> {
+
+                    AttachmentTags.Drawing.tagValue -> {
                         onlyDrawingImage.add(item)
                     }
 
@@ -365,12 +372,13 @@ class TaskDetailV2RVAdapter(
                 }
             }
 
-            binding.onlyImagesRV.visibility =
-                if (onlyImage.isNotEmpty()) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
+
+            if (onlyImage.isNotEmpty()) {
+                binding.onlyImagesRV.visibility = View.VISIBLE
+                binding.onlyImages.visibility = View.VISIBLE
+            } else {
+                binding.onlyImages.visibility = View.GONE
+            }
             val onlyImageAdapter = OnlyImageRVAdapter()
             onlyImageAdapter.setList(onlyImage)
             binding.onlyImagesRV.adapter = onlyImageAdapter
@@ -385,12 +393,15 @@ class TaskDetailV2RVAdapter(
                     openEventImageClickListener?.invoke(position, bundle)
 //                    navigate(R.id.imageViewerFragment, bundle)
                 }
-            binding.onlyDrawingRV.visibility =
-                if (onlyDrawingImage.isNotEmpty()) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
+
+            if (onlyDrawingImage.isNotEmpty()) {
+                binding.onlyDrawingRV.visibility = View.VISIBLE
+                binding.onlyDrawings.visibility = View.VISIBLE
+
+            } else {
+                binding.onlyDrawingRV.visibility = View.GONE
+                binding.onlyDrawings.visibility = View.GONE
+            }
             val onlyDrawingAdapter = OnlyImageRVAdapter()
             onlyDrawingAdapter.setList(onlyDrawingImage)
             binding.onlyDrawingRV.adapter = onlyDrawingAdapter
@@ -407,12 +418,14 @@ class TaskDetailV2RVAdapter(
                 }
 
 
-            binding.imagesWithCommentRV.visibility =
-                if (imagesWithComment.isNotEmpty()) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
+
+            if (imagesWithComment.isNotEmpty()) {
+                binding.imagesWithCommentRV.visibility = View.VISIBLE
+                binding.imagesWithComment.visibility = View.VISIBLE
+            } else {
+                binding.imagesWithCommentRV.visibility = View.GONE
+                binding.imagesWithComment.visibility = View.GONE
+            }
             val imageWithCommentAdapter = ImageWithCommentRVAdapter()
             imageWithCommentAdapter.setList(imagesWithComment)
             binding.imagesWithCommentRV.adapter = imageWithCommentAdapter

@@ -1091,7 +1091,6 @@ class LocationsV2Fragment :
                 yCord = marker.yPointToDisplay,
                 pageWidth = actualPageWidth,
                 pageHeight = actualPageHeight,
-                locationImgBitmap = bitmap,
                 locationImgFile = file,
                 drawingId = viewModel.drawingFile.value?._id,
                 drawingName = file.name ?: "Unknown",
