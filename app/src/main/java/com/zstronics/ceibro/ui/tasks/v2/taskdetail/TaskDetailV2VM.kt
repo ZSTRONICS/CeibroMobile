@@ -10,6 +10,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -37,6 +38,7 @@ class TaskDetailV2VM @Inject constructor(
     private val remoteTask: TaskRemoteDataSource,
     val dashboardRepository: IDashboardRepository,
     val taskDao: TaskV2Dao,
+    val drawingPinsDao: DrawingPinsV2Dao,
     val downloadedDrawingV2Dao:DownloadedDrawingV2Dao
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
     val user = sessionManager.getUser().value
@@ -254,7 +256,8 @@ class TaskDetailV2VM @Inject constructor(
                                 taskSeenData,
                                 taskDao,
                                 user?.id,
-                                sessionManager
+                                sessionManager,
+                                drawingPinsDao
                             )
                         }
                         onBack(taskSeenData)
@@ -315,7 +318,7 @@ class TaskDetailV2VM @Inject constructor(
             )) {
                 is ApiResponse.Success -> {
                     doneData = response.data.data
-                    updateTaskDoneInLocal(doneData, taskDao, sessionManager)
+                    updateTaskDoneInLocal(doneData, taskDao, sessionManager, drawingPinsDao)
                     loading(false, "")
                     onBack()
                     isSuccess = true

@@ -14,6 +14,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
@@ -27,7 +28,8 @@ class TaskHiddenVM @Inject constructor(
     override val viewState: TaskHiddenState,
     private val remoteTask: TaskRemoteDataSource,
     val sessionManager: SessionManager,
-    val taskDao: TaskV2Dao
+    val taskDao: TaskV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<ITaskHidden.State>(), ITaskHidden.ViewModel {
     val user = sessionManager.getUser().value
     var selectedState: String = "ongoing"
@@ -291,7 +293,8 @@ class TaskHiddenVM @Inject constructor(
                         updateTaskUnCanceledInLocal(
                             response.data.data,
                             taskDao,
-                            sessionManager
+                            sessionManager,
+                            drawingPinsDao
                         )
                     }
                     val handler = Handler(Looper.getMainLooper())
@@ -315,7 +318,7 @@ class TaskHiddenVM @Inject constructor(
             when (val response = remoteTask.unHideTask(taskId)) {
                 is ApiResponse.Success -> {
                     val unHideResponse = response.data
-                    updateTaskUnHideInLocal(unHideResponse, taskDao, sessionManager)
+                    updateTaskUnHideInLocal(unHideResponse, taskDao, sessionManager, drawingPinsDao)
                     loading(false, "")
                     callBack.invoke(true)
                 }
