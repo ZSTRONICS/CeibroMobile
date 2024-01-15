@@ -85,7 +85,7 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteTask.syncEvents(taskId, request)) {
             is ApiResponse.Success -> {
-                callBack(true, response.data.missingEvents,"")
+                callBack(true, response.data.missingEvents, "")
             }
 
             is ApiResponse.Error -> {
@@ -100,7 +100,7 @@ class TaskRepository @Inject constructor(
     ) {
         when (val response = remoteTask.getAllTaskWithEventsSeparately(timeStamp)) {
             is ApiResponse.Success -> {
-                callBack(true, response.data,"")
+                callBack(true, response.data, "")
             }
 
             is ApiResponse.Error -> {
@@ -168,10 +168,13 @@ class TaskRepository @Inject constructor(
             newTask.doneCommentsRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val invitedNumbers = invitedNumbersString2.toRequestBody("text/plain".toMediaTypeOrNull())
 
-        val parts = list.map { file ->
+        val parts = mutableListOf<MultipartBody.Part>()
+
+        list.forEachIndexed { index, file ->
             val reqFile =
                 file.file.asRequestBody(("image/" + file.file.extension).toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("files", file.file.name, reqFile)
+            val part = MultipartBody.Part.createFormData("files",file.fileName, reqFile)
+            parts.add(part)
         }
         val metaData = list.map { file ->
             var tag = ""
