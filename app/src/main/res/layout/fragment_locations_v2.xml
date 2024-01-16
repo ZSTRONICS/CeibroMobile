@@ -689,7 +689,7 @@
                         android:layout_marginTop="@dimen/_3sdp"
                         android:layout_marginEnd="@dimen/_3sdp"
                         android:layout_marginBottom="@dimen/_3sdp"
-                        android:background="@{viewState.isHiddenCancelled()? @drawable/status_ongoing_filled_new : @drawable/status_cancelled_outline}"
+                        android:background="@{viewState.isHiddenCancelled()? @drawable/status_cancelled_fill : @drawable/status_cancelled_outline}"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"

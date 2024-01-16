@@ -24,6 +24,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -377,6 +379,11 @@ class LocationsV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (pdfFileLoaded) {
+            println("ReloadFragment: onViewCreated")
+            pdfFileLoaded = false
+            reloadFragment()
+        }
 
         addFiltersToList()
 
@@ -1328,10 +1335,9 @@ class LocationsV2Fragment :
         }
     }
 
-
-    override fun onPause() {
-        super.onPause()
-        viewModel._drawingFile.value = null
+    private fun reloadFragment() {
+        println("ReloadFragment: LocationsV2Fragment")
+        EventBus.getDefault().postSticky(LocalEvents.ReloadLocationFragmentInstance())
     }
 
 

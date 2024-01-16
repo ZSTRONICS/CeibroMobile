@@ -210,9 +210,9 @@ class DashboardFragment :
 
                 } else if (viewState.locationViewSelected.value == true) {
                     viewState.locationViewSelected.value = true
-                    if (locationFragmentInstance == null) {
+                 //   if (locationFragmentInstance == null) {
                         locationFragmentInstance = LocationsV2Fragment()
-                    }
+                 //   }
                     childFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, locationFragmentInstance!!)
                         .commit()
@@ -853,6 +853,16 @@ class DashboardFragment :
         changeSelectedTab(R.id.locationBtn, false)
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReloadLocationFragmentInstance(event: LocalEvents.ReloadLocationFragmentInstance) {
+        locationFragmentInstance = LocationsV2Fragment()
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, locationFragmentInstance!!)
+            .commit()
+        println("ReloadFragment: onReloadLocationFragmentInstance in DashboardFragment")
+        EventBus.getDefault().removeStickyEvent(event)
+    }
+
     override fun onStart() {
         super.onStart()
         try {
@@ -861,9 +871,8 @@ class DashboardFragment :
         }
     }
 
-
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         EventBus.getDefault().unregister(this)
     }
 
