@@ -8,6 +8,7 @@ import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
@@ -33,6 +34,7 @@ class SplashViewModel @Inject constructor(
     private val floorV2Dao: FloorsV2Dao,
     private val groupV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
     val sessionManager: SessionManager
 ) : HiltBaseViewModel<ISplash.State>(), ISplash.ViewModel, IValidator {
 
@@ -70,6 +72,7 @@ class SplashViewModel @Inject constructor(
             floorV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
+            drawingPinsDao.deleteAll()
         }
         sessionManager.endUserSession()
         // Cancel all periodic work with the tag "contactSync"
