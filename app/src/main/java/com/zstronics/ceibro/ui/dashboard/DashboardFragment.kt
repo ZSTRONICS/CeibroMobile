@@ -210,9 +210,9 @@ class DashboardFragment :
 
                 } else if (viewState.locationViewSelected.value == true) {
                     viewState.locationViewSelected.value = true
-                    if (locationFragmentInstance == null) {
+                 //   if (locationFragmentInstance == null) {
                         locationFragmentInstance = LocationsV2Fragment()
-                    }
+                 //   }
                     childFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, locationFragmentInstance!!)
                         .commit()
