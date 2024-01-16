@@ -24,6 +24,8 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -377,6 +379,11 @@ class LocationsV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (pdfFileLoaded) {
+            println("ReloadFragment: onViewCreated")
+            pdfFileLoaded = false
+            reloadFragment()
+        }
 
         addFiltersToList()
 
@@ -1310,25 +1317,27 @@ class LocationsV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        Handler().postDelayed({
-            if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
-                viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
-                CookiesManager.openingNewLocationFile = false
-                CookiesManager.cameToLocationViewFromProject = false
-                CookiesManager.drawingFileForLocation.value?.let {
-                    viewModel.getDrawingPins(it._id)
-                    viewModel._drawingFile.postValue(it)
-                } ?: run {
-                    shortToastNow("No file to display. Please select any drawing file.")
-                }
-
-            } else {
-                viewModel.drawingFile.value?.let {
-                    viewModel.getDrawingPins(it._id)
-                }
+        if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
+            viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
+            CookiesManager.openingNewLocationFile = false
+            CookiesManager.cameToLocationViewFromProject = false
+            CookiesManager.drawingFileForLocation.value?.let {
+                viewModel.getDrawingPins(it._id)
+                viewModel._drawingFile.postValue(it)
+            } ?: run {
+                shortToastNow("No file to display. Please select any drawing file.")
             }
-        }, 500)
 
+        } else {
+            viewModel.drawingFile.value?.let {
+                viewModel.getDrawingPins(it._id)
+            }
+        }
+    }
+
+    private fun reloadFragment() {
+        println("ReloadFragment: LocationsV2Fragment")
+        EventBus.getDefault().postSticky(LocalEvents.ReloadLocationFragmentInstance())
     }
 
 
