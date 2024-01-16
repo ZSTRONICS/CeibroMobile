@@ -692,7 +692,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
     fun updateCreatedTaskInLocal(
-        task: CeibroTaskV2?, taskDao: TaskV2Dao, sessionManager: SessionManager, drawingPinsDao: DrawingPinsV2Dao
+        task: CeibroTaskV2?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
     ) {
         val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
             ViewModelProvider(it).get(SharedViewModel::class.java)
@@ -1113,8 +1116,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                         updateAllTasksListForComment(taskDao, eventData)
 
-                    }
-                    else {
+                    } else {
                         getTaskById(eventData.taskId) { isSuccess, taskData, events ->
                             if (isSuccess) {
                                 launch {
