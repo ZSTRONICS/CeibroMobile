@@ -23,12 +23,14 @@ import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
+import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 @HiltViewModel
@@ -94,7 +96,23 @@ class NewTaskV2VM @Inject constructor(
             }
 
             if (!oldCreatedTask.dueDate.isNullOrEmpty()) {
-                viewState.dueDate.value = oldCreatedTask.dueDate
+                val currentDate = DateUtils.getCurrentDateWithFormat(DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT)
+                val dateFormat = SimpleDateFormat(DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT)
+                try {
+                    val oldDate = dateFormat.parse(oldCreatedTask.dueDate)
+                    val newDate = dateFormat.parse(currentDate)
+
+                    if (oldDate != null) {
+                        if (oldDate == newDate || !oldDate.before(newDate)) {   //Allowed: Old date is the same or after the new date
+                            viewState.dueDate.value = oldCreatedTask.dueDate
+                        } else {
+                            viewState.dueDate.value = ""
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
             }
         }
 
