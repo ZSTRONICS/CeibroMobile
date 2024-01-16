@@ -125,6 +125,7 @@ object LocalEvents {
     class LoadLocationProjectFragmentInLocation
     class LoadDrawingFragmentInLocation
     class LoadViewDrawingFragmentInLocation
+    class ReloadLocationFragmentInstance
     data class UpdateGroupDrawings(val projectID: String)
 
     data class RefreshDrawingPins(val pinData: CeibroDrawingPins?)
