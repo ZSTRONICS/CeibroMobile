@@ -65,6 +65,8 @@ data class CeibroDrawingPins(
         val isSeenByMe: Boolean,
         @SerializedName("rootState")
         val rootState: String,
+        @SerializedName("taskRootState")
+        val taskRootState: String,
         @SerializedName("taskUID")
         val taskUID: String,
         @SerializedName("toMeState")

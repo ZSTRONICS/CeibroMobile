@@ -625,4 +625,5 @@
     <string name="images">Images</string>
     <string name="images_with_comment">Images with Comment</string>
     <string name="drawings">Drawings</string>
+    <string name="select_all">Select All</string>
 </resources>

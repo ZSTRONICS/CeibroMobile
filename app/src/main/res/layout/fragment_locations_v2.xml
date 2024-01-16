@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -364,7 +363,7 @@
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="@dimen/_1sdp"
-                        android:closeIcon="@drawable/icon_close_round_grey"
+                        android:closeIcon="@drawable/icon_search_cancel"
                         android:elevation="0dp"
                         android:fontFamily="@font/inter_regular"
                         android:iconifiedByDefault="false"
@@ -403,7 +402,7 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/llFilter"
-                android:layout_width="@dimen/_75sdp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:background="@color/white"
@@ -705,6 +704,37 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/llCheckAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}">
+
+                    <TextView
+                        android:id="@+id/tvCheckAll"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/_2sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:text="@string/select_all"
+                        android:textColor="@color/black"
+                        android:textSize="13sp" />
+
+                    <CheckBox
+                        android:id="@+id/cbSelectAll"
+                        android:layout_width="30dp"
+                        android:layout_height="37dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:checked="true"
+                        android:layout_marginEnd="3dp"
+                        android:focusable="false"
+                        android:clickable="false" />
+                </LinearLayout>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
