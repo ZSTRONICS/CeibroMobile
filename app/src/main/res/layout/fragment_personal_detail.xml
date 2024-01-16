@@ -120,7 +120,7 @@
                     android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/name_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -137,7 +137,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userFirstName}" />
 
@@ -150,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:hint="@string/surname_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="@+id/firstNameField"
@@ -167,7 +167,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userSurname}" />
 
@@ -182,7 +182,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/email_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -199,7 +199,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userEmail}" />
 
@@ -214,7 +214,7 @@
                     android:layout_marginTop="@dimen/_9sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/phone_number_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -231,7 +231,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userContactNumber}" />
 
@@ -246,7 +246,7 @@
                     android:layout_marginTop="@dimen/_9sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/company_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -263,7 +263,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userCompanyName}" />
 
@@ -278,7 +278,7 @@
                     android:layout_marginTop="@dimen/_9sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/work_email_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -295,7 +295,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userWorkEmail}" />
 
@@ -310,7 +310,7 @@
                     android:layout_marginTop="@dimen/_9sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/work_phone_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -327,7 +327,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userWorkContactNo}" />
 
@@ -342,7 +342,7 @@
                     android:layout_marginTop="@dimen/_9sdp"
                     android:layout_marginEnd="@dimen/_12sdp"
                     android:hint="@string/reg_date_heading"
-                    android:textColorHint="@color/grey"
+                    android:textColorHint="@color/defaultGrey"
                     app:boxStrokeColor="@color/colorGrey"
                     app:boxStrokeWidth="1dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -359,7 +359,7 @@
                         android:inputType="none"
                         android:maxLines="1"
                         android:scrollHorizontally="true"
-                        android:textColorHint="@color/grey"
+                        android:textColorHint="@color/defaultGrey"
                         android:textSize="15sp"
                         android:text="@={viewState.userRegisterDate}" />
 

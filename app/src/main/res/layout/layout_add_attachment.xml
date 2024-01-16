@@ -93,7 +93,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/uploadImg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/uploadImg"
-            app:tint="@color/grey" />
+            app:tint="@color/defaultGrey" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

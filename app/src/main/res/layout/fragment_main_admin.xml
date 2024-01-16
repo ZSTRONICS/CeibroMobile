@@ -126,7 +126,7 @@
                 android:id="@+id/view21"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
-                android:background="@color/grey"
+                android:background="@color/defaultGrey"
                 android:layout_marginStart="@dimen/_6sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginBottom="@dimen/_4sdp"
@@ -151,7 +151,7 @@
                 android:paddingEnd="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_3sdp"
                 android:text="@string/users_heading"
-                android:textColor="@color/grey"
+                android:textColor="@color/defaultGrey"
                 android:textSize="15.5sp"
                 app:layout_constraintStart_toEndOf="@id/view21"
                 app:layout_constraintTop_toTopOf="parent" />

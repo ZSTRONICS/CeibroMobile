@@ -82,7 +82,7 @@
                         android:id="@+id/saperatorOne"
                         android:layout_width="@dimen/_1sdp"
                         android:layout_height="0dp"
-                        android:background="@color/grey"
+                        android:background="@color/defaultGrey"
                         app:layout_constraintBottom_toBottomOf="@id/tvCreatedBy"
                         app:layout_constraintEnd_toEndOf="@+id/saperatorTwo"
                         app:layout_constraintStart_toStartOf="@id/saperatorTwo"
@@ -140,7 +140,7 @@
                         android:layout_width="@dimen/_1sdp"
                         android:layout_height="0dp"
                         android:layout_marginStart="@dimen/_6sdp"
-                        android:background="@color/grey"
+                        android:background="@color/defaultGrey"
                         app:layout_constraintBottom_toBottomOf="@id/tvProjectName"
                         app:layout_constraintStart_toEndOf="@id/tvProjectName"
                         app:layout_constraintTop_toTopOf="@id/tvProjectName" />

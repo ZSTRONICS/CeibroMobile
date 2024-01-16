@@ -62,7 +62,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="@dimen/_6sdp"
                     android:text="@string/groups_heading"
-                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/grey}" />
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Group.name ? @color/appYellow: @color/black:@color/defaultGrey}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/Role"
@@ -74,7 +74,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="@dimen/_6sdp"
                     android:text="@string/roles_heading"
-                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Role.name ? @color/appYellow: @color/black:@color/grey}" />
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Role.name ? @color/appYellow: @color/black:@color/defaultGrey}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/Member"
@@ -86,7 +86,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="@dimen/_6sdp"
                     android:text="@string/member_s_heading"
-                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Member.name ? @color/appYellow: @color/black:@color/grey}" />
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Member.name ? @color/appYellow: @color/black:@color/defaultGrey}" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/Document"
@@ -98,7 +98,7 @@
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="@dimen/_6sdp"
                     android:text="@string/document_s_heading"
-                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Document.name ? @color/appYellow: @color/black:@color/grey}" />
+                    android:textColor="@{viewState.isProjectCreated ? viewState.selectedTabId == CreateProjectTabs.Document.name ? @color/appYellow: @color/black:@color/defaultGrey}" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </HorizontalScrollView>
