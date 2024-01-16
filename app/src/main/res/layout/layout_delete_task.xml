@@ -85,7 +85,7 @@
             android:paddingEnd="20dp"
             android:text="@string/cancel_btn_text"
             android:textAllCaps="false"
-            android:textColor="@color/grey"
+            android:textColor="@color/defaultGrey"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/deleteTaskBtn"
             app:layout_constraintStart_toStartOf="parent"

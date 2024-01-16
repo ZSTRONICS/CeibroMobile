@@ -77,7 +77,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:endIconMode="dropdown_menu"
@@ -93,7 +93,7 @@
                 android:hint="@string/owner_heading"
                 android:inputType="text"
                 android:maxLines="2"
-                android:textColorHint="@color/grey"
+                android:textColorHint="@color/defaultGrey"
                 android:textSize="15sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -104,7 +104,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:endIconMode="dropdown_menu"
@@ -120,7 +120,7 @@
                 android:hint="@string/status_heading"
                 android:inputType="text"
                 android:maxLines="2"
-                android:textColorHint="@color/grey"
+                android:textColorHint="@color/defaultGrey"
                 android:textSize="15sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -133,7 +133,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/due_date_heading"
             android:layout_margin="@dimen/_10sdp"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:endIconDrawable="@drawable/ic_calendar"
@@ -153,7 +153,7 @@
                 android:maxLines="1"
                 android:paddingStart="18dp"
                 android:paddingEnd="28dp"
-                android:textColorHint="@color/grey"
+                android:textColorHint="@color/defaultGrey"
                 android:textSize="15sp" />
 
         </com.google.android.material.textfield.TextInputLayout>

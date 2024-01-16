@@ -400,7 +400,7 @@
                         android:fontFamily="@font/inter_medium"
                         android:text="@string/read_by_heading"
                         android:textAllCaps="true"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="13sp"
                         app:layout_constraintBottom_toBottomOf="@+id/imageView7"
                         app:layout_constraintStart_toEndOf="@+id/imageView7"

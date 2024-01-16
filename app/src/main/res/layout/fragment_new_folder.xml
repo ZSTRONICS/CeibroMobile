@@ -62,7 +62,7 @@
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="10dp"
             android:hint="@string/folder_heading"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"

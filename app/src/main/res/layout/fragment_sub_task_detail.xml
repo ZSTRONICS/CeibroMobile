@@ -127,7 +127,7 @@
                         android:paddingEnd="3dp"
                         android:paddingBottom="2.5dp"
                         android:text="@string/created_on_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12sp" />
 
                     <TextView
@@ -166,7 +166,7 @@
                         android:paddingEnd="3dp"
                         android:paddingBottom="2.5dp"
                         android:text="@string/due_date_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12sp" />
 
                     <TextView
@@ -212,7 +212,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/subtask_title_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12.5sp" />
 
                     <TextView
@@ -258,7 +258,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/project_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12.5sp" />
 
                     <TextView
@@ -304,7 +304,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/creator_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12.5sp" />
 
                     <TextView
@@ -350,7 +350,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/assigned_to_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12.5sp" />
 
                     <TextView
@@ -395,7 +395,7 @@
                         android:gravity="center"
                         android:maxLines="1"
                         android:text="@string/description_heading"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="12.5sp" />
 
                     <TextView
@@ -541,7 +541,7 @@
                     android:paddingBottom="1dp"
                     android:text="@string/recent_comment_heading"
                     android:background="@color/white"
-                    android:textColor="@color/grey"
+                    android:textColor="@color/defaultGrey"
                     android:textSize="12.5sp"
                     app:layout_constraintBottom_toBottomOf="@+id/recentCommentLine"
                     app:layout_constraintEnd_toEndOf="@+id/recentCommentLine"

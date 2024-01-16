@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Ceibro" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/grey</item>
+        <item name="colorPrimary">@color/defaultGrey</item>
         <item name="colorPrimaryVariant">@color/appBlue</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
