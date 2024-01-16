@@ -1310,28 +1310,25 @@ class LocationsV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
-            viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
-            CookiesManager.openingNewLocationFile = false
-            CookiesManager.cameToLocationViewFromProject = false
-            CookiesManager.drawingFileForLocation.value?.let {
-                viewModel.getDrawingPins(it._id)
-                viewModel._drawingFile.postValue(it)
-            } ?: run {
-                shortToastNow("No file to display. Please select any drawing file.")
+        Handler().postDelayed({
+            if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
+                viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
+                CookiesManager.openingNewLocationFile = false
+                CookiesManager.cameToLocationViewFromProject = false
+                CookiesManager.drawingFileForLocation.value?.let {
+                    viewModel.getDrawingPins(it._id)
+                    viewModel._drawingFile.postValue(it)
+                } ?: run {
+                    shortToastNow("No file to display. Please select any drawing file.")
+                }
+
+            } else {
+                viewModel.drawingFile.value?.let {
+                    viewModel.getDrawingPins(it._id)
+                }
             }
+        }, 500)
 
-        } else {
-            viewModel.drawingFile.value?.let {
-                viewModel.getDrawingPins(it._id)
-            }
-        }
-    }
-
-
-    override fun onPause() {
-        super.onPause()
-        viewModel._drawingFile.value = null
     }
 
 
