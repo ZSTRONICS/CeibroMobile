@@ -96,7 +96,7 @@
                         android:layout_marginEnd="@dimen/_10sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_medium"
-                        android:maxLines="1"
+                        android:maxLines="2"
                         android:text="@={viewState.projectCreator}"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_11sdp"

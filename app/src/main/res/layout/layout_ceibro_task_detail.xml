@@ -217,6 +217,21 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/onlyImages"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/images"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/onlyImagesRV"
                 android:layout_width="0dp"
@@ -231,9 +246,26 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout"
+                app:layout_constraintTop_toBottomOf="@+id/onlyImages"
                 tools:itemCount="3"
                 tools:listitem="@layout/layout_ceibro_only_image" />
+
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:textStyle="bold"
+                android:id="@+id/imagesWithComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/images_with_comment"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/imagesWithCommentRV"
@@ -247,9 +279,43 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV"
+                app:layout_constraintTop_toBottomOf="@+id/imagesWithComment"
                 tools:itemCount="1"
                 tools:listitem="@layout/layout_ceibro_image_with_comment" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:textStyle="bold"
+                android:id="@+id/onlyDrawings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/drawings"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/onlyDrawingRV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingStart="2dp"
+                android:paddingEnd="1dp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/onlyDrawings"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_ceibro_only_image" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

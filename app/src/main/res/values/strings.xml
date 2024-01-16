@@ -565,8 +565,8 @@
     <string name="projects">Projects</string>
     <string name="new_proj">New</string>
     <string name="search">Search</string>
-    <string name="do_you_want_to_un_hide_this_project">Do you want to unhide this project.</string>
-    <string name="do_you_want_to_hide_this_project">Do you want to hide this project.</string>
+    <string name="do_you_want_to_un_hide_this_project">Do you want to un-hide this project?</string>
+    <string name="do_you_want_to_hide_this_project">Do you want to hide this project?</string>
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
     <string name="all_groups">All Groups</string>
@@ -622,4 +622,7 @@
     <string name="public_group">Public group</string>
     <string name="private_group">Private group</string>
     <string name="no_drawing_uploaded_yet">No drawing uploaded yet</string>
+    <string name="images">Images</string>
+    <string name="images_with_comment">Images with Comment</string>
+    <string name="drawings">Drawings</string>
 </resources>

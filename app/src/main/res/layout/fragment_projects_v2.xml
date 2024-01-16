@@ -196,7 +196,7 @@
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="@dimen/_1sdp"
-                        android:closeIcon="@drawable/icon_close_round_grey"
+                        android:closeIcon="@drawable/icon_search_cancel"
                         android:elevation="0dp"
                         android:fontFamily="@font/inter_regular"
                         android:iconifiedByDefault="false"
