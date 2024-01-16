@@ -4,11 +4,11 @@ object AppConfig {
     const val COMPILE_SDK_VERSION = 34
     const val TARGET_SDK_VERSION = COMPILE_SDK_VERSION
 
-    const val VERSION_CODE = 6
-    const val VERSION_NAME = "2.2.1"
+    const val VERSION_CODE = 7
+    const val VERSION_NAME = "2.2.7"
 
-    const val VERSION_CODE_LIVE = 20
-    const val VERSION_NAME_LIVE = "2.2.6"
+    const val VERSION_CODE_LIVE = 21
+    const val VERSION_NAME_LIVE = "2.2.7"
 
     const val APP_ID = "com.zstronics.ceibro"
     const val APP_ID_LIVE = "com.zstronics.ceibro"

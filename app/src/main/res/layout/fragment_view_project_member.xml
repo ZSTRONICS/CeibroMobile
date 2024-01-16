@@ -140,7 +140,7 @@
                 app:layout_constraintStart_toEndOf="@+id/memberPhotoCard"
                 app:layout_constraintTop_toBottomOf="@id/userName"
                 app:srcCompat="@drawable/email_icon_solid"
-                app:tint="@color/grey" />
+                app:tint="@color/defaultGrey" />
 
             <TextView
                 android:id="@+id/email"
@@ -168,7 +168,7 @@
                 app:layout_constraintStart_toEndOf="@+id/memberPhotoCard"
                 app:layout_constraintTop_toTopOf="@+id/phone"
                 app:srcCompat="@drawable/ic_phone"
-                app:tint="@color/grey" />
+                app:tint="@color/defaultGrey" />
 
             <TextView
                 android:id="@+id/phone"
@@ -197,7 +197,7 @@
             android:layout_marginEnd="@dimen/_13sdp"
             android:layout_marginTop="12dp"
             android:hint="@string/role_heading"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -226,7 +226,7 @@
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="10dp"
             android:hint="@string/group_heading"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"

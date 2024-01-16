@@ -186,7 +186,7 @@
                         android:gravity="center"
                         android:paddingHorizontal="@dimen/_8sdp"
                         android:text="@string/add_photo"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/defaultGrey"
                         android:textSize="13sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

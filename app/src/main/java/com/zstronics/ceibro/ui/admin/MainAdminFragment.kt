@@ -8,12 +8,9 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentMainAdminBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.ui.admin.admins.AdminsFragment
 import com.zstronics.ceibro.ui.admin.users.AllUsersFragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.subtask.SubTaskFragment
-import com.zstronics.ceibro.ui.tasks.task.TasksFragment
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 
@@ -36,7 +33,7 @@ class MainAdminFragment :
                         .commit()
                     selectedFragment = "AdminsFragment"
                     mViewDataBinding.adminsHeading.setTextColor(resources.getColor(R.color.appYellow))
-                    mViewDataBinding.usersHeading.setTextColor(resources.getColor(R.color.grey))
+                    mViewDataBinding.usersHeading.setTextColor(resources.getColor(R.color.defaultGrey))
                 }
             }
             R.id.usersHeading -> {
@@ -45,7 +42,7 @@ class MainAdminFragment :
                         .replace(R.id.admin_fragment_container, AllUsersFragment())
                         .commit()
                     selectedFragment = "AllUsersFragment"
-                    mViewDataBinding.adminsHeading.setTextColor(resources.getColor(R.color.grey))
+                    mViewDataBinding.adminsHeading.setTextColor(resources.getColor(R.color.defaultGrey))
                     mViewDataBinding.usersHeading.setTextColor(resources.getColor(R.color.appYellow))
                 }
             }

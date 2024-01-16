@@ -37,7 +37,7 @@
                 android:paddingEnd="1dp"
                 android:paddingBottom="1dp"
                 android:text="Kristo Vunukainen"
-                android:textColor="@color/grey"
+                android:textColor="@color/defaultGrey"
                 android:textSize="12.5sp" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -58,7 +58,7 @@
             android:paddingEnd="1dp"
             android:paddingBottom="1dp"
             android:text="22.05.2021"
-            android:textColor="@color/grey"
+            android:textColor="@color/defaultGrey"
             android:textSize="11.5sp"
             app:layout_constraintBottom_toBottomOf="@+id/topBar"
             app:layout_constraintEnd_toEndOf="parent"

@@ -67,7 +67,7 @@
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="10dp"
             android:hint="@string/role_heading"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +94,7 @@
             android:layout_margin="@dimen/_13sdp"
             android:layout_marginTop="10dp"
             android:hint="Select Member(s)"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/defaultGrey"
             app:boxStrokeColor="@color/colorGrey"
             app:boxStrokeWidth="1dp"
             app:endIconMode="dropdown_menu"
@@ -110,7 +110,7 @@
                 android:inputType="text"
                 android:maxLines="2"
                 android:paddingStart="@dimen/_10sdp"
-                android:textColorHint="@color/grey"
+                android:textColorHint="@color/defaultGrey"
                 android:textSize="15sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
