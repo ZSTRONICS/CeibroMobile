@@ -31,6 +31,7 @@ import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.EditCommentDialogSheet
+import com.zstronics.ceibro.utils.DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
@@ -449,7 +450,7 @@ class NewTaskV2Fragment :
         }
 
     private fun updateDueDateInView() {
-        val formatToSend = "dd.MM.yyyy"
+        val formatToSend = FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
         val sdf1 = SimpleDateFormat(formatToSend, Locale.US)
 
         viewState.dueDate.value = sdf1.format(cal.time)

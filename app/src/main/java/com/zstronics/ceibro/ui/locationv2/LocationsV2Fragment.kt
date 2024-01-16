@@ -94,6 +94,15 @@ class LocationsV2Fragment :
                 }
             }
 
+            R.id.llCheckAll -> {
+                mViewDataBinding.cbSelectAll.isChecked = !mViewDataBinding.cbSelectAll.isChecked
+                if (mViewDataBinding.cbSelectAll.isChecked) {
+                    addFiltersToList()
+                } else {
+                    removeFiltersToList()
+                }
+            }
+
             R.id.projectFilterBtn -> {
                 viewState.isFilterVisible.value?.let { currentValue ->
                     val updateFlag = !currentValue
@@ -144,6 +153,7 @@ class LocationsV2Fragment :
                     )
                 }
                 viewState.isToNewClicked.value = !(viewState.isToNewClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -166,6 +176,7 @@ class LocationsV2Fragment :
                 }
 
                 viewState.isToOngoingClicked.value = !(viewState.isToOngoingClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -188,6 +199,7 @@ class LocationsV2Fragment :
                     )
                 }
                 viewState.isToDoneClicked.value = !(viewState.isToDoneClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -210,6 +222,7 @@ class LocationsV2Fragment :
                     )
                 }
                 viewState.isFromUnreadClicked.value = !(viewState.isFromUnreadClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -232,6 +245,7 @@ class LocationsV2Fragment :
                 }
 
                 viewState.isFromOngoingClicked.value = !(viewState.isFromOngoingClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -254,6 +268,7 @@ class LocationsV2Fragment :
                     )
                 }
                 viewState.isFromDoneClicked.value = !(viewState.isFromDoneClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -277,6 +292,7 @@ class LocationsV2Fragment :
                     )
                 }
                 viewState.isHiddenOngoingClicked.value = !(viewState.isHiddenOngoingClicked.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -300,7 +316,7 @@ class LocationsV2Fragment :
                 }
 
                 viewState.isHiddenDoneClicked.value = !(viewState.isHiddenDoneClicked.value!!)
-
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -323,6 +339,7 @@ class LocationsV2Fragment :
                     )
                 }
                 viewState.isHiddenCancelled.value = !(viewState.isHiddenCancelled.value!!)
+                isAnyConditionFalse()
                 viewModel.checkFilter(filtersList);
             }
 
@@ -439,22 +456,24 @@ class LocationsV2Fragment :
         }
 
 
-        viewModel.drawingFile.observe(viewLifecycleOwner) {
-            mViewDataBinding.progressBar.visibility = View.VISIBLE
-            mViewDataBinding.tvFloorName.text = "${it.floor.floorName} Floor"
-            mViewDataBinding.tvFileName.text = "${it.fileName}"
-            mViewDataBinding.tvGroupName.text = "${it.fileTag.toCamelCase()}"
+        viewModel.drawingFile.observe(viewLifecycleOwner) { drawing ->
+
+            drawing?.let {
+                mViewDataBinding.progressBar.visibility = View.VISIBLE
+                mViewDataBinding.tvFloorName.text = "${it.floor.floorName} Floor"
+                mViewDataBinding.tvFileName.text = "${it.fileName}"
+                mViewDataBinding.tvGroupName.text = "${it.fileTag.toCamelCase()}"
 //            mViewDataBinding.progressBar.isIndeterminate = true
 
 
-            val file = File(it.uploaderLocalFilePath)
+                val file = File(it.uploaderLocalFilePath)
 
-            mViewDataBinding.pdfView.fromFile(file)
-                .defaultPage(0)
-                .enableSwipe(true)
-                .enableDoubletap(true)
-                .enableAntialiasing(true)
-                .onLoad {
+                mViewDataBinding.pdfView.fromFile(file)
+                    .defaultPage(0)
+                    .enableSwipe(true)
+                    .enableDoubletap(true)
+                    .enableAntialiasing(true)
+                    .onLoad {
 //                    try {
 //                        val dummyJson =
 //                            "{\"points\": [{\"type\": \"task\", \"xPoint\": 64.797615, \"yPoint\": 108.57685, \"width\": 1080, \"height\": 657}, {\"type\": \"task\", \"xPoint\": 133.198, \"yPoint\": 182.58434, \"width\": 1080, \"height\": 657}, {\"type\": \"task\", \"xPoint\": 858.5824, \"yPoint\": 437.82886, \"width\": 1080, \"height\": 657}]}"
@@ -477,7 +496,7 @@ class LocationsV2Fragment :
 //                        // Handle any exceptions that occur during JSON parsing or calculations
 //                        e.printStackTrace()
 //                    }
-                    Handler(Looper.getMainLooper()).postDelayed({
+                        Handler(Looper.getMainLooper()).postDelayed({
 //                    println("PDFView onLoad: called")
 //                    val docWidth = pdfView.optimalPageWidth
 //                    val docHeight = pdfView.optimalPageHeight
@@ -507,50 +526,50 @@ class LocationsV2Fragment :
 
 //                    progressBar.visibility = View.INVISIBLE
 //                    pdfView.invalidate()
-                        println("PDFView loadExistingMarkerPoints: ${loadExistingMarkerPoints}")
-                    }, 500)
-
-                }
-                .onTap { event ->
-                    if (event.action == MotionEvent.ACTION_DOWN) {
-
-                        existingPointTapped.clear()
-
-                        val pageWidth = mViewDataBinding.pdfView.measuredWidth
-                        val pageHeight = mViewDataBinding.pdfView.measuredHeight
-
-                        val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
-
-                        val normalizedX =
-                            event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
-                        val normalizedY =
-                            event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
-
-                        existingPointTapped.add(
-                            Triple(
-                                normalizedX,
-                                normalizedY,
-                                zoom
-                            )
-                        )
-
-                        mViewDataBinding.pdfView.invalidate()
+                            println("PDFView loadExistingMarkerPoints: ${loadExistingMarkerPoints}")
+                        }, 500)
 
                     }
-                    false
-                }
-                .onLongPress { event ->
-                    if (event.action == MotionEvent.ACTION_DOWN) {
+                    .onTap { event ->
+                        if (event.action == MotionEvent.ACTION_DOWN) {
 
-                        val pageWidth = mViewDataBinding.pdfView.measuredWidth
-                        val pageHeight = mViewDataBinding.pdfView.measuredHeight
+                            existingPointTapped.clear()
 
-                        val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
+                            val pageWidth = mViewDataBinding.pdfView.measuredWidth
+                            val pageHeight = mViewDataBinding.pdfView.measuredHeight
 
-                        val normalizedX =
-                            event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
-                        val normalizedY =
-                            event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
+                            val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
+
+                            val normalizedX =
+                                event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
+                            val normalizedY =
+                                event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
+
+                            existingPointTapped.add(
+                                Triple(
+                                    normalizedX,
+                                    normalizedY,
+                                    zoom
+                                )
+                            )
+
+                            mViewDataBinding.pdfView.invalidate()
+
+                        }
+                        false
+                    }
+                    .onLongPress { event ->
+                        if (event.action == MotionEvent.ACTION_DOWN) {
+
+                            val pageWidth = mViewDataBinding.pdfView.measuredWidth
+                            val pageHeight = mViewDataBinding.pdfView.measuredHeight
+
+                            val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
+
+                            val normalizedX =
+                                event.x / mViewDataBinding.pdfView.width * pageWidth / zoom
+                            val normalizedY =
+                                event.y / mViewDataBinding.pdfView.height * pageHeight / zoom
 
 //                        if (zoom == 12.0f) {
 //                            mViewDataBinding.pdfView.zoomCenteredTo(14.0f, PointF(event.x, event.y))
@@ -558,220 +577,223 @@ class LocationsV2Fragment :
 //                            mViewDataBinding.pdfView.zoomCenteredTo(12.0f, PointF(event.x, event.y))
 //                        }
 
-                        println("normalizedX ${normalizedX} PDFView onTap : ${event.x} / ${mViewDataBinding.pdfView.width} * ${pageWidth} / ${zoom}")
-                        println("normalizedY${normalizedY} PDFView onTap : ${event.y} / ${mViewDataBinding.pdfView.height} * ${pageHeight} / ${zoom}")
+                            println("normalizedX ${normalizedX} PDFView onTap : ${event.x} / ${mViewDataBinding.pdfView.width} * ${pageWidth} / ${zoom}")
+                            println("normalizedY${normalizedY} PDFView onTap : ${event.y} / ${mViewDataBinding.pdfView.height} * ${pageHeight} / ${zoom}")
 
-                        addNewMarkerPoints.add(
-                            FiveTuple(
-                                normalizedX,
-                                normalizedY,
-                                zoom,
-                                event.x,
-                                event.y
-                            )
-                        )
-
-                        mViewDataBinding.pdfView.invalidate()
-
-                    }
-                }
-                .onDraw { canvas, pageWidth, pageHeight, displayedPage ->
-                    println("PDFView pageWidth: ${pageWidth} pageHeight: ${pageHeight} zoom: ${mViewDataBinding.pdfView.zoom}")
-                    pdfFileLoaded = true
-                    mViewDataBinding.progressBar.visibility = View.INVISIBLE
-
-                    val matrixValues = FloatArray(9)
-                    canvas.matrix.getValues(matrixValues)
-                    var transX = matrixValues[Matrix.MTRANS_X]
-                    var transY = matrixValues[Matrix.MTRANS_Y]
-
-                    if (existingPointTapped.isNotEmpty()) {
-                        val tappedPoints = existingPointTapped
-                        for (tappedPoint in tappedPoints) {
-                            existingPointTapped.clear()
-                            existingPointTapped = mutableListOf()
-
-                            canvas.matrix.getValues(matrixValues)
-                            transX = matrixValues[Matrix.MTRANS_X]
-                            transY = matrixValues[Matrix.MTRANS_Y]
-
-                            //Store these x and y points to DB to load the points again on the file
-                            val xPoint =
-                                tappedPoint.first - (transX / tappedPoint.third)         // we are doing minus because transX or transY are always in negative if zoomed
-                            val yPoint =
-                                tappedPoint.second - (transY / tappedPoint.third)        //so, minus minus becomes plus (+), so we are actually doing addition
-
-
-                            for (pinInfo in inViewPinsList) {
-
-                                if (pinInfo.loadedBitmap != null) {
-                                    if (xPoint >= (pinInfo.xPointToDisplay - (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) && xPoint <= (pinInfo.xPointToDisplay + (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) &&
-                                        yPoint >= (pinInfo.yPointToDisplay - (pinInfo.loadedBitmap.height / 2) / tappedPoint.third) && yPoint <= (pinInfo.yPointToDisplay + (pinInfo.loadedBitmap.height / 2) / tappedPoint.third)
-                                    ) {
-                                        shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
-                                        break
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (addNewMarkerPoints.isNotEmpty()) {
-                        val samplePointsMark = addNewMarkerPoints
-                        for (samplePoints in samplePointsMark) {
-
-                            canvas.matrix.getValues(matrixValues)
-                            transX = matrixValues[Matrix.MTRANS_X]
-                            transY = matrixValues[Matrix.MTRANS_Y]
-
-                            //Store these x and y points to DB to load the points again on the file
-                            val xPoint =
-                                samplePoints.actualX - (transX / samplePoints.zoomLevel)         // we are doing minus because transX or transY are always in negative if zoomed
-                            val yPoint =
-                                samplePoints.actualY - (transY / samplePoints.zoomLevel)        //so, minus minus becomes plus (+), so we are actually doing addition
-
-                            println("${samplePoints.zoomLevel} PDFView pdfCanvas.transX: ${samplePoints.actualX} = ${transX} = ${xPoint} -> pdfCanvas.transY: ${samplePoints.actualY} = ${transY} = ${yPoint} -> EVENT.X: ${samplePoints.eventX} EVENT.Y= ${samplePoints.eventY}")
-
-                            val pdfBounds =
-                                calculatePDFBounds(pageWidth, pageHeight, transX, transY)
-                            if (samplePoints.eventX >= pdfBounds.left && samplePoints.eventX <= pdfBounds.right &&
-                                samplePoints.eventY >= pdfBounds.top && samplePoints.eventY <= pdfBounds.bottom
-                            ) {      //if in bounds then marker is placed
-                                var isExistingPinTapped = false
-                                for (existingPin in inViewPinsList) {
-                                    val distance = calculateDistance(
-                                        existingPin.xPointToDisplay,
-                                        existingPin.yPointToDisplay,
-                                        xPoint,
-                                        yPoint
-                                    )
-                                    if (distance < PIN_TAP_THRESHOLD) {
-                                        println("PDFView distance: ${distance}")
-                                        isExistingPinTapped = true
-                                        shortToastNow("Existing point tapped")
-//                                        Toast.makeText(this, "Existing point tapped", Toast.LENGTH_SHORT).show()
-                                        break
-                                    }
-                                }
-                                if (loadingOldData) {
-                                    inViewPinsList.add(
-                                        MarkerPointsData(
-                                            xPointToDisplay = xPoint,
-                                            yPointToDisplay = yPoint,
-                                            actualEventX = samplePoints.eventX,
-                                            actualEventY = samplePoints.eventY,
-                                            isNewPoint = "",
-                                            loadedPinData = null,
-                                            loadedBitmap = null
-                                        )
-                                    )
-                                } else if (!isExistingPinTapped) {
-                                    inViewPinsList.add(
-                                        MarkerPointsData(
-                                            xPointToDisplay = xPoint,
-                                            yPointToDisplay = yPoint,
-                                            actualEventX = samplePoints.eventX,
-                                            actualEventY = samplePoints.eventY,
-                                            isNewPoint = "new",
-                                            loadedPinData = null,
-                                            loadedBitmap = null
-                                        )
-                                    )
-                                }
-
-                            }
-
-                            val index = samplePointsMark.indexOf(samplePoints)
-                            if (index == samplePointsMark.size - 1) {
-                                addNewMarkerPoints.clear()
-//                            pdfView.invalidate()
-                            }
-                        }
-                    }
-
-                    if (loadExistingMarkerPoints.isNotEmpty()) {
-                        val loadPointsMark = loadExistingMarkerPoints
-                        for (loadPoints in loadPointsMark) {
-                            val zoom = mViewDataBinding.pdfView.zoom // Get the current zoom level
-
-                            canvas.matrix.getValues(matrixValues)
-                            transX = matrixValues[Matrix.MTRANS_X]
-                            transY = matrixValues[Matrix.MTRANS_Y]
-
-                            val currentPageWidth = mViewDataBinding.pdfView.measuredWidth
-                            val currentPageHeight = mViewDataBinding.pdfView.measuredHeight
-                            val originalPageWidth = loadPoints.page_width
-                            val originalPageHeight = loadPoints.page_height
-
-                            val xScaleFactor = pageWidth / originalPageWidth
-                            val yScaleFactor = pageHeight / originalPageHeight
-
-                            val pointXOfCurrentDevice =
-                                (loadPoints.x_coord * xScaleFactor).toFloat()
-                            val pointYOfCurrentDevice =
-                                (loadPoints.y_coord * yScaleFactor).toFloat()
-
-                            println("PDFView currentPageWidth: ${pageWidth} currentPageHeight= ${pageHeight} originalPointWidth= ${originalPageWidth} originalPointHeight= ${originalPageHeight}")
-                            println("PDFView x and y ScaleFactor: ${xScaleFactor} = ${yScaleFactor} pointXOfCurrentDevice= ${pointXOfCurrentDevice} ${loadPoints.x_coord} pointYOfCurrentDevice= ${pointYOfCurrentDevice} ${loadPoints.y_coord}")
-
-
-                            val actualX = pointXOfCurrentDevice + transX
-                            val actualY =
-                                pointYOfCurrentDevice + transY        // this will give actual y point because we were saving yPoint after zoom calculation
-
-                            val normalizedX =
-                                actualX / mViewDataBinding.pdfView.width * mViewDataBinding.pdfView.measuredWidth / zoom
-                            val normalizedY =
-                                actualY / mViewDataBinding.pdfView.height * mViewDataBinding.pdfView.measuredHeight / zoom
-
-                            val xPoint =
-                                normalizedX - (transX / zoom)         // we are doing minus because transX or transY are always in negative if zoomed
-                            val yPoint =
-                                normalizedY - (transY / zoom)        //so, minus minus becomes plus (+), so we are actually doing addition
-
-                            println("PDFView pdfCanvas.transX: ${actualX} = ${normalizedX} = ${xPoint} = ${transX} -> pdfCanvas.transY: ${actualY} = ${normalizedY} = ${yPoint} = ${transY}")
-
-                            inViewPinsList.add(
-                                MarkerPointsData(
-                                    xPointToDisplay = xPoint,
-                                    yPointToDisplay = yPoint,
-                                    actualEventX = actualX,
-                                    actualEventY = actualY,
-                                    isNewPoint = "",
-                                    loadedPinData = loadPoints,
-                                    loadedBitmap = null
+                            addNewMarkerPoints.add(
+                                FiveTuple(
+                                    normalizedX,
+                                    normalizedY,
+                                    zoom,
+                                    event.x,
+                                    event.y
                                 )
                             )
 
-                            val index = loadPointsMark.indexOf(loadPoints)
-                            if (index == loadPointsMark.size - 1) {
-                                loadExistingMarkerPoints.clear()
-//                            pdfView.invalidate()
-                            }
+                            mViewDataBinding.pdfView.invalidate()
+
                         }
                     }
+                    .onDraw { canvas, pageWidth, pageHeight, displayedPage ->
+                        println("PDFView pageWidth: ${pageWidth} pageHeight: ${pageHeight} zoom: ${mViewDataBinding.pdfView.zoom}")
+                        pdfFileLoaded = true
+                        mViewDataBinding.progressBar.visibility = View.INVISIBLE
 
-                    loadingOldData = false
+                        val matrixValues = FloatArray(9)
+                        canvas.matrix.getValues(matrixValues)
+                        var transX = matrixValues[Matrix.MTRANS_X]
+                        var transY = matrixValues[Matrix.MTRANS_Y]
+
+                        if (existingPointTapped.isNotEmpty()) {
+                            val tappedPoints = existingPointTapped
+                            for (tappedPoint in tappedPoints) {
+                                existingPointTapped.clear()
+                                existingPointTapped = mutableListOf()
+
+                                canvas.matrix.getValues(matrixValues)
+                                transX = matrixValues[Matrix.MTRANS_X]
+                                transY = matrixValues[Matrix.MTRANS_Y]
+
+                                //Store these x and y points to DB to load the points again on the file
+                                val xPoint =
+                                    tappedPoint.first - (transX / tappedPoint.third)         // we are doing minus because transX or transY are always in negative if zoomed
+                                val yPoint =
+                                    tappedPoint.second - (transY / tappedPoint.third)        //so, minus minus becomes plus (+), so we are actually doing addition
 
 
-                    inViewPinsList.mapIndexed { index, marker ->
-                        mapPdfCoordinatesToCanvas(
-                            canvas,
-                            marker,
-                            index,
-                            pageWidth,
-                            pageHeight,
-                            marker.loadedPinData
-                        )
-                    }
+                                for (pinInfo in inViewPinsList) {
+
+                                    if (pinInfo.loadedBitmap != null) {
+                                        if (xPoint >= (pinInfo.xPointToDisplay - (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) && xPoint <= (pinInfo.xPointToDisplay + (pinInfo.loadedBitmap.width / 2) / tappedPoint.third) &&
+                                            yPoint >= (pinInfo.yPointToDisplay - (pinInfo.loadedBitmap.height / 2) / tappedPoint.third) && yPoint <= (pinInfo.yPointToDisplay + (pinInfo.loadedBitmap.height / 2) / tappedPoint.third)
+                                        ) {
+                                            shortToastNow("Existing Pin: ${pinInfo.loadedPinData?.taskData?.taskUID}")
+                                            break
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (addNewMarkerPoints.isNotEmpty()) {
+                            val samplePointsMark = addNewMarkerPoints
+                            for (samplePoints in samplePointsMark) {
+
+                                canvas.matrix.getValues(matrixValues)
+                                transX = matrixValues[Matrix.MTRANS_X]
+                                transY = matrixValues[Matrix.MTRANS_Y]
+
+                                //Store these x and y points to DB to load the points again on the file
+                                val xPoint =
+                                    samplePoints.actualX - (transX / samplePoints.zoomLevel)         // we are doing minus because transX or transY are always in negative if zoomed
+                                val yPoint =
+                                    samplePoints.actualY - (transY / samplePoints.zoomLevel)        //so, minus minus becomes plus (+), so we are actually doing addition
+
+                                println("${samplePoints.zoomLevel} PDFView pdfCanvas.transX: ${samplePoints.actualX} = ${transX} = ${xPoint} -> pdfCanvas.transY: ${samplePoints.actualY} = ${transY} = ${yPoint} -> EVENT.X: ${samplePoints.eventX} EVENT.Y= ${samplePoints.eventY}")
+
+                                val pdfBounds =
+                                    calculatePDFBounds(pageWidth, pageHeight, transX, transY)
+                                if (samplePoints.eventX >= pdfBounds.left && samplePoints.eventX <= pdfBounds.right &&
+                                    samplePoints.eventY >= pdfBounds.top && samplePoints.eventY <= pdfBounds.bottom
+                                ) {      //if in bounds then marker is placed
+                                    var isExistingPinTapped = false
+                                    for (existingPin in inViewPinsList) {
+                                        val distance = calculateDistance(
+                                            existingPin.xPointToDisplay,
+                                            existingPin.yPointToDisplay,
+                                            xPoint,
+                                            yPoint
+                                        )
+                                        if (distance < PIN_TAP_THRESHOLD) {
+                                            println("PDFView distance: ${distance}")
+                                            isExistingPinTapped = true
+                                            shortToastNow("Existing point tapped")
+//                                        Toast.makeText(this, "Existing point tapped", Toast.LENGTH_SHORT).show()
+                                            break
+                                        }
+                                    }
+                                    if (loadingOldData) {
+                                        inViewPinsList.add(
+                                            MarkerPointsData(
+                                                xPointToDisplay = xPoint,
+                                                yPointToDisplay = yPoint,
+                                                actualEventX = samplePoints.eventX,
+                                                actualEventY = samplePoints.eventY,
+                                                isNewPoint = "",
+                                                loadedPinData = null,
+                                                loadedBitmap = null
+                                            )
+                                        )
+                                    } else if (!isExistingPinTapped) {
+                                        inViewPinsList.add(
+                                            MarkerPointsData(
+                                                xPointToDisplay = xPoint,
+                                                yPointToDisplay = yPoint,
+                                                actualEventX = samplePoints.eventX,
+                                                actualEventY = samplePoints.eventY,
+                                                isNewPoint = "new",
+                                                loadedPinData = null,
+                                                loadedBitmap = null
+                                            )
+                                        )
+                                    }
+
+                                }
+
+                                val index = samplePointsMark.indexOf(samplePoints)
+                                if (index == samplePointsMark.size - 1) {
+                                    addNewMarkerPoints.clear()
+//                            pdfView.invalidate()
+                                }
+                            }
+                        }
+
+                        if (loadExistingMarkerPoints.isNotEmpty()) {
+                            val loadPointsMark = loadExistingMarkerPoints
+                            for (loadPoints in loadPointsMark) {
+                                val zoom =
+                                    mViewDataBinding.pdfView.zoom // Get the current zoom level
+
+                                canvas.matrix.getValues(matrixValues)
+                                transX = matrixValues[Matrix.MTRANS_X]
+                                transY = matrixValues[Matrix.MTRANS_Y]
+
+                                val currentPageWidth = mViewDataBinding.pdfView.measuredWidth
+                                val currentPageHeight = mViewDataBinding.pdfView.measuredHeight
+                                val originalPageWidth = loadPoints.page_width
+                                val originalPageHeight = loadPoints.page_height
+
+                                val xScaleFactor = pageWidth / originalPageWidth
+                                val yScaleFactor = pageHeight / originalPageHeight
+
+                                val pointXOfCurrentDevice =
+                                    (loadPoints.x_coord * xScaleFactor).toFloat()
+                                val pointYOfCurrentDevice =
+                                    (loadPoints.y_coord * yScaleFactor).toFloat()
+
+                                println("PDFView currentPageWidth: ${pageWidth} currentPageHeight= ${pageHeight} originalPointWidth= ${originalPageWidth} originalPointHeight= ${originalPageHeight}")
+                                println("PDFView x and y ScaleFactor: ${xScaleFactor} = ${yScaleFactor} pointXOfCurrentDevice= ${pointXOfCurrentDevice} ${loadPoints.x_coord} pointYOfCurrentDevice= ${pointYOfCurrentDevice} ${loadPoints.y_coord}")
+
+
+                                val actualX = pointXOfCurrentDevice + transX
+                                val actualY =
+                                    pointYOfCurrentDevice + transY        // this will give actual y point because we were saving yPoint after zoom calculation
+
+                                val normalizedX =
+                                    actualX / mViewDataBinding.pdfView.width * mViewDataBinding.pdfView.measuredWidth / zoom
+                                val normalizedY =
+                                    actualY / mViewDataBinding.pdfView.height * mViewDataBinding.pdfView.measuredHeight / zoom
+
+                                val xPoint =
+                                    normalizedX - (transX / zoom)         // we are doing minus because transX or transY are always in negative if zoomed
+                                val yPoint =
+                                    normalizedY - (transY / zoom)        //so, minus minus becomes plus (+), so we are actually doing addition
+
+                                println("PDFView pdfCanvas.transX: ${actualX} = ${normalizedX} = ${xPoint} = ${transX} -> pdfCanvas.transY: ${actualY} = ${normalizedY} = ${yPoint} = ${transY}")
+
+                                inViewPinsList.add(
+                                    MarkerPointsData(
+                                        xPointToDisplay = xPoint,
+                                        yPointToDisplay = yPoint,
+                                        actualEventX = actualX,
+                                        actualEventY = actualY,
+                                        isNewPoint = "",
+                                        loadedPinData = loadPoints,
+                                        loadedBitmap = null
+                                    )
+                                )
+
+                                val index = loadPointsMark.indexOf(loadPoints)
+                                if (index == loadPointsMark.size - 1) {
+                                    loadExistingMarkerPoints.clear()
+//                            pdfView.invalidate()
+                                }
+                            }
+                        }
+
+                        loadingOldData = false
+
+
+                        inViewPinsList.mapIndexed { index, marker ->
+                            mapPdfCoordinatesToCanvas(
+                                canvas,
+                                marker,
+                                index,
+                                pageWidth,
+                                pageHeight,
+                                marker.loadedPinData
+                            )
+                        }
 //                    for (marker in markers) {
 //
 ////                    canvas.drawCircle(point.x, point.y, 10f, paint)
 //                    }
 
-                }
-                .enableAnnotationRendering(true)
-                .load()
+                    }
+                    .enableAnnotationRendering(true)
+                    .load()
+
+            }
         }
 
     }
@@ -1060,7 +1082,10 @@ class LocationsV2Fragment :
         )
 
         sheet.onSheetDismiss = {
-            inViewPinsList.removeAt(markerIndex)
+            try {
+                inViewPinsList.removeAt(markerIndex)
+            } catch (_: Exception) {
+            }
             mViewDataBinding.pdfView.invalidate()
         }
 
@@ -1297,8 +1322,16 @@ class LocationsV2Fragment :
             }
 
         } else {
-            viewModel.getDrawingPins(viewModel.drawingFile.value!!._id)
+            viewModel.drawingFile.value?.let {
+                viewModel.getDrawingPins(it._id)
+            }
         }
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        viewModel._drawingFile.value = null
     }
 
 
@@ -1441,5 +1474,47 @@ class LocationsV2Fragment :
                 TaskStatus.CANCELED.name.lowercase()
             )
         )
+
+
+        viewModel.viewState.isToNewClicked.value = true
+        viewModel.viewState.isToOngoingClicked.value = true
+        viewModel.viewState.isToDoneClicked.value = true
+        viewModel.viewState.isFromUnreadClicked.value = true
+        viewModel.viewState.isFromOngoingClicked.value = true
+        viewModel.viewState.isFromDoneClicked.value = true
+        viewModel.viewState.isHiddenOngoingClicked.value = true
+        viewModel.viewState.isHiddenDoneClicked.value = true
+        viewModel.viewState.isHiddenCancelled.value = true
+
+        viewModel.checkFilter(filtersList)
+
+    }
+
+    private fun removeFiltersToList() {
+        filtersList.clear()
+        viewModel.viewState.isToNewClicked.value = false
+        viewModel.viewState.isToOngoingClicked.value = false
+        viewModel.viewState.isToDoneClicked.value = false
+        viewModel.viewState.isFromUnreadClicked.value = false
+        viewModel.viewState.isFromOngoingClicked.value = false
+        viewModel.viewState.isFromDoneClicked.value = false
+        viewModel.viewState.isHiddenOngoingClicked.value = false
+        viewModel.viewState.isHiddenDoneClicked.value = false
+        viewModel.viewState.isHiddenCancelled.value = false
+        viewModel.checkFilter(filtersList)
+    }
+
+    private fun isAnyConditionFalse() {
+        val viewState = viewModel.viewState
+        val flag = (viewState.isToNewClicked.value == true &&
+                viewState.isToOngoingClicked.value == true &&
+                viewState.isToDoneClicked.value == true &&
+                viewState.isFromUnreadClicked.value == true &&
+                viewState.isFromOngoingClicked.value == true &&
+                viewState.isFromDoneClicked.value == true &&
+                viewState.isHiddenOngoingClicked.value == true &&
+                viewState.isHiddenDoneClicked.value == true &&
+                viewState.isHiddenCancelled.value == true)
+        mViewDataBinding.cbSelectAll.isChecked = flag
     }
 }
