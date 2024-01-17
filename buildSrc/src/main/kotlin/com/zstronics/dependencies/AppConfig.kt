@@ -7,8 +7,8 @@ object AppConfig {
     const val VERSION_CODE = 7
     const val VERSION_NAME = "2.2.7"
 
-    const val VERSION_CODE_LIVE = 21
-    const val VERSION_NAME_LIVE = "2.2.7"
+    const val VERSION_CODE_LIVE = 22
+    const val VERSION_NAME_LIVE = "2.2.8"
 
     const val APP_ID = "com.zstronics.ceibro"
     const val APP_ID_LIVE = "com.zstronics.ceibro"
