@@ -7,6 +7,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.annotation.MainThread
 import androidx.core.os.bundleOf
@@ -210,9 +212,9 @@ class DashboardFragment :
 
                 } else if (viewState.locationViewSelected.value == true) {
                     viewState.locationViewSelected.value = true
-                 //   if (locationFragmentInstance == null) {
-                        locationFragmentInstance = LocationsV2Fragment()
-                 //   }
+                    //   if (locationFragmentInstance == null) {
+                    locationFragmentInstance = LocationsV2Fragment()
+                    //   }
                     childFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, locationFragmentInstance!!)
                         .commit()
@@ -814,15 +816,18 @@ class DashboardFragment :
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onLoadDrawingInLocation(event: LocalEvents.LoadDrawingInLocation) {
-        CookiesManager.cameToLocationViewFromProject = true
-        CookiesManager.openingNewLocationFile = true
-        viewState.locationProjectSelected.value = false
-        viewState.locationDrawingSelected.value = false
-        viewState.locationViewSelected.value = true
+        EventBus.getDefault().removeStickyEvent(event)
+        Handler(Looper.getMainLooper()).postDelayed({
+            CookiesManager.cameToLocationViewFromProject = true
+            CookiesManager.openingNewLocationFile = true
+            viewState.locationProjectSelected.value = false
+            viewState.locationDrawingSelected.value = false
+            viewState.locationViewSelected.value = true
 //        locationDrawingFragmentInstance = null
 
-        changeSelectedTab(R.id.locationBtn, false)
-        EventBus.getDefault().removeStickyEvent(event)
+            changeSelectedTab(R.id.locationBtn, false)
+        }, 150)
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
