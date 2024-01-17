@@ -965,9 +965,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                     if (task != null) {
                         task.seenBy = taskSeen.seenBy
-                        task.updatedAt = taskSeen.taskUpdatedAt
 
                         if (taskSeen.creatorStateChanged || taskSeen.stateChanged) {
+                            task.updatedAt = taskSeen.taskUpdatedAt
                             task.creatorState = taskSeen.newTaskData.creatorState
 
                             val foundState =
