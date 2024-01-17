@@ -12,6 +12,7 @@ import com.zstronics.ceibro.base.KEY_USERNAME
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -130,6 +131,7 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         editor.commit()
         editor.apply()
     }
+
     fun getCompleteTask(KEY_NAME: String): NewTaskToSave? {
         val gson = Gson()
         val json = sharedPref.getString(KEY_NAME, "")
@@ -144,6 +146,23 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         val gson = Gson()
         val json = sharedPref.getString(KEY_NAME, "")
         return gson.fromJson(json, User::class.java)
+    }
+
+
+    fun saveCompleteDrawingObj(drawing: DrawingV2?) {
+        val gson = Gson()
+        val json = gson.toJson(drawing)
+        val editor: SharedPreferences.Editor = sharedPref.edit()
+        editor.putString("drawingObj", json)
+        editor.commit()
+        editor.apply()
+    }
+
+
+    fun getCompleteDrawingObj(): DrawingV2? {
+        val gson = Gson()
+        val json = sharedPref.getString("drawingObj", "")
+        return gson.fromJson(json, DrawingV2::class.java)
     }
 
     fun getCompleteTokenObj(KEY_NAME: String): Tokens? {

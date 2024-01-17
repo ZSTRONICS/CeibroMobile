@@ -7,6 +7,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
@@ -40,8 +41,11 @@ class ProjectDetailV2Fragment :
         super.onViewCreated(view, savedInstanceState)
         tabTitles = listOf(getString(R.string.detail), getString(R.string.drawing))
         val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, absolutePath ->
-            data.uploaderLocalFilePath=absolutePath
+            data.uploaderLocalFilePath = absolutePath
             CookiesManager.drawingFileForLocation.value = data
+            NavHostPresenterActivity.isDrawingLoaded = true
+            viewModel.sessionManagerInternal.saveCompleteDrawingObj(data)
+
             CookiesManager.cameToLocationViewFromProject = true
             CookiesManager.openingNewLocationFile = true
             navigateBack()

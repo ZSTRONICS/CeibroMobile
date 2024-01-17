@@ -33,7 +33,7 @@ class AllProjectsV2Fragment :
     override val layoutResId: Int = R.layout.fragment_all_projects_v2
     override fun toolBarVisibility(): Boolean = false
     var sharedViewModel: SharedViewModel? = null
-    var searchingProject = false
+    private var searchingProject = false
     override fun onClick(id: Int) {
         when (id) {
 

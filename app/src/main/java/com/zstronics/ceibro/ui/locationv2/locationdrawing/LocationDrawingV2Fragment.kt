@@ -29,6 +29,7 @@ import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
@@ -306,9 +307,12 @@ class LocationDrawingV2Fragment :
         )
         referenceSectionedAdapter = sectionedAdapter
 
-        sectionedAdapter.drawingFileBack { view, data, absolutePath ->
+        sectionedAdapter.drawingFileCallBack { view, data, absolutePath ->
             data.uploaderLocalFilePath = absolutePath
             CookiesManager.drawingFileForLocation.value = data
+            NavHostPresenterActivity.isDrawingLoaded = true
+            viewModel.sessionManagerInternal.saveCompleteDrawingObj(data)
+
             CookiesManager.cameToLocationViewFromProject = false
             CookiesManager.openingNewLocationFile = true
             EventBus.getDefault().post(LocalEvents.LoadViewDrawingFragmentInLocation())

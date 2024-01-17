@@ -66,7 +66,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
     var drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)? =
         null
 
-    fun drawingFileBack(itemClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)?) {
+    fun drawingFileCallBack(itemClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)?) {
         this.drawingFileClickListener = itemClickListener
     }
 

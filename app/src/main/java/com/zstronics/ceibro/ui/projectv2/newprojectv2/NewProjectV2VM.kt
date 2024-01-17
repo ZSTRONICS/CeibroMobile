@@ -51,7 +51,8 @@ class NewProjectV2VM @Inject constructor(
             if (projectPhotoFile != null) {
                 val reqFile =
                     projectPhotoFile.asRequestBody(("image/" + projectPhotoFile.extension).toMediaTypeOrNull())
-                val fileParts = MultipartBody.Part.createFormData("file", projectPhotoFile.name, reqFile)
+                val fileParts =
+                    MultipartBody.Part.createFormData("file", projectPhotoFile.name, reqFile)
 
                 launch {
                     loading(true)
@@ -95,6 +96,4 @@ class NewProjectV2VM @Inject constructor(
 
         }
     }
-
-
 }
