@@ -7,6 +7,7 @@ import com.onesignal.OneSignal
 import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_DATA_SYNC_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_DEVICE_TYPE
+import com.zstronics.ceibro.base.KEY_DRAWING_OBJ
 import com.zstronics.ceibro.base.KEY_IS_FIRST_TIME_LAUNCH
 import com.zstronics.ceibro.base.KEY_IS_FROM_ME_UNREAD
 import com.zstronics.ceibro.base.KEY_IS_HIDDEN_UNREAD
@@ -70,6 +71,8 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_IS_TO_ME_UNREAD)
         sharedPreferenceManager.removeValue(KEY_SYNCED_CONTACTS)
         sharedPreferenceManager.removeValue(KEY_SAVED_TASK)
+        sharedPreferenceManager.removeValue(KEY_DRAWING_OBJ)
+        saveCompleteDrawingObj(null)
         val handler = Handler()
         handler.postDelayed(Runnable {
             _user.postValue(
@@ -83,7 +86,7 @@ class SessionManager constructor(
                     profilePic = "", autoContactSync = false
                 )
             )
-        }, 450)
+        }, 500)
 
         CookiesManager.isLoggedIn = false
         CookiesManager.jwtToken = ""
@@ -196,7 +199,7 @@ class SessionManager constructor(
         return sharedPreferenceManager.getCompleteDrawingObj()
     }
 
-    fun saveCompleteDrawingObj(drawingV2: DrawingV2) {
+    fun saveCompleteDrawingObj(drawingV2: DrawingV2?) {
         return sharedPreferenceManager.saveCompleteDrawingObj(drawingV2)
     }
 
