@@ -8,6 +8,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zstronics.ceibro.base.KEY_DRAWING_OBJ
 import com.zstronics.ceibro.base.KEY_USERNAME
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
@@ -153,7 +154,7 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
         val gson = Gson()
         val json = gson.toJson(drawing)
         val editor: SharedPreferences.Editor = sharedPref.edit()
-        editor.putString("drawingObj", json)
+        editor.putString(KEY_DRAWING_OBJ, json)
         editor.commit()
         editor.apply()
     }
@@ -161,7 +162,7 @@ class SharedPreferenceManager @Inject constructor(@ApplicationContext val contex
 
     fun getCompleteDrawingObj(): DrawingV2? {
         val gson = Gson()
-        val json = sharedPref.getString("drawingObj", "")
+        val json = sharedPref.getString(KEY_DRAWING_OBJ, "")
         return gson.fromJson(json, DrawingV2::class.java)
     }
 
