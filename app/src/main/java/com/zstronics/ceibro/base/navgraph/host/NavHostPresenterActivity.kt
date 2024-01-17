@@ -53,6 +53,7 @@ class NavHostPresenterActivity :
 
     companion object {
         var activityInstance: NavHostPresenterActivity? = null
+        var isDrawingLoaded = false
         const val BANNER_HIDE_TIME: Long = 3000
     }
 
@@ -133,7 +134,8 @@ class NavHostPresenterActivity :
                                         // After the delay, hide the views
                                         mViewDataBinding.llInternetConnected.visibility = View.GONE
                                     } else {
-                                        mViewDataBinding.llInternetDisconnected.visibility = View.GONE
+                                        mViewDataBinding.llInternetDisconnected.visibility =
+                                            View.GONE
                                         mViewDataBinding.llInternetConnected.visibility = View.GONE
                                     }
                                 }
@@ -248,9 +250,17 @@ class NavHostPresenterActivity :
                 //Do nothing
             } else {
                 Handler().postDelayed({
-                    println("Heartbeat, NavHostPresenterActivity... connected = ${SocketHandler.getSocket()?.connected()}")
-                    if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null || SocketHandler.getSocket()?.connected() == false) {
-                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == null) {
+                    println(
+                        "Heartbeat, NavHostPresenterActivity... connected = ${
+                            SocketHandler.getSocket()?.connected()
+                        }"
+                    )
+                    if (SocketHandler.getSocket() == null || SocketHandler.getSocket()
+                            ?.connected() == null || SocketHandler.getSocket()?.connected() == false
+                    ) {
+                        if (SocketHandler.getSocket() == null || SocketHandler.getSocket()
+                                ?.connected() == null
+                        ) {
                             println("Heartbeat, Internet observer Socket setting new in NavHostPresenterActivity")
                             SocketHandler.setActivityContext(this)
                             SocketHandler.closeConnectionAndRemoveObservers()

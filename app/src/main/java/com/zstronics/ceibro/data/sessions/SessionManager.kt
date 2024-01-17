@@ -23,6 +23,7 @@ import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskToSave
 
@@ -189,6 +190,14 @@ class SessionManager constructor(
     private fun getTokens(): Tokens? {
         val tokenPref: Tokens? = sharedPreferenceManager.getCompleteTokenObj(KEY_TOKEN)
         return tokenPref
+    }
+
+    fun getCompleteDrawingObj(): DrawingV2? {
+        return sharedPreferenceManager.getCompleteDrawingObj()
+    }
+
+    fun saveCompleteDrawingObj(drawingV2: DrawingV2) {
+        return sharedPreferenceManager.saveCompleteDrawingObj(drawingV2)
     }
 
 

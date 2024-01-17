@@ -7,6 +7,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.annotation.MainThread
 import androidx.core.os.bundleOf
@@ -190,42 +192,76 @@ class DashboardFragment :
                 mViewDataBinding.createNewTaskBtn.visibility = View.GONE
                 mViewDataBinding.locationLine.visibility = View.VISIBLE
 
-                if (viewState.locationProjectSelected.value == true) {
-                    viewState.locationProjectSelected.value = true
-                    if (locationProjectFragmentInstance == null) {
-                        locationProjectFragmentInstance = LocationProjectV2Fragment()
-                    }
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
-                        .commit()
+                if (!NavHostPresenterActivity.isDrawingLoaded) {
+                    val drawing = viewModel.sessionManager.getCompleteDrawingObj()
+                    drawing?.let {
+                        CookiesManager.drawingFileForLocation.value = it
+                        CookiesManager.cameToLocationViewFromProject = true
+                        CookiesManager.openingNewLocationFile = true
+                        NavHostPresenterActivity.isDrawingLoaded = true
 
-                } else if (viewState.locationDrawingSelected.value == true) {
-                    viewState.locationDrawingSelected.value = true
-                    if (locationDrawingFragmentInstance == null) {
-                        locationDrawingFragmentInstance = LocationDrawingV2Fragment()
-                    }
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, locationDrawingFragmentInstance!!)
-                        .commit()
-
-                } else if (viewState.locationViewSelected.value == true) {
-                    viewState.locationViewSelected.value = true
-                 //   if (locationFragmentInstance == null) {
+                        viewState.locationProjectSelected.value = false
+                        viewState.locationDrawingSelected.value = false
+                        viewState.locationViewSelected.value = true
                         locationFragmentInstance = LocationsV2Fragment()
-                 //   }
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, locationFragmentInstance!!)
-                        .commit()
 
-                } else {
-                    viewState.locationProjectSelected.value = true
-                    if (locationProjectFragmentInstance == null) {
-                        locationProjectFragmentInstance = LocationProjectV2Fragment()
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, locationFragmentInstance!!)
+                            .commit()
+
+                    } ?: kotlin.run {
+                        NavHostPresenterActivity.isDrawingLoaded = true
+                        viewState.locationProjectSelected.value = true
+                        viewState.locationDrawingSelected.value = false
+                        viewState.locationViewSelected.value = false
+
+                        if (locationProjectFragmentInstance == null) {
+                            locationProjectFragmentInstance = LocationProjectV2Fragment()
+                        }
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
+                            .commit()
+
                     }
-                    childFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
-                        .commit()
+                } else {
 
+                    if (viewState.locationProjectSelected.value == true) {
+                        viewState.locationProjectSelected.value = true
+                        if (locationProjectFragmentInstance == null) {
+                            locationProjectFragmentInstance = LocationProjectV2Fragment()
+                        }
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
+                            .commit()
+
+                    } else if (viewState.locationDrawingSelected.value == true) {
+                        viewState.locationDrawingSelected.value = true
+                        if (locationDrawingFragmentInstance == null) {
+                            locationDrawingFragmentInstance = LocationDrawingV2Fragment()
+                        }
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, locationDrawingFragmentInstance!!)
+                            .commit()
+
+                    } else if (viewState.locationViewSelected.value == true) {
+                        viewState.locationViewSelected.value = true
+                        //   if (locationFragmentInstance == null) {
+                        locationFragmentInstance = LocationsV2Fragment()
+                        //   }
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, locationFragmentInstance!!)
+                            .commit()
+
+                    } else {
+                        viewState.locationProjectSelected.value = true
+                        if (locationProjectFragmentInstance == null) {
+                            locationProjectFragmentInstance = LocationProjectV2Fragment()
+                        }
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, locationProjectFragmentInstance!!)
+                            .commit()
+
+                    }
                 }
             }
 
@@ -260,7 +296,8 @@ class DashboardFragment :
 
             list.forEach { item ->
 
-                val contactList = mutableListOf<String>() // Create a new contactList for each item
+                val contactList =
+                    mutableListOf<String>() // Create a new contactList for each item
 
                 if (item.assignedToState.isNotEmpty()) {
                     item.assignedToState.forEach {
@@ -291,9 +328,11 @@ class DashboardFragment :
                     }
                 }
 
-                var topicName = topic?.topicsData?.recentTopics?.find { it.id == item.topic }?.topic
+                var topicName =
+                    topic?.topicsData?.recentTopics?.find { it.id == item.topic }?.topic
                 if (topicName.isNullOrEmpty()) {
-                    topicName = topic?.topicsData?.allTopics?.find { it.id == item.topic }?.topic
+                    topicName =
+                        topic?.topicsData?.allTopics?.find { it.id == item.topic }?.topic
                 }
 
                 offlineTaskData.add(
@@ -414,7 +453,8 @@ class DashboardFragment :
         }
 
         SearchDataSingleton.searchString = MutableLiveData("")
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        val sharedViewModel =
+            ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.observe(viewLifecycleOwner) { isUnread ->
             if (isUnread) {
                 mViewDataBinding.toMeUnreadBadge.visibility = View.VISIBLE
@@ -480,14 +520,19 @@ class DashboardFragment :
 //        }
         viewModel.notificationEvent.observe(viewLifecycleOwner, ::onCreateNotification)
 
-        val socketObserversSet = viewModel.sessionManager.getBooleanValue(KEY_SOCKET_OBSERVER_SET)
+        val socketObserversSet =
+            viewModel.sessionManager.getBooleanValue(KEY_SOCKET_OBSERVER_SET)
         if (!socketObserversSet) {
             viewModel.handleSocketEvents()
             handleSocketReSyncDataEvent()
         }
     }
 
-    private fun changeSyncIcon(networkAvailable: Boolean, socketConnected: Boolean?, size: Int) {
+    private fun changeSyncIcon(
+        networkAvailable: Boolean,
+        socketConnected: Boolean?,
+        size: Int
+    ) {
         if (networkAvailable) {
             if (size > 0) {
                 mViewDataBinding.sync.visibility = View.VISIBLE
@@ -502,7 +547,8 @@ class DashboardFragment :
     }
 
     private fun setConnectivityIcon() {
-        val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        val sharedViewModel =
+            ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         lifecycleScope.launch {
             networkConnectivityObserver.observe().collect { connectionStatus ->
                 println("Heartbeat, $connectionStatus")
@@ -633,7 +679,10 @@ class DashboardFragment :
                         val totalSize = fileProgress?.totalSize ?: 100
                         val progress = ((fileProgress?.uploadedSize?.div(totalSize) ?: 1) * 100)
                         builder.setProgress(100, progress, false)
-                        notificationManager.notify(fileProgress?.fileId.hashCode(), builder.build())
+                        notificationManager.notify(
+                            fileProgress?.fileId.hashCode(),
+                            builder.build()
+                        )
                     }
 
                     SocketHandler.FileAttachmentEvents.FILE_UPLOADED.name -> {
@@ -667,10 +716,12 @@ class DashboardFragment :
 
                         requireActivity().getSystemService(NotificationManager::class.java)
                             ?.cancelAll()
-                        val allFilesUploaded = gson.fromJson<AllFilesUploadedSocketEventResponse>(
-                            arguments,
-                            object : TypeToken<AllFilesUploadedSocketEventResponse>() {}.type
-                        ).data
+                        val allFilesUploaded =
+                            gson.fromJson<AllFilesUploadedSocketEventResponse>(
+                                arguments,
+                                object :
+                                    TypeToken<AllFilesUploadedSocketEventResponse>() {}.type
+                            ).data
 
                         //// post local event to show notification
                         EventBus.getDefault().post(
@@ -696,7 +747,8 @@ class DashboardFragment :
                     val commentWithFile =
                         gson.fromJson<CommentsFilesUploadedSocketEventResponse>(
                             arguments,
-                            object : TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
+                            object :
+                                TypeToken<CommentsFilesUploadedSocketEventResponse>() {}.type
                         ).data
                     viewModel.launch {
                         viewModel.localSubTask.addFilesUnderComment(
@@ -706,7 +758,12 @@ class DashboardFragment :
                         )
                     }
                     EventBus.getDefault()
-                        .post(LocalEvents.NewSubTaskComment(commentWithFile, commentWithFile.id))
+                        .post(
+                            LocalEvents.NewSubTaskComment(
+                                commentWithFile,
+                                commentWithFile.id
+                            )
+                        )
                     requireActivity().getSystemService(NotificationManager::class.java)
                         ?.cancelAll()
                 }
@@ -814,15 +871,18 @@ class DashboardFragment :
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onLoadDrawingInLocation(event: LocalEvents.LoadDrawingInLocation) {
-        CookiesManager.cameToLocationViewFromProject = true
-        CookiesManager.openingNewLocationFile = true
-        viewState.locationProjectSelected.value = false
-        viewState.locationDrawingSelected.value = false
-        viewState.locationViewSelected.value = true
+        EventBus.getDefault().removeStickyEvent(event)
+        Handler(Looper.getMainLooper()).postDelayed({
+            CookiesManager.cameToLocationViewFromProject = true
+            CookiesManager.openingNewLocationFile = true
+            viewState.locationProjectSelected.value = false
+            viewState.locationDrawingSelected.value = false
+            viewState.locationViewSelected.value = true
 //        locationDrawingFragmentInstance = null
 
-        changeSelectedTab(R.id.locationBtn, false)
-        EventBus.getDefault().removeStickyEvent(event)
+            changeSelectedTab(R.id.locationBtn, false)
+        }, 150)
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

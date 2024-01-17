@@ -24,8 +24,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -35,6 +33,7 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.location.MarkerPointsData
@@ -1320,7 +1319,7 @@ class LocationsV2Fragment :
         if (viewModel.drawingFile.value == null || CookiesManager.openingNewLocationFile) {
             viewModel.cameFromProject = CookiesManager.cameToLocationViewFromProject
             CookiesManager.openingNewLocationFile = false
-            CookiesManager.cameToLocationViewFromProject = false
+//            CookiesManager.cameToLocationViewFromProject = false
             CookiesManager.drawingFileForLocation.value?.let {
                 viewModel.getDrawingPins(it._id)
                 viewModel._drawingFile.postValue(it)
