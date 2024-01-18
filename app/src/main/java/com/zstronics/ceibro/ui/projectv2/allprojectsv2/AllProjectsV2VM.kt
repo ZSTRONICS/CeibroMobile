@@ -52,7 +52,7 @@ class AllProjectsV2VM @Inject constructor(
     override fun getAllProjects() {
         launch {
             val allProjects = projectsV2Dao.getAllProjects()
-            if (allProjects.isNotEmpty()) {
+            if (allProjects?.isNotEmpty() == true) {
                 _allProjects.postValue(allProjects.toMutableList())
                 originalAllProjects = allProjects.toMutableList()
             } else {

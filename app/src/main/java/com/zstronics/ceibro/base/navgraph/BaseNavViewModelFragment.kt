@@ -875,8 +875,8 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
 
 
     fun isUserNameValid(name: String): Boolean {
-        val regex =
-            Regex("^[\\p{L}][\\p{L}0-9\\s]*\$") // "\p{L}" Allow alphabetical characters from various languages, making it a suitable pattern to accept all alphabet characters while excluding special characters and spaces
+        // "\p{L}" Allow alphabetical characters from various languages, making it a suitable pattern to accept all alphabet characters including special characters and spaces
+        val regex = Regex("^[\\p{L}][\\p{L}0-9\\s!@#\$%^&*()-_+=<>?/,.:;\"'{}\\[\\]\\\\|]*\$")
         return regex.matches(name)
     }
 

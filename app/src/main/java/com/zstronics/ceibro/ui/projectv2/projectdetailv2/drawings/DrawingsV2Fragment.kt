@@ -202,7 +202,7 @@ class DrawingsV2Fragment :
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
                     if (it.trim().equals("100%", true)) {
-                        sectionedAdapter.notifyDataSetChanged()
+                      //  sectionedAdapter.notifyDataSetChanged()
                         tv.visibility = View.GONE
                         ivDownloaded.visibility = View.VISIBLE
                         tv.text = it
@@ -572,11 +572,11 @@ class DrawingsV2Fragment :
             }
         }
 
-        Handler(Looper.getMainLooper()).postDelayed({
+   /*     Handler(Looper.getMainLooper()).postDelayed({
             getDownloadProgress(context, downloadId!!) {
                 itemClickListener?.invoke(it)
             }
-        }, 1000)
+        }, 1000)*/
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 

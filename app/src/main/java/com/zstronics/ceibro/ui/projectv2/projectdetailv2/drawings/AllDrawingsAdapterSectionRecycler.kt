@@ -17,25 +17,21 @@ import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
-import com.zstronics.ceibro.databinding.DrawingDetailItemListBinding
 import com.zstronics.ceibro.databinding.LayoutDrawingItemListBinding
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.adapter.DrawingAdapter
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -56,6 +52,7 @@ class AllDrawingsAdapterSectionRecycler(
     context,
     sectionList
 ) {
+
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
@@ -154,12 +151,12 @@ class AllDrawingsAdapterSectionRecycler(
 
             binding.apply {
                 groupLayout.setOnClickListener {
-                    if (llParent.visibility == View.VISIBLE) {
+                    if (rvDrawing.visibility == View.VISIBLE) {
                         ivDropDown.setImageResource(R.drawable.icon_drop_down)
-                        llParent.visibility = View.GONE
+                        rvDrawing.visibility = View.GONE
                     } else {
                         ivDropDown.setImageResource(R.drawable.arrow_drop_up)
-                        llParent.visibility = View.VISIBLE
+                        rvDrawing.visibility = View.VISIBLE
                     }
                 }
 
@@ -175,150 +172,175 @@ class AllDrawingsAdapterSectionRecycler(
                     togglePopupMenu(it, item)
                 }
 
-                llParent.removeAllViews()
 
-                item?.drawings?.forEachIndexed { index, data ->
-
-
-                    val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
-                        LayoutInflater.from(binding.root.context),
-                        R.layout.drawing_detail_item_list,
-                        binding.llParent,
-                        false
-                    )
-
-                    itemViewBinding.apply {
-
-                        tvSample.text = "${data.fileName}"
-                        tvFloor.text = "${data.floor.floorName} Floor"
-                        root.setOnClickListener { view ->
-                            MainScope().launch {
-                                val drawingObject =
-                                    downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
-                                drawingObject?.let {
-
-
-                                    val file = File(it.localUri)
-                                    if (file.exists()) {
-                                        drawingFileClickListener?.invoke(view, data, it.localUri)
-                                    } else {
-                                        cancelAndMakeToast(
-                                            view.context,
-                                            "File not downloaded",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                    }
-                                } ?: kotlin.run {
-                                    cancelAndMakeToast(
-                                        view.context,
-                                        "File not downloaded",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                }
-                            }
-                        }
-
-                        MainScope().launch {
-                            val drawingObject =
-                                downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
-                            drawingObject?.let {
-
-                                if (it.isDownloaded && it.localUri.isNotEmpty()) {
-                                    ivDownloaded.visibility = View.VISIBLE
-                                    tvDownloadProgress.visibility = View.GONE
-                                    ivDownloadFile.visibility = View.GONE
-                                } else if (it.downloading) {
-                                    ivDownloaded.visibility = View.GONE
-                                    tvDownloadProgress.visibility = View.VISIBLE
-                                    ivDownloadFile.visibility = View.GONE
-                                    getDownloadProgress(
-                                        tvDownloadProgress.context,
-                                        it.downloadId
-                                    ) { status, filepath, progress ->
-                                        MainScope().launch {
-                                            if (status.equals("downloaded", true)) {
-                                                if (filepath.isNotEmpty()) {
-                                                    ivDownloadFile.visibility =
-                                                        View.GONE
-                                                    tvDownloadProgress.visibility =
-                                                        View.GONE
-                                                    ivDownloaded.visibility =
-                                                        View.VISIBLE
-                                                    tvDownloadProgress.text = progress
-                                                } else {
-                                                    downloadedDrawingV2Dao.deleteByDrawingID(data._id)
-                                                    ivDownloaded.visibility = View.GONE
-                                                    tvDownloadProgress.visibility =
-                                                        View.GONE
-                                                    ivDownloadFile.visibility =
-                                                        View.VISIBLE
-                                                }
-                                            } else if (status == "retry" || status == "failed") {
-                                                downloadedDrawingV2Dao.deleteByDrawingID(data._id)
-                                                tvDownloadProgress.text = "0%"
-                                                ivDownloaded.visibility = View.GONE
-                                                tvDownloadProgress.visibility = View.GONE
-                                                ivDownloadFile.visibility = View.VISIBLE
-                                            } else if (status == "downloading") {
-                                                ivDownloadFile.visibility = View.GONE
-                                                tvDownloadProgress.visibility = View.VISIBLE
-                                                tvDownloadProgress.text = progress
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    ivDownloaded.visibility = View.GONE
-                                    tvDownloadProgress.visibility = View.GONE
-                                    ivDownloadFile.visibility = View.VISIBLE
-                                }
-                            } ?: kotlin.run {
-                                ivDownloaded.visibility = View.GONE
-                                tvDownloadProgress.visibility = View.GONE
-                                ivDownloadFile.visibility = View.VISIBLE
-                            }
-                        }
-                        ivDownloadFile.setOnClickListener {
-                            if (data.fileUrl.isEmpty()) {
-                                cancelAndMakeToast(
-                                    it.context,
-                                    "File address is invalid or file is corrupted",
-                                    Toast.LENGTH_SHORT
-                                )
-                            } else {
-                                if (networkConnectivityObserver.isNetworkAvailable()) {
-
-                                    if (checkDownloadFilePermission(
-                                            context
-                                        )
-                                    ) {
-
-                                        it.visibility = View.GONE
-                                        tvDownloadProgress.visibility = View.VISIBLE
-                                        downloadFileClickListener?.invoke(
-                                            tvDownloadProgress,
-                                            ivDownloadFile,
-                                            ivDownloaded,
-                                            data,
-                                            ""
-                                        )
-                                    } else {
-
-                                        requestPermissionClickListener?.invoke("getpermissoin")
-                                    }
-
-                                } else {
-                                    cancelAndMakeToast(
-                                        it.context,
-                                        "No Internet Available.",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                }
-                            }
-                        }
-
-                        binding.llParent.addView(itemViewBinding.root)
-                    }
+                val adapter = DrawingAdapter(downloadedDrawingV2Dao, networkConnectivityObserver)
+                item?.drawings?.let {
+                    adapter.setList(it)
                 }
+
+                binding.rvDrawing.adapter = adapter
+
+                adapter.downloadFileCallBack { tv, ivDownload, iv, data, tag ->
+                    downloadFileClickListener?.invoke(
+                        tv,
+                        ivDownload,
+                        iv,
+                        data,
+                        ""
+                    )
+                }
+                adapter.requestPermissionCallBack {
+                    requestPermissionClickListener?.invoke("getpermissoin")
+                }
+
+                adapter.drawingFileClickListenerCallBack { view, data, absolutePath ->
+                    drawingFileClickListener?.invoke(view, data,absolutePath)
+
+                }
+
+
+                /* item?.drawings?.forEachIndexed { index, data ->
+
+
+                     val itemViewBinding: DrawingDetailItemListBinding = DataBindingUtil.inflate(
+                         LayoutInflater.from(binding.root.context),
+                         R.layout.drawing_detail_item_list,
+                         binding.llParent,
+                         false
+                     )
+
+                     itemViewBinding.apply {
+
+                         tvSample.text = "${data.fileName}"
+                         tvFloor.text = "${data.floor.floorName} Floor"
+                         root.setOnClickListener { view ->
+                             MainScope().launch {
+                                 val drawingObject =
+                                     downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                                 drawingObject?.let {
+
+
+                                     val file = File(it.localUri)
+                                     if (file.exists()) {
+                                         drawingFileClickListener?.invoke(view, data, it.localUri)
+                                     } else {
+                                         cancelAndMakeToast(
+                                             view.context,
+                                             "File not downloaded",
+                                             Toast.LENGTH_SHORT
+                                         )
+                                     }
+                                 } ?: kotlin.run {
+                                     cancelAndMakeToast(
+                                         view.context,
+                                         "File not downloaded",
+                                         Toast.LENGTH_SHORT
+                                     )
+                                 }
+                             }
+                         }
+
+                         MainScope().launch {
+                             val drawingObject =
+                                 downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(data._id)
+                             drawingObject?.let {
+
+                                 if (it.isDownloaded && it.localUri.isNotEmpty()) {
+                                     ivDownloaded.visibility = View.VISIBLE
+                                     tvDownloadProgress.visibility = View.GONE
+                                     ivDownloadFile.visibility = View.GONE
+                                 } else if (it.downloading) {
+                                     ivDownloaded.visibility = View.GONE
+                                     tvDownloadProgress.visibility = View.VISIBLE
+                                     ivDownloadFile.visibility = View.GONE
+                                     getDownloadProgress(
+                                         tvDownloadProgress.context,
+                                         it.downloadId
+                                     ) { status, filepath, progress ->
+                                         MainScope().launch {
+                                             if (status.equals("downloaded", true)) {
+                                                 if (filepath.isNotEmpty()) {
+                                                     ivDownloadFile.visibility =
+                                                         View.GONE
+                                                     tvDownloadProgress.visibility =
+                                                         View.GONE
+                                                     ivDownloaded.visibility =
+                                                         View.VISIBLE
+                                                     tvDownloadProgress.text = progress
+                                                 } else {
+                                                     downloadedDrawingV2Dao.deleteByDrawingID(data._id)
+                                                     ivDownloaded.visibility = View.GONE
+                                                     tvDownloadProgress.visibility =
+                                                         View.GONE
+                                                     ivDownloadFile.visibility =
+                                                         View.VISIBLE
+                                                 }
+                                             } else if (status == "retry" || status == "failed") {
+                                                 downloadedDrawingV2Dao.deleteByDrawingID(data._id)
+                                                 tvDownloadProgress.text = "0%"
+                                                 ivDownloaded.visibility = View.GONE
+                                                 tvDownloadProgress.visibility = View.GONE
+                                                 ivDownloadFile.visibility = View.VISIBLE
+                                             } else if (status == "downloading") {
+                                                 ivDownloadFile.visibility = View.GONE
+                                                 tvDownloadProgress.visibility = View.VISIBLE
+                                                 tvDownloadProgress.text = progress
+                                             }
+                                         }
+                                     }
+                                 } else {
+                                     ivDownloaded.visibility = View.GONE
+                                     tvDownloadProgress.visibility = View.GONE
+                                     ivDownloadFile.visibility = View.VISIBLE
+                                 }
+                             } ?: kotlin.run {
+                                 ivDownloaded.visibility = View.GONE
+                                 tvDownloadProgress.visibility = View.GONE
+                                 ivDownloadFile.visibility = View.VISIBLE
+                             }
+                         }
+                         ivDownloadFile.setOnClickListener {
+                             if (data.fileUrl.isEmpty()) {
+                                 cancelAndMakeToast(
+                                     it.context,
+                                     "File address is invalid or file is corrupted",
+                                     Toast.LENGTH_SHORT
+                                 )
+                             } else {
+                                 if (networkConnectivityObserver.isNetworkAvailable()) {
+
+                                     if (checkDownloadFilePermission(
+                                             context
+                                         )
+                                     ) {
+
+                                         it.visibility = View.GONE
+                                         tvDownloadProgress.visibility = View.VISIBLE
+                                         downloadFileClickListener?.invoke(
+                                             tvDownloadProgress,
+                                             ivDownloadFile,
+                                             ivDownloaded,
+                                             data,
+                                             ""
+                                         )
+                                     } else {
+
+                                         requestPermissionClickListener?.invoke("getpermissoin")
+                                     }
+
+                                 } else {
+                                     cancelAndMakeToast(
+                                         it.context,
+                                         "No Internet Available.",
+                                         Toast.LENGTH_SHORT
+                                     )
+                                 }
+                             }
+                         }
+
+                         binding.llParent.addView(itemViewBinding.root)
+                     }
+                 }*/
             }
         }
     }

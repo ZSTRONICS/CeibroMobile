@@ -11,9 +11,14 @@ interface INewProjectV2 {
         var projectPhoto: MutableLiveData<String>
         var projectDescription: MutableLiveData<String>
     }
+
     interface ViewModel : IBase.ViewModel<State> {
 
         fun getProjectName(context: Context)
-        fun addNewProject(context: Context, callBack: (isSuccess: Boolean) -> Unit)
+        fun addNewProject(
+            context: Context,
+            callBack: (isSuccess: Boolean) -> Unit,
+            toast: (msg: String) -> Unit
+        )
     }
 }
