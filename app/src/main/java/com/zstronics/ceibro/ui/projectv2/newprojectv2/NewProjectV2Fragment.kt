@@ -20,6 +20,7 @@ import com.zstronics.ceibro.databinding.FragmentNewProjectV2Binding
 import com.zstronics.ceibro.ui.profile.ImagePickerOrCaptureDialogSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -55,9 +56,15 @@ class NewProjectV2Fragment :
                     if (it.isEmpty()) {
                         showToast(getString(R.string.project_name_is_required))
                     } else {
-                        viewModel.addNewProject(requireContext()) { isSuccess ->
-                            if (isSuccess) {
-                                navigateBack()
+                        GlobalScope.launch(Dispatchers.Main) {
+                            viewModel.addNewProject(requireContext(), { isSuccess ->
+                                if (isSuccess) {
+                                    navigateBack()
+                                }
+                            }) { msg ->
+                                if (msg.equals("found", true)) {
+                                    showToast("Project with the same name already exists")
+                                }
                             }
                         }
                     }
