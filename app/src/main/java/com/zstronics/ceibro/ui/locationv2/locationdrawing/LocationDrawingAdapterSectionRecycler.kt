@@ -132,7 +132,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
         fun bind(item: LocationDrawingSectionHeader?) {
             binding.headerTitle.text = item?.getSectionText()
             binding.headerTitle.textSize = 14f
-            binding.headerTitle.setTextColor(context.getColor(R.color.appGrey3))
+            binding.headerTitle.setTextColor(context.getColor(R.color.appBlue))
 
             if (item?.childItems.isNullOrEmpty()) {
                 binding.headerTitle.visibility = View.GONE

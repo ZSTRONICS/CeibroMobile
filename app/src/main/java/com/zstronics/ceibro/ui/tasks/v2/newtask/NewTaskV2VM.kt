@@ -8,10 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentModules
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.AttachmentUploadV2Request
@@ -43,6 +46,8 @@ class NewTaskV2VM @Inject constructor(
     private val projectDao: ProjectsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
     private val draftNewTaskV2Dao: DraftNewTaskV2Dao,
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+    private val groupsV2Dao: GroupsV2Dao,
     private var networkConnectivityObserver: NetworkConnectivityObserver
 ) : HiltBaseViewModel<INewTaskV2.State>(), INewTaskV2.ViewModel {
     val user = sessionManager.getUser().value
@@ -54,6 +59,9 @@ class NewTaskV2VM @Inject constructor(
 
     var locationTaskData: MutableLiveData<AddLocationTask?> = MutableLiveData(null)
     var taskId = ""
+
+    var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
+    var originalAllGroups: MutableList<CeibroGroupsV2> = mutableListOf()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -119,18 +127,21 @@ class NewTaskV2VM @Inject constructor(
         val locationTask = bundle?.getParcelable<AddLocationTask>("locationTaskData")
         launch {
             if (locationTask != null) {
-                locationTaskData.value = locationTask
-                val project = locationTask.projectId?.let { projectDao.getProjectByProjectId(it) }
-                if (project != null) {
-                    viewState.selectedProject.value = project
-                    viewState.projectText.value = project.title
-                }
-
-
+                newPinLocationInTask(locationTask)
             }
         }
     }
 
+    fun newPinLocationInTask(locationTask: AddLocationTask) {
+        launch {
+            locationTaskData.value = locationTask
+            val project = locationTask.projectId?.let { projectDao.getProjectByProjectId(it) }
+            if (project != null) {
+                viewState.selectedProject.value = project
+                viewState.projectText.value = project.title
+            }
+        }
+    }
 
     fun createNewTask(
         doneImageRequired: Boolean,
@@ -345,4 +356,15 @@ class NewTaskV2VM @Inject constructor(
         var locationPinData: AddLocationTask? = null
         var taskList: ArrayList<PickedImages>? = null
     }
+
+
+
+    fun getGroupsByProjectID(projectId: String) {
+        launch {
+            val groupsList = groupsV2Dao.getAllProjectGroups(projectId)
+            originalAllGroups = groupsList.toMutableList()
+            originalGroups.value = groupsList.toMutableList()
+        }
+    }
+
 }

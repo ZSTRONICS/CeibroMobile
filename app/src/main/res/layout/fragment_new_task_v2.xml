@@ -903,7 +903,7 @@
                 android:layout_weight="1"
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_location"
-                android:drawableTint="@color/appGrey2"
+                android:drawableTint="@drawable/bottom_btn_color"
                 android:fontFamily="@font/inter_medium"
                 android:enabled="false"
                 android:maxLines="1"
@@ -912,7 +912,7 @@
                 android:paddingEnd="@dimen/_3sdp"
                 android:text="@string/location_heading"
                 android:textAllCaps="false"
-                android:textColor="@color/appGrey2"
+                android:textColor="@drawable/bottom_btn_color"
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.appcompat.widget.AppCompatButton
