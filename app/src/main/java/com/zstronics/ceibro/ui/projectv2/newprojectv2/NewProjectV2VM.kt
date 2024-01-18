@@ -55,7 +55,7 @@ class NewProjectV2VM @Inject constructor(
             projects?.let {
                 it.forEach { project ->
                     if (project.title.equals(projectName, true)) {
-                        isProjectFound = true
+                        isProjectFound = false // set it true if you want to check duplication of project title on mobile side
                         return@forEach
                     }
                 }
