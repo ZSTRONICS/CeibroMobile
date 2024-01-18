@@ -781,9 +781,37 @@ class LocationDrawingV2Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onUpdateGroupDrawings(event: LocalEvents.UpdateGroupDrawings?) {
-//        event?.let {
-//            viewModel.getGroupsByProjectID(it.projectID)
-//        }
+        event?.let {
+            viewModel.getGroupsByProjectID(it.projectID)
+        }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshGroupsData(event: LocalEvents.RefreshGroupsData?) {
+        val projectID = event?.projectId
+        val projectData = viewModel.projectData.value
+        if (projectData != null) {
+            if (projectData._id == projectID) {
+                viewModel.getGroupsByProjectID(projectData._id)
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshDeletedGroupData(event: LocalEvents.RefreshDeletedGroupData?) {
+        val groupId = event?.groupId
+        val allGroups = viewModel.originalGroups.value
+        val projectData = viewModel.projectData.value
+
+        if (allGroups != null) {
+            val foundGroup = allGroups.find { it._id == groupId }
+            if (foundGroup != null) {
+                if (projectData != null) {
+                    viewModel.getGroupsByProjectID(projectData._id)
+                }
+            }
+        }
     }
 
     override fun onStart() {
