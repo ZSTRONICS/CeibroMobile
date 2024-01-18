@@ -32,6 +32,7 @@ import com.zstronics.ceibro.data.repos.projects.drawing.ProjectDrawingUploadedSo
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2CreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.floor.ProjectFloorV2CreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2DeletedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2RemovedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectV2CreatedUpdatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembersResponse
 import com.zstronics.ceibro.data.repos.task.TaskRepository
@@ -333,14 +334,28 @@ class DashboardVM @Inject constructor(
                     }
                 }
 
-                SocketHandler.ProjectEvent.PROJECT_GROUP_REMOVED.name -> {
+                SocketHandler.ProjectEvent.PROJECT_GROUP_REMOVED.name -> {  //this socket is for removing group when creator makes it private
+                    try {
+                        val groupIdToDelete =
+                            gson.fromJson<ProjectGroupV2RemovedSocketResponse>(
+                                arguments,
+                                object : TypeToken<ProjectGroupV2RemovedSocketResponse>() {}.type
+                            ).data
+                        deleteGroupInLocal(groupIdToDelete.removedGroupId, groupV2Dao)
+//                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
+                    } catch (e: Exception) {
+                        println("Some data error")
+                    }
+                }
+
+                SocketHandler.ProjectEvent.PROJECT_GROUP_DELETED.name -> {  //this socket is for removing group when group is deleted
                     try {
                         val groupIdToDelete =
                             gson.fromJson<ProjectGroupV2DeletedSocketResponse>(
                                 arguments,
                                 object : TypeToken<ProjectGroupV2DeletedSocketResponse>() {}.type
                             ).data
-                        deleteGroupInLocal(groupIdToDelete.removedGroupId, groupV2Dao)
+                        deleteGroupInLocal(groupIdToDelete, groupV2Dao)
 //                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
                     } catch (e: Exception) {
                         println("Some data error")
@@ -454,7 +469,7 @@ class DashboardVM @Inject constructor(
             if (BuildConfig.DEBUG) {
                 alert("Socket: ${socketData.eventType}")
             }
-            println("Heartbeat SocketEvent: ${socketData.eventType}")
+            println("Heartbeat SocketEvent: ${socketData.eventType}: ${arguments}")
             if (socketData.eventType.equals(SocketHandler.TaskEvent.TASK_SEEN.name, true)) {
                 println("Heartbeat SocketEvent TASK_SEEN DATA_RECEIVED: ${arguments}")
             }
