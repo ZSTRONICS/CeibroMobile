@@ -19,4 +19,5 @@ class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
     override var assignToText: MutableLiveData<String> = MutableLiveData("")
     override var projectText: MutableLiveData<String> = MutableLiveData("")
     override var description: MutableLiveData<String> = MutableLiveData("")
+    override var projectCannotChangeToastShown: Boolean = false
 }

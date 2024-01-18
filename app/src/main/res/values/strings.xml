@@ -422,6 +422,7 @@
     <string name="recent_used_projects">Recent used projects</string>
     <string name="topic_not_selected">Topic not selected</string>
     <string name="project_not_selected">Project not selected</string>
+    <string name="unable_to_access_new_pin_data">Unable to access new pin data</string>
     <string name="add_new_project">Add new project</string>
     <string name="details_view">Details view</string>
     <string name="added_details">Added details</string>
@@ -567,6 +568,7 @@
     <string name="search">Search</string>
     <string name="do_you_want_to_un_hide_this_project">Do you want to un-hide this project?</string>
     <string name="do_you_want_to_hide_this_project">Do you want to hide this project?</string>
+    <string name="do_you_want_to_place_pin_over_here_for_the_new_task">Do you want to place pin over here for the new task?</string>
     <string name="details">Details</string>
     <string name="all_projects">All Projects</string>
     <string name="all_groups">All Groups</string>
@@ -626,4 +628,6 @@
     <string name="images_with_comment">Images with Comment</string>
     <string name="drawings">Drawings</string>
     <string name="select_all">Select All</string>
+    <string name="group_drawing_not_uploaded_in_this_group_yet">Group / drawing not uploaded in this group yet.</string>
+    <string name="ceibro_drawing">Ceibro Drawing</string>
 </resources>

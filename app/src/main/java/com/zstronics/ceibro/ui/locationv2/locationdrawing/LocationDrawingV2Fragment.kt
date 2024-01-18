@@ -389,13 +389,13 @@ class LocationDrawingV2Fragment :
 
         }
 
-        viewModel.originalGroups.observe(viewLifecycleOwner) {
-            if (it.size > 1) {
-                mViewDataBinding.clSearch.visibility = View.VISIBLE
-            } else {
-                mViewDataBinding.clSearch.visibility = View.GONE
-            }
-        }
+//        viewModel.originalGroups.observe(viewLifecycleOwner) {
+//            if (it.size > 1) {
+//                mViewDataBinding.clSearch.visibility = View.VISIBLE
+//            } else {
+//                mViewDataBinding.clSearch.visibility = View.GONE
+//            }
+//        }
 
         viewModel.projectData.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -506,9 +506,9 @@ class LocationDrawingV2Fragment :
 
             if (result == PackageManager.PERMISSION_DENIED) {
                 if (shouldShowRequestPermissionRationale(permission)) {
-                    showToast("Permission denied: $permission")
+                    shortToastNow("Permission denied: $permission")
                 } else {
-                    showToast("Permission denied: $permission. Please enable it in the app settings.")
+                    shortToastNow("Permission denied: $permission. Please enable it in the app settings.")
                     navigateToAppSettings(context)
                     return
                 }

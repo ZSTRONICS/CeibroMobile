@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.longToastNow
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
@@ -27,6 +28,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentNewTaskV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
@@ -61,6 +63,7 @@ class NewTaskV2Fragment :
     private val TOPIC_REQUEST_CODE = 11
     private val ASSIGNEE_REQUEST_CODE = 12
     private val PROJECT_REQUEST_CODE = 13
+    private val DRAWING_REQUEST_CODE = 14
     private val PICK_FILE_REQUEST = 1
     private var isExpanded = true
     private val expandDuration = 100L
@@ -143,10 +146,19 @@ class NewTaskV2Fragment :
             R.id.newTaskProjectClearBtn -> {
                 viewState.projectText.value = ""
                 viewState.selectedProject = MutableLiveData()
+                mViewDataBinding.newTaskLocationBtn.isEnabled = false
+                mViewDataBinding.newTaskLocationBtn.isClickable = false
             }
 
             R.id.newTaskDueDateClearBtn -> {
                 viewState.dueDate.value = ""
+            }
+
+            R.id.newTaskLocationBtn -> {
+                openAddLocationSheet()
+                if (viewModel.locationTaskData.value != null) {
+                    shortToastNow("Existing location will be removed, if new pin is marked")
+                }
             }
 
             R.id.newTaskPhotoBtn -> {
@@ -273,7 +285,31 @@ class NewTaskV2Fragment :
             if (viewModel.locationTaskData.value != null) {
                 mViewDataBinding.newTaskProjectClearBtn.visibility = View.GONE
                 mViewDataBinding.newTaskProjectText.isClickable = false
+                if (!viewState.projectCannotChangeToastShown) {
+                    viewState.projectCannotChangeToastShown = true
+                    longToastNow("Project cannot be changed now, because location pin is added")
+                }
             }
+        }
+        viewState.selectedProject.observe(viewLifecycleOwner) {
+            if (it != null) {
+                viewModel.getGroupsByProjectID(it._id)
+                mViewDataBinding.newTaskLocationBtn.isEnabled = true
+                mViewDataBinding.newTaskLocationBtn.isClickable = true
+            } else {
+                mViewDataBinding.newTaskLocationBtn.isEnabled = false
+                mViewDataBinding.newTaskLocationBtn.isClickable = false
+            }
+        }
+        viewModel.originalGroups.observe(viewLifecycleOwner) {
+//            if (!it.isNullOrEmpty()) {
+//                viewModel.getGroupsByProjectID(it._id)
+//                mViewDataBinding.newTaskLocationBtn.isEnabled = true
+//                mViewDataBinding.newTaskLocationBtn.isClickable = true
+//            } else {
+//                mViewDataBinding.newTaskLocationBtn.isEnabled = false
+//                mViewDataBinding.newTaskLocationBtn.isClickable = false
+//            }
         }
         viewState.dueDate.observe(viewLifecycleOwner) {
             if (it == "") {
@@ -786,6 +822,15 @@ class NewTaskV2Fragment :
                         shortToastNow(resources.getString(R.string.project_not_selected))
                     }
                 }
+
+                DRAWING_REQUEST_CODE -> {
+                    val pinLocationOnTask = result.data?.getParcelable<AddLocationTask>("newLocationTaskData")
+                    if (pinLocationOnTask != null) {
+                        viewModel.newPinLocationInTask(pinLocationOnTask)
+                    } else {
+                        shortToastNow(resources.getString(R.string.unable_to_access_new_pin_data))
+                    }
+                }
             }
         }
     }
@@ -829,5 +874,17 @@ class NewTaskV2Fragment :
             return BitmapFactory.decodeFile(file.absolutePath)
         }
         return null
+    }
+
+    private fun openAddLocationSheet() {
+        val sheet = AddNewLocationBottomSheet(viewModel.originalAllGroups, viewModel.downloadedDrawingV2Dao, networkConnectivityObserver)
+
+        sheet.onDrawingTapped = {
+            sheet.dismiss()
+            navigateForResult(R.id.viewDrawingV2Fragment, DRAWING_REQUEST_CODE)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "AddNewLocationBottomSheet")
     }
 }
