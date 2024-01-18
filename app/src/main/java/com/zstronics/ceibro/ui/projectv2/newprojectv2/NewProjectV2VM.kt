@@ -11,6 +11,9 @@ import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -32,7 +35,12 @@ class NewProjectV2VM @Inject constructor(
 
     }
 
-    override fun addNewProject(context: Context, callBack: (isSuccess: Boolean) -> Unit) {
+    override fun addNewProject(
+        context: Context,
+        callBack: (isSuccess: Boolean) -> Unit,
+        toast: (msg: String) -> Unit
+    ) {
+        var isProjectFound = false
 
         val projectName = viewState.projectName.value
         val projectDescription = viewState.projectDescription.value ?: ""
@@ -42,58 +50,79 @@ class NewProjectV2VM @Inject constructor(
             projectPhotoFile = FileUtils.getFile(context, Uri.parse(projectPhoto))
         }
 
-        if (projectName.isNullOrEmpty()) {
-            alert(context.getString(R.string.project_name_is_required))
-        } else {
-            val title = projectName.toRequestBody("text/plain".toMediaTypeOrNull())
-            val description = projectDescription.toRequestBody("text/plain".toMediaTypeOrNull())
-
-            if (projectPhotoFile != null) {
-                val reqFile =
-                    projectPhotoFile.asRequestBody(("image/" + projectPhotoFile.extension).toMediaTypeOrNull())
-                val fileParts =
-                    MultipartBody.Part.createFormData("file", projectPhotoFile.name, reqFile)
-
-                launch {
-                    loading(true)
-                    when (val response = projectRepository.createNewProjectWithFile(
-                        title = title,
-                        description = description,
-                        file = fileParts
-                    )) {
-                        is ApiResponse.Success -> {
-                            addCreatedProjectInLocal(response.data.newProject, projectDao)
-                            loading(false, "Project created successfully")
-                            callBack(true)
-                        }
-
-                        is ApiResponse.Error -> {
-                            loading(false, response.error.message)
-                            callBack(false)
-                        }
-                    }
-                }
-            } else {
-                launch {
-                    loading(true)
-                    when (val response = projectRepository.createNewProjectWithoutFile(
-                        title = title,
-                        description = description
-                    )) {
-                        is ApiResponse.Success -> {
-                            addCreatedProjectInLocal(response.data.newProject, projectDao)
-                            loading(false, "Project created successfully")
-                            callBack(true)
-                        }
-
-                        is ApiResponse.Error -> {
-                            loading(false, response.error.message)
-                            callBack(false)
-                        }
+        GlobalScope.launch(Dispatchers.Main) {
+            val projects = projectDao.getAllProjects()
+            projects?.let {
+                it.forEach { project ->
+                    if (project.title.equals(projectName, true)) {
+                        isProjectFound = true
+                        return@forEach
                     }
                 }
             }
 
+            if (isProjectFound) {
+                toast.invoke("found")
+            } else {
+                if (projectName.isNullOrEmpty()) {
+                    alert(context.getString(R.string.project_name_is_required))
+                } else {
+                    val title = projectName.toRequestBody("text/plain".toMediaTypeOrNull())
+                    val description =
+                        projectDescription.toRequestBody("text/plain".toMediaTypeOrNull())
+
+                    if (projectPhotoFile != null) {
+                        val reqFile =
+                            projectPhotoFile.asRequestBody(("image/" + projectPhotoFile.extension).toMediaTypeOrNull())
+                        val fileParts =
+                            MultipartBody.Part.createFormData(
+                                "file",
+                                projectPhotoFile.name,
+                                reqFile
+                            )
+
+                        launch {
+                            loading(true)
+                            when (val response = projectRepository.createNewProjectWithFile(
+                                title = title,
+                                description = description,
+                                file = fileParts
+                            )) {
+                                is ApiResponse.Success -> {
+                                    addCreatedProjectInLocal(response.data.newProject, projectDao)
+                                    loading(false, "Project created successfully")
+                                    callBack(true)
+                                }
+
+                                is ApiResponse.Error -> {
+                                    loading(false, response.error.message)
+                                    callBack(false)
+                                }
+                            }
+                        }
+                    } else {
+                        launch {
+                            loading(true)
+                            when (val response = projectRepository.createNewProjectWithoutFile(
+                                title = title,
+                                description = description
+                            )) {
+                                is ApiResponse.Success -> {
+                                    addCreatedProjectInLocal(response.data.newProject, projectDao)
+                                    loading(false, "Project created successfully")
+                                    callBack(true)
+                                }
+
+                                is ApiResponse.Error -> {
+                                    loading(false, response.error.message)
+                                    callBack(false)
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
         }
     }
 }

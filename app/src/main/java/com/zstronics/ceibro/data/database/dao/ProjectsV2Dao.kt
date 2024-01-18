@@ -21,13 +21,19 @@ interface ProjectsV2Dao {
     suspend fun getAllHiddenProjects(isHiddenByMe: Boolean = true): List<CeibroProjectV2>
 
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe ORDER BY updatedAt DESC")
-    suspend fun getAllProjects(isHiddenByMe: Boolean = false): List<CeibroProjectV2>
+    suspend fun getAllProjects(isHiddenByMe: Boolean = false): List<CeibroProjectV2>?
 
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isRecentlyUsedByMe = :isRecentlyUsedByMe ORDER BY updatedAt DESC")
-    suspend fun getAllRecentUsedProjects(isHiddenByMe: Boolean = false, isRecentlyUsedByMe: Boolean = true): List<CeibroProjectV2>
+    suspend fun getAllRecentUsedProjects(
+        isHiddenByMe: Boolean = false,
+        isRecentlyUsedByMe: Boolean = true
+    ): List<CeibroProjectV2>
 
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isFavoriteByMe = :isFavoriteByMe ORDER BY updatedAt DESC")
-    suspend fun getAllFavoriteProjects(isHiddenByMe: Boolean = false, isFavoriteByMe: Boolean = true): List<CeibroProjectV2>
+    suspend fun getAllFavoriteProjects(
+        isHiddenByMe: Boolean = false,
+        isFavoriteByMe: Boolean = true
+    ): List<CeibroProjectV2>
 
     @Query("DELETE FROM projects_v2")
     suspend fun deleteAll()
