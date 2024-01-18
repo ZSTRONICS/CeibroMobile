@@ -86,7 +86,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_bold"
                         android:maxLines="1"
-                        android:text="Ceibro Drawing"
+                        android:text="@string/ceibro_drawing"
                         android:textColor="@color/appGrey3"
                         android:textSize="12sp" />
 

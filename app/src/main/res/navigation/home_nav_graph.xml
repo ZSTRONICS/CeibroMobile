@@ -342,6 +342,9 @@
         <action
             android:id="@+id/action_newTaskV2Fragment_to_taskProjectFragment"
             app:destination="@id/taskProjectFragment" />
+        <action
+            android:id="@+id/action_newTaskV2Fragment_to_viewDrawingV2Fragment"
+            app:destination="@id/viewDrawingV2Fragment" />
     </fragment>
     <fragment
         android:id="@+id/topicFragment"
@@ -513,6 +516,16 @@
         android:name="com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment"
         android:label="LocationDrawingV2Fragment"
         tools:layout="@layout/fragment_location_drawings_v2" />
+    <fragment
+        android:id="@+id/drawingsV2Fragment"
+        android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment"
+        android:label="DrawingsV2Fragment"
+        tools:layout="@layout/fragment_drawings_v2"/>
+    <fragment
+        android:id="@+id/viewDrawingV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.drawing.ViewDrawingV2Fragment"
+        android:label="ViewDrawingV2Fragment"
+        tools:layout="@layout/fragment_view_drawing_v2"/>
 
 
 </navigation>
