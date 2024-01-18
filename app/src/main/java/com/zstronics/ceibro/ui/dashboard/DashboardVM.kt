@@ -333,14 +333,14 @@ class DashboardVM @Inject constructor(
                     }
                 }
 
-                SocketHandler.ProjectEvent.PROJECT_GROUP_DELETED.name -> {
+                SocketHandler.ProjectEvent.PROJECT_GROUP_REMOVED.name -> {
                     try {
                         val groupIdToDelete =
                             gson.fromJson<ProjectGroupV2DeletedSocketResponse>(
                                 arguments,
                                 object : TypeToken<ProjectGroupV2DeletedSocketResponse>() {}.type
                             ).data
-                        deleteGroupInLocal(groupIdToDelete, groupV2Dao)
+                        deleteGroupInLocal(groupIdToDelete.removedGroupId, groupV2Dao)
 //                        EventBus.getDefault().post(LocalEvents.GroupCreatedEvent(updatedGroup))
                     } catch (e: Exception) {
                         println("Some data error")
