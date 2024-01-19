@@ -333,6 +333,12 @@ class NewTaskV2Fragment :
                     file = it.locationImgFile
                 )
                 val allOldImages = viewModel.listOfImages.value
+                val foundDrawingImg = allOldImages?.find { oldImage -> oldImage.attachmentType == AttachmentTypes.Drawing }
+                if (foundDrawingImg != null) {
+                    val index = allOldImages.indexOf(foundDrawingImg)
+                    allOldImages.removeAt(index)
+                }
+
                 allOldImages?.add(locationImgData)
                 viewModel.listOfImages.postValue(allOldImages)
 
