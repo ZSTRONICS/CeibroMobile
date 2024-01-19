@@ -10,19 +10,23 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.MainThread
 import androidx.core.os.bundleOf
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
+import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
@@ -89,6 +93,42 @@ class DashboardFragment :
         when (id) {
             R.id.createNewTaskBtn -> {
                 navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
+            }
+
+            R.id.usersHeader -> {
+
+
+
+                mViewDataBinding.apply {
+                    if (usersGroup.visibility == View.VISIBLE) {
+                        ivDropDown.setImageResource(R.drawable.icon_drop_down)
+                        usersGroup.visibility = View.GONE
+                    } else {
+                        ivDropDown.setImageResource(R.drawable.arrow_drop_up)
+                        usersGroup.visibility = View.VISIBLE
+                    }
+                }
+
+            }
+            R.id.tasksHeader -> {
+
+                mViewDataBinding.apply {
+                    if (tasksGroup.visibility == View.VISIBLE) {
+                        ivTasksDropDown.setImageResource(R.drawable.icon_drop_down)
+                        tasksGroup.visibility = View.GONE
+                    } else {
+                        ivTasksDropDown.setImageResource(R.drawable.arrow_drop_up)
+                        tasksGroup.visibility = View.VISIBLE
+                    }
+                }
+
+            }
+
+
+            R.id.imageView5 -> {
+
+                openNavigationView(mViewDataBinding.myDrawerLayout, mViewDataBinding.navigationView)
+
             }
 
             R.id.profileImg -> navigateToProfile()
@@ -396,6 +436,7 @@ class DashboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
 //        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
 //            println("CookiesManager.drawingFileForLocation: $it")
 //            changeSelectedTab(R.id.locationBtn, false)
@@ -408,14 +449,14 @@ class DashboardFragment :
         viewState.locationSelected.observe(viewLifecycleOwner) {
             viewState.setAddTaskButtonVisibility.value = it
         }
-//
-//        val callback = object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                showCloseAppDialog()
-//            }
-//        }
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                checkDrawer()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
 
 
@@ -960,6 +1001,22 @@ class DashboardFragment :
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun openNavigationView(drawerLayout: DrawerLayout, navigationView: NavigationView) {
+
+        if (!drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.openDrawer(navigationView)
+        }
+    }
+
+    fun checkDrawer() {
+        if (mViewDataBinding.myDrawerLayout.isDrawerOpen(mViewDataBinding.navigationView)) {
+            mViewDataBinding.myDrawerLayout.closeDrawer(mViewDataBinding.navigationView)
+
+        } else {
+            finish()
+        }
     }
 
 }
