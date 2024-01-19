@@ -31,7 +31,9 @@ import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.LayoutItemHeaderBinding
 import com.zstronics.ceibro.databinding.LayoutlocationdrawingitemlistingBinding
 import com.zstronics.ceibro.databinding.LayoutlocationdrawinglistBinding
+import com.zstronics.ceibro.ui.locationv2.locationdrawing.adapter.LocationDrawingAdapter
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
+import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.adapter.DrawingAdapter
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -156,12 +158,12 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
 
                 groupLayout.setOnClickListener {
-                    if (llParent.visibility == View.VISIBLE) {
+                    if (rvDrawing.visibility == View.VISIBLE) {
                         ivDropDown.setImageResource(R.drawable.icon_drop_down)
-                        llParent.visibility = View.GONE
+                        rvDrawing.visibility = View.GONE
                     } else {
                         ivDropDown.setImageResource(R.drawable.arrow_drop_up)
-                        llParent.visibility = View.VISIBLE
+                        rvDrawing.visibility = View.VISIBLE
                     }
                 }
 
@@ -169,8 +171,33 @@ class LocationDrawingAdapterSectionRecycler constructor(
                 tvGroupBy.text = "From: ${item?.creator?.firstName} ${item?.creator?.surName}"
 
 
+                val adapter = LocationDrawingAdapter(downloadedDrawingV2Dao, networkConnectivityObserver)
+                item?.drawings?.let {
+                    adapter.setList(it)
+                }
 
-                llParent.removeAllViews()
+                binding.rvDrawing.adapter = adapter
+
+                adapter.downloadFileCallBack { tv, ivDownload, iv, data, tag ->
+                    downloadFileClickListener?.invoke(
+                        tv,
+                        ivDownload,
+                        iv,
+                        data,
+                        ""
+                    )
+                }
+                adapter.requestPermissionCallBack {
+                    requestPermissionClickListener?.invoke("getpermissoin")
+                }
+
+                adapter.drawingFileClickListenerCallBack { view, data, absolutePath ->
+                    drawingFileClickListener?.invoke(view, data,absolutePath)
+
+                }
+
+
+           /*     rvDrawing.removeAllViews()
 
                 item?.drawings?.forEachIndexed { index, data ->
 
@@ -314,7 +341,7 @@ class LocationDrawingAdapterSectionRecycler constructor(
 
                         binding.llParent.addView(itemViewBinding.root)
                     }
-                }
+                }*/
             }
         }
     }
