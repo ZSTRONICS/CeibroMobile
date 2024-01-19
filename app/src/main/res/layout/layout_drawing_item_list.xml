@@ -135,6 +135,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:nestedScrollingEnabled="true"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/viewTwo"
             app:layout_constraintEnd_toEndOf="parent"

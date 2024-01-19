@@ -63,10 +63,6 @@ class ViewDrawingV2Fragment :
     override val bindingViewStateVariableId = BR.viewState
     override val viewModel: ViewDrawingV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_view_drawing_v2
-    private var layoutPressed = ""
-    private var isKeyboardShown = false
-    private val spinnerItems = arrayOf("Floor", "Kitchen", "Garden")
-    private val filtersList: ArrayList<Pair<String, String>> = arrayListOf()
 
     private var inViewPinsList: MutableList<MarkerPointsData> = mutableListOf()
     private var addNewMarkerPoints: MutableList<FiveTuple<Float, Float, Float, Float, Float>> =
