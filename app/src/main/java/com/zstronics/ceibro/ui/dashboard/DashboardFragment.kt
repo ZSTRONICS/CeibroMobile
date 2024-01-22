@@ -127,7 +127,7 @@ class DashboardFragment :
             }
 
 
-            R.id.imageView5 -> {
+            R.id.ceibroDashboardLogo -> {
 
                 openNavigationView(mViewDataBinding.myDrawerLayout, mViewDataBinding.navigationView)
 
