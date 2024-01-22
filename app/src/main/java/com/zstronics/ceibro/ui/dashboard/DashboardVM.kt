@@ -29,8 +29,8 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.projects.drawing.ProjectDrawingUploadedSocketResponse
-import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2CreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.floor.ProjectFloorV2CreatedSocketResponse
+import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2CreatedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2DeletedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.group.ProjectGroupV2RemovedSocketResponse
 import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectV2CreatedUpdatedSocketResponse
@@ -167,7 +167,13 @@ class DashboardVM @Inject constructor(
                         object : TypeToken<SocketNewTaskEventV2Response>() {}.type
                     ).data
                     launch {
-                        updateForwardTaskInLocal(eventData, taskDao, userId, sessionManager, drawingPinsDao)
+                        updateForwardTaskInLocal(
+                            eventData,
+                            taskDao,
+                            userId,
+                            sessionManager,
+                            drawingPinsDao
+                        )
                     }
                 }
 
@@ -177,7 +183,13 @@ class DashboardVM @Inject constructor(
                         object : TypeToken<SocketForwardedToMeNewTaskEventV2Response>() {}.type
                     ).data
                     launch {
-                        updateForwardedToMeNewTaskInLocal(eventData, taskDao, userId, sessionManager, drawingPinsDao)
+                        updateForwardedToMeNewTaskInLocal(
+                            eventData,
+                            taskDao,
+                            userId,
+                            sessionManager,
+                            drawingPinsDao
+                        )
                     }
                 }
 
@@ -187,7 +199,13 @@ class DashboardVM @Inject constructor(
                         object : TypeToken<SocketTaskSeenV2Response>() {}.type
                     ).data
                     launch {
-                        updateGenericTaskSeenInLocal(taskSeen, taskDao, userId, sessionManager, drawingPinsDao)
+                        updateGenericTaskSeenInLocal(
+                            taskSeen,
+                            taskDao,
+                            userId,
+                            sessionManager,
+                            drawingPinsDao
+                        )
                     }
                 }
 
@@ -235,13 +253,23 @@ class DashboardVM @Inject constructor(
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_DONE.name) {
                         if (commentData != null) {
                             launch {
-                                updateTaskDoneInLocal(commentData, taskDao, sessionManager, drawingPinsDao)
+                                updateTaskDoneInLocal(
+                                    commentData,
+                                    taskDao,
+                                    sessionManager,
+                                    drawingPinsDao
+                                )
                             }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.JOINED_TASK.name) {
                         launch {
-                            updateTaskJoinedInLocal(commentData, taskDao, sessionManager, drawingPinsDao)
+                            updateTaskJoinedInLocal(
+                                commentData,
+                                taskDao,
+                                sessionManager,
+                                drawingPinsDao
+                            )
                         }
                         updateContactsInDB {
 
@@ -257,36 +285,45 @@ class DashboardVM @Inject constructor(
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_HIDDEN.name) {
                         if (hideData != null) {
                             launch {
-                                updateTaskHideInLocal(hideData, taskDao, sessionManager, drawingPinsDao)
+                                updateTaskHideInLocal(
+                                    hideData,
+                                    taskDao,
+                                    sessionManager,
+                                    drawingPinsDao
+                                )
                             }
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.TASK_SHOWN.name) {
                         if (hideData != null) {
                             launch {
-                                updateTaskUnHideInLocal(hideData, taskDao, sessionManager, drawingPinsDao)
+                                updateTaskUnHideInLocal(
+                                    hideData,
+                                    taskDao,
+                                    sessionManager,
+                                    drawingPinsDao
+                                )
                             }
                         }
                     }
                 }
             }
-        }
-        else if (socketData.module == "project") {
+        } else if (socketData.module == "project") {
             when (socketData.eventType) {
                 SocketHandler.ProjectEvent.PROJECT_CREATED.name -> {
                     val newProject = gson.fromJson<ProjectV2CreatedUpdatedSocketResponse>(
-                            arguments,
-                            object : TypeToken<ProjectV2CreatedUpdatedSocketResponse>() {}.type
-                        ).data
+                        arguments,
+                        object : TypeToken<ProjectV2CreatedUpdatedSocketResponse>() {}.type
+                    ).data
 
                     addCreatedProjectInLocal(newProject, projectsV2Dao)
                 }
 
                 SocketHandler.ProjectEvent.PROJECT_UPDATED.name -> {
                     val updatedProject = gson.fromJson<ProjectV2CreatedUpdatedSocketResponse>(
-                            arguments,
-                            object : TypeToken<ProjectV2CreatedUpdatedSocketResponse>() {}.type
-                        ).data
+                        arguments,
+                        object : TypeToken<ProjectV2CreatedUpdatedSocketResponse>() {}.type
+                    ).data
 
                     updateProjectInLocal(updatedProject, projectsV2Dao)
                 }

@@ -10,12 +10,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
-import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2ProfileBinding
 import com.zstronics.ceibro.ui.dashboard.connectionv2Profile.blockunblock.FragmentConnectionBlockUnblockBottomSheet
 import com.zstronics.ceibro.ui.enums.ConnectionStatusActions
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 @AndroidEntryPoint
@@ -33,6 +36,7 @@ class MyConnectionV2ProfileFragment :
 //                navigate(R.id.newTaskFragment)
                 shortToastNow(resources.getString(R.string.not_available))
             }
+
             R.id.closeBtn -> navigateBack()
         }
     }
@@ -50,12 +54,14 @@ class MyConnectionV2ProfileFragment :
                         ColorStateList.valueOf(context.resources.getColor(R.color.appYellow))
                     )
                 }
+
                 item.isCeiborUser && item.isBlocked -> {
                     ImageViewCompat.setImageTintList(
                         binding.ceibroLogo,
                         ColorStateList.valueOf(context.resources.getColor(R.color.appRed))
                     )
                 }
+
                 else -> {
                     ImageViewCompat.setImageTintList(
                         binding.ceibroLogo,
@@ -118,6 +124,7 @@ class MyConnectionV2ProfileFragment :
 
                             }
                         }
+
                         ConnectionStatusActions.UNBLOCK -> {
                             /// API CALL
                             viewModel.unblockUser(item.id) {
@@ -132,4 +139,21 @@ class MyConnectionV2ProfileFragment :
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onGetAllContactsFromAPI(event: LocalEvents.UpdateConnections) {
+        viewModel.reloadConnection()
+
+    }
+
 }

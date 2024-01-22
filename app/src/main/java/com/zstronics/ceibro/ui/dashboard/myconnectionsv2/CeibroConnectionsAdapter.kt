@@ -38,10 +38,9 @@ class CeibroConnectionsAdapter @Inject constructor() :
     }
 
     fun setList(list: List<AllCeibroConnections.CeibroConnection>) {
-        val diffResult = DiffUtil.calculateDiff(CeibroConnectionsDiffCallback(listItems, list))
         this.listItems.clear()
         this.listItems.addAll(list)
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
     }
 
     inner class CeibroConnectionsViewHolder(private val binding: LayoutItemConnectionBinding) :
@@ -61,12 +60,14 @@ class CeibroConnectionsAdapter @Inject constructor() :
                         ColorStateList.valueOf(context.resources.getColor(R.color.appYellow))
                     )
                 }
+
                 item.isCeiborUser && item.isBlocked -> {
                     ImageViewCompat.setImageTintList(
                         binding.ceibroLogo,
                         ColorStateList.valueOf(context.resources.getColor(R.color.appRed))
                     )
                 }
+
                 else -> {
                     ImageViewCompat.setImageTintList(
                         binding.ceibroLogo,
