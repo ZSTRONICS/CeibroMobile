@@ -14,7 +14,6 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -67,17 +66,18 @@ class NotificationActivity : AppCompatActivity() {
         }
 
         if (sessionManager.isLoggedIn()) {
-            val currentFragmentID = CookiesManager.navigationGraphStartDestination
+            val currentFragmentID = CeibroApplication.CookiesManager.navigationGraphStartDestination
             if (extrasType == 3 && currentFragmentID == R.id.taskDetailV2Fragment) {      // type 3 is when user taps open button in notification
 
-                val detailViewTask: CeibroTaskV2? = CookiesManager.taskDataForDetails
+                val detailViewTask: CeibroTaskV2? =
+                    CeibroApplication.CookiesManager.taskDataForDetails
                 if (taskData?.taskId == detailViewTask?.id) {
                     //Do nothing, because user is already in detail view of same task whose notification has came
                     //println("NotificationActivityFragmentCheck = Detail View And Same task")
                     shortToastNow(resources.getString(R.string.task_already_opened))
                     finish()
                 } else {
-                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                         sessionManager.setUser()
                         sessionManager.setToken()
 
@@ -86,7 +86,8 @@ class NotificationActivity : AppCompatActivity() {
                         ) {
                             putExtra(NAVIGATION_Graph_ID, navigationGraphId)
                             putExtra(
-                                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.ceibroDataLoadingFragment
                             )
                         }
                     } else {
@@ -106,14 +107,14 @@ class NotificationActivity : AppCompatActivity() {
 
             } else if (extrasType == 1 && currentFragmentID == R.id.commentFragment) {      // type 1 is when user taps reply button in notification
 
-                val detailTaskId = CookiesManager.taskIdInDetails
+                val detailTaskId = CeibroApplication.CookiesManager.taskIdInDetails
                 if (taskData?.taskId == detailTaskId) {
                     //Do nothing, because user is already in detail view of same task whose notification has came
                     //println("NotificationActivityFragmentCheck = Detail View And Same task")
                     shortToastNow(resources.getString(R.string.reply_screen_already_opened))
                     finish()
                 } else {
-                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                         sessionManager.setUser()
                         sessionManager.setToken()
 
@@ -122,7 +123,8 @@ class NotificationActivity : AppCompatActivity() {
                         ) {
                             putExtra(NAVIGATION_Graph_ID, navigationGraphId)
                             putExtra(
-                                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.ceibroDataLoadingFragment
                             )
                         }
                     } else {
@@ -142,14 +144,14 @@ class NotificationActivity : AppCompatActivity() {
 
             } else if (extrasType == 2 && (currentFragmentID == R.id.forwardTaskFragment || currentFragmentID == R.id.forwardFragment)) {      // type 2 is when user taps forward button in notification
 
-                val detailTaskId = CookiesManager.taskIdInDetails
+                val detailTaskId = CeibroApplication.CookiesManager.taskIdInDetails
                 if (taskData?.taskId == detailTaskId) {
                     //Do nothing, because user is already in detail view of same task whose notification has came
                     //println("NotificationActivityFragmentCheck = Detail View And Same task")
                     shortToastNow(resources.getString(R.string.forward_screen_already_opened))
                     finish()
                 } else {
-                    if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                    if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                         sessionManager.setUser()
                         sessionManager.setToken()
 
@@ -158,7 +160,8 @@ class NotificationActivity : AppCompatActivity() {
                         ) {
                             putExtra(NAVIGATION_Graph_ID, navigationGraphId)
                             putExtra(
-                                NAVIGATION_Graph_START_DESTINATION_ID, R.id.ceibroDataLoadingFragment
+                                NAVIGATION_Graph_START_DESTINATION_ID,
+                                R.id.ceibroDataLoadingFragment
                             )
                         }
                     } else {
@@ -177,7 +180,7 @@ class NotificationActivity : AppCompatActivity() {
                 }
 
             } else {
-                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                     sessionManager.setUser()
                     sessionManager.setToken()
 

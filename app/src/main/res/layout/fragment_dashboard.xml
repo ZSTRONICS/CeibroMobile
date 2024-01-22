@@ -39,8 +39,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/imageView5"
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ceibroDashboardLogo"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -557,80 +557,78 @@
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
-            android:fitsSystemWindows="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="start">
+            android:layout_gravity="start"
+            android:background="@color/white"
+            android:fitsSystemWindows="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:paddingHorizontal="@dimen/_15sdp">
-
+                android:paddingHorizontal="@dimen/_10sdp">
 
                 <LinearLayout
                     android:id="@+id/custom_navigation_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:orientation="vertical"
-                    app:layout_constraintBottom_toTopOf="@+id/clConnections"
+                    app:layout_constraintBottom_toTopOf="@+id/menuFooterConnectionsBtn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/imageView55"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_15sdp"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                        android:padding="@dimen/_5sdp"
-                        app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
-                        app:layout_constraintEnd_toStartOf="@+id/view2"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/profileIcon"
-                        app:srcCompat="@drawable/ceibro_inline_logo_black" />
-
+                        android:layout_height="49dp"
+                        android:layout_marginTop="@dimen/_11sdp"
+                        android:padding="@dimen/_1sdp"
+                        app:srcCompat="@drawable/ceibro_inline_logo_black"/>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/usersHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:orientation="vertical"
-                        android:padding="@dimen/_10sdp">
+                        android:paddingVertical="@dimen/_6sdp"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_10sdp">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivUsers"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_15sdp"
-                            android:layout_marginBottom="@dimen/_3sdp"
-                            android:src="@drawable/icon_friends"
+                            android:layout_width="@dimen/_18sdp"
+                            android:layout_height="@dimen/_19sdp"
+                            android:src="@drawable/icon_new_friends"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/black" />
 
                         <TextView
+                            android:id="@+id/textView3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="Users"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="@string/users_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:textSize="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivUsers"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="@+id/ivUsers" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivDropDown"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:src="@drawable/icon_drop_down"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivUsers"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="@+id/ivUsers" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -640,32 +638,36 @@
                         android:layout_height="wrap_content"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:orientation="vertical"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_15sdp"
                         android:visibility="gone">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/menuConnectionsBtn"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_50sdp"
+                            android:layout_marginStart="@dimen/_29sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="7dp"
-                            android:text="Connections"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:text="@string/connections_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/menuGroupsBtn"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_50sdp"
+                            android:layout_marginStart="@dimen/_29sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="7dp"
-                            android:text="Groups"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:text="@string/groups"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -676,41 +678,44 @@
                         android:id="@+id/tasksHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_9sdp"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:orientation="vertical"
-                        android:padding="@dimen/_10sdp">
+                        android:paddingVertical="@dimen/_6sdp"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_10sdp">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/ivtasks"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_15sdp"
-                            android:layout_marginBottom="@dimen/_3sdp"
-                            android:src="@drawable/icon_friends"
+                            android:id="@+id/ivTasks"
+                            android:layout_width="@dimen/_18sdp"
+                            android:layout_height="@dimen/_19sdp"
+                            android:src="@drawable/icon_menu_task"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/black" />
 
                         <TextView
+                            android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="Task"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="@string/tasks_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
-                            android:textStyle="bold"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/ivtasks"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            android:textSize="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivTasks"
+                            app:layout_constraintStart_toEndOf="@id/ivTasks"
+                            app:layout_constraintTop_toTopOf="@+id/ivTasks" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivTasksDropDown"
                             android:layout_width="wrap_content"
                             android:layout_height="0dp"
                             android:src="@drawable/icon_drop_down"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivTasks"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="@+id/ivTasks" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -719,60 +724,66 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_15sdp"
                         android:visibility="gone">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/menuToMeTaskBtn"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_50sdp"
+                            android:layout_marginStart="@dimen/_29sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="7dp"
-                            android:text="To me"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:text="@string/to_me_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/menuFromMeTaskBtn"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_50sdp"
+                            android:layout_marginStart="@dimen/_29sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="7dp"
-                            android:text="From me"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:text="@string/from_me_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/menuHiddenTaskBtn"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_50sdp"
+                            android:layout_marginStart="@dimen/_29sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="7dp"
-                            android:text="Hidden"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:text="@string/hidden_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/menuCancelledTaskBtn"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_50sdp"
+                            android:layout_marginStart="@dimen/_29sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="7dp"
-                            android:text="Cancelled"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:text="@string/canceled"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -783,28 +794,33 @@
                         android:id="@+id/projectsHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_9sdp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:orientation="vertical"
-                        android:padding="@dimen/_10sdp">
+                        android:paddingVertical="@dimen/_6sdp"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_10sdp">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivprojects"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_15sdp"
-                            android:layout_marginBottom="@dimen/_3sdp"
-                            android:src="@drawable/icon_friends"
+                            android:layout_width="@dimen/_18sdp"
+                            android:layout_height="@dimen/_19sdp"
+                            android:paddingBottom="@dimen/_2sdp"
+                            android:src="@drawable/icon_folder"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/black" />
 
                         <TextView
+                            android:id="@+id/textView4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="Projects"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="@string/projects_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
-                            android:textStyle="bold"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivprojects"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -815,105 +831,110 @@
                         android:id="@+id/notesHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_9sdp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:orientation="vertical"
-                        android:padding="@dimen/_10sdp">
+                        android:paddingVertical="@dimen/_6sdp"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_10sdp">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivNotes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/_15sdp"
-                            android:layout_marginBottom="@dimen/_3sdp"
-                            android:src="@drawable/icon_friends"
+                            android:layout_width="@dimen/_18sdp"
+                            android:layout_height="@dimen/_19sdp"
+                            android:src="@drawable/icon_menu_notes"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/black" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_10sdp"
-                            android:fontFamily="@font/inter_medium"
-                            android:text="Notes"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="@string/notes_heading"
                             android:textColor="@color/black"
-                            android:textSize="@dimen/_13sdp"
-                            android:textStyle="bold"
+                            android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivNotes"
                             app:layout_constraintTop_toTopOf="parent" />
-
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/clConnections"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/signin_button_back"
-                    android:orientation="vertical"
-                    android:padding="@dimen/_10sdp"
-                    app:layout_constraintBottom_toTopOf="@id/profileFooter">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/ivConnections"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_15sdp"
-                        android:layout_marginEnd="@dimen/_10sdp"
-                        android:src="@drawable/icon_friends"
-                        android:tint="@color/white"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/tvConnectins"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvConnectins"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_medium"
-                        android:gravity="center"
-                        android:text="Connections"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_14sdp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/ivConnections"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/menuFooterConnectionsBtn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="55dp"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:backgroundTint="@color/appBlue"
+                    android:fontFamily="@font/inter_medium"
+                    android:letterSpacing="0.03"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:text="@string/connections_heading"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:icon="@drawable/icon_new_friends"
+                    app:iconGravity="textStart"
+                    app:iconPadding="12dp"
+                    app:iconTint="@color/white"
+                    app:layout_constraintBottom_toTopOf="@id/profileFooter"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:strokeColor="@color/appBlue"
+                    app:strokeWidth="2dp" />
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/profileFooter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_9sdp"
                     android:orientation="vertical"
-                    android:paddingVertical="@dimen/_10sdp"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    android:paddingVertical="@dimen/_2sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
 
-
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/ivprofile"
-                        android:layout_width="@dimen/_30sdp"
-                        android:layout_height="@dimen/_30sdp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/profile_img"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_centerHorizontal="true"
+                        app:cardBackgroundColor="@color/appGrey0"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="4dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:loadImageFromUrl="@{viewModel.sessionManager.Companion.user.profilePic}" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/menuProfileImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:padding="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/profile_img"
+                            app:loadSmallImageFromUrl="@{viewModel.sessionManager.Companion.user.profilePic}" />
+                    </androidx.cardview.widget.CardView>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_10sdp"
-                        android:fontFamily="@font/inter_medium"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_semibold"
+                        android:maxLines="1"
                         android:text='@{viewModel.sessionManager.Companion.user.firstName + " " + viewModel.sessionManager.Companion.user.surName}'
                         android:textColor="@color/black"
-                        android:textSize="@dimen/_14sdp"
-                        android:textStyle="bold"
+                        android:textSize="@dimen/_13sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/ivprofile"

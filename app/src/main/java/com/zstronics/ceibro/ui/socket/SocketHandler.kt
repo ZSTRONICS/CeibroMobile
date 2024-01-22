@@ -5,7 +5,7 @@ import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BuildConfig
-import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -79,9 +79,9 @@ object SocketHandler {
             options.reconnectionAttempts = Integer.MAX_VALUE
             options.timeout = 10000
             options.auth =
-                mapOf("token" to CookiesManager.jwtToken) // Use auth for token instead of query
+                mapOf("token" to CeibroApplication.CookiesManager.jwtToken) // Use auth for token instead of query
             options.query =
-                "secureUUID=${CookiesManager.secureUUID}&deviceType=${CookiesManager.deviceType}&androidId=${CookiesManager.androidId}"
+                "secureUUID=${CeibroApplication.CookiesManager.secureUUID}&deviceType=${CeibroApplication.CookiesManager.deviceType}&androidId=${CeibroApplication.CookiesManager.androidId}"
 //            println("QueryOnSocket: ${options.query}")
 
             mSocket = IO.socket(BuildConfig.SOCKET_URL, options)
@@ -106,7 +106,7 @@ object SocketHandler {
             mSocket?.on(
                 Socket.EVENT_CONNECT_ERROR
             ) {
-                CookiesManager.appFirstStartForSocket.postValue(false)
+                CeibroApplication.CookiesManager.appFirstStartForSocket.postValue(false)
                 println("Heartbeat, Socket EVENT_CONNECT_ERROR")
                 handler.removeCallbacks(runnable)
 //                hbCounter = 0
@@ -128,14 +128,14 @@ object SocketHandler {
                 if (sharedViewModel != null) {
                     sharedViewModel.isConnectedToServer.postValue(true)
                 }
-                if (CookiesManager.appFirstStartForSocket.value == true) {
-                    CookiesManager.appFirstStartForSocket.postValue(false)
+                if (CeibroApplication.CookiesManager.appFirstStartForSocket.value == true) {
+                    CeibroApplication.CookiesManager.appFirstStartForSocket.postValue(false)
                     Handler(Looper.getMainLooper()).postDelayed({
                         println("Heartbeat, Socket Data Cleared")
                         sendClearData()
                     }, 100)
                 }
-                CookiesManager.socketOnceConnected.postValue(true)
+                CeibroApplication.CookiesManager.socketOnceConnected.postValue(true)
                 Handler(Looper.getMainLooper()).postDelayed({
                     println("Heartbeat, Socket emitIsSyncRequired")
                     emitIsSyncRequired()

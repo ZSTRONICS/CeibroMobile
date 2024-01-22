@@ -432,7 +432,7 @@
                     android:text="@string/to"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    app:drawableEndCompat="@drawable/icon_drop_down"
+                    app:drawableEndCompat="@drawable/arrow_drop_up"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -443,7 +443,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
 
                     <TextView
@@ -526,7 +526,7 @@
                     android:text="@string/from"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    app:drawableEndCompat="@drawable/icon_drop_down"
+                    app:drawableEndCompat="@drawable/arrow_drop_up"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -538,7 +538,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/fromUnredStateText"
@@ -708,16 +708,16 @@
                     android:id="@+id/llCheckAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}">
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tvCheckAll"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginStart="@dimen/_2sdp"
                         android:layout_marginEnd="@dimen/_4sdp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/inter_regular"
                         android:gravity="center"
                         android:text="@string/select_all"
@@ -728,12 +728,12 @@
                         android:id="@+id/cbSelectAll"
                         android:layout_width="30dp"
                         android:layout_height="37dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="center"
-                        android:checked="true"
                         android:layout_marginEnd="3dp"
+                        android:checked="true"
+                        android:clickable="false"
                         android:focusable="false"
-                        android:clickable="false" />
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center" />
                 </LinearLayout>
 
             </androidx.appcompat.widget.LinearLayoutCompat>

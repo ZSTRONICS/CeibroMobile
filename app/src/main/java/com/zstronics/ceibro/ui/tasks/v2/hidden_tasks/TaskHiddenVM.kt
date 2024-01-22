@@ -10,10 +10,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -52,9 +52,9 @@ class TaskHiddenVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val allHiddenCanceledTasks = CookiesManager.hiddenCanceledTasks.value ?: mutableListOf()
-            val allHiddenOngoingTasks = CookiesManager.hiddenOngoingTasks.value ?: mutableListOf()
-            val allHiddenDoneTasks = CookiesManager.hiddenDoneTasks.value ?: mutableListOf()
+            val allHiddenCanceledTasks = CeibroApplication.CookiesManager.hiddenCanceledTasks.value ?: mutableListOf()
+            val allHiddenOngoingTasks = CeibroApplication.CookiesManager.hiddenOngoingTasks.value ?: mutableListOf()
+            val allHiddenDoneTasks = CeibroApplication.CookiesManager.hiddenDoneTasks.value ?: mutableListOf()
             val allHiddenTasks = mutableListOf<CeibroTaskV2>()
             allHiddenTasks.addAll(allHiddenCanceledTasks)
             allHiddenTasks.addAll(allHiddenOngoingTasks)
@@ -81,9 +81,9 @@ class TaskHiddenVM @Inject constructor(
                 allTasksList.addAll(ongoingTasks)
                 allTasksList.addAll(doneTasks)
 
-                CookiesManager.hiddenCanceledTasks.postValue(canceledTasks)
-                CookiesManager.hiddenOngoingTasks.postValue(ongoingTasks)
-                CookiesManager.hiddenDoneTasks.postValue(doneTasks)
+                CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(canceledTasks)
+                CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(ongoingTasks)
+                CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(doneTasks)
 
                 _cancelledTasks.postValue(canceledTasks)
                 _ongoingTasks.postValue(ongoingTasks)

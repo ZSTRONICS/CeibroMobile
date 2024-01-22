@@ -6,7 +6,6 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentProjectInfoV2Binding
 import com.zstronics.ceibro.utils.DateUtils
@@ -27,11 +26,6 @@ class ProjectInfoV2Fragment :
         }
     }
 
-    override fun onDetach() {
-        CookiesManager.projectDataForDetails = null
-        CookiesManager.projectNameForDetails = ""
-        super.onDetach()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

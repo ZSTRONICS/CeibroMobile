@@ -3,8 +3,8 @@ package com.zstronics.ceibro.ui.locationv2.locationdrawing
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -50,7 +50,7 @@ class LocationDrawingV2VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-        val project = CookiesManager.locationProjectDataForDetails
+        val project = CeibroApplication.CookiesManager.locationProjectDataForDetails
         project?.let {
             _projectData.postValue(it)
             getGroupsByProjectID(it._id)

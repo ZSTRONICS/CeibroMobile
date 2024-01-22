@@ -25,6 +25,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
 import com.zstronics.ceibro.base.extensions.finish
@@ -37,7 +38,6 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetail
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.chat.messages.socket.SocketEventTypeResponse
@@ -100,7 +100,6 @@ class DashboardFragment :
             R.id.usersHeader -> {
 
 
-
                 mViewDataBinding.apply {
                     if (usersGroup.visibility == View.VISIBLE) {
                         ivDropDown.setImageResource(R.drawable.icon_drop_down)
@@ -112,6 +111,7 @@ class DashboardFragment :
                 }
 
             }
+
             R.id.tasksHeader -> {
 
                 mViewDataBinding.apply {
@@ -127,7 +127,7 @@ class DashboardFragment :
             }
 
 
-            R.id.imageView5 -> {
+            R.id.ceibroDashboardLogo -> {
 
                 openNavigationView(mViewDataBinding.myDrawerLayout, mViewDataBinding.navigationView)
 
@@ -237,9 +237,9 @@ class DashboardFragment :
                 if (!NavHostPresenterActivity.isDrawingLoaded) {
                     val drawing = viewModel.sessionManager.getCompleteDrawingObj()
                     drawing?.let {
-                        CookiesManager.drawingFileForLocation.value = it
-                        CookiesManager.cameToLocationViewFromProject = true
-                        CookiesManager.openingNewLocationFile = true
+                        CeibroApplication.CookiesManager.drawingFileForLocation.value = it
+                        CeibroApplication.CookiesManager.cameToLocationViewFromProject = true
+                        CeibroApplication.CookiesManager.openingNewLocationFile = true
                         NavHostPresenterActivity.isDrawingLoaded = true
 
                         viewState.locationProjectSelected.value = false
@@ -444,8 +444,8 @@ class DashboardFragment :
         mViewDataBinding.navigationView.requestLayout()
 
 
-//        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
-//            println("CookiesManager.drawingFileForLocation: $it")
+//        CeibroApplication.CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
+//            println("CeibroApplication.CookiesManager.drawingFileForLocation: $it")
 //            changeSelectedTab(R.id.locationBtn, false)
 //        }
 
@@ -626,10 +626,10 @@ class DashboardFragment :
                             println("Heartbeat, Internet observer")
                             if (SocketHandler.getSocket() == null || SocketHandler.getSocket()
                                     ?.connected() == null ||
-                                !appStartWithInternet || CookiesManager.socketOnceConnected.value == false
+                                !appStartWithInternet || CeibroApplication.CookiesManager.socketOnceConnected.value == false
                             ) {
                                 println("Heartbeat, Internet observer Socket setting new")
-                                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                                     viewModel.sessionManager.setUser()
                                     viewModel.sessionManager.setToken()
                                 }
@@ -921,8 +921,8 @@ class DashboardFragment :
     fun onLoadDrawingInLocation(event: LocalEvents.LoadDrawingInLocation) {
         EventBus.getDefault().removeStickyEvent(event)
         Handler(Looper.getMainLooper()).postDelayed({
-            CookiesManager.cameToLocationViewFromProject = true
-            CookiesManager.openingNewLocationFile = true
+            CeibroApplication.CookiesManager.cameToLocationViewFromProject = true
+            CeibroApplication.CookiesManager.openingNewLocationFile = true
             viewState.locationProjectSelected.value = false
             viewState.locationDrawingSelected.value = false
             viewState.locationViewSelected.value = true
@@ -1025,6 +1025,7 @@ class DashboardFragment :
             finish()
         }
     }
+
     object Screen {
         val width: Int
             get() = Resources.getSystem().displayMetrics.widthPixels

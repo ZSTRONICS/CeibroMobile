@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -57,9 +57,9 @@ class TaskFromMeVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val allFromMeUnreadTasks = CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
-            val allFromMeOngoingTasks = CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
-            val allFromMeDoneTasks = CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+            val allFromMeUnreadTasks = CeibroApplication.CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+            val allFromMeOngoingTasks = CeibroApplication.CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+            val allFromMeDoneTasks = CeibroApplication.CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
             val allFromMeTasks = mutableListOf<CeibroTaskV2>()
             allFromMeTasks.addAll(allFromMeUnreadTasks)
             allFromMeTasks.addAll(allFromMeOngoingTasks)
@@ -109,9 +109,9 @@ class TaskFromMeVM @Inject constructor(
                 allTasksList.addAll(ongoingTasks)
                 allTasksList.addAll(doneTasks)
 
-                CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
-                CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
-                CookiesManager.fromMeDoneTasks.postValue(doneTasks)
+                CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(doneTasks)
 
                 if (firstStartOfFragment) {
                     selectedState = if (unreadTasks.isNotEmpty()) {

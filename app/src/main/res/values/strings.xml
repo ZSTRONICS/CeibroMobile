@@ -630,4 +630,5 @@
     <string name="select_all">Select All</string>
     <string name="group_drawing_not_uploaded_in_this_group_yet">Group / drawing not uploaded in this group yet.</string>
     <string name="ceibro_drawing">Ceibro Drawing</string>
+    <string name="notes_heading">Notes</string>
 </resources>

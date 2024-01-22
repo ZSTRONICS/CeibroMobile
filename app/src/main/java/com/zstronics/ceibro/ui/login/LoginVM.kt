@@ -4,18 +4,17 @@ import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.KEY_User_Last_Login_Time
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.resourses.IResourceProvider
 import com.zstronics.ceibro.ui.contacts.toLightContacts
@@ -66,9 +65,9 @@ class LoginVM @Inject constructor(
 
                 is ApiResponse.Success -> {
                     val secureUUID = UUID.randomUUID()
-                    CookiesManager.deviceType = deviceInfo.toString()
-                    CookiesManager.secureUUID = secureUUID.toString()
-                    CookiesManager.androidId = androidId
+                    CeibroApplication.CookiesManager.deviceType = deviceInfo.toString()
+                    CeibroApplication.CookiesManager.secureUUID = secureUUID.toString()
+                    CeibroApplication.CookiesManager.androidId = androidId
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,

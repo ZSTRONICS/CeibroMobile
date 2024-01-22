@@ -4,6 +4,7 @@ import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_DATA_SYNC_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_DEVICE_TYPE
@@ -20,7 +21,6 @@ import com.zstronics.ceibro.base.KEY_SECURE_UUID
 import com.zstronics.ceibro.base.KEY_SYNCED_CONTACTS
 import com.zstronics.ceibro.base.KEY_TOKEN
 import com.zstronics.ceibro.base.KEY_USER
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.User
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
@@ -44,11 +44,11 @@ class SessionManager constructor(
             KEY_IS_USER_LOGGED_IN,
             rememberMe
         )
-        CookiesManager.isLoggedIn = true
-        CookiesManager.jwtToken = tokens.access.token
-        CookiesManager.secureUUID = secureUUID
-        CookiesManager.deviceType = deviceType
-        CookiesManager.androidId = androidId
+        CeibroApplication.CookiesManager.isLoggedIn = true
+        CeibroApplication.CookiesManager.jwtToken = tokens.access.token
+        CeibroApplication.CookiesManager.secureUUID = secureUUID
+        CeibroApplication.CookiesManager.deviceType = deviceType
+        CeibroApplication.CookiesManager.androidId = androidId
         sharedPreferenceManager.saveCompleteUserObj(KEY_USER, user)
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
         sharedPreferenceManager.saveString(KEY_PASS, pass)
@@ -88,11 +88,11 @@ class SessionManager constructor(
             )
         }, 500)
 
-        CookiesManager.isLoggedIn = false
-        CookiesManager.jwtToken = ""
-        CookiesManager.secureUUID = ""
-        CookiesManager.deviceType = ""
-        CookiesManager.androidId = ""
+        CeibroApplication.CookiesManager.isLoggedIn = false
+        CeibroApplication.CookiesManager.jwtToken = ""
+        CeibroApplication.CookiesManager.secureUUID = ""
+        CeibroApplication.CookiesManager.deviceType = ""
+        CeibroApplication.CookiesManager.androidId = ""
     }
 
     companion object {
@@ -174,8 +174,8 @@ class SessionManager constructor(
 
     fun updateTokens(tokens: Tokens) {
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
-        CookiesManager.isLoggedIn = true
-        CookiesManager.jwtToken = tokens.access.token
+        CeibroApplication.CookiesManager.isLoggedIn = true
+        CeibroApplication.CookiesManager.jwtToken = tokens.access.token
     }
 
     fun setToken() {
@@ -183,11 +183,11 @@ class SessionManager constructor(
         val secureUUID = sharedPreferenceManager.getValueString(KEY_SECURE_UUID) ?: ""
         val deviceType = sharedPreferenceManager.getValueString(KEY_DEVICE_TYPE) ?: ""
         val androidId = sharedPreferenceManager.getValueString(KEY_ANDROID_ID) ?: ""
-        CookiesManager.isLoggedIn = true
-        CookiesManager.jwtToken = tokenPref?.access?.token
-        CookiesManager.secureUUID = secureUUID
-        CookiesManager.deviceType = deviceType
-        CookiesManager.androidId = androidId
+        CeibroApplication.CookiesManager.isLoggedIn = true
+        CeibroApplication.CookiesManager.jwtToken = tokenPref?.access?.token
+        CeibroApplication.CookiesManager.secureUUID = secureUUID
+        CeibroApplication.CookiesManager.deviceType = deviceType
+        CeibroApplication.CookiesManager.androidId = androidId
     }
 
     private fun getTokens(): Tokens? {
@@ -219,7 +219,7 @@ class SessionManager constructor(
 
     fun refreshToken(tokens: Tokens) {
         sharedPreferenceManager.saveCompleteTokenObj(KEY_TOKEN, tokens)
-        CookiesManager.jwtToken = tokens.access.token
+        CeibroApplication.CookiesManager.jwtToken = tokens.access.token
     }
 
     fun getRefreshToken(): String? {

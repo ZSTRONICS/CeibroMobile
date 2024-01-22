@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.work.WorkManager
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.KEY_TOKEN_VALID
 import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
@@ -78,7 +78,7 @@ class CeibroDataLoadingVM @Inject constructor(
         val navigationGraphId1 = bundle?.getInt(NAVIGATION_Graph_ID, 0)
         val startDestinationId1 = bundle?.getInt(NAVIGATION_Graph_START_DESTINATION_ID, 0)
         taskData?.let {
-            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+            if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
                 sessionManager.setToken()
                 sessionManager.isUserLoggedIn()
@@ -126,37 +126,62 @@ class CeibroDataLoadingVM @Inject constructor(
 //                    taskDao.deleteAllTasksData()
                     sessionManager.saveUpdatedAtTimeStamp(response.data.newData.latestUpdatedAt)
 
-                    val allTasks = response.data.newData.allTasks ?: taskDao.getAllTasks()?.toMutableList() ?: mutableListOf<CeibroTaskV2>()
-                    val allEvents = response.data.newData.allEvents ?: taskDao.getAllEvents()?.toMutableList() ?: mutableListOf<Events>()
-                    val allDrawingPins = response.data.newData.allPins ?: mutableListOf<CeibroDrawingPins>()
+                    val allTasks =
+                        response.data.newData.allTasks ?: taskDao.getAllTasks()?.toMutableList()
+                        ?: mutableListOf<CeibroTaskV2>()
+                    val allEvents =
+                        response.data.newData.allEvents ?: taskDao.getAllEvents()?.toMutableList()
+                        ?: mutableListOf<Events>()
+                    val allDrawingPins =
+                        response.data.newData.allPins ?: mutableListOf<CeibroDrawingPins>()
 
                     taskDao.insertMultipleTasks(allTasks)
                     taskDao.insertMultipleEvents(allEvents)
                     drawingPinsDao.insertMultiplePins(allDrawingPins)
 
-                    val toMeNewTask = allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
-                    val toMeOngoingTask = allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
-                    val toMeDoneTask = allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeNewTask =
+                        allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeOngoingTask =
+                        allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+                    val toMeDoneTask =
+                        allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
 
-                    val fromMeUnreadTask = allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
-                    val fromMeOngoingTask = allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
-                    val fromMeDoneTask = allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeUnreadTask =
+                        allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeOngoingTask =
+                        allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+                    val fromMeDoneTask =
+                        allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
 
-                    val hiddenCanceledTask = allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
-                    val hiddenOngoingTask = allTasks.filter { it.hiddenState == TaskStatus.ONGOING.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
-                    val hiddenDoneTask = allTasks.filter { it.hiddenState == TaskStatus.DONE.name.lowercase() }.sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenCanceledTask =
+                        allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenOngoingTask =
+                        allTasks.filter { it.hiddenState == TaskStatus.ONGOING.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+                    val hiddenDoneTask =
+                        allTasks.filter { it.hiddenState == TaskStatus.DONE.name.lowercase() }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
 
-                    CookiesManager.toMeNewTasks.postValue(toMeNewTask)
-                    CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-                    CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                    CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
-                    CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
-                    CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
-                    CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+                    CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                    CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                    CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
 
-                    CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
-                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                    CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
+                        hiddenCanceledTask
+                    )
+                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
                     apiSucceedCount++
                     callBack.invoke()
@@ -164,27 +189,38 @@ class CeibroDataLoadingVM @Inject constructor(
 
                 is ApiResponse.Error -> {
                     println("DataLoading-Tasks Data error ${response.error.message}")
-                    val newTasks = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
-                    val ongoingTasks = taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val doneTasks = taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                    val fromMeUnreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
-                    val fromMeOngoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val fromMeDoneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                    val hiddenCanceledTasks = taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
-                    val hiddenOngoingTasks = taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val hiddenDoneTasks = taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val newTasks =
+                        taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+                    val ongoingTasks =
+                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val doneTasks =
+                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val fromMeUnreadTasks =
+                        taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                    val fromMeOngoingTasks =
+                        taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val fromMeDoneTasks =
+                        taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    val hiddenCanceledTasks =
+                        taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+                    val hiddenOngoingTasks =
+                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                    val hiddenDoneTasks =
+                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
 
-                    CookiesManager.toMeNewTasks.postValue(newTasks)
-                    CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
-                    CookiesManager.toMeDoneTasks.postValue(doneTasks)
+                    CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
+                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
 
-                    CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
-                    CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
-                    CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
+                    CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
+                    CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
+                    CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
 
-                    CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTasks)
-                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
-                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
+                    CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
+                        hiddenCanceledTasks
+                    )
+                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
+                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
 
                     apiSucceedCount++
                     callBack.invoke()
@@ -228,7 +264,7 @@ class CeibroDataLoadingVM @Inject constructor(
             val user = sessionManager.getUser().value
             sessionManager.saveBooleanValue(
                 KEY_TOKEN_VALID,
-                !CookiesManager.jwtToken.isNullOrEmpty()
+                !CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()
             )
 
             val roomContacts = connectionsV2Dao.getAll()

@@ -40,9 +40,9 @@ class AllProjectsV2VM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
-        getAllProjects()
         getFavoriteProjects()
         getRecentProjects()
+        getAllProjects()
     }
 
     override fun getProjectName(context: Context) {

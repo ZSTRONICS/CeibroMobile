@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
@@ -17,7 +18,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.databinding.FragmentCeibroDataLoadingBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -46,7 +46,7 @@ class CeibroDataLoadingFragment :
     private fun socketEventsInitiating() {
         if (SocketHandler.getSocket() == null || SocketHandler.getSocket()?.connected() == false) {
             println("Heartbeat, CeibroDataLoadingFragment")
-            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+            if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                 viewModel.sessionManager.setToken()
                 viewModel.sessionManager.setUser()
             }

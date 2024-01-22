@@ -8,10 +8,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -57,9 +57,9 @@ class TaskToMeVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val allToMeNewTasks = CookiesManager.toMeNewTasks.value ?: mutableListOf()
-            val allToMeOngoingTasks = CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
-            val allToMeDoneTasks = CookiesManager.toMeDoneTasks.value ?: mutableListOf()
+            val allToMeNewTasks = CeibroApplication.CookiesManager.toMeNewTasks.value ?: mutableListOf()
+            val allToMeOngoingTasks = CeibroApplication.CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
+            val allToMeDoneTasks = CeibroApplication.CookiesManager.toMeDoneTasks.value ?: mutableListOf()
             val allTasksList = mutableListOf<CeibroTaskV2>()
             allTasksList.addAll(allToMeNewTasks)
             allTasksList.addAll(allToMeOngoingTasks)
@@ -108,9 +108,9 @@ class TaskToMeVM @Inject constructor(
                 allTasks.addAll(ongoingTasks)
                 allTasks.addAll(doneTasks)
 
-                CookiesManager.toMeNewTasks.postValue(newTasks)
-                CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
-                CookiesManager.toMeDoneTasks.postValue(doneTasks)
+                CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
+                CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
 
                 if (firstStartOfFragment) {
                     selectedState = if (newTasks.isNotEmpty()) {

@@ -2,8 +2,8 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask
 
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -42,7 +42,7 @@ class ForwardTaskVM @Inject constructor(
         val tasksId = bundle?.getString("taskId")
         tasksId?.let {
             taskId = it
-            CookiesManager.taskIdInDetails = it
+            CeibroApplication.CookiesManager.taskIdInDetails = it
         }
         if (!selectedContact.isNullOrEmpty()) {
             oldSelectedContacts = selectedContact
@@ -53,12 +53,12 @@ class ForwardTaskVM @Inject constructor(
         val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
         notificationTaskData.postValue(notificationData)
         notificationData?.let {
-            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+            if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
                 sessionManager.isUserLoggedIn()
             }
             taskId = it.taskId
-            CookiesManager.taskIdInDetails = it.taskId
+            CeibroApplication.CookiesManager.taskIdInDetails = it.taskId
             launch {
                 val task = taskDao.getTaskByID(it.taskId)
                 task?.let { task1 ->

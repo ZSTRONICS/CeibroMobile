@@ -11,9 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentAllProjectsV2Binding
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -71,8 +71,8 @@ class AllProjectsV2Fragment :
         sectionedAdapter.setCallBack { view, position, ceibroProjectV2, tag ->
             when (tag) {
                 "detail" -> {
-                    CookiesManager.projectNameForDetails = ceibroProjectV2.title
-                    CookiesManager.projectDataForDetails = ceibroProjectV2
+                    CeibroApplication.CookiesManager.projectNameForDetails = ceibroProjectV2.title
+                    CeibroApplication.CookiesManager.projectDataForDetails = ceibroProjectV2
                     navigate(R.id.projectDetailV2Fragment)
                 }
 

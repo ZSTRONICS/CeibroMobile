@@ -25,6 +25,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
@@ -36,7 +37,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -179,10 +179,10 @@ class TaskDetailV2Fragment :
 
     //This function is called when fragment is closed and detach from activity
     override fun onDetach() {
-        CookiesManager.taskDataForDetails = null
-        CookiesManager.taskDetailEvents = null
-        CookiesManager.taskDetailRootState = null
-        CookiesManager.taskDetailSelectedSubState = null
+        CeibroApplication.CookiesManager.taskDataForDetails = null
+        CeibroApplication.CookiesManager.taskDetailEvents = null
+        CeibroApplication.CookiesManager.taskDetailRootState = null
+        CeibroApplication.CookiesManager.taskDetailSelectedSubState = null
         super.onDetach()
     }
 

@@ -11,8 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import android.widget.SearchView
@@ -24,13 +22,13 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
@@ -309,12 +307,12 @@ class LocationDrawingV2Fragment :
 
         sectionedAdapter.drawingFileCallBack { view, data, absolutePath ->
             data.uploaderLocalFilePath = absolutePath
-            CookiesManager.drawingFileForLocation.value = data
+            CeibroApplication.CookiesManager.drawingFileForLocation.value = data
             NavHostPresenterActivity.isDrawingLoaded = true
             viewModel.sessionManagerInternal.saveCompleteDrawingObj(data)
 
-            CookiesManager.cameToLocationViewFromProject = false
-            CookiesManager.openingNewLocationFile = true
+            CeibroApplication.CookiesManager.cameToLocationViewFromProject = false
+            CeibroApplication.CookiesManager.openingNewLocationFile = true
             EventBus.getDefault().post(LocalEvents.LoadViewDrawingFragmentInLocation())
         }
 
