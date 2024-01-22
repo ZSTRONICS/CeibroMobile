@@ -5,24 +5,29 @@ import android.app.AlertDialog
 import android.app.NotificationManager
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.MainThread
 import androidx.core.os.bundleOf
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
+import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
@@ -84,11 +89,48 @@ class DashboardFragment :
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
 
+
     override fun onClick(id: Int) {
 
         when (id) {
             R.id.createNewTaskBtn -> {
                 navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
+            }
+
+            R.id.usersHeader -> {
+
+
+
+                mViewDataBinding.apply {
+                    if (usersGroup.visibility == View.VISIBLE) {
+                        ivDropDown.setImageResource(R.drawable.icon_drop_down)
+                        usersGroup.visibility = View.GONE
+                    } else {
+                        ivDropDown.setImageResource(R.drawable.arrow_drop_up)
+                        usersGroup.visibility = View.VISIBLE
+                    }
+                }
+
+            }
+            R.id.tasksHeader -> {
+
+                mViewDataBinding.apply {
+                    if (tasksGroup.visibility == View.VISIBLE) {
+                        ivTasksDropDown.setImageResource(R.drawable.icon_drop_down)
+                        tasksGroup.visibility = View.GONE
+                    } else {
+                        ivTasksDropDown.setImageResource(R.drawable.arrow_drop_up)
+                        tasksGroup.visibility = View.VISIBLE
+                    }
+                }
+
+            }
+
+
+            R.id.imageView5 -> {
+
+                openNavigationView(mViewDataBinding.myDrawerLayout, mViewDataBinding.navigationView)
+
             }
 
             R.id.profileImg -> navigateToProfile()
@@ -396,6 +438,12 @@ class DashboardFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val widthOfNav = (Screen.width) * 0.75
+        mViewDataBinding.navigationView.layoutParams.width = widthOfNav.toInt()
+        mViewDataBinding.navigationView.requestLayout()
+
+
 //        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
 //            println("CookiesManager.drawingFileForLocation: $it")
 //            changeSelectedTab(R.id.locationBtn, false)
@@ -408,14 +456,14 @@ class DashboardFragment :
         viewState.locationSelected.observe(viewLifecycleOwner) {
             viewState.setAddTaskButtonVisibility.value = it
         }
-//
-//        val callback = object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                showCloseAppDialog()
-//            }
-//        }
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                checkDrawer()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         viewModel.updateRootUnread(requireActivity())
 
 
@@ -962,4 +1010,26 @@ class DashboardFragment :
             .show()
     }
 
+    private fun openNavigationView(drawerLayout: DrawerLayout, navigationView: NavigationView) {
+
+        if (!drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.openDrawer(navigationView)
+        }
+    }
+
+    fun checkDrawer() {
+        if (mViewDataBinding.myDrawerLayout.isDrawerOpen(mViewDataBinding.navigationView)) {
+            mViewDataBinding.myDrawerLayout.closeDrawer(mViewDataBinding.navigationView)
+
+        } else {
+            finish()
+        }
+    }
+    object Screen {
+        val width: Int
+            get() = Resources.getSystem().displayMetrics.widthPixels
+
+        val height: Int
+            get() = Resources.getSystem().displayMetrics.heightPixels
+    }
 }
