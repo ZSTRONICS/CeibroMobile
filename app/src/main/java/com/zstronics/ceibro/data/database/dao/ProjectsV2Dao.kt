@@ -20,13 +20,18 @@ interface ProjectsV2Dao {
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe ORDER BY updatedAt DESC")
     suspend fun getAllHiddenProjects(isHiddenByMe: Boolean = true): List<CeibroProjectV2>
 
-    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe ORDER BY updatedAt DESC")
-    suspend fun getAllProjects(isHiddenByMe: Boolean = false): List<CeibroProjectV2>?
+    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isFavoriteByMe = :isFavoriteByMe AND isRecentlyUsedByMe = :isRecentlyUsedByMe ORDER BY updatedAt DESC")
+    suspend fun getAllProjects(
+        isHiddenByMe: Boolean = false,
+        isRecentlyUsedByMe: Boolean = false,
+        isFavoriteByMe: Boolean = false,
+    ): List<CeibroProjectV2>?
 
-    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isRecentlyUsedByMe = :isRecentlyUsedByMe ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isRecentlyUsedByMe = :isRecentlyUsedByMe AND isFavoriteByMe = :isFavoriteByMe ORDER BY updatedAt DESC")
     suspend fun getAllRecentUsedProjects(
         isHiddenByMe: Boolean = false,
-        isRecentlyUsedByMe: Boolean = true
+        isRecentlyUsedByMe: Boolean = true,
+        isFavoriteByMe: Boolean = false,
     ): List<CeibroProjectV2>
 
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isFavoriteByMe = :isFavoriteByMe ORDER BY updatedAt DESC")
