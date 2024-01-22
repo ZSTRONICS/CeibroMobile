@@ -368,7 +368,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         return true
     }
 
-    private suspend fun updateAllTasksListForComment(
+    private suspend fun updateAllTasksListForCommentAndForward(
         taskDao: TaskV2Dao,
         eventData: EventV2Response.Data
     ): Boolean {
@@ -384,6 +384,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val toMeNewTask =
                             taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
                         CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                        val toMeOngoingTask =
+                            taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
 
                     } else if (eventData.oldTaskData.userSubState.equals(
                             TaskStatus.ONGOING.name,
@@ -394,6 +398,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
                         CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                        val toMeDoneTask =
+                            taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                        CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
                     } else {
                         val toMeDoneTask =
@@ -408,6 +415,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
                                 .toMutableList()
                         CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                        val fromMeOngoingTask =
+                            taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
 
                     } else if (eventData.oldTaskData.creatorState.equals(
                             TaskStatus.ONGOING.name,
@@ -418,6 +429,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
                         CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                        val fromMeDoneTask =
+                            taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                        CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
 
                     } else {
                         val fromMeDoneTask =
@@ -432,11 +446,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
                         CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                        //Also update to-me so that when task removed from hidden, it should show in any other tab also which will be to-me ongoing
+                        val toMeOngoingTask =
+                            taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
 
                     } else {
                         val hiddenDoneTask =
                             taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                         CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                        val fromMeOngoingTask =
+                            taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+                                .toMutableList()
+                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
                     }
                 }
             } else {
@@ -925,7 +948,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         sessionManager.saveFromMeUnread(true)
                     }
 
-                    updateAllTasksLists(taskDao)
+                    updateAllTasksListForCommentAndForward(taskDao, eventData)
 
                 }.join()
 
@@ -1114,7 +1137,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             }
                         }
 
-                        updateAllTasksListForComment(taskDao, eventData)
+                        updateAllTasksListForCommentAndForward(taskDao, eventData)
 
                     } else {
                         getTaskById(eventData.taskId) { isSuccess, taskData, events ->
@@ -1142,7 +1165,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                         }
                                     }
 
-                                    updateAllTasksListForComment(taskDao, eventData)
+                                    updateAllTasksListForCommentAndForward(taskDao, eventData)
                                 }
                             } else {
                             }
