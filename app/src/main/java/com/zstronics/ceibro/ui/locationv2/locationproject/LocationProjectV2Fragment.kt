@@ -11,11 +11,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
-import com.zstronics.ceibro.databinding.FragmentAllProjectsV2Binding
 import com.zstronics.ceibro.databinding.FragmentLocationProjectsV2Binding
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -69,8 +68,8 @@ class LocationProjectV2Fragment :
         sectionedAdapter.setCallBack { view, position, ceibroProjectV2, tag ->
             when (tag) {
                 "detail" -> {
-                    CookiesManager.locationProjectNameForDetails = ceibroProjectV2.title
-                    CookiesManager.locationProjectDataForDetails = ceibroProjectV2
+                    CeibroApplication.CookiesManager.locationProjectNameForDetails = ceibroProjectV2.title
+                    CeibroApplication.CookiesManager.locationProjectDataForDetails = ceibroProjectV2
                     EventBus.getDefault().post(LocalEvents.LoadDrawingFragmentInLocation())
 //                    navigate(R.id.projectDetailV2Fragment)
                 }

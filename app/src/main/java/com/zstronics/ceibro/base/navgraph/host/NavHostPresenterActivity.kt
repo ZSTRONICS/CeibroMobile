@@ -8,11 +8,11 @@ import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_APP_FIRST_RUN_FOR_INTERNET
 import com.zstronics.ceibro.base.KEY_LAST_OFFLINE
 import com.zstronics.ceibro.base.KEY_SOCKET_OBSERVER_SET
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.databinding.ActivityNavhostPresenterBinding
@@ -48,7 +48,7 @@ class NavHostPresenterActivity :
         destination: NavDestination?,
         arguments: Bundle?
     ) {
-        CookiesManager.navigationGraphStartDestination = destination?.id ?: 0
+        CeibroApplication.CookiesManager.navigationGraphStartDestination = destination?.id ?: 0
     }
 
     companion object {
@@ -229,9 +229,9 @@ class NavHostPresenterActivity :
         if (applicationContext != null) {
             val sessionManager =
                 getSessionManager(SharedPreferenceManager(applicationContext))
-            println("Heartbeat -> NavHostPresenterActivity jwtToken.isNullOrEmpty ${CookiesManager.jwtToken.isNullOrEmpty()}")
+            println("Heartbeat -> NavHostPresenterActivity jwtToken.isNullOrEmpty ${CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()}")
             if (sessionManager.isLoggedIn()) {
-                if (CookiesManager.jwtToken.isNullOrEmpty()) {
+                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                     sessionManager.setToken()
                     println("Heartbeat -> NavHostPresenterActivity jwtToken set")
                 }

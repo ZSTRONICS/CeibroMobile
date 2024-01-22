@@ -1,47 +1,31 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.drawing
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.graphics.RectF
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.hideKeyboard
-import com.zstronics.ceibro.base.extensions.isVisible
 import com.zstronics.ceibro.base.extensions.shortToastNow
-import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.location.MarkerPointsData
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.databinding.FragmentLocationsV2Binding
 import com.zstronics.ceibro.databinding.FragmentViewDrawingV2Binding
 import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -720,7 +704,7 @@ class ViewDrawingV2Fragment :
     override fun onResume() {
         super.onResume()
 
-        CookiesManager.drawingFileForNewTask.value?.let {
+        CeibroApplication.CookiesManager.drawingFileForNewTask.value?.let {
             viewModel.getDrawingPins(it._id)
             viewModel._drawingFile.postValue(it)
         } ?: run {

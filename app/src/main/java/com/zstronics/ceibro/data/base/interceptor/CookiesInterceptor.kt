@@ -1,16 +1,11 @@
 package com.zstronics.ceibro.data.base.interceptor
 
-import android.text.TextUtils
-import androidx.media.MediaSessionManager.getSessionManager
-import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
-import ee.zstronics.CeibroCameraApplication.Companion.context
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 const val KEY_AUTHORIZATION = "Authorization"
 
@@ -29,11 +24,17 @@ class CookiesInterceptor @Inject constructor(_sessionManager: SessionManager) : 
     private fun addCookiesInRequest(request: Request): Request {
         val builder = request.newBuilder()
 
-        if (!CookiesManager.jwtToken.isNullOrEmpty()) {
-            builder.addHeader(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
+        if (!CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+            builder.addHeader(
+                KEY_AUTHORIZATION,
+                KEY_BEARER + CeibroApplication.CookiesManager.jwtToken
+            )
         } else {
             if (sessionManager.isUserLoggedIn()) {
-                builder.addHeader(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
+                builder.addHeader(
+                    KEY_AUTHORIZATION,
+                    KEY_BEARER + CeibroApplication.CookiesManager.jwtToken
+                )
             }
         }
 //        builder.addHeader(KEY_ACCEPT, "*/*")

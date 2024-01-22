@@ -5,10 +5,10 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentProjectDetailV2Binding
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -30,6 +30,8 @@ class ProjectDetailV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> {
+                CeibroApplication.CookiesManager.projectDataForDetails = null
+                CeibroApplication.CookiesManager.projectNameForDetails = ""
                 navigateBack()
             }
         }
@@ -42,12 +44,12 @@ class ProjectDetailV2Fragment :
         tabTitles = listOf(getString(R.string.detail), getString(R.string.drawing))
         val adapter = ProjectDetailTabLayoutAdapter(requireActivity()) { view, data, absolutePath ->
             data.uploaderLocalFilePath = absolutePath
-            CookiesManager.drawingFileForLocation.value = data
+            CeibroApplication.CookiesManager.drawingFileForLocation.value = data
             NavHostPresenterActivity.isDrawingLoaded = true
             viewModel.sessionManagerInternal.saveCompleteDrawingObj(data)
 
-            CookiesManager.cameToLocationViewFromProject = true
-            CookiesManager.openingNewLocationFile = true
+            CeibroApplication.CookiesManager.cameToLocationViewFromProject = true
+            CeibroApplication.CookiesManager.openingNewLocationFile = true
             navigateBack()
             EventBus.getDefault().postSticky(LocalEvents.LoadDrawingInLocation())
         }
@@ -60,7 +62,7 @@ class ProjectDetailV2Fragment :
             tab.text = tabTitles[position]
         }.attach()
 
-        mViewDataBinding.tvProjectName.text = CookiesManager.projectNameForDetails
+        mViewDataBinding.tvProjectName.text = CeibroApplication.CookiesManager.projectNameForDetails
     }
 
 }

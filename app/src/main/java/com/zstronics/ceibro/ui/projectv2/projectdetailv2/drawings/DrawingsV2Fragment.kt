@@ -13,8 +13,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import android.view.View
@@ -33,6 +31,7 @@ import com.zstronics.ceibro.base.extensions.isVisible
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterVM
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
@@ -75,6 +74,8 @@ class DrawingsV2Fragment :
     )
 
     private lateinit var sectionedAdapter: AllDrawingsAdapterSectionRecycler
+
+    private val cookiesViewModel: NavHostPresenterVM by viewModels()
 
 
     var drawingFileClickListener: ((view: View, data: DrawingV2, absolutePath: String) -> Unit)? =
@@ -202,7 +203,7 @@ class DrawingsV2Fragment :
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
                     if (it.trim().equals("100%", true)) {
-                      //  sectionedAdapter.notifyDataSetChanged()
+                        //  sectionedAdapter.notifyDataSetChanged()
                         tv.visibility = View.GONE
                         ivDownloaded.visibility = View.VISIBLE
                         tv.text = it
@@ -572,11 +573,11 @@ class DrawingsV2Fragment :
             }
         }
 
-   /*     Handler(Looper.getMainLooper()).postDelayed({
-            getDownloadProgress(context, downloadId!!) {
-                itemClickListener?.invoke(it)
-            }
-        }, 1000)*/
+        /*     Handler(Looper.getMainLooper()).postDelayed({
+                 getDownloadProgress(context, downloadId!!) {
+                     itemClickListener?.invoke(it)
+                 }
+             }, 1000)*/
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 

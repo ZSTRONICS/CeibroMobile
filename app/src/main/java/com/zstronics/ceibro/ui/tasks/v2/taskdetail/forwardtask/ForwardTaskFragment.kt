@@ -8,14 +8,13 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.showKeyboardWithFocus
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
 import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
@@ -23,7 +22,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentForwardTaskBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,7 +40,7 @@ class ForwardTaskFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> {
-                CookiesManager.taskIdInDetails = ""
+                CeibroApplication.CookiesManager.taskIdInDetails = ""
                 val instances = countActivitiesInBackStack(requireContext())
                 if (viewModel.notificationTaskData.value != null) {
                     if (instances <= 1) {
@@ -84,7 +82,7 @@ class ForwardTaskFragment :
 
             R.id.forwardBtn -> {
                 viewModel.forwardTask { eventData ->
-                    CookiesManager.taskIdInDetails = ""
+                    CeibroApplication.CookiesManager.taskIdInDetails = ""
                     if (viewModel.notificationTaskData.value != null) {
                         val instances = countActivitiesInBackStack(requireContext())
                         if (instances <= 1) {
@@ -114,13 +112,13 @@ class ForwardTaskFragment :
 
     //This function is called when fragment is closed and detach from activity
     override fun onDetach() {
-        CookiesManager.taskIdInDetails = ""
+        CeibroApplication.CookiesManager.taskIdInDetails = ""
         super.onDetach()
     }
 
     val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            CookiesManager.taskIdInDetails = ""
+            CeibroApplication.CookiesManager.taskIdInDetails = ""
             val instances = countActivitiesInBackStack(requireContext())
             if (instances <= 1) {
                 launchActivityWithFinishAffinity<NavHostPresenterActivity>(

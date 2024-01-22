@@ -15,11 +15,11 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
@@ -261,7 +261,7 @@ class CreateNewTaskService : Service() {
                         when (newTask.fromMeState) {
                             TaskStatus.UNREAD.name.lowercase() -> {
                                 val allFromMeUnreadTasks =
-                                    CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+                                    CeibroApplication.CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
                                 val foundTask = allFromMeUnreadTasks.find { it.id == newTask.id }
                                 if (foundTask != null) {
                                     val index = allFromMeUnreadTasks.indexOf(foundTask)
@@ -271,12 +271,12 @@ class CreateNewTaskService : Service() {
                                 val unreadTasks =
                                     allFromMeUnreadTasks.sortedByDescending { it.updatedAt }
                                         .toMutableList()
-                                CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                                CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
                             }
 
                             TaskStatus.ONGOING.name.lowercase() -> {
                                 val allFromMeOngoingTasks =
-                                    CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+                                    CeibroApplication.CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
                                 val foundTask = allFromMeOngoingTasks.find { it.id == newTask.id }
                                 if (foundTask != null) {
                                     val index = allFromMeOngoingTasks.indexOf(foundTask)
@@ -286,12 +286,12 @@ class CreateNewTaskService : Service() {
                                 val ongoingTasks =
                                     allFromMeOngoingTasks.sortedByDescending { it.updatedAt }
                                         .toMutableList()
-                                CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                                CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
                             }
 
                             TaskStatus.DONE.name.lowercase() -> {
                                 val allFromMeDoneTasks =
-                                    CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+                                    CeibroApplication.CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
                                 val foundTask = allFromMeDoneTasks.find { it.id == newTask.id }
                                 if (foundTask != null) {
                                     val index = allFromMeDoneTasks.indexOf(foundTask)
@@ -301,7 +301,7 @@ class CreateNewTaskService : Service() {
                                 val doneTasks =
                                     allFromMeDoneTasks.sortedByDescending { it.updatedAt }
                                         .toMutableList()
-                                CookiesManager.fromMeDoneTasks.postValue(doneTasks)
+                                CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(doneTasks)
                             }
                         }
                     }
@@ -310,7 +310,7 @@ class CreateNewTaskService : Service() {
                         when (newTask.toMeState) {
                             TaskStatus.NEW.name.lowercase() -> {
                                 val allToMeNewTasks =
-                                    CookiesManager.toMeNewTasks.value ?: mutableListOf()
+                                    CeibroApplication.CookiesManager.toMeNewTasks.value ?: mutableListOf()
                                 val foundTask = allToMeNewTasks.find { it.id == newTask.id }
                                 if (foundTask != null) {
                                     val index = allToMeNewTasks.indexOf(foundTask)
@@ -320,12 +320,12 @@ class CreateNewTaskService : Service() {
                                 val newTasks =
                                     allToMeNewTasks.sortedByDescending { it.updatedAt }
                                         .toMutableList()
-                                CookiesManager.toMeNewTasks.postValue(newTasks)
+                                CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
                             }
 
                             TaskStatus.ONGOING.name.lowercase() -> {
                                 val allToMeOngoingTasks =
-                                    CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
+                                    CeibroApplication.CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
                                 val foundTask = allToMeOngoingTasks.find { it.id == newTask.id }
                                 if (foundTask != null) {
                                     val index = allToMeOngoingTasks.indexOf(foundTask)
@@ -335,12 +335,12 @@ class CreateNewTaskService : Service() {
                                 val ongoingTasks =
                                     allToMeOngoingTasks.sortedByDescending { it.updatedAt }
                                         .toMutableList()
-                                CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                                CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
                             }
 
                             TaskStatus.DONE.name.lowercase() -> {
                                 val allToMeDoneTasks =
-                                    CookiesManager.toMeDoneTasks.value ?: mutableListOf()
+                                    CeibroApplication.CookiesManager.toMeDoneTasks.value ?: mutableListOf()
                                 val foundTask = allToMeDoneTasks.find { it.id == newTask.id }
                                 if (foundTask != null) {
                                     val index = allToMeDoneTasks.indexOf(foundTask)
@@ -350,7 +350,7 @@ class CreateNewTaskService : Service() {
                                 val doneTasks =
                                     allToMeDoneTasks.sortedByDescending { it.updatedAt }
                                         .toMutableList()
-                                CookiesManager.toMeDoneTasks.postValue(doneTasks)
+                                CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
                             }
                         }
                         sharedViewModel?.isToMeUnread?.value = true
@@ -858,17 +858,17 @@ class CreateNewTaskService : Service() {
             val hiddenDoneTask =
                 taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
 
-            CookiesManager.toMeNewTasks.postValue(toMeNewTask)
-            CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-            CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+            CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
-            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
-            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
-            CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
 
-            CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
-            CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-            CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+            CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+            CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+            CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
         }.join()
         return true
     }

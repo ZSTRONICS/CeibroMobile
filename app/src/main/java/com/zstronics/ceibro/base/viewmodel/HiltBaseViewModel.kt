@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import androidx.work.*
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
 import com.zstronics.ceibro.base.interfaces.IBase
@@ -21,7 +22,6 @@ import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.state.UIState
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
@@ -301,17 +301,29 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 taskDaoInternal.getHiddenTasks(TaskStatus.DONE.name.lowercase())
                                     .toMutableList()
 
-                            CookiesManager.toMeNewTasks.postValue(newTasks)
-                            CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
-                            CookiesManager.toMeDoneTasks.postValue(doneTasks)
+                            CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
+                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
 
-                            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
-                            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
-                            CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
+                            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(
+                                fromMeUnreadTasks
+                            )
+                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                                fromMeOngoingTasks
+                            )
+                            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(
+                                fromMeDoneTasks
+                            )
 
-                            CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTasks)
-                            CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
-                            CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
+                            CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
+                                hiddenCanceledTasks
+                            )
+                            CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(
+                                hiddenOngoingTasks
+                            )
+                            CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(
+                                hiddenDoneTasks
+                            )
 
                             EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                             EventBus.getDefault().post(LocalEvents.RefreshAllEvents())
@@ -353,17 +365,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             val hiddenDoneTask =
                 taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
 
-            CookiesManager.toMeNewTasks.postValue(toMeNewTask)
-            CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-            CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+            CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
-            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
-            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
-            CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
 
-            CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
-            CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-            CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+            CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+            CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+            CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
         }.join()
         return true
     }
@@ -383,11 +395,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     if (eventData.oldTaskData.userSubState.equals(TaskStatus.NEW.name, true)) {
                         val toMeNewTask =
                             taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
-                        CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                        CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
                         val toMeOngoingTask =
                             taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                        CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
 
                     } else if (eventData.oldTaskData.userSubState.equals(
                             TaskStatus.ONGOING.name,
@@ -397,15 +409,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val toMeOngoingTask =
                             taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                        CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
                         val toMeDoneTask =
                             taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                        CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                        CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
                     } else {
                         val toMeDoneTask =
                             taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                        CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                        CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
                     }
                 }
 
@@ -414,11 +426,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val fromMeUnreadTask =
                             taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                        CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(
+                            fromMeUnreadTask
+                        )
                         val fromMeOngoingTask =
                             taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                        CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                            fromMeOngoingTask
+                        )
 
                     } else if (eventData.oldTaskData.creatorState.equals(
                             TaskStatus.ONGOING.name,
@@ -428,15 +444,17 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val fromMeOngoingTask =
                             taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                        CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                            fromMeOngoingTask
+                        )
                         val fromMeDoneTask =
                             taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                        CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+                        CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
 
                     } else {
                         val fromMeDoneTask =
                             taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                        CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+                        CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
                     }
                 }
 
@@ -445,27 +463,31 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val hiddenOngoingTask =
                             taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                        CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(
+                            hiddenOngoingTask
+                        )
                         //Also update to-me so that when task removed from hidden, it should show in any other tab also which will be to-me ongoing
                         val toMeOngoingTask =
                             taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                        CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
 
                     } else {
                         val hiddenDoneTask =
                             taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                        CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                        CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
                         val fromMeOngoingTask =
                             taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                        CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                            fromMeOngoingTask
+                        )
                     }
                 }
             } else {
                 val hiddenCanceledTask =
                     taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
-                CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+                CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
             }
 
         }.join()
@@ -491,14 +513,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
 
-                        CookiesManager.toMeNewTasks.postValue(toMeNewTask)
-                        CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                        CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                        CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
                     } else {
                         if (taskSeen.oldTaskData.userSubState.equals(TaskStatus.NEW.name, true)) {
                             val toMeNewTask =
                                 taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                            CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
 
                         } else if (taskSeen.oldTaskData.userSubState.equals(
                                 TaskStatus.ONGOING.name,
@@ -508,22 +530,26 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val toMeNewTask =
                                 taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                            CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
 
                             val toMeOngoingTask =
                                 taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(
+                                toMeOngoingTask
+                            )
                         } else {
                             val toMeOngoingTask =
                                 taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(
+                                toMeOngoingTask
+                            )
 
                             val toMeDoneTask =
                                 taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
                         }
                     }
                 }
@@ -536,8 +562,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val fromMeOngoingTask =
                             taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
-                        CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                        CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(
+                            fromMeUnreadTask
+                        )
+                        CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                            fromMeOngoingTask
+                        )
                     } else {
                         if (taskSeen.oldTaskData.creatorState.equals(
                                 TaskStatus.UNREAD.name,
@@ -547,7 +577,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val fromMeUnreadTask =
                                 taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(
+                                fromMeUnreadTask
+                            )
 
                         } else if (taskSeen.oldTaskData.creatorState.equals(
                                 TaskStatus.ONGOING.name,
@@ -557,23 +589,31 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val fromMeUnreadTask =
                                 taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+                            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(
+                                fromMeUnreadTask
+                            )
 
                             val fromMeOngoingTask =
                                 taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                                fromMeOngoingTask
+                            )
 
                         } else {
                             val fromMeOngoingTask =
                                 taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                                fromMeOngoingTask
+                            )
 
                             val fromMeDoneTask =
                                 taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase())
                                     .toMutableList()
-                            CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+                            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(
+                                fromMeDoneTask
+                            )
                         }
                     }
 
@@ -584,18 +624,20 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val hiddenOngoingTask =
                             taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
                                 .toMutableList()
-                        CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                        CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(
+                            hiddenOngoingTask
+                        )
 
                     } else {
                         val hiddenDoneTask =
                             taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                        CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                        CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
                     }
                 }
             } else {
                 val hiddenCanceledTask =
                     taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
-                CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+                CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
             }
 
         }.join()
@@ -741,7 +783,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     when (newTask.fromMeState) {
                         TaskStatus.UNREAD.name.lowercase() -> {
                             val allFromMeUnreadTasks =
-                                CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+                                CeibroApplication.CookiesManager.fromMeUnreadTasks.value
+                                    ?: mutableListOf()
                             val foundTask = allFromMeUnreadTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allFromMeUnreadTasks.indexOf(foundTask)
@@ -751,12 +794,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val unreadTasks =
                                 allFromMeUnreadTasks.sortedByDescending { it.updatedAt }
                                     .toMutableList()
-                            CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
+                            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(unreadTasks)
                         }
 
                         TaskStatus.ONGOING.name.lowercase() -> {
                             val allFromMeOngoingTasks =
-                                CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+                                CeibroApplication.CookiesManager.fromMeOngoingTasks.value
+                                    ?: mutableListOf()
                             val foundTask = allFromMeOngoingTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allFromMeOngoingTasks.indexOf(foundTask)
@@ -766,12 +810,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val ongoingTasks =
                                 allFromMeOngoingTasks.sortedByDescending { it.updatedAt }
                                     .toMutableList()
-                            CookiesManager.fromMeOngoingTasks.postValue(ongoingTasks)
+                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+                                ongoingTasks
+                            )
                         }
 
                         TaskStatus.DONE.name.lowercase() -> {
                             val allFromMeDoneTasks =
-                                CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+                                CeibroApplication.CookiesManager.fromMeDoneTasks.value
+                                    ?: mutableListOf()
                             val foundTask = allFromMeDoneTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allFromMeDoneTasks.indexOf(foundTask)
@@ -780,7 +827,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             allFromMeDoneTasks.add(newTask)
                             val doneTasks = allFromMeDoneTasks.sortedByDescending { it.updatedAt }
                                 .toMutableList()
-                            CookiesManager.fromMeDoneTasks.postValue(doneTasks)
+                            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(doneTasks)
                         }
                     }
                 }
@@ -789,7 +836,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     when (newTask.toMeState) {
                         TaskStatus.NEW.name.lowercase() -> {
                             val allToMeNewTasks =
-                                CookiesManager.toMeNewTasks.value ?: mutableListOf()
+                                CeibroApplication.CookiesManager.toMeNewTasks.value
+                                    ?: mutableListOf()
                             val foundTask = allToMeNewTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allToMeNewTasks.indexOf(foundTask)
@@ -798,12 +846,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             allToMeNewTasks.add(newTask)
                             val newTasks =
                                 allToMeNewTasks.sortedByDescending { it.updatedAt }.toMutableList()
-                            CookiesManager.toMeNewTasks.postValue(newTasks)
+                            CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
                         }
 
                         TaskStatus.ONGOING.name.lowercase() -> {
                             val allToMeOngoingTasks =
-                                CookiesManager.toMeOngoingTasks.value ?: mutableListOf()
+                                CeibroApplication.CookiesManager.toMeOngoingTasks.value
+                                    ?: mutableListOf()
                             val foundTask = allToMeOngoingTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allToMeOngoingTasks.indexOf(foundTask)
@@ -813,12 +862,13 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             val ongoingTasks =
                                 allToMeOngoingTasks.sortedByDescending { it.updatedAt }
                                     .toMutableList()
-                            CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
                         }
 
                         TaskStatus.DONE.name.lowercase() -> {
                             val allToMeDoneTasks =
-                                CookiesManager.toMeDoneTasks.value ?: mutableListOf()
+                                CeibroApplication.CookiesManager.toMeDoneTasks.value
+                                    ?: mutableListOf()
                             val foundTask = allToMeDoneTasks.find { it.id == newTask.id }
                             if (foundTask != null) {
                                 val index = allToMeDoneTasks.indexOf(foundTask)
@@ -827,7 +877,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             allToMeDoneTasks.add(newTask)
                             val doneTasks =
                                 allToMeDoneTasks.sortedByDescending { it.updatedAt }.toMutableList()
-                            CookiesManager.toMeDoneTasks.postValue(doneTasks)
+                            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
                         }
                     }
                     sharedViewModel?.isToMeUnread?.value = true
@@ -864,7 +914,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 }
                 val toMeNewTask =
                     taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
-                CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+                CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
 
 //                updateAllTasksLists(taskDao)
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
@@ -1556,11 +1606,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     val hiddenDoneTask =
                         taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
 
-                    CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-                    CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
-                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
 //                    updateAllTasksLists(taskDao)
                 }.join()
@@ -1611,11 +1661,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     val hiddenDoneTask =
                         taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
 
-                    CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-                    CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
 
-                    CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-                    CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
 //                    updateAllTasksLists(taskDao)
 

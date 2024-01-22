@@ -8,12 +8,12 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -61,7 +61,7 @@ class CommentVM @Inject constructor(
         val action = bundle?.getString("action")
         if (tasksID != null) {
             taskId = tasksID
-            CookiesManager.taskIdInDetails = tasksID
+            CeibroApplication.CookiesManager.taskIdInDetails = tasksID
         }
         doneComment?.let { doneCommentsRequired = it }
         doneImage?.let { doneImageRequired = it }
@@ -70,7 +70,7 @@ class CommentVM @Inject constructor(
 
         val taskData2: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
         if (taskData2 != null) {
-            if (CookiesManager.jwtToken.isNullOrEmpty()) {
+            if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
                 sessionManager.setUser()
                 sessionManager.isUserLoggedIn()
             }
@@ -78,7 +78,7 @@ class CommentVM @Inject constructor(
             actionToPerform.value = TaskDetailEvents.Comment.eventValue
             notificationTaskData.postValue(taskData2)
             taskId = taskData2.taskId
-            CookiesManager.taskIdInDetails = taskData2.taskId
+            CeibroApplication.CookiesManager.taskIdInDetails = taskData2.taskId
         }
     }
 

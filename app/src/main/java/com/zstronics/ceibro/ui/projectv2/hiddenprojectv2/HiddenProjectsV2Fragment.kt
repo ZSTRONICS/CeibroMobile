@@ -9,14 +9,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.postDelayed
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentHiddenProjectsV2Binding
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -93,8 +91,8 @@ class HiddenProjectsV2Fragment :
         adapter.setCallBack {
             when (it.first) {
                 "root" -> {
-                    CookiesManager.projectNameForDetails = it.second.title
-                    CookiesManager.projectDataForDetails = it.second
+                    CeibroApplication.CookiesManager.projectNameForDetails = it.second.title
+                    CeibroApplication.CookiesManager.projectDataForDetails = it.second
 //                    val bundle = Bundle()
 //                    bundle.putParcelable("projectData", it.second)
                     navigate(R.id.projectDetailV2Fragment)

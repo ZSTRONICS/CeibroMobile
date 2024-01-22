@@ -6,9 +6,9 @@ import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskFromMeBinding
@@ -188,10 +188,10 @@ class TaskFromMeFragment :
                 }
                 viewModel.launch {
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
-                    CookiesManager.taskDataForDetails = data
-                    CookiesManager.taskDetailEvents = allEvents
-                    CookiesManager.taskDetailRootState = TaskRootStateTags.FromMe.tagValue.lowercase()
-                    CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
+                    CeibroApplication.CookiesManager.taskDataForDetails = data
+                    CeibroApplication.CookiesManager.taskDetailEvents = allEvents
+                    CeibroApplication.CookiesManager.taskDetailRootState = TaskRootStateTags.FromMe.tagValue.lowercase()
+                    CeibroApplication.CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
                     withContext(Dispatchers.Main) {
                         // Update the UI here
                         navigate(R.id.taskDetailV2Fragment)

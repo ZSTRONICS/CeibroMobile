@@ -11,8 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -26,14 +24,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.shortToastNow
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -41,15 +37,12 @@ import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentAddNewLocationSheetBinding
 import com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingAdapterSectionRecycler
 import com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingSectionHeader
-import com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 
 class AddNewLocationBottomSheet(
@@ -154,7 +147,7 @@ class AddNewLocationBottomSheet(
 
         sectionedAdapter.drawingFileCallBack { view, data, absolutePath ->
             data.uploaderLocalFilePath = absolutePath
-            CookiesManager.drawingFileForNewTask.value = data
+            CeibroApplication.CookiesManager.drawingFileForNewTask.value = data
             onDrawingTapped?.invoke()
         }
         sectionedAdapter.downloadFileCallBack { tv, ivDownloadFile, ivDownloaded, data, tag ->

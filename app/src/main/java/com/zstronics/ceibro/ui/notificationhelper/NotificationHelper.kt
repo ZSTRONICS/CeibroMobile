@@ -23,13 +23,13 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.NotificationActivity
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.BUNDLE_EXTRA
 import com.zstronics.ceibro.base.TYPE_EXTRA
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -190,9 +190,9 @@ class NotificationHelper(context: Context) {
 
             } else if (notificationType.equals("comment", true)) {
 
-                val currentFragmentID = CookiesManager.navigationGraphStartDestination
+                val currentFragmentID = CeibroApplication.CookiesManager.navigationGraphStartDestination
                 if (currentFragmentID == R.id.taskDetailV2Fragment) {
-                    val detailViewTask: CeibroTaskV2? = CookiesManager.taskDataForDetails
+                    val detailViewTask: CeibroTaskV2? = CeibroApplication.CookiesManager.taskDataForDetails
                     if (task.taskId == detailViewTask?.id) {
                         //Do nothing, because user is already in detail view of same task whose comment notification has came
                         //println("NotificationActivityFragmentCheck = Detail View And Same task")

@@ -1,16 +1,25 @@
 package com.zstronics.ceibro.data.repos.auth
 
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.base.BaseNetworkRepository
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.login.AuthTokenResponse
 import com.zstronics.ceibro.data.repos.auth.login.LoginRequest
 import com.zstronics.ceibro.data.repos.auth.login.LoginResponse
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
 import com.zstronics.ceibro.data.repos.auth.login.UserProfilePicUpdateResponse
 import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
-import com.zstronics.ceibro.data.repos.auth.signup.*
-import com.zstronics.ceibro.data.repos.editprofile.*
+import com.zstronics.ceibro.data.repos.auth.signup.ForgetPasswordRequest
+import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
+import com.zstronics.ceibro.data.repos.auth.signup.RegisterRequest
+import com.zstronics.ceibro.data.repos.auth.signup.RegisterVerifyOtpRequest
+import com.zstronics.ceibro.data.repos.auth.signup.ResetPasswordRequest
+import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
+import com.zstronics.ceibro.data.repos.editprofile.ChangeNumberRequest
+import com.zstronics.ceibro.data.repos.editprofile.ChangeNumberVerifyOtpRequest
+import com.zstronics.ceibro.data.repos.editprofile.ChangePasswordRequest
+import com.zstronics.ceibro.data.repos.editprofile.EditProfileRequest
+import com.zstronics.ceibro.data.repos.editprofile.EditProfileResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -18,9 +27,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.greenrobot.eventbus.EventBus
-import retrofit2.http.Body
 import java.io.File
-import java.util.UUID
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
@@ -37,9 +44,10 @@ class AuthRepository @Inject constructor(
         )
         when (response) {
             is ApiResponse.Success -> {
-                CookiesManager.jwtToken = response.data.tokens.access.token
-                CookiesManager.isLoggedIn = true
+                CeibroApplication.CookiesManager.jwtToken = response.data.tokens.access.token
+                CeibroApplication.CookiesManager.isLoggedIn = true
             }
+
             is ApiResponse.Error -> {
 
             }
@@ -92,7 +100,10 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun register(registerRequest: RegisterRequest, token: String): ApiResponse<GenericResponse> {
+    override suspend fun register(
+        registerRequest: RegisterRequest,
+        token: String
+    ): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {
@@ -119,7 +130,10 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun signup(phoneNumber: String, signUpRequest: SignUpRequest): ApiResponse<LoginResponse> {
+    override suspend fun signup(
+        phoneNumber: String,
+        signUpRequest: SignUpRequest
+    ): ApiResponse<LoginResponse> {
         return executeSafely(
             call =
             {
@@ -129,7 +143,10 @@ class AuthRepository @Inject constructor(
     }
 
 
-    override suspend fun forgetPassword(forgetPasswordRequest: ForgetPasswordRequest, token: String): ApiResponse<GenericResponse> {
+    override suspend fun forgetPassword(
+        forgetPasswordRequest: ForgetPasswordRequest,
+        token: String
+    ): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {
@@ -156,7 +173,10 @@ class AuthRepository @Inject constructor(
         )
     }
 
-    override suspend fun resendOtpBeforeLogin(forgetPasswordRequest: ForgetPasswordRequest, token: String): ApiResponse<GenericResponse> {
+    override suspend fun resendOtpBeforeLogin(
+        forgetPasswordRequest: ForgetPasswordRequest,
+        token: String
+    ): ApiResponse<GenericResponse> {
         return executeSafely(
             call =
             {
@@ -193,12 +213,13 @@ class AuthRepository @Inject constructor(
         )
         when (response) {
             is ApiResponse.Success -> {
-                CookiesManager.isLoggedIn = true
-                CookiesManager.tokens = response.data
-                CookiesManager.jwtToken = response.data.access.token
+                CeibroApplication.CookiesManager.isLoggedIn = true
+                CeibroApplication.CookiesManager.tokens = response.data
+                CeibroApplication.CookiesManager.jwtToken = response.data.access.token
                 sessionManager.refreshToken(response.data)
                 SocketHandler.reconnectSocket()
             }
+
             is ApiResponse.Error -> {
                 if (response.error.statusCode == 406) {
                     EventBus.getDefault().post(LocalEvents.LogoutUserEvent())

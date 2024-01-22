@@ -5,11 +5,11 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import com.onesignal.OneSignal
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.validator.IValidator
 import com.zstronics.ceibro.base.validator.Validator
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.signup.SignUpRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -74,9 +74,9 @@ class SignUpVM @Inject constructor(
 
                 is ApiResponse.Success -> {
                     val secureUUID = UUID.randomUUID()
-                    CookiesManager.deviceType = deviceInfo.toString()
-                    CookiesManager.secureUUID = secureUUID.toString()
-                    CookiesManager.androidId = androidId
+                    CeibroApplication.CookiesManager.deviceType = deviceInfo.toString()
+                    CeibroApplication.CookiesManager.secureUUID = secureUUID.toString()
+                    CeibroApplication.CookiesManager.androidId = androidId
                     sessionManager.startUserSession(
                         response.data.user,
                         response.data.tokens,

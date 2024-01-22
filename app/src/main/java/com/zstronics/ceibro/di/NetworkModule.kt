@@ -7,10 +7,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.zstronics.ceibro.BuildConfig
 import com.zstronics.ceibro.BuildConfig.BASE_URL
-import com.zstronics.ceibro.data.base.CookiesManager
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.data.base.interceptor.CookiesInterceptor
-import com.zstronics.ceibro.data.base.interceptor.KEY_AUTHORIZATION
-import com.zstronics.ceibro.data.base.interceptor.KEY_BEARER
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
 import com.zstronics.ceibro.data.database.CeibroDatabase
 import com.zstronics.ceibro.data.remote.TaskRetroService
@@ -132,12 +130,13 @@ class NetworkModule {
     }
 
     @Provides
-    fun cookiesInterceptor(sessionManager: SessionManager): CookiesInterceptor = CookiesInterceptor(sessionManager)
+    fun cookiesInterceptor(sessionManager: SessionManager): CookiesInterceptor =
+        CookiesInterceptor(sessionManager)
 
     @Provides
     fun headerInterceptor(sessionManager: SessionManager): Interceptor = Interceptor { chain ->
         val original = chain.request()
-        if (TextUtils.isEmpty(CookiesManager.jwtToken)) {
+        if (TextUtils.isEmpty(CeibroApplication.CookiesManager.jwtToken)) {
             sessionManager.isUserLoggedIn()
         }
 
@@ -214,4 +213,4 @@ class NetworkModule {
 const val timeoutRead = 600   //In seconds
 const val contentType = "Content-Type"
 const val contentTypeValue = "application/json"
-const val timeoutConnect =600   //In seconds
+const val timeoutConnect = 600   //In seconds

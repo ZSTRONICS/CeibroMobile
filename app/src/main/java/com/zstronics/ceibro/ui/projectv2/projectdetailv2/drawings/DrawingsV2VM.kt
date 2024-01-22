@@ -3,9 +3,9 @@ package com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -46,7 +46,7 @@ class DrawingsV2VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-        val project = CookiesManager.projectDataForDetails
+        val project = CeibroApplication.CookiesManager.projectDataForDetails
         project?.let {
             _projectData.postValue(it)
             getGroupsByProjectID(it._id)

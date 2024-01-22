@@ -1,7 +1,7 @@
 package com.zstronics.ceibro.data.base.interceptor
 
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.data.base.ApiResponse
-import com.zstronics.ceibro.data.base.CookiesManager
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.refreshtoken.RefreshTokenRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -26,7 +26,7 @@ open class SessionValidator :
         val originalRequest = chain.request()
         val refreshToken = sessionManager.getRefreshToken() ?: ""
         var response = chain.proceed(originalRequest)
-        if (CookiesManager.isLoggedIn && response.code == 401) {
+        if (CeibroApplication.CookiesManager.isLoggedIn && response.code == 401) {
             if ((!tokenRefreshInProgress)) {
                 tokenRefreshInProgress = true
                 when (runBlocking {
@@ -38,7 +38,10 @@ open class SessionValidator :
                 }) {
                     is ApiResponse.Success -> {
                         val builder = originalRequest.newBuilder()
-                            .header(KEY_AUTHORIZATION, KEY_BEARER + CookiesManager.jwtToken)
+                            .header(
+                                KEY_AUTHORIZATION,
+                                KEY_BEARER + CeibroApplication.CookiesManager.jwtToken
+                            )
                             .method(originalRequest.method, originalRequest.body)
                         try {
                             response.close() // Close the previous response
@@ -47,6 +50,7 @@ open class SessionValidator :
                         }
                         response = chain.proceed(builder.build())
                     }
+
                     is ApiResponse.Error -> {
                         println("RefreshJWTError: ${response.message}")
 
