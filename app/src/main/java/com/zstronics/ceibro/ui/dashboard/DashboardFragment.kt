@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.NotificationManager
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -87,6 +88,7 @@ class DashboardFragment :
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
+
 
     override fun onClick(id: Int) {
 
@@ -435,6 +437,11 @@ class DashboardFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        val widthOfNav = (Screen.width) * 0.75
+        mViewDataBinding.navigationView.layoutParams.width = widthOfNav.toInt()
+        mViewDataBinding.navigationView.requestLayout()
 
 
 //        CookiesManager.drawingFileForLocation.observe(viewLifecycleOwner) {
@@ -1018,5 +1025,11 @@ class DashboardFragment :
             finish()
         }
     }
+    object Screen {
+        val width: Int
+            get() = Resources.getSystem().displayMetrics.widthPixels
 
+        val height: Int
+            get() = Resources.getSystem().displayMetrics.heightPixels
+    }
 }

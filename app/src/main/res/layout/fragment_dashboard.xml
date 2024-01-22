@@ -557,9 +557,10 @@
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
+            android:fitsSystemWindows="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="">
+            android:layout_gravity="start">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -647,7 +648,7 @@
                             android:layout_marginStart="@dimen/_50sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="5dp"
+                            android:padding="7dp"
                             android:text="Connections"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
@@ -661,7 +662,7 @@
                             android:layout_marginStart="@dimen/_50sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="5dp"
+                            android:padding="7dp"
                             android:text="Groups"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
@@ -726,7 +727,7 @@
                             android:layout_marginStart="@dimen/_50sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="5dp"
+                            android:padding="7dp"
                             android:text="To me"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
@@ -740,7 +741,7 @@
                             android:layout_marginStart="@dimen/_50sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="5dp"
+                            android:padding="7dp"
                             android:text="From me"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
@@ -754,7 +755,7 @@
                             android:layout_marginStart="@dimen/_50sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="5dp"
+                            android:padding="7dp"
                             android:text="Hidden"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
@@ -768,7 +769,7 @@
                             android:layout_marginStart="@dimen/_50sdp"
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:padding="5dp"
+                            android:padding="7dp"
                             android:text="Cancelled"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_13sdp"
@@ -863,13 +864,14 @@
                         android:tint="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/tvConnectins"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tvConnectins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_40sdp"
                         android:fontFamily="@font/inter_medium"
                         android:gravity="center"
                         android:text="Connections"
@@ -877,7 +879,7 @@
                         android:textSize="@dimen/_14sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/ivConnections"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
