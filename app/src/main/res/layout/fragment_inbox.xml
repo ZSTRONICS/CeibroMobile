@@ -24,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_10sdp"
-            android:paddingVertical="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_5sdp"
+            android:paddingVertical="@dimen/_4sdp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -51,8 +51,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSort"
-                android:layout_width="45dp"
+                android:layout_width="36dp"
                 android:layout_height="0dp"
+                android:padding="6dp"
                 android:paddingHorizontal="@dimen/_5sdp"
                 android:src="@drawable/icon_sort"
                 android:visibility="visible"
@@ -88,21 +89,20 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginHorizontal="@dimen/_8sdp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/taskRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:itemCount="10"
-                    tools:listitem="@layout/layout_task_box_v2_from_me" />
+                    tools:listitem="@layout/layout_inbox_task_box_v2" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/fromMeOngoingInfoLayout"
