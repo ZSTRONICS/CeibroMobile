@@ -49,6 +49,7 @@ import com.zstronics.ceibro.data.repos.task.models.FileUploadingProgressEventRes
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.databinding.FragmentDashboardBinding
 import com.zstronics.ceibro.ui.dashboard.bottomSheet.UnSyncTaskBottomSheet
+import com.zstronics.ceibro.ui.inbox.InboxFragment
 import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
 import com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment
 import com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectV2Fragment
@@ -85,6 +86,7 @@ class DashboardFragment :
     private var locationProjectFragmentInstance: LocationProjectV2Fragment? = null
     private var locationDrawingFragmentInstance: LocationDrawingV2Fragment? = null
     private var projectsV2FragmentInstance: ProjectsV2Fragment? = null
+    private var inboxFragment: InboxFragment? = null
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
@@ -97,9 +99,8 @@ class DashboardFragment :
                 navigateForResult(R.id.newTaskV2Fragment, CREATE_NEW_TASK_CODE, bundleOf())
             }
 
+
             R.id.usersHeader -> {
-
-
                 mViewDataBinding.apply {
                     if (usersGroup.visibility == View.VISIBLE) {
                         ivDropDown.setImageResource(R.drawable.icon_drop_down)
@@ -127,7 +128,7 @@ class DashboardFragment :
             }
 
 
-            R.id.ceibroDashboardLogo -> {
+            R.id.menuBtn -> {
 
                 openNavigationView(mViewDataBinding.myDrawerLayout, mViewDataBinding.navigationView)
 
@@ -138,6 +139,12 @@ class DashboardFragment :
             R.id.feedbackBtn -> showFeedbackDialog()
             R.id.toMeBtn -> {
                 changeSelectedTab(R.id.toMeBtn, false)
+            }
+
+
+            R.id.inboxBtn -> {
+                changeSelectedTab(R.id.inboxBtn, false)
+
             }
 
             R.id.fromMeBtn -> {
@@ -169,16 +176,17 @@ class DashboardFragment :
     }
 
     private fun changeSelectedTab(btnID: Int, newTask: Boolean) {
+
+        viewState.inboxSelected.value = false
         viewState.locationSelected.value = false
-//        viewState.locationProjectSelected.value = false
-//        viewState.locationDrawingSelected.value = false
-//        viewState.locationViewSelected.value = false
         viewState.projectsSelected.value = false
         viewState.toMeSelected.value = false
         viewState.fromMeSelected.value = false
         viewState.hiddenSelected.value = false
 
 
+
+        mViewDataBinding.inboxLine.visibility = View.GONE
         mViewDataBinding.toMeLine.visibility = View.GONE
         mViewDataBinding.fromMeLine.visibility = View.GONE
         mViewDataBinding.hiddenLine.visibility = View.GONE
@@ -186,6 +194,21 @@ class DashboardFragment :
         mViewDataBinding.projectsLine.visibility = View.GONE
 
         when (btnID) {
+            R.id.inboxBtn -> {
+
+                locationProjectFragmentInstance = null
+                mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
+                viewState.inboxSelected.value = true
+
+                if (inboxFragment == null) {
+                    inboxFragment = InboxFragment()
+                }
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, inboxFragment!!)
+                    .commit()
+                mViewDataBinding.inboxLine.visibility = View.VISIBLE
+            }
+
             R.id.toMeBtn -> {
                 locationProjectFragmentInstance = null
                 mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
@@ -984,6 +1007,13 @@ class DashboardFragment :
         EventBus.getDefault().unregister(this)
     }
 
+    object Screen {
+        val width: Int
+            get() = Resources.getSystem().displayMetrics.widthPixels
+
+        val height: Int
+            get() = Resources.getSystem().displayMetrics.heightPixels
+    }
 
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == Activity.RESULT_OK) {
@@ -1018,19 +1048,18 @@ class DashboardFragment :
     }
 
     fun checkDrawer() {
-        if (mViewDataBinding.myDrawerLayout.isDrawerOpen(mViewDataBinding.navigationView)) {
-            mViewDataBinding.myDrawerLayout.closeDrawer(mViewDataBinding.navigationView)
-
-        } else {
+        if (!closeDrawerLayout()) {
             finish()
         }
     }
 
-    object Screen {
-        val width: Int
-            get() = Resources.getSystem().displayMetrics.widthPixels
 
-        val height: Int
-            get() = Resources.getSystem().displayMetrics.heightPixels
+    private fun closeDrawerLayout(): Boolean {
+        return if (mViewDataBinding.myDrawerLayout.isDrawerOpen(mViewDataBinding.navigationView)) {
+            mViewDataBinding.myDrawerLayout.closeDrawer(mViewDataBinding.navigationView)
+            true
+        } else {
+            false
+        }
     }
 }
