@@ -2,7 +2,6 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
 import android.os.Handler
 import android.os.Looper
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

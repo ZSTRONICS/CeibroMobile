@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -12,38 +11,37 @@
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
+        android:background="@color/white">
 
         <com.jsibbold.zoomage.ZoomageView
             android:id="@+id/fullImgView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:src="@drawable/new_background"
-            app:zoomage_autoCenter="false"
-            app:zoomage_zoomable="true"
-            app:zoomage_translatable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/imageComment"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:zoomage_autoCenter="false"
+            app:zoomage_translatable="true"
+            app:zoomage_zoomable="true" />
 
         <com.zstronics.ceibro.base.ScrollableTextView
             android:id="@+id/imageComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/almostBlack"
-            android:textColor="@color/white"
-            android:fontFamily="@font/inter_regular"
-            android:maxLines="4"
-            android:minLines="1"
-            android:visibility="visible"
             android:layout_marginBottom="@dimen/_9sdp"
-            android:text="@string/comment_text_here"
-            android:textSize="@dimen/_12sdp"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:maxLines="5"
+            android:minLines="2"
             android:padding="@dimen/_4sdp"
             android:paddingStart="@dimen/_10sdp"
             android:paddingEnd="@dimen/_10sdp"
-            android:gravity="center"
+            android:text="@string/comment_text_here"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12sdp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
