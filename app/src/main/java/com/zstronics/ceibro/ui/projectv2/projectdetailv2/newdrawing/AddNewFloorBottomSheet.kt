@@ -20,11 +20,8 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListingBinding
 import com.zstronics.ceibro.databinding.FragmentAddFloorBinding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.adpter.NewDrawingFloorAdapter
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
-@AndroidEntryPoint
 class AddNewFloorBottomSheet(
     val model: NewDrawingV2VM,
     val callback: (data: CeibroFloorV2) -> Unit
@@ -66,8 +63,7 @@ class AddNewFloorBottomSheet(
         "25"
     )
 
-    @Inject
-    lateinit var floorAdapter: NewDrawingFloorAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -83,6 +79,8 @@ class AddNewFloorBottomSheet(
 
         return binding.root
     }
+
+    private val floorAdapter = NewDrawingFloorAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

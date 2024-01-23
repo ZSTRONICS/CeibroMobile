@@ -23,21 +23,26 @@ class InboxFragment :
     override fun onClick(id: Int) {
     }
 
+    private val integerList = arrayListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
+
     @Inject
     lateinit var adapter: InboxAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mViewDataBinding.taskRV.adapter=adapter
-        viewModel.newTasks.observe(viewLifecycleOwner) {
-            if (it.isNullOrEmpty()) {
-                mViewDataBinding.taskRV.visibility = View.GONE
-                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
-            } else {
-                adapter.setList(it)
-                mViewDataBinding.taskRV.visibility = View.VISIBLE
-                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
-            }
-        }
+        mViewDataBinding.taskRV.adapter = adapter
+        adapter.setList(integerList)
+
+//        viewModel.newTasks.observe(viewLifecycleOwner) {
+//            if (it.isNullOrEmpty()) {
+//                mViewDataBinding.taskRV.visibility = View.GONE
+//                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.VISIBLE
+//            } else {
+//                adapter.setList(it)
+//                mViewDataBinding.taskRV.visibility = View.VISIBLE
+//                mViewDataBinding.fromMeOngoingInfoLayout.visibility = View.GONE
+//            }
+//        }
     }
 }

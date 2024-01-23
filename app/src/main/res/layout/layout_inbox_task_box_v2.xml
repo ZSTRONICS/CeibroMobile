@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -30,17 +29,16 @@
                 android:id="@+id/inboxTaskCardParentLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/status_ongoing_outline_new"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:background="@drawable/status_ongoing_outline_new">
+
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/inboxItemImg"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
+                    android:visibility="visible"
+                    android:background="@drawable/status_ongoing_outline_new"
                     android:src="@drawable/new_background2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/inboxImgEndPoint"
@@ -58,201 +56,217 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/inboxTaskCardHeaderLayout"
+                    android:id="@+id/inboxTaskUnseenLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_7sdp"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginStart="1dp"
+                    android:background="@drawable/right_corners_background"
+                    android:backgroundTint="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/inboxItemImg"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                        android:id="@+id/inboxTaskUId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/status_ongoing_filled"
-                        android:fontFamily="@font/inter_semibold"
-                        android:gravity="center"
-                        android:maxLength="9"
-                        android:paddingHorizontal="7dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:text="C01-0012"
-                        android:textColor="@color/black"
-                        android:textSize="11.5sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/taskDueDateLayout"
+                        android:id="@+id/inboxTaskCardHeaderLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_weight="1"
-                        android:gravity="center|start"
-                        android:orientation="horizontal"
-                        app:layout_constraintBottom_toBottomOf="@+id/inboxTaskUId"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginEnd="@dimen/_7sdp"
+                        android:gravity="center_vertical"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/inboxTaskUId"
-                        app:layout_constraintTop_toTopOf="@+id/inboxTaskUId">
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
-                            android:id="@+id/inboxTaskProjectName"
-                            android:layout_width="0dp"
+                            android:id="@+id/inboxTaskUId"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/_6sdp"
-                            android:elevation="0dp"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/inter_regular"
-                            android:maxLines="1"
-                            android:text="Project"
+                            android:background="@drawable/status_ongoing_filled"
+                            android:fontFamily="@font/inter_semibold"
+                            android:gravity="center"
+                            android:maxLength="9"
+                            android:paddingHorizontal="7dp"
+                            android:paddingTop="3dp"
+                            android:paddingBottom="3dp"
+                            android:text="C01-0012"
                             android:textColor="@color/black"
                             android:textSize="11.5sp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/taskDueDate"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/taskDueDate"
-                            android:layout_width="wrap_content"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/taskDueDateLayout"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/inter_regular"
-                            android:maxLength="25"
-                            android:maxLines="1"
-                            android:text="Due By: 29.05.23"
-                            android:textColor="@color/black"
-                            android:textSize="11.5sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:layout_weight="1"
+                            android:gravity="center|start"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@+id/inboxTaskUId"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintStart_toEndOf="@+id/inboxTaskUId"
+                            app:layout_constraintTop_toTopOf="@+id/inboxTaskUId">
+
+                            <TextView
+                                android:id="@+id/inboxTaskProjectName"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_6sdp"
+                                android:elevation="0dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/inter_regular"
+                                android:maxLines="1"
+                                android:text="Project"
+                                android:textColor="@color/black"
+                                android:textSize="11.5sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/taskDueDate"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/taskDueDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/inter_regular"
+                                android:maxLength="25"
+                                android:maxLines="1"
+                                android:text="Due By: 29.05.23"
+                                android:textColor="@color/black"
+                                android:textSize="11.5sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <TextView
-                    android:id="@+id/inboxTaskTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_7sdp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_semibold"
-                    android:maxLines="1"
-                    android:text="Task title will go over here"
-                    android:textColor="@color/black"
-                    android:textSize="15.5sp"
-                    app:layout_constraintEnd_toEndOf="@+id/inboxTaskCardHeaderLayout"
-                    app:layout_constraintStart_toStartOf="@+id/inboxTaskCardHeaderLayout"
-                    app:layout_constraintTop_toBottomOf="@+id/inboxTaskCardHeaderLayout" />
-
-                <TextView
-                    android:id="@+id/inboxTaskEventDescription"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_medium"
-                    android:maxLines="2"
-                    android:text="Task description or event description will go over here"
-                    android:textColor="@color/appTextGrey"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="@+id/inboxTaskTitle"
-                    app:layout_constraintStart_toStartOf="@+id/inboxTaskTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/inboxTaskTitle" />
-
-                <View
-                    android:id="@+id/footerLine"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/_7sdp"
-                    android:background="@color/appTextGrey"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/inboxItemImg"
-                    app:layout_constraintTop_toBottomOf="@+id/inboxTaskEventDescription" />
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/creatorCard"
-                    android:layout_width="33dp"
-                    android:layout_height="33dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginBottom="@dimen/_6sdp"
-                    app:cardBackgroundColor="@color/appGrey"
-                    app:cardCornerRadius="25dp"
-                    app:cardElevation="1dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/inboxTaskTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/footerLine">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/inboxTaskCreatorImg"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:padding="0dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/profile_img" />
-                </androidx.cardview.widget.CardView>
-
-                <LinearLayout
-                    android:id="@+id/inboxTaskEventCreatorLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_7sdp"
-                    android:layout_marginEnd="@dimen/_7sdp"
-                    android:gravity="start"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
-                    app:layout_constraintEnd_toStartOf="@+id/inboxTaskStateIcon"
-                    app:layout_constraintStart_toEndOf="@+id/creatorCard"
-                    app:layout_constraintTop_toTopOf="@+id/creatorCard">
-
                     <TextView
-                        android:id="@+id/inboxCreatorName"
-                        android:layout_width="match_parent"
+                        android:id="@+id/inboxTaskTitle"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_7sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_semibold"
-                        android:gravity="start"
                         android:maxLines="1"
-                        android:text="@string/creator_heading"
-                        android:textColor="@color/appTextGrey"
-                        android:textSize="13sp" />
+                        android:text="Task title will go over here"
+                        android:textColor="@color/black"
+                        android:textSize="15.5sp"
+                        app:layout_constraintEnd_toEndOf="@+id/inboxTaskCardHeaderLayout"
+                        app:layout_constraintStart_toStartOf="@+id/inboxTaskCardHeaderLayout"
+                        app:layout_constraintTop_toBottomOf="@+id/inboxTaskCardHeaderLayout" />
 
                     <TextView
-                        android:id="@+id/inboxCreatedAt"
-                        android:layout_width="match_parent"
+                        android:id="@+id/inboxTaskEventDescription"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_1sdp"
                         android:ellipsize="end"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="start"
-                        android:maxLines="1"
-                        android:text="@string/created_on_heading"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="2"
+                        android:text="Task description or event description will go over here"
                         android:textColor="@color/appTextGrey"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@+id/inboxTaskTitle"
+                        app:layout_constraintStart_toStartOf="@+id/inboxTaskTitle"
+                        app:layout_constraintTop_toBottomOf="@+id/inboxTaskTitle" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/inboxTaskStateIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"
-                    android:src="@drawable/icon_task_created"
-                    app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
-                    app:layout_constraintEnd_toEndOf="@+id/inboxTaskTitle"
-                    app:layout_constraintTop_toTopOf="@+id/creatorCard" />
+                    <View
+                        android:id="@+id/footerLine"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:background="@color/appTextGrey"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/inboxTaskEventDescription" />
 
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/creatorCard"
+                        android:layout_width="33dp"
+                        android:layout_height="33dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_6sdp"
+                        app:cardBackgroundColor="@color/appGrey"
+                        app:cardCornerRadius="25dp"
+                        app:cardElevation="1dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/inboxTaskTitle"
+                        app:layout_constraintTop_toBottomOf="@+id/footerLine">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/inboxTaskCreatorImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:padding="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/profile_img" />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:id="@+id/inboxTaskEventCreatorLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_7sdp"
+                        android:layout_marginEnd="@dimen/_7sdp"
+                        android:gravity="start"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
+                        app:layout_constraintEnd_toStartOf="@+id/inboxTaskStateIcon"
+                        app:layout_constraintStart_toEndOf="@+id/creatorCard"
+                        app:layout_constraintTop_toTopOf="@+id/creatorCard">
+
+                        <TextView
+                            android:id="@+id/inboxCreatorName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_semibold"
+                            android:gravity="start"
+                            android:maxLines="1"
+                            android:text="@string/creator_heading"
+                            android:textColor="@color/appTextGrey"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/inboxCreatedAt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter_regular"
+                            android:gravity="start"
+                            android:maxLines="1"
+                            android:text="@string/created_on_heading"
+                            android:textColor="@color/appTextGrey"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/inboxTaskStateIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
+                        app:layout_constraintEnd_toEndOf="@+id/inboxTaskTitle"
+                        app:layout_constraintTop_toTopOf="@+id/creatorCard" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 

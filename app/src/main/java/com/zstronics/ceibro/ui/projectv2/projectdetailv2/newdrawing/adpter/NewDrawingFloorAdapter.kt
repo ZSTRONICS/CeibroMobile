@@ -15,7 +15,7 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.databinding.FloorCheckboxItemListBinding
 import javax.inject.Inject
 
-class NewDrawingFloorAdapter @Inject constructor() :
+class NewDrawingFloorAdapter :
     RecyclerView.Adapter<NewDrawingFloorAdapter.NewFloorGroupViewHolder>() {
 
     var deleteClickListener: ((data: CeibroFloorV2) -> Unit)? = null
