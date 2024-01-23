@@ -18,14 +18,12 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.KEY_CONTACTS_CURSOR
 import com.zstronics.ceibro.base.KEY_TOKEN_VALID
 import com.zstronics.ceibro.base.KEY_updatedAndNewContacts
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.extensions.toast
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentConnectionsV2Binding
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskInfoBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import koleton.api.hideSkeleton
 import koleton.api.loadSkeleton
@@ -337,11 +335,16 @@ class MyConnectionV2Fragment :
 
     override fun onStart() {
         super.onStart()
-        EventBus.getDefault().register(this)
+        try {
+            EventBus.getDefault().register(this)
+        } catch (_: Exception) {
+
+        }
     }
 
-    override fun onStop() {
-        super.onStop()
+
+    override fun onDestroy() {
+        super.onDestroy()
         EventBus.getDefault().unregister(this)
     }
 

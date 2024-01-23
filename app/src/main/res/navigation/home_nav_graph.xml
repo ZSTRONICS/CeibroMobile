@@ -526,6 +526,10 @@
         android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.drawing.ViewDrawingV2Fragment"
         android:label="ViewDrawingV2Fragment"
         tools:layout="@layout/fragment_view_drawing_v2"/>
+    <fragment
+        android:id="@+id/inboxFragment"
+        android:name="com.zstronics.ceibro.ui.inbox.InboxFragment"
+        android:label="InboxFragment" />
 
 
 </navigation>

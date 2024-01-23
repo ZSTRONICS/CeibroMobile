@@ -6,6 +6,7 @@ import com.zstronics.ceibro.base.interfaces.IBase
 interface IDashboard {
     interface State : IBase.State {
         val toMeSelected: MutableLiveData<Boolean>
+        val inboxSelected: MutableLiveData<Boolean>
         val fromMeSelected: MutableLiveData<Boolean>
         val hiddenSelected: MutableLiveData<Boolean>
         val locationSelected: MutableLiveData<Boolean>
