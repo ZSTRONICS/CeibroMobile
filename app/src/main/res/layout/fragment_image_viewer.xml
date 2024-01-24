@@ -17,29 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/localViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/white">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/closeBtn"
@@ -53,7 +31,56 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/icon_back"
-            app:tint="@color/white" />
+            app:tint="@color/appBlue" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivMenu"
+            android:layout_width="34dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/closeBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/closeBtn"
+            app:srcCompat="@drawable/ic_menu_dots"
+            app:tint="@color/appBlue" />
+
+        <View
+            android:id="@+id/headerLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/appGrey0"
+            android:layout_marginTop="@dimen/_6sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/closeBtn" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLine" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/localViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLine" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
