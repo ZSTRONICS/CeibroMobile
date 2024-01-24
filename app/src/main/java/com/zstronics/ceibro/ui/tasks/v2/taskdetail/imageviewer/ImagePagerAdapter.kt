@@ -2,6 +2,8 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetail.imageviewer
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -108,6 +110,37 @@ class ImagePagerAdapter @Inject constructor() :
                 })
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.fullImgView)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (binding.imageComment.lineCount > 5) {
+                    binding.viewMoreLessLayout.visibility = View.VISIBLE
+                    binding.viewMoreBtn.visibility = View.VISIBLE
+                    binding.viewLessBtn.visibility = View.GONE
+                } else {
+                    binding.viewMoreLessLayout.visibility = View.GONE
+                    binding.viewMoreBtn.visibility = View.GONE
+                    binding.viewLessBtn.visibility = View.GONE
+                }
+            }, 10)
+
+            binding.viewMoreBtn.setOnClickListener {
+                if (binding.imageComment.maxLines == 5) {
+                    binding.imageComment.maxLines = binding.imageComment.lineCount
+                    binding.viewMoreLessLayout.visibility = View.VISIBLE
+                    binding.viewMoreBtn.visibility = View.GONE
+                    binding.viewLessBtn.visibility = View.VISIBLE
+                }
+            }
+
+            binding.viewLessBtn.setOnClickListener {
+                if (binding.imageComment.maxLines > 5) {
+                    binding.imageComment.maxLines = 5
+                    binding.viewMoreLessLayout.visibility = View.VISIBLE
+                    binding.viewMoreBtn.visibility = View.VISIBLE
+                    binding.viewLessBtn.visibility = View.GONE
+                }
+            }
+
         }
     }
 }
