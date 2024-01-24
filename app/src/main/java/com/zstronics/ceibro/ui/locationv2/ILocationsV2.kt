@@ -5,9 +5,9 @@ import com.zstronics.ceibro.base.interfaces.IBase
 
 interface ILocationsV2 {
     interface State : IBase.State {
+
         var isFilterVisible: MutableLiveData<Boolean>
-
-
+        var groupName: MutableLiveData<String>
         var isToNewClicked: MutableLiveData<Boolean>
         var isToOngoingClicked: MutableLiveData<Boolean>
         var isToDoneClicked: MutableLiveData<Boolean>

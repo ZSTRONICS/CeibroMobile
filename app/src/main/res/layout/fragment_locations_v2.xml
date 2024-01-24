@@ -32,7 +32,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/LocationHeader"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:elevation="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -44,15 +44,13 @@
                     android:id="@+id/backBtn"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_7sdp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="4dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat"
                     app:srcCompat="@drawable/icon_back"
                     app:tint="@color/appBlue" />
 
@@ -73,10 +71,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_6sdp"
                     android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/backBtn"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/saperaterTwo"
                     app:layout_constraintStart_toEndOf="@+id/saperaterOne"
-                    app:layout_constraintTop_toTopOf="@+id/backBtn">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/tvGroupName"
@@ -86,7 +86,7 @@
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_bold"
                         android:maxLines="1"
-                        android:text="@string/ceibro_drawing"
+                        android:text="@{viewState.groupName}"
                         android:textColor="@color/appGrey3"
                         android:textSize="12sp" />
 
@@ -94,7 +94,7 @@
                         android:id="@+id/locationSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="@dimen/_3sdp"
+                        android:paddingVertical="@dimen/_1sdp"
                         android:visibility="visible" />
 
                     <TextView
