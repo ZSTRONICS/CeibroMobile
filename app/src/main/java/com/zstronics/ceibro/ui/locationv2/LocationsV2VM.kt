@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
+import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -16,6 +19,8 @@ import javax.inject.Inject
 class LocationsV2VM @Inject constructor(
     override val viewState: LocationsV2State,
     private val drawingPinsDao: DrawingPinsV2Dao,
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+    private val groupsV2Dao: GroupsV2Dao,
 ) : HiltBaseViewModel<ILocationsV2.State>(), ILocationsV2.ViewModel {
 
 
@@ -28,17 +33,18 @@ class LocationsV2VM @Inject constructor(
     val existingDrawingPins: LiveData<MutableList<CeibroDrawingPins>> = _existingDrawingPins
 
 
+    private var _existingGroup: MutableLiveData<CeibroGroupsV2> =
+        MutableLiveData()
+    val existingGroup: LiveData<CeibroGroupsV2> = _existingGroup
+
+
+
     private val _filterExistingDrawingPins: MutableLiveData<MutableList<CeibroDrawingPins>> =
         MutableLiveData()
     val filterExistingDrawingPins: LiveData<MutableList<CeibroDrawingPins>> =
         _filterExistingDrawingPins
 
     var cameFromProject: Boolean = true
-
-    override fun onFirsTimeUiCreate(bundle: Bundle?) {
-        super.onFirsTimeUiCreate(bundle)
-
-    }
 
     fun getDrawingPins(drawingId: String) {
         launch {
@@ -48,6 +54,17 @@ class LocationsV2VM @Inject constructor(
             } else {
                 _existingDrawingPins.postValue(mutableListOf())
             }
+        }
+    }
+
+    fun getGroupDrawingsByGroupId(groupId: String) {
+        launch {
+
+            val ceibroGroupsV2: CeibroGroupsV2? = groupsV2Dao.getGroupByGroupId(groupId)
+            ceibroGroupsV2?.let {
+                _existingGroup.value=it
+            }
+
         }
     }
 
