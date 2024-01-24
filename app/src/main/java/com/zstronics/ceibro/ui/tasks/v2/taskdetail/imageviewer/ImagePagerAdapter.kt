@@ -1,18 +1,22 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.imageviewer
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.databinding.LayoutImageViewerBinding
-import ee.zstronics.ceibro.camera.databinding.LayoutCeibroFullImageViewerBinding
 import javax.inject.Inject
 
 class ImagePagerAdapter @Inject constructor() :
@@ -68,7 +72,7 @@ class ImagePagerAdapter @Inject constructor() :
             val circularProgressDrawable = CircularProgressDrawable(context)
             circularProgressDrawable.strokeWidth = 5f
             circularProgressDrawable.centerRadius = 30f
-            circularProgressDrawable.setColorSchemeColors(Color.WHITE)
+            circularProgressDrawable.setColorSchemeColors(Color.BLACK)
             circularProgressDrawable.start()
 
             val requestOptions = RequestOptions()
@@ -80,10 +84,30 @@ class ImagePagerAdapter @Inject constructor() :
             Glide.with(context)
                 .load(item.fileUrl)
                 .apply(requestOptions)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        circularProgressDrawable.stop()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        circularProgressDrawable.stop()
+                        return false
+                    }
+                })
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.fullImgView)
-
-
         }
     }
 }
