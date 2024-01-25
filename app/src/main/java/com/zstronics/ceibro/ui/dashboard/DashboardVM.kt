@@ -16,6 +16,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -40,6 +41,7 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketForwardedToMeNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.SocketInboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskSeenV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketTaskV2CreatedResponse
@@ -69,6 +71,7 @@ class DashboardVM @Inject constructor(
     private val authRepository: IAuthRepository,
     val fileAttachmentsDataSource: FileAttachmentsDataSource,
     private val taskDao: TaskV2Dao,
+    private val inboxV2Dao: InboxV2Dao,
     private val drawingPinsDao: DrawingPinsV2Dao,
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
@@ -204,7 +207,8 @@ class DashboardVM @Inject constructor(
                             taskDao,
                             userId,
                             sessionManager,
-                            drawingPinsDao
+                            drawingPinsDao,
+                            inboxV2Dao
                         )
                     }
                 }
@@ -302,6 +306,80 @@ class DashboardVM @Inject constructor(
                                     taskDao,
                                     sessionManager,
                                     drawingPinsDao
+                                )
+                            }
+                        }
+                    }
+                }
+
+                SocketHandler.TaskEvent.IB_TASK_CREATED.name, SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.IB_TASK_DONE.name,
+                SocketHandler.TaskEvent.IB_CANCELED_TASK.name, SocketHandler.TaskEvent.IB_JOINED_TASK.name, SocketHandler.TaskEvent.IB_TASK_FORWARDED.name -> {
+                    val inboxTask = gson.fromJson<SocketInboxTaskResponse>(
+                        arguments,
+                        object : TypeToken<SocketInboxTaskResponse>() {}.type
+                    ).data
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_CREATED.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_DONE.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_CANCELED_TASK.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_JOINED_TASK.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_FORWARDED.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
                                 )
                             }
                         }

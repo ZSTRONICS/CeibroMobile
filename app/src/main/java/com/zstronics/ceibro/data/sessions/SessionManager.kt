@@ -9,6 +9,7 @@ import com.zstronics.ceibro.base.KEY_ANDROID_ID
 import com.zstronics.ceibro.base.KEY_DATA_SYNC_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_DEVICE_TYPE
 import com.zstronics.ceibro.base.KEY_DRAWING_OBJ
+import com.zstronics.ceibro.base.KEY_INBOX_UPDATED_AT
 import com.zstronics.ceibro.base.KEY_IS_FIRST_TIME_LAUNCH
 import com.zstronics.ceibro.base.KEY_IS_FROM_ME_UNREAD
 import com.zstronics.ceibro.base.KEY_IS_HIDDEN_UNREAD
@@ -272,6 +273,17 @@ class SessionManager constructor(
     fun saveUpdatedAtTimeStamp(updatedAtTimeStamp: String?) {
         if (!updatedAtTimeStamp.isNullOrEmpty()) {
             sharedPreferenceManager.saveString(KEY_DATA_SYNC_UPDATED_AT, updatedAtTimeStamp)
+        }
+    }
+
+    fun getInboxUpdatedAtTimeStamp(): String {
+        // return sharedPreferenceManager.getValueString(KEY_INBOX_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
+        return "2020-01-01T17:12:18.787Z"
+    }
+
+    fun saveInboxUpdatedAtTimeStamp(updatedAtTimeStamp: String?) {
+        if (!updatedAtTimeStamp.isNullOrEmpty()) {
+            sharedPreferenceManager.saveString(KEY_INBOX_UPDATED_AT, updatedAtTimeStamp)
         }
     }
 

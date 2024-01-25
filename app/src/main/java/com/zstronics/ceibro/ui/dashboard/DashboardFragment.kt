@@ -135,8 +135,20 @@ class DashboardFragment :
             }
 
             R.id.profileImg -> navigateToProfile()
+            R.id.menuProfileFooter -> {
+                closeDrawerLayout()
+                navigateToProfile()
+            }
             R.id.friendsReqBtn -> navigateToConnections()
+            R.id.menuFooterConnectionsBtn -> {
+                closeDrawerLayout()
+                navigateToConnections()
+            }
             R.id.feedbackBtn -> showFeedbackDialog()
+            R.id.menuFeedbackHeaderBtn -> {
+                closeDrawerLayout()
+                showFeedbackDialog()
+            }
             R.id.toMeBtn -> {
                 changeSelectedTab(R.id.toMeBtn, false)
             }

@@ -2,24 +2,41 @@ package com.zstronics.ceibro.ui.inbox.adapter
 
 
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.CornerSize
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutInboxTaskBoxV2Binding
+import com.zstronics.ceibro.ui.socket.SocketHandler
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.utils.DateUtils
+import javax.annotation.meta.When
 import javax.inject.Inject
 
 class InboxAdapter @Inject constructor() :
     RecyclerView.Adapter<InboxAdapter.TaskToMeViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
+    var itemClickListener: ((view: View, position: Int, data: CeibroInboxV2) -> Unit)? =
         null
-    var itemLongClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
+    var itemLongClickListener: ((view: View, position: Int, data: CeibroInboxV2) -> Unit)? =
         null
-    var listItems: MutableList<Int> = mutableListOf()
+    var listItems: MutableList<CeibroInboxV2> = mutableListOf()
     var currentUser = SessionManager.user.value
     var sessionManager: SessionManager? = null
 
@@ -44,7 +61,7 @@ class InboxAdapter @Inject constructor() :
         return listItems.size
     }
 
-    fun setList(list: List<Int>) {
+    fun setList(list: List<CeibroInboxV2>) {
         this.listItems.clear()
         this.listItems.addAll(list)
         notifyDataSetChanged()
@@ -53,180 +70,287 @@ class InboxAdapter @Inject constructor() :
     inner class TaskToMeViewHolder(private val binding: LayoutInboxTaskBoxV2Binding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Int?) {
+        fun bind(item: CeibroInboxV2?) {
             val context = binding.root.context
-            binding.apply {
 
-                if (item == 2) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_new_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_new_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                    inboxTaskStateIcon.visibility = View.GONE
-                    inboxTaskEventDescription.visibility = View.VISIBLE
-                    inboxItemImg.visibility = View.VISIBLE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.31f
-                    inboxImgEndPoint.layoutParams = layoutParams
+            if (item != null) {
+                binding.apply {
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
+                    taskCard.setOnClickListener {
+                        itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                    }
 
-                } else if (item == 3) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_new_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_new_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                    inboxTaskStateIcon.visibility = View.GONE
-                    inboxTaskEventDescription.visibility = View.GONE
-                    inboxItemImg.visibility = View.GONE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.0f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                    val taskStatusNameBg: Pair<Int, Int> = when (item.taskState.uppercase()) {
+                        TaskStatus.NEW.name -> Pair(
+                            R.drawable.status_new_outline_new,
+                            R.drawable.status_new_filled
+                        )
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
+//                        TaskStatus.UNREAD.name -> Pair(
+//                            R.drawable.status_new_outline_new,
+//                            R.drawable.status_new_filled
+//                        )
 
-                } else if (item == 4) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_ongoing_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.GONE
-                    inboxItemImg.visibility = View.VISIBLE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.31f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                        TaskStatus.ONGOING.name -> Pair(
+                            R.drawable.status_ongoing_outline_new,
+                            R.drawable.status_ongoing_filled
+                        )
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
+                        TaskStatus.DONE.name -> Pair(
+                            R.drawable.status_done_outline_new,
+                            R.drawable.status_done_filled
+                        )
 
-                } else if (item == 5) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_done_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_done_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_done)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.VISIBLE
-                    inboxItemImg.visibility = View.GONE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.0f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                        TaskStatus.CANCELED.name -> Pair(
+                            R.drawable.status_cancelled_outline,
+                            R.drawable.status_cancelled_filled_less_corner
+                        )
 
-                    val tintColor = context.resources.getColor(R.color.appPaleBlue)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
+                        else -> Pair(
+                            R.drawable.unseen_corners_background,
+                            R.drawable.unseen_corners_background
+                        )
+                    }
 
-                } else if (item == 6) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_ongoing_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.VISIBLE
-                    inboxItemImg.visibility = View.GONE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.0f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                    val (inboxTaskCardBackground, inboxTaskUIdBackground) = taskStatusNameBg
+                    inboxTaskCardParentLayout.setBackgroundResource(inboxTaskCardBackground)
+                    inboxTaskUId.setBackgroundResource(inboxTaskUIdBackground)
+                    inboxTaskUId.text = item.actionDataTask.taskUID
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
 
-                } else if (item == 7) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_cancelled_outline)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_cancelled_filled_less_corner)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_canceled)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.GONE
-                    inboxItemImg.visibility = View.GONE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.0f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                    when (item.actionType) {
+                        SocketHandler.TaskEvent.IB_TASK_CREATED.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_created)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
+                        SocketHandler.TaskEvent.IB_STATE_CHANGED.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_state_change_new_to_ongoing)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                } else if (item == 8) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_ongoing_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_state_change_new_to_ongoing)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.VISIBLE
-                    inboxItemImg.visibility = View.GONE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.0f
-                    inboxImgEndPoint.layoutParams = layoutParams
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
+                        SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                } else if (item == 9) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_done_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_done_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.VISIBLE
-                    inboxItemImg.visibility = View.VISIBLE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.31f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                        SocketHandler.TaskEvent.IB_TASK_FORWARDED.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_forwarded)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                    val tintColor = context.resources.getColor(R.color.appPaleBlue)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
+                        SocketHandler.TaskEvent.IB_JOINED_TASK.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_joined)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                } else if (item == 10) {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_ongoing_filled)
-                    inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                    inboxTaskStateIcon.visibility = View.VISIBLE
-                    inboxTaskEventDescription.visibility = View.GONE
-                    inboxItemImg.visibility = View.VISIBLE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.31f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                        SocketHandler.TaskEvent.IB_TASK_DONE.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_done)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
+                        SocketHandler.TaskEvent.IB_CANCELED_TASK.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_canceled)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
 
-                } else {
-                    inboxTaskCardParentLayout.background = context.resources.getDrawable(R.drawable.status_ongoing_outline_new)
-                    inboxTaskUId.background = context.resources.getDrawable(R.drawable.status_ongoing_filled)
-                    inboxTaskStateIcon.visibility = View.GONE
-                    inboxTaskEventDescription.visibility = View.VISIBLE
-                    inboxItemImg.visibility = View.VISIBLE
-                    val layoutParams =
-                        inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                    // Set the new horizontal bias
-                    layoutParams.horizontalBias = 0.31f
-                    inboxImgEndPoint.layoutParams = layoutParams
+                        else -> {
+                            inboxTaskStateIcon.visibility = View.GONE
+                        }
+                    }
 
-                    val tintColor = context.resources.getColor(R.color.white)
-                    inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
+                    if (item.actionDataTask.project != null) {
+                        if (item.actionDataTask.project.title.isNotEmpty()) {
+                            inboxTaskProjectName.text = item.actionDataTask.project.title
+                            inboxTaskProjectName.visibility = View.VISIBLE
+                        } else {
+                            inboxTaskProjectName.text = ""
+                            inboxTaskProjectName.visibility = View.GONE
+                        }
+                    } else {
+                        inboxTaskProjectName.text = ""
+                        inboxTaskProjectName.visibility = View.GONE
+                    }
+
+                    if (item.actionDataTask.dueDate.isEmpty()) {
+                        inboxTaskDueDate.text = ""
+                        inboxTaskDueDate.visibility = View.GONE
+                    } else {
+                        var dueDate = ""
+                        dueDate = DateUtils.reformatStringDate(
+                            date = item.actionDataTask.dueDate,
+                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
+                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+                        )
+                        if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
+                            dueDate = DateUtils.reformatStringDate(
+                                date = item.actionDataTask.dueDate,
+                                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
+                                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
+                            )
+                            if (dueDate == "") {
+                                dueDate = "N/A"
+                            }
+                        }
+                        inboxTaskDueDate.text = "Due By: $dueDate"
+                        inboxTaskDueDate.visibility = View.VISIBLE
+                    }
+
+
+                    inboxTaskTitle.text = item.actionTitle
+
+
+                    if (item.actionDescription.isEmpty()) {
+                        inboxTaskEventDescription.text = ""
+                        inboxTaskEventDescription.visibility = View.GONE
+                    } else {
+                        inboxTaskEventDescription.text = item.actionDescription
+                        inboxTaskEventDescription.visibility = View.VISIBLE
+                    }
+
+                    if (!item.actionBy.profilePic.isNullOrEmpty()) {
+                        val circularProgressDrawable = CircularProgressDrawable(context)
+                        circularProgressDrawable.strokeWidth = 4f
+                        circularProgressDrawable.centerRadius = 14f
+                        circularProgressDrawable.start()
+
+                        val requestOptions = RequestOptions()
+                            .placeholder(circularProgressDrawable)
+                            .error(R.drawable.profile_img)
+                            .skipMemoryCache(true)
+                            .centerCrop()
+
+                        Glide.with(context)
+                            .load(item.actionBy.profilePic)
+                            .apply(requestOptions)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    circularProgressDrawable.stop()
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    dataSource: DataSource?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    circularProgressDrawable.stop()
+                                    return false
+                                }
+                            })
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(inboxTaskCreatorImg)
+                    }
+
+                    inboxCreatorName.text = "${item.actionBy.firstName} ${item.actionBy.surName}"
+
+                    inboxCreatedAt.text =
+                        DateUtils.formatCreationUTCTimeToCustom(
+                            utcTime = item.createdAt,
+                            inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
+                        )
+
+
+
+                    if (item.actionFiles.isEmpty()) {
+                        inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
+                        inboxItemImgCard.visibility = View.GONE
+                        inboxItemImg.visibility = View.GONE
+                        inboxImgCount.visibility = View.GONE
+                        val layoutParams =
+                            inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
+                        // Set the new horizontal bias for image width
+                        layoutParams.horizontalBias = 0.0f
+                        inboxImgEndPoint.layoutParams = layoutParams
+                    } else {
+                        val circularProgressDrawable = CircularProgressDrawable(context)
+                        circularProgressDrawable.strokeWidth = 4f
+                        circularProgressDrawable.centerRadius = 14f
+                        circularProgressDrawable.start()
+
+                        val requestOptions = RequestOptions()
+                            .placeholder(circularProgressDrawable)
+                            .error(R.drawable.icon_corrupt_file)
+                            .skipMemoryCache(true)
+                            .centerCrop()
+
+                        Glide.with(context)
+                            .load(item.actionFiles[0].fileUrl)
+                            .apply(requestOptions)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onLoadFailed(
+                                    e: GlideException?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    circularProgressDrawable.stop()
+                                    return false
+                                }
+
+                                override fun onResourceReady(
+                                    resource: Drawable?,
+                                    model: Any?,
+                                    target: Target<Drawable>?,
+                                    dataSource: DataSource?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    circularProgressDrawable.stop()
+                                    return false
+                                }
+                            })
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(inboxItemImg)
+
+                        inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
+                        inboxItemImgCard.visibility = View.VISIBLE
+                        inboxItemImg.visibility = View.VISIBLE
+                        val layoutParams =
+                            inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
+                        // Set the new horizontal bias for image width
+                        layoutParams.horizontalBias = 0.31f
+                        inboxImgEndPoint.layoutParams = layoutParams
+
+                        if (item.actionFiles.size > 1) {
+                            inboxImgCount.text = "+${item.actionFiles.size - 1}"
+                            inboxImgCount.visibility = View.VISIBLE
+                        } else {
+                            inboxImgCount.visibility = View.GONE
+                        }
+                    }
+
+                    // inboxTaskUnseenLayout background depends whether the task has image or not, so background is set in actionFiles on top of here
+                    // and inboxTaskUnseenLayout background color depends on task seen
+
+                    if (item.isSeen) {
+                        val tintColor = context.resources.getColor(R.color.white)
+                        inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
+                    } else {
+                        val tintColor = context.resources.getColor(R.color.appPaleBlue)
+                        inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
+                    }
+
+                    //Following unseen count can also come outside from this else condition depending on the scenario
+                    if (item.unSeenNotifCount > 1) {
+                        unreadCount.text = item.unSeenNotifCount.toString()
+                        unreadCount.visibility = View.VISIBLE
+                    } else {
+                        unreadCount.text = "0"
+                        unreadCount.visibility = View.GONE
+                    }
+
                 }
+            } else {
+                binding.taskCard.visibility = View.GONE
+                binding.unreadCount.visibility = View.GONE
             }
-
 
         }
     }
