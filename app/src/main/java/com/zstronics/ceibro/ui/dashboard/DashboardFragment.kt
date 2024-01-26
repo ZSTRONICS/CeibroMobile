@@ -134,21 +134,41 @@ class DashboardFragment :
 
             }
 
-            R.id.profileImg -> navigateToProfile()
             R.id.menuProfileFooter -> {
                 closeDrawerLayout()
                 navigateToProfile()
             }
-            R.id.friendsReqBtn -> navigateToConnections()
             R.id.menuFooterConnectionsBtn -> {
                 closeDrawerLayout()
                 navigateToConnections()
             }
-            R.id.feedbackBtn -> showFeedbackDialog()
             R.id.menuFeedbackHeaderBtn -> {
                 closeDrawerLayout()
                 showFeedbackDialog()
             }
+            R.id.menuToMeTaskBtn -> {
+                closeDrawerLayout()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    changeSelectedTab(R.id.toMeBtn, false)
+                },50)
+            }
+            R.id.menuFromMeTaskBtn -> {
+                closeDrawerLayout()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    changeSelectedTab(R.id.fromMeBtn, false)
+                },50)
+            }
+            R.id.menuHiddenTaskBtn -> {
+                closeDrawerLayout()
+//                Handler(Looper.getMainLooper()).postDelayed({
+                    navigate(R.id.taskHiddenFragment)
+//                },20)
+            }
+
+            R.id.profileImg -> navigateToProfile()
+            R.id.friendsReqBtn -> navigateToConnections()
+            R.id.feedbackBtn -> showFeedbackDialog()
+
             R.id.toMeBtn -> {
                 changeSelectedTab(R.id.toMeBtn, false)
             }
@@ -457,6 +477,12 @@ class DashboardFragment :
 
     override fun onResume() {
         super.onResume()
+        if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+            viewModel.sessionManager.setToken()
+        }
+        if (viewModel.sessionManager.getUser().value?.id.isNullOrEmpty()) {
+            viewModel.sessionManager.setUser()
+        }
         val coroutineScope = viewLifecycleOwner.lifecycleScope
         coroutineScope.launch(Dispatchers.IO) {
             val unSyncedTasks = viewModel.getDraftTasks()

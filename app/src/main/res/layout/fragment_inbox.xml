@@ -32,18 +32,19 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <android.widget.SearchView
-                android:id="@+id/taskFromMeSearchBar"
+                android:id="@+id/inboxSearchBar"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:background="@drawable/search_view_bottom_border"
                 android:elevation="0dp"
                 android:iconifiedByDefault="false"
                 android:paddingStart="-12dp"
-                android:paddingEnd="30dp"
+                android:paddingEnd="26dp"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="Start typing for search"
                 android:searchIcon="@null"
                 android:textColor="@color/black"
+                android:closeIcon="@drawable/icon_close_round_grey"
                 app:layout_constraintEnd_toEndOf="@+id/ivSort"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -53,13 +54,12 @@
                 android:id="@+id/ivSort"
                 android:layout_width="36dp"
                 android:layout_height="0dp"
-                android:padding="6dp"
-                android:paddingHorizontal="@dimen/_5sdp"
+                android:padding="5.5dp"
                 android:src="@drawable/icon_sort"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/taskFromMeSearchBar"
+                app:layout_constraintBottom_toBottomOf="@+id/inboxSearchBar"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/taskFromMeSearchBar"
+                app:layout_constraintTop_toTopOf="@+id/inboxSearchBar"
                 app:tint="@color/appBlue" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

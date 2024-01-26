@@ -1,6 +1,8 @@
 package com.zstronics.ceibro.ui.tasks.v2.tasktome
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
@@ -104,7 +106,16 @@ class TaskToMeFragment :
         changeSelectedUserState()
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
-                updateCount(it)
+                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+                    viewModel.sessionManager.setToken()
+                }
+                if (viewModel.user?.id.isNullOrEmpty()) {
+                    viewModel.sessionManager.setUser()
+                    viewModel.user = viewModel.sessionManager.getUserObj()
+                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    updateCount(it)
+                }, 20)
             }
         }
 
@@ -228,6 +239,13 @@ class TaskToMeFragment :
 
     override fun onResume() {
         super.onResume()
+        if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+            viewModel.sessionManager.setToken()
+        }
+        if (viewModel.user?.id.isNullOrEmpty()) {
+            viewModel.sessionManager.setUser()
+            viewModel.user = viewModel.sessionManager.getUserObj()
+        }
         loadTasks(false)
         val sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.isToMeUnread.value = false

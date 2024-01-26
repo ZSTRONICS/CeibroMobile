@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.InboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
@@ -49,6 +50,7 @@ interface ITaskRemoteDataSource {
     suspend fun deleteTask(taskId: String): ApiResponse<GenericResponse>
 
     suspend fun getAllTopics(): ApiResponse<TopicsResponse>
+    suspend fun getAllInboxTasks(): ApiResponse<InboxTaskResponse>
     suspend fun saveTopic(requestBody: NewTopicCreateRequest): ApiResponse<NewTopicResponse>
     suspend fun getAllTasks(rootState: String): ApiResponse<TaskV2Response>
     suspend fun syncAllTask(updatedAtTimeStamp: String): ApiResponse<AllTasksV2Response>

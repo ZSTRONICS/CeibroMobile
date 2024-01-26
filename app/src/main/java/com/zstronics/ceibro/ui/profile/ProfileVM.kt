@@ -16,6 +16,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -41,6 +42,7 @@ class ProfileVM @Inject constructor(
     private val topicsV2Dao: TopicsV2Dao,
     private val projectsV2Dao: ProjectsV2Dao,
     private val floorV2Dao: FloorsV2Dao,
+    private val inboxV2Dao: InboxV2Dao,
     private val groupV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
     private val drawingPinsDao: DrawingPinsV2Dao,
@@ -118,6 +120,7 @@ class ProfileVM @Inject constructor(
             projectsV2Dao.deleteAll()
             groupV2Dao.deleteAll()
             floorV2Dao.deleteAll()
+            inboxV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
             drawingPinsDao.deleteAll()

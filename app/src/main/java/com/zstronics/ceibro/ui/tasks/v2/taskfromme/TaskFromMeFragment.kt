@@ -104,6 +104,13 @@ class TaskFromMeFragment :
         changeSelectedUserState()
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
+                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+                    viewModel.sessionManager.setToken()
+                }
+                if (viewModel.user?.id.isNullOrEmpty()) {
+                    viewModel.sessionManager.setUser()
+                    viewModel.user = viewModel.sessionManager.getUserObj()
+                }
                 updateCount(it)
             }
         }

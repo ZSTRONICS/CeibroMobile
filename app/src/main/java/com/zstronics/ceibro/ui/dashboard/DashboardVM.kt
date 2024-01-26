@@ -705,6 +705,7 @@ class DashboardVM @Inject constructor(
             projectsV2Dao.deleteAll()
             groupV2Dao.deleteAll()
             floorV2Dao.deleteAll()
+            inboxV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
             drawingPinsDao.deleteAll()

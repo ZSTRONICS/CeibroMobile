@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.InboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
@@ -223,6 +224,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             call =
             {
                 service.getAllTopics()
+            }
+        )
+
+    override suspend fun getAllInboxTasks(): ApiResponse<InboxTaskResponse> =
+        executeSafely(
+            call =
+            {
+                service.getAllInboxTasks()
             }
         )
 
