@@ -23,6 +23,7 @@ class LocationsV2VM @Inject constructor(
     private val groupsV2Dao: GroupsV2Dao,
 ) : HiltBaseViewModel<ILocationsV2.State>(), ILocationsV2.ViewModel {
 
+    var index=0
 
     var _drawingFile: MutableLiveData<DrawingV2?> =
         MutableLiveData()
@@ -63,6 +64,7 @@ class LocationsV2VM @Inject constructor(
             val ceibroGroupsV2: CeibroGroupsV2? = groupsV2Dao.getGroupByGroupId(groupId)
             ceibroGroupsV2?.let {
                 _existingGroup.value=it
+                viewState.groupName.value=it.groupName
             }
 
         }

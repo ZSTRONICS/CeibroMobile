@@ -8,6 +8,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardTaskV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.InboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
@@ -138,6 +139,9 @@ interface TaskRetroService {
 
     @GET("v2/task/topic")
     suspend fun getAllTopics(): Response<TopicsResponse>
+
+    @GET("v2/task/syncInbox")
+    suspend fun getAllInboxTasks(): Response<InboxTaskResponse>
 
     @POST("v2/task/topic")
     suspend fun saveTopic(@Body requestBody: NewTopicCreateRequest): Response<NewTopicResponse>

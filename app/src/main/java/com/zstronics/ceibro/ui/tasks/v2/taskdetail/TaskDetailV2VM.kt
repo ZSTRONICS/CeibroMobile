@@ -11,6 +11,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -38,6 +39,7 @@ class TaskDetailV2VM @Inject constructor(
     private val remoteTask: TaskRemoteDataSource,
     val dashboardRepository: IDashboardRepository,
     val taskDao: TaskV2Dao,
+    private val inboxV2Dao: InboxV2Dao,
     val drawingPinsDao: DrawingPinsV2Dao,
     val downloadedDrawingV2Dao:DownloadedDrawingV2Dao
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
@@ -257,7 +259,8 @@ class TaskDetailV2VM @Inject constructor(
                                 taskDao,
                                 user?.id,
                                 sessionManager,
-                                drawingPinsDao
+                                drawingPinsDao,
+                                inboxV2Dao
                             )
                         }
                         onBack(taskSeenData)

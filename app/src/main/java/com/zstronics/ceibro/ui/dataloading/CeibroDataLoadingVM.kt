@@ -16,6 +16,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
@@ -60,6 +61,7 @@ class CeibroDataLoadingVM @Inject constructor(
     private val projectsV2Dao: ProjectsV2Dao,
     private val floorsV2Dao: FloorsV2Dao,
     private val groupsV2Dao: GroupsV2Dao,
+    private val inboxV2Dao: InboxV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
 ) : HiltBaseViewModel<ICeibroDataLoading.State>(), ICeibroDataLoading.ViewModel {
     var taskData: NotificationTaskData? = null
@@ -107,6 +109,24 @@ class CeibroDataLoadingVM @Inject constructor(
                             topicsData = response.data
                         )
                     )
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+            }
+        }
+
+        launch {
+            when (val response = remoteTask.getAllInboxTasks()) {
+                is ApiResponse.Success -> {
+                    val allInboxTasks = response.data.inboxEvents.toMutableList()
+                    inboxV2Dao.insertMultipleInboxItem(allInboxTasks)
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+
                     apiSucceedCount++
                     callBack.invoke()
                 }
@@ -381,6 +401,7 @@ class CeibroDataLoadingVM @Inject constructor(
             projectsV2Dao.deleteAll()
             groupsV2Dao.deleteAll()
             floorsV2Dao.deleteAll()
+            inboxV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
             drawingPinsDao.deleteAll()

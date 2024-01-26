@@ -26,8 +26,10 @@ import com.zstronics.ceibro.data.database.dao.DraftNewTaskV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
@@ -539,12 +541,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 toMeOngoingTask
                             )
                         } else {
-                            val toMeOngoingTask =
-                                taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
-                                    .toMutableList()
-                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(
-                                toMeOngoingTask
-                            )
+//                            val toMeOngoingTask =
+//                                taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
+//                                    .toMutableList()
+//                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(
+//                                toMeOngoingTask
+//                            )
 
                             val toMeDoneTask =
                                 taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase())
@@ -601,12 +603,12 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             )
 
                         } else {
-                            val fromMeOngoingTask =
-                                taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
-                                    .toMutableList()
-                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
-                                fromMeOngoingTask
-                            )
+//                            val fromMeOngoingTask =
+//                                taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
+//                                    .toMutableList()
+//                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
+//                                fromMeOngoingTask
+//                            )
 
                             val fromMeDoneTask =
                                 taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase())
@@ -1023,7 +1025,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         taskDao: TaskV2Dao,
         userId: String?,
         sessionManager: SessionManager,
-        drawingPinsDao: DrawingPinsV2Dao
+        drawingPinsDao: DrawingPinsV2Dao,
+        inboxV2Dao: InboxV2Dao
     ) {
         if (taskSeen != null) {
             val exist = TaskEventsList.isExists(
@@ -1035,6 +1038,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 sessionManager.saveUpdatedAtTimeStamp(taskSeen.taskUpdatedAt)
                 GlobalScope.launch {
                     val task = taskDao.getTaskByID(taskSeen.taskId)
+                    val inboxTask = inboxV2Dao.getInboxTaskData(taskSeen.taskId)
 
                     if (task != null) {
                         task.seenBy = taskSeen.seenBy
@@ -1087,16 +1091,31 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         }
                     }
                     updatedTask = task
+
                     if (taskSeen.pinData != null) {
                         drawingPinsDao.insertSinglePinData(taskSeen.pinData)
                     }
 
+                    if (inboxTask != null) {
+                        inboxTask.isSeen = true
+                        inboxTask.unSeenNotifCount = 0
+                        if (taskSeen.stateChanged) {
+                            inboxTask.taskState = taskSeen.newTaskData.userSubState
+                            inboxTask.actionType = SocketHandler.TaskEvent.IB_STATE_CHANGED.name
+                        }
+                        inboxV2Dao.insertInboxItem(inboxTask)
+                    }
+
                     updateAllTasksListForTaskSeen(taskDao, taskSeen)
+
+                    val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
 
                 }.join()
                 EventBus.getDefault()
                     .post(LocalEvents.TaskSeenEvent(updatedTask))
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.RefreshInboxData())
                 EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(taskSeen.pinData))
 
                 TaskEventsList.removeEvent(
@@ -1675,6 +1694,37 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                 TaskEventsList.removeEvent(
                     SocketHandler.TaskEvent.TASK_SHOWN.name, hideData.taskId
+                )
+
+            }
+        }
+    }
+
+    suspend fun addOrUpdateInboxTaskInLocal(
+        inboxTask: CeibroInboxV2?,
+        inboxV2Dao: InboxV2Dao,
+        sessionManager: SessionManager
+    ) {
+        if (inboxTask != null) {
+            val isExists = TaskEventsList.isExists(
+                SocketHandler.TaskEvent.IB_TASK_CREATED.name, inboxTask.taskId, true
+            )
+            if (!isExists) {
+                GlobalScope.launch {
+                    sessionManager.saveInboxUpdatedAtTimeStamp(inboxTask.createdAt)
+
+                    inboxV2Dao.insertInboxItem(inboxTask)
+
+
+                    val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+
+                }.join()
+                EventBus.getDefault().post(LocalEvents.RefreshInboxData())
+//                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(hideData.pinData))
+
+                TaskEventsList.removeEvent(
+                    SocketHandler.TaskEvent.IB_TASK_CREATED.name, inboxTask.taskId
                 )
 
             }

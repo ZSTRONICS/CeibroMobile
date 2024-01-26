@@ -412,7 +412,8 @@ class LocationsV2Fragment :
             pdfFileLoaded = false
             reloadFragment()
         }
-        manager = mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        manager =
+            mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
 
         addFiltersToList()
@@ -456,11 +457,29 @@ class LocationsV2Fragment :
                     val drawing = viewModel.existingGroup.value?.drawings?.get(position)
                     drawing?.let {
                         GlobalScope.launch() {
-                            val drawingObject =
-                                viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(it._id)
+                            val drawingObject = viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(it._id)
 
                             withContext(Dispatchers.Main) {
                                 drawingObject?.let { downloadedDrawing ->
+
+                                    viewModel.existingGroup.observe(viewLifecycleOwner) {
+
+                                        it?.let {
+                                            viewState.groupName.value = it.groupName
+                                            adapter.setList(it.drawings)
+
+                                            viewModel.drawingFile.value?.let {file->
+                                                it.drawings.forEachIndexed { index, drawingV2 ->
+
+                                                    if (file._id==drawingV2._id){
+                                                        viewModel.index=position
+                                                   //     mViewDataBinding.locationSpinner.setSelection(index)
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
                                     val file = File(downloadedDrawing.localUri)
                                     if (file.exists()) {
                                         it.uploaderLocalFilePath = downloadedDrawing.localUri
@@ -484,10 +503,13 @@ class LocationsV2Fragment :
                                         "File not downloaded",
                                         Toast.LENGTH_SHORT
                                     )
+                                    mViewDataBinding.locationSpinner.setSelection( viewModel.index)
                                 }
                             }
                         }
 
+                    }?: kotlin.run {
+                        mViewDataBinding.locationSpinner.setSelection(viewModel.index)
                     }
                 }
 
@@ -538,7 +560,19 @@ class LocationsV2Fragment :
         viewModel.existingGroup.observe(viewLifecycleOwner) {
 
             it?.let {
+                viewState.groupName.value = it.groupName
                 adapter.setList(it.drawings)
+
+                viewModel.drawingFile.value?.let {file->
+                    it.drawings.forEachIndexed { index, drawingV2 ->
+
+                        if (file._id==drawingV2._id){
+                            viewModel.index=index
+                            mViewDataBinding.locationSpinner.setSelection(index)
+                        }
+                    }
+
+                }
             }
         }
         viewModel.filterExistingDrawingPins.observe(viewLifecycleOwner) {
@@ -561,6 +595,8 @@ class LocationsV2Fragment :
         viewModel.drawingFile.observe(viewLifecycleOwner) { drawing ->
 
             drawing?.let {
+
+
                 mViewDataBinding.progressBar.visibility = View.VISIBLE
                 mViewDataBinding.tvFloorName.text = "${it.floor.floorName} Floor"
                 mViewDataBinding.tvFileName.text = "${it.fileName}"

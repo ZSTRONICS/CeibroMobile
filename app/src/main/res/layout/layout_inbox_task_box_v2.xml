@@ -19,6 +19,7 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,19 +31,53 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/status_ongoing_outline_new">
 
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/inboxItemImg"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/inboxItemImgCard"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:background="@drawable/status_ongoing_outline_new"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/new_background2"
-                    android:visibility="visible"
+                    app:cardBackgroundColor="@color/transparent"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="7.5dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginBottom="1dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/inboxImgEndPoint"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/inboxItemImg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/new_background2"
+                            android:visibility="visible"
+                            android:elevation="2dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/inboxImgCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/almostBlack"
+                            android:paddingVertical="2dp"
+                            android:paddingHorizontal="3dp"
+                            android:text="+3"
+                            android:elevation="4dp"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
 
                 <View
                     android:id="@+id/inboxImgEndPoint"
@@ -66,7 +101,7 @@
                     android:backgroundTint="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/inboxItemImg"
+                    app:layout_constraintStart_toEndOf="@+id/inboxItemImgCard"
                     app:layout_constraintTop_toTopOf="parent">
 
 
@@ -87,12 +122,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/status_ongoing_filled"
-                            android:fontFamily="@font/inter_semibold"
+                            android:fontFamily="@font/inter_medium"
                             android:gravity="center"
                             android:maxLength="9"
-                            android:paddingHorizontal="7dp"
-                            android:paddingTop="3dp"
-                            android:paddingBottom="3dp"
+                            android:paddingHorizontal="6dp"
+                            android:paddingTop="2.5dp"
+                            android:paddingBottom="2.5dp"
                             android:text="C01-0012"
                             android:textColor="@color/black"
                             android:textSize="11.5sp"
@@ -124,14 +159,14 @@
                                 android:maxLines="1"
                                 android:text="Project"
                                 android:textColor="@color/black"
-                                android:textSize="11.5sp"
+                                android:textSize="11sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@+id/taskDueDate"
+                                app:layout_constraintEnd_toStartOf="@+id/inboxTaskDueDate"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
-                                android:id="@+id/taskDueDate"
+                                android:id="@+id/inboxTaskDueDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="end"
@@ -141,7 +176,7 @@
                                 android:maxLines="1"
                                 android:text="Due By: 29.05.23"
                                 android:textColor="@color/black"
-                                android:textSize="11.5sp"
+                                android:textSize="11sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -195,7 +230,7 @@
                         android:layout_height="33dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_marginBottom="@dimen/_6sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
                         app:cardBackgroundColor="@color/appGrey"
                         app:cardCornerRadius="25dp"
                         app:cardElevation="1dp"
@@ -237,7 +272,7 @@
                             android:maxLines="1"
                             android:text="@string/creator_heading"
                             android:textColor="@color/appTextGrey"
-                            android:textSize="13sp" />
+                            android:textSize="12.5sp" />
 
                         <TextView
                             android:id="@+id/inboxCreatedAt"
@@ -249,7 +284,7 @@
                             android:maxLines="1"
                             android:text="@string/created_on_heading"
                             android:textColor="@color/appTextGrey"
-                            android:textSize="13sp" />
+                            android:textSize="12.5sp" />
                     </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -283,7 +318,7 @@
             android:text="0"
             android:textColor="@color/black"
             android:textSize="11sp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/taskCard"
             app:layout_constraintEnd_toEndOf="@+id/taskCard"
             app:layout_constraintStart_toEndOf="@+id/taskCard"

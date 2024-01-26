@@ -38,6 +38,10 @@ class TaskHiddenFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
+            R.id.backBtn -> {
+                navigateBack()
+            }
+
             R.id.cancelledStateText -> {
                 viewModel.selectedState = TaskStatus.CANCELED.name.lowercase()
                 val cancelledTasks = viewModel.cancelledTasks.value
@@ -59,6 +63,7 @@ class TaskHiddenFragment :
                 changeSelectedUserState()
                 preSearch()
             }
+
             R.id.ongoingStateText -> {
                 viewModel.selectedState = TaskStatus.ONGOING.name.lowercase()
                 val ongoingTask = viewModel.ongoingTasks.value
@@ -80,6 +85,7 @@ class TaskHiddenFragment :
                 changeSelectedUserState()
                 preSearch()
             }
+
             R.id.doneStateText -> {
                 viewModel.selectedState = TaskStatus.DONE.name.lowercase()
                 val doneTask = viewModel.doneTasks.value
@@ -113,6 +119,13 @@ class TaskHiddenFragment :
         changeSelectedUserState()
         viewModel.allTasks.observe(viewLifecycleOwner) {
             if (it != null) {
+                if (CeibroApplication.CookiesManager.jwtToken.isNullOrEmpty()) {
+                    viewModel.sessionManager.setToken()
+                }
+                if (viewModel.user?.id.isNullOrEmpty()) {
+                    viewModel.sessionManager.setUser()
+                    viewModel.user = viewModel.sessionManager.getUserObj()
+                }
                 updateCount(it)
             }
         }
@@ -190,8 +203,10 @@ class TaskHiddenFragment :
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
-                    CeibroApplication.CookiesManager.taskDetailRootState = TaskRootStateTags.Hidden.tagValue.lowercase()
-                    CeibroApplication.CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
+                    CeibroApplication.CookiesManager.taskDetailRootState =
+                        TaskRootStateTags.Hidden.tagValue.lowercase()
+                    CeibroApplication.CookiesManager.taskDetailSelectedSubState =
+                        viewModel.selectedState
                     withContext(Dispatchers.Main) {
                         // Update the UI here
                         navigate(R.id.taskDetailV2Fragment)
@@ -202,10 +217,13 @@ class TaskHiddenFragment :
         adapter.itemLongClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
                 //user cannot hide a task of new state
-                if (viewModel.selectedState.equals(TaskStatus.ONGOING.name, true) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)) {
+                if (viewModel.selectedState.equals(
+                        TaskStatus.ONGOING.name,
+                        true
+                    ) || viewModel.selectedState.equals(TaskStatus.DONE.name, true)
+                ) {
                     viewModel.showUnHideTaskDialog(requireContext(), data)
-                }
-                else if (viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
+                } else if (viewModel.selectedState.equals(TaskStatus.CANCELED.name, true)) {
                     if (data.creator.id == viewModel.user?.id) {
                         viewModel.showUnCancelTaskDialog(requireContext(), data)
                     } else {
@@ -280,7 +298,9 @@ class TaskHiddenFragment :
     }
 
     private fun updateCount(allTasks: MutableList<CeibroTaskV2>) {
-        val canceledCount = allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }.count { task -> viewModel.user?.id !in task.seenBy }
+        val canceledCount =
+            allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }
+                .count { task -> viewModel.user?.id !in task.seenBy }
         mViewDataBinding.cancelledStateCount.text =
             if (canceledCount > 99) {
                 "99+"

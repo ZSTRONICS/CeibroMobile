@@ -7,6 +7,7 @@ import androidx.work.WorkManager
 import com.gu.toolargetool.TooLargeTool
 import com.onesignal.OneSignal
 import com.zstronics.ceibro.data.base.interceptor.SessionValidator
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
@@ -76,6 +77,7 @@ open class CeibroApplication : Application() {
         var secureUUID: String? = null
         var deviceType: String? = null
         var androidId: String? = null
+        var allInboxTasks: MutableLiveData<MutableList<CeibroInboxV2>> = MutableLiveData()
         var toMeNewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var toMeOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var toMeDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()

@@ -32,18 +32,19 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <android.widget.SearchView
-                android:id="@+id/taskFromMeSearchBar"
+                android:id="@+id/inboxSearchBar"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:background="@drawable/search_view_bottom_border"
                 android:elevation="0dp"
                 android:iconifiedByDefault="false"
                 android:paddingStart="-12dp"
-                android:paddingEnd="30dp"
+                android:paddingEnd="26dp"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="Start typing for search"
                 android:searchIcon="@null"
                 android:textColor="@color/black"
+                android:closeIcon="@drawable/icon_close_round_grey"
                 app:layout_constraintEnd_toEndOf="@+id/ivSort"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -53,18 +54,17 @@
                 android:id="@+id/ivSort"
                 android:layout_width="36dp"
                 android:layout_height="0dp"
-                android:padding="6dp"
-                android:paddingHorizontal="@dimen/_5sdp"
+                android:padding="5.5dp"
                 android:src="@drawable/icon_sort"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/taskFromMeSearchBar"
+                app:layout_constraintBottom_toBottomOf="@+id/inboxSearchBar"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/taskFromMeSearchBar"
+                app:layout_constraintTop_toTopOf="@+id/inboxSearchBar"
                 app:tint="@color/appBlue" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/fromMeLogoBackground"
+            android:id="@+id/inboxLogoBackground"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:padding="@dimen/_35sdp"
@@ -105,7 +105,7 @@
                     tools:listitem="@layout/layout_inbox_task_box_v2" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/fromMeOngoingInfoLayout"
+                    android:id="@+id/inboxInfoLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/_11sdp"
@@ -115,13 +115,13 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:id="@+id/toMeOngoingDescHeadingEstonia"
+                        android:id="@+id/inboxInfoHeadingEstonia"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_semibold"
                         android:maxLines="2"
-                        android:text="@string/to_me_ongoing_desc_heading_estonia"
+                        android:text="@string/inbox_desc_heading_estonia"
                         android:textColor="@color/appBlue"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -129,49 +129,49 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/toMeOngoingDescDetailEstonia"
+                        android:id="@+id/inboxInfoDetailEstonia"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
                         android:maxLines="8"
-                        android:text="@string/to_me_ongoing_desc_detail_estonia"
+                        android:text="@string/inbox_desc_detail_estonia"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/toMeOngoingDescHeadingEstonia" />
+                        app:layout_constraintTop_toBottomOf="@+id/inboxInfoHeadingEstonia" />
 
                     <TextView
-                        android:id="@+id/toMeOngoingDescHeadingEnglish"
+                        android:id="@+id/inboxInfoHeadingEnglish"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_7sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_semibold"
                         android:maxLines="2"
-                        android:text="@string/to_me_ongoing_desc_heading_english"
+                        android:text="@string/inbox_desc_heading_english"
                         android:textColor="@color/appBlue"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/toMeOngoingDescDetailEstonia" />
+                        app:layout_constraintTop_toBottomOf="@+id/inboxInfoDetailEstonia" />
 
                     <TextView
-                        android:id="@+id/toMeOngoingDescDetailEnglish"
+                        android:id="@+id/inboxInfoDetailEnglish"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
                         android:maxLines="8"
-                        android:text="@string/to_me_ongoing_desc_detail_english"
+                        android:text="@string/inbox_desc_detail_english"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/toMeOngoingDescHeadingEnglish" />
+                        app:layout_constraintTop_toBottomOf="@+id/inboxInfoHeadingEnglish" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

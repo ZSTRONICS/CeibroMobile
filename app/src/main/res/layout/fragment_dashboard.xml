@@ -136,6 +136,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="4dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
                     app:layout_constraintEnd_toStartOf="@+id/notificationBtn"
                     app:layout_constraintTop_toTopOf="@+id/profileIcon"
@@ -150,6 +151,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="4dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
                     app:layout_constraintEnd_toStartOf="@+id/friendsReqBtn"
                     app:layout_constraintTop_toTopOf="@+id/profileIcon"
@@ -973,6 +975,41 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/menuFeedbackHeaderBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_9sdp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/_6sdp"
+                        android:paddingStart="@dimen/_2sdp"
+                        android:paddingEnd="@dimen/_10sdp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/feedbackIcon"
+                            android:layout_width="@dimen/_18sdp"
+                            android:layout_height="@dimen/_19sdp"
+                            android:src="@drawable/icon_feedback"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/black" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="Feedback Form"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_12sdp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/feedbackIcon"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
@@ -993,7 +1030,7 @@
                     app:iconGravity="textStart"
                     app:iconPadding="12dp"
                     app:iconTint="@color/white"
-                    app:layout_constraintBottom_toTopOf="@id/profileFooter"
+                    app:layout_constraintBottom_toTopOf="@id/menuProfileFooter"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:strokeColor="@color/appBlue"
@@ -1001,12 +1038,13 @@
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/profileFooter"
+                    android:id="@+id/menuProfileFooter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_9sdp"
                     android:orientation="vertical"
                     android:paddingVertical="@dimen/_2sdp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">

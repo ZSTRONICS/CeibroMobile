@@ -110,6 +110,7 @@ object LocalEvents {
     class LogoutUserEvent
     object UpdateConnections
     class RefreshTasksData
+    class RefreshInboxData
     class RefreshProjectsData
     data class RefreshFloorsData(val projectId: String)
     data class RefreshGroupsData(val projectId: String)

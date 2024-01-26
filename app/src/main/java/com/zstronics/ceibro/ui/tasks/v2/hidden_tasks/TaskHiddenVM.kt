@@ -31,7 +31,7 @@ class TaskHiddenVM @Inject constructor(
     val taskDao: TaskV2Dao,
     private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<ITaskHidden.State>(), ITaskHidden.ViewModel {
-    val user = sessionManager.getUser().value
+    var user = sessionManager.getUser().value
     var selectedState: String = "ongoing"
 
     private val _cancelledTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()

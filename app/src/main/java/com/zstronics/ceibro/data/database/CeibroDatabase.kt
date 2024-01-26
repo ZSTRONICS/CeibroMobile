@@ -7,6 +7,7 @@ import com.zstronics.ceibro.data.database.converters.*
 import com.zstronics.ceibro.data.database.converters.v2.*
 import com.zstronics.ceibro.data.database.dao.*
 import com.zstronics.ceibro.data.database.models.attachments.FilesAttachments
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
@@ -40,6 +41,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         FilesAttachments::class,
         RejectionComment::class,
         CeibroTaskV2::class,
+        CeibroInboxV2::class,
         Events::class,
         TopicsV2DatabaseEntity::class,
         CeibroProjectV2::class,
@@ -50,7 +52,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 99,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(
@@ -102,6 +104,9 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     AddLocationTaskTypeConverter::class,
     CeibroDrawingPinsTypeConverter::class,
     PinTaskDataTypeConverter::class,
+    ActionFilesDataListTypeConverter::class,
+    ActionProjectDataTypeConverter::class,
+    ActionDataTaskTypeConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")
@@ -118,11 +123,12 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getFloorsV2Dao(): FloorsV2Dao
     abstract fun getDownloadDrawingDao(): DownloadedDrawingV2Dao
     abstract fun getGroupsV2Dao(): GroupsV2Dao
+    abstract fun getInboxV2Dao(): InboxV2Dao
     abstract fun getDrawingPinsV2Dao(): DrawingPinsV2Dao
     abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
     abstract fun getDraftNewTaskV2Dao(): DraftNewTaskV2Dao
 
     companion object {
-        const val DB_NAME = "ceibro_app.db"
+        const val DB_NAME = "ceibro_database.db"
     }
 }

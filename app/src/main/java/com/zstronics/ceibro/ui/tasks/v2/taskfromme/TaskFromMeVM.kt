@@ -30,7 +30,7 @@ class TaskFromMeVM @Inject constructor(
     val taskDao: TaskV2Dao,
     private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<ITaskFromMe.State>(), ITaskFromMe.ViewModel {
-    val user = sessionManager.getUser().value
+    var user = sessionManager.getUser().value
     var selectedState: String = TaskStatus.UNREAD.name.lowercase()
     var disabledUnreadState: MutableLiveData<Boolean> = MutableLiveData()
     var firstStartOfFragment = true
