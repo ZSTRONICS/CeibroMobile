@@ -117,6 +117,7 @@ class InboxFragment :
         super.onResume()
         GlobalScope.launch {
             val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
+            allInboxTasks?.sortByDescending { it.createdAt }
 
             if (allInboxTasks.isNullOrEmpty()) {
                 val allInboxTasks1 = viewModel.inboxV2Dao.getAllInboxItems().toMutableList()
@@ -153,6 +154,7 @@ class InboxFragment :
     fun onRefreshInboxData(event: LocalEvents.RefreshInboxData) {
         GlobalScope.launch {
             val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
+            allInboxTasks?.sortByDescending { it.createdAt }
             viewModel._inboxTasks.postValue(allInboxTasks)
             viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
         }
