@@ -34,14 +34,20 @@ class InboxFragment :
     override val layoutResId: Int = R.layout.fragment_inbox
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
-    }
+        when(id) {
+            R.id.ivSort -> {
 
+            }
+        }
+    }
 
     @Inject
     lateinit var adapter: InboxAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.isUserSearching = false
+        mViewDataBinding.inboxSearchBar.setQuery("", false)
 
         mViewDataBinding.taskRV.adapter = adapter
 
@@ -137,8 +143,8 @@ class InboxFragment :
 //                    viewModel.searchInboxTasks(searchQuery.trim())
 //                }
 //            } else {
-            viewModel.isUserSearching = false
-            mViewDataBinding.inboxSearchBar.setQuery("", false)
+//            viewModel.isUserSearching = false
+//            mViewDataBinding.inboxSearchBar.setQuery("", false)
 //            }
         }
     }

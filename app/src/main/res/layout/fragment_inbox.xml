@@ -12,6 +12,8 @@
         <variable
             name="viewModel"
             type="com.zstronics.ceibro.ui.inbox.InboxVM" />
+
+        <import type="android.view.View" />
     </data>
 
 
@@ -57,6 +59,7 @@
                 android:padding="5.5dp"
                 android:src="@drawable/icon_sort"
                 android:visibility="visible"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 app:layout_constraintBottom_toBottomOf="@+id/inboxSearchBar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/inboxSearchBar"

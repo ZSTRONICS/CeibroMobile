@@ -19,7 +19,7 @@
             android:id="@+id/tvSample"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
             android:maxLines="1"

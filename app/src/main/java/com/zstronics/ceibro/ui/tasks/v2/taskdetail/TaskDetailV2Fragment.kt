@@ -40,6 +40,7 @@ import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -52,6 +53,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -90,31 +92,87 @@ class TaskDetailV2Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.closeBtn -> {
-                val instances = countActivitiesInBackStack(requireContext())
-                if (viewModel.notificationTaskData.value != null) {
-                    if (instances <= 1) {
-                        launchActivityWithFinishAffinity<NavHostPresenterActivity>(
-                            options = Bundle(),
-                            clearPrevious = true
-                        ) {
-                            putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
-                            putExtra(
-                                NAVIGATION_Graph_START_DESTINATION_ID,
-                                R.id.homeFragment
-                            )
-                        }
-                    } else {
-                        //finish is called so that second instance of app will be closed and only one last instance will remain
-                        finish()
-                    }
-                } else {
+                navigateBackFromDetailFragment {
                     navigateBack()
                 }
             }
 
             R.id.taskInfoBtn -> showTaskInfoBottomSheet()
-            R.id.DrawingOpenBtn -> {
-                showToast("Coming soon !!!")
+            R.id.drawingOpenBtn -> {
+                val task = viewModel.taskDetail.value
+                task?.let { taskData ->
+                    if (taskData.pinData != null) {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val downloadedDrawingFile =
+                                viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
+                                    taskData.pinData!!.drawingId
+                                )
+
+                            var actualDrawingObj: DrawingV2? = null
+                            val projectId = taskData.project?.id
+                            if (projectId != null) {
+                                val groups = viewModel.groupsV2Dao.getAllProjectGroups(projectId)
+                                groups.map {
+                                    it.drawings.map { drawing ->
+                                        if (drawing._id == taskData.pinData!!.drawingId) {
+                                            actualDrawingObj = drawing
+                                        }
+                                    }
+                                }
+                            }
+
+                            downloadedDrawingFile?.let { downloadedFile ->
+
+                                if (downloadedFile.isDownloaded) {
+
+                                    actualDrawingObj?.uploaderLocalFilePath =
+                                        downloadedFile.localUri
+                                    CeibroApplication.CookiesManager.drawingFileForLocation.value =
+                                        actualDrawingObj
+                                    viewModel.sessionManagerInternal.saveCompleteDrawingObj(
+                                        actualDrawingObj
+                                    )
+
+                                    CeibroApplication.CookiesManager.cameToLocationViewFromProject =
+                                        true
+                                    CeibroApplication.CookiesManager.openingNewLocationFile = true
+                                    navigateBackFromDetailFragment {
+                                        navigateBack()
+                                        EventBus.getDefault()
+                                            .postSticky(LocalEvents.LoadDrawingInLocation())
+                                    }
+
+
+                                } else if (downloadedFile.downloading) {
+                                    shortToastNow("Please wait, file is downloading")
+
+                                } else {
+                                    shortToastNow("Cannot download file. Please download it from projects")
+                                }
+                            } ?: kotlin.run {
+
+                                actualDrawingObj?.let {
+                                    val triplet = Triple(it._id, it.fileName, it.fileUrl)
+
+                                    checkDownloadFilePermission(
+                                        triplet,
+                                        viewModel.downloadedDrawingV2Dao
+                                    ) {
+                                        MainScope().launch {
+                                            if (it.trim().equals("100%", true)) {
+                                                shortToastNow("File Downloaded")
+                                            } else if (it == "retry" || it == "failed") {
+                                                shortToastNow("Downloading Failed")
+                                            }
+                                        }
+                                    }
+                                } ?: kotlin.run {
+                                    shortToastNow("Drawing/Group is not accessible, please check it in projects.")
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             R.id.taskCommentBtn -> {
@@ -299,9 +357,9 @@ class TaskDetailV2Fragment :
 
         viewModel.taskDetail.observe(viewLifecycleOwner) { item ->
             if (item.hasPinData) {
-                mViewDataBinding.DrawingOpenBtn.visibility = View.VISIBLE
+                mViewDataBinding.drawingOpenBtn.visibility = View.VISIBLE
             } else {
-                mViewDataBinding.DrawingOpenBtn.visibility = View.GONE
+                mViewDataBinding.drawingOpenBtn.visibility = View.GONE
             }
 
             if (taskSeenRequest) {
@@ -510,12 +568,12 @@ class TaskDetailV2Fragment :
                     viewModel.separateFiles(item.files)
                 }
 
-//            if (item.events.isNotEmpty()) {
-//                mViewDataBinding.eventsLayout.visibility = View.VISIBLE
-//                viewModel.handleEvents(item.events)
-//            } else {
-//                mViewDataBinding.eventsLayout.visibility = View.GONE
-//            }
+    //            if (item.events.isNotEmpty()) {
+    //                mViewDataBinding.eventsLayout.visibility = View.VISIBLE
+    //                viewModel.handleEvents(item.events)
+    //            } else {
+    //                mViewDataBinding.eventsLayout.visibility = View.GONE
+    //            }
             } else {
                 shortToastNow("Task Data is empty")
             }*/
@@ -534,8 +592,8 @@ class TaskDetailV2Fragment :
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
         onlyImageAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
-//                val fileUrls: ArrayList<String> = viewModel.onlyImages.value?.map { it.fileUrl } as ArrayList<String>
-//                viewModel.openImageViewer(requireContext(), fileUrls, position)
+    //                val fileUrls: ArrayList<String> = viewModel.onlyImages.value?.map { it.fileUrl } as ArrayList<String>
+    //                viewModel.openImageViewer(requireContext(), fileUrls, position)
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
                 bundle.putInt("position", position)
@@ -556,8 +614,8 @@ class TaskDetailV2Fragment :
         mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, fileUrl: String ->
-//                val fileUrls: ArrayList<String> = viewModel.imagesWithComments.value?.map { it.fileUrl } as ArrayList<String>
-//                viewModel.openImageViewer(requireContext(), fileUrls, position)
+    //                val fileUrls: ArrayList<String> = viewModel.imagesWithComments.value?.map { it.fileUrl } as ArrayList<String>
+    //                viewModel.openImageViewer(requireContext(), fileUrls, position)
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "images",
@@ -583,11 +641,11 @@ class TaskDetailV2Fragment :
             val bundle = Bundle()
             bundle.putParcelable("taskFile", data)
             navigate(R.id.fileViewerFragment, bundle)
-//            val pdfUrl = data.fileUrl             // This following code downloads the file
-//            val intent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-//                .addCategory(Intent.CATEGORY_BROWSABLE)
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            context?.startActivity(intent)
+    //            val pdfUrl = data.fileUrl             // This following code downloads the file
+    //            val intent: Intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+    //                .addCategory(Intent.CATEGORY_BROWSABLE)
+    //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    //            context?.startActivity(intent)
         }*/
 
 
@@ -1327,4 +1385,29 @@ class TaskDetailV2Fragment :
         return
 
     }
+
+
+    private fun navigateBackFromDetailFragment(callBack: () -> Unit) {
+        val instances = countActivitiesInBackStack(requireContext())
+        if (viewModel.notificationTaskData.value != null) {
+            if (instances <= 1) {
+                launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+                    options = Bundle(),
+                    clearPrevious = true
+                ) {
+                    putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+                    putExtra(
+                        NAVIGATION_Graph_START_DESTINATION_ID,
+                        R.id.homeFragment
+                    )
+                }
+            } else {
+                //finish is called so that second instance of app will be closed and only one last instance will remain
+                finish()
+            }
+        } else {
+            callBack.invoke()
+        }
+    }
+
 }

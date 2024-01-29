@@ -1,6 +1,5 @@
 package com.zstronics.ceibro.ui.locationv2
 
-import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
@@ -23,7 +22,8 @@ class LocationsV2VM @Inject constructor(
     private val groupsV2Dao: GroupsV2Dao,
 ) : HiltBaseViewModel<ILocationsV2.State>(), ILocationsV2.ViewModel {
 
-    var index=0
+    var index = -10
+    var oldPosition = -11
 
     var _drawingFile: MutableLiveData<DrawingV2?> =
         MutableLiveData()
@@ -37,7 +37,6 @@ class LocationsV2VM @Inject constructor(
     private var _existingGroup: MutableLiveData<CeibroGroupsV2> =
         MutableLiveData()
     val existingGroup: LiveData<CeibroGroupsV2> = _existingGroup
-
 
 
     private val _filterExistingDrawingPins: MutableLiveData<MutableList<CeibroDrawingPins>> =
@@ -63,8 +62,7 @@ class LocationsV2VM @Inject constructor(
 
             val ceibroGroupsV2: CeibroGroupsV2? = groupsV2Dao.getGroupByGroupId(groupId)
             ceibroGroupsV2?.let {
-                _existingGroup.value=it
-                viewState.groupName.value=it.groupName
+                _existingGroup.value = it
             }
 
         }

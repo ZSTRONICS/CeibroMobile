@@ -657,7 +657,7 @@
                 android:textSize="@dimen/_9sdp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/DrawingOpenBtn"
+                android:id="@+id/drawingOpenBtn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_8sdp"
