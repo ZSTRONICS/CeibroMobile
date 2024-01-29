@@ -119,7 +119,11 @@ class SpinnerAdapter constructor(
                     drawingObject?.let {
 
                         if (it.isDownloaded && it.localUri.isNotEmpty()) {
-                            ivDownloaded.visibility = View.VISIBLE
+                            ivDownloaded.visibility =
+                                View.GONE
+                            viewOne.visibility =
+                                View.GONE
+                          //  ivDownloaded.visibility = View.VISIBLE
                             tvDownloadProgress.visibility = View.GONE
                             ivDownloadFile.visibility = View.GONE
                         } else if (it.downloading) {
@@ -132,16 +136,19 @@ class SpinnerAdapter constructor(
                             ) { status, filepath, progress ->
                                 MainScope().launch {
                                     if (status.equals("downloaded", true)) {
+
+                                        ivDownloaded.visibility =
+                                            View.GONE
+                                        viewOne.visibility =
+                                            View.GONE
                                         notifyPropertyChanged(position)
-                                        // notifyItemChanged(position)
 
                                         if (filepath.isNotEmpty()) {
                                             ivDownloadFile.visibility =
                                                 View.GONE
                                             tvDownloadProgress.visibility =
                                                 View.GONE
-                                            ivDownloaded.visibility =
-                                                View.VISIBLE
+                                       //     ivDownloaded.visibility = View.VISIBLE
                                             tvDownloadProgress.text = progress
                                         } else {
                                             downloadedDrawingV2Dao.deleteByDrawingID(data._id)
@@ -211,7 +218,11 @@ class SpinnerAdapter constructor(
                                         drawingObject?.let {
 
                                             if (it.isDownloaded && it.localUri.isNotEmpty()) {
-                                                ivDownloaded.visibility = View.VISIBLE
+                                                ivDownloaded.visibility =
+                                                    View.GONE
+                                                viewOne.visibility =
+                                                    View.GONE
+                                              //  ivDownloaded.visibility = View.VISIBLE
                                                 tvDownloadProgress.visibility = View.GONE
                                                 ivDownloadFile.visibility = View.GONE
                                             } else if (it.downloading) {
@@ -224,15 +235,17 @@ class SpinnerAdapter constructor(
                                                 ) { status, filepath, progress ->
                                                     MainScope().launch {
                                                         if (status.equals("downloaded", true)) {
-
+                                                            ivDownloaded.visibility =
+                                                                View.GONE
+                                                            viewOne.visibility =
+                                                                View.GONE
                                                             notifyPropertyChanged(position)
                                                             if (filepath.isNotEmpty()) {
                                                                 ivDownloadFile.visibility =
                                                                     View.GONE
                                                                 tvDownloadProgress.visibility =
                                                                     View.GONE
-                                                                ivDownloaded.visibility =
-                                                                    View.VISIBLE
+                                                               // ivDownloaded.visibility = View.VISIBLE
                                                                 tvDownloadProgress.text = progress
                                                             } else {
                                                                 downloadedDrawingV2Dao.deleteByDrawingID(

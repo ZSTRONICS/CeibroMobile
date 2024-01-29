@@ -455,31 +455,16 @@ class LocationsV2Fragment :
                 ) {
 
                     val drawing = viewModel.existingGroup.value?.drawings?.get(position)
+
                     drawing?.let {
                         GlobalScope.launch() {
-                            val drawingObject = viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(it._id)
+                            val drawingObject =
+                                viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(it._id)
 
                             withContext(Dispatchers.Main) {
                                 drawingObject?.let { downloadedDrawing ->
 
-                                    viewModel.existingGroup.observe(viewLifecycleOwner) {
 
-                                        it?.let {
-                                            viewState.groupName.value = it.groupName
-                                            adapter.setList(it.drawings)
-
-                                            viewModel.drawingFile.value?.let {file->
-                                                it.drawings.forEachIndexed { index, drawingV2 ->
-
-                                                    if (file._id==drawingV2._id){
-                                                        viewModel.index=position
-                                                   //     mViewDataBinding.locationSpinner.setSelection(index)
-                                                    }
-                                                }
-
-                                            }
-                                        }
-                                    }
                                     val file = File(downloadedDrawing.localUri)
                                     if (file.exists()) {
                                         it.uploaderLocalFilePath = downloadedDrawing.localUri
@@ -487,10 +472,13 @@ class LocationsV2Fragment :
                                         CeibroApplication.CookiesManager.drawingFileForLocation.value =
                                             it
                                         viewModel.sessionManagerInternal.saveCompleteDrawingObj(it)
-
+                                        viewModel.oldPosition = viewModel.index
+                                        viewModel.index = position
                                         viewModel.getDrawingPins(it._id)
                                         viewModel._drawingFile.postValue(it)
                                     } else {
+                                        viewModel.oldPosition = viewModel.index
+                                        mViewDataBinding.locationSpinner.setSelection(viewModel.index)
                                         cancelAndMakeToast(
                                             context,
                                             "File not downloaded",
@@ -503,12 +491,14 @@ class LocationsV2Fragment :
                                         "File not downloaded",
                                         Toast.LENGTH_SHORT
                                     )
-                                    mViewDataBinding.locationSpinner.setSelection( viewModel.index)
+                                    viewModel.oldPosition = viewModel.index
+                                    mViewDataBinding.locationSpinner.setSelection(viewModel.index)
                                 }
                             }
                         }
 
-                    }?: kotlin.run {
+                    } ?: kotlin.run {
+                        viewModel.oldPosition = viewModel.index
                         mViewDataBinding.locationSpinner.setSelection(viewModel.index)
                     }
                 }
@@ -555,19 +545,26 @@ class LocationsV2Fragment :
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            } else {
+                inViewPinsList.clear()
+                inViewPinsList = mutableListOf()
+                loadExistingMarkerPoints.addAll(it)
             }
         }
         viewModel.existingGroup.observe(viewLifecycleOwner) {
 
             it?.let {
-                viewState.groupName.value = it.groupName
+
+                viewModel.viewState.groupName.value = it.groupName
+
                 adapter.setList(it.drawings)
 
-                viewModel.drawingFile.value?.let {file->
+                viewModel.drawingFile.value?.let { file ->
                     it.drawings.forEachIndexed { index, drawingV2 ->
 
-                        if (file._id==drawingV2._id){
-                            viewModel.index=index
+                        if (file._id == drawingV2._id) {
+                            viewModel.index = index
+                            viewModel.oldPosition = index
                             mViewDataBinding.locationSpinner.setSelection(index)
                         }
                     }
@@ -596,13 +593,17 @@ class LocationsV2Fragment :
 
             drawing?.let {
 
+                if (viewModel.index == viewModel.oldPosition) {
+                    return@let
+                }
 
                 mViewDataBinding.progressBar.visibility = View.VISIBLE
                 mViewDataBinding.tvFloorName.text = "${it.floor.floorName} Floor"
                 mViewDataBinding.tvFileName.text = "${it.fileName}"
-                mViewDataBinding.tvGroupName.text = "${it.fileTag.toCamelCase()}"
 //            mViewDataBinding.progressBar.isIndeterminate = true
 
+
+                mViewDataBinding.pdfView.recycle()
 
                 val file = File(it.uploaderLocalFilePath)
 
@@ -1548,6 +1549,17 @@ class LocationsV2Fragment :
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshGroupsData(event: LocalEvents.RefreshGroupsData?) {
+        val projectID = event?.projectId
+        val oldGroup = viewModel.existingGroup.value
+        if (oldGroup != null && oldGroup.projectId == projectID) {
+
+            viewModel.getGroupDrawingsByGroupId(oldGroup._id)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -1868,5 +1880,4 @@ class LocationsV2Fragment :
             }
         }
     }
-
 }
