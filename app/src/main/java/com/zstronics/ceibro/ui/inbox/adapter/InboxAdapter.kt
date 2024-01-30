@@ -16,18 +16,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.shape.CornerFamily
-import com.google.android.material.shape.CornerSize
-import com.google.android.material.shape.ShapeAppearanceModel
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutInboxTaskBoxV2Binding
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
-import javax.annotation.meta.When
 import javax.inject.Inject
 
 class InboxAdapter @Inject constructor() :

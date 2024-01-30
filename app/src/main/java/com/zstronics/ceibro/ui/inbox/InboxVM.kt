@@ -7,9 +7,11 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +36,16 @@ class InboxVM @Inject constructor(
 //            val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
 //            CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
 //            _inboxTasks.postValue(allInboxTasks)
+        }
+    }
+
+    fun deleteInboxTaskFromDB(originalTaskToRemove: CeibroInboxV2) {
+        GlobalScope.launch {
+            inboxV2Dao.deleteInboxTaskData(originalTaskToRemove.taskId)
+            val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
+            withContext(Dispatchers.Main) {
+                CeibroApplication.CookiesManager.allInboxTasks.value = allInboxTasks
+            }
         }
     }
 

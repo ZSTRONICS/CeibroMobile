@@ -1,18 +1,22 @@
 package com.zstronics.ceibro.ui.inbox
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentInboxBinding
-import com.zstronics.ceibro.ui.dashboard.SearchDataSingleton
 import com.zstronics.ceibro.ui.inbox.adapter.InboxAdapter
-import com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment
+import com.zstronics.ceibro.ui.inbox.adapter.SwipeRecyclerItemFromLeft
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +28,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class InboxFragment :
     BaseNavViewModelFragment<FragmentInboxBinding, IInbox.State, InboxVM>() {
@@ -34,7 +39,7 @@ class InboxFragment :
     override val layoutResId: Int = R.layout.fragment_inbox
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
-        when(id) {
+        when (id) {
             R.id.ivSort -> {
 
             }
@@ -117,6 +122,73 @@ class InboxFragment :
             }
         })
 
+
+        val swipeHelperRight: SwipeRecyclerItemFromLeft =
+            object : SwipeRecyclerItemFromLeft(context, mViewDataBinding.taskRV) {
+                override fun instantiateUnderlayButton(
+                    viewHolder: RecyclerView.ViewHolder?,
+                    underlayButtons: MutableList<UnderlayButton?>
+                ) {
+                    /*underlayButtons.add(UnderlayButton(
+                        context,
+                        "Archive",
+                        R.drawable.delete,
+                        Color.parseColor("#BBBBC3"),
+                        object : UnderlayButtonClickListener {
+                            override fun onClick(pos: Int) {
+                                Toast.makeText(context, "Archive $pos", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    ))*/
+
+                    underlayButtons.add(UnderlayButton(
+                        context,
+                        "Delete",
+                        R.drawable.delete,
+                        Color.parseColor("#FE3B30"),
+                        object : UnderlayButtonClickListener {
+                            @SuppressLint("NotifyDataSetChanged")
+                            override fun onClick(pos: Int) {
+                            //    Toast.makeText(context, "Delete $pos", Toast.LENGTH_SHORT).show()
+                                if (viewModel.isUserSearching) {
+                                    val filterList = viewModel.filteredInboxTasks.value
+                                    if (!filterList.isNullOrEmpty()) {
+                                        val taskToRemove = filterList[pos]
+                                        filterList.removeAt(pos)
+                                        viewModel._filteredInboxTasks.postValue(filterList)
+
+                                        val originalTaskToRemove =
+                                            viewModel.originalInboxTasks.find {
+                                                it._id == taskToRemove._id
+                                            }
+                                        if (originalTaskToRemove != null) {
+                                            val index = viewModel.originalInboxTasks.indexOf(
+                                                originalTaskToRemove
+                                            )
+                                            viewModel.originalInboxTasks.removeAt(index)
+                                            viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
+                                        }
+                                    }
+                                } else {
+                                    if (pos < viewModel.originalInboxTasks.size) {
+                                        val originalList = viewModel.originalInboxTasks
+                                        val originalTaskToRemove = originalList[pos]
+                                        val index = originalList.indexOf(originalTaskToRemove)
+                                        originalList.removeAt(index)
+                                        viewModel.originalInboxTasks = originalList
+                                        viewModel._inboxTasks.postValue(originalList)
+                                        viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
+                                    }
+                                }
+                                Handler().postDelayed({
+                                    mViewDataBinding.taskRV.invalidate()
+                                    adapter.notifyDataSetChanged()
+                                }, 100)
+                            }
+                        }
+                    ))
+                }
+            }
     }
 
     override fun onResume() {
