@@ -1,12 +1,15 @@
 package com.zstronics.ceibro.ui.inbox
 
 import android.app.Dialog
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -17,17 +20,14 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskInfoBinding
+import com.zstronics.ceibro.databinding.LayoutInboxSortingBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 
-class InboxSortingBottomSheet(_rootState: String, _selectedState: String, _userId: String, _taskDetail: CeibroTaskV2?) : BottomSheetDialogFragment() {
-    lateinit var binding: FragmentTaskInfoBinding
-    var onChangePassword: ((oldPassword: String, newPassword: String) -> Unit)? = null
-    var onChangePasswordDismiss: (() -> Unit)? = null
-    val rootState = _rootState
-    val selectedState = _selectedState
-    val userId = _userId
-    val taskDetail = _taskDetail
+class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogFragment() {
+    lateinit var binding: LayoutInboxSortingBinding
+    var onChangeSortingType: ((sortingType: String) -> Unit)? = null
+    private var lastSortingType = lastSortingTypeParam
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +36,7 @@ class InboxSortingBottomSheet(_rootState: String, _selectedState: String, _userI
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_task_info,
+            R.layout.layout_inbox_sorting,
             container,
             false
         )
@@ -48,7 +48,29 @@ class InboxSortingBottomSheet(_rootState: String, _selectedState: String, _userI
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (taskDetail != null) {
+        if (lastSortingType.equals("SortByActivity", true)) {
+            setDrawableEndWithTint(binding.latestActivitySortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            removeDrawableEnd(binding.unreadSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
+
+        } else if (lastSortingType.equals("SortByUnread", true)) {
+            removeDrawableEnd(binding.latestActivitySortBtn)
+            setDrawableEndWithTint(binding.unreadSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            removeDrawableEnd(binding.dueDateSortBtn)
+
+        } else if (lastSortingType.equals("SortByDueDate", true)) {
+            removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unreadSortBtn)
+            setDrawableEndWithTint(binding.dueDateSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+
+        } else {
+            removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unreadSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
+        }
+
+
+        /*if (taskDetail != null) {
             var state = ""
             state = if (rootState == TaskRootStateTags.FromMe.tagValue && userId == taskDetail.creator.id) {
                 taskDetail.creatorState
@@ -185,17 +207,52 @@ class InboxSortingBottomSheet(_rootState: String, _selectedState: String, _userI
             } else {
                 binding.taskProjectLayout.visibility = View.GONE
             }
+        }*/
+
+
+        binding.latestActivitySortBtn.setOnClick {
+            lastSortingType = "SortByActivity"
+            setDrawableEndWithTint(binding.latestActivitySortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            removeDrawableEnd(binding.unreadSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
+            onChangeSortingType?.invoke(lastSortingType)
         }
 
+        binding.unreadSortBtn.setOnClick {
+            lastSortingType = "SortByUnread"
+            removeDrawableEnd(binding.latestActivitySortBtn)
+            setDrawableEndWithTint(binding.unreadSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            removeDrawableEnd(binding.dueDateSortBtn)
+            onChangeSortingType?.invoke(lastSortingType)
+        }
+
+        binding.dueDateSortBtn.setOnClick {
+            lastSortingType = "SortByDueDate"
+            removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unreadSortBtn)
+            setDrawableEndWithTint(binding.dueDateSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            onChangeSortingType?.invoke(lastSortingType)
+        }
 
         binding.closeBtn.setOnClick {
             dismiss()
         }
     }
 
+    // Function to set drawableEnd and drawableTint programmatically
+    private fun setDrawableEndWithTint(textView: TextView, drawableResId: Int, tintResId: Int) {
+        val drawable = ContextCompat.getDrawable(textView.context, drawableResId)
+        drawable?.let {
+            it.setBounds(0, 0, it.intrinsicWidth, it.intrinsicHeight)
+            textView.setCompoundDrawables(null, null, it, null)
+            textView.compoundDrawableTintList = ContextCompat.getColorStateList(textView.context, tintResId)
+            textView.compoundDrawableTintMode = PorterDuff.Mode.SRC_IN
+        }
+    }
 
-    private fun showToast(text: String) {
-        Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
+    // Function to remove drawableEnd
+    fun removeDrawableEnd(textView: TextView) {
+        textView.setCompoundDrawables(null, null, null, null)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
