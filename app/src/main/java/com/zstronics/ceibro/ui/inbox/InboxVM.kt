@@ -3,6 +3,7 @@ package com.zstronics.ceibro.ui.inbox
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
@@ -29,6 +30,7 @@ class InboxVM @Inject constructor(
     val filteredInboxTasks: MutableLiveData<MutableList<CeibroInboxV2>> = _filteredInboxTasks
 
     var isUserSearching = false
+    var lastSortingType = "SortByActivity"
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -46,6 +48,37 @@ class InboxVM @Inject constructor(
             withContext(Dispatchers.Main) {
                 CeibroApplication.CookiesManager.allInboxTasks.value = allInboxTasks
             }
+        }
+    }
+
+    fun changeSortingOrder(latestSortingType: String) {
+        if (latestSortingType.equals("SortByActivity", true)) {
+            val allTasks = originalInboxTasks
+            allTasks.sortByDescending { it.createdAt }
+            originalInboxTasks = allTasks
+            _inboxTasks.postValue(allTasks)
+            isUserSearching = false
+
+        } else if (latestSortingType.equals("SortByUnread", true)) {
+            val allTasks = originalInboxTasks
+            allTasks.sortByDescending { !it.isSeen }
+            originalInboxTasks = allTasks
+            _inboxTasks.postValue(allTasks)
+            isUserSearching = false
+
+        } else if (latestSortingType.equals("SortByDueDate", true)) {
+            val allTasks = originalInboxTasks
+            allTasks.sortByDescending { it.actionDataTask.dueDate }
+            originalInboxTasks = allTasks
+            _inboxTasks.postValue(allTasks)
+            isUserSearching = false
+
+        } else {
+            val allTasks = originalInboxTasks
+            allTasks.sortByDescending { it.createdAt }
+            originalInboxTasks = allTasks
+            _inboxTasks.postValue(allTasks)
+            isUserSearching = false
         }
     }
 

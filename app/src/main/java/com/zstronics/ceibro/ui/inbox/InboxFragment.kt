@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.BR
@@ -41,7 +40,7 @@ class InboxFragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.ivSort -> {
-
+                sortInboxBottomSheet()
             }
         }
     }
@@ -149,7 +148,7 @@ class InboxFragment :
                         object : UnderlayButtonClickListener {
                             @SuppressLint("NotifyDataSetChanged")
                             override fun onClick(pos: Int) {
-                            //    Toast.makeText(context, "Delete $pos", Toast.LENGTH_SHORT).show()
+                                //    Toast.makeText(context, "Delete $pos", Toast.LENGTH_SHORT).show()
                                 if (viewModel.isUserSearching) {
                                     val filterList = viewModel.filteredInboxTasks.value
                                     if (!filterList.isNullOrEmpty()) {
@@ -197,15 +196,18 @@ class InboxFragment :
             val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
             allInboxTasks?.sortByDescending { it.createdAt }
 
-            if (allInboxTasks.isNullOrEmpty()) {
-                val allInboxTasks1 = viewModel.inboxV2Dao.getAllInboxItems().toMutableList()
-                CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks1)
-                viewModel._inboxTasks.postValue(allInboxTasks1)
-                viewModel.originalInboxTasks = allInboxTasks1
-            } else {
-                viewModel._inboxTasks.postValue(allInboxTasks)
-                viewModel.originalInboxTasks = allInboxTasks
+//            if (allInboxTasks.isNullOrEmpty()) {
+            val allInboxTasks1 = viewModel.inboxV2Dao.getAllInboxItems().toMutableList()
+            CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks1)
+            viewModel._inboxTasks.postValue(allInboxTasks1)
+            viewModel.originalInboxTasks = allInboxTasks1
+            withContext(Dispatchers.Main) {
+                CeibroApplication.CookiesManager.allInboxTasks.value = allInboxTasks1
             }
+//            } else {
+//                viewModel._inboxTasks.postValue(allInboxTasks)
+//                viewModel.originalInboxTasks = allInboxTasks
+//            }
 
 //            if (viewModel.isUserSearching) {
 //                if (mViewDataBinding.inboxSearchBar.query.toString().isNotEmpty()) {
@@ -227,6 +229,20 @@ class InboxFragment :
         mViewDataBinding.inboxSearchBar.setQuery("", true)
     }
 
+    private fun sortInboxBottomSheet() {
+        val sheet = InboxSortingBottomSheet(viewModel.lastSortingType)
+
+        sheet.onChangeSortingType = { latestSortingType ->
+            viewModel.lastSortingType = latestSortingType
+            if (viewModel.isUserSearching) {
+                mViewDataBinding.inboxSearchBar.setQuery("", false)
+            }
+            viewModel.changeSortingOrder(latestSortingType)
+        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "InboxSortingBottomSheet")
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshInboxData(event: LocalEvents.RefreshInboxData) {
