@@ -38,6 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:background="@drawable/search_view_bottom_border"
+                android:closeIcon="@drawable/icon_close_round_grey"
                 android:elevation="0dp"
                 android:iconifiedByDefault="false"
                 android:paddingStart="-12dp"
@@ -46,7 +47,6 @@
                 android:queryHint="Start typing for search"
                 android:searchIcon="@null"
                 android:textColor="@color/black"
-                android:closeIcon="@drawable/icon_close_round_grey"
                 app:layout_constraintEnd_toEndOf="@+id/ivSort"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -56,10 +56,10 @@
                 android:id="@+id/ivSort"
                 android:layout_width="36dp"
                 android:layout_height="0dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="5.5dp"
                 android:src="@drawable/icon_sort"
                 android:visibility="visible"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 app:layout_constraintBottom_toBottomOf="@+id/inboxSearchBar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/inboxSearchBar"
@@ -92,18 +92,36 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_3sdp">
+                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_marginEnd="@dimen/_7sdp">
+
+                <TextView
+                    android:id="@+id/sortedByText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_1sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxLines="1"
+                    android:text="Sorted By:"
+                    android:textColor="@color/appTextGrey"
+                    android:textSize="14.5sp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/taskRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:visibility="visible"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sortedByText"
                     tools:itemCount="10"
                     tools:listitem="@layout/layout_inbox_task_box_v2" />
 

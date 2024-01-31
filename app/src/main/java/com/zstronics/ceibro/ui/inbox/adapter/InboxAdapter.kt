@@ -108,7 +108,7 @@ class InboxAdapter @Inject constructor() :
                     }
 
                     val (inboxTaskCardBackground, inboxTaskUIdBackground) = taskStatusNameBg
-                    inboxTaskCardParentLayout.setBackgroundResource(inboxTaskCardBackground)
+//                    inboxTaskCardParentLayout.setBackgroundResource(inboxTaskCardBackground)
                     inboxTaskUId.setBackgroundResource(inboxTaskUIdBackground)
                     inboxTaskUId.text = item.actionDataTask.taskUID
 
@@ -310,7 +310,7 @@ class InboxAdapter @Inject constructor() :
                         val layoutParams =
                             inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
                         // Set the new horizontal bias for image width
-                        layoutParams.horizontalBias = 0.31f
+                        layoutParams.horizontalBias = 0.20f
                         inboxImgEndPoint.layoutParams = layoutParams
 
                         if (item.actionFiles.size > 1) {

@@ -433,7 +433,7 @@ class CommentFragment :
         }
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
         onlyImageAdapter.openImageClickListener =
-            { _: View, position: Int, fileUri: String ->
+            { _: View, position: Int, fileUri: String,obj ->
                 val bundle = Bundle()
                 bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
                 bundle.putInt("position", position)

@@ -140,8 +140,8 @@ interface TaskRetroService {
     @GET("v2/task/topic")
     suspend fun getAllTopics(): Response<TopicsResponse>
 
-    @GET("v2/task/syncInbox")
-    suspend fun getAllInboxTasks(): Response<InboxTaskResponse>
+    @GET("v2/task/syncInbox/{lastUpdatedAt}")
+    suspend fun getAllInboxTasks(@Path("lastUpdatedAt") lastUpdatedAt: String): Response<InboxTaskResponse>
 
     @POST("v2/task/topic")
     suspend fun saveTopic(@Body requestBody: NewTopicCreateRequest): Response<NewTopicResponse>

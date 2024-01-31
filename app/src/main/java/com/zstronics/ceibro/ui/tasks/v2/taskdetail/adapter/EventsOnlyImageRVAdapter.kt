@@ -58,6 +58,7 @@ class EventsOnlyImageRVAdapter @Inject constructor() :
                 openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
 
+            binding.ivCross.visibility=View.GONE
             val context = binding.smallImgView.context
 
             val circularProgressDrawable = CircularProgressDrawable(context)

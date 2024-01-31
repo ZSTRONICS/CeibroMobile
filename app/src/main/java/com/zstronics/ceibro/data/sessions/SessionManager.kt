@@ -277,8 +277,8 @@ class SessionManager constructor(
     }
 
     fun getInboxUpdatedAtTimeStamp(): String {
-        // return sharedPreferenceManager.getValueString(KEY_INBOX_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
-        return "2020-01-01T17:12:18.787Z"
+         return sharedPreferenceManager.getValueString(KEY_INBOX_UPDATED_AT) ?: "2020-01-01T17:12:18.787Z"
+//        return "2020-01-01T17:12:18.787Z"
     }
 
     fun saveInboxUpdatedAtTimeStamp(updatedAtTimeStamp: String?) {

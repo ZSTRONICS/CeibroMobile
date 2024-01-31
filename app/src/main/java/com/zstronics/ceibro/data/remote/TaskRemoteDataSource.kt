@@ -227,11 +227,11 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun getAllInboxTasks(): ApiResponse<InboxTaskResponse> =
+    override suspend fun getAllInboxTasks(inboxTimeStamp: String): ApiResponse<InboxTaskResponse> =
         executeSafely(
             call =
             {
-                service.getAllInboxTasks()
+                service.getAllInboxTasks(inboxTimeStamp)
             }
         )
 
