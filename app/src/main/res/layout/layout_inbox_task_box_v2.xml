@@ -9,17 +9,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/_5sdp"
-        android:paddingBottom="@dimen/_2sdp">
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/taskCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_8sdp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:layout_marginEnd="@dimen/_3sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="3.5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,92 +31,109 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/inboxTaskCardParentLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/status_ongoing_outline_new">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/inboxItemImgCard"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:cardBackgroundColor="@color/transparent"
-                    app:cardElevation="0dp"
-                    app:cardCornerRadius="7.5dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginBottom="1dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/inboxImgEndPoint"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/inboxItemImg"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/new_background2"
-                            android:visibility="visible"
-                            android:elevation="2dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/inboxImgCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/almostBlack"
-                            android:paddingVertical="2dp"
-                            android:paddingHorizontal="3dp"
-                            android:text="+3"
-                            android:elevation="4dp"
-                            android:textColor="@color/white"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-
-                <View
-                    android:id="@+id/inboxImgEndPoint"
-                    android:layout_width="1dp"
-                    android:layout_height="1dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.31"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/inboxTaskUnseenLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:background="@drawable/right_corners_background"
+                    android:layout_margin="0dp"
+                    android:background="@drawable/unseen_corners_background"
                     android:backgroundTint="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/inboxItemImgCard"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/inboxItemImgCard"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        app:cardBackgroundColor="@color/transparent"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/inboxImgEndPoint"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/inboxTaskCardHeaderLayout">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/inboxItemImg"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:elevation="2dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/new_background2"
+                                android:visibility="visible"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/inboxImgCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@color/almostBlack"
+                                android:elevation="4dp"
+                                android:paddingHorizontal="3dp"
+                                android:paddingVertical="2dp"
+                                android:text="+3"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <View
+                        android:id="@+id/inboxImgEndPoint"
+                        android:layout_width="1dp"
+                        android:layout_height="1dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.20"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/unreadCount"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:background="@drawable/inbox_unread_badge"
+                        android:elevation="12dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="center"
+                        android:maxLength="2"
+                        android:maxLines="1"
+                        android:outlineProvider="none"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/inboxTaskCardHeaderLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_6sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:layout_marginEnd="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
                         android:gravity="center_vertical"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/unreadCount"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
@@ -188,28 +208,29 @@
                         android:id="@+id/inboxTaskTitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_7sdp"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
                         android:ellipsize="end"
-                        android:fontFamily="@font/inter_semibold"
+                        android:fontFamily="@font/inter_medium"
                         android:maxLines="1"
                         android:text="Task title will go over here"
                         android:textColor="@color/black"
-                        android:textSize="15.5sp"
-                        app:layout_constraintEnd_toEndOf="@+id/inboxTaskCardHeaderLayout"
-                        app:layout_constraintStart_toStartOf="@+id/inboxTaskCardHeaderLayout"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/inboxImgEndPoint"
                         app:layout_constraintTop_toBottomOf="@+id/inboxTaskCardHeaderLayout" />
 
                     <TextView
                         android:id="@+id/inboxTaskEventDescription"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_1sdp"
                         android:ellipsize="end"
-                        android:fontFamily="@font/inter_medium"
+                        android:fontFamily="@font/inter_regular"
                         android:maxLines="2"
                         android:text="Task description or event description will go over here"
                         android:textColor="@color/appTextGrey"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         app:layout_constraintEnd_toEndOf="@+id/inboxTaskTitle"
                         app:layout_constraintStart_toStartOf="@+id/inboxTaskTitle"
                         app:layout_constraintTop_toBottomOf="@+id/inboxTaskTitle" />
@@ -218,19 +239,19 @@
                         android:id="@+id/footerLine"
                         android:layout_width="0dp"
                         android:layout_height="1dp"
-                        android:layout_marginTop="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
                         android:background="@color/appTextGrey"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/inboxImgEndPoint"
                         app:layout_constraintTop_toBottomOf="@+id/inboxTaskEventDescription" />
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/creatorCard"
-                        android:layout_width="33dp"
-                        android:layout_height="33dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_3sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
                         app:cardBackgroundColor="@color/appGrey"
                         app:cardCornerRadius="25dp"
                         app:cardElevation="1dp"
@@ -253,12 +274,12 @@
                         android:id="@+id/inboxTaskEventCreatorLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_7sdp"
-                        android:layout_marginEnd="@dimen/_7sdp"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
                         android:gravity="start"
                         android:orientation="vertical"
                         app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
-                        app:layout_constraintEnd_toStartOf="@+id/inboxTaskStateIcon"
+                        app:layout_constraintEnd_toStartOf="@+id/inboxCreatedAt"
                         app:layout_constraintStart_toEndOf="@+id/creatorCard"
                         app:layout_constraintTop_toTopOf="@+id/creatorCard">
 
@@ -274,18 +295,23 @@
                             android:textColor="@color/appTextGrey"
                             android:textSize="12.5sp" />
 
-                        <TextView
-                            android:id="@+id/inboxCreatedAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:fontFamily="@font/inter_regular"
-                            android:gravity="start"
-                            android:maxLines="1"
-                            android:text="@string/created_on_heading"
-                            android:textColor="@color/appTextGrey"
-                            android:textSize="12.5sp" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/inboxCreatedAt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:gravity="start"
+                        android:maxLines="1"
+                        android:text="@string/created_on_heading"
+                        android:textColor="@color/appTextGrey"
+                        android:textSize="11sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/inboxTaskStateIcon"
+                        app:layout_constraintEnd_toStartOf="@+id/inboxTaskStateIcon"
+                        app:layout_constraintTop_toTopOf="@+id/inboxTaskStateIcon" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/inboxTaskStateIcon"
@@ -301,28 +327,10 @@
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/unreadCount"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:background="@drawable/inbox_unread_badge"
-            android:elevation="12dp"
-            android:fontFamily="@font/inter_medium"
-            android:gravity="center"
-            android:maxLength="2"
-            android:maxLines="1"
-            android:outlineProvider="none"
-            android:text="0"
-            android:textColor="@color/black"
-            android:textSize="11sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/taskCard"
-            app:layout_constraintEnd_toEndOf="@+id/taskCard"
-            app:layout_constraintStart_toEndOf="@+id/taskCard"
-            app:layout_constraintTop_toTopOf="@+id/taskCard" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

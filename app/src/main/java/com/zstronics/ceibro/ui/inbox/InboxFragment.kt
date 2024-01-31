@@ -59,12 +59,15 @@ class InboxFragment :
             if (it.isNullOrEmpty()) {
                 mViewDataBinding.inboxSearchBar.isEnabled = false
                 mViewDataBinding.taskRV.visibility = View.GONE
+                mViewDataBinding.sortedByText.visibility = View.GONE
                 mViewDataBinding.inboxInfoLayout.visibility = View.VISIBLE
                 mViewDataBinding.inboxLogoBackground.visibility = View.VISIBLE
             } else {
                 adapter.setList(it)
                 mViewDataBinding.inboxSearchBar.isEnabled = true
                 mViewDataBinding.taskRV.visibility = View.VISIBLE
+                mViewDataBinding.sortedByText.visibility = View.VISIBLE
+                changeSortingText(viewModel.lastSortingType)
                 mViewDataBinding.inboxInfoLayout.visibility = View.GONE
                 mViewDataBinding.inboxLogoBackground.visibility = View.GONE
             }
@@ -74,11 +77,14 @@ class InboxFragment :
             if (viewModel.isUserSearching) {
                 if (it.isNullOrEmpty()) {
                     mViewDataBinding.taskRV.visibility = View.GONE
+                    mViewDataBinding.sortedByText.visibility = View.GONE
                     mViewDataBinding.inboxInfoLayout.visibility = View.VISIBLE
                     mViewDataBinding.inboxLogoBackground.visibility = View.VISIBLE
                 } else {
                     adapter.setList(it)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
+                    mViewDataBinding.sortedByText.visibility = View.VISIBLE
+                    changeSortingText(viewModel.lastSortingType)
                     mViewDataBinding.inboxInfoLayout.visibility = View.GONE
                     mViewDataBinding.inboxLogoBackground.visibility = View.GONE
                 }
@@ -143,8 +149,8 @@ class InboxFragment :
                     underlayButtons.add(UnderlayButton(
                         context,
                         "Delete",
-                        R.drawable.delete,
-                        Color.parseColor("#FE3B30"),
+                        R.drawable.icon_delete_white,
+                        Color.parseColor("#E42116"),
                         object : UnderlayButtonClickListener {
                             @SuppressLint("NotifyDataSetChanged")
                             override fun onClick(pos: Int) {
@@ -194,32 +200,25 @@ class InboxFragment :
         super.onResume()
         GlobalScope.launch {
             val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
-            allInboxTasks?.sortByDescending { it.createdAt }
+            val inboxSorting = CeibroApplication.CookiesManager.inboxTasksSortingType.value
 
-//            if (allInboxTasks.isNullOrEmpty()) {
-            val allInboxTasks1 = viewModel.inboxV2Dao.getAllInboxItems().toMutableList()
-            CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks1)
-            viewModel._inboxTasks.postValue(allInboxTasks1)
-            viewModel.originalInboxTasks = allInboxTasks1
-            withContext(Dispatchers.Main) {
-                CeibroApplication.CookiesManager.allInboxTasks.value = allInboxTasks1
+            if (viewModel.fragmentFirstRun || allInboxTasks.isNullOrEmpty()) {
+                viewModel.lastSortingType = "SortByActivity"
+                viewModel.fragmentFirstRun = false
+                val allInboxTasks1 = viewModel.inboxV2Dao.getAllInboxItems().toMutableList()
+
+                viewModel._inboxTasks.postValue(allInboxTasks1)
+                viewModel.originalInboxTasks = allInboxTasks1
+                withContext(Dispatchers.Main) {
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks1)
+                    CeibroApplication.CookiesManager.inboxTasksSortingType.postValue("SortByActivity")
+                }
+            } else {
+                viewModel.lastSortingType = inboxSorting ?: "SortByActivity"
+                viewModel.fragmentFirstRun = false
+                viewModel._inboxTasks.postValue(allInboxTasks)
+                viewModel.originalInboxTasks = allInboxTasks
             }
-//            } else {
-//                viewModel._inboxTasks.postValue(allInboxTasks)
-//                viewModel.originalInboxTasks = allInboxTasks
-//            }
-
-//            if (viewModel.isUserSearching) {
-//                if (mViewDataBinding.inboxSearchBar.query.toString().isNotEmpty()) {
-//                    val searchQuery = mViewDataBinding.inboxSearchBar.query.toString()
-//                    viewModel.isUserSearching = true
-//                    mViewDataBinding.inboxSearchBar.setQuery(searchQuery, false)
-//                    viewModel.searchInboxTasks(searchQuery.trim())
-//                }
-//            } else {
-//            viewModel.isUserSearching = false
-//            mViewDataBinding.inboxSearchBar.setQuery("", false)
-//            }
         }
     }
 
@@ -237,11 +236,29 @@ class InboxFragment :
             if (viewModel.isUserSearching) {
                 mViewDataBinding.inboxSearchBar.setQuery("", false)
             }
+            CeibroApplication.CookiesManager.inboxTasksSortingType.postValue(latestSortingType)
             viewModel.changeSortingOrder(latestSortingType)
+            changeSortingText(latestSortingType)
         }
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "InboxSortingBottomSheet")
+    }
+
+    private fun changeSortingText(latestSortingType: String) {
+        mViewDataBinding.sortedByText.text = if (latestSortingType.equals("SortByActivity", true)) {
+            "Sorted by: Last activity on top"
+
+        } else if (latestSortingType.equals("SortByUnread", true)) {
+            "Sorted by: Unread on top"
+
+        } else if (latestSortingType.equals("SortByDueDate", true)) {
+            "Sorted by: Due date"
+
+        } else {
+            mViewDataBinding.sortedByText.visibility = View.GONE
+            ""
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

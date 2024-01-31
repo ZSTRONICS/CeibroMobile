@@ -121,10 +121,15 @@ class CeibroDataLoadingVM @Inject constructor(
         }
 
         launch {
-            when (val response = remoteTask.getAllInboxTasks()) {
+            val inboxTimeStamp = sessionManager.getInboxUpdatedAtTimeStamp()
+            when (val response = remoteTask.getAllInboxTasks(inboxTimeStamp)) {
                 is ApiResponse.Success -> {
                     val allInboxTasks = response.data.inboxEvents.toMutableList()
+                    allInboxTasks.sortByDescending { it.createdAt }
                     inboxV2Dao.insertMultipleInboxItem(allInboxTasks)
+                    if (allInboxTasks.isNotEmpty()) {
+                        sessionManager.saveInboxUpdatedAtTimeStamp(allInboxTasks[0].createdAt)
+                    }
                     CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
 
                     apiSucceedCount++

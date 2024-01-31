@@ -50,7 +50,7 @@ interface ITaskRemoteDataSource {
     suspend fun deleteTask(taskId: String): ApiResponse<GenericResponse>
 
     suspend fun getAllTopics(): ApiResponse<TopicsResponse>
-    suspend fun getAllInboxTasks(): ApiResponse<InboxTaskResponse>
+    suspend fun getAllInboxTasks(inboxTimeStamp: String): ApiResponse<InboxTaskResponse>
     suspend fun saveTopic(requestBody: NewTopicCreateRequest): ApiResponse<NewTopicResponse>
     suspend fun getAllTasks(rootState: String): ApiResponse<TaskV2Response>
     suspend fun syncAllTask(updatedAtTimeStamp: String): ApiResponse<AllTasksV2Response>
