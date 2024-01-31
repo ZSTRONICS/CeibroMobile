@@ -60,6 +60,7 @@ class EventsImageWithCommentRVAdapter @Inject constructor() :
             binding.smallImgView.setOnClickListener {
                 openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
+            binding.ivCross.visibility=View.GONE
 
             if (item.hasComment) {
                 binding.imgComment.text = item.comment

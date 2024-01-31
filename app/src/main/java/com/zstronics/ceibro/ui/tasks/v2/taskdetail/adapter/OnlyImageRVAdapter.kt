@@ -55,6 +55,7 @@ class OnlyImageRVAdapter @Inject constructor() :
             binding.root.setOnClickListener {
                 openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
+            binding.ivCross.visibility=View.GONE
 
             val context = binding.smallImgView.context
 

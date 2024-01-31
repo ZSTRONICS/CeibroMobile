@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class CeibroOnlyImageRVAdapter @Inject constructor() :
     RecyclerView.Adapter<CeibroOnlyImageRVAdapter.CeibroOnlyImageViewHolder>() {
-    var openImageClickListener: ((view: View, position: Int, fileUrl: String) -> Unit)? =
+    var openImageClickListener: ((view: View, position: Int, fileUrl: String,obj:PickedImages) -> Unit)? =
         null
     var itemClickListener: ((view: View, position: Int) -> Unit)? =
         null
@@ -53,7 +53,7 @@ class CeibroOnlyImageRVAdapter @Inject constructor() :
 
         fun bind(item: PickedImages) {
             binding.root.setOnClickListener {
-                openImageClickListener?.invoke(it, position, item.fileUri.toString())
+                openImageClickListener?.invoke(it, position, item.fileUri.toString(),item)
             }
 
             binding.ivCross.setOnClickListener {
