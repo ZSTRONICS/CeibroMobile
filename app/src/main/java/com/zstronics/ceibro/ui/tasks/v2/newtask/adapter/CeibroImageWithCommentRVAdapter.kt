@@ -18,7 +18,8 @@ class CeibroImageWithCommentRVAdapter @Inject constructor() :
         null
     var listItems: MutableList<PickedImages> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
-
+    var removeItemClickListener: ((removeImage: PickedImages) -> Unit)? =
+        null
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -52,6 +53,10 @@ class CeibroImageWithCommentRVAdapter @Inject constructor() :
         fun bind(item: PickedImages) {
             binding.imgComment.setOnClickListener {
                 textClickListener?.invoke(it, absoluteAdapterPosition, item)
+            }
+
+            binding.ivCross.setOnClickListener {
+                removeItemClickListener?.invoke(item)
             }
             binding.smallImgView.setOnClickListener {
                 openImageClickListener?.invoke(it, absoluteAdapterPosition, item)

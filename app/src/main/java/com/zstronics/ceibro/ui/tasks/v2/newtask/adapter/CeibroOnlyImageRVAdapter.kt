@@ -18,6 +18,9 @@ class CeibroOnlyImageRVAdapter @Inject constructor() :
     var listItems: MutableList<PickedImages> = mutableListOf()
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
+    var removeItemClickListener: ((removeImage: PickedImages) -> Unit)? =
+        null
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -53,6 +56,9 @@ class CeibroOnlyImageRVAdapter @Inject constructor() :
                 openImageClickListener?.invoke(it, position, item.fileUri.toString())
             }
 
+            binding.ivCross.setOnClickListener {
+                removeItemClickListener?.invoke(item)
+            }
             val context = binding.smallImgView.context
 
             Glide.with(context)

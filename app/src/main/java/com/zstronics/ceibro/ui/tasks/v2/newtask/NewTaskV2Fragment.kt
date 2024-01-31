@@ -333,7 +333,8 @@ class NewTaskV2Fragment :
                     file = it.locationImgFile
                 )
                 val allOldImages = viewModel.listOfImages.value
-                val foundDrawingImg = allOldImages?.find { oldImage -> oldImage.attachmentType == AttachmentTypes.Drawing }
+                val foundDrawingImg =
+                    allOldImages?.find { oldImage -> oldImage.attachmentType == AttachmentTypes.Drawing }
                 if (foundDrawingImg != null) {
                     val index = allOldImages.indexOf(foundDrawingImg)
                     allOldImages.removeAt(index)
@@ -440,6 +441,15 @@ class NewTaskV2Fragment :
                 navigate(R.id.imageViewerFragment, bundle)
             }
 
+        imageWithCommentAdapter.removeItemClickListener =
+            {
+                val listOfImages = viewModel.listOfImages.value
+                if (listOfImages?.contains(it) == true) {
+                    listOfImages.remove(it)
+                    viewModel.listOfImages.postValue(listOfImages)
+                }
+            }
+
 
         viewModel.onlyImages.observe(viewLifecycleOwner) {
             onlyImageAdapter.setList(it)
@@ -459,6 +469,14 @@ class NewTaskV2Fragment :
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", false)
                 navigate(R.id.imageViewerFragment, bundle)
+            }
+        onlyImageAdapter.removeItemClickListener =
+            {
+                val listOfImages = viewModel.listOfImages.value
+                if (listOfImages?.contains(it) == true) {
+                    listOfImages.remove(it)
+                    viewModel.listOfImages.postValue(listOfImages)
+                }
             }
 
         viewModel.documents.observe(viewLifecycleOwner) {
@@ -830,7 +848,8 @@ class NewTaskV2Fragment :
                 }
 
                 DRAWING_REQUEST_CODE -> {
-                    val pinLocationOnTask = result.data?.getParcelable<AddLocationTask>("newLocationTaskData")
+                    val pinLocationOnTask =
+                        result.data?.getParcelable<AddLocationTask>("newLocationTaskData")
                     if (pinLocationOnTask != null) {
                         viewModel.newPinLocationInTask(pinLocationOnTask)
                     } else {
@@ -883,7 +902,11 @@ class NewTaskV2Fragment :
     }
 
     private fun openAddLocationSheet() {
-        val sheet = AddNewLocationBottomSheet(viewModel.originalAllGroups, viewModel.downloadedDrawingV2Dao, networkConnectivityObserver)
+        val sheet = AddNewLocationBottomSheet(
+            viewModel.originalAllGroups,
+            viewModel.downloadedDrawingV2Dao,
+            networkConnectivityObserver
+        )
 
         sheet.onDrawingTapped = {
             sheet.dismiss()
