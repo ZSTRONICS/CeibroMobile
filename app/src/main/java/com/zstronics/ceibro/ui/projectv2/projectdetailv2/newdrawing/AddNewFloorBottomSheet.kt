@@ -32,10 +32,9 @@ class AddNewFloorBottomSheet(
     var deleteClickListener: ((String) -> Unit)? = null
     var selectItemClickListener: ((data: CeibroFloorV2, list: List<CeibroFloorV2>) -> Unit)? = null
     private val enumOrder = listOf(
-        "B3",
-        "B2",
-        "B1",
-        "G",
+        "-3",
+        "-2",
+        "-1",
         "1",
         "2",
         "3",
@@ -137,7 +136,7 @@ class AddNewFloorBottomSheet(
     ) {
 
         val enumOrder = listOf(
-            "B3", "B2", "B1", "G", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "-3", "-2", "-1", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
             "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25"
         )
 
@@ -157,10 +156,9 @@ class AddNewFloorBottomSheet(
         llFloorsList.removeAllViews()
         val item = ArrayList<String>()
 
-        item.add("B3")
-        item.add("B2")
-        item.add("B1")
-        item.add("G")
+        item.add("-3")
+        item.add("-2")
+        item.add("-1")
         item.add("1")
         item.add("2")
         item.add("3")
