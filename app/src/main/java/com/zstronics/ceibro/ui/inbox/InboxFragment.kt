@@ -66,7 +66,7 @@ class InboxFragment :
                 adapter.setList(it)
                 mViewDataBinding.inboxSearchBar.isEnabled = true
                 mViewDataBinding.taskRV.visibility = View.VISIBLE
-                mViewDataBinding.sortedByText.visibility = View.VISIBLE
+                mViewDataBinding.sortedByText.visibility = View.GONE
                 changeSortingText(viewModel.lastSortingType)
                 mViewDataBinding.inboxInfoLayout.visibility = View.GONE
                 mViewDataBinding.inboxLogoBackground.visibility = View.GONE
@@ -83,7 +83,7 @@ class InboxFragment :
                 } else {
                     adapter.setList(it)
                     mViewDataBinding.taskRV.visibility = View.VISIBLE
-                    mViewDataBinding.sortedByText.visibility = View.VISIBLE
+                    mViewDataBinding.sortedByText.visibility = View.GONE        //make it visible if you wanna see sorted by text
                     changeSortingText(viewModel.lastSortingType)
                     mViewDataBinding.inboxInfoLayout.visibility = View.GONE
                     mViewDataBinding.inboxLogoBackground.visibility = View.GONE
