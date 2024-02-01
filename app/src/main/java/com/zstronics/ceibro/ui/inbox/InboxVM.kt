@@ -5,9 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
+import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
+import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,9 +26,13 @@ import javax.inject.Inject
 @HiltViewModel
 class InboxVM @Inject constructor(
     override val viewState: InboxState,
+    val sessionManager: SessionManager,
+    private val taskRepository: ITaskRepository,
     val inboxV2Dao: InboxV2Dao,
+    val drawingPinsDao: DrawingPinsV2Dao,
     val taskDao: TaskV2Dao,
 ) : HiltBaseViewModel<IInbox.State>(), IInbox.ViewModel {
+    val user = sessionManager.getUserObj()
 
     val _inboxTasks: MutableLiveData<MutableList<CeibroInboxV2>> = MutableLiveData()
     val inboxTasks: MutableLiveData<MutableList<CeibroInboxV2>> = _inboxTasks
@@ -89,16 +97,16 @@ class InboxVM @Inject constructor(
                 val comparator = compareBy<CeibroInboxV2> { task ->
                     when {
                         task.actionDataTask.dueDate.isEmpty() -> 3 // Tasks with no due date go to the bottom
-                        parseDate(task.actionDataTask.dueDate) == currentDate -> 0 // Tasks with due date equal to current date
                         parseDate(task.actionDataTask.dueDate)!! < currentDate -> 2 // Tasks with due date before current date
-                        else -> 1 // Tasks with due date after current date
+                        parseDate(task.actionDataTask.dueDate)!! > currentDate -> 1 // Tasks with due date after current date
+                        else -> 0 // Tasks with due date equal to current date
                     }
                 }.thenByDescending { task ->
                     when {
                         task.actionDataTask.dueDate.isEmpty() -> "" // No further sorting for tasks with no due date
-                        parseDate(task.actionDataTask.dueDate) == currentDate -> "" // No further sorting for tasks with due date equal to current date
-                        parseDate(task.actionDataTask.dueDate)!! < currentDate -> task.actionDataTask.dueDate // Sort tasks with due date before current date in descending order
-                        else -> "" // No further sorting for tasks with due date after current date
+                        parseDate(task.actionDataTask.dueDate)!! < currentDate -> parseDate(task.actionDataTask.dueDate) // Sort tasks with due date before current date in descending order
+                        parseDate(task.actionDataTask.dueDate)!! > currentDate -> parseDate(task.actionDataTask.dueDate) // Sort tasks with due date after current date in descending order
+                        else -> "" // No further sorting for tasks with due date equal to current date
                     }
                 }
 
@@ -176,6 +184,38 @@ class InboxVM @Inject constructor(
         }.toMutableList()
 
         _filteredInboxTasks.postValue(filteredTasks)
+    }
+
+
+    fun taskSeen(
+        taskId: String,
+        onBack: (taskSeenData: TaskSeenResponse.TaskSeen) -> Unit,
+    ) {
+        launch {
+            //loading(true)
+            taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
+                if (isSuccess) {
+//                    println("Heartbeat taskSeenData: ${taskSeenData}")
+                    if (taskSeenData != null) {
+                        launch {
+                            updateGenericTaskSeenInLocal(
+                                taskSeenData,
+                                taskDao,
+                                user?.id,
+                                sessionManager,
+                                drawingPinsDao,
+                                inboxV2Dao
+                            )
+                        }
+                        onBack(taskSeenData)
+                    }
+
+                } else {
+//                    println("Heartbeat taskSeenData: ${taskSeenData}")
+//                    loading(false, "")
+                }
+            }
+        }
     }
 
 }

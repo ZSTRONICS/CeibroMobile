@@ -91,6 +91,7 @@
                         android:textSize="12sp" />
 
                     <androidx.appcompat.widget.AppCompatSpinner
+                        android:backgroundTint="@color/black"
                         android:id="@+id/locationSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
