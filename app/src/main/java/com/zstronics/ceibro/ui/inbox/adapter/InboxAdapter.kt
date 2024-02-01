@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -265,44 +266,66 @@ class InboxAdapter @Inject constructor() :
                         layoutParams.horizontalBias = 0.0f
                         inboxImgEndPoint.layoutParams = layoutParams
                     } else {
-                        val circularProgressDrawable = CircularProgressDrawable(context)
-                        circularProgressDrawable.strokeWidth = 4f
-                        circularProgressDrawable.centerRadius = 14f
-                        circularProgressDrawable.start()
+                        val extension = getFileUrlExtension(item.actionFiles[0].fileUrl)
+                        println("File Extension: $extension")
 
-                        val requestOptions = RequestOptions()
-                            .placeholder(circularProgressDrawable)
-                            .error(R.drawable.icon_corrupt_file)
-                            .skipMemoryCache(true)
-                            .centerCrop()
+                        if (isImageExtension(extension)) {
+                            val circularProgressDrawable = CircularProgressDrawable(context)
+                            circularProgressDrawable.strokeWidth = 4f
+                            circularProgressDrawable.centerRadius = 14f
+                            circularProgressDrawable.start()
 
-                        Glide.with(context)
-                            .load(item.actionFiles[0].fileUrl)
-                            .apply(requestOptions)
-                            .listener(object : RequestListener<Drawable> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    circularProgressDrawable.stop()
-                                    return false
-                                }
+                            val requestOptions = RequestOptions()
+                                .placeholder(circularProgressDrawable)
+                                .error(R.drawable.icon_corrupted)
+                                .skipMemoryCache(true)
+                                .centerCrop()
 
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    dataSource: DataSource?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    circularProgressDrawable.stop()
-                                    return false
-                                }
-                            })
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .into(inboxItemImg)
+                            Glide.with(context)
+                                .load(item.actionFiles[0].fileUrl)
+                                .apply(requestOptions)
+                                .listener(object : RequestListener<Drawable> {
+                                    override fun onLoadFailed(
+                                        e: GlideException?,
+                                        model: Any?,
+                                        target: Target<Drawable>?,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        circularProgressDrawable.stop()
+                                        return false
+                                    }
+
+                                    override fun onResourceReady(
+                                        resource: Drawable?,
+                                        model: Any?,
+                                        target: Target<Drawable>?,
+                                        dataSource: DataSource?,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        circularProgressDrawable.stop()
+                                        return false
+                                    }
+                                })
+                                .transition(DrawableTransitionOptions.withCrossFade())
+                                .into(inboxItemImg)
+                            inboxItemImg.scaleType = ImageView.ScaleType.CENTER_CROP
+
+                        } else {
+                            if (extension.equals("pdf", true)) {
+                                inboxItemImg.setImageResource(R.drawable.icon_pdf)
+                                inboxItemImg.scaleType = ImageView.ScaleType.FIT_CENTER
+                            } else if (extension.equals("odt", true) || extension.equals("odp", true) ||
+                                extension.equals("docx", true) || extension.equals("doc", true) ||
+                                extension.equals("xlsx", true) || extension.equals("xls", true) ||
+                                extension.equals("pptx", true) || extension.equals("ppt", true)) {
+                                inboxItemImg.setImageResource(R.drawable.icon_doc)
+                                inboxItemImg.scaleType = ImageView.ScaleType.FIT_CENTER
+                            } else {
+                                inboxItemImg.setImageResource(R.drawable.icon_corrupted)
+                                inboxItemImg.scaleType = ImageView.ScaleType.FIT_CENTER
+                            }
+                        }
+
 
                         inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
                         inboxItemImgCard.visibility = View.VISIBLE
@@ -347,6 +370,20 @@ class InboxAdapter @Inject constructor() :
                 binding.unreadCount.visibility = View.GONE
             }
 
+        }
+
+        private fun getFileUrlExtension(url: String): String {
+            val lastDotIndex = url.lastIndexOf('.')
+            return if (lastDotIndex != -1) {
+                url.substring(lastDotIndex + 1)
+            } else {
+                ""
+            }
+        }
+
+        private fun isImageExtension(extension: String): Boolean {
+            val imageExtensions = listOf("png", "jpg", "jpeg", "gif", "bmp", "webp", "heic")
+            return extension.lowercase() in imageExtensions
         }
     }
 }

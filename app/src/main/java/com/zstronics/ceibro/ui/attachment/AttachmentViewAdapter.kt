@@ -75,13 +75,13 @@ class AttachmentViewAdapter @Inject constructor() :
                 item?.fileType == ".pdf" -> {
                     binding.playButton.visibility = View.GONE
                     Glide.with(binding.attachmentImageView.context)
-                        .load(R.drawable.icon_pdf)
+                        .load(R.drawable.icon_pdf_img)
                         .into(binding.attachmentImageView)
                 }
                 documentExtensions.contains(item?.fileType) -> {
                     binding.playButton.visibility = View.GONE
                     Glide.with(binding.attachmentImageView.context)
-                        .load(R.drawable.icon_doc)
+                        .load(R.drawable.icon_doc_img)
                         .centerCrop()
                         .into(binding.attachmentImageView)
                 }

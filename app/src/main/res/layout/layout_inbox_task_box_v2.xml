@@ -89,7 +89,7 @@
                                 android:paddingVertical="2dp"
                                 android:text="+3"
                                 android:textColor="@color/white"
-                                android:textSize="15sp"
+                                android:textSize="11.5sp"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
