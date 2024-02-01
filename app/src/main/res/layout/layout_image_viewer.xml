@@ -34,7 +34,7 @@
             android:layout_marginBottom="@dimen/_3sdp"
             android:fontFamily="@font/inter_regular"
             android:background="@color/transparentWhite"
-            android:gravity="start|center"
+            android:gravity="center"
             android:maxLines="5"
             android:padding="@dimen/_4sdp"
             android:paddingStart="@dimen/_10sdp"
