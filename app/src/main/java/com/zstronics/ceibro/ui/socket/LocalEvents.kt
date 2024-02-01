@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.socket
 
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.subtask.SubTaskComments
 import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -111,6 +112,7 @@ object LocalEvents {
     object UpdateConnections
     class RefreshTasksData
     class RefreshInboxData
+    data class UpdateInboxItemData(val inboxTask: CeibroInboxV2)
     class RefreshProjectsData
     data class RefreshFloorsData(val projectId: String)
     data class RefreshGroupsData(val projectId: String)

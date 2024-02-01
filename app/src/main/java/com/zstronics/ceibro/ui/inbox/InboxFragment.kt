@@ -172,6 +172,8 @@ class InboxFragment :
                                             )
                                             viewModel.originalInboxTasks.removeAt(index)
                                             viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
+
+                                            viewModel.taskSeen(originalTaskToRemove.taskId) { }
                                         }
                                     }
                                 } else {
@@ -188,6 +190,7 @@ class InboxFragment :
 
 //                                        viewModel._inboxTasks.postValue(originalList)
                                         viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
+                                        viewModel.taskSeen(originalTaskToRemove.taskId) { }
                                     }
                                 }
 //                                Handler().postDelayed({
@@ -269,9 +272,27 @@ class InboxFragment :
     fun onRefreshInboxData(event: LocalEvents.RefreshInboxData) {
         GlobalScope.launch {
             val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
-            allInboxTasks?.sortByDescending { it.createdAt }
+//            allInboxTasks?.sortByDescending { it.createdAt }
             viewModel._inboxTasks.postValue(allInboxTasks)
             viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onUpdateInboxItemData(event: LocalEvents.UpdateInboxItemData?) {
+        GlobalScope.launch {
+            val inboxUpdatedTask = event?.inboxTask
+            if (inboxUpdatedTask != null) {
+                val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
+                val taskToUpdate = allInboxTasks?.find { it.taskId == inboxUpdatedTask.taskId }
+                if (taskToUpdate != null) {
+                    val index = allInboxTasks.indexOf(taskToUpdate)
+                    allInboxTasks[index] = inboxUpdatedTask
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+//                    viewModel._inboxTasks.postValue(allInboxTasks)
+                    viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
+                }
+            }
         }
     }
 

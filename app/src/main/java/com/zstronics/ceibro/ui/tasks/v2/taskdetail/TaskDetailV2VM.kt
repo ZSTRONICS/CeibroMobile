@@ -29,7 +29,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
+import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -122,6 +125,15 @@ class TaskDetailV2VM @Inject constructor(
                         val seenByMe = task1.seenBy.find { it1 -> it1 == user?.id }
                         if (seenByMe == null) {
                             taskSeen(task1.id) { }
+                        } else {
+                            val inboxTask = inboxV2Dao.getInboxTaskData(task1.id)
+                            if (inboxTask != null && !inboxTask.isSeen) {
+                                inboxTask.isSeen = true
+                                inboxTask.unSeenNotifCount = 0
+                                inboxV2Dao.insertInboxItem(inboxTask)
+
+                                EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
+                            }
                         }
                     } ?: run {
                         // run API call because task not found in DB
@@ -136,6 +148,17 @@ class TaskDetailV2VM @Inject constructor(
                                 val seenByMe = task?.seenBy?.find { it1 -> it1 == user?.id }
                                 if (seenByMe == null) {
                                     taskSeen(taskId) { }
+                                } else {
+                                    launch {
+                                        val inboxTask = inboxV2Dao.getInboxTaskData(taskId)
+                                        if (inboxTask != null && !inboxTask.isSeen) {
+                                            inboxTask.isSeen = true
+                                            inboxTask.unSeenNotifCount = 0
+                                            inboxV2Dao.insertInboxItem(inboxTask)
+
+                                            EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
+                                        }
+                                    }
                                 }
                             } else {
                                 loading(false, "No task details to show")
@@ -166,6 +189,17 @@ class TaskDetailV2VM @Inject constructor(
                     val seenByMe = task.seenBy.find { it == user?.id }
                     if (seenByMe == null) {
                         taskSeen(task.id) { }
+                    } else {
+                        launch {
+                            val inboxTask = inboxV2Dao.getInboxTaskData(task.id)
+                            if (inboxTask != null && !inboxTask.isSeen) {
+                                inboxTask.isSeen = true
+                                inboxTask.unSeenNotifCount = 0
+                                inboxV2Dao.insertInboxItem(inboxTask)
+
+                                EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
+                            }
+                        }
                     }
                 } ?: run {
                     alert("No details to display")
@@ -218,6 +252,17 @@ class TaskDetailV2VM @Inject constructor(
                 val seenByMe = task?.seenBy?.find { it == user?.id }
                 if (seenByMe == null) {
                     taskSeen(taskEvent.taskId) { }
+                } else {
+                    launch {
+                        val inboxTask = inboxV2Dao.getInboxTaskData(task.id)
+                        if (inboxTask != null && !inboxTask.isSeen) {
+                            inboxTask.isSeen = true
+                            inboxTask.unSeenNotifCount = 0
+                            inboxV2Dao.insertInboxItem(inboxTask)
+
+                            EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
+                        }
+                    }
                 }
             }
         }
