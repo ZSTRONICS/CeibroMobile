@@ -56,13 +56,18 @@ class CeibroImageViewerActivity : BaseActivity() {
             isFromNewTaskFragment = it
         }
 //        images?.map { println("ImagesURI: ${it.fileUri}") }
+        val itemsToRemove = mutableListOf<PickedImages>()
+        images?.forEachIndexed { index, pickedImages ->
+            if (pickedImages.attachmentType == AttachmentTypes.Drawing) {
+                itemsToRemove.add(pickedImages)
+            }
+        }
+        images?.removeAll(itemsToRemove.toSet())
         listOfImages.value = images
 
 
         listOfImages.observe(this) {
             it.map { println("ImagesURI: ${it.fileUri}") }
-
-
             println("comment: observer")
             fullImageAdapter.setList(it)
             smallImageAdapter.setList(it)

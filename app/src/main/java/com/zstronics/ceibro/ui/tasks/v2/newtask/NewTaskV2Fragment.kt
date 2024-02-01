@@ -480,7 +480,7 @@ class NewTaskV2Fragment :
         }
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
         onlyImageAdapter.openImageClickListener =
-            { _: View, position: Int, fileUri: String,obj ->
+            { _: View, position: Int, fileUri: String, obj ->
                 /*  val bundle = Bundle()
                   bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
                   bundle.putInt("position", position)
@@ -956,9 +956,19 @@ class NewTaskV2Fragment :
                 var newList: ArrayList<PickedImages> = arrayListOf()
                 val listOfPickedImages =
                     result.data?.extras?.getParcelableArrayList<PickedImages>("images")
-                if (listOfPickedImages?.isNotEmpty() == true){
-                    newList=listOfPickedImages
+                if (listOfPickedImages?.isNotEmpty() == true) {
+                    newList = listOfPickedImages
                 }
+
+                val itemsToRemove = mutableListOf<PickedImages>()
+
+                viewModel.listOfImages.value?.forEachIndexed { index, pickedImages ->
+                    if (pickedImages.attachmentType == AttachmentTypes.Drawing) {
+                        itemsToRemove.add(pickedImages)
+                    }
+                }
+                newList.addAll(itemsToRemove)
+
                 viewModel.listOfImages.postValue(newList)
             }
         }
