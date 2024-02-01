@@ -181,14 +181,18 @@ class InboxFragment :
                                         val index = originalList.indexOf(originalTaskToRemove)
                                         originalList.removeAt(index)
                                         viewModel.originalInboxTasks = originalList
-                                        viewModel._inboxTasks.postValue(originalList)
+
+                                        val adapterItemIndex = adapter.listItems.indexOf(originalTaskToRemove)
+                                        adapter.listItems.removeAt(adapterItemIndex)
+                                        adapter.notifyItemRemoved(adapterItemIndex)
+
+//                                        viewModel._inboxTasks.postValue(originalList)
                                         viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
                                     }
                                 }
-                                Handler().postDelayed({
-                                    mViewDataBinding.taskRV.invalidate()
-                                    adapter.notifyDataSetChanged()
-                                }, 100)
+//                                Handler().postDelayed({
+//                                    adapter.notifyDataSetChanged()
+//                                }, 100)
                             }
                         }
                     ))
