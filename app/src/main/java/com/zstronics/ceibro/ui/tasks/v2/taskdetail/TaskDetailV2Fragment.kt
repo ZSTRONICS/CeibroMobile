@@ -823,6 +823,10 @@ class TaskDetailV2Fragment :
         sheet.show(childFragmentManager, "TaskInfoBottomSheet")
     }
 
+    override fun onResume() {
+        super.onResume()
+        retainInstance=false
+    }
 
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == Activity.RESULT_OK) {
