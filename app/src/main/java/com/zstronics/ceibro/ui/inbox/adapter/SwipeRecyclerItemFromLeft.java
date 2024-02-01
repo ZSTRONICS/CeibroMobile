@@ -130,7 +130,7 @@ public abstract class SwipeRecyclerItemFromLeft extends ItemTouchHelper.SimpleCa
 
     @Override
     public float getSwipeEscapeVelocity(float defaultValue) {
-        return 0.1f * defaultValue;
+        return 0.8f * defaultValue;
     }
 
     @Override
