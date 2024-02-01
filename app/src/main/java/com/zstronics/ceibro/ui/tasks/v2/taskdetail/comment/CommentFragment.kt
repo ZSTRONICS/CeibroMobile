@@ -150,7 +150,7 @@ class CommentFragment :
                         "application/vnd.oasis.opendocument.spreadsheet",                           // .ods
                         "application/vnd.oasis.opendocument.presentation",                          // .odp
                         "application/x-rar-compressed",
-                        "application/vnd.android.package-archive",      //for APK file
+//                        "application/vnd.android.package-archive",      //for APK file
                         "application/msword",
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // .docx
                         "application/vnd.ms-word.document.macroEnabled.12",                         // .doc
