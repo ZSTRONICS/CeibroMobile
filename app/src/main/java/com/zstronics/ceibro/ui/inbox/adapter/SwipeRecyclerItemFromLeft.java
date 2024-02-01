@@ -28,7 +28,7 @@ import java.util.Queue;
 
 public abstract class SwipeRecyclerItemFromLeft extends ItemTouchHelper.SimpleCallback {
 
-    public static final int BUTTON_WIDTH = 140;
+    public static final int BUTTON_WIDTH = 160;
     private RecyclerView recyclerView;
     private List<SwipeRecyclerItemFromLeft.UnderlayButton> buttons;
     private GestureDetector gestureDetector;
@@ -244,7 +244,7 @@ public abstract class SwipeRecyclerItemFromLeft extends ItemTouchHelper.SimpleCa
 
             // Draw Text
             p.setColor(Color.WHITE);
-            p.setTextSize(25.0f);
+            p.setTextSize(30.0f);
 
 
             Rect r = new Rect();
@@ -254,13 +254,13 @@ public abstract class SwipeRecyclerItemFromLeft extends ItemTouchHelper.SimpleCa
             p.getTextBounds(text, 0, text.length(), r);
             float x = cWidth / 2f - r.width() / 2f - r.left;
             float y = cHeight / 2f + r.height() / 2f - r.bottom;
-            c.drawText(text, rect.left + x, rect.top + y + (r.height() * 2), p);
+            c.drawText(text, rect.left + x, (float) (rect.top + y + (r.height() * 1.6)), p);
 
             //Draw Image
             if (imageResId != 0) {
                 float textWidth = p.measureText(text);
                 Bitmap bmp = drawableToBitmap(ContextCompat.getDrawable(context, imageResId));
-                c.drawBitmap(bmp, rect.centerX() - (bmp.getWidth() / 2f), rect.centerY() - (bmp.getHeight() / 2f), null);
+                c.drawBitmap(bmp, rect.centerX() - (bmp.getWidth() / 2f), rect.centerY() - (bmp.getHeight() / 2f) - 20, null);
             }
 
             clickRegion = rect;
