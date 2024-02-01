@@ -7,7 +7,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 class TaskMemberDetailTypeConverter {
 
     @TypeConverter
-    fun fromString(value: String): TaskMemberDetail {
+    fun fromString(value: String): TaskMemberDetail? {
         return Gson().fromJson(value, TaskMemberDetail::class.java)
     }
 
