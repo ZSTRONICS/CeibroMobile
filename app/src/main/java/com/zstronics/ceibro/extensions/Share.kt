@@ -8,6 +8,7 @@ import android.content.Intent.*
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.annotation.Keep
 import androidx.fragment.app.FragmentActivity
@@ -271,7 +272,8 @@ inline fun FragmentActivity.openFilePicker(
 ) {
 
     try {
-        Intent(ACTION_OPEN_DOCUMENT).apply {
+//        Intent(ACTION_OPEN_DOCUMENT).apply        // This is used to access folder directly
+        Intent(ACTION_GET_CONTENT).apply {
             putExtra(EXTRA_ALLOW_MULTIPLE, allowMultiple)
             addCategory(CATEGORY_OPENABLE)
             addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
@@ -279,6 +281,8 @@ inline fun FragmentActivity.openFilePicker(
             addFlags(FLAG_GRANT_WRITE_URI_PERMISSION)
             putExtra(EXTRA_MIME_TYPES, mimeTypes)
             type = "*/*"
+//            val rootUri = DocumentsContract.buildRootUri("com.android.externalstorage.documents", "root_primary")
+//            putExtra(DocumentsContract.EXTRA_INITIAL_URI, rootUri)
         }.also {
             val possibleActivitiesList: List<ResolveInfo> =
                 packageManager.queryIntentActivities(it, PackageManager.MATCH_ALL)

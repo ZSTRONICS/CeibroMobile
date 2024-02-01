@@ -271,7 +271,8 @@ inline fun FragmentActivity.openFilePicker(
 ) {
 
     try {
-        Intent(ACTION_OPEN_DOCUMENT).apply {
+//        Intent(ACTION_OPEN_DOCUMENT).apply        // This is used to access folder directly
+        Intent(ACTION_GET_CONTENT).apply {
             putExtra(EXTRA_ALLOW_MULTIPLE, allowMultiple)
             addCategory(CATEGORY_OPENABLE)
             addFlags(FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
