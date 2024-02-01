@@ -336,27 +336,27 @@ class CeibroImageViewerActivity : BaseActivity() {
     }
 
     private fun saveComment() {
-
-        println("comment: saveComment ")
-        val comment = binding.commentsField.text.toString().trim()
-        val oldImages = listOfImages.value
-        oldImages?.get(lastSelectedPosition)?.comment = comment
-        listOfImages.postValue(oldImages)
-
-        binding.okBtn.visibility = View.INVISIBLE
-        binding.saveBtn.visibility = View.VISIBLE
-
-        binding.commentsField.clearFocus()
-        hideKeyboard()
+        if (lastSelectedPosition >= 0) {
+            println("comment: saveComment ")
+            val comment = binding.commentsField.text.toString().trim()
+            val oldImages = listOfImages.value
+            oldImages?.get(lastSelectedPosition)?.comment = comment
+            listOfImages.postValue(oldImages)
+            binding.okBtn.visibility = View.INVISIBLE
+            binding.saveBtn.visibility = View.VISIBLE
+            binding.commentsField.clearFocus()
+            hideKeyboard()
+        }
     }
 
     private fun setUserCommentLogic(position: Int) {
-        val userComment = listOfImages.value?.get(position)?.comment
-        println("comment: setUserCommentLogic:$userComment at position: $position")
-
-        binding.commentsField.setText(userComment)
-        binding.okBtn.visibility = View.INVISIBLE
-        binding.saveBtn.visibility = View.VISIBLE
+        if (position >= 0) {
+            val userComment = listOfImages.value?.get(position)?.comment
+            binding.commentsField.setText(userComment)
+            println("comment: setUserCommentLogic:$userComment at position: $position")
+            binding.okBtn.visibility = View.INVISIBLE
+            binding.saveBtn.visibility = View.VISIBLE
+        }
     }
 
     private fun hideKeyboard() {

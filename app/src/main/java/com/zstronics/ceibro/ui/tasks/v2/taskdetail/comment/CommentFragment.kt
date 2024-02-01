@@ -34,6 +34,7 @@ import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
+import ee.zstronics.ceibro.camera.CeibroImageViewerActivity
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import id.zelory.compressor.Compressor
@@ -222,7 +223,7 @@ class CommentFragment :
                 ) {
                     viewModel.doneTask(
                         requireContext()
-                    ) { eventData,isBeingDone ->
+                    ) { eventData, isBeingDone ->
                         CeibroApplication.CookiesManager.taskIdInDetails = ""
                         val bundle = Bundle()
                         bundle.putParcelable("eventData", eventData)
@@ -410,14 +411,39 @@ class CommentFragment :
         }
         imageWithCommentAdapter.openImageClickListener =
             { _: View, position: Int, data: PickedImages ->
+                /*  val bundle = Bundle()
+                  bundle.putParcelableArray(
+                      "images",
+                      viewModel.imagesWithComments.value?.toTypedArray()
+                  )
+                  bundle.putInt("position", position)
+                  bundle.putBoolean("fromServerUrl", false)
+                  navigate(R.id.imageViewerFragment, bundle)*/
+
+                val newList: ArrayList<PickedImages> = arrayListOf()
+                //  val listOfPickedImages = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                val ceibroCamera = Intent(requireActivity(), CeibroImageViewerActivity::class.java)
                 val bundle = Bundle()
-                bundle.putParcelableArray(
-                    "images",
-                    viewModel.imagesWithComments.value?.toTypedArray()
-                )
-                bundle.putInt("position", position)
-                bundle.putBoolean("fromServerUrl", false)
-                navigate(R.id.imageViewerFragment, bundle)
+                if (viewModel.listOfImages.value != null) {
+                    newList.addAll(viewModel.listOfImages.value!!)
+                }
+                //  newList.addAll(oldImages)
+
+                bundle.putParcelableArrayList("images", newList)
+                bundle.putParcelable("object", data)
+                bundle.putBoolean("isFromNewTaskFragment", true)
+                ceibroCamera.putExtras(bundle)
+                ceibroImageViewerLauncher.launch(ceibroCamera)
+
+            }
+
+        imageWithCommentAdapter.removeItemClickListener =
+            {
+                val listOfImages = viewModel.listOfImages.value
+                if (listOfImages?.contains(it) == true) {
+                    listOfImages.remove(it)
+                    viewModel.listOfImages.postValue(listOfImages)
+                }
             }
 
 
@@ -433,15 +459,37 @@ class CommentFragment :
         }
         mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
         onlyImageAdapter.openImageClickListener =
-            { _: View, position: Int, fileUri: String,obj ->
+            { _: View, position: Int, fileUri: String, obj ->
+                /* val bundle = Bundle()
+                 bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
+                 bundle.putInt("position", position)
+                 bundle.putBoolean("fromServerUrl", false)
+                 navigate(R.id.imageViewerFragment, bundle)*/
+
+                val newList: ArrayList<PickedImages> = arrayListOf()
+                //  val listOfPickedImages = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                val ceibroCamera = Intent(requireActivity(), CeibroImageViewerActivity::class.java)
                 val bundle = Bundle()
-                bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
-                bundle.putInt("position", position)
-                bundle.putBoolean("fromServerUrl", false)
-                navigate(R.id.imageViewerFragment, bundle)
+                if (viewModel.listOfImages.value != null) {
+                    newList.addAll(viewModel.listOfImages.value!!)
+                }
+                //  newList.addAll(oldImages)
+
+                bundle.putParcelableArrayList("images", newList)
+                bundle.putParcelable("object", obj)
+                bundle.putBoolean("isFromNewTaskFragment", true)
+                ceibroCamera.putExtras(bundle)
+                ceibroImageViewerLauncher.launch(ceibroCamera)
             }
 
-
+        onlyImageAdapter.removeItemClickListener =
+            {
+                val listOfImages = viewModel.listOfImages.value
+                if (listOfImages?.contains(it) == true) {
+                    listOfImages.remove(it)
+                    viewModel.listOfImages.postValue(listOfImages)
+                }
+            }
         viewModel.documents.observe(viewLifecycleOwner) {
             filesAdapter.setList(it)
             if (it.isNotEmpty()) {
@@ -519,14 +567,20 @@ class CommentFragment :
                             val fileUri = clipData.getItemAt(i).uri
                             val fileName = getFileNameFromUri(requireContext(), fileUri)
                             var fileExtension = getFileExtension(requireContext(), fileUri)
-                            if (fileExtension.isNullOrEmpty()){
-                                fileExtension="jpg"
+                            if (fileExtension.isNullOrEmpty()) {
+                                fileExtension = "jpg"
                             }
-                            val newUri = createFileUriFromContentUri(requireContext(), fileUri, fileName,fileExtension!!)
+                            val newUri = createFileUriFromContentUri(
+                                requireContext(),
+                                fileUri,
+                                fileName,
+                                fileExtension!!
+                            )
                             val file = FileUtils.getFile(requireContext(), newUri)
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
-                            val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
+                            val foundImage =
+                                oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                             if (foundImage != null) {
                                 viewModel.launch(Dispatcher.Main) {
                                     shortToastNow("You selected an already-added image")
@@ -552,8 +606,8 @@ class CommentFragment :
                         fileUri?.let {
                             val fileName = getFileNameFromUri(requireContext(), it)
                             var fileExtension = getFileExtension(requireContext(), fileUri)
-                            if (fileExtension.isNullOrEmpty()){
-                                fileExtension="jpg"
+                            if (fileExtension.isNullOrEmpty()) {
+                                fileExtension = "jpg"
                             }
                             val newUri = createFileUriFromContentUri(
                                 requireContext(),
@@ -565,7 +619,8 @@ class CommentFragment :
                             val selectedImgDetail =
                                 getPickedFileDetail(requireContext(), newUri)
 
-                            val foundImage = oldImages?.find {oldImage -> oldImage.fileName == selectedImgDetail.fileName}
+                            val foundImage =
+                                oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                             if (foundImage != null) {
                                 viewModel.launch(Dispatcher.Main) {
                                     shortToastNow("You selected an already-added image")
@@ -721,4 +776,17 @@ class CommentFragment :
 
         return activityCount
     }
+
+    private val ceibroImageViewerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                var newList: ArrayList<PickedImages> = arrayListOf()
+                val listOfPickedImages =
+                    result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                if (listOfPickedImages?.isNotEmpty() == true) {
+                    newList = listOfPickedImages
+                }
+                viewModel.listOfImages.postValue(newList)
+            }
+        }
 }
