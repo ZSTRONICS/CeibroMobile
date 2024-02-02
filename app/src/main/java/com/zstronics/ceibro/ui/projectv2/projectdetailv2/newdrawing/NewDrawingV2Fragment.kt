@@ -133,27 +133,64 @@ class NewDrawingV2Fragment :
 
             if (existingFloor != null && existingFloor._id.isNotEmpty()) {
                 viewModel.selectedFloor = floorData
-
-
-                list.forEach { data ->
+                val createFloorList = ArrayList<String>()
+                createFloorList.clear()
+                list.forEachIndexed { index, data ->
                     val item = viewModel.floorList.value?.find { it.floorName == data.floorName }
                     if (item == null) {
-                        viewModel.createFloorsByProjectID(
-                            viewModel.projectId.value.toString(), data.floorName
-                        )
+                        createFloorList.add(data.floorName)
+
                     }
                 }
-                sheet.dismiss()
-
-            } else {
-                viewModel.createFloorByProjectID(
-                    viewModel.projectId.value.toString(),
-                    floorData.floorName,
-                    list
-                ) { newFloor ->
-                    viewModel.selectedFloor = newFloor
+                if (createFloorList.size>0){
+                    viewModel.createFloorsByProjectID(
+                        viewModel.projectId.value.toString(), createFloorList
+                    ) {
+                        sheet.dismiss()
+                    }
+                }else{
                     sheet.dismiss()
                 }
+
+
+
+
+            } else {
+
+                val createFloorList = ArrayList<String>()
+                createFloorList.clear()
+                list.forEachIndexed { index, data ->
+                    val item = viewModel.floorList.value?.find { it.floorName == data.floorName }
+                    if (item == null) {
+                        createFloorList.add(data.floorName)
+
+                    }
+                }
+
+                if (createFloorList.size>0){
+                    viewModel.createFloorsByProjectID(
+                        viewModel.projectId.value.toString(), createFloorList
+                    ) {
+                        viewModel.floorList.value?.forEachIndexed{idenx,item->
+                            if (floorData.floorName==item.floorName){
+                                viewModel.selectedFloor = item
+                            }
+                        }
+
+                        sheet.dismiss()
+                    }
+                }else{
+                    sheet.dismiss()
+                }
+                /*   viewModel.createFloorByProjectID(
+                       viewModel.projectId.value.toString(),
+                       floorData.floorName,
+                       list
+                   ) { newFloor ->
+                       viewModel.selectedFloor = newFloor
+                       sheet.dismiss()
+                   }*/
+
             }
 
 
@@ -189,8 +226,7 @@ class NewDrawingV2Fragment :
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     hideKeyboard()
-                },200)
-
+                }, 200)
 
 
             }
@@ -204,7 +240,7 @@ class NewDrawingV2Fragment :
                 sheet.binding.clAddGroup.visibility = View.GONE
                 Handler(Looper.getMainLooper()).postDelayed({
                     hideKeyboard()
-                },200)
+                }, 200)
             }
         }
 
@@ -219,7 +255,7 @@ class NewDrawingV2Fragment :
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         hideKeyboard()
-                    },200)
+                    }, 200)
                 }
             }
         }

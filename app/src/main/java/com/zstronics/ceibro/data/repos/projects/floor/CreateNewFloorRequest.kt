@@ -4,11 +4,12 @@ import android.os.Parcelable
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.base.BaseResponse
+import com.zstronics.ceibro.data.database.models.projects.CeibroFloorV2
 import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
 data class CreateNewFloorRequest(
     @SerializedName("floorName")
-    val floorName: String
+    val floorName: List<String>
 ): BaseResponse(), Parcelable

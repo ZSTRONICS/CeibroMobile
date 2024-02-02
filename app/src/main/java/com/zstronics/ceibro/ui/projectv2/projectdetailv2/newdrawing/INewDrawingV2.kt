@@ -42,7 +42,8 @@ interface INewDrawingV2 {
         )
         fun createFloorsByProjectID(
             projectId: String,
-            floorName: String,
+            floorName: List<String>,
+            callback: () -> Unit
         )
 
         fun getGroupsByProjectID(projectId: String)

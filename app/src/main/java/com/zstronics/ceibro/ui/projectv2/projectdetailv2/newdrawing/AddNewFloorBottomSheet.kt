@@ -216,7 +216,7 @@ class AddNewFloorBottomSheet(
                 }
             }
 
-            itemViewBinding.tvAddFloors.setOnClickListener {
+           /* itemViewBinding.tvAddFloors.setOnClickListener {
                 itemViewBinding.cbFloorName.isChecked = !(itemViewBinding.cbFloorName.isChecked)
                 val floorName1 = itemViewBinding.cbFloorName.text.toString()
                 val existingFloor = floorsList.find { it.floorName.equals(floorName1, true) }
@@ -248,7 +248,7 @@ class AddNewFloorBottomSheet(
                 floorsList = floorsList.sortedWith(compareBy { enumOrder.indexOf(it.floorName) })
                     .toMutableList()
                 callback.invoke(floorsList)
-            }
+            }*/
             itemViewBinding.cbFloorName.setOnClickListener {
                 val floorName1 = itemViewBinding.cbFloorName.text.toString()
                 val existingFloor = floorsList.find { it.floorName.equals(floorName1, true) }
