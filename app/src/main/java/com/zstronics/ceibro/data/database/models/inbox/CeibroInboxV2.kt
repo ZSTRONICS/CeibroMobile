@@ -16,13 +16,13 @@ data class CeibroInboxV2(
     @SerializedName("_id")
     val _id: String,
     @SerializedName("actionBy")
-    val actionBy: TaskMemberDetail,
+    var actionBy: TaskMemberDetail,
     @SerializedName("actionDataTask")
     val actionDataTask: ActionDataTask,
     @SerializedName("actionDescription")
-    val actionDescription: String,
+    var actionDescription: String,
     @SerializedName("actionFiles")
-    val actionFiles: MutableList<ActionFilesData>,
+    var actionFiles: MutableList<ActionFilesData>,
     @SerializedName("actionTitle")
     val actionTitle: String,
     @SerializedName("actionType")
@@ -30,7 +30,7 @@ data class CeibroInboxV2(
     @SerializedName("commentId")
     val commentId: String?,
     @SerializedName("createdAt")
-    val createdAt: String,
+    var createdAt: String,
     @SerializedName("eventId")
     val eventId: String?,
     @SerializedName("isSeen")

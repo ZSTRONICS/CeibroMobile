@@ -49,16 +49,28 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
         super.onViewCreated(view, savedInstanceState)
 
         if (lastSortingType.equals("SortByActivity", true)) {
+            binding.latestActivitySortBtn.isClickable = false
+            binding.unreadSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = true
+
             setDrawableEndWithTint(binding.latestActivitySortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
             removeDrawableEnd(binding.unreadSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByUnread", true)) {
+            binding.latestActivitySortBtn.isClickable = true
+            binding.unreadSortBtn.isClickable = false
+            binding.dueDateSortBtn.isClickable = true
+
             removeDrawableEnd(binding.latestActivitySortBtn)
             setDrawableEndWithTint(binding.unreadSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
             removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByDueDate", true)) {
+            binding.latestActivitySortBtn.isClickable = true
+            binding.unreadSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = false
+
             removeDrawableEnd(binding.latestActivitySortBtn)
             removeDrawableEnd(binding.unreadSortBtn)
             setDrawableEndWithTint(binding.dueDateSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
@@ -70,147 +82,12 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
         }
 
 
-        /*if (taskDetail != null) {
-            var state = ""
-            state = if (rootState == TaskRootStateTags.FromMe.tagValue && userId == taskDetail.creator.id) {
-                taskDetail.creatorState
-            } else if (rootState == TaskRootStateTags.Hidden.tagValue && selectedState.equals(TaskStatus.CANCELED.name, true)) {
-                taskDetail.creatorState
-            } else {
-                taskDetail.assignedToState.find { it.userId == userId }?.state ?: ""
-            }
-            val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
-                TaskStatus.NEW.name -> Pair(
-                    R.drawable.status_new_filled_more_corners,
-                    requireContext().getString(R.string.new_heading)
-                )
-
-                TaskStatus.UNREAD.name -> Pair(
-                    R.drawable.status_new_filled_more_corners,
-                    requireContext().getString(R.string.unread_heading)
-                )
-
-                TaskStatus.ONGOING.name -> Pair(
-                    R.drawable.status_ongoing_filled_more_corners,
-                    requireContext().getString(R.string.ongoing_heading)
-                )
-
-                TaskStatus.DONE.name -> Pair(
-                    R.drawable.status_done_filled_more_corners,
-                    requireContext().getString(R.string.done_heading)
-                )
-
-                TaskStatus.CANCELED.name -> Pair(
-                    R.drawable.status_cancelled_filled_more_corners,
-                    requireContext().getString(R.string.canceled)
-                )
-
-                else -> Pair(
-                    R.drawable.status_draft_outline,
-                    state.ifEmpty {
-                        "N/A"
-                    }
-                )
-            }
-            val (background, status) = taskStatusNameBg
-            binding.taskDetailStatusName.setBackgroundResource(background)
-            binding.taskDetailStatusName.text = status
-
-            binding.taskDetailCreationDate.text = DateUtils.formatCreationUTCTimeToCustom(
-                utcTime = taskDetail.createdAt,
-                inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
-            )
-
-            var dueDate = ""
-            dueDate = DateUtils.reformatStringDate(
-                date = taskDetail.dueDate,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
-                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
-            )
-            if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
-                dueDate = DateUtils.reformatStringDate(
-                    date = taskDetail.dueDate,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
-                    DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
-                )
-                if (dueDate == "") {
-                    dueDate = "N/A"
-                }
-            }
-            binding.taskDetailDueDate.text = "Due Date: $dueDate"
-
-
-            binding.taskCreatorName.text = "${taskDetail.creator.firstName} ${taskDetail.creator.surName}"
-
-            if (taskDetail.assignedToState.isNotEmpty()) {
-                val allAssignee = taskDetail.assignedToState.map { it }
-                var assigneeMembers = ""
-
-                var index = 0
-                if (allAssignee.isNotEmpty()) {
-                    for (item in allAssignee) {
-                        assigneeMembers += if (index == allAssignee.size - 1) {
-                            if (item.firstName.isEmpty()) {
-                                item.phoneNumber
-                            } else {
-                                "${item.firstName} ${item.surName}"
-                            }
-                        } else {
-                            if (item.firstName.isEmpty()) {
-                                "${item.phoneNumber}, "
-                            } else {
-                                "${item.firstName} ${item.surName}, "
-                            }
-                        }
-                        index++
-                    }
-                }
-                binding.taskAssigneeNames.text = assigneeMembers
-            } else {
-                binding.taskAssigneeNames.text = "No assignee members"
-            }
-
-            if (taskDetail.invitedNumbers.isNotEmpty()) {
-                var invitedNumber = ""
-
-                var index = 0
-                for (item in taskDetail.invitedNumbers) {
-                    invitedNumber += if (index == taskDetail.invitedNumbers.size - 1) {
-                        if (item.firstName.isNotEmpty()) {
-                            "${item.firstName} ${item.surName}"
-                        } else {
-                            item.phoneNumber
-                        }
-                    } else {
-                        if (item.firstName.isNotEmpty()) {
-                            "${item.firstName} ${item.surName}, "
-                        } else {
-                            "${item.phoneNumber}, "
-                        }
-                    }
-                    index++
-                }
-
-                binding.taskInvitedMembersNumbers.text = invitedNumber
-            } else {
-                binding.taskInvitedMembersLayout.visibility = View.GONE
-            }
-
-
-            binding.taskConfirmerName.text = "No confirmer added on this task"
-            binding.taskViewerName.text = "No viewer added on this task"
-            binding.taskConfirmerLayout.visibility = View.GONE
-            binding.taskViewerLayout.visibility = View.GONE
-
-            if (taskDetail.project != null && taskDetail.project.title.isNotEmpty()) {
-                binding.taskProjectName.text = taskDetail.project.title
-            } else {
-                binding.taskProjectLayout.visibility = View.GONE
-            }
-        }*/
-
 
         binding.latestActivitySortBtn.setOnClick {
+            binding.latestActivitySortBtn.isClickable = false
+            binding.unreadSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = true
+
             lastSortingType = "SortByActivity"
             setDrawableEndWithTint(binding.latestActivitySortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
             removeDrawableEnd(binding.unreadSortBtn)
@@ -219,6 +96,10 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
         }
 
         binding.unreadSortBtn.setOnClick {
+            binding.latestActivitySortBtn.isClickable = true
+            binding.unreadSortBtn.isClickable = false
+            binding.dueDateSortBtn.isClickable = true
+
             lastSortingType = "SortByUnread"
             removeDrawableEnd(binding.latestActivitySortBtn)
             setDrawableEndWithTint(binding.unreadSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
@@ -227,6 +108,10 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
         }
 
         binding.dueDateSortBtn.setOnClick {
+            binding.latestActivitySortBtn.isClickable = true
+            binding.unreadSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = false
+
             lastSortingType = "SortByDueDate"
             removeDrawableEnd(binding.latestActivitySortBtn)
             removeDrawableEnd(binding.unreadSortBtn)

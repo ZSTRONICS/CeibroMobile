@@ -112,7 +112,8 @@ object LocalEvents {
     object UpdateConnections
     class RefreshTasksData
     class RefreshInboxData
-    data class UpdateInboxItemData(val inboxTask: CeibroInboxV2)
+    data class UpdateInboxItemSeen(val inboxTask: CeibroInboxV2)
+    data class RefreshInboxSingleEvent(val inboxTask: CeibroInboxV2)
     class RefreshProjectsData
     data class RefreshFloorsData(val projectId: String)
     data class RefreshGroupsData(val projectId: String)
