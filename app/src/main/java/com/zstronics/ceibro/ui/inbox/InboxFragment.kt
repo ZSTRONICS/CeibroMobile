@@ -98,8 +98,16 @@ class InboxFragment :
 
                 CeibroApplication.CookiesManager.taskDataForDetails = task
                 CeibroApplication.CookiesManager.taskDetailEvents = allEvents
-                CeibroApplication.CookiesManager.taskDetailRootState =
+                CeibroApplication.CookiesManager.taskDetailRootState = if (task != null) {
+                    if (task.isCreator) {
+                        TaskRootStateTags.FromMe.tagValue.lowercase()
+                    } else {
+                        TaskRootStateTags.ToMe.tagValue.lowercase()
+                    }
+                } else {
                     TaskRootStateTags.ToMe.tagValue.lowercase()
+                }
+
                 withContext(Dispatchers.Main) {
                     // Update the UI here
 //                    viewModel.loading(false, "")

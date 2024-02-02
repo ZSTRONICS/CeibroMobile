@@ -185,7 +185,7 @@ class TaskDetailV2RVAdapter(
             val context = binding.taskDetailStatusName.context
             var state = ""
             state =
-                if (rootState == TaskRootStateTags.FromMe.tagValue && loggedInUserId == task.creator.id) {
+                if (rootState == TaskRootStateTags.FromMe.tagValue || loggedInUserId == task.creator.id) {
                     task.creatorState
                 } else if (rootState == TaskRootStateTags.Hidden.tagValue && selectedState.equals(
                         TaskStatus.CANCELED.name,
