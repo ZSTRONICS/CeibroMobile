@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.inbox
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
-import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
@@ -18,7 +17,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -113,10 +111,6 @@ class InboxVM @Inject constructor(
                 // Sort tasks using the custom comparator
                 val sortedTasksList = allTasks.sortedWith(comparator)
 
-//            sortedTasksList.forEach { tasks ->
-//                println("Sorting Dates /: after sorting Due Date: ${tasks.actionDataTask.dueDate}")
-//            }
-
                 originalInboxTasks = sortedTasksList.toMutableList()
                 _inboxTasks.postValue(sortedTasksList.toMutableList())
                 isUserSearching = false
@@ -128,6 +122,81 @@ class InboxVM @Inject constructor(
 
             } else {
                 val allTasks = originalInboxTasks
+                allTasks.sortByDescending { it.createdAt }
+                originalInboxTasks = allTasks
+                _inboxTasks.postValue(allTasks)
+                isUserSearching = false
+                withContext(Dispatchers.Main) {
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allTasks)
+                    CeibroApplication.CookiesManager.inboxTasksSortingType.postValue("SortByActivity")
+                }
+            }
+        }
+    }
+
+    fun changeSortingOrderWhenNewItemAdded(
+        allInboxTasks: MutableList<CeibroInboxV2>,
+        latestSortingType: String
+    ) {
+        GlobalScope.launch {
+
+            if (latestSortingType.equals("SortByActivity", true)) {
+                val allTasks = allInboxTasks
+                allTasks.sortByDescending { it.createdAt }
+                originalInboxTasks = allTasks
+                _inboxTasks.postValue(allTasks)
+                isUserSearching = false
+                withContext(Dispatchers.Main) {
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allTasks)
+                    CeibroApplication.CookiesManager.inboxTasksSortingType.postValue("SortByActivity")
+                }
+
+            } else if (latestSortingType.equals("SortByUnread", true)) {
+                val allTasks = allInboxTasks
+                allTasks.sortByDescending { !it.isSeen }
+                originalInboxTasks = allTasks
+                _inboxTasks.postValue(allTasks)
+                isUserSearching = false
+                withContext(Dispatchers.Main) {
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allTasks)
+                    CeibroApplication.CookiesManager.inboxTasksSortingType.postValue("SortByUnread")
+                }
+
+            } else if (latestSortingType.equals("SortByDueDate", true)) {
+//                loading(true)
+                val currentDate = Date()
+                val allTasks = allInboxTasks
+
+                val comparator = compareBy<CeibroInboxV2> { task ->
+                    when {
+                        task.actionDataTask.dueDate.isEmpty() -> 3 // Tasks with no due date go to the bottom
+                        parseDate(task.actionDataTask.dueDate)!! < currentDate -> 2 // Tasks with due date before current date
+                        parseDate(task.actionDataTask.dueDate)!! > currentDate -> 1 // Tasks with due date after current date
+                        else -> 0 // Tasks with due date equal to current date
+                    }
+                }.thenByDescending { task ->
+                    when {
+                        task.actionDataTask.dueDate.isEmpty() -> "" // No further sorting for tasks with no due date
+                        parseDate(task.actionDataTask.dueDate)!! < currentDate -> parseDate(task.actionDataTask.dueDate) // Sort tasks with due date before current date in descending order
+                        parseDate(task.actionDataTask.dueDate)!! > currentDate -> parseDate(task.actionDataTask.dueDate) // Sort tasks with due date after current date in descending order
+                        else -> "" // No further sorting for tasks with due date equal to current date
+                    }
+                }
+
+                // Sort tasks using the custom comparator
+                val sortedTasksList = allTasks.sortedWith(comparator)
+
+                originalInboxTasks = sortedTasksList.toMutableList()
+                _inboxTasks.postValue(sortedTasksList.toMutableList())
+                isUserSearching = false
+//                loading(false, "")
+                withContext(Dispatchers.Main) {
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(sortedTasksList.toMutableList())
+                    CeibroApplication.CookiesManager.inboxTasksSortingType.postValue("SortByDueDate")
+                }
+
+            } else {
+                val allTasks = allInboxTasks
                 allTasks.sortByDescending { it.createdAt }
                 originalInboxTasks = allTasks
                 _inboxTasks.postValue(allTasks)

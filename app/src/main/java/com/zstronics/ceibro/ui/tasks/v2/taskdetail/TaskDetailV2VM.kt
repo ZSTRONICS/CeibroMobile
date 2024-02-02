@@ -30,7 +30,6 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -46,7 +45,7 @@ class TaskDetailV2VM @Inject constructor(
     val groupsV2Dao: GroupsV2Dao,
     private val inboxV2Dao: InboxV2Dao,
     val drawingPinsDao: DrawingPinsV2Dao,
-    val downloadedDrawingV2Dao:DownloadedDrawingV2Dao
+    val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
 ) : HiltBaseViewModel<ITaskDetailV2.State>(), ITaskDetailV2.ViewModel {
     val user = sessionManager.getUser().value
 
@@ -102,7 +101,8 @@ class TaskDetailV2VM @Inject constructor(
                 selectedState = parentSelectedState
             }
 
-            val notificationData: NotificationTaskData? = bundle?.getParcelable("notificationTaskData")
+            val notificationData: NotificationTaskData? =
+                bundle?.getParcelable("notificationTaskData")
 
             if (notificationData != null) {         //It means detail is opened via notification if not null
                 notificationTaskData.postValue(notificationData)
@@ -123,18 +123,9 @@ class TaskDetailV2VM @Inject constructor(
                         syncEvents(task1.id)
 
                         val seenByMe = task1.seenBy.find { it1 -> it1 == user?.id }
-                        if (seenByMe == null) {
+//                        if (seenByMe == null) {
                             taskSeen(task1.id) { }
-                        } else {
-                            val inboxTask = inboxV2Dao.getInboxTaskData(task1.id)
-                            if (inboxTask != null && !inboxTask.isSeen) {
-                                inboxTask.isSeen = true
-                                inboxTask.unSeenNotifCount = 0
-                                inboxV2Dao.insertInboxItem(inboxTask)
-
-                                EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
-                            }
-                        }
+//                        }
                     } ?: run {
                         // run API call because task not found in DB
                         getTaskById(taskId) { isSuccess, task, events ->
@@ -146,20 +137,9 @@ class TaskDetailV2VM @Inject constructor(
                                 _taskEvents.postValue(events.toMutableList())
 
                                 val seenByMe = task?.seenBy?.find { it1 -> it1 == user?.id }
-                                if (seenByMe == null) {
+//                                if (seenByMe == null) {
                                     taskSeen(taskId) { }
-                                } else {
-                                    launch {
-                                        val inboxTask = inboxV2Dao.getInboxTaskData(taskId)
-                                        if (inboxTask != null && !inboxTask.isSeen) {
-                                            inboxTask.isSeen = true
-                                            inboxTask.unSeenNotifCount = 0
-                                            inboxV2Dao.insertInboxItem(inboxTask)
-
-                                            EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
-                                        }
-                                    }
-                                }
+//                                }
                             } else {
                                 loading(false, "No task details to show")
                             }
@@ -187,20 +167,21 @@ class TaskDetailV2VM @Inject constructor(
                     syncEvents(task.id)
 
                     val seenByMe = task.seenBy.find { it == user?.id }
-                    if (seenByMe == null) {
+//                    if (seenByMe == null) {
                         taskSeen(task.id) { }
-                    } else {
-                        launch {
-                            val inboxTask = inboxV2Dao.getInboxTaskData(task.id)
-                            if (inboxTask != null && !inboxTask.isSeen) {
-                                inboxTask.isSeen = true
-                                inboxTask.unSeenNotifCount = 0
-                                inboxV2Dao.insertInboxItem(inboxTask)
-
-                                EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
-                            }
-                        }
-                    }
+//                    } else {
+//                        launch {
+//                            val inboxTask = inboxV2Dao.getInboxTaskData(task.id)
+//                            if (inboxTask != null && !inboxTask.isSeen) {
+//                                inboxTask.isSeen = true
+//                                inboxTask.unSeenNotifCount = 0
+//                                inboxV2Dao.insertInboxItem(inboxTask)
+//
+//                                EventBus.getDefault()
+//                                    .post(LocalEvents.UpdateInboxItemSeen(inboxTask))
+//                            }
+//                        }
+//                    }
                 } ?: run {
                     alert("No details to display")
                 }
@@ -260,7 +241,7 @@ class TaskDetailV2VM @Inject constructor(
                             inboxTask.unSeenNotifCount = 0
                             inboxV2Dao.insertInboxItem(inboxTask)
 
-                            EventBus.getDefault().post(LocalEvents.UpdateInboxItemData(inboxTask))
+                            EventBus.getDefault().post(LocalEvents.UpdateInboxItemSeen(inboxTask))
                         }
                     }
                 }
@@ -298,7 +279,7 @@ class TaskDetailV2VM @Inject constructor(
             //loading(true)
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
-                    println("Heartbeat taskSeenData: ${taskSeenData}")
+//                    println("Heartbeat taskSeenData: ${taskSeenData}")
                     if (taskSeenData != null) {
                         launch {
                             updateGenericTaskSeenInLocal(
@@ -314,7 +295,7 @@ class TaskDetailV2VM @Inject constructor(
                     }
 
                 } else {
-                    println("Heartbeat taskSeenData: ${taskSeenData}")
+//                    println("Heartbeat taskSeenData: ${taskSeenData}")
                     //loading(false, "")
                 }
             }
@@ -368,7 +349,13 @@ class TaskDetailV2VM @Inject constructor(
             )) {
                 is ApiResponse.Success -> {
                     doneData = response.data.data
-                    updateTaskDoneInLocal(doneData, taskDao, sessionManager, drawingPinsDao)
+                    updateTaskDoneInLocal(
+                        doneData,
+                        taskDao,
+                        inboxV2Dao,
+                        sessionManager,
+                        drawingPinsDao
+                    )
                     loading(false, "")
                     onBack()
                     isSuccess = true

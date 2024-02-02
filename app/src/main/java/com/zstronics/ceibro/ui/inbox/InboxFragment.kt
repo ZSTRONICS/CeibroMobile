@@ -3,7 +3,6 @@ package com.zstronics.ceibro.ui.inbox
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
@@ -272,14 +271,15 @@ class InboxFragment :
     fun onRefreshInboxData(event: LocalEvents.RefreshInboxData) {
         GlobalScope.launch {
             val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
+            viewModel.changeSortingOrderWhenNewItemAdded(allInboxTasks ?: mutableListOf(), viewModel.lastSortingType)
 //            allInboxTasks?.sortByDescending { it.createdAt }
-            viewModel._inboxTasks.postValue(allInboxTasks)
-            viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
+//            viewModel._inboxTasks.postValue(allInboxTasks)
+//            viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onUpdateInboxItemData(event: LocalEvents.UpdateInboxItemData?) {
+    fun onUpdateInboxItemSeen(event: LocalEvents.UpdateInboxItemSeen?) {
         GlobalScope.launch {
             val inboxUpdatedTask = event?.inboxTask
             if (inboxUpdatedTask != null) {
@@ -292,6 +292,46 @@ class InboxFragment :
 //                    viewModel._inboxTasks.postValue(allInboxTasks)
                     viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
                 }
+                withContext(Dispatchers.Main) {
+                    val listItem = adapter.listItems.find { it.taskId == inboxUpdatedTask.taskId }
+                    if (listItem != null) {
+                        val index = adapter.listItems.indexOf(listItem)
+                        adapter.listItems[index] = inboxUpdatedTask
+                        adapter.notifyItemChanged(index)
+                    }
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshInboxSingleEvent(event: LocalEvents.RefreshInboxSingleEvent?) {
+        GlobalScope.launch {
+            val inboxUpdatedTask = event?.inboxTask
+            if (inboxUpdatedTask != null) {
+                val allInboxTasks = CeibroApplication.CookiesManager.allInboxTasks.value
+
+                withContext(Dispatchers.Main) {
+                    val listItem = adapter.listItems.find { it.taskId == inboxUpdatedTask.taskId }
+                    if (listItem != null) {
+                        val index = adapter.listItems.indexOf(listItem)
+                        adapter.listItems[index] = inboxUpdatedTask
+                        adapter.notifyItemChanged(index)
+                    }
+                }
+
+                val taskToUpdate = allInboxTasks?.find { it.taskId == inboxUpdatedTask.taskId }
+                if (taskToUpdate != null) {
+                    val index = allInboxTasks.indexOf(taskToUpdate)
+                    allInboxTasks[index] = inboxUpdatedTask
+                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+//                    viewModel._inboxTasks.postValue(allInboxTasks)
+                    viewModel.originalInboxTasks = allInboxTasks ?: mutableListOf()
+                } else {
+                    allInboxTasks?.add(0, inboxUpdatedTask)
+                    viewModel.changeSortingOrderWhenNewItemAdded(allInboxTasks ?: mutableListOf(), viewModel.lastSortingType)
+                }
+
             }
         }
     }

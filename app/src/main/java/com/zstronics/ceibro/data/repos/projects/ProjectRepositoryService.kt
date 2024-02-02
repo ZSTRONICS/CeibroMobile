@@ -227,7 +227,7 @@ interface ProjectRepositoryService {
 
     @POST("v2/project/{projectId}/floor")
     suspend fun createFloorV2(
-        @Path("projectId") projectId: String,
+        @Path("projectId") projectId:String,
         @Body requestBody: CreateNewFloorRequest
     ): Response<CreateFloorResponseV2>
 

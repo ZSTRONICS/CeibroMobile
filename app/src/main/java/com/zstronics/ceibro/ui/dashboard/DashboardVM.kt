@@ -226,6 +226,7 @@ class DashboardVM @Inject constructor(
                             updateTaskCommentInLocal(
                                 commentData,
                                 taskDao,
+                                inboxV2Dao,
                                 userId,
                                 sessionManager, drawingPinsDao
                             )
@@ -260,6 +261,7 @@ class DashboardVM @Inject constructor(
                                 updateTaskDoneInLocal(
                                     commentData,
                                     taskDao,
+                                    inboxV2Dao,
                                     sessionManager,
                                     drawingPinsDao
                                 )

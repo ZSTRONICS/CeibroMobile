@@ -289,7 +289,9 @@ class NewDrawingV2VM @Inject constructor(
         list: List<CeibroFloorV2>,
         callback: (floor: CeibroFloorV2) -> Unit
     ) {
-        val request = CreateNewFloorRequest(floorName)
+        val list=ArrayList<String>()
+        list.add(floorName)
+        val request = CreateNewFloorRequest(list)
         launch {
             loading(true)
             when (val response = projectRepository.createFloorV2(projectId, request)) {
@@ -297,15 +299,9 @@ class NewDrawingV2VM @Inject constructor(
                 is ApiResponse.Success -> {
                     val floor = response.data.floor
                     floor?.let {
-                        floorsV2Dao.insertFloor(it)
-                        _floorList.value?.add(it)
-                        callback.invoke(floor)
-                    }
-                    list.forEach { data ->
-                        val item = floorList.value?.find { it.floorName == data.floorName }
-                        if (item == null) {
-                            createFloorsByProjectID(projectId, data.floorName)
-                        }
+                        floorsV2Dao.insertMultipleFloors(it.filterNotNull())
+                   //     it.toMutableList().let { it1 -> _floorList.value?.addAll(it1) }
+                      //  callback.invoke(floor)
                     }
 
 
@@ -321,21 +317,25 @@ class NewDrawingV2VM @Inject constructor(
 
     override fun createFloorsByProjectID(
         projectId: String,
-        floorName: String,
+        floorName: List<String>,
+        callback: () -> Unit
     ) {
         val request = CreateNewFloorRequest(floorName)
+        loading(true)
         launch {
 
             when (val response = projectRepository.createFloorV2(projectId, request)) {
 
                 is ApiResponse.Success -> {
 
-                    print("created new floor:${response.data.floor?.floorName}")
-                    val floor = response.data.floor
-                    floor?.let {
-                        floorsV2Dao.insertFloor(it)
-                        _floorList.value?.add(it)
+                    print("created new floor:${response.data.floor}")
+                    val floors = response.data.floor
+                    floors?.let {
+                        floorsV2Dao.insertMultipleFloors(it.filterNotNull())
+                        _floorList.value?.addAll(it.filterNotNull())
                     }
+                    loading(false, "")
+                    callback.invoke()
                 }
 
                 is ApiResponse.Error -> {

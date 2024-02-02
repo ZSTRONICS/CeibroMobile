@@ -15,6 +15,7 @@ import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -38,6 +39,7 @@ class CommentVM @Inject constructor(
     val sessionManager: SessionManager,
     val dashboardRepository: IDashboardRepository,
     private val taskDao: TaskV2Dao,
+    private val inboxV2Dao: InboxV2Dao,
     private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<IComment.State>(), IComment.ViewModel {
     val user = sessionManager.getUser().value
@@ -192,6 +194,7 @@ class CommentVM @Inject constructor(
                 updateTaskCommentInLocal(
                     eventData,
                     taskDao,
+                    inboxV2Dao,
                     user?.id,
                     sessionManager,
                     drawingPinsDao
@@ -210,7 +213,7 @@ class CommentVM @Inject constructor(
 
     fun doneTask(
         context: Context,
-        onBack: (eventData: EventV2Response.Data?,isBeingDone: Boolean) -> Unit
+        onBack: (eventData: EventV2Response.Data?, isBeingDone: Boolean) -> Unit
     ) {
         val list = getCombinedList()
         val imageList = getCombinedImagesList()
@@ -324,11 +327,13 @@ class CommentVM @Inject constructor(
                     }
                 }
 
-                updateTaskDoneInLocal(eventData, taskDao, sessionManager, drawingPinsDao)
+                updateTaskDoneInLocal(
+                    eventData, taskDao, inboxV2Dao, sessionManager, drawingPinsDao
+                )
 
                 loading(false, "")
                 if (isSuccess) {
-                    onBack(eventData,false)
+                    onBack(eventData, false)
                 }
             }
         }
