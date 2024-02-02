@@ -9,13 +9,13 @@ import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 class ActionFilesDataListTypeConverter {
 
     @TypeConverter
-    fun fromString(value: String): List<ActionFilesData> {
+    fun fromString(value: String): List<ActionFilesData>? {
         val type = object : TypeToken<List<ActionFilesData>>() {}.type
         return Gson().fromJson(value, type)
     }
 
     @TypeConverter
-    fun fromList(list: List<ActionFilesData>): String {
+    fun fromList(list: List<ActionFilesData>?): String? {
         return Gson().toJson(list)
     }
 }
