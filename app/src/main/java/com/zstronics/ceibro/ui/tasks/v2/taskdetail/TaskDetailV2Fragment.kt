@@ -103,7 +103,7 @@ class TaskDetailV2Fragment :
                 task?.let { taskData ->
                     if (taskData.pinData != null) {
                         GlobalScope.launch(Dispatchers.Main) {
-                            val downloadedDrawingFile =
+                            var downloadedDrawingFile =
                                 viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
                                     taskData.pinData!!.drawingId
                                 )
@@ -160,8 +160,18 @@ class TaskDetailV2Fragment :
                                     ) {
                                         MainScope().launch {
                                             if (it.trim().equals("100%", true)) {
+
+
+                                                 downloadedDrawingFile =
+                                                    viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
+                                                        taskData.pinData!!.drawingId
+                                                    )
+
+                                                println("progress  File data $downloadedDrawingFile")
+                                                println("progress  File Downloaded")
                                                 shortToastNow("File Downloaded")
                                             } else if (it == "retry" || it == "failed") {
+                                                println("progress  File failed to downloaded")
                                                 shortToastNow("Downloading Failed")
                                             }
                                         }
@@ -1208,6 +1218,9 @@ class TaskDetailV2Fragment :
 
         val downloadId = manager?.enqueue(request)
 
+        println("progress id   $downloadId")
+        println("progress   $manager")
+
         val ceibroDownloadDrawingV2 = downloadId?.let {
             CeibroDownloadDrawingV2(
                 fileName = triplet.second,
@@ -1225,14 +1238,16 @@ class TaskDetailV2Fragment :
         GlobalScope.launch {
             ceibroDownloadDrawingV2?.let {
                 downloadedDrawingV2Dao.insertDownloadDrawing(it)
+                println("progress  object  $it")
             }
+
         }
 
-        /* Handler(Looper.getMainLooper()).postDelayed({
+         Handler(Looper.getMainLooper()).postDelayed({
              getDownloadProgress(context, downloadId!!) {
-                 itemClickListener?.invoke(it)
+              //   itemClickListener?.invoke(it)
              }
-         }, 1000)*/
+         }, 1000)
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
@@ -1246,6 +1261,7 @@ class TaskDetailV2Fragment :
     ) {
         GlobalScope.launch {
             while (true) {
+                println("progress : checking")
                 val query = DownloadManager.Query().setFilterById(downloadId)
                 val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                 val cursor = manager.query(query)
@@ -1259,6 +1275,8 @@ class TaskDetailV2Fragment :
                     val status =
                         cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                     println("Status: $status")
+
+                    println("progress status : $status")
 
                     if (status.toInt() == DownloadManager.STATUS_FAILED) {
 
@@ -1279,8 +1297,10 @@ class TaskDetailV2Fragment :
                     itemClickListener?.invoke("$downloadedPercent %")
                     if (bytesTotal > 0) {
                         println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                        println("progress downloaded" +  ((bytesDownloaded * 100L) / bytesTotal).toInt())
                     }
                 } else {
+                    println("progress retry " )
                     itemClickListener?.invoke("retry")
                     break
                 }
