@@ -146,6 +146,28 @@ class TaskDetailV2Fragment :
                                 } else if (downloadedFile.downloading) {
                                     shortToastNow("Please wait, file is downloading")
 
+
+                                    getDownloadProgressSeparately(
+                                        mViewDataBinding.root.context,
+                                        downloadedFile.downloadId
+                                    ) { status ->
+                                        MainScope().launch {
+                                            if (status.equals("downloaded", true)) {
+                                                downloadedDrawingFile =
+                                                    viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
+                                                        taskData.pinData!!.drawingId
+                                                    )
+                                                shortToastNow("File downloaded")
+                                            } else if (status == "retry" || status == "failed") {
+                                                viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
+                                                    taskData.pinData!!.drawingId
+                                                )
+                                                downloadedDrawingFile=null
+
+                                            }
+                                        }
+                                    }
+
                                 } else {
                                     shortToastNow("Cannot download file. Please download it from projects")
                                 }
@@ -162,7 +184,7 @@ class TaskDetailV2Fragment :
                                             if (it.trim().equals("100%", true)) {
 
 
-                                                 downloadedDrawingFile =
+                                                downloadedDrawingFile =
                                                     viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
                                                         taskData.pinData!!.drawingId
                                                     )
@@ -171,6 +193,9 @@ class TaskDetailV2Fragment :
                                                 println("progress  File Downloaded")
                                                 shortToastNow("File Downloaded")
                                             } else if (it == "retry" || it == "failed") {
+                                                viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
+                                                    taskData.pinData!!.drawingId
+                                                )
                                                 println("progress  File failed to downloaded")
                                                 shortToastNow("Downloading Failed")
                                             }
@@ -295,6 +320,7 @@ class TaskDetailV2Fragment :
         detailAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
             checkDownloadFilePermission(triplet, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
+              /*
                     if (it.trim().equals("100%", true)) {
                         textView.visibility = View.GONE
                         downloaded.visibility = View.VISIBLE
@@ -310,6 +336,7 @@ class TaskDetailV2Fragment :
                         textView.text = it
                         textView.visibility = View.VISIBLE
                     }
+                    */
                 }
             }
         }
@@ -835,7 +862,7 @@ class TaskDetailV2Fragment :
 
     override fun onResume() {
         super.onResume()
-        retainInstance=false
+        retainInstance = false
     }
 
     override fun onNavigationResult(result: BackNavigationResult) {
@@ -1243,11 +1270,19 @@ class TaskDetailV2Fragment :
 
         }
 
-         Handler(Looper.getMainLooper()).postDelayed({
-             getDownloadProgress(context, downloadId!!) {
-              //   itemClickListener?.invoke(it)
-             }
-         }, 1000)
+        Handler(Looper.getMainLooper()).postDelayed({
+            getDownloadProgress(context, downloadId!!) {
+                GlobalScope.launch(Dispatchers.Main) {
+                    if (it == "retry" || it == "failed") {
+                        downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                    } else if (it.trim().equals("100%", true)) {
+
+                        shortToastNow("Downloaded")
+                    }
+                }
+                   itemClickListener?.invoke(it)
+            }
+        }, 1000)
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
@@ -1297,10 +1332,10 @@ class TaskDetailV2Fragment :
                     itemClickListener?.invoke("$downloadedPercent %")
                     if (bytesTotal > 0) {
                         println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
-                        println("progress downloaded" +  ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                        println("progress downloaded" + ((bytesDownloaded * 100L) / bytesTotal).toInt())
                     }
                 } else {
-                    println("progress retry " )
+                    println("progress retry ")
                     itemClickListener?.invoke("retry")
                     break
                 }
@@ -1431,6 +1466,63 @@ class TaskDetailV2Fragment :
             }
         } else {
             callBack.invoke()
+        }
+    }
+    @SuppressLint("Range")
+    private fun getDownloadProgressSeparately(
+        context: Context?,
+        downloadId: Long,
+        itemClickListener: ((tag: String) -> Unit)?
+    ) {
+        GlobalScope.launch {
+            while (true) {
+                println("progress : checking")
+                val query = DownloadManager.Query().setFilterById(downloadId)
+                val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val cursor = manager.query(query)
+
+                if (cursor.moveToFirst()) {
+                    val bytesDownloaded =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val bytesTotal =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+
+                    val status =
+                        cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    println("Status: $status")
+
+                    println("progress status : $status")
+
+                    if (status.toInt() == DownloadManager.STATUS_FAILED) {
+
+                        println("Status failed: $status")
+                        itemClickListener?.invoke("failed")
+                        break
+                    } else if (status.toInt() == DownloadManager.STATUS_SUCCESSFUL) {
+                        itemClickListener?.invoke("100%")
+                        break
+                    }
+
+                    val downloadedPercent = ((bytesDownloaded * 100L) / bytesTotal).toInt()
+
+                    println("StatusProgress %: $downloadedPercent")
+                    println("StatusDownloaded: $bytesDownloaded")
+                    println("StatusTotal: $bytesTotal")
+
+                    itemClickListener?.invoke("$downloadedPercent %")
+                    if (bytesTotal > 0) {
+                        println("Progress: " + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                        println("progress downloaded" + ((bytesDownloaded * 100L) / bytesTotal).toInt())
+                    }
+                } else {
+                    println("progress retry ")
+                    itemClickListener?.invoke("retry")
+                    break
+                }
+                cursor.close()
+
+                delay(500)
+            }
         }
     }
 

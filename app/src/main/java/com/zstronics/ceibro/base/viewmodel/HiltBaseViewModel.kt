@@ -1146,6 +1146,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             }
 
             if (!isExists) {
+                val currentUser = sessionManager.getUserObj()
                 val taskEvent = Events(
                     id = eventData.id,
                     taskId = eventData.taskId,
@@ -1247,7 +1248,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(eventData.pinData)
                     }
 
-                    if (inboxTask != null) {
+                    if (inboxTask != null && eventData.initiator.id != currentUser?.id) {
                         inboxTask.actionBy = eventData.initiator
                         inboxTask.createdAt = eventData.createdAt
                         inboxTask.actionType = SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name
@@ -1464,6 +1465,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 SocketHandler.TaskEvent.TASK_DONE.name, eventData.taskId, true
             )
             if (!isExists) {
+                val currentUser = sessionManager.getUserObj()
                 val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
                     ViewModelProvider(it).get(SharedViewModel::class.java)
                 }
@@ -1781,8 +1783,19 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 GlobalScope.launch {
                     sessionManager.saveInboxUpdatedAtTimeStamp(inboxTask.createdAt)
 
-                    inboxV2Dao.insertInboxItem(inboxTask)
+                    if (inboxTask.actionType.equals(SocketHandler.TaskEvent.IB_TASK_DONE.name, true) ||
+                        inboxTask.actionType.equals(SocketHandler.TaskEvent.IB_CANCELED_TASK.name, true)) {
 
+                        val existingTask = inboxV2Dao.getInboxTaskData(inboxTask.taskId)
+                        if (existingTask != null) {
+                            inboxV2Dao.insertInboxItem(inboxTask)
+                        } else {
+                            // this case will be ignored because if user created task and cancelled it without any other event,
+                            // there creator will not have that task in inbox list, so don't add in this case
+                        }
+                    } else {
+                        inboxV2Dao.insertInboxItem(inboxTask)
+                    }
 
                     val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
                     CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)

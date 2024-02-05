@@ -73,6 +73,8 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_SYNCED_CONTACTS)
         sharedPreferenceManager.removeValue(KEY_SAVED_TASK)
         sharedPreferenceManager.removeValue(KEY_DRAWING_OBJ)
+        sharedPreferenceManager.removeValue(KEY_DATA_SYNC_UPDATED_AT)
+        sharedPreferenceManager.removeValue(KEY_INBOX_UPDATED_AT)
         saveCompleteDrawingObj(null)
         val handler = Handler()
         handler.postDelayed(Runnable {
