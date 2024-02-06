@@ -717,6 +717,20 @@
 
         </LinearLayout>
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            android:layout_centerVertical="true"
+            android:indeterminate="false"
+            android:max="2"
+            android:progress="0"
+            app:layout_constraintTop_toTopOf="@+id/bottomFooterLayout"
+            android:progressTint="@color/appBlue"
+        android:progressBackgroundTint="@color/grey"     />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
