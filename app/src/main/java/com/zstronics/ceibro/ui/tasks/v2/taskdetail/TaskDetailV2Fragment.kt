@@ -320,14 +320,7 @@ class TaskDetailV2Fragment :
 
         }
 
-        viewModel.msg.observe(viewLifecycleOwner) {
-            it?.let {
-                if (it.isNotEmpty()) {
-                    showToast(it)
-                }
-            }
 
-        }
 
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager

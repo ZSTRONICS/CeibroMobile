@@ -7,9 +7,11 @@ import android.view.View
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.tsuryo.swipeablerv.SwipeLeftRightCallback
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentInboxBinding
@@ -135,13 +137,62 @@ class InboxFragment :
         })
 
 
-        val swipeHelperRight: SwipeRecyclerItemFromLeft =
+        mViewDataBinding.taskRV.setListener(object : SwipeLeftRightCallback.Listener {
+            override fun onSwipedLeft(position: Int) {
+                shortToastNow("left")
+            }
+
+            override fun onSwipedRight(pos: Int) {
+
+
+                if (viewModel.isUserSearching) {
+                    val filterList = viewModel.filteredInboxTasks.value
+                    if (!filterList.isNullOrEmpty()) {
+                        val taskToRemove = filterList[pos]
+                        filterList.removeAt(pos)
+                        viewModel._filteredInboxTasks.postValue(filterList)
+
+                        val originalTaskToRemove =
+                            viewModel.originalInboxTasks.find {
+                                it._id == taskToRemove._id
+                            }
+                        if (originalTaskToRemove != null) {
+                            val index = viewModel.originalInboxTasks.indexOf(
+                                originalTaskToRemove
+                            )
+                            viewModel.originalInboxTasks.removeAt(index)
+                            viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
+
+                            viewModel.taskSeen(originalTaskToRemove.taskId) { }
+                        }
+                    }
+                } else {
+                    if (pos < viewModel.originalInboxTasks.size) {
+                        val originalList = viewModel.originalInboxTasks
+                        val originalTaskToRemove = originalList[pos]
+                        val index = originalList.indexOf(originalTaskToRemove)
+                        originalList.removeAt(index)
+                        viewModel.originalInboxTasks = originalList
+
+                        val adapterItemIndex = adapter.listItems.indexOf(originalTaskToRemove)
+                        adapter.listItems.removeAt(adapterItemIndex)
+                        adapter.notifyItemRemoved(adapterItemIndex)
+
+//                                        viewModel._inboxTasks.postValue(originalList)
+                        viewModel.deleteInboxTaskFromDB(originalTaskToRemove)
+                        viewModel.taskSeen(originalTaskToRemove.taskId) { }
+                    }
+                }
+            }
+        })
+
+        /*val swipeHelperRight: SwipeRecyclerItemFromLeft =
             object : SwipeRecyclerItemFromLeft(context, mViewDataBinding.taskRV) {
                 override fun instantiateUnderlayButton(
                     viewHolder: RecyclerView.ViewHolder?,
                     underlayButtons: MutableList<UnderlayButton?>
                 ) {
-                    /*underlayButtons.add(UnderlayButton(
+                    *//*underlayButtons.add(UnderlayButton(
                         context,
                         "Archive",
                         R.drawable.delete,
@@ -151,7 +202,7 @@ class InboxFragment :
                                 Toast.makeText(context, "Archive $pos", Toast.LENGTH_SHORT).show()
                             }
                         }
-                    ))*/
+                    ))*//*
 
                     underlayButtons.add(UnderlayButton(
                         context,
@@ -207,7 +258,7 @@ class InboxFragment :
                         }
                     ))
                 }
-            }
+            }*/
     }
 
     override fun onResume() {

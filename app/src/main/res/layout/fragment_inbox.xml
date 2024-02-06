@@ -111,12 +111,17 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.recyclerview.widget.RecyclerView
+                <com.tsuryo.swipeablerv.SwipeableRecyclerView
                     android:id="@+id/taskRV"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="@dimen/_3sdp"
                     android:visibility="visible"
+                    app:leftBgColor="@color/appRed"
+                    app:leftImage="@drawable/icon_delete_white"
+                    app:leftText="@string/delete_heading"
+                    app:textColor="@color/white"
+                    app:textSize="13sp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
