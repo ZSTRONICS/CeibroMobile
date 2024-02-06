@@ -30,6 +30,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -379,6 +380,22 @@ class TaskDetailV2VM @Inject constructor(
         }
     }
 
+
+    fun markInboxTaskSeen(taskId: String?) {
+        launch {
+            if (!taskId.isNullOrEmpty()) {
+                val inboxTask = inboxV2Dao.getInboxTaskData(taskId)
+                if (inboxTask != null) {
+                    inboxTask.isSeen = true
+                    inboxTask.unSeenNotifCount = 0
+
+                    inboxV2Dao.insertInboxItem(inboxTask)
+
+                    EventBus.getDefault().post(LocalEvents.UpdateInboxItemSeen(inboxTask))
+                }
+            }
+        }
+    }
 
     fun isSameTask(newEvent: Events, taskId: String) = newEvent.taskId == taskId
 

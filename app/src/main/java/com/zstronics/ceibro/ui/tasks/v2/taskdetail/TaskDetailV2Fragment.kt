@@ -890,6 +890,11 @@ class TaskDetailV2Fragment :
         retainInstance = false
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.markInboxTaskSeen(viewModel.originalTask.value?.id)
+    }
+
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {

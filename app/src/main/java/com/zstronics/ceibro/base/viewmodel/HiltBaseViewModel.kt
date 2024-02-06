@@ -1526,6 +1526,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         inboxTask.actionBy = eventData.initiator
                         inboxTask.createdAt = eventData.createdAt
                         inboxTask.actionType = SocketHandler.TaskEvent.IB_TASK_DONE.name
+                        inboxTask.taskState = eventData.newTaskData.creatorState
                         inboxTask.isSeen = false
                         inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
 
