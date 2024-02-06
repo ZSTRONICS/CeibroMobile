@@ -162,7 +162,7 @@ class TaskDetailV2Fragment :
                                                 viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
                                                     taskData.pinData!!.drawingId
                                                 )
-                                                downloadedDrawingFile=null
+                                                downloadedDrawingFile = null
 
                                             }
                                         }
@@ -304,6 +304,31 @@ class TaskDetailV2Fragment :
         super.onViewCreated(view, savedInstanceState)
         retainInstance = true
 
+        viewModel.progress.observe(viewLifecycleOwner) {
+            it?.let {
+
+                GlobalScope.launch {
+                    delay(400)
+                    mViewDataBinding.progressBar.progress = it
+                    if (it >= 2) {
+                        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                            mViewDataBinding.progressBar.visibility = View.GONE
+                        }, 700)
+                    }
+                }
+            }
+
+        }
+
+        viewModel.msg.observe(viewLifecycleOwner) {
+            it?.let {
+                if (it.isNotEmpty()) {
+                    showToast(it)
+                }
+            }
+
+        }
+
         manager =
             mViewDataBinding.root.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         mViewDataBinding.confirmNeededBtn.visibility = View.GONE
@@ -320,23 +345,23 @@ class TaskDetailV2Fragment :
         detailAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
             checkDownloadFilePermission(triplet, viewModel.downloadedDrawingV2Dao) {
                 MainScope().launch {
-              /*
-                    if (it.trim().equals("100%", true)) {
-                        textView.visibility = View.GONE
-                        downloaded.visibility = View.VISIBLE
-                        textView.text = it
-                        //    detailAdapter.notifyDataSetChanged()
-                    } else if (it == "retry" || it == "failed") {
-                        downloaded.visibility = View.GONE
-                        textView.visibility = View.GONE
-                        ivDownload.visibility = View.VISIBLE
-                    } else {
+                    /*
+                          if (it.trim().equals("100%", true)) {
+                              textView.visibility = View.GONE
+                              downloaded.visibility = View.VISIBLE
+                              textView.text = it
+                              //    detailAdapter.notifyDataSetChanged()
+                          } else if (it == "retry" || it == "failed") {
+                              downloaded.visibility = View.GONE
+                              textView.visibility = View.GONE
+                              ivDownload.visibility = View.VISIBLE
+                          } else {
 
-                        println("progress: $it textView.text = ${textView.text}")
-                        textView.text = it
-                        textView.visibility = View.VISIBLE
-                    }
-                    */
+                              println("progress: $it textView.text = ${textView.text}")
+                              textView.text = it
+                              textView.visibility = View.VISIBLE
+                          }
+                          */
                 }
             }
         }
@@ -1280,7 +1305,7 @@ class TaskDetailV2Fragment :
                         shortToastNow("Downloaded")
                     }
                 }
-                   itemClickListener?.invoke(it)
+                itemClickListener?.invoke(it)
             }
         }, 1000)
 
@@ -1468,6 +1493,7 @@ class TaskDetailV2Fragment :
             callBack.invoke()
         }
     }
+
     @SuppressLint("Range")
     private fun getDownloadProgressSeparately(
         context: Context?,
