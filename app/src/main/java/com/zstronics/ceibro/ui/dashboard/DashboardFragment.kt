@@ -142,6 +142,10 @@ class DashboardFragment :
                 closeDrawerLayout()
                 navigateToConnections()
             }
+            R.id.menuGroupsBtn -> {
+                closeDrawerLayout()
+                navigateToGroups()
+            }
             R.id.menuFeedbackHeaderBtn -> {
                 closeDrawerLayout()
                 showFeedbackDialog()
@@ -887,6 +891,9 @@ class DashboardFragment :
 
     private fun navigateToConnections() {
         navigate(R.id.MyConnectionV2Fragment)
+    }
+    private fun navigateToGroups() {
+        navigate(R.id.groupV2Fragment)
     }
 
     private fun showFeedbackDialog() {

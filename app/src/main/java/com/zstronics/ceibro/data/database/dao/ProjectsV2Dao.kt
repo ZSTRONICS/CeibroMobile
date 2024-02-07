@@ -27,6 +27,9 @@ interface ProjectsV2Dao {
         isFavoriteByMe: Boolean = false,
     ): List<CeibroProjectV2>?
 
+    @Query("SELECT * FROM projects_v2 ORDER BY updatedAt DESC")
+    suspend fun getAllProjectsWithoutCondition(): List<CeibroProjectV2>?
+
     @Query("SELECT * FROM projects_v2 WHERE isHiddenByMe = :isHiddenByMe AND isRecentlyUsedByMe = :isRecentlyUsedByMe AND isFavoriteByMe = :isFavoriteByMe ORDER BY updatedAt DESC")
     suspend fun getAllRecentUsedProjects(
         isHiddenByMe: Boolean = false,

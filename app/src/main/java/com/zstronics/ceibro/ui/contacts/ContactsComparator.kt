@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.contacts
 
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 
 fun compareContactsAndUpdateList(
     roomContacts: List<AllCeibroConnections.CeibroConnection>,
@@ -114,6 +115,21 @@ fun List<AllCeibroConnections.CeibroConnection>.toLightContacts(): List<SyncCont
             countryCode = connection.countryCode,
             phoneNumber = connection.phoneNumber,
             contactFullName = connection.contactFullName,
+        )
+    }
+}
+
+fun List<AllCeibroConnections.CeibroConnection>.toLightDBContacts(): List<SyncDBContactsList.CeibroDBContactsLight> {
+    return this.map { connection ->
+        SyncDBContactsList.CeibroDBContactsLight(
+            connectionId = connection.id,
+            contactFirstName = connection.contactFirstName ?: "",
+            contactSurName = connection.contactSurName ?: "",
+            countryCode = connection.countryCode,
+            phoneNumber = connection.phoneNumber,
+            contactFullName = connection.contactFullName,
+            isCeibroUser = connection.isCeiborUser,
+            userCeibroData = connection.userCeibroData
         )
     }
 }

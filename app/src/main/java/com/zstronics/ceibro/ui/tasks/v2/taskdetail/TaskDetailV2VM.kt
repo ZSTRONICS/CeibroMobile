@@ -30,7 +30,6 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.socket.SocketHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
@@ -80,7 +79,6 @@ class TaskDetailV2VM @Inject constructor(
     var taskId: String = ""
     var descriptionExpanded = false
     val progress: MutableLiveData<Int?> = MutableLiveData(0)
-    val msg: MutableLiveData<String?> = MutableLiveData("")
 
     init {
         if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
@@ -138,6 +136,9 @@ class TaskDetailV2VM @Inject constructor(
                                 originalTask.postValue(task)
                                 originalEvents.postValue(events.toMutableList())
                                 _taskEvents.postValue(events.toMutableList())
+
+                                val progres = progress.value?.plus(1);
+                                progress.postValue(progres)
 
                                 val seenByMe = task?.seenBy?.find { it1 -> it1 == user?.id }
 //                                if (seenByMe == null) {
@@ -282,7 +283,6 @@ class TaskDetailV2VM @Inject constructor(
             //loading(true)
             taskRepository.taskSeen(taskId) { isSuccess, taskSeenData ->
                 if (isSuccess) {
-//                    println("Heartbeat taskSeenData: ${taskSeenData}")
                     if (taskSeenData != null) {
                         launch {
                             updateGenericTaskSeenInLocal(
@@ -301,8 +301,6 @@ class TaskDetailV2VM @Inject constructor(
                 } else {
                     val progres = progress.value?.plus(1);
                     progress.postValue(progres)
-//                    println("Heartbeat taskSeenData: ${taskSeenData}")
-                    //loading(false, "")
                 }
 
             }
@@ -330,12 +328,14 @@ class TaskDetailV2VM @Inject constructor(
                             taskDao.insertMultipleEvents(missingEvents)
                         }
                     }
+                    val progres = progress.value?.plus(1);
+                    progress.postValue(progres)
                 } else {
-                    msg.postValue("Failed to sync task events")
+                    alert("Failed to sync task events")
+                    val progres = progress.value?.plus(1);
+                    progress.postValue(progres)
                 }
 
-                val progres = progress.value?.plus(1);
-                progress.postValue(progres)
             }
         }
     }

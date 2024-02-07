@@ -1,0 +1,257 @@
+package com.zstronics.ceibro.ui.groupsv2.adapter
+
+
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.PopupWindow
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
+import javax.inject.Inject
+
+class GroupV2Adapter @Inject constructor() :
+    RecyclerView.Adapter<GroupV2Adapter.TaskToMeViewHolder>() {
+
+    private var groupListItems: MutableList<Int> = mutableListOf()
+    var selectedGroup: ArrayList<Int> = arrayListOf()
+
+
+    var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var itemClickListener: ((list: ArrayList<Int>) -> Unit)? = null
+    var editFlag = false
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): TaskToMeViewHolder {
+        return TaskToMeViewHolder(
+            LayoutGroupBoxV2Binding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
+    }
+
+    override fun onBindViewHolder(holder: TaskToMeViewHolder, position: Int) {
+        holder.bind(null, position)
+    }
+
+    override fun getItemCount(): Int {
+        //return listItems.size
+        return 10
+    }
+
+    fun setList(list: List<Int>?, flag: Boolean) {
+        list?.let {
+            groupListItems.clear()
+            groupListItems.addAll(list)
+        }
+        editFlag = flag
+
+        notifyDataSetChanged()
+    }
+
+    inner class TaskToMeViewHolder(private val binding: LayoutGroupBoxV2Binding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: Int?, position: Int) {
+            val context = binding.root.context
+
+            binding.apply {
+                groupCheckBox.isChecked = selectedGroup.contains(position)
+
+                if (editFlag) {
+                    groupCheckBox.visibility = View.VISIBLE
+                    groupMenu.visibility = View.GONE
+                } else {
+                    groupCheckBox.visibility = View.GONE
+                    groupMenu.visibility = View.VISIBLE
+                }
+                groupCheckBox.setOnClickListener {
+
+                    if (groupCheckBox.isChecked) {
+                        if (!selectedGroup.contains(position)) {
+                            selectedGroup.add(position)
+                        }
+                    } else {
+                        if (selectedGroup.contains(position)) {
+                            selectedGroup.remove(position)
+                        }
+                    }
+                    itemClickListener?.invoke(selectedGroup)
+                    notifyItemChanged(position)
+                }
+                root.setOnClickListener {
+
+                    if (editFlag) {
+
+
+                        if (groupCheckBox.isChecked) {
+                            groupCheckBox.isChecked = false
+
+                            if (selectedGroup.contains(position)) {
+                                selectedGroup.remove(position)
+                            }
+                        } else {
+                            groupCheckBox.isChecked = true
+                            if (!selectedGroup.contains(position)) {
+                                selectedGroup.add(position)
+                            }
+                        }
+                        itemClickListener?.invoke(selectedGroup)
+                        notifyItemChanged(position)
+                    }
+
+                    groupMenu.setOnClickListener {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            createPopupWindow(it, null) { tag, data ->
+                                if (tag == "delete") {
+                                    deleteClickListener?.invoke(data)
+                                } else if (tag == "rename") {
+                                    renameClickListener?.invoke(data)
+
+                                }
+                            }
+                        }, 200)
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+private fun createPopupWindow(
+    v: View,
+    groupResponseV2: CeibroInboxV2?,
+    callback: (String, CeibroGroupsV2) -> Unit
+): PopupWindow {
+    val context: Context = v.context
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view: View = inflater.inflate(R.layout.group_menu_dialog, null)
+
+    val popupWindow = PopupWindow(
+        view,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        true
+    )
+    popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    popupWindow.elevation = 13F
+    popupWindow.isOutsideTouchable = true
+
+
+    val delete: TextView = view.findViewById(R.id.deleteGroupBtn)
+    val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
+
+    delete.setOnClickListener {
+
+        if (true) {
+            updateGroup(it.context, null) { tag, data ->
+                callback.invoke(tag, data)
+            }
+            popupWindow.dismiss()
+        } else {
+            cannotDeleteAlertBox(it.context)
+        }
+
+    }
+    renameGroupBtn.setOnClickListener {
+        //  callback.invoke("rename", null)
+        popupWindow.dismiss()
+    }
+
+    val values = IntArray(2)
+    v.getLocationInWindow(values)
+    val positionOfIcon = values[1]
+
+    //Get the height of 2/3rd of the height of the screen
+    val displayMetrics = context.resources.displayMetrics
+    val height = displayMetrics.heightPixels * 2 / 3
+
+    if (positionOfIcon > height) {
+        popupWindow.showAsDropDown(v, -200, -170)
+    } else {
+        popupWindow.showAsDropDown(v, -205, -60)
+    }
+
+
+    return popupWindow
+}
+
+private fun updateGroup(
+    context: Context,
+    groupResponseV2: CeibroGroupsV2?,
+    callback: (String, CeibroGroupsV2) -> Unit
+) {
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+    val builder: androidx.appcompat.app.AlertDialog.Builder =
+        androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+    val alertDialog = builder.create()
+
+    val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+    val noBtn = view.findViewById<Button>(R.id.noBtn)
+    val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+    dialogText.text =
+        context.resources.getString(R.string.are_you_sure_you_want_to_delete_this_group)
+    alertDialog.window?.setBackgroundDrawable(null)
+    alertDialog.show()
+
+    yesBtn.setOnClickListener {
+        //   callback.invoke("delete", groupResponseV2)
+        alertDialog.dismiss()
+
+    }
+
+    noBtn.setOnClickListener {
+        alertDialog.dismiss()
+    }
+}
+
+
+private fun cannotDeleteAlertBox(
+    context: Context,
+) {
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+    val builder: androidx.appcompat.app.AlertDialog.Builder =
+        androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+    val alertDialog = builder.create()
+
+    val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+    yesBtn.text = context.getString(R.string.ok)
+    val noBtn = view.findViewById<Button>(R.id.noBtn)
+    val saperater = view.findViewById<View>(R.id.viewSaperator)
+    saperater.visibility = View.GONE
+    noBtn.visibility = View.GONE
+
+    val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+    dialogText.text =
+        context.resources.getString(R.string.cannot_delete_group)
+    alertDialog.window?.setBackgroundDrawable(null)
+    alertDialog.show()
+
+    yesBtn.setOnClickListener {
+        alertDialog.dismiss()
+    }
+
+    noBtn.setOnClickListener {
+        alertDialog.dismiss()
+    }
+}
