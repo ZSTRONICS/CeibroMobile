@@ -530,6 +530,10 @@
         android:id="@+id/inboxFragment"
         android:name="com.zstronics.ceibro.ui.inbox.InboxFragment"
         android:label="InboxFragment" />
+    <fragment
+        android:id="@+id/groupV2Fragment"
+        android:name="com.zstronics.ceibro.ui.groupsv2.GroupV2Fragment"
+        android:label="GroupV2Fragment" />
 
 
 </navigation>

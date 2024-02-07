@@ -1,47 +1,43 @@
 package com.zstronics.ceibro.ui.groupsv2.adapter
 
 
-import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
-import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.databinding.LayoutInboxTaskBoxV2Binding
-import com.zstronics.ceibro.ui.socket.SocketHandler
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.utils.DateUtils
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
 import javax.inject.Inject
 
 class GroupV2Adapter @Inject constructor() :
     RecyclerView.Adapter<GroupV2Adapter.TaskToMeViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: CeibroInboxV2) -> Unit)? =
-        null
-    var itemLongClickListener: ((view: View, position: Int, data: CeibroInboxV2) -> Unit)? =
-        null
-    var listItems: MutableList<CeibroInboxV2> = mutableListOf()
-    var currentUser = SessionManager.user.value
-    var sessionManager: SessionManager? = null
+
+    private var groupListItems: MutableList<Int> = mutableListOf()
+    var selectedGroup: ArrayList<Int> = arrayListOf()
+
+
+    var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var itemClickListener: ((list: ArrayList<Int>) -> Unit)? = null
+    var editFlag = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): TaskToMeViewHolder {
         return TaskToMeViewHolder(
-            LayoutInboxTaskBoxV2Binding.inflate(
+            LayoutGroupBoxV2Binding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -50,340 +46,212 @@ class GroupV2Adapter @Inject constructor() :
     }
 
     override fun onBindViewHolder(holder: TaskToMeViewHolder, position: Int) {
-        holder.bind(listItems[position])
+        holder.bind(null, position)
     }
 
     override fun getItemCount(): Int {
-        return listItems.size
+        //return listItems.size
+        return 10
     }
 
-    fun setList(list: List<CeibroInboxV2>) {
-        this.listItems.clear()
-        this.listItems.addAll(list)
+    fun setList(list: List<Int>?, flag: Boolean) {
+        list?.let {
+            groupListItems.clear()
+            groupListItems.addAll(list)
+        }
+        editFlag = flag
+
         notifyDataSetChanged()
     }
 
-    inner class TaskToMeViewHolder(private val binding: LayoutInboxTaskBoxV2Binding) :
+    inner class TaskToMeViewHolder(private val binding: LayoutGroupBoxV2Binding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: CeibroInboxV2?) {
+        fun bind(item: Int?, position: Int) {
             val context = binding.root.context
 
-            if (item != null) {
-                binding.apply {
+            binding.apply {
+                groupCheckBox.isChecked = selectedGroup.contains(position)
 
-                    taskCard.setOnClickListener {
-                        itemClickListener?.invoke(it, absoluteAdapterPosition, item)
-                    }
-
-                    val taskStatusNameBg: Pair<Int, Int> = when (item.taskState.uppercase()) {
-                        TaskStatus.NEW.name -> Pair(
-                            R.drawable.status_new_outline_new,
-                            R.drawable.status_new_filled
-                        )
-
-//                        TaskStatus.UNREAD.name -> Pair(
-//                            R.drawable.status_new_outline_new,
-//                            R.drawable.status_new_filled
-//                        )
-
-                        TaskStatus.ONGOING.name -> Pair(
-                            R.drawable.status_ongoing_outline_new,
-                            R.drawable.status_ongoing_filled
-                        )
-
-                        TaskStatus.DONE.name -> Pair(
-                            R.drawable.status_done_outline_new,
-                            R.drawable.status_done_filled
-                        )
-
-                        TaskStatus.CANCELED.name -> Pair(
-                            R.drawable.status_cancelled_outline,
-                            R.drawable.status_cancelled_filled_less_corner
-                        )
-
-                        else -> Pair(
-                            R.drawable.unseen_corners_background,
-                            R.drawable.unseen_corners_background
-                        )
-                    }
-
-                    val (inboxTaskCardBackground, inboxTaskUIdBackground) = taskStatusNameBg
-//                    inboxTaskCardParentLayout.setBackgroundResource(inboxTaskCardBackground)
-                    inboxTaskUId.setBackgroundResource(inboxTaskUIdBackground)
-                    inboxTaskUId.text = item.actionDataTask.taskUID
-
-
-                    when (item.actionType) {
-                        SocketHandler.TaskEvent.IB_TASK_CREATED.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_created)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        SocketHandler.TaskEvent.IB_STATE_CHANGED.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_state_change_new_to_ongoing)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_comment)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        SocketHandler.TaskEvent.IB_TASK_FORWARDED.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_forwarded)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        SocketHandler.TaskEvent.IB_JOINED_TASK.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_joined)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        SocketHandler.TaskEvent.IB_TASK_DONE.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_done)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        SocketHandler.TaskEvent.IB_CANCELED_TASK.name -> {
-                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_canceled)
-                            inboxTaskStateIcon.visibility = View.VISIBLE
-                        }
-
-                        else -> {
-                            inboxTaskStateIcon.visibility = View.GONE
-                        }
-                    }
-
-                    if (item.actionDataTask.project != null) {
-                        if (item.actionDataTask.project.title.isNotEmpty()) {
-                            inboxTaskProjectName.text = item.actionDataTask.project.title
-                            inboxTaskProjectName.visibility = View.VISIBLE
-                        } else {
-                            inboxTaskProjectName.text = ""
-                            inboxTaskProjectName.visibility = View.GONE
-                        }
-                    } else {
-                        inboxTaskProjectName.text = ""
-                        inboxTaskProjectName.visibility = View.GONE
-                    }
-
-                    if (item.actionDataTask.dueDate.isEmpty()) {
-                        inboxTaskDueDate.text = ""
-                        inboxTaskDueDate.visibility = View.GONE
-                    } else {
-                        var dueDate = ""
-                        dueDate = DateUtils.reformatStringDate(
-                            date = item.actionDataTask.dueDate,
-                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR,
-                            DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
-                        )
-                        if (dueDate == "") {                              // Checking if date format was not dd-MM-yyyy then it will be empty
-                            dueDate = DateUtils.reformatStringDate(
-                                date = item.actionDataTask.dueDate,
-                                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT,
-                                DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
-                            )
-                            if (dueDate == "") {
-                                dueDate = "N/A"
-                            }
-                        }
-                        inboxTaskDueDate.text = "Due By: $dueDate"
-                        inboxTaskDueDate.visibility = View.VISIBLE
-                    }
-
-
-                    inboxTaskTitle.text = item.actionTitle
-
-
-                    if (item.actionDescription.isEmpty()) {
-                        inboxTaskEventDescription.text = ""
-                        inboxTaskEventDescription.visibility = View.GONE
-                    } else {
-                        inboxTaskEventDescription.text = item.actionDescription
-                        inboxTaskEventDescription.visibility = View.VISIBLE
-                    }
-
-                    if (!item.actionBy.profilePic.isNullOrEmpty()) {
-                        val circularProgressDrawable = CircularProgressDrawable(context)
-                        circularProgressDrawable.strokeWidth = 4f
-                        circularProgressDrawable.centerRadius = 14f
-                        circularProgressDrawable.start()
-
-                        val requestOptions = RequestOptions()
-                            .placeholder(circularProgressDrawable)
-                            .error(R.drawable.profile_img)
-                            .skipMemoryCache(true)
-                            .centerCrop()
-
-                        Glide.with(context)
-                            .load(item.actionBy.profilePic)
-                            .apply(requestOptions)
-                            .listener(object : RequestListener<Drawable> {
-                                override fun onLoadFailed(
-                                    e: GlideException?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    circularProgressDrawable.stop()
-                                    return false
-                                }
-
-                                override fun onResourceReady(
-                                    resource: Drawable?,
-                                    model: Any?,
-                                    target: Target<Drawable>?,
-                                    dataSource: DataSource?,
-                                    isFirstResource: Boolean
-                                ): Boolean {
-                                    circularProgressDrawable.stop()
-                                    return false
-                                }
-                            })
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .into(inboxTaskCreatorImg)
-                    }
-
-                    inboxCreatorName.text = "${item.actionBy.firstName} ${item.actionBy.surName}"
-
-                    inboxCreatedAt.text =
-                        DateUtils.formatCreationUTCTimeToCustom(
-                            utcTime = item.createdAt,
-                            inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
-                        )
-
-
-
-                    if (item.actionFiles.isEmpty()) {
-                        inboxTaskUnseenLayout.setBackgroundResource(R.drawable.unseen_corners_background)
-                        inboxItemImgCard.visibility = View.GONE
-                        inboxItemImg.visibility = View.GONE
-                        inboxImgCount.visibility = View.GONE
-                        val layoutParams =
-                            inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                        // Set the new horizontal bias for image width
-                        layoutParams.horizontalBias = 0.0f
-                        inboxImgEndPoint.layoutParams = layoutParams
-                    } else {
-                        val extension = getFileUrlExtension(item.actionFiles[0].fileUrl)
-                        println("File Extension: $extension")
-
-                        if (isImageExtension(extension)) {
-                            val circularProgressDrawable = CircularProgressDrawable(context)
-                            circularProgressDrawable.strokeWidth = 4f
-                            circularProgressDrawable.centerRadius = 14f
-                            circularProgressDrawable.start()
-
-                            val requestOptions = RequestOptions()
-                                .placeholder(circularProgressDrawable)
-                                .error(R.drawable.icon_corrupted)
-                                .skipMemoryCache(true)
-                                .centerCrop()
-
-                            Glide.with(context)
-                                .load(item.actionFiles[0].fileUrl)
-                                .apply(requestOptions)
-                                .listener(object : RequestListener<Drawable> {
-                                    override fun onLoadFailed(
-                                        e: GlideException?,
-                                        model: Any?,
-                                        target: Target<Drawable>?,
-                                        isFirstResource: Boolean
-                                    ): Boolean {
-                                        circularProgressDrawable.stop()
-                                        return false
-                                    }
-
-                                    override fun onResourceReady(
-                                        resource: Drawable?,
-                                        model: Any?,
-                                        target: Target<Drawable>?,
-                                        dataSource: DataSource?,
-                                        isFirstResource: Boolean
-                                    ): Boolean {
-                                        circularProgressDrawable.stop()
-                                        return false
-                                    }
-                                })
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(inboxItemImg)
-                            inboxItemImg.scaleType = ImageView.ScaleType.CENTER_CROP
-
-                        } else {
-                            if (extension.equals("pdf", true)) {
-                                inboxItemImg.setImageResource(R.drawable.icon_pdf)
-                                inboxItemImg.scaleType = ImageView.ScaleType.FIT_CENTER
-                            } else if (extension.equals("odt", true) || extension.equals("odp", true) ||
-                                extension.equals("docx", true) || extension.equals("doc", true) ||
-                                extension.equals("xlsx", true) || extension.equals("xls", true) ||
-                                extension.equals("pptx", true) || extension.equals("ppt", true)) {
-                                inboxItemImg.setImageResource(R.drawable.icon_doc)
-                                inboxItemImg.scaleType = ImageView.ScaleType.FIT_CENTER
-                            } else {
-                                inboxItemImg.setImageResource(R.drawable.icon_corrupted)
-                                inboxItemImg.scaleType = ImageView.ScaleType.FIT_CENTER
-                            }
-                        }
-
-
-                        inboxTaskUnseenLayout.setBackgroundResource(R.drawable.right_corners_background)
-                        inboxItemImgCard.visibility = View.VISIBLE
-                        inboxItemImg.visibility = View.VISIBLE
-                        val layoutParams =
-                            inboxImgEndPoint.layoutParams as ConstraintLayout.LayoutParams
-                        // Set the new horizontal bias for image width
-                        layoutParams.horizontalBias = 0.20f
-                        inboxImgEndPoint.layoutParams = layoutParams
-
-                        if (item.actionFiles.size > 1) {
-                            inboxImgCount.text = "+${item.actionFiles.size - 1}"
-                            inboxImgCount.visibility = View.VISIBLE
-                        } else {
-                            inboxImgCount.visibility = View.GONE
-                        }
-                    }
-
-                    // inboxTaskUnseenLayout background depends whether the task has image or not, so background is set in actionFiles on top of here
-                    // and inboxTaskUnseenLayout background color depends on task seen
-
-                    if (item.isSeen) {
-                        val tintColor = context.resources.getColor(R.color.white)
-                        inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    } else {
-                        val tintColor = context.resources.getColor(R.color.appPaleBlue)
-                        inboxTaskUnseenLayout.backgroundTintList = ColorStateList.valueOf(tintColor)
-                    }
-
-                    //Following unseen count can also come outside from this else condition depending on the scenario
-                    if (item.unSeenNotifCount > 1) {
-                        unreadCount.text = item.unSeenNotifCount.toString()
-                        unreadCount.visibility = View.VISIBLE
-                    } else {
-                        unreadCount.text = "0"
-                        unreadCount.visibility = View.GONE
-                    }
-
+                if (editFlag) {
+                    groupCheckBox.visibility = View.VISIBLE
+                    groupMenu.visibility = View.GONE
+                } else {
+                    groupCheckBox.visibility = View.GONE
+                    groupMenu.visibility = View.VISIBLE
                 }
-            } else {
-                binding.taskCard.visibility = View.GONE
-                binding.unreadCount.visibility = View.GONE
+                groupCheckBox.setOnClickListener {
+
+                    if (groupCheckBox.isChecked) {
+                        if (!selectedGroup.contains(position)) {
+                            selectedGroup.add(position)
+                        }
+                    } else {
+                        if (selectedGroup.contains(position)) {
+                            selectedGroup.remove(position)
+                        }
+                    }
+                    itemClickListener?.invoke(selectedGroup)
+                    notifyItemChanged(position)
+                }
+                root.setOnClickListener {
+
+                    if (editFlag) {
+
+
+                        if (groupCheckBox.isChecked) {
+                            groupCheckBox.isChecked = false
+
+                            if (selectedGroup.contains(position)) {
+                                selectedGroup.remove(position)
+                            }
+                        } else {
+                            groupCheckBox.isChecked = true
+                            if (!selectedGroup.contains(position)) {
+                                selectedGroup.add(position)
+                            }
+                        }
+                        itemClickListener?.invoke(selectedGroup)
+                        notifyItemChanged(position)
+                    }
+
+                    groupMenu.setOnClickListener {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            createPopupWindow(it, null) { tag, data ->
+                                if (tag == "delete") {
+                                    deleteClickListener?.invoke(data)
+                                } else if (tag == "rename") {
+                                    renameClickListener?.invoke(data)
+
+                                }
+                            }
+                        }, 200)
+                    }
+                }
             }
-
         }
 
-        private fun getFileUrlExtension(url: String): String {
-            val lastDotIndex = url.lastIndexOf('.')
-            return if (lastDotIndex != -1) {
-                url.substring(lastDotIndex + 1)
-            } else {
-                ""
+    }
+}
+
+private fun createPopupWindow(
+    v: View,
+    groupResponseV2: CeibroInboxV2?,
+    callback: (String, CeibroGroupsV2) -> Unit
+): PopupWindow {
+    val context: Context = v.context
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view: View = inflater.inflate(R.layout.group_menu_dialog, null)
+
+    val popupWindow = PopupWindow(
+        view,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        true
+    )
+    popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    popupWindow.elevation = 13F
+    popupWindow.isOutsideTouchable = true
+
+
+    val delete: TextView = view.findViewById(R.id.deleteGroupBtn)
+    val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
+
+    delete.setOnClickListener {
+
+        if (true) {
+            updateGroup(it.context, null) { tag, data ->
+                callback.invoke(tag, data)
             }
+            popupWindow.dismiss()
+        } else {
+            cannotDeleteAlertBox(it.context)
         }
 
-        private fun isImageExtension(extension: String): Boolean {
-            val imageExtensions = listOf("png", "jpg", "jpeg", "gif", "bmp", "webp", "heic")
-            return extension.lowercase() in imageExtensions
-        }
+    }
+    renameGroupBtn.setOnClickListener {
+        //  callback.invoke("rename", null)
+        popupWindow.dismiss()
+    }
+
+    val values = IntArray(2)
+    v.getLocationInWindow(values)
+    val positionOfIcon = values[1]
+
+    //Get the height of 2/3rd of the height of the screen
+    val displayMetrics = context.resources.displayMetrics
+    val height = displayMetrics.heightPixels * 2 / 3
+
+    if (positionOfIcon > height) {
+        popupWindow.showAsDropDown(v, -200, -170)
+    } else {
+        popupWindow.showAsDropDown(v, -205, -60)
+    }
+
+
+    return popupWindow
+}
+
+private fun updateGroup(
+    context: Context,
+    groupResponseV2: CeibroGroupsV2?,
+    callback: (String, CeibroGroupsV2) -> Unit
+) {
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+    val builder: androidx.appcompat.app.AlertDialog.Builder =
+        androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+    val alertDialog = builder.create()
+
+    val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+    val noBtn = view.findViewById<Button>(R.id.noBtn)
+    val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+    dialogText.text =
+        context.resources.getString(R.string.are_you_sure_you_want_to_delete_this_group)
+    alertDialog.window?.setBackgroundDrawable(null)
+    alertDialog.show()
+
+    yesBtn.setOnClickListener {
+        //   callback.invoke("delete", groupResponseV2)
+        alertDialog.dismiss()
+
+    }
+
+    noBtn.setOnClickListener {
+        alertDialog.dismiss()
+    }
+}
+
+
+private fun cannotDeleteAlertBox(
+    context: Context,
+) {
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+    val builder: androidx.appcompat.app.AlertDialog.Builder =
+        androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+    val alertDialog = builder.create()
+
+    val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+    yesBtn.text = context.getString(R.string.ok)
+    val noBtn = view.findViewById<Button>(R.id.noBtn)
+    val saperater = view.findViewById<View>(R.id.viewSaperator)
+    saperater.visibility = View.GONE
+    noBtn.visibility = View.GONE
+
+    val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+    dialogText.text =
+        context.resources.getString(R.string.cannot_delete_group)
+    alertDialog.window?.setBackgroundDrawable(null)
+    alertDialog.show()
+
+    yesBtn.setOnClickListener {
+        alertDialog.dismiss()
+    }
+
+    noBtn.setOnClickListener {
+        alertDialog.dismiss()
     }
 }

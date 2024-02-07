@@ -1,21 +1,29 @@
 package com.zstronics.ceibro.ui.groupsv2
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.databinding.FragmentInboxBinding
+import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.shortToastNow
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class GroupV2Fragment :
-    BaseNavViewModelFragment<FragmentInboxBinding, IGroupV2.State, GroupV2VM>() {
+    BaseNavViewModelFragment<FragmentGroupV2Binding, IGroupV2.State, GroupV2VM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
@@ -24,16 +32,73 @@ class GroupV2Fragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.ivSort -> {
+            R.id.backBtn -> {
+                navigateBack()
+            }
+
+
+            R.id.groupMenuBtn -> {
+                selPopupWindow(mViewDataBinding.groupMenuBtn) {
+                    if (it == "select") {
+                        mViewDataBinding.selectionHeader.visibility = View.VISIBLE
+                        viewState.setAddTaskButtonVisibility.postValue(false)
+                        adapter.setList(null, true)
+                    }
+                }
+            }
+
+            R.id.cancel -> {
+                mViewDataBinding.cbSelectAll.isChecked = false
+                mViewDataBinding.selectionHeader.visibility = View.GONE
+                viewState.setAddTaskButtonVisibility.postValue(true)
+                adapter.selectedGroup = arrayListOf()
+                adapter.setList(null, flag = false)
+                adapter.notifyDataSetChanged()
+
+            }
+
+            R.id.deleteAll -> {
+                mViewDataBinding.cbSelectAll.isChecked = false
+                mViewDataBinding.selectionHeader.visibility = View.GONE
+                viewState.setAddTaskButtonVisibility.postValue(true)
+                adapter.selectedGroup = arrayListOf()
+                adapter.setList(null, flag = false)
+                adapter.notifyDataSetChanged()
 
             }
         }
     }
 
+
     @Inject
     lateinit var adapter: GroupV2Adapter
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mViewDataBinding.apply {
 
+
+            groupsRV.adapter = adapter
+            adapter.itemClickListener = { list ->
+
+                if (list.size >= 10) {
+                    cbSelectAll.isChecked = true
+                } else {
+                    cbSelectAll.isChecked = false
+                }
+                shortToastNow(list.size.toString())
+            }
+            cbSelectAll.setOnClickListener {
+                if (cbSelectAll.isChecked) {
+                    adapter.selectedGroup = arrayListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+                    adapter.notifyDataSetChanged()
+                } else {
+                    adapter.selectedGroup = arrayListOf()
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -46,5 +111,48 @@ class GroupV2Fragment :
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+    }
+
+    private fun selPopupWindow(
+        v: View,
+        selectGroupCallBack: (type: String) -> Unit
+    ): PopupWindow {
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.groupv2_menu_dialog, null)
+
+        val popupWindow = PopupWindow(
+            view,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+
+
+        val selectGroup: TextView = view.findViewById(R.id.selectGroup)
+
+        selectGroup.setOnClickListener {
+            popupWindow.dismiss()
+            selectGroupCallBack.invoke("select")
+        }
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, -200, -170)
+        } else {
+            popupWindow.showAsDropDown(v, -205, -60)
+        }
+
+        return popupWindow
     }
 }

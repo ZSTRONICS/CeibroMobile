@@ -639,4 +639,5 @@
     <string name="notes_heading">Notes</string>
     <string name="hidden_tasks">Hidden tasks</string>
     <string name="sort_inbox_by">Sort inbox by</string>
+    <string name="cancel_heading">Cancel</string>
 </resources>
