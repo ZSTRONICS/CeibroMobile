@@ -30,7 +30,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddNewGroupV2Sheet constructor(
-    val connectionsV2Dao: ConnectionsV2Dao
+    val connectionsV2Dao: ConnectionsV2Dao,
+    val viewModel: GroupV2VM
 ) : BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupV2Binding
 
@@ -44,7 +45,7 @@ class AddNewGroupV2Sheet constructor(
 
     var selectedContacts: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>?> = MutableLiveData(mutableListOf())
 
-    var onGroupAdd: ((groupName: String) -> Unit)? = null
+    var createGroupClickListener: ((groupName: String, contacts: List<String>) -> Unit)? = null
     var onGroupEdited: ((status: String) -> Unit)? = null
 
     override fun onCreateView(
@@ -74,6 +75,19 @@ class AddNewGroupV2Sheet constructor(
 
         binding.closeBtn.setOnClickListener {
             dismiss()
+        }
+
+        binding.saveGroupBtn.setOnClickListener {
+            val groupName = binding.groupNameText.text.toString().trim()
+            val selectedOnes = selectedContacts.value
+            if (groupName.isEmpty()) {
+                shortToastNow("Group name required")
+            } else if (selectedOnes.isNullOrEmpty()){
+                shortToastNow("First select any contact to create group")
+            } else {
+                val selectedContactIds = selectedOnes.map { it.connectionId }
+                createGroupClickListener?.invoke(groupName, selectedContactIds)
+            }
         }
 
         binding.allContactsRV.adapter = adapter

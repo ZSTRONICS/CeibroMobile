@@ -165,13 +165,15 @@ class GroupV2Fragment :
 
     private fun openNewGroupSheet() {
         val sheet = AddNewGroupV2Sheet(
-            viewModel.connectionsV2Dao
+            viewModel.connectionsV2Dao,
+            viewModel
         )
 
-//        sheet.onDrawingTapped = {
-//            sheet.dismiss()
-//            navigateForResult(R.id.viewDrawingV2Fragment, DRAWING_REQUEST_CODE)
-//        }
+        sheet.createGroupClickListener = { groupName, selectedContactIds ->
+            viewModel.createConnectionGroup(groupName, selectedContactIds) {
+                sheet.dismiss()
+            }
+        }
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "AddNewGroupV2Sheet")

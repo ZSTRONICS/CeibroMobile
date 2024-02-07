@@ -75,6 +75,7 @@ class SessionManager constructor(
         sharedPreferenceManager.removeValue(KEY_DRAWING_OBJ)
         sharedPreferenceManager.removeValue(KEY_DATA_SYNC_UPDATED_AT)
         sharedPreferenceManager.removeValue(KEY_INBOX_UPDATED_AT)
+        saveInboxUpdatedAtTimeStamp("2020-01-01T17:12:18.787Z")
         saveCompleteDrawingObj(null)
         val handler = Handler()
         handler.postDelayed(Runnable {
