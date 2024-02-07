@@ -51,7 +51,7 @@ class NewProjectV2VM @Inject constructor(
         }
 
         GlobalScope.launch(Dispatchers.Main) {
-            val projects = projectDao.getAllProjects()
+            val projects = projectDao.getAllProjectsWithoutCondition()
             projects?.let {
                 it.forEach { project ->
                     if (project.title.equals(projectName, true)) {

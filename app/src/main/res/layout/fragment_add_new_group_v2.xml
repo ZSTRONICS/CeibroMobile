@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/_10sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/closeBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="13dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/headingText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/headingText"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <TextView
+                android:id="@+id/headingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/new_group"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/closeBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/saveGroupBtn"
+                android:layout_width="@dimen/_56sdp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_semibold"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:text="@string/save"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/headingText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/headingText" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/appLightGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/groupNameField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_9sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/input_field_bottom_line"
+            android:hint="@string/group_name_required_heading"
+            android:textColorHint="@color/appTextGrey"
+            app:boxStrokeColor="@color/transparent"
+            app:boxStrokeWidth="0dp"
+            app:hintTextColor="@color/appGrey3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/groupNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:inputType="none"
+                android:maxLines="2"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                android:textSize="15sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <android.widget.SearchView
+            android:id="@+id/groupSearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="@dimen/_9sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/input_field_bottom_line"
+            android:closeIcon="@drawable/icon_close_round_grey"
+            android:elevation="0dp"
+            android:iconifiedByDefault="false"
+            android:paddingStart="-12dp"
+            android:paddingEnd="1dp"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Start typing for search"
+            android:searchIcon="@null"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/ivSort"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:theme="@style/AppSearchView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/selectedContactsRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_9sdp"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/_4sdp"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="@+id/contactSearchBar"
+            app:layout_constraintStart_toStartOf="@+id/contactSearchBar"
+            app:layout_constraintTop_toBottomOf="@+id/contactSearchBar"
+            tools:itemCount="3"
+            tools:listitem="@layout/layout_item_assignee_chip" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_9sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:fontFamily="@font/inter_regular"
+            android:text="@string/my_connections_text"
+            android:textSize="13.5sp"
+            app:layout_constraintEnd_toEndOf="@+id/contactSearchBar"
+            app:layout_constraintStart_toStartOf="@+id/contactSearchBar"
+            app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allContactsRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:paddingTop="@dimen/_2sdp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5"
+            tools:itemCount="8"
+            tools:listitem="@layout/layout_item_group_member_selection" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

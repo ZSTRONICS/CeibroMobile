@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.fragment.app.viewModels
@@ -15,6 +16,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
+import com.zstronics.ceibro.ui.tasks.v2.newtask.AddNewLocationBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.shortToastNow
 import org.greenrobot.eventbus.EventBus
@@ -35,7 +37,6 @@ class GroupV2Fragment :
             R.id.backBtn -> {
                 navigateBack()
             }
-
 
             R.id.groupMenuBtn -> {
                 selPopupWindow(mViewDataBinding.groupMenuBtn) {
@@ -58,13 +59,18 @@ class GroupV2Fragment :
             }
 
             R.id.deleteAll -> {
-                mViewDataBinding.cbSelectAll.isChecked = false
-                mViewDataBinding.selectionHeader.visibility = View.GONE
-                viewState.setAddTaskButtonVisibility.postValue(true)
-                adapter.selectedGroup = arrayListOf()
-                adapter.setList(null, flag = false)
-                adapter.notifyDataSetChanged()
+                deleteGroupDialog(requireContext()) {
+                    mViewDataBinding.cbSelectAll.isChecked = false
+                    mViewDataBinding.selectionHeader.visibility = View.GONE
+                    viewState.setAddTaskButtonVisibility.postValue(true)
+                    adapter.selectedGroup = arrayListOf()
+                    adapter.setList(null, flag = false)
+                    adapter.notifyDataSetChanged()
+                }
+            }
 
+            R.id.createNewGroupBtn -> {
+                openNewGroupSheet()
             }
         }
     }
@@ -154,5 +160,50 @@ class GroupV2Fragment :
         }
 
         return popupWindow
+    }
+
+
+    private fun openNewGroupSheet() {
+        val sheet = AddNewGroupV2Sheet(
+            viewModel.connectionsV2Dao
+        )
+
+//        sheet.onDrawingTapped = {
+//            sheet.dismiss()
+//            navigateForResult(R.id.viewDrawingV2Fragment, DRAWING_REQUEST_CODE)
+//        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "AddNewGroupV2Sheet")
+    }
+
+    private fun deleteGroupDialog(
+        context: Context,
+        callback: (String) -> Unit
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text =
+            context.resources.getString(R.string.are_you_sure_you_want_to_delete_groups)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            callback.invoke("delete")
+            alertDialog.dismiss()
+
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
     }
 }

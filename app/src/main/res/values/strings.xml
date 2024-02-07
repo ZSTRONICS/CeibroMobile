@@ -415,6 +415,7 @@
     <string name="select_group">Select Group  <font color="#D9000D">*</font></string>
     <string name="select_group_">Select Group</string>
     <string name="assign_to_required_heading">Assign to <font color="#D9000D">*</font></string>
+    <string name="group_name_required_heading">Group name <font color="#D9000D">*</font></string>
     <string name="forward_to_required_heading">Forward to <font color="#D9000D">*</font></string>
     <string name="attach_heading">Attach</string>
     <string name="done_requirements_heading">Done requirements</string>
@@ -640,4 +641,7 @@
     <string name="hidden_tasks">Hidden tasks</string>
     <string name="sort_inbox_by">Sort inbox by</string>
     <string name="cancel_heading">Cancel</string>
+    <string name="new_group">New group</string>
+    <string name="start_typing_name">Start typing name</string>
+    <string name="are_you_sure_you_want_to_delete_groups">Are you sure you want to delete groups?</string>
 </resources>
