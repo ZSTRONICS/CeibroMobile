@@ -71,6 +71,32 @@ class GroupV2VM @Inject constructor(
             }
         }
     }
+    fun updateConnectionGroup(
+        item: CeibroConnectionGroupV2,
+        groupName: String,
+        contacts: List<String>,
+        callBack: (createdGroup:CeibroConnectionGroupV2) -> Unit
+    ) {
+        val requestBody = NewConnectionGroupRequest(
+            name = groupName,
+            contacts = contacts
+        )
+        loading(true)
+        launch {
+            when (val response = dashboardRepository.updateConnectionGroup(item._id,requestBody)) {
+                is ApiResponse.Success -> {
+                    val createdGroup = response.data
+                    connectionGroupV2Dao.insertConnectionGroup(createdGroup)
+                    loading(false, "Group updated")
+                    callBack.invoke(createdGroup)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, "Error: ${response.error.message}")
+                }
+            }
+        }
+    }
 
     fun deleteConnectionGroup(groupId: String, callBack: () -> Unit) {
         loading(true)

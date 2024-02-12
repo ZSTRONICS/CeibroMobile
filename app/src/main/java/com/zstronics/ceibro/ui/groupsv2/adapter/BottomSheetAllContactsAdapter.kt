@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
-import com.zstronics.ceibro.databinding.LayoutItemContactBinding
 import com.zstronics.ceibro.databinding.LayoutItemGroupMemberSelectionBinding
 import javax.inject.Inject
 
@@ -44,6 +42,14 @@ class BottomSheetAllContactsAdapter @Inject constructor() :
         notifyDataSetChanged()
     }
 
+    fun setSelectedList(contact: List<SyncDBContactsList.CeibroDBContactsLight>) {
+        for (item in dataList) {
+            val matchingContact = contact.find { it.connectionId == item.connectionId }
+            item.isChecked = matchingContact != null
+        }
+        notifyDataSetChanged()
+    }
+
     inner class ContactsSelectionViewHolder(private val binding: LayoutItemGroupMemberSelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -67,6 +73,7 @@ class BottomSheetAllContactsAdapter @Inject constructor() :
                             ColorStateList.valueOf(context.resources.getColor(R.color.appYellow))
                         )
                     }
+
                     else -> {
                         ImageViewCompat.setImageTintList(
                             binding.ceibroLogo,
