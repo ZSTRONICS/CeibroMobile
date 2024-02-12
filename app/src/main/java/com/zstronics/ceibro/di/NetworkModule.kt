@@ -196,6 +196,9 @@ class NetworkModule {
     @Provides
     fun provideConnectionsV2Dao(database: CeibroDatabase) = database.getConnectionsV2Dao()
 
+    @Provides
+    fun provideConnectionGroupV2Dao(database: CeibroDatabase) = database.getConnectionGroupV2Dao()
+
 
     @Provides
     fun provideDraftNewTaskV2Dao(database: CeibroDatabase) = database.getDraftNewTaskV2Dao()

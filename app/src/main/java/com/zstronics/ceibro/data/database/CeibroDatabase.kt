@@ -21,6 +21,7 @@ import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 
@@ -42,6 +43,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         RejectionComment::class,
         CeibroTaskV2::class,
         CeibroInboxV2::class,
+        CeibroConnectionGroupV2::class,
         Events::class,
         TopicsV2DatabaseEntity::class,
         CeibroProjectV2::class,
@@ -52,7 +54,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         AllCeibroConnections.CeibroConnection::class,
         NewTaskV2Entity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(
@@ -107,6 +109,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     ActionFilesDataListTypeConverter::class,
     ActionProjectDataTypeConverter::class,
     ActionDataTaskTypeConverter::class,
+    GroupContactV2ListTypeConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")
@@ -126,6 +129,7 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getInboxV2Dao(): InboxV2Dao
     abstract fun getDrawingPinsV2Dao(): DrawingPinsV2Dao
     abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
+    abstract fun getConnectionGroupV2Dao(): ConnectionGroupV2Dao
     abstract fun getDraftNewTaskV2Dao(): DraftNewTaskV2Dao
 
     companion object {

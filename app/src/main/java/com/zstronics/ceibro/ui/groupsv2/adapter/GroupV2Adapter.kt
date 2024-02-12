@@ -17,13 +17,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
 import javax.inject.Inject
 
 class GroupV2Adapter @Inject constructor() :
-    RecyclerView.Adapter<GroupV2Adapter.TaskToMeViewHolder>() {
+    RecyclerView.Adapter<GroupV2Adapter.GroupV2ViewHolder>() {
 
-    private var groupListItems: MutableList<Int> = mutableListOf()
+    private var groupListItems: MutableList<CeibroConnectionGroupV2> = mutableListOf()
     var selectedGroup: ArrayList<Int> = arrayListOf()
 
 
@@ -35,8 +36,8 @@ class GroupV2Adapter @Inject constructor() :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): TaskToMeViewHolder {
-        return TaskToMeViewHolder(
+    ): GroupV2ViewHolder {
+        return GroupV2ViewHolder(
             LayoutGroupBoxV2Binding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
@@ -45,88 +46,108 @@ class GroupV2Adapter @Inject constructor() :
         )
     }
 
-    override fun onBindViewHolder(holder: TaskToMeViewHolder, position: Int) {
-        holder.bind(null, position)
+    override fun onBindViewHolder(holder: GroupV2ViewHolder, position: Int) {
+        holder.bind(groupListItems[position])
     }
 
     override fun getItemCount(): Int {
-        //return listItems.size
-        return 10
+        return groupListItems.size
     }
 
-    fun setList(list: List<Int>?, flag: Boolean) {
-        list?.let {
-            groupListItems.clear()
-            groupListItems.addAll(list)
-        }
-        editFlag = flag
+    fun setList(list: List<CeibroConnectionGroupV2>, editFlag: Boolean) {
+        this.groupListItems.clear()
+        this.groupListItems.addAll(list)
+        this.editFlag = editFlag
 
         notifyDataSetChanged()
     }
+    fun changeEditFlag(editFlag: Boolean) {
+        this.editFlag = editFlag
+        notifyDataSetChanged()
+    }
 
-    inner class TaskToMeViewHolder(private val binding: LayoutGroupBoxV2Binding) :
+    inner class GroupV2ViewHolder(private val binding: LayoutGroupBoxV2Binding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Int?, position: Int) {
+        fun bind(item: CeibroConnectionGroupV2) {
             val context = binding.root.context
 
             binding.apply {
-                groupCheckBox.isChecked = selectedGroup.contains(position)
 
-                if (editFlag) {
-                    groupCheckBox.visibility = View.VISIBLE
-                    groupMenu.visibility = View.GONE
+                groupName.text = item.name
+                groupMemberCount.text = if (item.contacts.size > 1) {
+                    "(${item.contacts.size} members)"
                 } else {
-                    groupCheckBox.visibility = View.GONE
-                    groupMenu.visibility = View.VISIBLE
+                    "(${item.contacts.size} member)"
                 }
+
+
+
+
+
+
+
+
+
+
+
+//                groupCheckBox.isChecked = selectedGroup.contains(position)
+
+//                if (editFlag) {
+//                    groupCheckBox.visibility = View.VISIBLE
+//                    groupMenu.visibility = View.GONE
+//                } else {
+//                    groupCheckBox.visibility = View.GONE
+//                    groupMenu.visibility = View.VISIBLE
+//                }
+
                 groupCheckBox.setOnClickListener {
 
-                    if (groupCheckBox.isChecked) {
-                        if (!selectedGroup.contains(position)) {
-                            selectedGroup.add(position)
-                        }
-                    } else {
-                        if (selectedGroup.contains(position)) {
-                            selectedGroup.remove(position)
-                        }
-                    }
-                    itemClickListener?.invoke(selectedGroup)
-                    notifyItemChanged(position)
+//                    if (groupCheckBox.isChecked) {
+//                        if (!selectedGroup.contains(position)) {
+//                            selectedGroup.add(position)
+//                        }
+//                    } else {
+//                        if (selectedGroup.contains(position)) {
+//                            selectedGroup.remove(position)
+//                        }
+//                    }
+//                    itemClickListener?.invoke(selectedGroup)
+//                    notifyItemChanged(position)
                 }
                 root.setOnClickListener {
 
-                    if (editFlag) {
-
-
-                        if (groupCheckBox.isChecked) {
-                            groupCheckBox.isChecked = false
-
-                            if (selectedGroup.contains(position)) {
-                                selectedGroup.remove(position)
-                            }
-                        } else {
-                            groupCheckBox.isChecked = true
-                            if (!selectedGroup.contains(position)) {
-                                selectedGroup.add(position)
-                            }
-                        }
-                        itemClickListener?.invoke(selectedGroup)
-                        notifyItemChanged(position)
-                    }
-
-                    groupMenu.setOnClickListener {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            createPopupWindow(it, null) { tag, data ->
-                                if (tag == "delete") {
-                                    deleteClickListener?.invoke(data)
-                                } else if (tag == "rename") {
-                                    renameClickListener?.invoke(data)
-
-                                }
-                            }
-                        }, 200)
-                    }
+//                    if (editFlag) {
+//
+//
+//                        if (groupCheckBox.isChecked) {
+//                            groupCheckBox.isChecked = false
+//
+//                            if (selectedGroup.contains(position)) {
+//                                selectedGroup.remove(position)
+//                            }
+//                        } else {
+//                            groupCheckBox.isChecked = true
+//                            if (!selectedGroup.contains(position)) {
+//                                selectedGroup.add(position)
+//                            }
+//                        }
+//                        itemClickListener?.invoke(selectedGroup)
+//                        notifyItemChanged(position)
+//                    }
+//
+//                    groupMenu.setOnClickListener {
+//                        Handler(Looper.getMainLooper()).postDelayed({
+//                            createPopupWindow(it, null) { tag, data ->
+//                                if (tag == "delete") {
+//                                    deleteClickListener?.invoke(data)
+//                                } else if (tag == "rename") {
+//                                    renameClickListener?.invoke(data)
+//
+//                                }
+//                            }
+//                        }, 200)
+//                    }
                 }
             }
         }

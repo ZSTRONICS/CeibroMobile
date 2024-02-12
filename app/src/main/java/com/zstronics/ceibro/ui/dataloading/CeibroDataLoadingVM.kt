@@ -12,6 +12,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.ConnectionGroupV2Dao
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
@@ -63,6 +64,7 @@ class CeibroDataLoadingVM @Inject constructor(
     private val groupsV2Dao: GroupsV2Dao,
     private val inboxV2Dao: InboxV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
+    private val connectionGroupV2Dao: ConnectionGroupV2Dao,
 ) : HiltBaseViewModel<ICeibroDataLoading.State>(), ICeibroDataLoading.ViewModel {
     var taskData: NotificationTaskData? = null
     var taskId: String = ""
@@ -408,6 +410,7 @@ class CeibroDataLoadingVM @Inject constructor(
             floorsV2Dao.deleteAll()
             inboxV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
+            connectionGroupV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
             drawingPinsDao.deleteAll()
         }

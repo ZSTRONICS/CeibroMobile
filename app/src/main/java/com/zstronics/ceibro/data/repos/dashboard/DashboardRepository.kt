@@ -12,6 +12,8 @@ import com.zstronics.ceibro.data.repos.dashboard.attachment.v2.UploadFilesV2Resp
 import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
 import com.zstronics.ceibro.data.repos.dashboard.contacts.ContactSyncEnableResponse
@@ -232,6 +234,15 @@ class DashboardRepository @Inject constructor(
             call =
             {
                 service.getRecentCeibroConnections()
+            }
+        )
+
+
+    override suspend fun createConnectionGroup(connectionGroupRequest: NewConnectionGroupRequest): ApiResponse<CeibroConnectionGroupV2> =
+        executeSafely(
+            call =
+            {
+                service.createConnectionGroup(connectionGroupRequest)
             }
         )
 

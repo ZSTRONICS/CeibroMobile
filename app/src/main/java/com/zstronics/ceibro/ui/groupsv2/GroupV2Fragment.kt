@@ -39,11 +39,12 @@ class GroupV2Fragment :
             }
 
             R.id.groupMenuBtn -> {
-                selPopupWindow(mViewDataBinding.groupMenuBtn) {
+                selectPopupWindow(mViewDataBinding.groupMenuBtn) {
                     if (it == "select") {
+                        mViewDataBinding.cbSelectAll.isChecked = false
                         mViewDataBinding.selectionHeader.visibility = View.VISIBLE
                         viewState.setAddTaskButtonVisibility.postValue(false)
-                        adapter.setList(null, true)
+                        adapter.changeEditFlag(true)
                     }
                 }
             }
@@ -53,9 +54,7 @@ class GroupV2Fragment :
                 mViewDataBinding.selectionHeader.visibility = View.GONE
                 viewState.setAddTaskButtonVisibility.postValue(true)
                 adapter.selectedGroup = arrayListOf()
-                adapter.setList(null, flag = false)
-                adapter.notifyDataSetChanged()
-
+                adapter.changeEditFlag(false)
             }
 
             R.id.deleteAll -> {
@@ -64,8 +63,7 @@ class GroupV2Fragment :
                     mViewDataBinding.selectionHeader.visibility = View.GONE
                     viewState.setAddTaskButtonVisibility.postValue(true)
                     adapter.selectedGroup = arrayListOf()
-                    adapter.setList(null, flag = false)
-                    adapter.notifyDataSetChanged()
+                    adapter.changeEditFlag(false)
                 }
             }
 
@@ -83,17 +81,25 @@ class GroupV2Fragment :
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.apply {
 
-
             groupsRV.adapter = adapter
-            adapter.itemClickListener = { list ->
 
-                if (list.size >= 10) {
-                    cbSelectAll.isChecked = true
+            viewModel.connectionGroups.observe(viewLifecycleOwner) {
+                if (!it.isNullOrEmpty()) {
+                    adapter.setList(it, false)
                 } else {
-                    cbSelectAll.isChecked = false
+                    adapter.setList(mutableListOf(), false)
                 }
-                shortToastNow(list.size.toString())
             }
+
+//            adapter.itemClickListener = { list ->
+//
+//                if (list.size >= 10) {
+//                    cbSelectAll.isChecked = true
+//                } else {
+//                    cbSelectAll.isChecked = false
+//                }
+//                shortToastNow(list.size.toString())
+//            }
             cbSelectAll.setOnClickListener {
                 if (cbSelectAll.isChecked) {
                     adapter.selectedGroup = arrayListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
@@ -119,7 +125,7 @@ class GroupV2Fragment :
         EventBus.getDefault().unregister(this)
     }
 
-    private fun selPopupWindow(
+    private fun selectPopupWindow(
         v: View,
         selectGroupCallBack: (type: String) -> Unit
     ): PopupWindow {
@@ -165,13 +171,15 @@ class GroupV2Fragment :
 
     private fun openNewGroupSheet() {
         val sheet = AddNewGroupV2Sheet(
-            viewModel.connectionsV2Dao
+            viewModel.connectionsV2Dao,
+            viewModel
         )
 
-//        sheet.onDrawingTapped = {
-//            sheet.dismiss()
-//            navigateForResult(R.id.viewDrawingV2Fragment, DRAWING_REQUEST_CODE)
-//        }
+        sheet.createGroupClickListener = { groupName, selectedContactIds ->
+            viewModel.createConnectionGroup(groupName, selectedContactIds) {
+                sheet.dismiss()
+            }
+        }
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "AddNewGroupV2Sheet")

@@ -13,5 +13,6 @@ object TableNamesV2 {
     const val DownloadDrawing = "downloaded_drawing_v2"
     const val DrawingPins = "drawing_pins_v2"
     const val Connections = "connections_v2"
+    const val ConnectionGroup = "connection_group_v2"
     const val DraftNewTask = "draft_new_task_v2"
 }
