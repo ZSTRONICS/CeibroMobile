@@ -139,8 +139,12 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:background="@color/black_transparency"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cbSelectAll" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -150,22 +154,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-
                 <TextView
                     android:id="@+id/cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_3sdp"
-                    android:drawablePadding="@dimen/_5sdp"
-                    android:fontFamily="@font/inter_semibold"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:paddingHorizontal="@dimen/_7sdp"
+                    android:paddingHorizontal="@dimen/_9sdp"
                     android:paddingVertical="@dimen/_7sdp"
                     android:text="@string/cancel_heading"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
 
@@ -173,17 +174,15 @@
                     android:id="@+id/deleteAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_3sdp"
-                    android:drawablePadding="@dimen/_5sdp"
-                    android:fontFamily="@font/inter_semibold"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:paddingHorizontal="@dimen/_7sdp"
+                    android:paddingHorizontal="@dimen/_9sdp"
                     android:paddingVertical="@dimen/_7sdp"
                     android:text="@string/delete_heading"
                     android:textAllCaps="false"
                     android:textColor="@color/red_color_picker"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
 
@@ -279,8 +278,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/_7sdp"
-            android:layout_marginEnd="@dimen/_7sdp"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

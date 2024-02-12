@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
@@ -37,6 +38,17 @@ class GroupV2VM @Inject constructor(
     val connectionGroupV2Dao: ConnectionGroupV2Dao
 ) : HiltBaseViewModel<IGroupV2.State>(), IGroupV2.ViewModel {
 
+
+    private val _connectionGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = MutableLiveData()
+    val connectionGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = _connectionGroups
+    var originalConnectionGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
+
+    fun getAllConnectionGroups() {
+        launch {
+            val groups = connectionGroupV2Dao.getAllConnectionGroup()
+            _connectionGroups.postValue(groups.toMutableList())
+        }
+    }
 
     fun createConnectionGroup(name: String, contacts: List<String>, callBack: () -> Unit) {
         val requestBody = NewConnectionGroupRequest(

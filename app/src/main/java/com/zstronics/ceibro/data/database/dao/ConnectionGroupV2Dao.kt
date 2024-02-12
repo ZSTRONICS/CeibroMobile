@@ -12,6 +12,9 @@ interface ConnectionGroupV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleConnectionGroup(connectionsList: List<CeibroConnectionGroupV2>)
 
+    @Query("SELECT * FROM connection_group_v2 ORDER BY createdAt DESC")
+    suspend fun getAllConnectionGroup(): List<CeibroConnectionGroupV2>
+
 
     @Query("DELETE FROM connection_group_v2")
     suspend fun deleteAll()
