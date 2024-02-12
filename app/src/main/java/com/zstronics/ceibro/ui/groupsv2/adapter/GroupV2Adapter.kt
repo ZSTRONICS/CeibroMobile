@@ -30,8 +30,8 @@ class GroupV2Adapter @Inject constructor() :
 
     var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
     var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
-    var itemClickListener: ((list: ArrayList<Int>) -> Unit)? = null
-    var editFlag = false
+    var itemClickListener: ((list: ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
+    private var editFlag = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
