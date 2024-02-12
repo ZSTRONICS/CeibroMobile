@@ -133,9 +133,24 @@ class GroupV2Fragment :
             }
         }
         adapter.deleteClickListener = { item ->
+            viewModel.deleteConnectionGroup(item._id) {
+                val allOriginalGroups = viewModel.originalConnectionGroups
+                val groupFound = allOriginalGroups.find { it._id == item._id }
+                if (groupFound != null) {
+                    val index = allOriginalGroups.indexOf(groupFound)
+                    allOriginalGroups.removeAt(index)
+                    viewModel.originalConnectionGroups = allOriginalGroups
+                }
 
-            shortToastNow("Coming Soon")
+                val adapterItemFound = adapter.groupListItems.find { it._id == item._id }
+                if (adapterItemFound != null) {
+                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
+                    adapter.groupListItems.removeAt(index1)
+                    adapter.notifyItemRemoved(index1)
+                }
+            }
         }
+
         mViewDataBinding.cbSelectAll.setOnClickListener {
             if (mViewDataBinding.cbSelectAll.isChecked) {
 

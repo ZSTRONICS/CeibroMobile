@@ -131,7 +131,7 @@
             android:id="@+id/groupMenu"
             android:layout_width="@dimen/_25sdp"
             android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
             android:padding="3dp"
             android:src="@drawable/ic_menu_dots"
             app:layout_constraintBottom_toBottomOf="@+id/groupImgCard"

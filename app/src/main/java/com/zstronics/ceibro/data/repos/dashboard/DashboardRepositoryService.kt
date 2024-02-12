@@ -139,4 +139,15 @@ interface DashboardRepositoryService {
 
     @GET("v2/users/groups")
     suspend fun getConnectionGroups(): Response<GetConnectionGroupsResponse>
+
+    @DELETE("v2/users/groups/{groupId}")
+    suspend fun deleteConnectionGroup(
+        @Path("groupId") groupId: String
+    ): Response<GenericResponse>
+
+    @PATCH("v2/users/groups/{groupId}")
+    suspend fun updateConnectionGroup(
+        @Path("groupId") groupId: String,
+        @Body connectionGroupRequest: NewConnectionGroupRequest
+    ): Response<CeibroConnectionGroupV2>
 }

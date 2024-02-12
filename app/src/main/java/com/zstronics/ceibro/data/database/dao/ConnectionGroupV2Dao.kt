@@ -16,6 +16,9 @@ interface ConnectionGroupV2Dao {
     suspend fun getAllConnectionGroup(): List<CeibroConnectionGroupV2>
 
 
+    @Query("DELETE FROM connection_group_v2 WHERE _id = :groupId")
+    suspend fun deleteConnectionGroupById(groupId: String)
+
     @Query("DELETE FROM connection_group_v2")
     suspend fun deleteAll()
 }

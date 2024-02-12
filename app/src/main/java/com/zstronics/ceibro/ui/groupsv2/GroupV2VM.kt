@@ -72,6 +72,23 @@ class GroupV2VM @Inject constructor(
         }
     }
 
+    fun deleteConnectionGroup(groupId: String, callBack: () -> Unit) {
+        loading(true)
+        launch {
+            when (val response = dashboardRepository.deleteConnectionGroup(groupId)) {
+                is ApiResponse.Success -> {
+                    connectionGroupV2Dao.deleteConnectionGroupById(groupId)
+                    loading(false, response.data.message)
+                    callBack.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, "Error: ${response.error.message}")
+                }
+            }
+        }
+    }
+
     fun filterGroups(search: String) {
         if (search.isEmpty()) {
             if (originalConnectionGroups.isNotEmpty()) {
