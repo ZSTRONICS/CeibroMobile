@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsRespo
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
@@ -88,4 +89,6 @@ interface IDashboardRepository {
     suspend fun createConnectionGroup(
         connectionGroupRequest: NewConnectionGroupRequest
     ): ApiResponse<CeibroConnectionGroupV2>
+
+    suspend fun getConnectionGroups(): ApiResponse<GetConnectionGroupsResponse>
 }

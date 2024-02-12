@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsRespo
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.contacts.BlockUserResponse
@@ -135,4 +136,7 @@ interface DashboardRepositoryService {
     suspend fun createConnectionGroup(
         @Body connectionGroupRequest: NewConnectionGroupRequest
     ): Response<CeibroConnectionGroupV2>
+
+    @GET("v2/users/groups")
+    suspend fun getConnectionGroups(): Response<GetConnectionGroupsResponse>
 }

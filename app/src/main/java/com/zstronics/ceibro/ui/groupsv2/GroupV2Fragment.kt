@@ -16,9 +16,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
-import com.zstronics.ceibro.ui.tasks.v2.newtask.AddNewLocationBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
-import ee.zstronics.ceibro.camera.shortToastNow
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -79,17 +77,17 @@ class GroupV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewDataBinding.apply {
 
-            groupsRV.adapter = adapter
 
-            viewModel.connectionGroups.observe(viewLifecycleOwner) {
-                if (!it.isNullOrEmpty()) {
-                    adapter.setList(it, false)
-                } else {
-                    adapter.setList(mutableListOf(), false)
-                }
+        mViewDataBinding.groupsRV.adapter = adapter
+
+        viewModel.connectionGroups.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                adapter.setList(it, false)
+            } else {
+                adapter.setList(mutableListOf(), false)
             }
+        }
 
 //            adapter.itemClickListener = { list ->
 //
@@ -100,16 +98,16 @@ class GroupV2Fragment :
 //                }
 //                shortToastNow(list.size.toString())
 //            }
-            cbSelectAll.setOnClickListener {
-                if (cbSelectAll.isChecked) {
-                    adapter.selectedGroup = arrayListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-                    adapter.notifyDataSetChanged()
-                } else {
-                    adapter.selectedGroup = arrayListOf()
-                    adapter.notifyDataSetChanged()
-                }
+        mViewDataBinding.cbSelectAll.setOnClickListener {
+            if (mViewDataBinding.cbSelectAll.isChecked) {
+                adapter.selectedGroup = arrayListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+                adapter.notifyDataSetChanged()
+            } else {
+                adapter.selectedGroup = arrayListOf()
+                adapter.notifyDataSetChanged()
             }
         }
+
     }
 
     override fun onStart() {

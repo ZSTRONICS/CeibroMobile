@@ -145,6 +145,24 @@ class CeibroDataLoadingVM @Inject constructor(
             }
         }
 
+        launch {
+            when (val response = dashboardRepository.getConnectionGroups()) {
+                is ApiResponse.Success -> {
+                    val allGroups = response.data.groups.toMutableList()
+                    allGroups.sortByDescending { it.createdAt }
+                    connectionGroupV2Dao.insertMultipleConnectionGroup(allGroups)
+
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    apiSucceedCount++
+                    callBack.invoke()
+                }
+            }
+        }
+
         GlobalScope.launch {
             val lastUpdatedAt = sessionManager.getUpdatedAtTimeStamp()
             when (val response = remoteTask.getAllTaskWithEventsSeparately(lastUpdatedAt)) {

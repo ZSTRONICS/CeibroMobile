@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -59,6 +60,8 @@ class AddNewGroupV2Sheet constructor(
             container,
             false
         )
+        //set to adjust screen height automatically, when soft keyboard appears on screen
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return binding.root
     }
 
