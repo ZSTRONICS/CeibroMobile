@@ -9,10 +9,12 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.PopupWindow
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
@@ -57,6 +59,8 @@ class GroupV2Fragment :
 
             R.id.deleteAll -> {
                 deleteGroupDialog(requireContext()) {
+                    shortToastNow("Coming Soon")
+
                     mViewDataBinding.cbSelectAll.isChecked = false
                     mViewDataBinding.selectionHeader.visibility = View.GONE
                     viewState.setAddTaskButtonVisibility.postValue(true)
@@ -88,26 +92,58 @@ class GroupV2Fragment :
                 adapter.setList(mutableListOf(), false)
             }
         }
+        viewModel.filteredGroups.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                adapter.setList(it, false)
+            } else {
+                adapter.setList(mutableListOf(), false)
+            }
+        }
 
-//            adapter.itemClickListener = { list ->
-//
-//                if (list.size >= 10) {
-//                    cbSelectAll.isChecked = true
-//                } else {
-//                    cbSelectAll.isChecked = false
-//                }
-//                shortToastNow(list.size.toString())
-//            }
+        adapter.itemClickListener = { list ->
+
+            mViewDataBinding.cbSelectAll.isChecked =
+                list.size == viewModel.originalConnectionGroups.size
+            if (list.size > 0) {
+                mViewDataBinding.deleteAll.isClickable = true
+                mViewDataBinding.deleteAll.isEnabled = true
+
+            } else {
+                mViewDataBinding.deleteAll.isClickable = false
+                mViewDataBinding.deleteAll.isEnabled = false
+
+            }
+        }
+        adapter.deleteClickListener = { item ->
+
+            shortToastNow("Coming Soon")
+        }
         mViewDataBinding.cbSelectAll.setOnClickListener {
             if (mViewDataBinding.cbSelectAll.isChecked) {
-                adapter.selectedGroup = arrayListOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-                adapter.notifyDataSetChanged()
+
+                adapter.selectAllGroups(viewModel.originalConnectionGroups)
             } else {
                 adapter.selectedGroup = arrayListOf()
                 adapter.notifyDataSetChanged()
             }
         }
 
+        mViewDataBinding.groupSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.filterGroups(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.filterGroups(newText)
+                }
+                return true
+            }
+        })
     }
 
     override fun onStart() {
