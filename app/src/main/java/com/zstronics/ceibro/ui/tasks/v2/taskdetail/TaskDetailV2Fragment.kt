@@ -29,6 +29,7 @@ import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
+import com.zstronics.ceibro.base.extensions.longToastNow
 import com.zstronics.ceibro.base.extensions.scrollToBottomWithoutFocusChange
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BackNavigationResult
@@ -121,90 +122,98 @@ class TaskDetailV2Fragment :
                                 }
                             }
 
-                            downloadedDrawingFile?.let { downloadedFile ->
+                            actualDrawingObj?.let {
 
-                                if (downloadedFile.isDownloaded) {
+                                downloadedDrawingFile?.let { downloadedFile ->
 
-                                    actualDrawingObj?.uploaderLocalFilePath =
-                                        downloadedFile.localUri
-                                    CeibroApplication.CookiesManager.drawingFileForLocation.value =
-                                        actualDrawingObj
-                                    viewModel.sessionManagerInternal.saveCompleteDrawingObj(
-                                        actualDrawingObj
-                                    )
+                                    if (downloadedFile.isDownloaded) {
 
-                                    CeibroApplication.CookiesManager.cameToLocationViewFromProject =
-                                        true
-                                    CeibroApplication.CookiesManager.openingNewLocationFile = true
-                                    navigateBackFromDetailFragment {
-                                        navigateBack()
-                                        EventBus.getDefault()
-                                            .postSticky(LocalEvents.LoadDrawingInLocation())
-                                    }
+                                        actualDrawingObj?.uploaderLocalFilePath =
+                                            downloadedFile.localUri
+                                        CeibroApplication.CookiesManager.drawingFileForLocation.value =
+                                            actualDrawingObj
+                                        viewModel.sessionManagerInternal.saveCompleteDrawingObj(
+                                            actualDrawingObj
+                                        )
+
+                                        CeibroApplication.CookiesManager.cameToLocationViewFromProject =
+                                            true
+                                        CeibroApplication.CookiesManager.openingNewLocationFile =
+                                            true
+                                        navigateBackFromDetailFragment {
+                                            navigateBack()
+                                            EventBus.getDefault()
+                                                .postSticky(LocalEvents.LoadDrawingInLocation())
+                                        }
 
 
-                                } else if (downloadedFile.downloading) {
-                                    shortToastNow("Please wait, file is downloading")
+                                    } else if (downloadedFile.downloading) {
+                                        shortToastNow("Please wait, file is downloading")
 
 
-                                    getDownloadProgressSeparately(
-                                        mViewDataBinding.root.context,
-                                        downloadedFile.downloadId
-                                    ) { status ->
-                                        MainScope().launch {
-                                            if (status.equals("downloaded", true)) {
-                                                downloadedDrawingFile =
-                                                    viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
+                                        getDownloadProgressSeparately(
+                                            mViewDataBinding.root.context,
+                                            downloadedFile.downloadId
+                                        ) { status ->
+                                            MainScope().launch {
+                                                if (status.equals("downloaded", true)) {
+                                                    downloadedDrawingFile =
+                                                        viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
+                                                            taskData.pinData!!.drawingId
+                                                        )
+                                                    shortToastNow("File downloaded")
+                                                } else if (status == "retry" || status == "failed") {
+                                                    viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
                                                         taskData.pinData!!.drawingId
                                                     )
-                                                shortToastNow("File downloaded")
-                                            } else if (status == "retry" || status == "failed") {
-                                                viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
-                                                    taskData.pinData!!.drawingId
-                                                )
-                                                downloadedDrawingFile = null
+                                                    downloadedDrawingFile = null
 
+                                                }
                                             }
                                         }
-                                    }
 
-                                } else {
-                                    shortToastNow("Cannot download file. Please download it from projects")
-                                }
-                            } ?: kotlin.run {
-
-                                actualDrawingObj?.let {
-                                    val triplet = Triple(it._id, it.fileName, it.fileUrl)
-
-                                    checkDownloadFilePermission(
-                                        triplet,
-                                        viewModel.downloadedDrawingV2Dao
-                                    ) {
-                                        MainScope().launch {
-                                            if (it.trim().equals("100%", true)) {
-
-
-                                                downloadedDrawingFile =
-                                                    viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
-                                                        taskData.pinData!!.drawingId
-                                                    )
-
-                                                println("progress  File data $downloadedDrawingFile")
-                                                println("progress  File Downloaded")
-                                                shortToastNow("File Downloaded")
-                                            } else if (it == "retry" || it == "failed") {
-                                                viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
-                                                    taskData.pinData!!.drawingId
-                                                )
-                                                println("progress  File failed to downloaded")
-                                                shortToastNow("Downloading Failed")
-                                            }
-                                        }
+                                    } else {
+                                        shortToastNow("Cannot download file. Please download it from projects")
                                     }
                                 } ?: kotlin.run {
-                                    shortToastNow("Drawing/Group is not accessible, please check it in projects.")
+
+                                    actualDrawingObj?.let {
+                                        val triplet = Triple(it._id, it.fileName, it.fileUrl)
+
+                                        checkDownloadFilePermission(
+                                            triplet,
+                                            viewModel.downloadedDrawingV2Dao
+                                        ) {
+                                            MainScope().launch {
+                                                if (it.trim().equals("100%", true)) {
+
+
+                                                    downloadedDrawingFile =
+                                                        viewModel.downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(
+                                                            taskData.pinData!!.drawingId
+                                                        )
+
+                                                    println("progress  File data $downloadedDrawingFile")
+                                                    println("progress  File Downloaded")
+                                                    shortToastNow("File Downloaded")
+                                                } else if (it == "retry" || it == "failed") {
+                                                    viewModel.downloadedDrawingV2Dao.deleteByDrawingID(
+                                                        taskData.pinData!!.drawingId
+                                                    )
+                                                    println("progress  File failed to downloaded")
+                                                    shortToastNow("Downloading Failed")
+                                                }
+                                            }
+                                        }
+                                    } ?: kotlin.run {
+                                        shortToastNow("Drawing/Group is not accessible, please check it in projects.")
+                                    }
                                 }
+
+                            } ?: kotlin.run {
+                                longToastNow("Drawing/Group is not accessible because it might be private now")
                             }
+
                         }
                     }
                 }
@@ -1248,6 +1257,7 @@ class TaskDetailV2Fragment :
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
         itemClickListener: ((tag: String) -> Unit)?
     ) {
+        shortToastNow("Downloading file...")
         val uri = Uri.parse(triplet.third)
         val fileName = triplet.second
         val folder = File(

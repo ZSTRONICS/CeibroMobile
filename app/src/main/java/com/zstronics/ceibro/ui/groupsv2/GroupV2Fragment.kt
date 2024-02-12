@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.groupsv2
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -41,6 +43,13 @@ class GroupV2Fragment :
             R.id.groupMenuBtn -> {
                 selectPopupWindow(mViewDataBinding.groupMenuBtn) {
                     if (it == "select") {
+                        mViewDataBinding.groupMenuBtn.isEnabled = false
+                        val newColor = ContextCompat.getColor(requireContext(), R.color.appGrey3)
+                        mViewDataBinding.groupMenuBtn.setColorFilter(
+                            newColor,
+                            PorterDuff.Mode.SRC_IN
+                        )
+
                         mViewDataBinding.cbSelectAll.isChecked = false
                         mViewDataBinding.selectionHeader.visibility = View.VISIBLE
                         viewState.setAddTaskButtonVisibility.postValue(false)
@@ -55,17 +64,26 @@ class GroupV2Fragment :
                 viewState.setAddTaskButtonVisibility.postValue(true)
                 adapter.selectedGroup = arrayListOf()
                 adapter.changeEditFlag(false)
+                mViewDataBinding.deleteAll.isClickable = false
+                mViewDataBinding.deleteAll.isEnabled = false
+                mViewDataBinding.groupMenuBtn.isEnabled = true
+                val newColor = ContextCompat.getColor(requireContext(), R.color.appBlue)
+                mViewDataBinding.groupMenuBtn.setColorFilter(newColor, PorterDuff.Mode.SRC_IN)
             }
 
             R.id.deleteAll -> {
                 deleteGroupDialog(requireContext()) {
                     shortToastNow("Coming Soon")
-
+                    mViewDataBinding.deleteAll.isClickable = false
+                    mViewDataBinding.deleteAll.isEnabled = false
                     mViewDataBinding.cbSelectAll.isChecked = false
                     mViewDataBinding.selectionHeader.visibility = View.GONE
                     viewState.setAddTaskButtonVisibility.postValue(true)
                     adapter.selectedGroup = arrayListOf()
                     adapter.changeEditFlag(false)
+                    mViewDataBinding.groupMenuBtn.isEnabled = true
+                    val newColor = ContextCompat.getColor(requireContext(), R.color.appBlue)
+                    mViewDataBinding.groupMenuBtn.setColorFilter(newColor, PorterDuff.Mode.SRC_IN)
                 }
             }
 
