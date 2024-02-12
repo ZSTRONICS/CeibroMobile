@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
 import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class GroupV2Adapter @Inject constructor() :
 
 
     var deleteClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
-    var renameClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
+    var renameClickListener: ((CeibroConnectionGroupV2, List<SyncDBContactsList.CeibroDBContactsLight>) -> Unit)? = null
     var itemClickListener: ((list: ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
     private var editFlag = false
 
@@ -138,7 +139,7 @@ class GroupV2Adapter @Inject constructor() :
                                 if (tag == "delete") {
                                     deleteClickListener?.invoke(data)
                                 } else if (tag == "rename") {
-                                    renameClickListener?.invoke(data)
+                                    renameClickListener?.invoke(data,item.contacts.toLightDBGroupContacts())
 
                                 }
                             }
@@ -186,7 +187,7 @@ private fun createPopupWindow(
 
     }
     renameGroupBtn.setOnClickListener {
-        //  callback.invoke("rename", null)
+          callback.invoke("rename", groupResponseV2)
         popupWindow.dismiss()
     }
 

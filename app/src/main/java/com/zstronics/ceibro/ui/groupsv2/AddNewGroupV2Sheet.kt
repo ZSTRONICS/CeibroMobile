@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.groupsv2
 
 import android.app.Dialog
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,25 +16,22 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
-import com.zstronics.ceibro.databinding.FragmentAddNewGroupBinding
 import com.zstronics.ceibro.databinding.FragmentAddNewGroupV2Binding
-import com.zstronics.ceibro.databinding.FragmentAddNewStatusBinding
-import com.zstronics.ceibro.ui.contacts.adapter.ContactsSelectionAdapter
-import com.zstronics.ceibro.ui.contacts.toLightContacts
 import com.zstronics.ceibro.ui.contacts.toLightDBContacts
 import com.zstronics.ceibro.ui.groupsv2.adapter.BottomSheetAllContactsAdapter
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupSelectedContactsChipsAdapter
-import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeChipsAdapter
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class AddNewGroupV2Sheet constructor(
+class AddNewGroupV2Sheet(
     val connectionsV2Dao: ConnectionsV2Dao,
-    val viewModel: GroupV2VM
+    val viewModel: GroupV2VM,
+    val isUpdating: Boolean
 ) : BottomSheetDialogFragment() {
+    lateinit var contact: List<SyncDBContactsList.CeibroDBContactsLight>
+    lateinit var item: CeibroConnectionGroupV2
     lateinit var binding: FragmentAddNewGroupV2Binding
 
     private var _allLightConnections: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>> =
@@ -44,9 +42,12 @@ class AddNewGroupV2Sheet constructor(
     var originalLightConnections = mutableListOf<SyncDBContactsList.CeibroDBContactsLight>()
     var originalConnections = mutableListOf<SyncDBContactsList.CeibroDBContactsLight>()
 
-    var selectedContacts: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>?> = MutableLiveData(mutableListOf())
+    var selectedContacts: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>?> =
+        MutableLiveData(mutableListOf())
 
     var createGroupClickListener: ((groupName: String, contacts: List<String>) -> Unit)? = null
+    var updateGroupClickListener: ((item: CeibroConnectionGroupV2, groupName: String, contacts: List<String>) -> Unit)? =
+        null
     var onGroupEdited: ((status: String) -> Unit)? = null
 
     override fun onCreateView(
@@ -76,20 +77,42 @@ class AddNewGroupV2Sheet constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         binding.closeBtn.setOnClickListener {
             dismiss()
         }
 
+
+        if (isUpdating) {
+            selectedContacts.postValue(contact.toMutableList())
+
+            val editableText: Editable = Editable.Factory.getInstance().newEditable(item.name)
+
+            binding.groupNameText.setText(editableText)
+            binding.saveGroupBtn.setText("Update")
+
+
+        }
         binding.saveGroupBtn.setOnClickListener {
             val groupName = binding.groupNameText.text.toString().trim()
             val selectedOnes = selectedContacts.value
             if (groupName.isEmpty()) {
                 shortToastNow("Group name required")
-            } else if (selectedOnes.isNullOrEmpty()){
+            } else if (selectedOnes.isNullOrEmpty()) {
                 shortToastNow("First select any contact to create group")
             } else {
                 val selectedContactIds = selectedOnes.map { it.connectionId }
-                createGroupClickListener?.invoke(groupName, selectedContactIds)
+                if (isUpdating) {
+                    if (item.name == groupName && selectedOnes == contact) {
+                        shortToastNow("identical group already exist")
+                    } else {
+                        updateGroupClickListener?.invoke(item, groupName, selectedContactIds)
+                    }
+                } else {
+                    createGroupClickListener?.invoke(groupName, selectedContactIds)
+                }
+
+
             }
         }
 
@@ -104,6 +127,8 @@ class AddNewGroupV2Sheet constructor(
 //                    viewModel.filterContacts(searchQuery)
 //                }
                 adapter.setList(it)
+                if (isUpdating) {
+                    adapter.setSelectedList(contact)}
             } else {
                 adapter.setList(mutableListOf())
             }
@@ -149,7 +174,8 @@ class AddNewGroupV2Sheet constructor(
                     }
                     if (commonItem != null) {
                         val index = allContacts.indexOf(commonItem)
-                        allContacts[index] = data            //set is used for updating the specific item
+                        allContacts[index] =
+                            data            //set is used for updating the specific item
                     }
 
                     originalLightConnections = allContacts
@@ -202,6 +228,7 @@ class AddNewGroupV2Sheet constructor(
             val allContacts = connectionsData.groupDataByFirstLetter().toMutableList()
 
             val lightContacts = allContacts.toLightDBContacts()
+
             _allLightConnections.postValue(lightContacts.toMutableList())
             originalLightConnections = lightContacts.toMutableList()
         }

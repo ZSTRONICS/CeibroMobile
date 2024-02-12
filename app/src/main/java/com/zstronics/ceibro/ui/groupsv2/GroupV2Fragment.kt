@@ -18,6 +18,8 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -150,6 +152,9 @@ class GroupV2Fragment :
                 }
             }
         }
+        adapter.renameClickListener = { item,contacts ->
+            openUpdateGroupSheet(item,contacts)
+        }
 
         mViewDataBinding.cbSelectAll.setOnClickListener {
             if (mViewDataBinding.cbSelectAll.isChecked) {
@@ -239,11 +244,50 @@ class GroupV2Fragment :
     private fun openNewGroupSheet() {
         val sheet = AddNewGroupV2Sheet(
             viewModel.connectionsV2Dao,
-            viewModel
+            viewModel,
+            false
         )
 
         sheet.createGroupClickListener = { groupName, selectedContactIds ->
             viewModel.createConnectionGroup(groupName, selectedContactIds) {
+                sheet.dismiss()
+            }
+        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "AddNewGroupV2Sheet")
+    }
+    private fun openUpdateGroupSheet(
+        item: CeibroConnectionGroupV2,
+        contacts: List<SyncDBContactsList.CeibroDBContactsLight>
+    ) {
+        val sheet = AddNewGroupV2Sheet(
+            viewModel.connectionsV2Dao,
+            viewModel,
+            isUpdating=true
+        )
+        sheet.item=item
+        sheet.contact=contacts
+
+        sheet.updateGroupClickListener = { item,groupName, selectedContactIds ->
+            viewModel.updateConnectionGroup(item,groupName, selectedContactIds) {updatedGroup->
+
+                val allOriginalGroups = viewModel.originalConnectionGroups
+                val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
+                if (groupFound != null) {
+                    val index = allOriginalGroups.indexOf(groupFound)
+                    allOriginalGroups[index]=updatedGroup
+                    viewModel.originalConnectionGroups = allOriginalGroups
+                }
+
+                val adapterItemFound = adapter.groupListItems.find { it._id == updatedGroup._id }
+                if (adapterItemFound != null) {
+                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
+                    adapter.groupListItems[index1]=updatedGroup
+                    adapter.notifyItemChanged(index1)
+                }
+
+
                 sheet.dismiss()
             }
         }
