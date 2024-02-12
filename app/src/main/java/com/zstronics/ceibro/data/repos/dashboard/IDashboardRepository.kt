@@ -91,4 +91,11 @@ interface IDashboardRepository {
     ): ApiResponse<CeibroConnectionGroupV2>
 
     suspend fun getConnectionGroups(): ApiResponse<GetConnectionGroupsResponse>
+
+    suspend fun deleteConnectionGroup(groupId: String): ApiResponse<GenericResponse>
+
+    suspend fun updateConnectionGroup(
+        groupId: String,
+        connectionGroupRequest: NewConnectionGroupRequest
+    ): ApiResponse<CeibroConnectionGroupV2>
 }

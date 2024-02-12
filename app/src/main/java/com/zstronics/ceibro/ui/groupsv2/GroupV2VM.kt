@@ -2,30 +2,16 @@ package com.zstronics.ceibro.ui.groupsv2
 
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.ConnectionGroupV2Dao
 import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
-import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
-import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
-import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
-import com.zstronics.ceibro.data.repos.task.ITaskRepository
-import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
-import com.zstronics.ceibro.ui.contacts.toLightContacts
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,14 +25,28 @@ class GroupV2VM @Inject constructor(
 ) : HiltBaseViewModel<IGroupV2.State>(), IGroupV2.ViewModel {
 
 
-    private val _connectionGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = MutableLiveData()
+    private val _connectionGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> =
+        MutableLiveData()
     val connectionGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = _connectionGroups
+
+
+    private val _filteredGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> =
+        MutableLiveData()
+    val filteredGroups: MutableLiveData<MutableList<CeibroConnectionGroupV2>> = _filteredGroups
+
+
     var originalConnectionGroups: MutableList<CeibroConnectionGroupV2> = mutableListOf()
 
-    fun getAllConnectionGroups() {
+    override fun onFirsTimeUiCreate(bundle: Bundle?) {
+        super.onFirsTimeUiCreate(bundle)
+        getAllConnectionGroups()
+    }
+
+    private fun getAllConnectionGroups() {
         launch {
             val groups = connectionGroupV2Dao.getAllConnectionGroup()
             _connectionGroups.postValue(groups.toMutableList())
+            originalConnectionGroups = groups.toMutableList()
         }
     }
 
@@ -70,6 +70,39 @@ class GroupV2VM @Inject constructor(
                 }
             }
         }
+    }
+
+    fun deleteConnectionGroup(groupId: String, callBack: () -> Unit) {
+        loading(true)
+        launch {
+            when (val response = dashboardRepository.deleteConnectionGroup(groupId)) {
+                is ApiResponse.Success -> {
+                    connectionGroupV2Dao.deleteConnectionGroupById(groupId)
+                    loading(false, response.data.message)
+                    callBack.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, "Error: ${response.error.message}")
+                }
+            }
+        }
+    }
+
+    fun filterGroups(search: String) {
+        if (search.isEmpty()) {
+            if (originalConnectionGroups.isNotEmpty()) {
+                _filteredGroups.postValue(originalConnectionGroups)
+            }
+            return
+        }
+        val filtered = originalConnectionGroups.filter {
+            (it.name.isNotEmpty() && it.name.lowercase().contains(search, true))
+        }
+        if (filtered.isNotEmpty())
+            _filteredGroups.postValue(filtered.toMutableList())
+        else
+            _filteredGroups.postValue(mutableListOf())
     }
 
 }

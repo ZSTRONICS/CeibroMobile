@@ -256,4 +256,22 @@ class DashboardRepository @Inject constructor(
             }
         )
 
+
+    override suspend fun deleteConnectionGroup(groupId: String): ApiResponse<GenericResponse> =
+        executeSafely(
+            call =
+            {
+                service.deleteConnectionGroup(groupId)
+            }
+        )
+
+
+    override suspend fun updateConnectionGroup(groupId: String, connectionGroupRequest: NewConnectionGroupRequest): ApiResponse<CeibroConnectionGroupV2> =
+        executeSafely(
+            call =
+            {
+                service.updateConnectionGroup(groupId, connectionGroupRequest)
+            }
+        )
+
 }

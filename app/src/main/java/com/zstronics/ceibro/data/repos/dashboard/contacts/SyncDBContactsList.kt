@@ -15,8 +15,6 @@ data class SyncDBContactsList(
         var contactFirstName: String = "",
         @SerializedName("contactSurName")
         var contactSurName: String = "",
-        @SerializedName("countryCode")
-        var countryCode: String = "",
         @SerializedName("phoneNumber")
         var phoneNumber: String = "",
         @SerializedName("contactFullName")

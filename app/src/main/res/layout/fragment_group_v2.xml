@@ -76,6 +76,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="3dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView6"
@@ -105,7 +106,7 @@
                 android:elevation="0dp"
                 android:iconifiedByDefault="false"
                 android:paddingStart="-12dp"
-                android:paddingEnd="26dp"
+                android:paddingEnd="-4dp"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="Start typing for search"
                 android:searchIcon="@drawable/icon_search"
@@ -133,6 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/select_all"
+                android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -174,6 +176,8 @@
                     android:id="@+id/deleteAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:enabled="false"
                     android:fontFamily="@font/inter_medium"
                     android:gravity="center"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
@@ -181,8 +185,9 @@
                     android:paddingVertical="@dimen/_7sdp"
                     android:text="@string/delete_heading"
                     android:textAllCaps="false"
-                    android:textColor="@color/red_color_picker"
+                    android:textColor="@drawable/delete_text_color"
                     android:textSize="13sp"
+                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
 

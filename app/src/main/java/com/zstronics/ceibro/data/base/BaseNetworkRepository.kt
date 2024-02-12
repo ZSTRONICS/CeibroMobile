@@ -23,7 +23,7 @@ abstract class BaseNetworkRepository : INetwork {
             return ApiResponse.Error(
                 ApiError(
                     MALFORMED_JSON_EXCEPTION_CODE,
-                    "No response from server"
+                    "Malformed Json or No response from server"
                 )
             )
         } catch (e: SocketTimeoutException) {

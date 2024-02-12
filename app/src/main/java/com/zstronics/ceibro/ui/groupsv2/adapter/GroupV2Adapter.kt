@@ -15,21 +15,20 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
-import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
+import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import javax.inject.Inject
 
 class GroupV2Adapter @Inject constructor() :
     RecyclerView.Adapter<GroupV2Adapter.GroupV2ViewHolder>() {
 
-    private var groupListItems: MutableList<CeibroConnectionGroupV2> = mutableListOf()
-    var selectedGroup: ArrayList<Int> = arrayListOf()
+    var groupListItems: MutableList<CeibroConnectionGroupV2> = mutableListOf()
+    var selectedGroup: ArrayList<CeibroConnectionGroupV2> = arrayListOf()
 
 
-    var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
-    var renameClickListener: ((CeibroGroupsV2) -> Unit)? = null
+    var deleteClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
+    var renameClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var itemClickListener: ((list: ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
     private var editFlag = false
 
@@ -61,6 +60,13 @@ class GroupV2Adapter @Inject constructor() :
 
         notifyDataSetChanged()
     }
+
+    fun selectAllGroups(list: List<CeibroConnectionGroupV2>) {
+        this.selectedGroup.clear()
+        this.selectedGroup.addAll(list)
+        notifyDataSetChanged()
+    }
+
     fun changeEditFlag(editFlag: Boolean) {
         this.editFlag = editFlag
         notifyDataSetChanged()
@@ -81,73 +87,63 @@ class GroupV2Adapter @Inject constructor() :
                     "(${item.contacts.size} member)"
                 }
 
+                groupCheckBox.isChecked = selectedGroup.contains(groupListItems[position])
 
-
-
-
-
-
-
-
-
-
-//                groupCheckBox.isChecked = selectedGroup.contains(position)
-
-//                if (editFlag) {
-//                    groupCheckBox.visibility = View.VISIBLE
-//                    groupMenu.visibility = View.GONE
-//                } else {
-//                    groupCheckBox.visibility = View.GONE
-//                    groupMenu.visibility = View.VISIBLE
-//                }
+                if (editFlag) {
+                    groupCheckBox.visibility = View.VISIBLE
+                    groupMenu.visibility = View.GONE
+                } else {
+                    groupCheckBox.visibility = View.GONE
+                    groupMenu.visibility = View.VISIBLE
+                }
 
                 groupCheckBox.setOnClickListener {
 
-//                    if (groupCheckBox.isChecked) {
-//                        if (!selectedGroup.contains(position)) {
-//                            selectedGroup.add(position)
-//                        }
-//                    } else {
-//                        if (selectedGroup.contains(position)) {
-//                            selectedGroup.remove(position)
-//                        }
-//                    }
-//                    itemClickListener?.invoke(selectedGroup)
-//                    notifyItemChanged(position)
+                    if (groupCheckBox.isChecked) {
+                        if (!selectedGroup.contains(groupListItems[position])) {
+                            selectedGroup.add(groupListItems[position])
+                        }
+                    } else {
+                        if (selectedGroup.contains(groupListItems[position])) {
+                            selectedGroup.remove(groupListItems[position])
+                        }
+                    }
+                    itemClickListener?.invoke(selectedGroup)
+                    notifyItemChanged(position)
                 }
                 root.setOnClickListener {
 
-//                    if (editFlag) {
-//
-//
-//                        if (groupCheckBox.isChecked) {
-//                            groupCheckBox.isChecked = false
-//
-//                            if (selectedGroup.contains(position)) {
-//                                selectedGroup.remove(position)
-//                            }
-//                        } else {
-//                            groupCheckBox.isChecked = true
-//                            if (!selectedGroup.contains(position)) {
-//                                selectedGroup.add(position)
-//                            }
-//                        }
-//                        itemClickListener?.invoke(selectedGroup)
-//                        notifyItemChanged(position)
-//                    }
-//
-//                    groupMenu.setOnClickListener {
-//                        Handler(Looper.getMainLooper()).postDelayed({
-//                            createPopupWindow(it, null) { tag, data ->
-//                                if (tag == "delete") {
-//                                    deleteClickListener?.invoke(data)
-//                                } else if (tag == "rename") {
-//                                    renameClickListener?.invoke(data)
-//
-//                                }
-//                            }
-//                        }, 200)
-//                    }
+                    if (editFlag) {
+
+
+                        if (groupCheckBox.isChecked) {
+                            groupCheckBox.isChecked = false
+
+                            if (selectedGroup.contains(groupListItems[position])) {
+                                selectedGroup.remove(groupListItems[position])
+                            }
+                        } else {
+                            groupCheckBox.isChecked = true
+                            if (!selectedGroup.contains(groupListItems[position])) {
+                                selectedGroup.add(groupListItems[position])
+                            }
+                        }
+                        itemClickListener?.invoke(selectedGroup)
+                        notifyItemChanged(position)
+                    }
+
+                    groupMenu.setOnClickListener {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            createPopupWindow(it, item) { tag, data ->
+                                if (tag == "delete") {
+                                    deleteClickListener?.invoke(data)
+                                } else if (tag == "rename") {
+                                    renameClickListener?.invoke(data)
+
+                                }
+                            }
+                        }, 200)
+                    }
                 }
             }
         }
@@ -157,8 +153,8 @@ class GroupV2Adapter @Inject constructor() :
 
 private fun createPopupWindow(
     v: View,
-    groupResponseV2: CeibroInboxV2?,
-    callback: (String, CeibroGroupsV2) -> Unit
+    groupResponseV2: CeibroConnectionGroupV2,
+    callback: (String, CeibroConnectionGroupV2) -> Unit
 ): PopupWindow {
     val context: Context = v.context
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -179,12 +175,11 @@ private fun createPopupWindow(
     val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
 
     delete.setOnClickListener {
-
         if (true) {
-            updateGroup(it.context, null) { tag, data ->
+            popupWindow.dismiss()
+            deleteGroupDialog(it.context, groupResponseV2) { tag, data ->
                 callback.invoke(tag, data)
             }
-            popupWindow.dismiss()
         } else {
             cannotDeleteAlertBox(it.context)
         }
@@ -213,10 +208,10 @@ private fun createPopupWindow(
     return popupWindow
 }
 
-private fun updateGroup(
+private fun deleteGroupDialog(
     context: Context,
-    groupResponseV2: CeibroGroupsV2?,
-    callback: (String, CeibroGroupsV2) -> Unit
+    groupResponseV2: CeibroConnectionGroupV2,
+    callback: (String, CeibroConnectionGroupV2) -> Unit
 ) {
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
@@ -234,9 +229,8 @@ private fun updateGroup(
     alertDialog.show()
 
     yesBtn.setOnClickListener {
-        //   callback.invoke("delete", groupResponseV2)
         alertDialog.dismiss()
-
+        callback.invoke("delete", groupResponseV2)
     }
 
     noBtn.setOnClickListener {
