@@ -14,11 +14,9 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
@@ -77,17 +75,43 @@ class GroupV2Fragment :
 
             R.id.deleteAll -> {
                 deleteGroupDialog(requireContext()) {
-                    shortToastNow("Coming Soon")
-                    mViewDataBinding.deleteAll.isClickable = false
-                    mViewDataBinding.deleteAll.isEnabled = false
-                    mViewDataBinding.cbSelectAll.isChecked = false
-                    mViewDataBinding.selectionHeader.visibility = View.GONE
-                    viewState.setAddTaskButtonVisibility.postValue(true)
-                    adapter.selectedGroup = arrayListOf()
-                    adapter.changeEditFlag(false)
-                    mViewDataBinding.groupMenuBtn.isEnabled = true
-                    val newColor = ContextCompat.getColor(requireContext(), R.color.appBlue)
-                    mViewDataBinding.groupMenuBtn.setColorFilter(newColor, PorterDuff.Mode.SRC_IN)
+                    if (adapter.selectedGroup.size > 0) {
+                        viewModel.deleteConnectionGroupsInBulk(adapter.selectedGroup) { list ->
+                            list.forEachIndexed { index, item ->
+                                val allOriginalGroups = viewModel.originalConnectionGroups
+                                val groupFound = allOriginalGroups.find { it._id == item }
+                                if (groupFound != null) {
+                                    val index = allOriginalGroups.indexOf(groupFound)
+                                    allOriginalGroups.removeAt(index)
+                                    viewModel.originalConnectionGroups = allOriginalGroups
+                                }
+
+                                val adapterItemFound =
+                                    adapter.groupListItems.find { it._id == item }
+                                if (adapterItemFound != null) {
+                                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
+                                    adapter.groupListItems.removeAt(index1)
+                                    adapter.notifyItemRemoved(index1)
+                                }
+
+                            }
+
+
+                            mViewDataBinding.deleteAll.isClickable = false
+                            mViewDataBinding.deleteAll.isEnabled = false
+                            mViewDataBinding.cbSelectAll.isChecked = false
+                            mViewDataBinding.selectionHeader.visibility = View.GONE
+                            viewState.setAddTaskButtonVisibility.postValue(true)
+                            adapter.selectedGroup = arrayListOf()
+                            adapter.changeEditFlag(false)
+                            mViewDataBinding.groupMenuBtn.isEnabled = true
+                            val newColor = ContextCompat.getColor(requireContext(), R.color.appBlue)
+                            mViewDataBinding.groupMenuBtn.setColorFilter(
+                                newColor,
+                                PorterDuff.Mode.SRC_IN
+                            )
+                        }
+                    }
                 }
             }
 
@@ -169,7 +193,11 @@ class GroupV2Fragment :
             if (mViewDataBinding.cbSelectAll.isChecked) {
 
                 adapter.selectAllGroups(viewModel.originalConnectionGroups)
+                mViewDataBinding.deleteAll.isClickable = true
+                mViewDataBinding.deleteAll.isEnabled = true
             } else {
+                mViewDataBinding.deleteAll.isClickable = false
+                mViewDataBinding.deleteAll.isEnabled = false
                 adapter.selectedGroup = arrayListOf()
                 adapter.notifyDataSetChanged()
             }

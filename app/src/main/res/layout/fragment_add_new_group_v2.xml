@@ -98,6 +98,7 @@
                 android:fontFamily="@font/inter_regular"
                 android:inputType="none"
                 android:maxLines="2"
+                android:maxLength="50"
                 android:paddingStart="2dp"
                 android:paddingEnd="2dp"
                 android:textSize="15sp" />
