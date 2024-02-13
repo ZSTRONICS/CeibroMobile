@@ -50,7 +50,7 @@ class GroupV2VM @Inject constructor(
         }
     }
 
-    fun createConnectionGroup(name: String, contacts: List<String>, callBack: () -> Unit) {
+    fun createConnectionGroup(name: String, contacts: List<String>, callBack: (createdGroup: CeibroConnectionGroupV2) -> Unit) {
         val requestBody = NewConnectionGroupRequest(
             name = name,
             contacts = contacts
@@ -62,7 +62,7 @@ class GroupV2VM @Inject constructor(
                     val createdGroup = response.data
                     connectionGroupV2Dao.insertConnectionGroup(createdGroup)
                     loading(false, "Group created")
-                    callBack.invoke()
+                    callBack.invoke(createdGroup)
                 }
 
                 is ApiResponse.Error -> {
