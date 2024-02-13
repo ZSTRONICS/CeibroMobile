@@ -102,11 +102,11 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:background="@drawable/search_view_bottom_border"
-                android:closeIcon="@drawable/icon_close_round_grey"
+                android:closeIcon="@null"
                 android:elevation="0dp"
                 android:iconifiedByDefault="false"
                 android:paddingStart="-12dp"
-                android:paddingEnd="-4dp"
+                android:paddingEnd="17dp"
                 android:queryBackground="@android:color/transparent"
                 android:queryHint="Start typing for search"
                 android:searchIcon="@drawable/icon_search"
@@ -115,6 +115,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:theme="@style/AppSearchView" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/groupSearchClearBtn"
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_3sdp"
+                android:src="@drawable/icon_close_round_grey"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/groupSearchBar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/groupSearchBar" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

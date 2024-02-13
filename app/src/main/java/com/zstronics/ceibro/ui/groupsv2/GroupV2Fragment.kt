@@ -14,8 +14,10 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
@@ -92,6 +94,13 @@ class GroupV2Fragment :
             R.id.createNewGroupBtn -> {
                 openNewGroupSheet()
             }
+
+            R.id.groupSearchClearBtn -> {
+                mViewDataBinding.groupSearchBar.setQuery("", true)
+                mViewDataBinding.groupSearchBar.clearFocus()
+                mViewDataBinding.groupSearchBar.hideKeyboard()
+                mViewDataBinding.groupSearchClearBtn.visibility = View.GONE
+            }
         }
     }
 
@@ -152,8 +161,8 @@ class GroupV2Fragment :
                 }
             }
         }
-        adapter.renameClickListener = { item,contacts ->
-            openUpdateGroupSheet(item,contacts)
+        adapter.renameClickListener = { item, contacts ->
+            openUpdateGroupSheet(item, contacts)
         }
 
         mViewDataBinding.cbSelectAll.setOnClickListener {
@@ -172,12 +181,18 @@ class GroupV2Fragment :
                 if (query != null) {
                     viewModel.filterGroups(query)
                 }
+                if (!query.isNullOrEmpty()) {
+                    mViewDataBinding.groupSearchClearBtn.visibility = View.VISIBLE
+                }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     viewModel.filterGroups(newText)
+                }
+                if (!newText.isNullOrEmpty()) {
+                    mViewDataBinding.groupSearchClearBtn.visibility = View.VISIBLE
                 }
                 return true
             }
@@ -249,14 +264,36 @@ class GroupV2Fragment :
         )
 
         sheet.createGroupClickListener = { groupName, selectedContactIds ->
-            viewModel.createConnectionGroup(groupName, selectedContactIds) {
+            viewModel.createConnectionGroup(groupName, selectedContactIds) { createdGroup ->
                 sheet.dismiss()
+
+                val allOriginalGroups = viewModel.originalConnectionGroups
+                val groupFound = allOriginalGroups.find { it._id == createdGroup._id }
+                if (groupFound != null) {
+                    val index = allOriginalGroups.indexOf(groupFound)
+                    allOriginalGroups[index] = createdGroup
+                    viewModel.originalConnectionGroups = allOriginalGroups
+                } else {
+                    allOriginalGroups.add(0, createdGroup)
+                    viewModel.originalConnectionGroups = allOriginalGroups
+                }
+
+                val adapterItemFound = adapter.groupListItems.find { it._id == createdGroup._id }
+                if (adapterItemFound != null) {
+                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
+                    adapter.groupListItems[index1] = createdGroup
+                    adapter.notifyItemChanged(index1)
+                } else {
+                    adapter.groupListItems.add(0, createdGroup)
+                    adapter.notifyItemInserted(0)
+                }
             }
         }
 
         sheet.isCancelable = false
         sheet.show(childFragmentManager, "AddNewGroupV2Sheet")
     }
+
     private fun openUpdateGroupSheet(
         item: CeibroConnectionGroupV2,
         contacts: List<SyncDBContactsList.CeibroDBContactsLight>
@@ -264,26 +301,26 @@ class GroupV2Fragment :
         val sheet = AddNewGroupV2Sheet(
             viewModel.connectionsV2Dao,
             viewModel,
-            isUpdating=true
+            isUpdating = true
         )
-        sheet.item=item
-        sheet.contact=contacts
+        sheet.item = item
+        sheet.contact = contacts
 
-        sheet.updateGroupClickListener = { item,groupName, selectedContactIds ->
-            viewModel.updateConnectionGroup(item,groupName, selectedContactIds) {updatedGroup->
+        sheet.updateGroupClickListener = { item, groupName, selectedContactIds ->
+            viewModel.updateConnectionGroup(item, groupName, selectedContactIds) { updatedGroup ->
 
                 val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
                 if (groupFound != null) {
                     val index = allOriginalGroups.indexOf(groupFound)
-                    allOriginalGroups[index]=updatedGroup
+                    allOriginalGroups[index] = updatedGroup
                     viewModel.originalConnectionGroups = allOriginalGroups
                 }
 
                 val adapterItemFound = adapter.groupListItems.find { it._id == updatedGroup._id }
                 if (adapterItemFound != null) {
                     val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                    adapter.groupListItems[index1]=updatedGroup
+                    adapter.groupListItems[index1] = updatedGroup
                     adapter.notifyItemChanged(index1)
                 }
 
