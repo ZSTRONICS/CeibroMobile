@@ -89,6 +89,7 @@ open class CeibroApplication : Application() {
         var hiddenOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var hiddenDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var taskDataForDetails: CeibroTaskV2? = null
+        var taskDataForDetailsFromNotification: CeibroTaskV2? = null
         var taskDetailEvents: List<Events>? = null
         var taskDetailRootState: String? = null
         var taskDetailSelectedSubState: String? = null

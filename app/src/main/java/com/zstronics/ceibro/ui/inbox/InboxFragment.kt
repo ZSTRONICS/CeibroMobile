@@ -110,7 +110,7 @@ class InboxFragment :
                 withContext(Dispatchers.Main) {
                     // Update the UI here
 //                    viewModel.loading(false, "")
-                    navigate(R.id.taskDetailV2Fragment)
+                    navigate(R.id.taskDetailTabV2Fragment)
                 }
             }
         }
