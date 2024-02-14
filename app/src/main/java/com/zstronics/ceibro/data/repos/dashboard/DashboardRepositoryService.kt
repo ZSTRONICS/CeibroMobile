@@ -151,7 +151,7 @@ interface DashboardRepositoryService {
         @Body connectionGroupRequest: NewConnectionGroupRequest
     ): Response<CeibroConnectionGroupV2>
 
-    @DELETE("v2/users/groups")
+    @HTTP(method = "DELETE", path = "v2/users/groups", hasBody = true)
     suspend fun deleteConnectionGroupsInBulk(
         @Body deleteGroupInBulkRequest: DeleteGroupInBulkRequest
     ): Response<GenericResponse>

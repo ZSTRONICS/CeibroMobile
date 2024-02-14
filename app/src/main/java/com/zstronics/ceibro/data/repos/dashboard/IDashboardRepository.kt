@@ -101,6 +101,6 @@ interface IDashboardRepository {
     ): ApiResponse<CeibroConnectionGroupV2>
 
     suspend fun deleteConnectionGroupInBulk(
-        connectionGroupRequest: DeleteGroupInBulkRequest
+        deleteBulkGroupRequest: DeleteGroupInBulkRequest
     ): ApiResponse<GenericResponse>
 }

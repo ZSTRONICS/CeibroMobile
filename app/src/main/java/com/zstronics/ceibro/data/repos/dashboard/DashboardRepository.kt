@@ -274,11 +274,12 @@ class DashboardRepository @Inject constructor(
                 service.updateConnectionGroup(groupId, connectionGroupRequest)
             }
         )
-   override suspend fun deleteConnectionGroupInBulk( connectionGroupRequest: DeleteGroupInBulkRequest): ApiResponse<GenericResponse> =
+
+   override suspend fun deleteConnectionGroupInBulk( deleteBulkGroupRequest: DeleteGroupInBulkRequest): ApiResponse<GenericResponse> =
         executeSafely(
             call =
             {
-                service.deleteConnectionGroupsInBulk(connectionGroupRequest)
+                service.deleteConnectionGroupsInBulk(deleteBulkGroupRequest)
             }
         )
 

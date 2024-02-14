@@ -77,7 +77,7 @@ class GroupV2Fragment :
                 deleteGroupDialog(requireContext()) {
                     if (adapter.selectedGroup.size > 0) {
                         viewModel.deleteConnectionGroupsInBulk(adapter.selectedGroup) { list ->
-                            list.forEachIndexed { index, item ->
+                            list.forEach { item ->
                                 val allOriginalGroups = viewModel.originalConnectionGroups
                                 val groupFound = allOriginalGroups.find { it._id == item }
                                 if (groupFound != null) {
