@@ -30,16 +30,16 @@ class AddNewGroupV2Sheet(
     val viewModel: GroupV2VM,
     val isUpdating: Boolean
 ) : BottomSheetDialogFragment() {
-    lateinit var contact: List<SyncDBContactsList.CeibroDBContactsLight>
-    lateinit var item: CeibroConnectionGroupV2
+    var contact: List<SyncDBContactsList.CeibroDBContactsLight>? = null
+    var item: CeibroConnectionGroupV2? = null
     lateinit var binding: FragmentAddNewGroupV2Binding
 
     private var _allLightConnections: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>> =
         MutableLiveData()
-    val allLightConnections: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>> =
+    private val allLightConnections: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>> =
         _allLightConnections
 
-    var originalLightConnections = mutableListOf<SyncDBContactsList.CeibroDBContactsLight>()
+    private var originalLightConnections = mutableListOf<SyncDBContactsList.CeibroDBContactsLight>()
     var originalConnections = mutableListOf<SyncDBContactsList.CeibroDBContactsLight>()
 
     var selectedContacts: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>?> =
@@ -72,7 +72,7 @@ class AddNewGroupV2Sheet(
 
     var adapter: BottomSheetAllContactsAdapter = BottomSheetAllContactsAdapter()
 
-    var chipAdapter: GroupSelectedContactsChipsAdapter = GroupSelectedContactsChipsAdapter()
+    private var chipAdapter: GroupSelectedContactsChipsAdapter = GroupSelectedContactsChipsAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,12 +84,14 @@ class AddNewGroupV2Sheet(
 
 
         if (isUpdating) {
-            selectedContacts.postValue(contact.toMutableList())
+            selectedContacts.postValue(contact?.toMutableList())
 
-            val editableText: Editable = Editable.Factory.getInstance().newEditable(item.name)
+            item?.name?.let {
+                val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
 
-            binding.groupNameText.setText(editableText)
-            binding.saveGroupBtn.setText("Update")
+                binding.groupNameText.text = editableText
+                binding.saveGroupBtn.text = "Update"
+            }
 
 
         }
@@ -103,11 +105,22 @@ class AddNewGroupV2Sheet(
             } else {
                 val selectedContactIds = selectedOnes.map { it.connectionId }
                 if (isUpdating) {
-                    if (item.name == groupName && selectedOnes == contact) {
-                        shortToastNow("identical group already exist")
-                    } else {
-                        updateGroupClickListener?.invoke(item, groupName, selectedContactIds)
+                    item?.name?.let { name ->
+                        contact?.let { contact ->
+                            if (name == groupName && selectedOnes == contact) {
+                                shortToastNow("identical group already exist")
+                            } else {
+                                item?.let { item ->
+                                    updateGroupClickListener?.invoke(
+                                        item,
+                                        groupName,
+                                        selectedContactIds
+                                    )
+                                }
+                            }
+                        }
                     }
+
                 } else {
                     createGroupClickListener?.invoke(groupName, selectedContactIds)
                 }
@@ -128,7 +141,11 @@ class AddNewGroupV2Sheet(
 //                }
                 adapter.setList(it)
                 if (isUpdating) {
-                    adapter.setSelectedList(contact)}
+                    contact?.let {contact->
+                        adapter.setSelectedList(contact)
+                    }
+
+                }
             } else {
                 adapter.setList(mutableListOf())
             }
@@ -281,14 +298,11 @@ class AddNewGroupV2Sheet(
             _allLightConnections.postValue(mutableListOf())
     }
 
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         if (dialog is BottomSheetDialog) {
             dialog.behavior.skipCollapsed = true
         }
         return dialog
-
     }
-
 }

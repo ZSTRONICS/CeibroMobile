@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsRespo
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.RecentCeibroConnections
@@ -131,7 +132,6 @@ interface DashboardRepositoryService {
     ): Response<GetContactsResponse>
 
 
-
     @POST("v2/users/groups")
     suspend fun createConnectionGroup(
         @Body connectionGroupRequest: NewConnectionGroupRequest
@@ -150,4 +150,10 @@ interface DashboardRepositoryService {
         @Path("groupId") groupId: String,
         @Body connectionGroupRequest: NewConnectionGroupRequest
     ): Response<CeibroConnectionGroupV2>
+
+    @HTTP(method = "DELETE", path = "v2/users/groups", hasBody = true)
+    suspend fun deleteConnectionGroupsInBulk(
+        @Body deleteGroupInBulkRequest: DeleteGroupInBulkRequest
+    ): Response<GenericResponse>
+
 }

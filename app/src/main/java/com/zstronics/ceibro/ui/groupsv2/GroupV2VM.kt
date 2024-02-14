@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +51,11 @@ class GroupV2VM @Inject constructor(
         }
     }
 
-    fun createConnectionGroup(name: String, contacts: List<String>, callBack: (createdGroup: CeibroConnectionGroupV2) -> Unit) {
+    fun createConnectionGroup(
+        name: String,
+        contacts: List<String>,
+        callBack: (createdGroup: CeibroConnectionGroupV2) -> Unit
+    ) {
         val requestBody = NewConnectionGroupRequest(
             name = name,
             contacts = contacts
@@ -71,11 +76,12 @@ class GroupV2VM @Inject constructor(
             }
         }
     }
+
     fun updateConnectionGroup(
         item: CeibroConnectionGroupV2,
         groupName: String,
         contacts: List<String>,
-        callBack: (createdGroup:CeibroConnectionGroupV2) -> Unit
+        callBack: (createdGroup: CeibroConnectionGroupV2) -> Unit
     ) {
         val requestBody = NewConnectionGroupRequest(
             name = groupName,
@@ -83,7 +89,7 @@ class GroupV2VM @Inject constructor(
         )
         loading(true)
         launch {
-            when (val response = dashboardRepository.updateConnectionGroup(item._id,requestBody)) {
+            when (val response = dashboardRepository.updateConnectionGroup(item._id, requestBody)) {
                 is ApiResponse.Success -> {
                     val createdGroup = response.data
                     connectionGroupV2Dao.insertConnectionGroup(createdGroup)
@@ -106,6 +112,30 @@ class GroupV2VM @Inject constructor(
                     connectionGroupV2Dao.deleteConnectionGroupById(groupId)
                     loading(false, response.data.message)
                     callBack.invoke()
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, "Error: ${response.error.message}")
+                }
+            }
+        }
+    }
+
+    fun deleteConnectionGroupsInBulk(
+        groups: ArrayList<CeibroConnectionGroupV2>,
+        callBack: (List<String>) -> Unit
+    ) {
+        loading(true)
+        launch {
+            val list = groups.map { it._id }
+            val delRequest = DeleteGroupInBulkRequest(list)
+            when (val response = dashboardRepository.deleteConnectionGroupInBulk(delRequest)) {
+                is ApiResponse.Success -> {
+                    list.forEach {
+                        connectionGroupV2Dao.deleteConnectionGroupById(it)
+                    }
+                    loading(false, response.data.message)
+                    callBack.invoke(list)
                 }
 
                 is ApiResponse.Error -> {
