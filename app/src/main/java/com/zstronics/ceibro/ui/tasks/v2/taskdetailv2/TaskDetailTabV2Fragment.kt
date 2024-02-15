@@ -36,6 +36,7 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -52,6 +53,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
 @AndroidEntryPoint
@@ -708,6 +711,59 @@ class TaskDetailTabV2Fragment :
                 cursor.close()
 
                 delay(500)
+            }
+        }
+    }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskFailedToDone(event: LocalEvents.TaskFailedToDone?) {
+        mViewDataBinding.doneBtn.isEnabled = true
+        mViewDataBinding.doneBtn.isClickable = true
+        mViewDataBinding.doneBtn.alpha = 1f
+        mViewDataBinding.taskForwardBtn.isEnabled = true
+        mViewDataBinding.taskForwardBtn.isClickable = true
+        mViewDataBinding.taskForwardBtn.alpha = 1f
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskSeenEvent(event: LocalEvents.TaskSeenEvent?) {
+        val task = event?.task
+        if (task != null) {
+            viewModel.taskDetail.value?.let { taskDetail ->
+                if (task.id == taskDetail.id) {
+                    task.let { it1 ->
+                        viewModel.originalTask.postValue(it1)
+                        viewModel._taskDetail.postValue(it1)
+                    }
+                }
+            }
+        }
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskDoneEvent(event: LocalEvents.TaskDoneEvent?) {
+        val task = event?.task
+        if (task != null) {
+            viewModel.taskDetail.value?.let { taskDetail ->
+                if (task.id == taskDetail.id) {
+                    task.let { it1 ->
+                        viewModel.originalTask.postValue(it1)
+                        viewModel._taskDetail.postValue(it1)
+                    }
+                }
             }
         }
     }

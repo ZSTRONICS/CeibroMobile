@@ -21,8 +21,8 @@ class TaskDetailV2TabLayout(fragmentManager: FragmentActivity) :
 
         return when (position) {
             0 -> taskDetailParentV2Fragment
-            1 -> taskDetailParentV2Fragment
-            2 -> taskDetailParentV2Fragment
+            1 -> taskDetailCommentsV2Fragment
+            2 -> taskDetailFilesV2Fragment
             else -> taskDetailParentV2Fragment
         }
     }
