@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-        <layout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-            <data>
+    <data>
 
         <variable
             name="viewState"
@@ -18,31 +18,130 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/layoutSelectionType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvAll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_weight="2"
+                android:background="@drawable/signin_button_back"
+                android:backgroundTint="@color/appBlue"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingHorizontal="@dimen/_9sdp"
+                android:paddingVertical="@dimen/_7sdp"
+                android:text="All"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
+
+            <TextView
+                android:id="@+id/tvPhotos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_weight="2"
+                android:background="@drawable/signin_button_back"
+                android:backgroundTint="@color/appGrey1"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingHorizontal="@dimen/_9sdp"
+                android:paddingVertical="@dimen/_7sdp"
+                android:text="Photos"
+                android:textAllCaps="false"
+                android:textColor="@color/appGrey3"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
+
+            <TextView
+
+                android:id="@+id/tvLinks"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_weight="2"
+                android:background="@drawable/signin_button_back"
+                android:backgroundTint="@color/appGrey1"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingHorizontal="@dimen/_9sdp"
+                android:paddingVertical="@dimen/_7sdp"
+                android:text="Links"
+                android:textAllCaps="false"
+                android:textColor="@color/appGrey3"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
+
+            <TextView
+
+                android:id="@+id/tvDocuments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_weight="3.5"
+                android:background="@drawable/signin_button_back"
+                android:backgroundTint="@color/appGrey1"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingHorizontal="@dimen/_9sdp"
+                android:paddingVertical="@dimen/_7sdp"
+                android:text="Documents"
+                android:textAllCaps="false"
+                android:textColor="@color/appGrey3"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
+
+
+        </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatSpinner
-            app:layout_constraintTop_toTopOf="parent"
-            android:backgroundTint="@color/black"
             android:id="@+id/filesSpinner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
+            android:backgroundTint="@color/black"
             android:paddingVertical="@dimen/_1sdp"
-            android:visibility="visible" />
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/filesRV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginStart="@dimen/_6sdp"
-            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_2sdp"
             android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
             android:orientation="vertical"
             android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/filesSpinner"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutSelectionType"
             tools:itemCount="1"
-            tools:listitem="@layout/layout_ceibro_task_events" />
+            tools:listitem="@layout/layout_ceibro_task_detail_files" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

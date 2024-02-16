@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.utils
 
 import android.text.format.DateUtils
-import java.lang.Math.abs
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -111,6 +110,43 @@ object DateUtils {
         } else {
             val customFormat = SimpleDateFormat(SHORT_DATE_MON_YEAR_WITH_TIME, Locale.getDefault())
             return customFormat.format(utcDate)
+        }
+    }
+
+    fun formatCreationUTCTimeToCustomForDetailFiles(
+        utcTime: String, inputFormatter: String? = SERVER_DATE_FULL_FORMAT_IN_UTC
+    ): String {
+        val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        val outputFormat = SimpleDateFormat(FORMAT_TIME_12H, Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault()
+
+        val utcDate: Date = inputFormat.parse(utcTime) ?: return ""
+
+        val calendarNow = Calendar.getInstance()
+//        val calendarOfUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+//        calendarOfUTC.time = utcDate
+
+        val timeFormatted = outputFormat.format(utcDate)
+
+        val utcDateFormatted = SimpleDateFormat(SERVER_DATE_FULL_FORMAT, Locale.getDefault())
+        utcDateFormatted.timeZone = TimeZone.getDefault()
+
+        val utcDateFormattedToDeviceDateTime = utcDateFormatted.format(utcDate)
+        val calendarFromFormattedTime = Calendar.getInstance()
+        calendarFromFormattedTime.time =
+            utcDateFormatted.parse(utcDateFormattedToDeviceDateTime) ?: Date()
+
+        if (isSameDay(calendarNow, calendarFromFormattedTime)) {
+            return "Today at $timeFormatted"
+        } else if (isYesterday(calendarNow, calendarFromFormattedTime)) {
+            return "Yesterday at $timeFormatted"
+        } else {
+            val customFormat = SimpleDateFormat(SHORT_DATE_MON_YEAR_ONLY, Locale.getDefault())
+            val formattedDate = customFormat.format(utcDate)
+
+            return "$formattedDate at $timeFormatted"
         }
     }
 

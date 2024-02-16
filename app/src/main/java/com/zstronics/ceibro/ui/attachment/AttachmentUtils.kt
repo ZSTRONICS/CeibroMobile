@@ -1,7 +1,7 @@
 package com.zstronics.ceibro.ui.attachment
 
 // List of image extensions
-val imageExtensions = listOf(".jpeg", ".jpg", ".png", ".gif", ".webp", ".bmp", ".x-icon")
+val imageExtensions = listOf(".jpeg", ".jpg", ".png", ".gif", ".webp", ".bmp", ".x-icon", ".heic")
 
 // List of video extensions
 val videoExtensions = listOf(".mp4", ".avi", ".mov")

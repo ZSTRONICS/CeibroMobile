@@ -12,8 +12,10 @@ import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
+import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +43,14 @@ class TaskDetailFilesV2VM @Inject constructor(
     val allDetailFiles: LiveData<MutableList<LocalTaskDetailFiles>> = _allDetailFiles
     val originalAllDetailFiles: MutableLiveData<MutableList<LocalTaskDetailFiles>> = MutableLiveData()
 
+    val _photoFiles: MutableLiveData<MutableList<LocalTaskDetailFiles>> = MutableLiveData()
+    val photoFiles: LiveData<MutableList<LocalTaskDetailFiles>> = _photoFiles
+    val originalPhotoFiles: MutableLiveData<MutableList<LocalTaskDetailFiles>> = MutableLiveData()
+
+    val _documentFiles: MutableLiveData<MutableList<LocalTaskDetailFiles>> = MutableLiveData()
+    val documentFiles: LiveData<MutableList<LocalTaskDetailFiles>> = _documentFiles
+    val originalDocumentFiles: MutableLiveData<MutableList<LocalTaskDetailFiles>> = MutableLiveData()
+
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -55,8 +65,40 @@ class TaskDetailFilesV2VM @Inject constructor(
             }
 
             allFiles?.let { files ->
-                originalAllDetailFiles.postValue(files.toMutableList())
-                _allDetailFiles.postValue(files.toMutableList())
+                val sortedFiles = files.sortedByDescending { it.createdAt }.toMutableList()
+
+                originalAllDetailFiles.postValue(sortedFiles)
+                _allDetailFiles.postValue(sortedFiles)
+
+                val allPhotosList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
+                val allFilesList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
+
+                for (item in sortedFiles) {
+                    when (item.fileTag) {
+                        AttachmentTags.Image.tagValue -> {
+                            allPhotosList.add(item)
+                        }
+
+                        AttachmentTags.Drawing.tagValue -> {
+                            allPhotosList.add(item)
+                        }
+
+                        AttachmentTags.ImageWithComment.tagValue -> {
+                            allPhotosList.add(item)
+                        }
+
+                        AttachmentTags.File.tagValue -> {
+                            allFilesList.add(item)
+                        }
+                    }
+                }
+
+                originalPhotoFiles.postValue(allPhotosList.toMutableList())
+                _photoFiles.postValue(allPhotosList.toMutableList())
+
+                originalDocumentFiles.postValue(allFilesList.toMutableList())
+                _documentFiles.postValue(allFilesList.toMutableList())
+
             }
         }
     }

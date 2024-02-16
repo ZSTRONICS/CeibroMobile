@@ -195,6 +195,8 @@ class TaskDetailTabV2VM @Inject constructor(
                     }
                 } else {
                     alert("Failed to sync task events")
+                    originalEvents.postValue(allEvents)
+                    _taskEvents.postValue(allEvents)
                 }
             }
         }
