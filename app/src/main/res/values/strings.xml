@@ -645,4 +645,7 @@
     <string name="new_group">New group</string>
     <string name="start_typing_name">Start typing name</string>
     <string name="are_you_sure_you_want_to_delete_groups">Are you sure you want to delete groups?</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
+    <string name="go_to_file_location">Go to file location</string>
 </resources>

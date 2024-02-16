@@ -5,19 +5,27 @@ import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailFilesBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import kotlinx.coroutines.GlobalScope
@@ -239,7 +247,18 @@ class TaskDetailFilesAdapter constructor(
 
                binding.fileName.text = item.fileName
                binding.fileSize.text = "File size: unknown"*/
+            binding.ivDots.setOnClickListener {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    createPopupWindow(it, null) { tag, data ->
+                        if (tag == "delete") {
 
+                        } else if (tag == "rename") {
+
+
+                        }
+                    }
+                }, 200)
+            }
         }
     }
 
@@ -449,4 +468,46 @@ class TaskDetailFilesAdapter constructor(
         }
     }
 
+    private fun createPopupWindow(
+        v: View,
+        groupResponseV2: CeibroConnectionGroupV2?,
+        callback: (String, CeibroConnectionGroupV2) -> Unit
+    ): PopupWindow {
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.task_detail_files_menu_dialog, null)
+
+        val popupWindow = PopupWindow(
+            view,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+
+
+        val tvFileLocation: TextView = view.findViewById(R.id.tvFileLocation)
+        val tvShare: TextView = view.findViewById(R.id.tvShare)
+        val tvDownload: TextView = view.findViewById(R.id.tvShare)
+
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, -200, -170)
+        } else {
+            popupWindow.showAsDropDown(v, -205, -60)
+        }
+
+
+        return popupWindow
+    }
 }
