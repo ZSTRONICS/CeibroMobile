@@ -11,6 +11,7 @@ import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.auth.IAuthRepository
 import com.zstronics.ceibro.data.repos.auth.login.Tokens
@@ -91,6 +92,7 @@ open class CeibroApplication : Application() {
         var taskDataForDetails: CeibroTaskV2? = null
         var taskDataForDetailsFromNotification: CeibroTaskV2? = null
         var taskDetailEvents: List<Events>? = null
+        var taskDetailFiles: List<LocalTaskDetailFiles>? = null
         var taskDetailRootState: String? = null
         var taskDetailSelectedSubState: String? = null
         var taskIdInDetails: String = ""

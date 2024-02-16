@@ -51,6 +51,10 @@ class TaskDetailTabV2VM @Inject constructor(
     val taskDetail: LiveData<CeibroTaskV2> = _taskDetail
     val originalTask: MutableLiveData<CeibroTaskV2> = MutableLiveData()
 
+    val _taskEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
+    val taskEvents: MutableLiveData<MutableList<Events>> = _taskEvents
+    val originalEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
+
     var notificationTaskData: MutableLiveData<NotificationTaskData?> = MutableLiveData()
     var isTaskBeingDone: MutableLiveData<Boolean> = MutableLiveData(false)
 
@@ -95,19 +99,24 @@ class TaskDetailTabV2VM @Inject constructor(
                     task?.let { task1 ->
                         isTaskBeingDone.postValue(task.isBeingDoneByAPI)
                         rootState = TaskRootStateTags.ToMe.tagValue
-                        _taskDetail.postValue(task1)
                         originalTask.postValue(task1)
-                        CeibroApplication.CookiesManager.taskDataForDetailsFromNotification=task1
+                        _taskDetail.postValue(task1)
+                        CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = task1
+                        CeibroApplication.CookiesManager.taskDataForDetails = task1
+
+//                        getAllEvents(task1.id)
+                        syncEvents(task1.id)
 
                     } ?: run {
                         // run API call because task not found in DB
                         getTaskById(taskId) { isSuccess, task, events ->
                             if (isSuccess) {
                                 isTaskBeingDone.postValue(false)
-                                _taskDetail.postValue(task)
                                 originalTask.postValue(task)
-                                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification=task
-
+                                _taskDetail.postValue(task)
+                                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = task
+                                CeibroApplication.CookiesManager.taskDataForDetails = task
+                                syncEvents(taskId)
                             } else {
                                 loading(false, "No task details to show")
                             }
@@ -121,7 +130,7 @@ class TaskDetailTabV2VM @Inject constructor(
                     isTaskBeingDone.postValue(isTaskBeingDone1)
                     _taskDetail.postValue(task)
                     originalTask.postValue(task)
-
+                    syncEvents(taskId)
                 } ?: run {
                     alert("No details to display")
                 }
@@ -130,6 +139,66 @@ class TaskDetailTabV2VM @Inject constructor(
         }
     }
 
+
+    private fun getAllEvents(taskId: String) {
+        launch {
+            val taskEvents = taskDao.getEventsOfTask(taskId)
+            if (taskEvents.isEmpty()) {
+                originalEvents.postValue(mutableListOf<Events>())
+                _taskEvents.postValue(mutableListOf<Events>())
+            } else {
+                originalEvents.postValue(taskEvents.toMutableList())
+                _taskEvents.postValue(taskEvents.toMutableList())
+            }
+        }
+    }
+
+    private fun syncEvents(
+        taskId: String
+    ) {
+        launch {
+            val allEvents = taskDao.getEventsOfTask(taskId).toMutableList()
+            val eventsIds: MutableList<Int> = mutableListOf()
+            allEvents.forEach {
+                eventsIds.add(it.eventNumber)
+            }
+            val syncTaskEventsBody = SyncTaskEventsBody(eventsIds)
+            taskRepository.syncEvents(
+                taskId,
+                syncTaskEventsBody
+            ) { isSuccess, missingEvents, message ->
+                if (isSuccess) {
+                    if (missingEvents.isNotEmpty()) {
+                        if (allEvents.isNotEmpty()) {
+                            val newMissingEventList = mutableListOf<Events>()
+                            missingEvents.forEach { event ->
+                                val eventExist = allEvents.find { event.id == it.id }
+                                if (eventExist == null) {  /// event not existed
+                                    newMissingEventList.add(event)
+                                }
+                            }
+                            allEvents.addAll(newMissingEventList)
+                            originalEvents.postValue(allEvents)
+                            _taskEvents.postValue(allEvents)
+
+                        } else {
+                            allEvents.addAll(missingEvents)
+                            originalEvents.postValue(allEvents)
+                            _taskEvents.postValue(allEvents)
+                        }
+                        launch {
+                            taskDao.insertMultipleEvents(missingEvents)
+                        }
+                    } else {
+                        originalEvents.postValue(allEvents)
+                        _taskEvents.postValue(allEvents)
+                    }
+                } else {
+                    alert("Failed to sync task events")
+                }
+            }
+        }
+    }
 
     private fun getTaskById(
         taskId: String,
