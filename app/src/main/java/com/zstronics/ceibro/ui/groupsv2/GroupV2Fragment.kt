@@ -21,6 +21,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentGroupV2Binding
+import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -185,8 +186,8 @@ class GroupV2Fragment :
                 }
             }
         }
-        adapter.renameClickListener = { item, contacts ->
-            openUpdateGroupSheet(item, contacts)
+        adapter.renameClickListener = { item ->
+            openUpdateGroupSheet(item)
         }
 
         mViewDataBinding.cbSelectAll.setOnClickListener {
@@ -323,16 +324,30 @@ class GroupV2Fragment :
     }
 
     private fun openUpdateGroupSheet(
-        item: CeibroConnectionGroupV2,
-        contacts: List<SyncDBContactsList.CeibroDBContactsLight>
+        oldGroup: CeibroConnectionGroupV2
     ) {
+
+        var groupToSendToSheet: CeibroConnectionGroupV2? = null
+        var contactToSendToSheet: List<SyncDBContactsList.CeibroDBContactsLight>? = null
+
+        val allOriginalGroups1 = viewModel.originalConnectionGroups
+        val groupFound1 = allOriginalGroups1.find { it._id == oldGroup._id }
+        if (groupFound1 != null) {
+            groupToSendToSheet = groupFound1
+            contactToSendToSheet = groupFound1.contacts.toLightDBGroupContacts()
+        } else {
+            groupToSendToSheet = oldGroup
+            contactToSendToSheet = oldGroup.contacts.toLightDBGroupContacts()
+        }
+
         val sheet = AddNewGroupV2Sheet(
             viewModel.connectionsV2Dao,
             viewModel,
-            isUpdating = true
+            isUpdating = true,
+            oldGroup = groupToSendToSheet,
+            oldGroupContact = contactToSendToSheet
         )
-        sheet.item = item
-        sheet.contact = contacts
+
 
         sheet.updateGroupClickListener = { item, groupName, selectedContactIds ->
             viewModel.updateConnectionGroup(item, groupName, selectedContactIds) { updatedGroup ->

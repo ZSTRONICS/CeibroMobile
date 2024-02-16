@@ -28,10 +28,10 @@ import kotlinx.coroutines.launch
 class AddNewGroupV2Sheet(
     val connectionsV2Dao: ConnectionsV2Dao,
     val viewModel: GroupV2VM,
-    val isUpdating: Boolean
+    val isUpdating: Boolean,
+    var oldGroup: CeibroConnectionGroupV2? = null,
+    var oldGroupContact: List<SyncDBContactsList.CeibroDBContactsLight>? = null
 ) : BottomSheetDialogFragment() {
-    var contact: List<SyncDBContactsList.CeibroDBContactsLight>? = null
-    var item: CeibroConnectionGroupV2? = null
     lateinit var binding: FragmentAddNewGroupV2Binding
 
     private var _allLightConnections: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>> =
@@ -84,17 +84,16 @@ class AddNewGroupV2Sheet(
 
 
         if (isUpdating) {
-            selectedContacts.postValue(contact?.toMutableList())
+            selectedContacts.postValue(oldGroupContact?.toMutableList())
 
-            item?.name?.let {
+            oldGroup?.name?.let {
                 val editableText: Editable = Editable.Factory.getInstance().newEditable(it)
 
                 binding.groupNameText.text = editableText
                 binding.saveGroupBtn.text = "Update"
             }
-
-
         }
+
         binding.saveGroupBtn.setOnClickListener {
             val groupName = binding.groupNameText.text.toString().trim()
             val selectedOnes = selectedContacts.value
@@ -105,12 +104,12 @@ class AddNewGroupV2Sheet(
             } else {
                 val selectedContactIds = selectedOnes.map { it.connectionId }
                 if (isUpdating) {
-                    item?.name?.let { name ->
-                        contact?.let { contact ->
+                    oldGroup?.name?.let { name ->
+                        oldGroupContact?.let { contact ->
                             if (name == groupName && selectedOnes == contact) {
-                                shortToastNow("identical group already exist")
+                                shortToastNow("No data changed to update")
                             } else {
-                                item?.let { item ->
+                                oldGroup?.let { item ->
                                     updateGroupClickListener?.invoke(
                                         item,
                                         groupName,
@@ -141,7 +140,7 @@ class AddNewGroupV2Sheet(
 //                }
                 adapter.setList(it)
                 if (isUpdating) {
-                    contact?.let {contact->
+                    oldGroupContact?.let {contact->
                         adapter.setSelectedList(contact)
                     }
 

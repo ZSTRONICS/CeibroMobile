@@ -29,7 +29,7 @@ class GroupV2Adapter @Inject constructor() :
 
 
     var deleteClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
-    var renameClickListener: ((CeibroConnectionGroupV2, List<SyncDBContactsList.CeibroDBContactsLight>) -> Unit)? = null
+    var renameClickListener: ((CeibroConnectionGroupV2) -> Unit)? = null
     var itemClickListener: ((list: ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
     private var editFlag = false
 
@@ -139,7 +139,7 @@ class GroupV2Adapter @Inject constructor() :
                                 if (tag == "delete") {
                                     deleteClickListener?.invoke(data)
                                 } else if (tag == "rename") {
-                                    renameClickListener?.invoke(data,item.contacts.toLightDBGroupContacts())
+                                    renameClickListener?.invoke(data)
 
                                 }
                             }

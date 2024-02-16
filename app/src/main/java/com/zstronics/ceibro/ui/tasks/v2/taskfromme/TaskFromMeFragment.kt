@@ -201,7 +201,7 @@ class TaskFromMeFragment :
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = viewModel.selectedState
                     withContext(Dispatchers.Main) {
                         // Update the UI here
-                        navigate(R.id.taskDetailV2Fragment)
+                        navigate(R.id.taskDetailTabV2Fragment)
                         viewModel.loading(false, "")
                     }
                 }

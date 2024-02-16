@@ -732,17 +732,6 @@ class TaskDetailV2Fragment :
                                 viewModel._taskEvents.postValue(allEvents)
 
 
-//                                val handler = Handler(Looper.getMainLooper())
-//                                handler.postDelayed(Runnable {
-//                                    val startPosition = eventsAdapter.listItems.size
-//                                    val itemCount = newMissingEventList.size
-//
-//                                    eventsAdapter.listItems.addAll(newMissingEventList)
-//                                    mViewDataBinding.eventsRV.adapter?.notifyItemRangeInserted(
-//                                        startPosition,
-//                                        itemCount
-//                                    )
-//                                }, 10)
                             } else {
                                 allEvents.addAll(missingEventsList)
                                 viewModel.originalEvents.postValue(allEvents)

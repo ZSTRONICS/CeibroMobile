@@ -7,165 +7,32 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskDetailV2State" />
+            type="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailparent.TaskDetailParentV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskDetailV2VM" />
+            type="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailparent.TaskDetailParentV2VM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/taskDetailHeader"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:elevation="3dp"
-            android:visibility="gone"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/closeBtn"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginStart="@dimen/_11sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="4dp"
-                app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/taskTitleLayout"
-                app:srcCompat="@drawable/icon_back"
-                app:tint="@color/appBlue" />
-
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/taskInfoBtn"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginEnd="@dimen/_11sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:padding="6dp"
-                android:tooltipText="Filters"
-                app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/taskTitleLayout"
-                app:srcCompat="@drawable/icon_info"
-                app:tint="@color/appBlue" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/taskTitleLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_11sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_11sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:gravity="start"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/confirmNeededBtn"
-                app:layout_constraintStart_toEndOf="@+id/closeBtn"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/detailViewHeading"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:fontFamily="@font/inter_bold"
-                    android:maxLines="1"
-                    android:text="@string/details_view"
-                    android:textColor="@color/black"
-                    android:textSize="18.5sp" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/confirmNeededBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="33dp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:background="@drawable/btn_minimum_corners"
-                android:fontFamily="@font/inter_medium"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:paddingStart="@dimen/_4sdp"
-                android:paddingEnd="@dimen/_4sdp"
-                android:text="@string/confirm_needed_heading"
-                android:textAllCaps="false"
-                android:textColor="@color/appBlue"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/taskTitleLayout"
-                app:layout_constraintEnd_toStartOf="@+id/taskInfoBtn"
-                app:layout_constraintTop_toTopOf="@+id/taskTitleLayout" />
-
-            <View
-                android:id="@+id/view20"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="13dp"
-                android:alpha="0.6"
-                android:background="@color/colorGrey"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/bodyScroll"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottomFooterLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskDetailHeader">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/parentRV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:orientation="vertical"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:itemCount="1"
-                    tools:listitem="@layout/layout_ceibro_task_detail" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
-
-        <!--<androidx.core.widget.NestedScrollView
-            android:id="@+id/bodyScroll"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:contentDescription="@string/appbar_scrolling_view_behavior"
-            android:fillViewport="true"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toTopOf="@+id/bottomFooterLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskDetailHeader">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/detailRootLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="1dp"
-                android:paddingEnd="1dp"
+                android:paddingStart="@dimen/_11sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_11sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:theme="@style/SelectableTextTheme">
 
@@ -173,9 +40,6 @@
                     android:id="@+id/taskDetailStatusBar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_11sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_11sdp"
                     android:gravity="start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -254,10 +118,7 @@
                     android:id="@+id/taskTitleBar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_9sdp"
-                    android:layout_marginEnd="@dimen/_11sdp"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingTop="@dimen/_1sdp"
                     android:paddingBottom="@dimen/_1sdp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -268,9 +129,10 @@
                         android:id="@+id/taskTitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_9sdp"
+                        android:layout_marginEnd="@dimen/_1sdp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_bold"
+                        android:maxLength="100"
                         android:maxLines="3"
                         android:text="Magnis dis parturient montes, nascetur ridicuu dis mus."
                         android:textColor="@color/black"
@@ -284,6 +146,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/icon_navigate_up"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/taskTitle"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/taskTitle" />
@@ -294,9 +157,7 @@
                     android:id="@+id/taskDescriptionImageLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_marginEnd="@dimen/_11sdp"
                     android:paddingTop="@dimen/_1sdp"
                     android:paddingBottom="@dimen/_1sdp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -310,6 +171,7 @@
                         android:layout_marginTop="@dimen/_4sdp"
                         android:ellipsize="marquee"
                         android:fontFamily="@font/inter_regular"
+                        android:maxLength="1500"
                         android:maxLines="15"
                         android:text="Task description text over here."
                         android:textColor="@color/black"
@@ -323,9 +185,10 @@
                         android:id="@+id/viewMoreLessLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:theme="@style/NonSelectableTextTheme"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/taskDescription"
-                        android:theme="@style/NonSelectableTextTheme">
+                        app:layout_constraintTop_toBottomOf="@+id/taskDescription">
 
                         <TextView
                             android:id="@+id/viewMoreBtn"
@@ -374,6 +237,21 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/onlyImages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/images"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/onlyImagesRV"
                         android:layout_width="0dp"
@@ -382,15 +260,31 @@
                         android:layout_marginTop="@dimen/_10sdp"
                         android:nestedScrollingEnabled="false"
                         android:orientation="horizontal"
-                        android:paddingStart="-2dp"
-                        android:paddingEnd="-2dp"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="1dp"
                         android:visibility="gone"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout"
+                        app:layout_constraintTop_toBottomOf="@+id/onlyImages"
                         tools:itemCount="3"
                         tools:listitem="@layout/layout_ceibro_only_image" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/imagesWithComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/images_with_comment"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/imagesWithCommentRV"
@@ -404,9 +298,43 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV"
+                        app:layout_constraintTop_toBottomOf="@+id/imagesWithComment"
                         tools:itemCount="1"
                         tools:listitem="@layout/layout_ceibro_image_with_comment" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/onlyDrawings"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginBottom="@dimen/_4sdp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/drawings"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/onlyDrawingRV"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="horizontal"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="1dp"
+                        android:visibility="gone"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/onlyDrawings"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/layout_ceibro_only_image" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -414,9 +342,7 @@
                     android:id="@+id/taskDescriptionImageBottomLine"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:layout_marginStart="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_11sdp"
                     android:alpha="0.7"
                     android:background="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -427,9 +353,7 @@
                     android:id="@+id/filesLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_11sdp"
                     android:layout_marginTop="@dimen/_7sdp"
-                    android:layout_marginEnd="@dimen/_11sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/taskDescriptionImageBottomLine">
@@ -438,9 +362,9 @@
                         android:id="@+id/filesHeaderLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingTop="@dimen/_1sdp"
                         android:paddingBottom="@dimen/_1sdp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
@@ -522,216 +446,8 @@
                         app:layout_constraintTop_toBottomOf="@+id/filesRV" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/eventsLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/filesLayout">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/eventsHeaderLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_11sdp"
-                        android:layout_marginEnd="@dimen/_11sdp"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/eventsHeading"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_4sdp"
-                            android:layout_marginBottom="@dimen/_4sdp"
-                            android:fontFamily="@font/inter_semibold"
-                            android:text="@string/added_details"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/eventsDownUpIcon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/icon_navigate_up"
-                            app:layout_constraintBottom_toBottomOf="@+id/eventsHeading"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/eventsHeading" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <View
-                        android:id="@+id/eventsRVBottomLine"
-                        android:layout_width="0dp"
-                        android:layout_height="0.9dp"
-                        android:alpha="0.6"
-                        android:background="@color/appGrey3"
-                        android:visibility="invisible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventsHeaderLayout" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/eventsRV"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginStart="@dimen/_7sdp"
-                        android:layout_marginEnd="@dimen/_7sdp"
-                        android:nestedScrollingEnabled="false"
-                        android:orientation="vertical"
-                        android:visibility="visible"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/eventsRVBottomLine"
-                        tools:itemCount="1"
-                        tools:listitem="@layout/layout_ceibro_task_events" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>-->
-
-        <LinearLayout
-            android:id="@+id/bottomFooterLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shadowfile"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/_1sdp"
-            android:paddingTop="@dimen/_5sdp"
-            android:paddingEnd="@dimen/_1sdp"
-            android:paddingBottom="@dimen/_2sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/taskCommentBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_weight="1"
-                android:background="@color/transparent"
-                android:drawableTop="@drawable/icon_reply"
-                android:drawableTint="@color/appBlue"
-                android:fontFamily="@font/inter_medium"
-                android:maxLines="1"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:paddingStart="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:text="@string/reply_heading"
-                android:textAllCaps="false"
-                android:textColor="@color/appBlue"
-                android:textSize="@dimen/_9sdp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/taskForwardBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_weight="1"
-                android:background="@color/transparent"
-                android:drawableTop="@drawable/icon_forward"
-                android:drawableTint="@color/appBlue"
-                android:fontFamily="@font/inter_medium"
-                android:maxLines="1"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:paddingStart="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:text="@string/forward_heading"
-                android:textAllCaps="false"
-                android:textColor="@color/appBlue"
-                android:textSize="@dimen/_9sdp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/drawingOpenBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_weight="1"
-                android:background="@color/transparent"
-                android:drawableTop="@drawable/icon_new_drawing"
-                android:drawableTint="@color/appBlue"
-                android:fontFamily="@font/inter_medium"
-                android:maxLines="1"
-                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                android:paddingStart="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_3sdp"
-                android:text="Open Drawing"
-                android:textAllCaps="false"
-                android:textColor="@color/appBlue"
-                android:textSize="@dimen/_9sdp" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:layout_weight="0.9">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/doneBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/_2sdp"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_marginEnd="@dimen/_2sdp"
-                    android:layout_marginBottom="@dimen/_3sdp"
-                    android:background="@drawable/signin_button_back"
-                    android:fontFamily="@font/inter_medium"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:text="@string/done"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="14.5sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:id="@+id/doneRequirementBadge"
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:background="@drawable/button_back_red"
-                    android:elevation="7dp"
-                    android:outlineSpotShadowColor="@color/white"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_2sdp"
-            android:layout_centerVertical="true"
-            android:indeterminate="false"
-            android:max="2"
-            android:progress="0"
-            app:layout_constraintTop_toTopOf="@+id/bottomFooterLayout"
-            android:progressTint="@color/appBlue"
-        android:progressBackgroundTint="@color/grey"     />
-
-
+        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -534,6 +534,22 @@
         android:id="@+id/groupV2Fragment"
         android:name="com.zstronics.ceibro.ui.groupsv2.GroupV2Fragment"
         android:label="GroupV2Fragment" />
+    <fragment
+        android:id="@+id/taskDetailTabV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.TaskDetailTabV2Fragment"
+        android:label="TaskDetailTabV2Fragment" />
+    <fragment
+        android:id="@+id/taskDetailCommentsV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailcomments.TaskDetailCommentsV2Fragment"
+        android:label="TaskDetailCommentsV2Fragment" />
+    <fragment
+        android:id="@+id/taskDetailFilesV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.TaskDetailFilesV2Fragment"
+        android:label="TaskDetailFilesV2Fragment" />
+    <fragment
+        android:id="@+id/taskDetailParentV2Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailparent.TaskDetailParentV2Fragment"
+        android:label="TaskDetailParentV2Fragment" />
 
 
 </navigation>
