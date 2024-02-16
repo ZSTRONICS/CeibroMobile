@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="130dp"
     android:layout_height="wrap_content"
     android:background="@drawable/task_card_less_corner_outline"
     android:backgroundTint="@color/white"
     android:elevation="@dimen/_4sdp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/_1sdp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -23,14 +23,12 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_semibold"
             android:gravity="start"
-            android:paddingHorizontal="@dimen/_7sdp"
             android:paddingVertical="@dimen/_7sdp"
+            android:paddingStart="@dimen/_7sdp"
             android:text="@string/go_to_file_location"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tvShare"
@@ -45,9 +43,7 @@
             android:text="@string/share"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tvDownload"
@@ -62,9 +58,7 @@
             android:text="@string/download"
             android:textAllCaps="false"
             android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
