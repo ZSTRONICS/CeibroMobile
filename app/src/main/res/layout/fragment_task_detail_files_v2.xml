@@ -23,10 +23,11 @@
             android:id="@+id/layoutSelectionType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
             android:orientation="horizontal"
             android:weightSum="10"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -87,6 +88,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/appGrey3"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/addGroupBtn" />
 
@@ -128,9 +130,9 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_2sdp"
             android:layout_marginTop="@dimen/_4sdp"
-            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
             android:orientation="vertical"
             android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -139,7 +141,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutSelectionType"
             tools:itemCount="1"
-            tools:listitem="@layout/layout_ceibro_task_events" />
+            tools:listitem="@layout/layout_ceibro_task_detail_files" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

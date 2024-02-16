@@ -23,29 +23,26 @@
             android:id="@+id/filesImgCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_6sdp"
             android:elevation="0dp"
             android:outlineSpotShadowColor="@color/transparent"
-            app:cardBackgroundColor="@color/appGrey1"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/layoutFileDetail"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/layoutFileDetail">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/contactImage"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
+                android:id="@+id/fileImage"
+                android:layout_width="@dimen/_43sdp"
+                android:layout_height="@dimen/_43sdp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/profile_img"
-                android:visibility="invisible" />
+                android:src="@drawable/app_logo" />
 
             <TextView
                 android:id="@+id/contactInitials"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
+                android:layout_width="@dimen/_43sdp"
+                android:layout_height="@dimen/_43sdp"
                 android:fontFamily="@font/inter_semibold"
                 android:gravity="center"
                 android:maxLength="3"
@@ -53,18 +50,21 @@
                 android:paddingBottom="8dp"
                 android:text="KD"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:id="@+id/layoutFileDetail"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_7sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_5sdp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/llIcons"
+            app:layout_constraintEnd_toStartOf="@+id/fileCreatedAt"
             app:layout_constraintStart_toEndOf="@+id/filesImgCard"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -73,7 +73,6 @@
                 android:id="@+id/fileName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_8sdp"
                 android:ellipsize="end"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -81,73 +80,73 @@
                 android:gravity="start"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="my-new-cover.pdf"
+                android:text="file.pdf"
                 android:textColor="@color/black"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toStartOf="@+id/llIcons"
-                app:layout_constraintStart_toEndOf="@+id/filesImgCard"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/fileSenderName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginBottom="@dimen/_3sdp"
                 android:ellipsize="end"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="start"
                 android:maxLines="1"
-                android:text="Kristo Frans"
+                android:text="Kristo"
                 android:textColor="@color/appTextGrey"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fileName"
-                app:layout_constraintStart_toStartOf="@+id/fileName"
-                app:layout_constraintTop_toBottomOf="@+id/fileName"
-                app:layout_constraintVertical_bias="0.0" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/fileSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginBottom="@dimen/_3sdp"
                 android:ellipsize="end"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="start"
                 android:maxLines="1"
-                android:text="100kb"
-                android:textColor="@color/appTextGrey"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fileName"
-                app:layout_constraintStart_toStartOf="@+id/fileName"
-                app:layout_constraintTop_toBottomOf="@+id/fileSenderName"
-                app:layout_constraintVertical_bias="0.0" />
+                android:text="Size: "
+                android:textColor="@color/appHintGrey"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
 
+        <TextView
+            android:id="@+id/fileCreatedAt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="@string/created_on_heading"
+            android:textColor="@color/appTextGrey"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@+id/layoutFileDetail"
+            app:layout_constraintEnd_toStartOf="@+id/llIcons"
+            app:layout_constraintTop_toTopOf="@+id/layoutFileDetail" />
+
+
         <LinearLayout
             android:id="@+id/llIcons"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/layoutFileDetail"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/layoutFileDetail">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivDots"
                 android:layout_width="@dimen/_26sdp"
-                android:layout_height="@dimen/_26sdp"
+                android:layout_height="@dimen/_27sdp"
                 android:layout_gravity="center"
-                android:padding="@dimen/_2sdp"
+                android:padding="3dp"
                 android:src="@drawable/ic_menu_dots"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/fileSize"

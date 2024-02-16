@@ -26,15 +26,32 @@ class TaskDetailFilesV2Fragment :
     override val layoutResId: Int = R.layout.fragment_task_detail_files_v2
     override fun toolBarVisibility(): Boolean = false
     private val filesAdapterList = arrayOf("All", "Photos", "Links", "Files")
-    private lateinit var eventsAdapter: TaskDetailFilesAdapter
     override fun onClick(id: Int) {
         when (id) {
             R.id.tvAll -> {
                 changeTaBackgroundColor(1)
+                viewModel.allDetailFiles.value?.let {
+                    if (it.isNotEmpty()) {
+                        detailFilesAdapter.setList(it)
+                    } else {
+                        detailFilesAdapter.setList(mutableListOf())
+                    }
+                } ?: kotlin.run {
+                    detailFilesAdapter.setList(mutableListOf())
+                }
             }
 
             R.id.tvPhotos -> {
                 changeTaBackgroundColor(2)
+                viewModel.photoFiles.value?.let {
+                    if (it.isNotEmpty()) {
+                        detailFilesAdapter.setList(it)
+                    } else {
+                        detailFilesAdapter.setList(mutableListOf())
+                    }
+                } ?: kotlin.run {
+                    detailFilesAdapter.setList(mutableListOf())
+                }
 
             }
 
@@ -45,12 +62,26 @@ class TaskDetailFilesV2Fragment :
 
             R.id.tvDocuments -> {
                 changeTaBackgroundColor(4)
+                viewModel.documentFiles.value?.let {
+                    if (it.isNotEmpty()) {
+                        detailFilesAdapter.setList(it)
+                    } else {
+                        detailFilesAdapter.setList(mutableListOf())
+                    }
+                } ?: kotlin.run {
+                    detailFilesAdapter.setList(mutableListOf())
+                }
             }
         }
     }
 
+
+    private lateinit var detailFilesAdapter: TaskDetailFilesAdapter
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        
         val adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filesAdapterList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -73,12 +104,30 @@ class TaskDetailFilesV2Fragment :
                 }
             }
 
-        eventsAdapter = TaskDetailFilesAdapter(
+        detailFilesAdapter = TaskDetailFilesAdapter(
             networkConnectivityObserver,
             requireContext(),
             viewModel.downloadedDrawingV2Dao
         )
-        mViewDataBinding.filesRV.adapter = eventsAdapter
+        mViewDataBinding.filesRV.adapter = detailFilesAdapter
+
+
+        viewModel.allDetailFiles.observe(viewLifecycleOwner) {
+            changeTaBackgroundColor(1)
+            if (!it.isNullOrEmpty()) {
+                detailFilesAdapter.setList(it)
+            } else {
+                detailFilesAdapter.setList(mutableListOf())
+            }
+        }
+
+        viewModel.photoFiles.observe(viewLifecycleOwner) {
+
+        }
+
+        viewModel.documentFiles.observe(viewLifecycleOwner) {
+
+        }
 
     }
 
