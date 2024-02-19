@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/inter_medium"
-                android:gravity="center"
+                android:gravity="end"
                 android:maxLines="1"
                 android:text="Downloading: 100%"
                 android:textColor="@color/black"
@@ -176,19 +176,6 @@
                 android:padding="3dp"
                 android:src="@drawable/ic_menu_dots"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/fileSize"
-                app:layout_constraintEnd_toStartOf="@+id/clearIcon"
-                app:layout_constraintTop_toTopOf="@+id/fileName"
-                app:layout_goneMarginEnd="@dimen/_5sdp" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivDownloaded"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
-                android:layout_gravity="center"
-                android:padding="@dimen/_2sdp"
-                android:src="@drawable/icon_tick_mark"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/fileSize"
                 app:layout_constraintEnd_toStartOf="@+id/clearIcon"
                 app:layout_constraintTop_toTopOf="@+id/fileName"

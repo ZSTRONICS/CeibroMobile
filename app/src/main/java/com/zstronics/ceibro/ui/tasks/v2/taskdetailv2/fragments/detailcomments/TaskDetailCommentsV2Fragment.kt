@@ -432,6 +432,7 @@ class TaskDetailCommentsV2Fragment :
         return
 
     }
+
     private fun checkDownloadFilePermission(
         url: Triple<String, String, String>,
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,

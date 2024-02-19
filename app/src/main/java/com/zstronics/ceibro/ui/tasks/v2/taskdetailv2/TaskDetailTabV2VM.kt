@@ -245,11 +245,11 @@ class TaskDetailTabV2VM @Inject constructor(
         callBack: (taskFiles: List<LocalTaskDetailFiles>) -> Unit
     ) {
         launch {
-            val allFiles = detailFilesV2Dao.getAllFilesOfTask(taskId)
-
-            if (allFiles.isNotEmpty()) {
-                callBack.invoke(allFiles)
-            } else {
+//            val allFiles = detailFilesV2Dao.getAllFilesOfTask(taskId)
+//
+//            if (allFiles.isNotEmpty()) {
+//                callBack.invoke(allFiles)
+//            } else {
                 when (val response = remoteTask.getTaskFilesByTaskId(taskId)) {
                     is ApiResponse.Success -> {
                         val allTaskFiles = response.data.allTaskFiles
@@ -263,7 +263,7 @@ class TaskDetailTabV2VM @Inject constructor(
                         alert(response.error.message)
                     }
                 }
-            }
+//            }
         }
     }
 

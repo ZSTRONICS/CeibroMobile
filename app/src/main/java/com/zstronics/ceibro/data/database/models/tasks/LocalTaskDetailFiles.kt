@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 import com.zstronics.ceibro.data.database.TableNamesV2
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = TableNamesV2.TaskFiles, primaryKeys = ["taskId"])
+@Entity(tableName = TableNamesV2.TaskFiles, primaryKeys = ["fileId"])
 @Parcelize
 @Keep
 data class LocalTaskDetailFiles(
@@ -28,13 +28,7 @@ data class LocalTaskDetailFiles(
     @SerializedName("fileType")
     val fileType: String,
     @SerializedName("fileSize")
-    val fileSize: String,
-    @SerializedName("hasComment")
-    val hasComment: Boolean,
-    @SerializedName("moduleId")
-    val moduleId: String,
-    @SerializedName("moduleType")
-    val moduleType: String,
+    val fileSize: String?,
     @SerializedName("createdAt")
     val createdAt: String,
     @SerializedName("initiator")

@@ -51,8 +51,8 @@
             android:id="@+id/headerLine"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/appGrey0"
             android:layout_marginTop="@dimen/_6sdp"
+            android:background="@color/appGrey0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/closeBtn" />
@@ -71,6 +71,18 @@
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/localViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLine" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/detailViewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="@dimen/_10sdp"
