@@ -8,18 +8,24 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Keep
 data class LocalTaskDetailFiles(
-    @SerializedName("fileID")
-    val fileID: String,
-    @SerializedName("fileComment")
-    val fileComment: String,
-    @SerializedName("userComment")
-    val userComment: String?,
+    @SerializedName("taskId")
+    val taskId: String,
+    @SerializedName("commentId")
+    val commentId: String,
+    @SerializedName("fileId")
+    val fileId: String,
+    @SerializedName("comment")
+    val comment: String,
     @SerializedName("fileName")
     val fileName: String,
     @SerializedName("fileTag")
     val fileTag: String,
     @SerializedName("fileUrl")
     val fileUrl: String,
+    @SerializedName("fileType")
+    val fileType: String,
+    @SerializedName("fileSize")
+    val fileSize: String,
     @SerializedName("hasComment")
     val hasComment: Boolean,
     @SerializedName("moduleId")
@@ -28,8 +34,10 @@ data class LocalTaskDetailFiles(
     val moduleType: String,
     @SerializedName("createdAt")
     val createdAt: String,
-    @SerializedName("uploadedBy")
-    val uploadedBy: TaskMemberDetail,
+    @SerializedName("initiator")
+    val initiator: TaskMemberDetail,
     @SerializedName("isTaskFile")
-    val isTaskFile: Boolean = false,
+    val isTaskFile: Boolean,
+    @SerializedName("isCommentFile")
+    val isCommentFile: Boolean,
 ) : Parcelable
