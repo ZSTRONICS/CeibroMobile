@@ -36,7 +36,6 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
-import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -320,56 +319,56 @@ class TaskDetailTabV2Fragment :
 
         viewModel.taskEvents.observe(viewLifecycleOwner) { eventsList ->
             GlobalScope.launch {
-                val localTaskDetailFiles = mutableListOf<LocalTaskDetailFiles>()
-                val task = viewModel.originalTask.value
-                task?.let { myTask ->
-                    val taskFilesToList = myTask.files.map {
-                        LocalTaskDetailFiles(
-                            fileID = it.id,
-                            fileComment = it.comment,
-                            userComment = null,
-                            fileName = it.fileName,
-                            fileTag = it.fileTag,
-                            fileUrl = it.fileUrl,
-                            hasComment = it.hasComment,
-                            moduleId = it.moduleId,
-                            moduleType = it.moduleType,
-                            createdAt = it.createdAt,
-                            uploadedBy = it.uploadedBy,
-                            isTaskFile = true
-                        )
-                    }
-                    localTaskDetailFiles.addAll(taskFilesToList)
-                }
-
-                if (!eventsList.isNullOrEmpty()) {
-                    CeibroApplication.CookiesManager.taskDetailEvents = eventsList
-
-                    eventsList.map { event ->
-                        val eventFilesToList = event.commentData?.files?.map { file ->
-                            LocalTaskDetailFiles(
-                                fileID = file.id,
-                                fileComment = file.comment,
-                                userComment = event.commentData.message,
-                                fileName = file.fileName,
-                                fileTag = file.fileTag,
-                                fileUrl = file.fileUrl,
-                                hasComment = file.hasComment,
-                                moduleId = file.moduleId,
-                                moduleType = file.moduleType,
-                                createdAt = event.createdAt,
-                                uploadedBy = event.initiator,
-                                isTaskFile = false
-                            )
-                        }
-                        if (eventFilesToList != null) {
-                            localTaskDetailFiles.addAll(eventFilesToList)
-                        }
-                    }
-                }
-                withContext(Dispatchers.Main) {
-                    CeibroApplication.CookiesManager.taskDetailFiles = localTaskDetailFiles
-                }
+//                val localTaskDetailFiles = mutableListOf<LocalTaskDetailFiles>()
+//                val task = viewModel.originalTask.value
+//                task?.let { myTask ->
+//                    val taskFilesToList = myTask.files.map {
+//                        LocalTaskDetailFiles(
+//                            fileID = it.id,
+//                            fileComment = it.comment,
+//                            userComment = null,
+//                            fileName = it.fileName,
+//                            fileTag = it.fileTag,
+//                            fileUrl = it.fileUrl,
+//                            hasComment = it.hasComment,
+//                            moduleId = it.moduleId,
+//                            moduleType = it.moduleType,
+//                            createdAt = it.createdAt,
+//                            uploadedBy = it.uploadedBy,
+//                            isTaskFile = true
+//                        )
+//                    }
+//                    localTaskDetailFiles.addAll(taskFilesToList)
+//                }
+//
+//                if (!eventsList.isNullOrEmpty()) {
+//                    CeibroApplication.CookiesManager.taskDetailEvents = eventsList
+//
+//                    eventsList.map { event ->
+//                        val eventFilesToList = event.commentData?.files?.map { file ->
+//                            LocalTaskDetailFiles(
+//                                fileID = file.id,
+//                                fileComment = file.comment,
+//                                userComment = event.commentData.message,
+//                                fileName = file.fileName,
+//                                fileTag = file.fileTag,
+//                                fileUrl = file.fileUrl,
+//                                hasComment = file.hasComment,
+//                                moduleId = file.moduleId,
+//                                moduleType = file.moduleType,
+//                                createdAt = event.createdAt,
+//                                uploadedBy = event.initiator,
+//                                isTaskFile = false
+//                            )
+//                        }
+//                        if (eventFilesToList != null) {
+//                            localTaskDetailFiles.addAll(eventFilesToList)
+//                        }
+//                    }
+//                }
+//                withContext(Dispatchers.Main) {
+//                    CeibroApplication.CookiesManager.taskDetailFiles = localTaskDetailFiles
+//                }
             }
         }
 

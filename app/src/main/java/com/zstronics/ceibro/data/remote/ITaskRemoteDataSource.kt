@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.task.models.TasksResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.UpdateDraftTaskRequestNoAdvanceOptions
 import com.zstronics.ceibro.data.repos.task.models.UpdateTaskRequestNoAdvanceOptions
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTaskFilesV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
@@ -113,4 +114,5 @@ interface ITaskRemoteDataSource {
     suspend fun unHideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun getTaskById(taskId: String): ApiResponse<ForwardedToMeNewTaskV2Response>
     suspend fun syncTaskAndEvents(request: SocketReSyncUpdateV2Request): ApiResponse<AllTasksV2NewResponse.NewData>
+    suspend fun getTaskFilesByTaskId(taskId: String): ApiResponse<AllTaskFilesV2Response>
 }

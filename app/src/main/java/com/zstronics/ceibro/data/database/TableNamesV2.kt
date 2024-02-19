@@ -5,6 +5,7 @@ object TableNamesV2 {
     const val Tasks = "tasks_v2"
     const val TaskBasic = "tasks_v2_basic"
     const val TaskEvents = "tasks_v2_events"
+    const val TaskFiles = "task_v2_files"
     const val Topics = "topics_v2"
     const val Projects = "projects_v2"
     const val Floors = "floors_v2"

@@ -11,9 +11,11 @@ import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskDetailFilesV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.NotificationTaskData
@@ -28,6 +30,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -42,6 +48,7 @@ class TaskDetailTabV2VM @Inject constructor(
     val groupsV2Dao: GroupsV2Dao,
     private val inboxV2Dao: InboxV2Dao,
     val drawingPinsDao: DrawingPinsV2Dao,
+    val detailFilesV2Dao: TaskDetailFilesV2Dao,
     val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
 ) : HiltBaseViewModel<ITaskDetailTabV2.State>(), ITaskDetailTabV2.ViewModel {
 
@@ -72,7 +79,7 @@ class TaskDetailTabV2VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
 
-        launch {
+        GlobalScope.launch {
             val taskData: CeibroTaskV2? = CeibroApplication.CookiesManager.taskDataForDetails
             val parentRootState = CeibroApplication.CookiesManager.taskDetailRootState
             val parentSelectedState = CeibroApplication.CookiesManager.taskDetailSelectedSubState
@@ -105,7 +112,7 @@ class TaskDetailTabV2VM @Inject constructor(
                         CeibroApplication.CookiesManager.taskDataForDetails = task1
 
 //                        getAllEvents(task1.id)
-                        syncEvents(task1.id)
+//                        syncEvents(task1.id)
 
                     } ?: run {
                         // run API call because task not found in DB
@@ -114,13 +121,18 @@ class TaskDetailTabV2VM @Inject constructor(
                                 isTaskBeingDone.postValue(false)
                                 originalTask.postValue(task)
                                 _taskDetail.postValue(task)
-                                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification = task
+                                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification =
+                                    task
                                 CeibroApplication.CookiesManager.taskDataForDetails = task
-                                syncEvents(taskId)
+//                                syncEvents(taskId)
                             } else {
                                 loading(false, "No task details to show")
                             }
                         }
+                    }
+
+                    getTaskFiles(taskId) { files ->
+                        CeibroApplication.CookiesManager.taskDetailFiles = files
                     }
                 }
             } else {
@@ -130,7 +142,11 @@ class TaskDetailTabV2VM @Inject constructor(
                     isTaskBeingDone.postValue(isTaskBeingDone1)
                     _taskDetail.postValue(task)
                     originalTask.postValue(task)
-                    syncEvents(taskId)
+//                    syncEvents(taskId)
+                    getTaskFiles(taskId) { files ->
+                        CeibroApplication.CookiesManager.taskDetailFiles = files
+                    }
+
                 } ?: run {
                     alert("No details to display")
                 }
@@ -219,6 +235,33 @@ class TaskDetailTabV2VM @Inject constructor(
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                     callBack.invoke(false, null, emptyList())
+                }
+            }
+        }
+    }
+
+    private fun getTaskFiles(
+        taskId: String,
+        callBack: (taskFiles: List<LocalTaskDetailFiles>) -> Unit
+    ) {
+        launch {
+            val allFiles = detailFilesV2Dao.getAllFilesOfTask(taskId)
+
+            if (allFiles.isNotEmpty()) {
+                callBack.invoke(allFiles)
+            } else {
+                when (val response = remoteTask.getTaskFilesByTaskId(taskId)) {
+                    is ApiResponse.Success -> {
+                        val allTaskFiles = response.data.allTaskFiles
+                        if (allTaskFiles.isNotEmpty()) {
+                            detailFilesV2Dao.insertAllFiles(allTaskFiles)
+                        }
+                        callBack.invoke(allTaskFiles)
+                    }
+
+                    is ApiResponse.Error -> {
+                        alert(response.error.message)
+                    }
                 }
             }
         }

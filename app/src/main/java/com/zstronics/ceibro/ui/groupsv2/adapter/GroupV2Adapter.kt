@@ -16,9 +16,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.LayoutGroupBoxV2Binding
-import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import javax.inject.Inject
 
 class GroupV2Adapter @Inject constructor() :
@@ -112,6 +110,7 @@ class GroupV2Adapter @Inject constructor() :
                     itemClickListener?.invoke(selectedGroup)
                     notifyItemChanged(position)
                 }
+
                 root.setOnClickListener {
 
                     if (editFlag) {
@@ -133,18 +132,19 @@ class GroupV2Adapter @Inject constructor() :
                         notifyItemChanged(position)
                     }
 
-                    groupMenu.setOnClickListener {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            createPopupWindow(it, item) { tag, data ->
-                                if (tag == "delete") {
-                                    deleteClickListener?.invoke(data)
-                                } else if (tag == "rename") {
-                                    renameClickListener?.invoke(data)
+                }
 
-                                }
+                groupMenu.setOnClickListener {
+//                    Handler(Looper.getMainLooper()).postDelayed({
+                        createPopupWindow(it, item) { tag ->
+                            if (tag == "delete") {
+                                deleteClickListener?.invoke(item)
+                            } else if (tag == "rename") {
+                                renameClickListener?.invoke(item)
+
                             }
-                        }, 200)
-                    }
+                        }
+//                    }, 50)
                 }
             }
         }
@@ -155,7 +155,7 @@ class GroupV2Adapter @Inject constructor() :
 private fun createPopupWindow(
     v: View,
     groupResponseV2: CeibroConnectionGroupV2,
-    callback: (String, CeibroConnectionGroupV2) -> Unit
+    callback: (String) -> Unit
 ): PopupWindow {
     val context: Context = v.context
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -178,8 +178,8 @@ private fun createPopupWindow(
     delete.setOnClickListener {
         if (true) {
             popupWindow.dismiss()
-            deleteGroupDialog(it.context, groupResponseV2) { tag, data ->
-                callback.invoke(tag, data)
+            deleteGroupDialog(it.context, groupResponseV2) { tag ->
+                callback.invoke(tag)
             }
         } else {
             cannotDeleteAlertBox(it.context)
@@ -187,7 +187,7 @@ private fun createPopupWindow(
 
     }
     renameGroupBtn.setOnClickListener {
-          callback.invoke("rename", groupResponseV2)
+        callback.invoke("rename")
         popupWindow.dismiss()
     }
 
@@ -212,7 +212,7 @@ private fun createPopupWindow(
 private fun deleteGroupDialog(
     context: Context,
     groupResponseV2: CeibroConnectionGroupV2,
-    callback: (String, CeibroConnectionGroupV2) -> Unit
+    callback: (String) -> Unit
 ) {
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
@@ -231,7 +231,7 @@ private fun deleteGroupDialog(
 
     yesBtn.setOnClickListener {
         alertDialog.dismiss()
-        callback.invoke("delete", groupResponseV2)
+        callback.invoke("delete")
     }
 
     noBtn.setOnClickListener {

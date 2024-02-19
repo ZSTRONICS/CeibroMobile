@@ -18,6 +18,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroDrawingPins
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTask
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.database.models.tasks.SubTaskStatusCount
 import com.zstronics.ceibro.data.database.models.tasks.TaskMember
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
@@ -52,9 +53,10 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         CeibroDownloadDrawingV2::class,
         CeibroDrawingPins::class,
         AllCeibroConnections.CeibroConnection::class,
-        NewTaskV2Entity::class
+        NewTaskV2Entity::class,
+        LocalTaskDetailFiles::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(
@@ -129,6 +131,7 @@ abstract class CeibroDatabase : RoomDatabase() {
     abstract fun getInboxV2Dao(): InboxV2Dao
     abstract fun getDrawingPinsV2Dao(): DrawingPinsV2Dao
     abstract fun getConnectionsV2Dao(): ConnectionsV2Dao
+    abstract fun getTaskDetailFilesV2Dao(): TaskDetailFilesV2Dao
     abstract fun getConnectionGroupV2Dao(): ConnectionGroupV2Dao
     abstract fun getDraftNewTaskV2Dao(): DraftNewTaskV2Dao
 

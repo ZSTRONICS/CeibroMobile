@@ -2,6 +2,7 @@ package com.zstronics.ceibro.data.remote
 
 import com.zstronics.ceibro.data.repos.auth.signup.GenericResponse
 import com.zstronics.ceibro.data.repos.task.models.*
+import com.zstronics.ceibro.data.repos.task.models.v2.AllTaskFilesV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2NewResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.AllTasksV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
@@ -250,4 +251,9 @@ interface TaskRetroService {
         @Body request: SocketReSyncUpdateV2Request
     ): Response<AllTasksV2NewResponse.NewData>
 
+
+    @GET("v2/docs/taskFiles/{taskId}")
+    suspend fun getTaskFilesByTaskId(
+        @Path("taskId") taskId: String
+    ): Response<AllTaskFilesV2Response>
 }

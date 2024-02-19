@@ -2,9 +2,12 @@ package com.zstronics.ceibro.data.database.models.tasks
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
+import com.zstronics.ceibro.data.database.TableNamesV2
 import kotlinx.parcelize.Parcelize
 
+@Entity(tableName = TableNamesV2.TaskFiles, primaryKeys = ["taskId"])
 @Parcelize
 @Keep
 data class LocalTaskDetailFiles(
