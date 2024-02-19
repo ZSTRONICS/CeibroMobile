@@ -22,19 +22,23 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
+import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.databinding.FragmentTaskDetailFilesV2Binding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.adapter.TaskDetailFilesAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import ee.zstronics.ceibro.camera.AttachmentTypes
+import ee.zstronics.ceibro.camera.FileUtils
+import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -108,7 +112,7 @@ class TaskDetailFilesV2Fragment :
 
 
     private lateinit var detailFilesAdapter: TaskDetailFilesAdapter
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -142,9 +146,9 @@ class TaskDetailFilesV2Fragment :
             requireContext(),
             viewModel.downloadedDrawingV2Dao
         )
-        detailFilesAdapter.downloadFileCallBack {  data, tag ->
+        detailFilesAdapter.downloadFileCallBack { data, tag ->
             checkDownloadFilePermission(data, viewModel.downloadedDrawingV2Dao) {
-                MainScope().launch {
+                /*MainScope().launch {
                     if (it.trim().equals("100%", true)) {
 
                     } else if (it == "retry" || it == "failed") {
@@ -152,9 +156,53 @@ class TaskDetailFilesV2Fragment :
                     } else {
 
                     }
-                }
+                }*/
             }
         }
+        detailFilesAdapter.fileClickListener =
+            { position: Int, drawingFile ->
+                val bundle = Bundle()
+//                bundle.putParcelable("eventFile", data)
+                bundle.putParcelable("downloadedFile", drawingFile)
+
+                val file = File(drawingFile.localUri)
+                val fileUri = Uri.fromFile(file)
+                val fileDetails = getPickedFileDetail(requireContext(), fileUri)
+                if (fileDetails.attachmentType == AttachmentTypes.Pdf) {
+                    navigate(R.id.fileViewerFragment, bundle)
+                } else {
+                    openFile(file, requireContext())
+                    //    shortToastNow("File format not supported yet.")
+                }
+            }
+
+        detailFilesAdapter.imageClickListener =
+            { position: Int, item: LocalTaskDetailFiles ->
+                var newPosition = position
+                val allPhotos = viewModel.photoFiles.value
+                if (allPhotos != null) {
+                    val foundImage = allPhotos.find { it.fileId == item.fileId }
+                    if (foundImage != null) {
+                        val index = allPhotos.indexOf(foundImage)
+                        newPosition = index
+
+                        val bundle = Bundle()
+                        bundle.putParcelableArray("images", allPhotos.toTypedArray())
+                        bundle.putInt("position", newPosition)
+                        bundle.putBoolean("fromDetailView", true)
+                        navigate(R.id.imageViewerFragment, bundle)
+
+                    }
+                } else {
+                    shortToastNow("Unable to open this image")
+                }
+
+            }
+
+        detailFilesAdapter.requestPermissionCallBack {
+            checkDownloadFilePermission()
+        }
+
         mViewDataBinding.filesRV.adapter = detailFilesAdapter
 
 
@@ -486,6 +534,7 @@ class TaskDetailFilesV2Fragment :
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
     }
+
     @SuppressLint("Range")
     private fun getDownloadProgress(
         context: Context?,
@@ -542,5 +591,104 @@ class TaskDetailFilesV2Fragment :
                 delay(500)
             }
         }
+    }
+
+    private fun getPickedFileDetail(context: Context, fileUri: Uri?): PickedImages {
+        val mimeType = FileUtils.getMimeType(context, fileUri)
+        val fileName = FileUtils.getFileName(context, fileUri)
+        val fileSize = FileUtils.getFileSizeInBytes(context, fileUri)
+        val fileSizeReadAble = FileUtils.getReadableFileSize(fileSize)
+        println("mimeTypeFound: ${mimeType} - ${fileName}")
+        val attachmentType = when {
+            mimeType == null -> {
+                AttachmentTypes.Doc
+            }
+
+            mimeType == "application/pdf" -> {
+                AttachmentTypes.Pdf
+            }
+
+            mimeType == "application/x-rar-compressed" || mimeType == "application/zip" -> {
+                AttachmentTypes.Zip
+            }
+
+            mimeType.equals("text/plain", true) ||
+                    mimeType.equals("text/csv", true) ||
+                    mimeType.equals("application/rtf", true) ||
+                    mimeType.equals("application/zip", true) ||
+                    mimeType.equals("application/x-rar-compressed", true) ||
+                    mimeType.equals("application/vnd.oasis.opendocument.text", true) ||
+                    mimeType.equals("application/vnd.oasis.opendocument.spreadsheet", true) ||
+                    mimeType.equals("application/vnd.oasis.opendocument.presentation", true) ||
+                    mimeType.equals("application/vnd.android.package-archive", true) ||
+                    mimeType.equals("application/msword", true) ||
+                    mimeType.equals(
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/vnd.ms-word.document.macroEnabled.12",
+                        true
+                    ) ||
+                    mimeType.equals("application/vnd.ms-excel", true) ||
+                    mimeType.equals(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/vnd.ms-excel.sheet.macroEnabled.12",
+                        true
+                    ) ||
+                    mimeType.equals("application/vnd.ms-powerpoint", true) ||
+                    mimeType.equals(
+                        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "image/vnd.dwg",
+                        true
+                    ) ||
+                    mimeType.equals(
+                        "application/acad",
+                        true
+                    ) -> {
+                AttachmentTypes.Doc
+            }
+
+            mimeType.contains("image/vnd") -> {
+                AttachmentTypes.Doc
+            }
+
+            mimeType.startsWith("image") -> {
+                AttachmentTypes.Image
+            }
+
+            mimeType.startsWith("video") -> {
+                AttachmentTypes.Video
+            }
+
+            else -> AttachmentTypes.Doc
+        }
+        return PickedImages(
+            fileUri = fileUri,
+            attachmentType = attachmentType,
+            fileName = fileName,
+            fileSizeReadAble = fileSizeReadAble,
+            file = FileUtils.getFile(requireContext(), fileUri)
+        )
+    }
+
+    private fun openFile(file: File, context: Context) {
+
+        val intent = Intent(context, All_Document_Reader_Activity::class.java)
+        intent.putExtra("path", file.absolutePath)
+        intent.putExtra("fromAppActivity", true)
+        context.startActivity(intent)
+        return
+
     }
 }
