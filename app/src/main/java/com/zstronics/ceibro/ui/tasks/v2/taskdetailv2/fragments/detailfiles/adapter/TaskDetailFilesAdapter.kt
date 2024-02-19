@@ -21,7 +21,6 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -38,7 +37,6 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailFilesBinding
-import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.utils.DateUtils
 import ee.zstronics.ceibro.camera.cancelAndMakeToast
@@ -78,10 +76,10 @@ class TaskDetailFilesAdapter constructor(
         this.requestPermissionClickListener = requestPermissionClickListener
     }
 
-    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, data: Triple<String, String, String>, tag: String) -> Unit)? =
+    var downloadFileClickListener: ((data: Triple<String, String, String>, tag: String) -> Unit)? =
         null
 
-    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, data: Triple<String, String, String>, tag: String) -> Unit)?) {
+    fun downloadFileCallBack(itemClickListener: ((data: Triple<String, String, String>, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
 
@@ -117,10 +115,80 @@ class TaskDetailFilesAdapter constructor(
 
         fun bind(item: LocalTaskDetailFiles, position: Int) {
             val context = binding.fileName.context
+            var isPDF=false
+            var isDownloaded=false
+
+            if (item.fileType.contains("pdf")) {
+                isPDF=true
+
+                if (item.fileType.contains("pdf", true)) {
+
+                    MainScope().launch {
+                        val drawingObject =
+                            downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.fileId)
+                        drawingObject?.let {
+
+                            if (it.isDownloaded && it.localUri.isNotEmpty()) {
+                                binding.ivDownloaded.visibility = View.VISIBLE
+                                binding.tvDownloadProgress.visibility = View.GONE
+                                //    binding.ivDownloadFile.visibility = View.GONE
+                            } else if (it.downloading) {
+                                binding.ivDownloaded.visibility = View.GONE
+                                binding.tvDownloadProgress.visibility = View.VISIBLE
+                                getDownloadProgress(
+                                    binding.tvDownloadProgress.context,
+                                    it.downloadId
+                                ) { status, filepath, progress ->
+                                    MainScope().launch {
+                                        if (status.equals("downloaded", true)) {
+                                            isDownloaded=true
+                                            if (filepath.isNotEmpty()) {
+                                                //        binding.ivDownloadFile.visibility =
+                                                View.GONE
+                                                binding.tvDownloadProgress.visibility =
+                                                    View.GONE
+                                                binding.tvDownloadProgress.text = progress
+                                            } else {
+                                                downloadedDrawingV2Dao.deleteByDrawingID(item.fileId)
+                                                binding.ivDownloaded.visibility = View.GONE
+                                                //  binding.ivDownloadFile.visibility = View.VISIBLE
+                                            }
+                                        } else if (status == "retry" || status == "failed") {
+                                            isDownloaded=false
+                                            downloadedDrawingV2Dao.deleteByDrawingID(item.fileId)
+                                            binding.tvDownloadProgress.text = "0%"
+                                            binding.ivDownloaded.visibility = View.GONE
+                                            binding.tvDownloadProgress.visibility = View.GONE
+                                            //     binding.ivDownloadFile.visibility = View.VISIBLE
+                                        } else if (status == "downloading") {
+                                            isDownloaded=true
+                                            // binding.ivDownloadFile.visibility = View.GONE
+                                            binding.tvDownloadProgress.visibility = View.VISIBLE
+                                            binding.tvDownloadProgress.text = progress
+                                        }
+                                    }
+                                }
+                            } else {
+                                binding.ivDownloaded.visibility = View.GONE
+                                binding.tvDownloadProgress.visibility = View.GONE
+                                //    binding.ivDownloadFile.visibility = View.VISIBLE
+                            }
+                        } ?: kotlin.run {
+                            binding.ivDownloaded.visibility = View.GONE
+                            binding.tvDownloadProgress.visibility = View.GONE
+                            //  binding.ivDownloadFile.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+
+            }
+
+            val fileExtension = getFileUrlExtension(item.fileUrl)
 
             binding.apply {
                 fileName.text = item.fileName
-                fileSenderName.text = "${item.uploadedBy.firstName} ${item.uploadedBy.surName}"
+                fileSenderName.text = "${item.initiator.firstName} ${item.initiator.surName}"
                 fileSize.text = "Size: unknown"
                 fileCreatedAt.text =
                     DateUtils.formatCreationUTCTimeToCustomForDetailFiles(
@@ -194,30 +262,8 @@ class TaskDetailFilesAdapter constructor(
             }
 
             binding.root.setOnClickListener { view ->
-//                MainScope().launch {
-//                    val drawingObject =
-//                        downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(item.fileID)
-//                    drawingObject?.let {
-//
-//                        val file = File(it.localUri)
-//
-//                        if (file.exists()) {
-//                            fileClickListener?.invoke(view, absoluteAdapterPosition, item, it)
-//                        } else {
-//                            cancelAndMakeToast(
-//                                view.context,
-//                                "File not downloaded",
-//                                Toast.LENGTH_SHORT
-//                            )
-//                        }
-//                    } ?: kotlin.run {
-//                        cancelAndMakeToast(
-//                            view.context,
-//                            "File not downloaded",
-//                            Toast.LENGTH_SHORT
-//                        )
-//                    }
-//                }
+
+
                 cancelAndMakeToast(
                     view.context,
                     "Coming soon",
@@ -284,65 +330,62 @@ class TaskDetailFilesAdapter constructor(
                 }*/
             }
 
-            /* binding.ivDownloadFile.setOnClickListener {
-                 if (item.fileUrl.isEmpty()) {
-                     cancelAndMakeToast(
-                         it.context,
-                         "File address is invalid or file is corrupted",
-                         Toast.LENGTH_SHORT
-                     )
-                 } else {
-                     if (networkConnectivityObserver.isNetworkAvailable()) {
-
-                         if (checkDownloadFilePermission(
-                                 context
-                             )
-                         ) {
-
-                             it.visibility = View.GONE
-                             binding.tvDownloadProgress.visibility = View.VISIBLE
-                             downloadFileClickListener?.invoke(
-                                 binding.tvDownloadProgress,
-                                 binding.ivDownloadFile,
-                                 binding.ivDownloaded,
-                                 Triple(item.id, item.fileName, item.fileUrl),
-                                 ""
-                             )
-
-                             checkDownloadStatus(
-                                 item.id,
-                                 binding.ivDownloaded,
-                                 binding.tvDownloadProgress,
-                                 binding.ivDownloadFile,
-                                 position
-                             ) {
-
-                                 notifyItemChanged(position)
-                             }
-                         } else {
-
-                             requestPermissionClickListener?.invoke()
-                         }
-
-                     } else {
-                         cancelAndMakeToast(
-                             it.context,
-                             "No Internet Available.",
-                             Toast.LENGTH_SHORT
-                         )
-                     }
-                 }
-             }
-
-*/
-
 
             binding.ivDots.setOnClickListener {
+
+
                 Handler(Looper.getMainLooper()).postDelayed({
-                    createPopupWindow(it, null) { tag, data ->
+
+                    if (isPDF)
+                    createPopupWindow(isPDF,isDownloaded, it, null) { tag ->
                         if (tag == "delete") {
 
                         } else if (tag == "rename") {
+
+                        } else {
+
+                            if (item.fileUrl.isEmpty()) {
+                                cancelAndMakeToast(
+                                    it.context,
+                                    "File address is invalid or file is corrupted",
+                                    Toast.LENGTH_SHORT
+                                )
+                            } else {
+                                if (networkConnectivityObserver.isNetworkAvailable()) {
+
+                                    if (checkDownloadFilePermission(
+                                            context
+                                        )
+                                    ) {
+
+                                        it.visibility = View.GONE
+                                        binding.tvDownloadProgress.visibility = View.VISIBLE
+                                        downloadFileClickListener?.invoke(
+                                            Triple(item.fileId, item.fileName, item.fileUrl),
+                                            ""
+                                        )
+
+                                        checkDownloadStatus(
+                                            item.fileId,
+                                            binding.tvDownloadProgress,
+                                            position
+                                        ) {
+
+                                            notifyItemChanged(position)
+                                        }
+                                    } else {
+
+                                        requestPermissionClickListener?.invoke()
+                                    }
+
+                                } else {
+                                    cancelAndMakeToast(
+                                        it.context,
+                                        "No Internet Available.",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
+                            }
 
                         }
                     }
@@ -488,9 +531,7 @@ class TaskDetailFilesAdapter constructor(
 
     fun checkDownloadStatus(
         id: String,
-        ivDownloaded: AppCompatImageView,
         tvDownloadProgress: TextView,
-        ivDownloadFile: AppCompatImageView,
         position: Int,
         callBack: (Int) -> Unit
     ) {
@@ -501,13 +542,12 @@ class TaskDetailFilesAdapter constructor(
             drawingObject?.let {
 
                 if (it.isDownloaded && it.localUri.isNotEmpty()) {
-                    ivDownloaded.visibility = View.VISIBLE
                     tvDownloadProgress.visibility = View.GONE
-                    ivDownloadFile.visibility = View.GONE
+
                 } else if (it.downloading) {
-                    ivDownloaded.visibility = View.GONE
+
                     tvDownloadProgress.visibility = View.VISIBLE
-                    ivDownloadFile.visibility = View.GONE
+
                     getDownloadProgress(
                         tvDownloadProgress.context,
                         it.downloadId
@@ -516,51 +556,42 @@ class TaskDetailFilesAdapter constructor(
                             if (status.equals("downloaded", true)) {
                                 callBack.invoke(position)
                                 if (filepath.isNotEmpty()) {
-                                    ivDownloadFile.visibility =
-                                        View.GONE
                                     tvDownloadProgress.visibility =
                                         View.GONE
-                                    ivDownloaded.visibility =
-                                        View.VISIBLE
                                     tvDownloadProgress.text = progress
                                 } else {
                                     downloadedDrawingV2Dao.deleteByDrawingID(id)
-                                    ivDownloaded.visibility = View.GONE
                                     tvDownloadProgress.visibility =
-                                        View.GONE
-                                    ivDownloadFile.visibility =
                                         View.VISIBLE
                                 }
                             } else if (status == "retry" || status == "failed") {
                                 downloadedDrawingV2Dao.deleteByDrawingID(id)
                                 tvDownloadProgress.text = "0 %"
-                                ivDownloaded.visibility = View.GONE
                                 tvDownloadProgress.visibility = View.GONE
-                                ivDownloadFile.visibility = View.VISIBLE
+
                             } else if (status == "downloading") {
-                                ivDownloadFile.visibility = View.GONE
                                 tvDownloadProgress.visibility = View.VISIBLE
                                 tvDownloadProgress.text = progress
                             }
                         }
                     }
                 } else {
-                    ivDownloaded.visibility = View.GONE
                     tvDownloadProgress.visibility = View.GONE
-                    ivDownloadFile.visibility = View.VISIBLE
                 }
             } ?: kotlin.run {
-                ivDownloaded.visibility = View.GONE
+
                 tvDownloadProgress.visibility = View.GONE
-                ivDownloadFile.visibility = View.VISIBLE
+
             }
         }
     }
 
     private fun createPopupWindow(
+        isPDF: Boolean = false,
+        isdownloaded: Boolean = false,
         v: View,
         groupResponseV2: CeibroConnectionGroupV2?,
-        callback: (String, CeibroConnectionGroupV2) -> Unit
+        callback: (String) -> Unit
     ): PopupWindow {
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -580,7 +611,14 @@ class TaskDetailFilesAdapter constructor(
         val tvFileLocation: TextView = view.findViewById(R.id.tvFileLocation)
         val tvShare: TextView = view.findViewById(R.id.tvShare)
         val tvDownload: TextView = view.findViewById(R.id.tvShare)
+        tvDownload.setOnClickListener {
 
+            callback.invoke("download")
+        }
+
+        if (isdownloaded) {
+            tvDownload.visibility = View.VISIBLE
+        }
 
         val values = IntArray(2)
         v.getLocationInWindow(values)

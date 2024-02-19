@@ -64,7 +64,7 @@
             android:layout_marginEnd="@dimen/_5sdp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fileCreatedAt"
+            app:layout_constraintEnd_toStartOf="@+id/layoutCreationDate"
             app:layout_constraintStart_toEndOf="@+id/filesImgCard"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -115,21 +115,48 @@
 
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/fileCreatedAt"
+        <LinearLayout
+            android:id="@+id/layoutCreationDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/inter_regular"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text="@string/created_on_heading"
-            android:textColor="@color/appTextGrey"
-            android:textSize="11sp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/layoutFileDetail"
             app:layout_constraintEnd_toStartOf="@+id/llIcons"
-            app:layout_constraintTop_toTopOf="@+id/layoutFileDetail" />
+            app:layout_constraintTop_toTopOf="@+id/layoutFileDetail">
+
+            <TextView
+                android:id="@+id/fileCreatedAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="@string/created_on_heading"
+                android:textColor="@color/appTextGrey"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="@+id/layoutFileDetail"
+                app:layout_constraintEnd_toStartOf="@+id/llIcons"
+                app:layout_constraintTop_toTopOf="@+id/layoutFileDetail" />
+
+            <TextView
+                android:id="@+id/tvDownloadProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="Downloading: 100%"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/fileSize"
+                app:layout_constraintEnd_toStartOf="@+id/clearIcon"
+                app:layout_constraintTop_toTopOf="@+id/fileName" />
+
+
+        </LinearLayout>
 
 
         <LinearLayout
@@ -167,20 +194,6 @@
                 app:layout_constraintTop_toTopOf="@+id/fileName"
                 app:layout_goneMarginEnd="@dimen/_5sdp" />
 
-            <TextView
-                android:id="@+id/tvDownloadProgress"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:maxLines="1"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/fileSize"
-                app:layout_constraintEnd_toStartOf="@+id/clearIcon"
-                app:layout_constraintTop_toTopOf="@+id/fileName" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
