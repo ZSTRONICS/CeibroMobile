@@ -168,7 +168,7 @@
 
     <style name="MyTabLayout" parent="Widget.Design.TabLayout">
         <!-- Customize TabLayout attributes here -->
-        <item name="tabBackground">@color/white</item>
+        <item name="tabBackground">@color/appGrey1</item>
         <item name="tabIndicatorColor">@color/black_01</item>
         <item name="tabTextColor">@color/black_01</item>
         <item name="tabTextAppearance">@style/MyTabTextAppearance</item>
