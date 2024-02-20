@@ -57,11 +57,18 @@ class TaskDetailFilesV2VM @Inject constructor(
 
         launch {
             val taskData: CeibroTaskV2? = CeibroApplication.CookiesManager.taskDataForDetails
+            val taskDataFromNotification: CeibroTaskV2? =
+                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification
             val allFiles: List<LocalTaskDetailFiles>? = CeibroApplication.CookiesManager.taskDetailFiles
 
             taskData?.let { task ->
                 originalTask.postValue(task)
                 _taskDetail.postValue(task)
+            } ?: kotlin.run {
+                taskDataFromNotification?.let { taskNotification ->
+                    originalTask.postValue(taskNotification)
+                    _taskDetail.postValue(taskNotification)
+                }
             }
 
             allFiles?.let { files ->
