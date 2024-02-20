@@ -342,8 +342,6 @@ class TaskDetailFilesAdapter constructor(
                                             context
                                         )
                                     ) {
-
-                                        binding.tvDownloadProgress.visibility = View.VISIBLE
                                         downloadFileClickListener?.invoke(
                                             Triple(item.fileId, item.fileName, item.fileUrl),
                                             ""
@@ -522,6 +520,7 @@ class TaskDetailFilesAdapter constructor(
         callBack: (String) -> Unit
     ) {
         MainScope().launch {
+            tvDownloadProgress.visibility = View.VISIBLE
             delay(500)
             val drawingObject =
                 downloadedDrawingV2Dao.getDownloadedDrawingByDrawingId(id)
@@ -532,7 +531,7 @@ class TaskDetailFilesAdapter constructor(
 
                 } else if (it.downloading) {
 
-                    tvDownloadProgress.visibility = View.VISIBLE
+
 
                     getDownloadProgress(
                         tvDownloadProgress.context,
