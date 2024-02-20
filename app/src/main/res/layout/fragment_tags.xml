@@ -74,6 +74,7 @@
             android:layout_height="0dp"
             android:padding="@dimen/_35sdp"
             android:src="@drawable/ceibro_logo_dim_background"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout5"
             app:layout_constraintEnd_toEndOf="@+id/constraintLayout5"
             app:layout_constraintStart_toStartOf="parent"

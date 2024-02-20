@@ -44,7 +44,6 @@ class TagsFragment :
 
         val list = mutableListOf("tag1", "tag2", "tag3", "tag4", "tag5")
 
-
         sectionList.add(
             0,
             TagsDrawingSectionHeader(
@@ -61,6 +60,8 @@ class TagsFragment :
         )
 
         tagsSectionRecyclerView = TagsSectionRecyclerView(requireContext(), sectionList)
+        mViewDataBinding.alltagsRV.adapter = tagsSectionRecyclerView
+
 
         viewModel.myGroupData.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -76,7 +77,6 @@ class TagsFragment :
                 tagsSectionRecyclerView.notifyDataSetChanged()
             }
         }
-        mViewDataBinding.alltagsRV.adapter = tagsSectionRecyclerView
 
 
     }
