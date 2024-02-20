@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
@@ -36,7 +37,6 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATIO
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
-import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -52,7 +52,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -303,6 +302,26 @@ class TaskDetailTabV2Fragment :
         list.add(getString(R.string.files_heading))
         val adapter = TaskDetailV2TabLayout(requireActivity())
         mViewDataBinding.viewPager.adapter = adapter
+
+        mViewDataBinding.viewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> {
+                        mViewDataBinding.bottomFooterLayout.visibility = View.VISIBLE
+                    }
+
+                    1 -> {
+                        mViewDataBinding.bottomFooterLayout.visibility = View.GONE
+                    }
+
+                    2 -> {
+                        mViewDataBinding.bottomFooterLayout.visibility = View.GONE
+                    }
+                }
+            }
+        })
+
 
 
         TabLayoutMediator(mViewDataBinding.tabLayout, mViewDataBinding.viewPager) { tab, position ->
