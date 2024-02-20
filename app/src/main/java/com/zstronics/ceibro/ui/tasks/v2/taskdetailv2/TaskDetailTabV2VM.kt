@@ -132,7 +132,7 @@ class TaskDetailTabV2VM @Inject constructor(
                     }
 
                     getTaskFiles(taskId) { files ->
-                        CeibroApplication.CookiesManager.taskDetailFiles = files
+                        CeibroApplication.CookiesManager.taskDetailFiles.postValue(files)
                     }
                 }
             } else {
@@ -144,7 +144,7 @@ class TaskDetailTabV2VM @Inject constructor(
                     originalTask.postValue(task)
 //                    syncEvents(taskId)
                     getTaskFiles(taskId) { files ->
-                        CeibroApplication.CookiesManager.taskDetailFiles = files
+                        CeibroApplication.CookiesManager.taskDetailFiles.postValue(files)
                     }
 
                 } ?: run {

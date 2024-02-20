@@ -24,12 +24,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
+import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.databinding.FragmentTaskDetailFilesV2Binding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.adapter.TaskDetailFilesAdapter
@@ -221,6 +223,45 @@ class TaskDetailFilesV2Fragment :
 
         viewModel.documentFiles.observe(viewLifecycleOwner) {
 
+        }
+
+        CeibroApplication.CookiesManager.taskDetailFiles.observe(viewLifecycleOwner) { files ->
+            if (!files.isNullOrEmpty()) {
+                val sortedFiles = files.sortedByDescending { it.createdAt }.toMutableList()
+
+                viewModel.originalAllDetailFiles.postValue(sortedFiles)
+                viewModel._allDetailFiles.postValue(sortedFiles)
+
+                val allPhotosList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
+                val allFilesList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
+
+                for (item in sortedFiles) {
+                    when (item.fileTag) {
+                        AttachmentTags.Image.tagValue -> {
+                            allPhotosList.add(item)
+                        }
+
+                        AttachmentTags.Drawing.tagValue -> {
+                            allPhotosList.add(item)
+                        }
+
+                        AttachmentTags.ImageWithComment.tagValue -> {
+                            allPhotosList.add(item)
+                        }
+
+                        AttachmentTags.File.tagValue -> {
+                            allFilesList.add(item)
+                        }
+                    }
+                }
+
+                viewModel.originalPhotoFiles.postValue(allPhotosList.toMutableList())
+                viewModel._photoFiles.postValue(allPhotosList.toMutableList())
+
+                viewModel.originalDocumentFiles.postValue(allFilesList.toMutableList())
+                viewModel._documentFiles.postValue(allFilesList.toMutableList())
+
+            }
         }
 
     }

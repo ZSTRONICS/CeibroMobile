@@ -92,7 +92,7 @@ open class CeibroApplication : Application() {
         var taskDataForDetails: CeibroTaskV2? = null
         var taskDataForDetailsFromNotification: CeibroTaskV2? = null
         var taskDetailEvents: List<Events>? = null
-        var taskDetailFiles: List<LocalTaskDetailFiles>? = null
+        var taskDetailFiles: MutableLiveData<List<LocalTaskDetailFiles>?> = MutableLiveData(null)
         var taskDetailRootState: String? = null
         var taskDetailSelectedSubState: String? = null
         var taskIdInDetails: String = ""
