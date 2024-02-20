@@ -20,6 +20,9 @@ interface INewTaskV2 {
         var projectText: MutableLiveData<String>
         var description: MutableLiveData<String>
         var projectCannotChangeToastShown: Boolean
+        var confirmerText: MutableLiveData<String>
+        var viewerText: MutableLiveData<String>
+        var tagText: MutableLiveData<String>
     }
 
     interface ViewModel : IBase.ViewModel<State> {

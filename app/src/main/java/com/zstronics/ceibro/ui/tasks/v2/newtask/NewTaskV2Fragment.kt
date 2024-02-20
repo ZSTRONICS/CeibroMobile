@@ -32,6 +32,8 @@ import com.zstronics.ceibro.ui.locationv2.usage.AddLocationTask
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.TagsChipsAdapter
+import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeChipsAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.EditCommentDialogSheet
 import com.zstronics.ceibro.utils.DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,6 +67,9 @@ class NewTaskV2Fragment :
     private val ASSIGNEE_REQUEST_CODE = 12
     private val PROJECT_REQUEST_CODE = 13
     private val DRAWING_REQUEST_CODE = 14
+    private val CONFIRMER_REQUEST_CODE = 15
+    private val VIEWER_REQUEST_CODE = 16
+    private val TAG_REQUEST_CODE = 17
     private val PICK_FILE_REQUEST = 1
     private var isExpanded = true
     private val expandDuration = 100L
@@ -109,6 +114,32 @@ class NewTaskV2Fragment :
                 PROJECT_REQUEST_CODE
             )
 
+
+            R.id.newConfirmerTopicText -> {
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewState.selectedContacts.value?.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
+                navigateForResult(R.id.assigneeFragment, CONFIRMER_REQUEST_CODE, bundle)
+            }
+
+            R.id.newViewerTopicText -> {
+                val bundle = Bundle()
+                bundle.putParcelableArray(
+                    "contacts",
+                    viewState.selectedContacts.value?.toTypedArray()
+                )
+                bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
+                navigateForResult(R.id.assigneeFragment, VIEWER_REQUEST_CODE, bundle)
+            }
+
+            R.id.newTagTopicText -> {
+                navigateForResult(R.id.tagsFragment, TAG_REQUEST_CODE)
+            }
+
+
             R.id.newTaskAssignToText -> {
                 val bundle = Bundle()
                 bundle.putParcelableArray(
@@ -136,6 +167,18 @@ class NewTaskV2Fragment :
             R.id.newTaskTopicClearBtn -> {
                 viewState.taskTitle.value = ""
                 viewState.selectedTopic = MutableLiveData()
+            }
+
+            R.id.confirmerEndLayoutClearBtn -> {
+                viewState.confirmerText.value = ""
+            }
+
+            R.id.viewerEndLayoutClearBtn -> {
+                viewState.viewerText.value = ""
+            }
+
+            R.id.tagEndLayoutClearBtn -> {
+                viewState.tagText.value = ""
             }
 
             R.id.newTaskAssignToClearBtn -> {
@@ -255,8 +298,15 @@ class NewTaskV2Fragment :
     @Inject
     lateinit var filesAdapter: CeibroFilesRVAdapter
 
+
+    @Inject
+    lateinit var chipAdapter: TagsChipsAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        mViewDataBinding.selectedTagsRV.adapter = chipAdapter
 
         mViewDataBinding.newTaskParentScroll.isSmoothScrollingEnabled = true
         mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
@@ -268,6 +318,29 @@ class NewTaskV2Fragment :
                 mViewDataBinding.newTaskTopicClearBtn.visibility = View.GONE
             } else {
                 mViewDataBinding.newTaskTopicClearBtn.visibility = View.VISIBLE
+            }
+        }
+        viewState.confirmerText.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.confirmerEndLayoutClearBtn.visibility = View.GONE
+            } else {
+                mViewDataBinding.confirmerEndLayoutClearBtn.visibility = View.VISIBLE
+            }
+        }
+
+        viewState.viewerText.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.viewerEndLayoutClearBtn.visibility = View.GONE
+            } else {
+                mViewDataBinding.viewerEndLayoutClearBtn.visibility = View.VISIBLE
+            }
+        }
+
+        viewState.tagText.observe(viewLifecycleOwner) {
+            if (it == "") {
+                mViewDataBinding.selectedTagsRV.visibility = View.GONE
+            } else {
+                mViewDataBinding.selectedTagsRV.visibility = View.VISIBLE
             }
         }
         viewState.assignToText.observe(viewLifecycleOwner) {
@@ -867,6 +940,96 @@ class NewTaskV2Fragment :
                         viewState.selectedContacts.value = selectedContactList
                     }
                     viewState.assignToText.value = assigneeMembers
+                }
+
+                VIEWER_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        // viewState.selfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewState.selectedContacts.value = selectedContactList
+                    }
+                    viewState.viewerText.value = assigneeMembers
+                }
+
+                TAG_REQUEST_CODE -> {
+
+                }
+
+                CONFIRMER_REQUEST_CODE -> {
+
+                    val selfAssigned = result.data?.getBoolean("self-assign")
+                    val selectedContact = result.data?.getParcelableArray("contacts")
+                    val selectedContactList =
+                        selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
+                            ?.toMutableList()
+                    val selectedItem = selectedContactList?.find { item1 ->
+                        item1.id == viewModel.user?.id
+                    }
+                    if (selectedItem != null) {
+                        val index = selectedContactList.indexOf(selectedItem)
+                        selectedContactList.removeAt(index)
+                    }
+
+                    var assigneeMembers = ""
+
+                    if (selfAssigned != null) {
+                        if (selfAssigned) {
+                            assigneeMembers += if (selectedContactList.isNullOrEmpty()) {
+                                "Me"
+                            } else {
+                                "Me; "
+                            }
+                        }
+                        //  viewState.selfAssigned.value = selfAssigned
+                    }
+
+                    var index = 0
+                    if (selectedContactList != null) {
+                        for (item in selectedContactList) {
+                            assigneeMembers += if (index == selectedContactList.size - 1) {
+                                "${item.contactFirstName} ${item.contactSurName}"
+                            } else {
+                                "${item.contactFirstName} ${item.contactSurName}; "
+                            }
+                            index++
+                        }
+                        viewState.selectedContacts.value = selectedContactList
+                    }
+                    viewState.confirmerText.value = assigneeMembers
                 }
 
                 PROJECT_REQUEST_CODE -> {

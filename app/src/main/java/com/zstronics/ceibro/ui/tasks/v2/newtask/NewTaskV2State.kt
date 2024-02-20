@@ -7,7 +7,8 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import javax.inject.Inject
 
-class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
+class NewTaskV2State @Inject constructor() :
+    BaseState(), INewTaskV2.State {
     override var dueDate: MutableLiveData<String> = MutableLiveData("")
     override val isDoneReqAllowed: MutableLiveData<Boolean> = MutableLiveData(false)
     override val isAttachLayoutOpen: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -19,5 +20,8 @@ class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
     override var assignToText: MutableLiveData<String> = MutableLiveData("")
     override var projectText: MutableLiveData<String> = MutableLiveData("")
     override var description: MutableLiveData<String> = MutableLiveData("")
+    override var confirmerText: MutableLiveData<String> = MutableLiveData("")
+    override var viewerText: MutableLiveData<String> = MutableLiveData("")
+    override var tagText: MutableLiveData<String> = MutableLiveData("")
     override var projectCannotChangeToastShown: Boolean = false
 }

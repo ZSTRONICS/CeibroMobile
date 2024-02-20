@@ -79,6 +79,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/newTaskHeader">
 
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -97,11 +98,11 @@
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
-                    app:endIconMode="custom"
-                    app:hintTextColor="@color/appGrey3"
                     app:counterEnabled="true"
                     app:counterMaxLength="100"
                     app:counterTextColor="@color/appGrey3"
+                    app:endIconMode="custom"
+                    app:hintTextColor="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -116,8 +117,8 @@
                         android:fontFamily="@font/inter_regular"
                         android:hint="@string/topic_required"
                         android:inputType="text|textCapSentences"
-                        android:maxLines="1"
                         android:maxLength="100"
+                        android:maxLines="1"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
                         android:paddingEnd="1dp"
@@ -234,6 +235,156 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/newTaskConfirmerField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_14sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_14sdp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:counterTextColor="@color/appGrey3"
+                    app:endIconMode="custom"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskAssignToField">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/newConfirmerTopicText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_bottom_line"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:hint="Confirmer"
+                        android:inputType="text|textCapSentences"
+                        android:maxLength="100"
+                        android:maxLines="1"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="1dp"
+                        android:text="@={viewState.confirmerText}"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/confirmerEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskConfirmerField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskConfirmerField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskConfirmerField"
+                    app:layout_constraintVertical_bias="0.32">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/confirmerEndLayoutClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/newTaskViewerField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_14sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_14sdp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:counterTextColor="@color/appGrey3"
+                    app:endIconMode="custom"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskConfirmerField">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/newViewerTopicText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_bottom_line"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:hint="Viewer"
+                        android:inputType="text|textCapSentences"
+                        android:maxLength="100"
+                        android:maxLines="1"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="1dp"
+                        android:text="@={viewState.viewerText}"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/viewerEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskViewerField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskViewerField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskViewerField"
+                    app:layout_constraintVertical_bias="0.32">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/viewerEndLayoutClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/newTaskProjectField"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="0dp"
@@ -245,9 +396,9 @@
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
                     app:hintTextColor="@color/appGrey3"
-                    app:layout_constraintEnd_toEndOf="@+id/newTaskAssignToField"
-                    app:layout_constraintStart_toStartOf="@+id/newTaskAssignToField"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskAssignToField">
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskViewerField"
+                    app:layout_constraintStart_toStartOf="@+id/newTaskViewerField"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskViewerField">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/newTaskProjectText"
@@ -387,12 +538,12 @@
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
-                    app:endIconDrawable="@drawable/icon_close_round_grey"
-                    app:endIconMode="clear_text"
-                    app:hintTextColor="@color/appGrey3"
                     app:counterEnabled="true"
                     app:counterMaxLength="1500"
                     app:counterTextColor="@color/appGrey3"
+                    app:endIconDrawable="@drawable/icon_close_round_grey"
+                    app:endIconMode="clear_text"
+                    app:hintTextColor="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDueDateField"
                     app:layout_constraintTop_toBottomOf="@+id/newTaskDueDateField">
@@ -401,12 +552,12 @@
                         android:id="@+id/newTaskDescriptionText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
                         android:background="@drawable/input_field_bottom_line"
+                        android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
                         android:inputType="none"
-                        android:maxLines="6"
                         android:maxLength="1500"
+                        android:maxLines="6"
                         android:overScrollMode="always"
                         android:paddingStart="1dp"
                         android:scrollbarStyle="insideInset"
@@ -415,6 +566,100 @@
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/newTaskTagField"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_14sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginEnd="@dimen/_14sdp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/appTextGrey"
+                    app:boxStrokeColor="@color/transparent"
+                    app:counterTextColor="@color/appGrey3"
+                    app:endIconMode="custom"
+                    app:hintTextColor="@color/appGrey3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionField">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/newTagTopicText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/input_field_bottom_line"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:fontFamily="@font/inter_regular"
+                        android:hint="Tag"
+                        android:inputType="text|textCapSentences"
+                        android:maxLength="100"
+                        android:maxLines="1"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:paddingStart="1dp"
+                        android:paddingEnd="1dp"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/tagEndLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="@+id/newTaskTagField"
+                    app:layout_constraintEnd_toEndOf="@+id/newTaskTagField"
+                    app:layout_constraintTop_toTopOf="@+id/newTaskTagField"
+                    app:layout_constraintVertical_bias="0.32">
+
+                    <ImageView
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:padding="@dimen/_2sdp"
+                        android:src="@drawable/icon_drop_next"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+
+                    <ImageView
+                        android:id="@+id/tagEndLayoutClearBtn"
+                        android:layout_width="29dp"
+                        android:layout_height="29dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:padding="@dimen/_3sdp"
+                        android:src="@drawable/icon_close_round_grey"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
+                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
+                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
+                        app:layout_constraintVertical_bias="0.6" />
+                </LinearLayout>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/selectedTagsRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:visibility="gone"
+                    android:paddingBottom="@dimen/_1sdp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newTaskTagField"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/layout_item_assignee_chip" />
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/onlyImagesRV"
@@ -426,9 +671,9 @@
                     android:orientation="horizontal"
                     android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionField"
+                    app:layout_constraintEnd_toEndOf="@+id/selectedTagsRV"
+                    app:layout_constraintStart_toStartOf="@+id/selectedTagsRV"
+                    app:layout_constraintTop_toBottomOf="@+id/selectedTagsRV"
                     tools:itemCount="3"
                     tools:listitem="@layout/layout_ceibro_only_image" />
 
@@ -475,8 +720,8 @@
                     android:id="@+id/locationLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:layout_marginTop="@dimen/_9sdp"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
                     app:layout_constraintStart_toStartOf="@+id/newTaskDescriptionField"
                     app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentBottomLine">
@@ -543,9 +788,9 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:background="@color/appGrey3"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/drawingImg" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -644,8 +889,8 @@
                     android:gravity="center|start"
                     android:padding="1dp"
                     android:text="@string/done_requirements_heading"
-                    android:textSize="14.5sp"
                     android:textColor="@color/black"
+                    android:textSize="14.5sp"
                     android:theme="@style/SwitchThemeOverlay"
                     android:thumb="@drawable/switch_ios_thumb"
                     app:layout_constraintEnd_toEndOf="@+id/newTaskDescriptionField"
@@ -904,8 +1149,8 @@
                 android:background="@color/transparent"
                 android:drawableTop="@drawable/icon_location"
                 android:drawableTint="@drawable/bottom_btn_color"
-                android:fontFamily="@font/inter_medium"
                 android:enabled="false"
+                android:fontFamily="@font/inter_medium"
                 android:maxLines="1"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_3sdp"
