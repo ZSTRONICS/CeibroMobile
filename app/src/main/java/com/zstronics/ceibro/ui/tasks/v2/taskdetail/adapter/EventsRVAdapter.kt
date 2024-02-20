@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
@@ -104,30 +105,36 @@ class EventsRVAdapter constructor(
             binding.viewLessBtn.visibility = View.GONE
 
 
-            binding.eventBy.text =
+            val creatorName =
                 if (item.initiator.firstName.isEmpty() && item.initiator.surName.isEmpty()) {
                     "${item.initiator.phoneNumber}"
                 } else {
                     "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
                 }
+            binding.eventBy.text = creatorName
             binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustom(
                 utcTime = item.createdAt,
                 inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
             )
 
+            var isCreator = false
             if (item.initiator.id == loggedInUserId) {
-                binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+//                binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+                isCreator = true
             } else {
-                binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+//                binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+                isCreator = false
             }
 
             when (item.eventType) {
                 TaskDetailEvents.ForwardTask.eventValue -> {
-                    binding.onlyImagesRV.visibility = View.GONE
-                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.myMsgLayout.visibility = View.GONE
 
-                    binding.eventImg.setImageResource(R.drawable.icon_forward)
-                    binding.eventImg.visibility = View.VISIBLE
+//                    binding.onlyImagesRV.visibility = View.GONE
+//                    binding.imagesWithCommentRV.visibility = View.GONE
+//
+//                    binding.eventImg.setImageResource(R.drawable.icon_forward)
+//                    binding.eventImg.visibility = View.VISIBLE
 
                     var forwardedToUsers = ""
                     if (!item.eventData.isNullOrEmpty()) {
@@ -164,16 +171,30 @@ class EventsRVAdapter constructor(
                         binding.invitedNumbers.visibility = View.VISIBLE
                     }
 
-
-                    if (item.commentData != null) {
-                        if (!item.commentData.message.isNullOrEmpty()) {
-                            binding.onlyComment.text = item.commentData.message.trim()
-                            binding.onlyComment.visibility = View.VISIBLE
+                    var eventText = "${creatorName.toCamelCase()}"
+                    if (forwardedToUsers.isNotEmpty()) {
+                        eventText = "$eventText forwarded task to: $forwardedToUsers"
+                    }
+                    if (invitedUsers.isNotEmpty()) {
+                        if (forwardedToUsers.isNotEmpty()) {
+                            eventText = "$eventText and invited to: $invitedUsers"
                         } else {
-                            binding.onlyComment.text = ""
-                            binding.onlyComment.visibility = View.GONE
+                            eventText = "$eventText invited to: $invitedUsers"
                         }
                     }
+                    binding.otherEventText.text = eventText
+                    binding.otherEventLayout.visibility = View.VISIBLE
+
+                    binding.onlyComment.text = ""
+//                    if (item.commentData != null) {
+//                        if (!item.commentData.message.isNullOrEmpty()) {
+//                            binding.onlyComment.text = item.commentData.message.trim()
+//                            binding.onlyComment.visibility = View.VISIBLE
+//                        } else {
+//                            binding.onlyComment.text = ""
+//                            binding.onlyComment.visibility = View.GONE
+//                        }
+//                    }
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (binding.onlyComment.lineCount > 6) {
                             binding.viewMoreLessLayout.visibility = View.VISIBLE
@@ -189,11 +210,14 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.InvitedUser.eventValue -> {
-                    binding.onlyImagesRV.visibility = View.GONE
-                    binding.imagesWithCommentRV.visibility = View.GONE
+                    binding.myMsgLayout.visibility = View.GONE
 
-                    binding.eventImg.setImageResource(R.drawable.icon_forward)
-                    binding.eventImg.visibility = View.VISIBLE
+
+//                    binding.onlyImagesRV.visibility = View.GONE
+//                    binding.imagesWithCommentRV.visibility = View.GONE
+//
+//                    binding.eventImg.setImageResource(R.drawable.icon_forward)
+//                    binding.eventImg.visibility = View.VISIBLE
 
                     var invitedUsers = ""
                     if (!item.eventData.isNullOrEmpty()) {
@@ -209,15 +233,26 @@ class EventsRVAdapter constructor(
                         binding.invitedNumbers.visibility = View.VISIBLE
                     }
 
-                    if (item.commentData != null) {
-                        if (!item.commentData.message.isNullOrEmpty()) {
-                            binding.onlyComment.text = item.commentData.message.trim()
-                            binding.onlyComment.visibility = View.VISIBLE
-                        } else {
-                            binding.onlyComment.text = ""
-                            binding.onlyComment.visibility = View.GONE
-                        }
+                    if (!item.eventData.isNullOrEmpty() && item.eventData.size > 1) {
+                        binding.otherEventText.text =
+                            "$invitedUsers are invited by ${creatorName.toCamelCase()}"
+                    } else {
+                        binding.otherEventText.text =
+                            "$invitedUsers is invited by ${creatorName.toCamelCase()}"
                     }
+                    binding.otherEventLayout.visibility = View.VISIBLE
+
+                    binding.onlyComment.text = ""
+
+//                    if (item.commentData != null) {
+//                        if (!item.commentData.message.isNullOrEmpty()) {
+//                            binding.onlyComment.text = item.commentData.message.trim()
+//                            binding.onlyComment.visibility = View.VISIBLE
+//                        } else {
+//                            binding.onlyComment.text = ""
+//                            binding.onlyComment.visibility = View.GONE
+//                        }
+//                    }
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (binding.onlyComment.lineCount > 6) {
                             binding.viewMoreLessLayout.visibility = View.VISIBLE
@@ -232,6 +267,11 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.Comment.eventValue -> {
+                    binding.otherEventText.text = ""
+                    binding.otherEventLayout.visibility = View.GONE
+                    binding.myMsgLayout.visibility = View.VISIBLE
+
+
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
                     binding.filesRV.visibility = View.GONE
@@ -267,72 +307,91 @@ class EventsRVAdapter constructor(
                 }
 
                 TaskDetailEvents.CancelTask.eventValue -> {
-                    binding.onlyImagesRV.visibility = View.GONE
-                    binding.imagesWithCommentRV.visibility = View.GONE
-                    binding.filesRV.visibility = View.GONE
+                    binding.myMsgLayout.visibility = View.GONE
 
-                    binding.eventImg.setImageResource(R.drawable.icon_canceled_task)
-                    binding.eventImg.visibility = View.VISIBLE
+                    binding.otherEventText.text = "${creatorName.toCamelCase()} canceled the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
 
-                    binding.onlyComment.text =
-                        context.resources.getString(R.string.task_has_been_canceled)
-                    binding.onlyComment.visibility = View.VISIBLE
+//                    binding.onlyImagesRV.visibility = View.GONE
+//                    binding.imagesWithCommentRV.visibility = View.GONE
+//                    binding.filesRV.visibility = View.GONE
+//
+//                    binding.eventImg.setImageResource(R.drawable.icon_canceled_task)
+//                    binding.eventImg.visibility = View.VISIBLE
+//
+//                    binding.onlyComment.text =
+//                        context.resources.getString(R.string.task_has_been_canceled)
+//                    binding.onlyComment.visibility = View.VISIBLE
                 }
 
                 TaskDetailEvents.UnCancelTask.eventValue -> {
-                    binding.onlyImagesRV.visibility = View.GONE
-                    binding.imagesWithCommentRV.visibility = View.GONE
-                    binding.filesRV.visibility = View.GONE
+                    binding.myMsgLayout.visibility = View.GONE
 
-                    binding.onlyComment.text =
-                        context.resources.getString(R.string.task_has_been_un_canceled)
-                    binding.onlyComment.visibility = View.VISIBLE
+                    binding.otherEventText.text = "${creatorName.toCamelCase()} un-canceled the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
+
+//                    binding.onlyImagesRV.visibility = View.GONE
+//                    binding.imagesWithCommentRV.visibility = View.GONE
+//                    binding.filesRV.visibility = View.GONE
+//
+//                    binding.onlyComment.text =
+//                        context.resources.getString(R.string.task_has_been_un_canceled)
+//                    binding.onlyComment.visibility = View.VISIBLE
                 }
 
                 TaskDetailEvents.JoinedTask.eventValue -> {
-                    binding.onlyImagesRV.visibility = View.GONE
-                    binding.imagesWithCommentRV.visibility = View.GONE
-                    binding.filesRV.visibility = View.GONE
+                    binding.myMsgLayout.visibility = View.GONE
 
-                    binding.eventImg.setImageResource(R.drawable.icon_person_add)
-                    binding.eventImg.visibility = View.VISIBLE
+                    binding.otherEventText.text = "${creatorName.toCamelCase()} joined the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
 
-                    binding.onlyComment.text =
-                        context.resources.getString(R.string.joined_the_task)
-                    binding.onlyComment.visibility = View.VISIBLE
+//                    binding.onlyImagesRV.visibility = View.GONE
+//                    binding.imagesWithCommentRV.visibility = View.GONE
+//                    binding.filesRV.visibility = View.GONE
+//
+//                    binding.eventImg.setImageResource(R.drawable.icon_person_add)
+//                    binding.eventImg.visibility = View.VISIBLE
+//
+//                    binding.onlyComment.text =
+//                        context.resources.getString(R.string.joined_the_task)
+//                    binding.onlyComment.visibility = View.VISIBLE
                 }
 
                 TaskDetailEvents.DoneTask.eventValue -> {
+                    binding.myMsgLayout.visibility = View.GONE
 
-                    binding.mainLayout.setBackgroundResource(R.drawable.round_green)
+                    binding.otherEventText.text = "${creatorName.toCamelCase()} marked the task as done"
+                    binding.otherEventLayout.visibility = View.VISIBLE
 
-                    binding.eventImg.setImageResource(R.drawable.icon_tick_mark)
-                    binding.eventImg.visibility = View.VISIBLE
-
-                    binding.onlyImagesRV.visibility = View.GONE
-                    binding.imagesWithCommentRV.visibility = View.GONE
-                    binding.filesRV.visibility = View.GONE
-
-                    if (item.commentData != null) {
-
-                        if (!item.commentData.message.isNullOrEmpty()) {
-                            binding.onlyComment.text = item.commentData.message.trim()
-                            binding.onlyComment.visibility = View.VISIBLE
-                        } else {
-                            binding.onlyComment.text =
-                                context.resources.getString(R.string.marked_the_task_as_done)
-                            binding.onlyComment.visibility = View.VISIBLE
-                        }
-
-                        if (item.commentData.files.isNotEmpty()) {
-                            separateFiles(item.commentData.files)
-                        }
-                    } else {
-                        binding.onlyComment.text =
-                            context.resources.getString(R.string.marked_the_task_as_done)
-                        binding.onlyComment.visibility = View.VISIBLE
-                    }
-
+//                    binding.mainLayout.setBackgroundResource(R.drawable.round_green)
+//
+//                    binding.eventImg.setImageResource(R.drawable.icon_tick_mark)
+//                    binding.eventImg.visibility = View.VISIBLE
+//
+//                    binding.onlyImagesRV.visibility = View.GONE
+//                    binding.imagesWithCommentRV.visibility = View.GONE
+//                    binding.filesRV.visibility = View.GONE
+//
+//                    if (item.commentData != null) {
+//
+//                        if (!item.commentData.message.isNullOrEmpty()) {
+//                            binding.onlyComment.text = item.commentData.message.trim()
+//                            binding.onlyComment.visibility = View.VISIBLE
+//                        } else {
+//                            binding.onlyComment.text =
+//                                context.resources.getString(R.string.marked_the_task_as_done)
+//                            binding.onlyComment.visibility = View.VISIBLE
+//                        }
+//
+//                        if (item.commentData.files.isNotEmpty()) {
+//                            separateFiles(item.commentData.files)
+//                        }
+//                    } else {
+//                        binding.onlyComment.text =
+//                            context.resources.getString(R.string.marked_the_task_as_done)
+//                        binding.onlyComment.visibility = View.VISIBLE
+//                    }
+                    binding.onlyComment.text = ""
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (binding.onlyComment.lineCount > 6) {
                             binding.viewMoreLessLayout.visibility = View.VISIBLE
