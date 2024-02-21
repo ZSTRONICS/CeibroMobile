@@ -116,12 +116,15 @@ class NewTaskV2Fragment :
 
 
             R.id.newConfirmerTopicText -> {
+                viewState.selectedConfirmerContacts.value?.clear()
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
-                    viewState.selectedContacts.value?.toTypedArray()
+                    viewState.selectedConfirmerContacts.value?.toTypedArray()
                 )
-                bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
+                bundle.putBoolean("self-assign", viewState.selfAssignedConfermer.value ?: false)
+                bundle.putBoolean("isConfirmer", true)
+                bundle.putBoolean("isViewer", false)
                 navigateForResult(R.id.assigneeFragment, CONFIRMER_REQUEST_CODE, bundle)
             }
 
@@ -129,9 +132,11 @@ class NewTaskV2Fragment :
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
-                    viewState.selectedContacts.value?.toTypedArray()
+                    viewState.selectedViewerContacts.value?.toTypedArray()
                 )
-                bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
+                bundle.putBoolean("self-assign", viewState.selfAssignedViewer.value ?: false)
+                bundle.putBoolean("isConfirmer", false)
+                bundle.putBoolean("isViewer", true)
                 navigateForResult(R.id.assigneeFragment, VIEWER_REQUEST_CODE, bundle)
             }
 
@@ -147,6 +152,8 @@ class NewTaskV2Fragment :
                     viewState.selectedContacts.value?.toTypedArray()
                 )
                 bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
+                bundle.putBoolean("isConfirmer", false)
+                bundle.putBoolean("isViewer", false)
                 navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE, bundle)
             }
 
@@ -170,11 +177,15 @@ class NewTaskV2Fragment :
             }
 
             R.id.confirmerEndLayoutClearBtn -> {
+                viewState.selfAssignedConfermer.value = false
                 viewState.confirmerText.value = ""
+                viewState.selectedConfirmerContacts = MutableLiveData()
             }
 
             R.id.viewerEndLayoutClearBtn -> {
+                viewState.selfAssignedViewer.value = false
                 viewState.viewerText.value = ""
+                viewState.selectedViewerContacts = MutableLiveData()
             }
 
             R.id.tagEndLayoutClearBtn -> {
@@ -967,7 +978,7 @@ class NewTaskV2Fragment :
                                 "Me; "
                             }
                         }
-                        // viewState.selfAssigned.value = selfAssigned
+                         viewState.selfAssignedViewer.value = selfAssigned
                     }
 
                     var index = 0
@@ -980,7 +991,7 @@ class NewTaskV2Fragment :
                             }
                             index++
                         }
-                        viewState.selectedContacts.value = selectedContactList
+                        viewState.selectedViewerContacts.value = selectedContactList
                     }
                     viewState.viewerText.value = assigneeMembers
                 }
@@ -1014,7 +1025,7 @@ class NewTaskV2Fragment :
                                 "Me; "
                             }
                         }
-                        //  viewState.selfAssigned.value = selfAssigned
+                          viewState.selfAssignedConfermer.value = selfAssigned
                     }
 
                     var index = 0
@@ -1027,7 +1038,7 @@ class NewTaskV2Fragment :
                             }
                             index++
                         }
-                        viewState.selectedContacts.value = selectedContactList
+                        viewState.selectedConfirmerContacts.value = selectedContactList
                     }
                     viewState.confirmerText.value = assigneeMembers
                 }

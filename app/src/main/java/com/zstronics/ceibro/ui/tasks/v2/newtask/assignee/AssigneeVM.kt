@@ -37,11 +37,25 @@ class AssigneeVM @Inject constructor(
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
+    var isConfirmer: MutableLiveData<Boolean> = MutableLiveData(false)
+    var isViewer: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         val selfAssigned = bundle?.getBoolean("self-assign")
+        val isConfirmer = bundle?.getBoolean("isConfirmer")
+        val isViewer = bundle?.getBoolean("isViewer")
+        isConfirmer?.let {
+            this.isConfirmer.value = it
+        } ?: kotlin.run {
+            this.isConfirmer.value = false
+        }
+        isViewer?.let {
+            this.isViewer.value = it
+        } ?: kotlin.run {
+            this.isViewer.value = false
+        }
         val selectedContact = bundle?.getParcelableArray("contacts")
         val selectedContactList =
             selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
@@ -62,7 +76,12 @@ class AssigneeVM @Inject constructor(
         loadRecentConnections()
         launch {
             val connectionsData = connectionsV2Dao.getAll()
-            processConnectionsData(connectionsData, callBack)
+            if (isConfirmer.value == true || isViewer.value == true) {
+                val list = connectionsData.filter { it.isCeiborUser }
+                processConnectionsData(list, callBack)
+            } else {
+                processConnectionsData(connectionsData, callBack)
+            }
         }
     }
 

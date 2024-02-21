@@ -5,14 +5,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.ceibro.permissionx.PermissionX
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
@@ -27,6 +25,7 @@ class ConnectionAdapterSectionRecycler constructor(
         sectionList
     ) {
     var showContactPermissionToast = true
+    var isConfirmer = false
 
     var itemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
@@ -115,6 +114,11 @@ class ConnectionAdapterSectionRecycler constructor(
         fun bind(item: AllCeibroConnections.CeibroConnection?) {
             item?.let {
                 with(binding) {
+                    if (isConfirmer) {
+                        contactCheckBox.visibility = View.GONE
+                    } else {
+                        contactCheckBox.visibility = View.VISIBLE
+                    }
                     contactCheckBox.isChecked = item.isChecked
                     mainLayout.isEnabled = true
                     root.isEnabled = true
