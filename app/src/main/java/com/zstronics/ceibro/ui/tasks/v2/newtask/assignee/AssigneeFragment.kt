@@ -50,15 +50,37 @@ class AssigneeFragment :
             }
 
             R.id.doneBtn -> {
-                val selectedContactList = viewModel.selectedContacts.value
-                val selfAssigned = viewState.isSelfAssigned.value
-                if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
-                    shortToastNow("Please select contacts to proceed")
+                if (viewModel.isConfirmer.value == true) {
+                    val selectedContactList = viewModel.selectedContacts.value
+                    val selfAssigned = viewState.isSelfAssigned.value
+                    if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
+                        shortToastNow("Please select contact to proceed")
+                    } else {
+                        val bundle = Bundle()
+                        if (selfAssigned == true) {
+                            selectedContactList?.clear()
+                            bundle.putBoolean("self-assign", selfAssigned)
+
+                        } else {
+                            bundle.putBoolean("self-assign", selfAssigned ?: false)
+                        }
+
+                        bundle.putParcelableArray("contacts", selectedContactList?.toTypedArray())
+
+                         navigateBackWithResult(Activity.RESULT_OK, bundle)
+                    }
                 } else {
-                    val bundle = Bundle()
-                    bundle.putParcelableArray("contacts", selectedContactList?.toTypedArray())
-                    bundle.putBoolean("self-assign", selfAssigned ?: false)
-                    navigateBackWithResult(Activity.RESULT_OK, bundle)
+                    val selectedContactList = viewModel.selectedContacts.value
+                    val selfAssigned = viewState.isSelfAssigned.value
+                    if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
+                        shortToastNow("Please select contacts to proceed")
+                    } else {
+                        val bundle = Bundle()
+                        bundle.putParcelableArray("contacts", selectedContactList?.toTypedArray())
+                        bundle.putBoolean("self-assign", selfAssigned ?: false)
+                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+                    }
+
                 }
             }
         }
@@ -84,6 +106,16 @@ class AssigneeFragment :
             ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
         )
         adapter = ConnectionAdapterSectionRecycler(requireContext(), sectionList)
+
+        viewModel.isConfirmer.observe(viewLifecycleOwner) {
+            if (it) {
+                adapter.isConfirmer = true
+                adapter.notifyDataSetChanged()
+            }else{
+                adapter.isConfirmer = false
+                adapter.notifyDataSetChanged()
+            }
+        }
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.allContactsRV.layoutManager = linearLayoutManager
@@ -143,12 +175,17 @@ class AssigneeFragment :
         viewModel.selectedContacts.observe(viewLifecycleOwner) {
             if (it != null) {
 
-                chipAdapter.setList(it)
+                if (viewModel.isConfirmer.value != true) {
+                    chipAdapter.setList(it)
+                }
             }
             if (fullItemClickedForDone) {
                 fullItemClickedForDone = false
                 val selectedContactList = it
-                val selfAssigned = viewState.isSelfAssigned.value
+                var selfAssigned = viewState.isSelfAssigned.value
+                if (viewModel.isConfirmer.value == true) {
+                    selfAssigned = false
+                }
                 if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
                     shortToastNow("Please select contacts to proceed")
                 } else {
