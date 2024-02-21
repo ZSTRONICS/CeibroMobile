@@ -4,10 +4,6 @@
 
     <data>
 
-        <variable
-            name="ceibroConnection"
-            type="com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections.CeibroConnection" />
-
         <import type="android.view.View" />
     </data>
 
@@ -28,15 +24,14 @@
             android:src="@drawable/ic_upload"
             app:layout_constraintBottom_toBottomOf="@+id/fileSize"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/fileName"
-            app:tint="@color/appBlue" />
+            app:layout_constraintTop_toTopOf="@+id/fileName" />
 
         <TextView
             android:id="@+id/fileName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:layout_marginEnd="@dimen/_5sdp"
             android:ellipsize="end"
             android:focusable="false"
@@ -47,7 +42,7 @@
             android:singleLine="true"
             android:text="my-new-cover.pdf"
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/llIcons"
             app:layout_constraintStart_toEndOf="@+id/uploadImg"
             app:layout_constraintTop_toTopOf="parent" />
@@ -56,7 +51,7 @@
             android:id="@+id/fileSize"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginTop="1dp"
             android:layout_marginBottom="@dimen/_3sdp"
             android:ellipsize="end"
             android:focusable="false"
@@ -66,7 +61,7 @@
             android:maxLines="1"
             android:text="100Kb"
             android:textColor="@color/appTextGrey"
-            android:textSize="12sp"
+            android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/fileName"
             app:layout_constraintStart_toStartOf="@+id/fileName"
@@ -88,7 +83,7 @@
                 android:layout_width="@dimen/_26sdp"
                 android:layout_height="@dimen/_26sdp"
                 android:layout_gravity="center"
-                android:padding="@dimen/_2sdp"
+                android:padding="@dimen/_3sdp"
                 android:src="@drawable/download"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/fileSize"
@@ -101,7 +96,7 @@
                 android:layout_width="30sp"
                 android:layout_height="30sp"
                 android:layout_gravity="center"
-                android:padding="@dimen/_2sdp"
+                android:padding="@dimen/_3sdp"
                 android:src="@drawable/icon_tick_mark"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/fileSize"

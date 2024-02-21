@@ -550,6 +550,10 @@
         android:id="@+id/taskDetailParentV2Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailparent.TaskDetailParentV2Fragment"
         android:label="TaskDetailParentV2Fragment" />
+    <fragment
+        android:id="@+id/tagsFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.tag.TagsFragment"
+        android:label="TagsFragment" />
 
 
 </navigation>

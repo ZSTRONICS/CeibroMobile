@@ -27,6 +27,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ee.zstronics.ceibro.camera.PickedImages
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -44,6 +45,8 @@ class TaskDetailCommentsV2VM @Inject constructor(
     val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
 ) : HiltBaseViewModel<ITaskDetailCommentsV2.State>(), ITaskDetailCommentsV2.ViewModel {
     val user = sessionManager.getUser().value
+    val listOfImages: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
+    val documents: MutableLiveData<ArrayList<PickedImages>> = MutableLiveData(arrayListOf())
 
     val _taskDetail: MutableLiveData<CeibroTaskV2> = MutableLiveData()
     val taskDetail: LiveData<CeibroTaskV2> = _taskDetail

@@ -95,6 +95,8 @@ class NewTaskV2VM @Inject constructor(
                     index++
                 }
                 viewState.selectedContacts.value = selectedContactList.toMutableList()
+                viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
+                viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
             }
             viewState.assignToText.value = assigneeMembers
 

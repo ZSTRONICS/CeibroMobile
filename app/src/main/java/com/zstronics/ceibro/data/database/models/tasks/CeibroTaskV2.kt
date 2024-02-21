@@ -232,6 +232,8 @@ data class EventFiles(
     val fileName: String,
     @SerializedName("fileTag")
     val fileTag: String,
+    @SerializedName("fileType")
+    val fileType: String,
     @SerializedName("fileUrl")
     val fileUrl: String,
     @SerializedName("hasComment")

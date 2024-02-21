@@ -7,7 +7,8 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import javax.inject.Inject
 
-class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
+class NewTaskV2State @Inject constructor() :
+    BaseState(), INewTaskV2.State {
     override var dueDate: MutableLiveData<String> = MutableLiveData("")
     override val isDoneReqAllowed: MutableLiveData<Boolean> = MutableLiveData(false)
     override val isAttachLayoutOpen: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -15,9 +16,16 @@ class NewTaskV2State @Inject constructor() : BaseState(), INewTaskV2.State {
     override var selectedTopic: MutableLiveData<TopicsResponse.TopicData> = MutableLiveData()
     override var selectedProject: MutableLiveData<CeibroProjectV2> = MutableLiveData()
     override var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    override var selectedViewerContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
+    override var selectedConfirmerContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
     override var selfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)
+    override var selfAssignedViewer: MutableLiveData<Boolean> = MutableLiveData(false)
+    override var selfAssignedConfermer: MutableLiveData<Boolean> = MutableLiveData(false)
     override var assignToText: MutableLiveData<String> = MutableLiveData("")
     override var projectText: MutableLiveData<String> = MutableLiveData("")
     override var description: MutableLiveData<String> = MutableLiveData("")
+    override var confirmerText: MutableLiveData<String> = MutableLiveData("")
+    override var viewerText: MutableLiveData<String> = MutableLiveData("")
+    override var tagText: MutableLiveData<String> = MutableLiveData("")
     override var projectCannotChangeToastShown: Boolean = false
 }

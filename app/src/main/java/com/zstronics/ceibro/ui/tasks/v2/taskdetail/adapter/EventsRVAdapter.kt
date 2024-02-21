@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
@@ -8,7 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
@@ -22,7 +32,6 @@ import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskEventsBinding
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.utils.DateUtils
-import javax.inject.Inject
 
 class EventsRVAdapter constructor(
     val networkConnectivityObserver: NetworkConnectivityObserver,
@@ -48,10 +57,10 @@ class EventsRVAdapter constructor(
     }
 
 
-    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String,String,String>, tag: String) -> Unit)? =
+    var downloadFileClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String, String, String>, tag: String) -> Unit)? =
         null
 
-    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String,String,String>, tag: String) -> Unit)?) {
+    fun downloadFileCallBack(itemClickListener: ((textView: TextView, ivDownload: AppCompatImageView, downloaded: AppCompatImageView, triplet: Triple<String, String, String>, tag: String) -> Unit)?) {
         this.downloadFileClickListener = itemClickListener
     }
 
@@ -112,19 +121,73 @@ class EventsRVAdapter constructor(
                     "${item.initiator.firstName.trim()} ${item.initiator.surName.trim()}"
                 }
             binding.eventBy.text = creatorName
-            binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustom(
+
+            if (!item.initiator.profilePic.isNullOrEmpty()) {
+                val circularProgressDrawable = CircularProgressDrawable(context)
+                circularProgressDrawable.strokeWidth = 4f
+                circularProgressDrawable.centerRadius = 14f
+                circularProgressDrawable.start()
+
+                val requestOptions = RequestOptions()
+                    .placeholder(circularProgressDrawable)
+                    .error(R.drawable.profile_img)
+                    .skipMemoryCache(true)
+                    .centerCrop()
+
+                Glide.with(context)
+                    .load(item.initiator.profilePic)
+                    .apply(requestOptions)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            circularProgressDrawable.stop()
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            circularProgressDrawable.stop()
+                            return false
+                        }
+                    })
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.creatorImg)
+            }
+
+            binding.eventDate.text = DateUtils.formatCreationUTCTimeToCustomForDetailFiles(
                 utcTime = item.createdAt,
                 inputFormatter = DateUtils.SERVER_DATE_FULL_FORMAT_IN_UTC
             )
 
-            var isCreator = false
-            if (item.initiator.id == loggedInUserId) {
-//                binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
-                isCreator = true
+
+            val tintColor = if (!item.eventSeenBy.isNullOrEmpty()) {
+                if (item.eventSeenBy?.contains(loggedInUserId) == true) {
+                    context.resources.getColor(R.color.appBlue)
+                }
+                else {
+                    context.resources.getColor(R.color.appGrey3)
+                }
             } else {
-//                binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
-                isCreator = false
+                context.resources.getColor(R.color.appGrey3)
             }
+            binding.seenImg.setColorFilter(tintColor)
+
+            val isCreator: Boolean = item.initiator.id == loggedInUserId
+
+//            if (item.initiator.id == loggedInUserId) {
+//                binding.mainLayout.setBackgroundResource(R.drawable.round_grey)
+//            } else {
+//                binding.mainLayout.setBackgroundResource(R.drawable.round_blue)
+//            }
 
             when (item.eventType) {
                 TaskDetailEvents.ForwardTask.eventValue -> {
@@ -271,6 +334,23 @@ class EventsRVAdapter constructor(
                     binding.otherEventLayout.visibility = View.GONE
                     binding.myMsgLayout.visibility = View.VISIBLE
 
+                    val marginEndOrStartInPixels =
+                        context.resources.getDimensionPixelSize(R.dimen.comment_card_margin)
+                    val marginWithZeroPixels =
+                        context.resources.getDimensionPixelSize(R.dimen.comment_card_no_margin)
+
+                    val layoutParams =
+                        binding.myMsgLayout.layoutParams as ConstraintLayout.LayoutParams
+
+                    if (item.initiator.id == loggedInUserId) {
+                        layoutParams.marginStart = marginEndOrStartInPixels
+                        layoutParams.marginEnd = marginWithZeroPixels
+                    } else {
+                        layoutParams.marginStart = marginWithZeroPixels
+                        layoutParams.marginEnd = marginEndOrStartInPixels
+                    }
+                    binding.myMsgLayout.layoutParams = layoutParams
+
 
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -309,7 +389,7 @@ class EventsRVAdapter constructor(
                 TaskDetailEvents.CancelTask.eventValue -> {
                     binding.myMsgLayout.visibility = View.GONE
 
-                    binding.otherEventText.text = "${creatorName.toCamelCase()} canceled the task"
+                    binding.otherEventText.text = "Task canceled by ${creatorName.toCamelCase()}"
                     binding.otherEventLayout.visibility = View.VISIBLE
 
 //                    binding.onlyImagesRV.visibility = View.GONE
@@ -327,7 +407,7 @@ class EventsRVAdapter constructor(
                 TaskDetailEvents.UnCancelTask.eventValue -> {
                     binding.myMsgLayout.visibility = View.GONE
 
-                    binding.otherEventText.text = "${creatorName.toCamelCase()} un-canceled the task"
+                    binding.otherEventText.text = "Task un-canceled by ${creatorName.toCamelCase()}"
                     binding.otherEventLayout.visibility = View.VISIBLE
 
 //                    binding.onlyImagesRV.visibility = View.GONE
@@ -360,7 +440,8 @@ class EventsRVAdapter constructor(
                 TaskDetailEvents.DoneTask.eventValue -> {
                     binding.myMsgLayout.visibility = View.GONE
 
-                    binding.otherEventText.text = "${creatorName.toCamelCase()} marked the task as done"
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} marked the task as done"
                     binding.otherEventLayout.visibility = View.VISIBLE
 
 //                    binding.mainLayout.setBackgroundResource(R.drawable.round_green)
@@ -522,19 +603,30 @@ class EventsRVAdapter constructor(
                 binding.imagesWithCommentRV.visibility = View.VISIBLE
             }
             if (document.isNotEmpty()) {
-                val filesAdapter = EventsFilesRVAdapter(networkConnectivityObserver, context, downloadedDrawingV2Dao)
+                val filesAdapter = EventsFilesRVAdapter(
+                    networkConnectivityObserver,
+                    context,
+                    downloadedDrawingV2Dao
+                )
 
-                filesAdapter.fileClickListener = { view: View, position: Int, data: EventFiles,drawingFile ->
+                filesAdapter.fileClickListener =
+                    { view: View, position: Int, data: EventFiles, drawingFile ->
 
-                    fileClickListener?.invoke(view, position, data,drawingFile)
+                        fileClickListener?.invoke(view, position, data, drawingFile)
 
-                }
+                    }
                 filesAdapter.requestPermissionCallBack {
 
                     requestPermissionClickListener?.invoke("")
                 }
                 filesAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
-                    downloadFileClickListener?.invoke(textView,ivDownload,downloaded,triplet,tag)
+                    downloadFileClickListener?.invoke(
+                        textView,
+                        ivDownload,
+                        downloaded,
+                        triplet,
+                        tag
+                    )
                 }
                 binding.filesRV.adapter = filesAdapter
                 filesAdapter.setList(document)

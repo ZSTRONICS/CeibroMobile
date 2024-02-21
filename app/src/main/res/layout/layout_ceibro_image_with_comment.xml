@@ -73,7 +73,7 @@
             android:maxLength="1500"
             android:text="Sample Image comment"
             android:textColor="@color/black"
-            android:textSize="14.5sp"
+            android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/mainCard"

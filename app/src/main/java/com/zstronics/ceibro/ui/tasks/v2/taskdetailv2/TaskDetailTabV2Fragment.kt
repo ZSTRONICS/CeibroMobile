@@ -211,6 +211,10 @@ class TaskDetailTabV2Fragment :
             }
 
             R.id.taskCommentBtn -> {
+
+                mViewDataBinding.viewPager.setCurrentItem(1, true)
+                return
+
                 val bundle = Bundle()
                 val taskData = viewModel.taskDetail.value
                 bundle.putBoolean("doneCommentsRequired", taskData?.doneCommentsRequired ?: false)
