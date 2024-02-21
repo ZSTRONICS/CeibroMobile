@@ -20,6 +20,7 @@
         app:cardCornerRadius="@dimen/_8sdp"
         app:cardElevation="2dp"
         app:cardMaxElevation="@dimen/_1sdp"
+        android:visibility="visible"
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +31,8 @@
             android:id="@+id/mainLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/_6sdp"
+            android:paddingStart="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
             android:backgroundTint="@color/appGrey1"
             android:background="@drawable/round_grey"
@@ -39,50 +41,73 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/creatorCard"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_3sdp"
+                app:cardBackgroundColor="@color/appGrey"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="1dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/creatorImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:padding="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_img" />
+            </androidx.cardview.widget.CardView>
+
             <TextView
                 android:id="@+id/eventBy"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_7sdp"
                 android:layout_marginEnd="@dimen/_13sdp"
+                android:layout_marginStart="@dimen/_5sdp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="start"
                 android:maxLength="30"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Kristo Vunukainen Vunukainen"
+                android:text="Creator name"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
                 app:layout_constraintEnd_toStartOf="@+id/eventImg"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/creatorCard"
+                app:layout_constraintTop_toTopOf="@+id/creatorCard" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/eventImg"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:layout_marginEnd="@dimen/_9sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:padding="2dp"
                 android:src="@drawable/icon_navigate_up"
-                app:layout_constraintBottom_toBottomOf="@+id/eventDate"
-                app:layout_constraintEnd_toStartOf="@+id/eventDate"
-                app:layout_constraintTop_toTopOf="@+id/eventDate" />
+                app:layout_constraintBottom_toBottomOf="@+id/dotMenu"
+                app:layout_constraintEnd_toStartOf="@+id/dotMenu"
+                app:layout_constraintTop_toTopOf="@+id/dotMenu" />
 
-
-            <TextView
-                android:id="@+id/eventDate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="start"
-                android:maxLength="18"
-                android:maxLines="1"
-                android:text="Yesterday 13:30"
-                android:textColor="@color/black"
-                android:textSize="13sp"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/dotMenu"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_menu_dots"
+                android:paddingStart="3.5dp"
+                android:paddingEnd="0dp"
+                android:paddingTop="3.5dp"
+                android:paddingBottom="3.5dp"
                 app:layout_constraintBottom_toBottomOf="@+id/eventBy"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/eventBy" />
+
 
             <TextView
                 android:id="@+id/forwardedToNames"
@@ -97,7 +122,7 @@
                 android:text="To: Kristo Vunukainen ; Kristo Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/eventBy" />
@@ -114,7 +139,7 @@
                 android:text="Invited: Kristo Vunukainen ; Kristo Vunukainen"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/forwardedToNames" />
@@ -131,7 +156,7 @@
                 android:maxLines="6"
                 android:text="Only comment will be shown here"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="13.5sp"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -239,17 +264,35 @@
                 tools:itemCount="2"
                 tools:listitem="@layout/layout_ceibro_files" />
 
-            <View
-                android:id="@+id/eventsBottomLine"
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:background="@color/appGrey3"
-                android:visibility="invisible"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/seenImg"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:padding="1.5dp"
+                android:src="@drawable/icon_done_all"
+                app:tint="@color/appGrey3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/filesRV" />
+                app:layout_constraintTop_toBottomOf="@id/filesRV" />
+
+            <TextView
+                android:id="@+id/eventDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="start"
+                android:maxLength="18"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:maxLines="1"
+                android:text="Yesterday 13:30"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/seenImg"
+                app:layout_constraintEnd_toStartOf="@+id/seenImg"
+                app:layout_constraintTop_toTopOf="@+id/seenImg" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -260,8 +303,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginVertical="5dp"
-        android:layout_marginStart="@dimen/_38sdp"
-        android:layout_marginEnd="@dimen/_38sdp"
+        android:layout_marginStart="@dimen/_35sdp"
+        android:layout_marginEnd="@dimen/_35sdp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -285,12 +328,12 @@
                 android:id="@+id/otherEventText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="7dp"
+                android:layout_marginVertical="3dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
                 android:gravity="center"
                 android:maxLines="3"
-                android:paddingHorizontal="14dp"
+                android:paddingHorizontal="10dp"
                 android:text=""
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"

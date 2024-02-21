@@ -10,12 +10,14 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
@@ -342,9 +344,33 @@ class EventsFilesRVAdapter constructor(
             val context = binding.uploadImg.context
 
             binding.fileName.text = item.fileName
-            binding.fileSize.text = "File size: unknown"
+            binding.fileSize.text = "Size: unknown"
             binding.clearIcon.visibility = View.GONE
 
+            val fileExtension = item.fileType
+            if (fileExtension.contains("pdf", true)) {
+                binding.uploadImg.setImageResource(R.drawable.icon_pdf)
+//                binding.uploadImg.scaleType = ImageView.ScaleType.FIT_CENTER
+            } else if (fileExtension.contains("odt", true) || fileExtension.contains(
+                    "odp",
+                    true
+                ) ||
+                fileExtension.contains("docx", true) || fileExtension.contains(
+                    "doc",
+                    true
+                ) ||
+                fileExtension.contains("xlsx", true) || fileExtension.contains(
+                    "xls",
+                    true
+                ) ||
+                fileExtension.contains("pptx", true) || fileExtension.contains("ppt", true)
+            ) {
+                binding.uploadImg.setImageResource(R.drawable.icon_doc)
+//                binding.uploadImg.scaleType = ImageView.ScaleType.FIT_CENTER
+            } else {
+                binding.uploadImg.setImageResource(R.drawable.icon_document)
+//                binding.uploadImg.scaleType = ImageView.ScaleType.FIT_CENTER
+            }
         }
     }
 

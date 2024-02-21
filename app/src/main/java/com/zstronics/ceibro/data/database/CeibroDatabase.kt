@@ -56,7 +56,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         NewTaskV2Entity::class,
         LocalTaskDetailFiles::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(
