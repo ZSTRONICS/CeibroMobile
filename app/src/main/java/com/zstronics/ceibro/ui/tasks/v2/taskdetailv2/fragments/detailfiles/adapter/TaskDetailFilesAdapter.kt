@@ -303,7 +303,8 @@ class TaskDetailFilesAdapter constructor(
 
                     //pdf viewer click listener
                 } else if (item.fileTag.equals(AttachmentTags.Image.tagValue, true) ||
-                    item.fileTag.equals(AttachmentTags.ImageWithComment.tagValue, true)
+                    item.fileTag.equals(AttachmentTags.ImageWithComment.tagValue, true) ||
+                    item.fileTag.equals(AttachmentTags.Drawing.tagValue, true)
                 ) {
                     imageClickListener?.invoke(
                         position,
@@ -621,9 +622,15 @@ class TaskDetailFilesAdapter constructor(
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -200, -170)
+            if (tvDownload.visibility == View.GONE) {
+                popupWindow.showAsDropDown(v, 0, -295)
+            }
+            else {
+                popupWindow.showAsDropDown(v, 0, -420)
+            }
+//            popupWindow.showAsDropDown(v, 0, -270)
         } else {
-            popupWindow.showAsDropDown(v, -205, -60)
+            popupWindow.showAsDropDown(v, 0, -30)
         }
 
 
