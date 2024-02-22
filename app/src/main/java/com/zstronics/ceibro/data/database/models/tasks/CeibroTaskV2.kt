@@ -55,9 +55,9 @@ data class CeibroTaskV2(
     @SerializedName("confirmer")
     val confirmer: String?,
     @SerializedName("tags")
-    val tags: List<Tag>,
+    val tags: List<Tag>?,
     @SerializedName("viewer")
-    val viewer: List<String>,
+    val viewer: List<String>?,
     @SerializedName("updatedAt")
     var updatedAt: String,
     @SerializedName("__v")
