@@ -59,9 +59,12 @@ interface ITaskRemoteDataSource {
 
     suspend fun newTaskV2(newTask: NewTaskV2Entity): ApiResponse<NewTaskV2Response>
     suspend fun newTaskV2WithFiles(
+        tags: RequestBody,
+        confirmer: RequestBody,
+        viewer: RequestBody,
+        title: RequestBody,
         hasFiles: Boolean,
         dueDate: RequestBody,
-        topic: RequestBody,
         project: RequestBody,
         assignedToState: RequestBody,
         creator: RequestBody,
@@ -74,9 +77,12 @@ interface ITaskRemoteDataSource {
     ): ApiResponse<NewTaskV2Response>
 
     suspend fun newTaskV2WithFilesWithPinData(
+        tags: RequestBody,
+        confirmer: RequestBody,
+        viewer: RequestBody,
+        title: RequestBody,
         hasFiles: Boolean,
         dueDate: RequestBody,
-        topic: RequestBody,
         project: RequestBody,
         assignedToState: RequestBody,
         creator: RequestBody,
@@ -90,9 +96,12 @@ interface ITaskRemoteDataSource {
     ): ApiResponse<NewTaskV2Response>
 
     suspend fun newTaskV2WithoutFiles(
+        tags: RequestBody,
+        confirmer: RequestBody,
+        viewer: RequestBody,
+        title: RequestBody,
         hasFiles: Boolean,
         dueDate: RequestBody,
-        topic: RequestBody,
         project: RequestBody,
         assignedToState: RequestBody,
         creator: RequestBody,

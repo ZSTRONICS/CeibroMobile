@@ -50,8 +50,14 @@ data class CeibroTaskV2(
     var seenBy: List<String>,
     @SerializedName("taskUID")
     val taskUID: String,
-    @SerializedName("topic")
-    val topic: Topic?,
+    @SerializedName("title")
+    val title: String?,
+    @SerializedName("confirmer")
+    val confirmer: String?,
+    @SerializedName("tags")
+    val tags: List<Tag>,
+    @SerializedName("viewer")
+    val viewer: List<String>,
     @SerializedName("updatedAt")
     var updatedAt: String,
     @SerializedName("__v")
@@ -134,7 +140,7 @@ data class Events(
 
 @Parcelize
 @Keep
-data class Topic(
+data class Tag(
     @SerializedName("_id")
     val id: String,
     @SerializedName("topic")

@@ -155,7 +155,7 @@ class TopicFragment :
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     if(newText.trim().length > 100){
-                        shortToastNow("Topic max length is 100 characters")
+                        shortToastNow("Tag max length is 100 characters")
                         mViewDataBinding.topicSearchBar.setQuery(newText.trim().substring(0,100), false)
                         return true
                     }

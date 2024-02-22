@@ -67,9 +67,8 @@ class NewTaskV2VM @Inject constructor(
         super.onFirsTimeUiCreate(bundle)
         val oldCreatedTask = sessionManager.getSavedNewTaskData()
         if (oldCreatedTask != null) {
-            if (oldCreatedTask.topic != null) {
-                viewState.selectedTopic.value = oldCreatedTask.topic
-                viewState.taskTitle.value = oldCreatedTask.topic.topic
+            if (oldCreatedTask.title != null) {
+                viewState.taskTitle.value = oldCreatedTask.title
             }
 
             var assigneeMembers = ""
@@ -96,7 +95,7 @@ class NewTaskV2VM @Inject constructor(
                 }
                 viewState.selectedContacts.value = selectedContactList.toMutableList()
                 viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
-                viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
+               // viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
             }
             viewState.assignToText.value = assigneeMembers
 
@@ -153,14 +152,16 @@ class NewTaskV2VM @Inject constructor(
     ) {
 
         if (viewState.taskTitle.value.toString() == "") {
-            alert("Topic is required")
+            alert("Tag is required")
         } else if (viewState.assignToText.value.toString() == "") {
             alert("Assignee is required")
         } else {
             launch {
                 val selectedIds = viewState.selectedContacts.value?.map { it.id }
-                val selectedContacts =
-                    selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
+                val selectedViewersIds = viewState.selectedViewerContacts.value?.map { it.id }?: emptyList()
+                val selectedConfirmersIds = viewState.selectedConfirmerContacts.value?.id?:""
+
+                val selectedContacts = selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
 
                 val assignedToCeibroUsers =
                     selectedContacts.filter { it.isCeiborUser }
@@ -184,21 +185,25 @@ class NewTaskV2VM @Inject constructor(
                 val projectId = viewState.selectedProject.value?._id ?: ""
                 val list = getCombinedList()
 
-                val newTaskRequest = NewTaskV2Entity(
-                    topic = viewState.selectedTopic.value?.id.toString(),
-                    project = projectId,
-                    assignedToState = assignedToCeibroUsers,
-                    dueDate = viewState.dueDate.value.toString(),
-                    creator = user?.id.toString(),
-                    description = viewState.description.value.toString(),
-                    doneImageRequired = doneImageRequired,
-                    doneCommentsRequired = doneCommentsRequired,
-                    invitedNumbers = invitedNumbers,
-                    hasPendingFilesToUpload = list.isNotEmpty()
-                )
+                val newTaskRequest =NewTaskV2Entity(
+                        title = viewState.taskTitle.value?:"",
+                        tags=viewState.selectedTags,
+                        project = projectId,
+                        assignedToState = assignedToCeibroUsers,
+                        confirmer = selectedConfirmersIds,
+                        viewer = selectedViewersIds,
+                        dueDate = viewState.dueDate.value.toString(),
+                        creator = user?.id.toString(),
+                        description = viewState.description.value.toString(),
+                        doneImageRequired = doneImageRequired,
+                        doneCommentsRequired = doneCommentsRequired,
+                        invitedNumbers = invitedNumbers,
+                        hasPendingFilesToUpload = list.isNotEmpty()
+                    )
+
 
                 val newTaskToSave = NewTaskToSave(
-                    topic = viewState.selectedTopic.value,
+                    title = viewState.taskTitle.value?:"",
                     project = viewState.selectedProject.value,
                     selectedContacts = selectedContacts,
                     dueDate = viewState.dueDate.value,

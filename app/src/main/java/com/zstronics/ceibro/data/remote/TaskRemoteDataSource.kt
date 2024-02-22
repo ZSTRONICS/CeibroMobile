@@ -58,9 +58,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
         )
 
     override suspend fun newTaskV2WithFiles(
+        tags: RequestBody,
+        confirmer: RequestBody,
+        viewer: RequestBody,
+        title: RequestBody,
         hasFiles: Boolean,
         dueDate: RequestBody,
-        topic: RequestBody,
         project: RequestBody,
         assignedToState: RequestBody,
         creator: RequestBody,
@@ -73,9 +76,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     ): ApiResponse<NewTaskV2Response> {
         return executeSafely(call = {
             service.newTaskV2WithFiles(
+                tags= tags,
+                confirmer= confirmer,
+                viewer= viewer,
                 hasFiles = hasFiles,
                 dueDate = dueDate,
-                topic = topic,
+                title = title,
                 project = project,
                 assignedToState = assignedToState,
                 creator = creator,
@@ -90,9 +96,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     }
 
     override suspend fun newTaskV2WithFilesWithPinData(
+        tags: RequestBody,
+        confirmer: RequestBody,
+        viewer: RequestBody,
+        title: RequestBody,
         hasFiles: Boolean,
         dueDate: RequestBody,
-        topic: RequestBody,
         project: RequestBody,
         assignedToState: RequestBody,
         creator: RequestBody,
@@ -106,9 +115,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     ): ApiResponse<NewTaskV2Response> {
         return executeSafely(call = {
             service.newTaskV2WithFilesWithPinData(
+                tags= tags,
+                confirmer= confirmer,
+                viewer= viewer,
                 hasFiles = hasFiles,
                 dueDate = dueDate,
-                topic = topic,
+                title = title,
                 project = project,
                 assignedToState = assignedToState,
                 creator = creator,
@@ -124,9 +136,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     }
 
     override suspend fun newTaskV2WithoutFiles(
+        tags: RequestBody,
+        confirmer: RequestBody,
+        viewer: RequestBody,
+        title: RequestBody,
         hasFiles: Boolean,
         dueDate: RequestBody,
-        topic: RequestBody,
         project: RequestBody,
         assignedToState: RequestBody,
         creator: RequestBody,
@@ -137,9 +152,12 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     ): ApiResponse<NewTaskV2Response> {
         return executeSafely(call = {
             service.newTaskV2WithoutFiles(
+                tags= tags,
+                confirmer= confirmer,
+                viewer= viewer,
                 hasFiles = hasFiles,
                 dueDate = dueDate,
-                topic = topic,
+                title = title,
                 project = project,
                 assignedToState = assignedToState,
                 creator = creator,
