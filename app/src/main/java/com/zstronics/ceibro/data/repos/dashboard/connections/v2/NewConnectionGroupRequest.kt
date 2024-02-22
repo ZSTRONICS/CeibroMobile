@@ -9,3 +9,8 @@ data class NewConnectionGroupRequest(
     @SerializedName("contacts")
     val contacts: List<String>
 )
+
+data class ConnectionGroupUpdateWithoutNameRequest(
+    @SerializedName("contacts")
+    val contacts: List<String>
+)

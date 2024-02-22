@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsRespo
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionGroupUpdateWithoutNameRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
@@ -98,6 +99,11 @@ interface IDashboardRepository {
     suspend fun updateConnectionGroup(
         groupId: String,
         connectionGroupRequest: NewConnectionGroupRequest
+    ): ApiResponse<CeibroConnectionGroupV2>
+
+    suspend fun updateConnectionGroupWithoutName(
+        groupId: String,
+        connectionGroupUpdateRequest: ConnectionGroupUpdateWithoutNameRequest
     ): ApiResponse<CeibroConnectionGroupV2>
 
     suspend fun deleteConnectionGroupInBulk(

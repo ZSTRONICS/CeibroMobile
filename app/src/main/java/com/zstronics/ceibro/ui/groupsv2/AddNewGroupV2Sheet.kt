@@ -33,6 +33,7 @@ class AddNewGroupV2Sheet(
     var oldGroupContact: List<SyncDBContactsList.CeibroDBContactsLight>? = null
 ) : BottomSheetDialogFragment() {
     lateinit var binding: FragmentAddNewGroupV2Binding
+    var isFirstRun = true
 
     private var _allLightConnections: MutableLiveData<MutableList<SyncDBContactsList.CeibroDBContactsLight>> =
         MutableLiveData()
@@ -46,7 +47,7 @@ class AddNewGroupV2Sheet(
         MutableLiveData(mutableListOf())
 
     var createGroupClickListener: ((groupName: String, contacts: List<String>) -> Unit)? = null
-    var updateGroupClickListener: ((item: CeibroConnectionGroupV2, groupName: String, contacts: List<String>) -> Unit)? =
+    var updateGroupClickListener: ((item: CeibroConnectionGroupV2, groupName: String, contacts: List<String>, groupNameChanged: Boolean) -> Unit)? =
         null
     var onGroupEdited: ((status: String) -> Unit)? = null
 
@@ -113,7 +114,8 @@ class AddNewGroupV2Sheet(
                                     updateGroupClickListener?.invoke(
                                         item,
                                         groupName,
-                                        selectedContactIds
+                                        selectedContactIds,
+                                        !name.equals(groupName, true)
                                     )
                                 }
                             }
@@ -139,7 +141,8 @@ class AddNewGroupV2Sheet(
 //                    viewModel.filterContacts(searchQuery)
 //                }
                 adapter.setList(it)
-                if (isUpdating) {
+                if (isUpdating && isFirstRun) {
+                    isFirstRun = false
                     oldGroupContact?.let {contact->
                         adapter.setSelectedList(contact)
                     }
@@ -153,7 +156,9 @@ class AddNewGroupV2Sheet(
             { _: View, position: Int, contact: SyncDBContactsList.CeibroDBContactsLight ->
                 val originalContacts = originalLightConnections
                 val index = originalContacts.indexOf(contact)
-                originalContacts[index].isChecked = contact.isChecked
+                if (index > -1) {
+                    originalContacts[index].isChecked = contact.isChecked
+                }
                 originalLightConnections = originalContacts
 
                 val selectedOnes = selectedContacts.value ?: mutableListOf()
@@ -162,7 +167,9 @@ class AddNewGroupV2Sheet(
                     selectedContacts.postValue(selectedOnes)
                 } else {
                     val selectedIndex = selectedOnes.indexOf(contact)
-                    selectedOnes.removeAt(selectedIndex)
+                    if (selectedIndex > -1) {
+                        selectedOnes.removeAt(selectedIndex)
+                    }
                     selectedContacts.postValue(selectedOnes)
                 }
             }
