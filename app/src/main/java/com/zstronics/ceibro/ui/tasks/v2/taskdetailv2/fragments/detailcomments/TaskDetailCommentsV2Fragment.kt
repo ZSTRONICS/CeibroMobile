@@ -21,11 +21,18 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.finish
+import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
+import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
+import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
@@ -122,6 +129,44 @@ class TaskDetailCommentsV2Fragment :
                     )
                 )
             }
+
+            R.id.sendMsgBtn -> {
+                viewModel.uploadComment(
+                    requireContext()
+                ) { eventData ->
+                    viewModel.listOfImages.postValue(arrayListOf())
+                    viewModel.documents.postValue(arrayListOf())
+                    viewState.comment.postValue("")
+                    mViewDataBinding.msgTypingField.clearFocus()
+
+
+//                    if (viewModel.taskFromNotification != null) {
+//                        CeibroApplication.CookiesManager.taskIdInDetails = ""
+//                        shortToastNow(getString(R.string.commented_successfully))
+//                        val instances = countActivitiesInBackStack(requireContext())
+//                        if (instances <= 1) {
+//                            launchActivityWithFinishAffinity<NavHostPresenterActivity>(
+//                                options = Bundle(),
+//                                clearPrevious = true
+//                            ) {
+//                                putExtra(NAVIGATION_Graph_ID, R.navigation.home_nav_graph)
+//                                putExtra(
+//                                    NAVIGATION_Graph_START_DESTINATION_ID,
+//                                    R.id.homeFragment
+//                                )
+//                            }
+//                        } else {
+//                            //finish is called so that second instance of app will be closed and only one last instance will remain
+//                            finish()
+//                        }
+//                    } else {
+//                        CeibroApplication.CookiesManager.taskIdInDetails = ""
+//                        val bundle = Bundle()
+//                        bundle.putParcelable("eventData", null)
+//                        navigateBackWithResult(Activity.RESULT_OK, bundle)
+//                    }
+                }
+            }
         }
     }
 
@@ -190,14 +235,24 @@ class TaskDetailCommentsV2Fragment :
                 eventsAdapter.setList(mutableListOf(), viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: "")
             }
 
-            mViewDataBinding.eventsParentLayout.visibility =
+            mViewDataBinding.eventsRV.visibility =
                 if (events.isNotEmpty()) {
                     View.VISIBLE
                 } else {
                     View.GONE
                 }
-        }
 
+            Handler().postDelayed({
+                eventsAdapter.itemCount.let { itemCount ->
+                    if (itemCount > 0) {
+                        mViewDataBinding.eventsRV.scrollToPosition(itemCount - 1)
+                    }
+                }
+            }, 100)
+        }
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.stackFromEnd = true
+        mViewDataBinding.eventsRV.layoutManager = layoutManager
         mViewDataBinding.eventsRV.adapter = eventsAdapter
 
         eventsAdapter.requestPermissionCallBack {
@@ -479,12 +534,12 @@ class TaskDetailCommentsV2Fragment :
     private fun scrollToBottom(size: Int) {
 //        if (!isScrolling) {
 //            isScrolling = true
-        var scrollDelay: Long = 370
-        if (size >= 40 && size < 52) {
-            scrollDelay = 450
-        } else if (size >= 52) {
-            scrollDelay = 530
-        }
+        var scrollDelay: Long = 100
+//        if (size >= 40 && size < 52) {
+//            scrollDelay = 450
+//        } else if (size >= 52) {
+//            scrollDelay = 530
+//        }
         Handler(Looper.getMainLooper()).postDelayed({
             //   mViewDataBinding.bodyScroll.isFocusableInTouchMode = true
             //  mViewDataBinding.bodyScroll.descendantFocusability = ViewGroup.FOCUS_BEFORE_DESCENDANTS
@@ -492,6 +547,11 @@ class TaskDetailCommentsV2Fragment :
             // mViewDataBinding.bodyScroll.scrollToBottomWithoutFocusChange()
 //            mViewDataBinding.bodyScroll.fullScroll(View.FOCUS_DOWN)
 //            isScrolling = false
+            eventsAdapter.itemCount.let { itemCount ->
+                if (itemCount > 0) {
+                    mViewDataBinding.eventsRV.scrollToPosition(itemCount - 1)
+                }
+            }
         }, scrollDelay)
 //        }
     }

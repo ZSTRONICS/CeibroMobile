@@ -349,8 +349,8 @@ class GroupV2Fragment :
         )
 
 
-        sheet.updateGroupClickListener = { item, groupName, selectedContactIds ->
-            viewModel.updateConnectionGroup(item, groupName, selectedContactIds) { updatedGroup ->
+        sheet.updateGroupClickListener = { item, groupName, selectedContactIds, groupNameChanged ->
+            viewModel.updateConnectionGroup(item, groupName, selectedContactIds, groupNameChanged) { updatedGroup ->
 
                 val allOriginalGroups = viewModel.originalConnectionGroups
                 val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }

@@ -154,8 +154,8 @@ class TaskToMeRVAdapter @Inject constructor() :
                 binding.bottomCenterPoint.layoutParams = layoutParams
             }
 
-            if (item.topic != null) {
-                binding.taskTitle.text = item.topic.topic
+            if (!item.title.isNullOrEmpty()) {
+                binding.taskTitle.text = item.title
             } else {
                 binding.taskTitle.text = "N/A"
             }

@@ -15,8 +15,9 @@ interface INewTaskV2 {
         var selectedTopic: MutableLiveData<TopicsResponse.TopicData>
         var selectedProject: MutableLiveData<CeibroProjectV2>
         var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>>
+        var selectedTags: List<String>
         var selectedViewerContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>>
-        var selectedConfirmerContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>>
+        var selectedConfirmerContacts: MutableLiveData<AllCeibroConnections.CeibroConnection>
         var selfAssigned: MutableLiveData<Boolean>
         var selfAssignedViewer: MutableLiveData<Boolean>
         var selfAssignedConfermer: MutableLiveData<Boolean>

@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.database.dao.ConnectionsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionGroupUpdateWithoutNameRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -81,24 +82,47 @@ class GroupV2VM @Inject constructor(
         item: CeibroConnectionGroupV2,
         groupName: String,
         contacts: List<String>,
+        groupNameChanged: Boolean,
         callBack: (createdGroup: CeibroConnectionGroupV2) -> Unit
     ) {
-        val requestBody = NewConnectionGroupRequest(
-            name = groupName,
-            contacts = contacts
-        )
         loading(true)
-        launch {
-            when (val response = dashboardRepository.updateConnectionGroup(item._id, requestBody)) {
-                is ApiResponse.Success -> {
-                    val createdGroup = response.data
-                    connectionGroupV2Dao.insertConnectionGroup(createdGroup)
-                    loading(false, "Group updated")
-                    callBack.invoke(createdGroup)
-                }
+        if (groupNameChanged) {
+            val requestBody = NewConnectionGroupRequest(
+                name = groupName,
+                contacts = contacts
+            )
+            launch {
+                when (val response =
+                    dashboardRepository.updateConnectionGroup(item._id, requestBody)) {
+                    is ApiResponse.Success -> {
+                        val createdGroup = response.data
+                        connectionGroupV2Dao.insertConnectionGroup(createdGroup)
+                        loading(false, "Group updated")
+                        callBack.invoke(createdGroup)
+                    }
 
-                is ApiResponse.Error -> {
-                    loading(false, "Error: ${response.error.message}")
+                    is ApiResponse.Error -> {
+                        loading(false, "Error: ${response.error.message}")
+                    }
+                }
+            }
+        } else {
+            val requestBody1 = ConnectionGroupUpdateWithoutNameRequest(
+                contacts = contacts
+            )
+            launch {
+                when (val response =
+                    dashboardRepository.updateConnectionGroupWithoutName(item._id, requestBody1)) {
+                    is ApiResponse.Success -> {
+                        val createdGroup = response.data
+                        connectionGroupV2Dao.insertConnectionGroup(createdGroup)
+                        loading(false, "Group updated")
+                        callBack.invoke(createdGroup)
+                    }
+
+                    is ApiResponse.Error -> {
+                        loading(false, "Error: ${response.error.message}")
+                    }
                 }
             }
         }

@@ -9,6 +9,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.AllConnectionsRespo
 import com.zstronics.ceibro.data.repos.dashboard.connections.CountResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.ConnectionGroupUpdateWithoutNameRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.DeleteGroupInBulkRequest
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GetConnectionGroupsResponse
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.NewConnectionGroupRequest
@@ -149,6 +150,12 @@ interface DashboardRepositoryService {
     suspend fun updateConnectionGroup(
         @Path("groupId") groupId: String,
         @Body connectionGroupRequest: NewConnectionGroupRequest
+    ): Response<CeibroConnectionGroupV2>
+
+    @PATCH("v2/users/groups/{groupId}")
+    suspend fun updateConnectionGroupWithoutName(
+        @Path("groupId") groupId: String,
+        @Body connectionGroupUpdateRequest: ConnectionGroupUpdateWithoutNameRequest
     ): Response<CeibroConnectionGroupV2>
 
     @HTTP(method = "DELETE", path = "v2/users/groups", hasBody = true)

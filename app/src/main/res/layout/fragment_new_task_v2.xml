@@ -86,81 +86,49 @@
                 android:background="@color/white">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/newTaskTopicField"
+                    android:id="@+id/titleField"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_14sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_11sdp"
                     android:layout_marginEnd="@dimen/_14sdp"
+                    android:hint="Task Title"
                     android:paddingStart="0dp"
-                    android:paddingEnd="2dp"
+                    android:paddingEnd="-1dp"
                     android:textColorHint="@color/appTextGrey"
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
                     app:counterEnabled="true"
                     app:counterMaxLength="100"
                     app:counterTextColor="@color/appGrey3"
-                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/icon_close_round_grey"
+                    app:endIconMode="clear_text"
                     app:hintTextColor="@color/appGrey3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/newTaskTopicText"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/titleText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/input_field_bottom_line"
-                        android:clickable="true"
-                        android:focusable="false"
+                        android:ellipsize="end"
                         android:fontFamily="@font/inter_regular"
-                        android:hint="@string/topic_required"
-                        android:inputType="text|textCapSentences"
+                        android:gravity="top|start"
+                        android:inputType="none"
                         android:maxLength="100"
-                        android:maxLines="1"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:maxLines="5"
+                        android:overScrollMode="always"
                         android:paddingStart="1dp"
-                        android:paddingEnd="1dp"
+                        android:scrollbarStyle="insideInset"
+                        android:scrollbars="none"
                         android:text="@={viewState.taskTitle}"
+                        android:textColor="@color/black"
                         android:textSize="15sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <LinearLayout
-                    android:id="@+id/topicEndLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@+id/newTaskTopicField"
-                    app:layout_constraintEnd_toEndOf="@+id/newTaskTopicField"
-                    app:layout_constraintTop_toTopOf="@+id/newTaskTopicField"
-                    app:layout_constraintVertical_bias="0.32">
-
-                    <ImageView
-                        android:layout_width="29dp"
-                        android:layout_height="29dp"
-                        android:layout_marginEnd="@dimen/_3sdp"
-                        android:padding="@dimen/_2sdp"
-                        android:src="@drawable/icon_drop_next"
-                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
-                        app:layout_constraintVertical_bias="0.6" />
-
-                    <ImageView
-                        android:id="@+id/newTaskTopicClearBtn"
-                        android:layout_width="29dp"
-                        android:layout_height="29dp"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                        android:padding="@dimen/_3sdp"
-                        android:src="@drawable/icon_close_round_grey"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="@+id/newTaskDueDateField"
-                        app:layout_constraintEnd_toEndOf="@+id/newTaskDueDateField"
-                        app:layout_constraintTop_toTopOf="@+id/newTaskDueDateField"
-                        app:layout_constraintVertical_bias="0.6" />
-                </LinearLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -175,9 +143,9 @@
                     app:boxStrokeColor="@color/transparent"
                     app:boxStrokeWidth="0dp"
                     app:hintTextColor="@color/appGrey3"
-                    app:layout_constraintEnd_toEndOf="@+id/newTaskTopicField"
-                    app:layout_constraintStart_toStartOf="@+id/newTaskTopicField"
-                    app:layout_constraintTop_toBottomOf="@+id/newTaskTopicField">
+                    app:layout_constraintEnd_toEndOf="@+id/titleField"
+                    app:layout_constraintStart_toStartOf="@+id/titleField"
+                    app:layout_constraintTop_toBottomOf="@+id/titleField">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/newTaskAssignToText"
@@ -267,7 +235,7 @@
                         android:maxLines="1"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
-                        android:paddingEnd="1dp"
+                        android:paddingEnd="62dp"
                         android:text="@={viewState.confirmerText}"
                         android:textSize="15sp" />
 
@@ -342,7 +310,7 @@
                         android:maxLines="1"
                         android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:paddingStart="1dp"
-                        android:paddingEnd="1dp"
+                        android:paddingEnd="62dp"
                         android:text="@={viewState.viewerText}"
                         android:textSize="15sp" />
 

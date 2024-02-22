@@ -153,11 +153,20 @@ class TaskRepository @Inject constructor(
         val assignedToStateString = Gson().toJson(newTask.assignedToState)
         val assignedToStateString2 = Gson().toJson(assignedToStateString)
 
+
+        val viewerToStateString = Gson().toJson(newTask.viewer)
+        val viewerToStateString2 = Gson().toJson(viewerToStateString)
+
+        val tagsString = Gson().toJson(newTask.tags)
+        val tagsString2 = Gson().toJson(tagsString)
+
         val invitedNumbersString = Gson().toJson(newTask.invitedNumbers)
         val invitedNumbersString2 = Gson().toJson(invitedNumbersString)
 
         val dueDate = newTask.dueDate.toRequestBody("text/plain".toMediaTypeOrNull())
-        val topic = newTask.topic.toRequestBody("text/plain".toMediaTypeOrNull())
+        val title = newTask.title.toRequestBody("text/plain".toMediaTypeOrNull())
+        val viewer = viewerToStateString2.toRequestBody("text/plain".toMediaTypeOrNull())
+        val confirmer = newTask.confirmer.toRequestBody("text/plain".toMediaTypeOrNull())
         val project = newTask.project.toRequestBody("text/plain".toMediaTypeOrNull())
         val assignedToState = assignedToStateString2.toRequestBody("text/plain".toMediaTypeOrNull())
         val creator = newTask.creator.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -167,6 +176,7 @@ class TaskRepository @Inject constructor(
         val doneCommentsRequired =
             newTask.doneCommentsRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val invitedNumbers = invitedNumbersString2.toRequestBody("text/plain".toMediaTypeOrNull())
+        val tags = tagsString2.toRequestBody("text/plain".toMediaTypeOrNull())
 
         val parts = mutableListOf<MultipartBody.Part>()
 
@@ -219,9 +229,12 @@ class TaskRepository @Inject constructor(
                 pinDataString2.toRequestBody("text/plain".toMediaTypeOrNull())
 
             when (val response = remoteTask.newTaskV2WithFilesWithPinData(
+                tags=tags,
+                confirmer=confirmer,
+                viewer=viewer,
                 hasFiles = true,
                 dueDate = dueDate,
-                topic = topic,
+                title = title,
                 project = project,
                 assignedToState = assignedToState,
                 creator = creator,
@@ -245,9 +258,12 @@ class TaskRepository @Inject constructor(
         } else {
 
             when (val response = remoteTask.newTaskV2WithFiles(
+                tags=tags,
+                confirmer=confirmer,
+                viewer=viewer,
                 hasFiles = true,
                 dueDate = dueDate,
-                topic = topic,
+                title = title,
                 project = project,
                 assignedToState = assignedToState,
                 creator = creator,
@@ -276,14 +292,22 @@ class TaskRepository @Inject constructor(
         val assignedToStateString = Gson().toJson(newTask.assignedToState)
         val assignedToStateString2 = Gson().toJson(assignedToStateString)
 
+        val viewerToStateString = Gson().toJson(newTask.viewer)
+        val viewerToStateString2 = Gson().toJson(viewerToStateString)
+
         val invitedNumbersString = Gson().toJson(newTask.invitedNumbers)
         val invitedNumbersString2 = Gson().toJson(invitedNumbersString)
 
+        val tagsString = Gson().toJson(newTask.tags)
+        val tagsString2 = Gson().toJson(tagsString)
+
 
         val dueDate = newTask.dueDate.toRequestBody("text/plain".toMediaTypeOrNull())
-        val topic = newTask.topic.toRequestBody("text/plain".toMediaTypeOrNull())
+        val confirmer = newTask.confirmer.toRequestBody("text/plain".toMediaTypeOrNull())
+        val title = newTask.title.toRequestBody("text/plain".toMediaTypeOrNull())
         val project = newTask.project.toRequestBody("text/plain".toMediaTypeOrNull())
         val assignedToState = assignedToStateString2.toRequestBody("text/plain".toMediaTypeOrNull())
+        val viewer = viewerToStateString2.toRequestBody("text/plain".toMediaTypeOrNull())
         val creator = newTask.creator.toRequestBody("text/plain".toMediaTypeOrNull())
         val description = newTask.description.toRequestBody("text/plain".toMediaTypeOrNull())
         val doneImageRequired =
@@ -291,13 +315,17 @@ class TaskRepository @Inject constructor(
         val doneCommentsRequired =
             newTask.doneCommentsRequired.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val invitedNumbers = invitedNumbersString2.toRequestBody("text/plain".toMediaTypeOrNull())
+        val tags = tagsString2.toRequestBody("text/plain".toMediaTypeOrNull())
 
 
 
         when (val response = remoteTask.newTaskV2WithoutFiles(
+            tags=tags,
+            confirmer=confirmer,
+            viewer=viewer,
             hasFiles = false,
             dueDate = dueDate,
-            topic = topic,
+            title = title,
             project = project,
             assignedToState = assignedToState,
             creator = creator,

@@ -33,7 +33,6 @@ import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.TagsChipsAdapter
-import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeChipsAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.EditCommentDialogSheet
 import com.zstronics.ceibro.utils.DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,6 +83,7 @@ class NewTaskV2Fragment :
                     doneImageRequired = mViewDataBinding.imageCheckbox.isChecked
                     doneCommentsRequired = mViewDataBinding.commentCheckbox.isChecked
                 }
+                viewState.selectedTags= emptyList()
                 viewModel.createNewTask(
                     doneImageRequired = doneImageRequired,
                     doneCommentsRequired = doneCommentsRequired,
@@ -108,7 +108,6 @@ class NewTaskV2Fragment :
             }
 
             R.id.backBtn -> navigateBack()
-            R.id.newTaskTopicText -> navigateForResult(R.id.topicFragment, TOPIC_REQUEST_CODE)
             R.id.newTaskProjectText -> navigateForResult(
                 R.id.taskProjectFragment,
                 PROJECT_REQUEST_CODE
@@ -116,11 +115,10 @@ class NewTaskV2Fragment :
 
 
             R.id.newConfirmerTopicText -> {
-                viewState.selectedConfirmerContacts.value?.clear()
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
-                    viewState.selectedConfirmerContacts.value?.toTypedArray()
+                    viewState.selectedContacts.value?.toTypedArray()
                 )
                 bundle.putBoolean("self-assign", viewState.selfAssignedConfermer.value ?: false)
                 bundle.putBoolean("isConfirmer", true)
@@ -171,10 +169,6 @@ class NewTaskV2Fragment :
                 datePicker.show()
             }
 
-            R.id.newTaskTopicClearBtn -> {
-                viewState.taskTitle.value = ""
-                viewState.selectedTopic = MutableLiveData()
-            }
 
             R.id.confirmerEndLayoutClearBtn -> {
                 viewState.selfAssignedConfermer.value = false
@@ -325,11 +319,11 @@ class NewTaskV2Fragment :
         mViewDataBinding.filesRV.isNestedScrollingEnabled = false
 
         viewState.taskTitle.observe(viewLifecycleOwner) {
-            if (it == "") {
+            /*if (it == "") {
                 mViewDataBinding.newTaskTopicClearBtn.visibility = View.GONE
             } else {
                 mViewDataBinding.newTaskTopicClearBtn.visibility = View.VISIBLE
-            }
+            }*/
         }
         viewState.confirmerText.observe(viewLifecycleOwner) {
             if (it == "") {
@@ -900,16 +894,7 @@ class NewTaskV2Fragment :
     override fun onNavigationResult(result: BackNavigationResult) {
         if (result.resultCode == RESULT_OK) {
             when (result.requestCode) {
-                TOPIC_REQUEST_CODE -> {
-                    val selectedTopic =
-                        result.data?.getParcelable<TopicsResponse.TopicData>("topic")
-                    if (selectedTopic != null) {
-                        viewState.selectedTopic.value = selectedTopic
-                        viewState.taskTitle.value = selectedTopic.topic
-                    } else {
-                        shortToastNow(resources.getString(R.string.topic_not_selected))
-                    }
-                }
+
 
                 ASSIGNEE_REQUEST_CODE -> {
                     val selfAssigned = result.data?.getBoolean("self-assign")
@@ -978,7 +963,7 @@ class NewTaskV2Fragment :
                                 "Me; "
                             }
                         }
-                         viewState.selfAssignedViewer.value = selfAssigned
+                        viewState.selfAssignedViewer.value = selfAssigned
                     }
 
                     var index = 0
@@ -1025,7 +1010,7 @@ class NewTaskV2Fragment :
                                 "Me; "
                             }
                         }
-                          viewState.selfAssignedConfermer.value = selfAssigned
+                        viewState.selfAssignedConfermer.value = selfAssigned
                     }
 
                     var index = 0
@@ -1038,7 +1023,9 @@ class NewTaskV2Fragment :
                             }
                             index++
                         }
-                        viewState.selectedConfirmerContacts.value = selectedContactList
+                        if (selectedContact.isNotEmpty()) {
+                            viewState.selectedConfirmerContacts.value = selectedContactList[0]
+                        }
                     }
                     viewState.confirmerText.value = assigneeMembers
                 }

@@ -430,10 +430,10 @@ class DashboardFragment :
                 }
 
                 var topicName =
-                    topic?.topicsData?.recentTopics?.find { it.id == item.topic }?.topic
+                    topic?.topicsData?.recentTopics?.find { it.id == item.title }?.topic
                 if (topicName.isNullOrEmpty()) {
                     topicName =
-                        topic?.topicsData?.allTopics?.find { it.id == item.topic }?.topic
+                        topic?.topicsData?.allTopics?.find { it.id == item.title }?.topic
                 }
 
                 offlineTaskData.add(
