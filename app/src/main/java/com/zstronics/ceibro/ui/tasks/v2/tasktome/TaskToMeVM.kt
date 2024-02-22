@@ -277,7 +277,7 @@ class TaskToMeVM @Inject constructor(
         if (selectedState.equals("new", true)) {
             val filteredTasks =
                 originalNewTasks.filter {
-                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                    (it.title!=null && it.title.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
                             it.taskUID.contains(query.trim(), true) ||
                             it.assignedToState.any { assignee ->
@@ -291,7 +291,7 @@ class TaskToMeVM @Inject constructor(
         } else if (selectedState.equals("ongoing", true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
-                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                    (it.title!=null && it.title.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
                             it.taskUID.contains(query.trim(), true) ||
                             it.assignedToState.any { assignee ->
@@ -305,7 +305,7 @@ class TaskToMeVM @Inject constructor(
         } else if (selectedState.equals("done", true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
-                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                    (it.title!=null && it.title.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
                             it.taskUID.contains(query.trim(), true) ||
                             it.assignedToState.any { assignee ->

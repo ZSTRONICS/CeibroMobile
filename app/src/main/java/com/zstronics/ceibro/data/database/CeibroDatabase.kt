@@ -56,7 +56,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         NewTaskV2Entity::class,
         LocalTaskDetailFiles::class,
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(
@@ -85,7 +85,8 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     AssignToStateDataTypeConverter::class,
     TaskMemberDetailTypeConverter::class,
     ProjectOfTaskTypeConverter::class,
-    TopicTypeConverter::class,
+    TagTypeConverter::class,
+    TagsListTypeConverter::class,
     TaskFilesListTypeConverter::class,
     EventFilesListTypeConverter::class,
     EventsListTypeConverter::class,

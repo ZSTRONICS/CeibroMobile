@@ -17,9 +17,13 @@ import ee.zstronics.ceibro.camera.AttachmentTypes
 @Entity(tableName = TableNamesV2.DraftNewTask)
 @Keep
 data class NewTaskV2Entity(
-    @SerializedName("topic") val topic: String,
+
+    @SerializedName("title") val title: String,
+    @SerializedName("tags") val tags: List<String>,
     @SerializedName("project") val project: String,
     @SerializedName("assignedToState") val assignedToState: List<AssignedToStateNewEntity>,
+    @SerializedName("confirmer") val confirmer: String,
+    @SerializedName("viewer") val viewer: List<String>,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("creator") val creator: String,
     @SerializedName("description") val description: String,
@@ -47,7 +51,7 @@ data class NewTaskV2Entity(
 
 @Keep
 data class NewTaskToSave(
-    @SerializedName("topic") val topic: TopicsResponse.TopicData?,
+    @SerializedName("title") val title: String,
     @SerializedName("project") val project: CeibroProjectV2?,
     @SerializedName("selectedContacts") val selectedContacts: List<AllCeibroConnections.CeibroConnection>?,
     @SerializedName("dueDate") val dueDate: String?,

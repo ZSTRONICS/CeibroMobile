@@ -351,8 +351,8 @@ class TaskDetailParentV2Fragment :
         binding.taskDetailDueDate.text = "Due Date: $dueDate"
 
         binding.taskTitle.text =
-            if (task.topic != null) {
-                task.topic.topic.ifEmpty {
+            if (task.title!=null) {
+                task.title.ifEmpty {
                     "N/A"
                 }
             } else {

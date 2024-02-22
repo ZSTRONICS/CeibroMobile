@@ -57,9 +57,12 @@ class TaskFromMeVM @Inject constructor(
 
     fun loadAllTasks(skeletonVisible: Boolean, taskRV: RecyclerView, callBack: () -> Unit) {
         launch {
-            val allFromMeUnreadTasks = CeibroApplication.CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
-            val allFromMeOngoingTasks = CeibroApplication.CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
-            val allFromMeDoneTasks = CeibroApplication.CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
+            val allFromMeUnreadTasks =
+                CeibroApplication.CookiesManager.fromMeUnreadTasks.value ?: mutableListOf()
+            val allFromMeOngoingTasks =
+                CeibroApplication.CookiesManager.fromMeOngoingTasks.value ?: mutableListOf()
+            val allFromMeDoneTasks =
+                CeibroApplication.CookiesManager.fromMeDoneTasks.value ?: mutableListOf()
             val allFromMeTasks = mutableListOf<CeibroTaskV2>()
             allFromMeTasks.addAll(allFromMeUnreadTasks)
             allFromMeTasks.addAll(allFromMeOngoingTasks)
@@ -101,9 +104,12 @@ class TaskFromMeVM @Inject constructor(
                 callBack.invoke()
             } else {
 
-                val unreadTasks = taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
-                val ongoingTasks = taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                val doneTasks = taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                val unreadTasks =
+                    taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+                val ongoingTasks =
+                    taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+                val doneTasks =
+                    taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
                 val allTasksList = mutableListOf<CeibroTaskV2>()
                 allTasksList.addAll(unreadTasks)
                 allTasksList.addAll(ongoingTasks)
@@ -160,7 +166,7 @@ class TaskFromMeVM @Inject constructor(
         if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
             val filteredTasks =
                 originalUnreadTasks.filter {
-                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                    (it.title != null && it.title.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
                             it.taskUID.contains(query.trim(), true) ||
                             it.assignedToState.any { assignee ->
@@ -174,7 +180,7 @@ class TaskFromMeVM @Inject constructor(
         } else if (selectedState.equals(TaskStatus.ONGOING.name.lowercase(), true)) {
             val filteredTasks =
                 originalOngoingTasks.filter {
-                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                    (it.title != null && it.title.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
                             it.taskUID.contains(query.trim(), true) ||
                             it.assignedToState.any { assignee ->
@@ -188,7 +194,7 @@ class TaskFromMeVM @Inject constructor(
         } else if (selectedState.equals(TaskStatus.DONE.name.lowercase(), true)) {
             val filteredTasks =
                 originalDoneTasks.filter {
-                    (it.topic != null && it.topic.topic.contains(query.trim(), true)) ||
+                    (it.title!=null && it.title.contains(query.trim(), true)) ||
                             it.description.contains(query.trim(), true) ||
                             it.taskUID.contains(query.trim(), true) ||
                             it.assignedToState.any { assignee ->
@@ -247,6 +253,7 @@ class TaskFromMeVM @Inject constructor(
                         callBack.invoke(true)
                     }, 50)
                 }
+
                 is ApiResponse.Error -> {
                     loading(false, response.error.message)
                     callBack.invoke(false)
