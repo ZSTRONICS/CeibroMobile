@@ -100,7 +100,7 @@ class EventsRVAdapter constructor(
 //                itemClickListener?.invoke(it, absoluteAdapterPosition, item)
 //            }
 
-            val context = binding.eventImg.context
+            val context = binding.eventPinImg.context
             binding.onlyComment.text = ""
             binding.onlyComment.visibility = View.GONE
             binding.onlyImagesRV.visibility = View.GONE
@@ -108,7 +108,7 @@ class EventsRVAdapter constructor(
             binding.forwardedToNames.text = ""
             binding.forwardedToNames.visibility = View.GONE
             binding.invitedNumbers.visibility = View.GONE
-            binding.eventImg.visibility = View.GONE
+            binding.eventPinImg.visibility = View.GONE
             binding.viewMoreLessLayout.visibility = View.GONE
             binding.viewMoreBtn.visibility = View.GONE
             binding.viewLessBtn.visibility = View.GONE
@@ -356,8 +356,8 @@ class EventsRVAdapter constructor(
                     binding.imagesWithCommentRV.visibility = View.GONE
                     binding.filesRV.visibility = View.GONE
 
-                    binding.eventImg.setImageResource(R.drawable.icon_reply)
-                    binding.eventImg.visibility = View.VISIBLE
+//                    binding.eventImg.setImageResource(R.drawable.icon_reply)
+//                    binding.eventPinImg.visibility = View.VISIBLE
 
                     if (item.commentData != null) {
 

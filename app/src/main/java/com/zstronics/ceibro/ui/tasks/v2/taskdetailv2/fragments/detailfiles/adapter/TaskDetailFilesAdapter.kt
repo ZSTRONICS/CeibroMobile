@@ -37,6 +37,7 @@ import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.databinding.LayoutCeibroTaskDetailFilesBinding
+import com.zstronics.ceibro.extensions.share
 import com.zstronics.ceibro.ui.attachment.imageExtensions
 import com.zstronics.ceibro.ui.networkobserver.NetworkConnectivityObserver
 import com.zstronics.ceibro.utils.DateUtils
@@ -328,7 +329,7 @@ class TaskDetailFilesAdapter constructor(
                         isDownloaded,
                         it
                     ) { tag ->
-                       if (tag == "download") {
+                        if (tag.equals("download", true)) {
 
                             if (item.fileUrl.isEmpty()) {
                                 cancelAndMakeToast(
@@ -372,6 +373,12 @@ class TaskDetailFilesAdapter constructor(
                                     )
                                 }
                             }
+                        } else if (tag.equals("share", true)) {
+                            context.share(
+                                text = "Check out this file: ${item.fileUrl}",
+                                subject = null,
+                                title = "Share File"
+                            )
                         }
                     }
                 }, 30)
@@ -533,7 +540,6 @@ class TaskDetailFilesAdapter constructor(
                 } else if (it.downloading) {
 
 
-
                     getDownloadProgress(
                         tvDownloadProgress.context,
                         it.downloadId
@@ -604,7 +610,11 @@ class TaskDetailFilesAdapter constructor(
         tvDownload.setOnClickListener {
             popupWindow.dismiss()
             callback.invoke("download")
+        }
 
+        tvShare.setOnClickListener {
+            popupWindow.dismiss()
+            callback.invoke("share")
         }
 
         if (!isDownloaded) {
@@ -624,8 +634,7 @@ class TaskDetailFilesAdapter constructor(
         if (positionOfIcon > height) {
             if (tvDownload.visibility == View.GONE) {
                 popupWindow.showAsDropDown(v, 0, -295)
-            }
-            else {
+            } else {
                 popupWindow.showAsDropDown(v, 0, -420)
             }
 //            popupWindow.showAsDropDown(v, 0, -270)

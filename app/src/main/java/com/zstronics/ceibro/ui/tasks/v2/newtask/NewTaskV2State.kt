@@ -16,7 +16,7 @@ class NewTaskV2State @Inject constructor() :
     override var selectedTopic: MutableLiveData<TopicsResponse.TopicData> = MutableLiveData()
     override var selectedProject: MutableLiveData<CeibroProjectV2> = MutableLiveData()
     override var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
-    override var selectedTags: List<String> = emptyList()
+    override var selectedTags: MutableLiveData<MutableList<TopicsResponse.TopicData>> = MutableLiveData()
     override var selectedViewerContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> = MutableLiveData()
     override var selectedConfirmerContacts: MutableLiveData<AllCeibroConnections.CeibroConnection> = MutableLiveData()
     override var selfAssigned: MutableLiveData<Boolean> = MutableLiveData(false)

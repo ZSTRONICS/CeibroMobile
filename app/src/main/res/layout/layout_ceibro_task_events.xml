@@ -80,17 +80,18 @@
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
-                app:layout_constraintEnd_toStartOf="@+id/eventImg"
+                app:layout_constraintEnd_toStartOf="@+id/eventPinImg"
                 app:layout_constraintStart_toEndOf="@+id/creatorCard"
                 app:layout_constraintTop_toTopOf="@+id/creatorCard" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/eventImg"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:layout_marginEnd="@dimen/_5sdp"
+                android:id="@+id/eventPinImg"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="@dimen/_4sdp"
                 android:padding="2dp"
-                android:src="@drawable/icon_navigate_up"
+                android:src="@drawable/icon_pin_filled"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/dotMenu"
                 app:layout_constraintEnd_toStartOf="@+id/dotMenu"
                 app:layout_constraintTop_toTopOf="@+id/dotMenu" />

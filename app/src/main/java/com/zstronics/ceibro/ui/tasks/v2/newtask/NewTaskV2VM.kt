@@ -60,7 +60,8 @@ class NewTaskV2VM @Inject constructor(
     var locationTaskData: MutableLiveData<AddLocationTask?> = MutableLiveData(null)
     var taskId = ""
 
-    var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> = MutableLiveData(mutableListOf())
+    var originalGroups: MutableLiveData<MutableList<CeibroGroupsV2>> =
+        MutableLiveData(mutableListOf())
     var originalAllGroups: MutableList<CeibroGroupsV2> = mutableListOf()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
@@ -95,7 +96,7 @@ class NewTaskV2VM @Inject constructor(
                 }
                 viewState.selectedContacts.value = selectedContactList.toMutableList()
                 viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
-               // viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
+                // viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
             }
             viewState.assignToText.value = assigneeMembers
 
@@ -105,7 +106,8 @@ class NewTaskV2VM @Inject constructor(
             }
 
             if (!oldCreatedTask.dueDate.isNullOrEmpty()) {
-                val currentDate = DateUtils.getCurrentDateWithFormat(DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT)
+                val currentDate =
+                    DateUtils.getCurrentDateWithFormat(DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT)
                 val dateFormat = SimpleDateFormat(DateUtils.FORMAT_SHORT_DATE_MON_YEAR_WITH_DOT)
                 try {
                     val oldDate = dateFormat.parse(oldCreatedTask.dueDate)
@@ -158,10 +160,19 @@ class NewTaskV2VM @Inject constructor(
         } else {
             launch {
                 val selectedIds = viewState.selectedContacts.value?.map { it.id }
-                val selectedViewersIds = viewState.selectedViewerContacts.value?.map { it.id }?: emptyList()
-                val selectedConfirmersIds = viewState.selectedConfirmerContacts.value?.id?:""
+                val selectedViewersIds: MutableList<String> = mutableListOf()
+                viewState.selectedViewerContacts.value?.map {
+                    if (it.userCeibroData != null) {
+                        selectedViewersIds.add(it.userCeibroData.id)
+                    }
+                }
+                var selectedConfirmersIds = ""
+                viewState.selectedConfirmerContacts.value?.let {
+                    selectedConfirmersIds = it.userCeibroData?.id ?: ""
+                }
 
-                val selectedContacts = selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
+                val selectedContacts =
+                    selectedIds?.let { connectionsV2Dao.getByIds(it) } ?: emptyList()
 
                 val assignedToCeibroUsers =
                     selectedContacts.filter { it.isCeiborUser }
@@ -180,30 +191,32 @@ class NewTaskV2VM @Inject constructor(
                     }
                 }
 
+                val tagList=viewState.selectedTags.value?.map { it.id }?: emptyList()
+
                 val invitedNumbers = selectedContacts.filter { !it.isCeiborUser }
                     .map { it.phoneNumber }
                 val projectId = viewState.selectedProject.value?._id ?: ""
                 val list = getCombinedList()
 
-                val newTaskRequest =NewTaskV2Entity(
-                        title = viewState.taskTitle.value?:"",
-                        tags=viewState.selectedTags,
-                        project = projectId,
-                        assignedToState = assignedToCeibroUsers,
-                        confirmer = selectedConfirmersIds,
-                        viewer = selectedViewersIds,
-                        dueDate = viewState.dueDate.value.toString(),
-                        creator = user?.id.toString(),
-                        description = viewState.description.value.toString(),
-                        doneImageRequired = doneImageRequired,
-                        doneCommentsRequired = doneCommentsRequired,
-                        invitedNumbers = invitedNumbers,
-                        hasPendingFilesToUpload = list.isNotEmpty()
-                    )
+                val newTaskRequest = NewTaskV2Entity(
+                    title = viewState.taskTitle.value ?: "",
+                    tags = tagList,
+                    project = projectId,
+                    assignedToState = assignedToCeibroUsers,
+                    confirmer = selectedConfirmersIds,
+                    viewer = selectedViewersIds,
+                    dueDate = viewState.dueDate.value.toString(),
+                    creator = user?.id.toString(),
+                    description = viewState.description.value.toString(),
+                    doneImageRequired = doneImageRequired,
+                    doneCommentsRequired = doneCommentsRequired,
+                    invitedNumbers = invitedNumbers,
+                    hasPendingFilesToUpload = list.isNotEmpty()
+                )
 
 
                 val newTaskToSave = NewTaskToSave(
-                    title = viewState.taskTitle.value?:"",
+                    title = viewState.taskTitle.value ?: "",
                     project = viewState.selectedProject.value,
                     selectedContacts = selectedContacts,
                     dueDate = viewState.dueDate.value,
@@ -363,7 +376,6 @@ class NewTaskV2VM @Inject constructor(
         var locationPinData: AddLocationTask? = null
         var taskList: ArrayList<PickedImages>? = null
     }
-
 
 
     fun getGroupsByProjectID(projectId: String) {

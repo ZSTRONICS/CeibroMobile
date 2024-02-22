@@ -83,7 +83,6 @@ class NewTaskV2Fragment :
                     doneImageRequired = mViewDataBinding.imageCheckbox.isChecked
                     doneCommentsRequired = mViewDataBinding.commentCheckbox.isChecked
                 }
-                viewState.selectedTags= emptyList()
                 viewModel.createNewTask(
                     doneImageRequired = doneImageRequired,
                     doneCommentsRequired = doneCommentsRequired,
@@ -139,7 +138,10 @@ class NewTaskV2Fragment :
             }
 
             R.id.newTagTopicText -> {
-                navigateForResult(R.id.tagsFragment, TAG_REQUEST_CODE)
+                val bundle = Bundle()
+                bundle.putParcelableArray("oldTags", viewState.selectedTags.value?.toTypedArray())
+                navigateForResult(R.id.tagsFragment, TAG_REQUEST_CODE, bundle)
+
             }
 
 
@@ -312,6 +314,10 @@ class NewTaskV2Fragment :
 
 
         mViewDataBinding.selectedTagsRV.adapter = chipAdapter
+        chipAdapter.removeItemClickListener={
+            viewState.selectedTags.value?.remove(it)
+
+        }
 
         mViewDataBinding.newTaskParentScroll.isSmoothScrollingEnabled = true
         mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
@@ -982,6 +988,19 @@ class NewTaskV2Fragment :
                 }
 
                 TAG_REQUEST_CODE -> {
+
+                    val tagList: ArrayList<TopicsResponse.TopicData>? =
+                        result.data?.getParcelableArrayList("tag")
+                    if (tagList != null) {
+
+                        viewState.selectedTags.value = tagList
+                        val list = tagList.map { it.id }
+                        chipAdapter.setList(tagList)
+                        viewState.tagText.value=list.toString()
+                    } else {
+                        viewState.selectedTags = MutableLiveData()
+                        viewState.tagText.value=viewState.selectedTags.toString()
+                    }
 
                 }
 
