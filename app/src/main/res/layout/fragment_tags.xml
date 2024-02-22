@@ -52,8 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="15dp"
+                android:layout_marginEnd="10dp"
                 android:ellipsize="end"
                 android:fontFamily="@font/inter_bold"
                 android:maxLines="1"
@@ -61,10 +61,28 @@
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/saveBtn"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/backBtn"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/saveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/signin_button_back"
+                android:fontFamily="@font/inter_regular"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_9sdp"
+                android:paddingEnd="@dimen/_9sdp"
+                android:text="Done"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -157,7 +175,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/recentTopicLayout"
                         tools:itemCount="3"
-                        tools:listitem="@layout/layout_item_topic_header" />
+                        tools:listitem="@layout/layout_tag_item_listing" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
 
@@ -180,9 +198,9 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:padding="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
+                app:layout_constraintBottom_toBottomOf="@+id/tagSearchBar"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/topicSearchBar"
+                app:layout_constraintTop_toTopOf="@+id/tagSearchBar"
                 app:srcCompat="@drawable/icon_back"
                 app:tint="@color/appBlue" />
 
@@ -194,13 +212,13 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
                 android:background="@color/appGrey3"
-                app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
-                app:layout_constraintEnd_toStartOf="@+id/topicSearchBar"
+                app:layout_constraintBottom_toBottomOf="@+id/tagSearchBar"
+                app:layout_constraintEnd_toStartOf="@+id/tagSearchBar"
                 app:layout_constraintStart_toEndOf="@+id/tagBackBtn"
-                app:layout_constraintTop_toTopOf="@+id/topicSearchBar" />
+                app:layout_constraintTop_toTopOf="@+id/tagSearchBar" />
 
             <SearchView
-                android:id="@+id/topicSearchBar"
+                android:id="@+id/tagSearchBar"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="@dimen/_2sdp"
@@ -231,7 +249,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topicSearchBar" />
+                app:layout_constraintTop_toBottomOf="@+id/tagSearchBar" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/saveTagBtn"
@@ -246,10 +264,10 @@
                 android:text="@string/save_and_use"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/topicSearchBar"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/tagSearchBar"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/topicSearchBar" />
+                app:layout_constraintTop_toTopOf="@+id/tagSearchBar" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

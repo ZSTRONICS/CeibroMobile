@@ -296,13 +296,4 @@ class TopicFragment :
         imm.showSoftInput(mViewDataBinding.topicSearchBar, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    private fun deactivateSearchView() {
-        // close the keyboard
-        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(mViewDataBinding.topicSearchBar.windowToken, 0)
-
-        mViewDataBinding.topicSearchBar.clearFocus()
-        mViewDataBinding.topicSearchBtn.visibility = View.VISIBLE
-    }
-
 }

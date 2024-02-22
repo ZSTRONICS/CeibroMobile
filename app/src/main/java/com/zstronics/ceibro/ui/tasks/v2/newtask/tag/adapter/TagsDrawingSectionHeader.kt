@@ -1,15 +1,15 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.tag.adapter
 
 import com.intrusoft.sectionedrecyclerview.Section
-import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 
 
 class TagsDrawingSectionHeader(
-    private val childList: MutableList<String>,
+    private val childList: List<TopicsResponse.TopicData>,
     private val sectionText: String,
-) : Section<String> {
+) : Section<TopicsResponse.TopicData> {
 
-    override fun getChildItems(): MutableList<String> {
+    override fun getChildItems(): List<TopicsResponse.TopicData> {
         return childList
     }
 

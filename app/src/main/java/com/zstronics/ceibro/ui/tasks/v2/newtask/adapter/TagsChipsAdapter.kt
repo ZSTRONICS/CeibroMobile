@@ -1,19 +1,20 @@
 package com.zstronics.ceibro.ui.tasks.v2.newtask.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
-import com.zstronics.ceibro.databinding.LayoutItemAssigneeChipBinding
+import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.LayoutItemTagChipBindingBinding
+import java.util.ArrayList
 import javax.inject.Inject
 
 class TagsChipsAdapter @Inject constructor() :
     RecyclerView.Adapter<TagsChipsAdapter.AssigneeChipsViewHolder>() {
-    var removeItemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
+
+    var removeItemClickListener: (( data: TopicsResponse.TopicData) -> Unit)? =
         null
-    var dataList: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
+
+    var dataList: MutableList<TopicsResponse.TopicData> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AssigneeChipsViewHolder {
         return AssigneeChipsViewHolder(
             LayoutItemTagChipBindingBinding.inflate(
@@ -32,7 +33,7 @@ class TagsChipsAdapter @Inject constructor() :
         return dataList.size
     }
 
-    fun setList(list: List<AllCeibroConnections.CeibroConnection>) {
+    fun setList(list: ArrayList<TopicsResponse.TopicData>) {
         this.dataList.clear()
         this.dataList.addAll(list)
         notifyDataSetChanged()
@@ -41,27 +42,18 @@ class TagsChipsAdapter @Inject constructor() :
     inner class AssigneeChipsViewHolder(private val binding: LayoutItemTagChipBindingBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: AllCeibroConnections.CeibroConnection) {
+        fun bind(item: TopicsResponse.TopicData) {
 
             binding.removeBtn.setOnClickListener {
                 val oldList = dataList
                 oldList.removeAt(absoluteAdapterPosition)
                 dataList = oldList
-                notifyDataSetChanged()
-                removeItemClickListener?.invoke(it, absoluteAdapterPosition, item)
-            }
-            if (item.userCeibroData?.profilePic.isNullOrEmpty()) {
-                binding.contactInitials.visibility = View.VISIBLE
-                var initials = ""
-                if (item.contactFirstName?.isNotEmpty() == true) {
-                    initials += item.contactFirstName[0].uppercaseChar()
-                }
-                if (item.contactSurName?.isNotEmpty() == true) {
-                    initials += item.contactSurName[0].uppercaseChar()
-                }
 
-                binding.contactInitials.text = initials
+                removeItemClickListener?.invoke(item)
+                notifyDataSetChanged()
             }
+
+            binding.contactInitials.text = item.topic
         }
     }
 }

@@ -43,7 +43,7 @@ data class CeibroTaskV2(
     @SerializedName("invitedNumbers")
     var invitedNumbers: List<InvitedNumbers>,
     @SerializedName("locations")
-    val locations: List<String>,
+    val locations: List<String>?,
     @SerializedName("project")
     val project: ProjectOfTask?,
     @SerializedName("seenBy")
