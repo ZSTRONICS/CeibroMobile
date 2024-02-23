@@ -261,7 +261,7 @@
                 android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                 android:paddingStart="@dimen/_9sdp"
                 android:paddingEnd="@dimen/_9sdp"
-                android:text="@string/save_and_use"
+                android:text="@string/save"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:visibility="visible"
