@@ -30,9 +30,9 @@
                 android:id="@+id/detailRootLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_11sdp"
+                android:paddingStart="@dimen/_9sdp"
                 android:paddingTop="@dimen/_10sdp"
-                android:paddingEnd="@dimen/_11sdp"
+                android:paddingEnd="@dimen/_9sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:theme="@style/SelectableTextTheme">
 
@@ -175,7 +175,7 @@
                         android:maxLines="15"
                         android:text="Task description text over here."
                         android:textColor="@color/black"
-                        android:textSize="14.5sp"
+                        android:textSize="14sp"
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -205,7 +205,7 @@
                             android:singleLine="true"
                             android:text="View More"
                             android:textColor="@color/appBlue"
-                            android:textSize="13sp"
+                            android:textSize="12.5sp"
                             android:visibility="gone"
                             app:drawableEndCompat="@drawable/icon_navigate_down"
                             app:drawableTint="@color/appBlue"
@@ -227,7 +227,7 @@
                             android:singleLine="true"
                             android:text="View Less"
                             android:textColor="@color/appBlue"
-                            android:textSize="13sp"
+                            android:textSize="12.5sp"
                             android:visibility="gone"
                             app:drawableEndCompat="@drawable/icon_navigate_up"
                             app:drawableTint="@color/appBlue"
@@ -243,11 +243,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_4sdp"
-                        android:fontFamily="@font/inter_regular"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="@string/images"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:textSize="14sp"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/viewMoreLessLayout" />
@@ -277,11 +276,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_4sdp"
-                        android:fontFamily="@font/inter_regular"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="@string/images_with_comment"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:textSize="14sp"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/onlyImagesRV" />
@@ -309,11 +307,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:layout_marginBottom="@dimen/_4sdp"
-                        android:fontFamily="@font/inter_regular"
+                        android:fontFamily="@font/inter_semibold"
                         android:text="@string/drawings"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:textSize="14sp"
                         android:visibility="gone"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/imagesWithCommentRV" />
@@ -375,10 +372,10 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_4sdp"
                             android:layout_marginBottom="@dimen/_4sdp"
-                            android:fontFamily="@font/inter_regular"
+                            android:fontFamily="@font/inter_medium"
                             android:text="@string/files_heading"
                             android:textColor="@color/black"
-                            android:textSize="15sp"
+                            android:textSize="14sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -401,7 +398,7 @@
                             android:fontFamily="@font/inter_medium"
                             android:text="2 files"
                             android:textColor="@color/black"
-                            android:textSize="14.5sp"
+                            android:textSize="14sp"
                             app:layout_constraintBottom_toBottomOf="@+id/fileHeading"
                             app:layout_constraintStart_toEndOf="@+id/view4"
                             app:layout_constraintTop_toTopOf="@+id/fileHeading" />
@@ -445,6 +442,98 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/filesRV" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/pinnedCommentsLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:layout_marginStart="-3dp"
+                    android:layout_marginEnd="-3dp"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/filesLayout">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/pinnedCommentsHeaderLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/_1sdp"
+                        android:paddingBottom="@dimen/_1sdp"
+                        android:paddingHorizontal="3dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/pinnedCommentsHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginBottom="@dimen/_4sdp"
+                            android:fontFamily="@font/inter_medium"
+                            android:text="@string/pinned_comments"
+                            android:textColor="@color/black"
+                            android:textSize="13.5sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:id="@+id/view5"
+                            android:layout_width="0.8dp"
+                            android:layout_height="0dp"
+                            android:layout_marginStart="@dimen/_9sdp"
+                            android:background="@color/appGrey3"
+                            app:layout_constraintBottom_toBottomOf="@+id/pinnedCommentsHeading"
+                            app:layout_constraintStart_toEndOf="@+id/pinnedCommentsHeading"
+                            app:layout_constraintTop_toTopOf="@+id/pinnedCommentsHeading" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/pinnedCommentsCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_9sdp"
+                            android:fontFamily="@font/inter_medium"
+                            android:text="1 comment"
+                            android:textColor="@color/black"
+                            android:textSize="13.5sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/pinnedCommentsHeading"
+                            app:layout_constraintStart_toEndOf="@+id/view5"
+                            app:layout_constraintTop_toTopOf="@+id/pinnedCommentsHeading" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/pinnedCommentsDownUpIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/icon_navigate_up"
+                            app:layout_constraintBottom_toBottomOf="@+id/pinnedCommentsCount"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/pinnedCommentsCount" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/pinnedCommentsRV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_marginBottom="@dimen/_2sdp"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/pinnedCommentsHeaderLayout"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/layout_ceibro_task_pinned_events" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

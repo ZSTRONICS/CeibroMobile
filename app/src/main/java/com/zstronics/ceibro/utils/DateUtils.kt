@@ -150,6 +150,41 @@ object DateUtils {
         }
     }
 
+    fun formatCreationUTCTimeToCustomForPinnedComments(
+        utcTime: String, inputFormatter: String? = SERVER_DATE_FULL_FORMAT_IN_UTC
+    ): String {
+        val inputFormat = SimpleDateFormat(inputFormatter, Locale.getDefault())
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        val outputFormat = SimpleDateFormat(FORMAT_TIME_12H, Locale.getDefault())
+        outputFormat.timeZone = TimeZone.getDefault()
+
+        val utcDate: Date = inputFormat.parse(utcTime) ?: return ""
+
+        val calendarNow = Calendar.getInstance()
+//        val calendarOfUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+//        calendarOfUTC.time = utcDate
+
+        val timeFormatted = outputFormat.format(utcDate)
+
+        val utcDateFormatted = SimpleDateFormat(SERVER_DATE_FULL_FORMAT, Locale.getDefault())
+        utcDateFormatted.timeZone = TimeZone.getDefault()
+
+        val utcDateFormattedToDeviceDateTime = utcDateFormatted.format(utcDate)
+        val calendarFromFormattedTime = Calendar.getInstance()
+        calendarFromFormattedTime.time =
+            utcDateFormatted.parse(utcDateFormattedToDeviceDateTime) ?: Date()
+
+//        if (isSameDay(calendarNow, calendarFromFormattedTime)) {
+//            return "Today at $timeFormatted"
+//        } else if (isYesterday(calendarNow, calendarFromFormattedTime)) {
+//            return "Yesterday at $timeFormatted"
+//        } else {
+            val customFormat = SimpleDateFormat(FORMAT_SHORT_DATE_MON_YEAR_WITH_DAY, Locale.getDefault())
+            return customFormat.format(utcDate)
+//        }
+    }
+
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(
             Calendar.DAY_OF_YEAR

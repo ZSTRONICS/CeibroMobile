@@ -26,6 +26,7 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
@@ -34,9 +35,11 @@ import com.zstronics.ceibro.databinding.FragmentTaskDetailParentV2Binding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.PinnedEventsRVAdapter
 import com.zstronics.ceibro.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
@@ -44,6 +47,7 @@ import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -103,6 +107,16 @@ class TaskDetailParentV2Fragment :
                     mViewDataBinding.filesDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
                 }
             }
+
+            R.id.pinnedCommentsHeaderLayout -> {
+                if (mViewDataBinding.pinnedCommentsRV.visibility == View.VISIBLE) {
+                    mViewDataBinding.pinnedCommentsRV.visibility = View.GONE
+                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_down)
+                } else {
+                    mViewDataBinding.pinnedCommentsRV.visibility = View.VISIBLE
+                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+                }
+            }
         }
     }
 
@@ -117,6 +131,8 @@ class TaskDetailParentV2Fragment :
 
     lateinit var filesAdapter: FilesRVAdapter
 
+    private lateinit var pinnedEventsAdapter: PinnedEventsRVAdapter
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -129,6 +145,12 @@ class TaskDetailParentV2Fragment :
                 requireContext(),
                 viewModel.downloadedDrawingV2Dao
             )
+
+        pinnedEventsAdapter = PinnedEventsRVAdapter(
+            networkConnectivityObserver,
+            requireContext(),
+            viewModel.downloadedDrawingV2Dao
+        )
 
         viewModel.descriptionExpanded.observe(viewLifecycleOwner) { isExpanded ->
             if (isExpanded) {
@@ -252,6 +274,123 @@ class TaskDetailParentV2Fragment :
 
             checkDownloadFilePermission(triplet, viewModel.downloadedDrawingV2Dao) { }
         }
+
+        mViewDataBinding.pinnedCommentsRV.adapter = pinnedEventsAdapter
+
+        viewModel.taskPinnedEvents.observe(viewLifecycleOwner) { events ->
+            if (!events.isNullOrEmpty()) {
+                pinnedEventsAdapter.setList(
+                    events,
+                    viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: ""
+                )
+            } else {
+                pinnedEventsAdapter.setList(
+                    mutableListOf(),
+                    viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: ""
+                )
+            }
+
+            mViewDataBinding.pinnedCommentsCount.text = if (events.size > 1) {
+                "${events.size} comments"
+            } else {
+                "${events.size} comment"
+            }
+
+            mViewDataBinding.pinnedCommentsLayout.visibility =
+                if (events.isNotEmpty()) {
+                    View.VISIBLE
+                } else {
+                    mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+                    View.GONE
+                }
+        }
+
+        pinnedEventsAdapter.requestPermissionCallBack {
+            checkDownloadFilePermission()
+        }
+        pinnedEventsAdapter.downloadFileCallBack { textView, ivDownload, downloaded, triplet, tag ->
+            checkDownloadFilePermission(triplet, viewModel.downloadedDrawingV2Dao) {
+                MainScope().launch {
+                    /*
+                          if (it.trim().equals("100%", true)) {
+                              textView.visibility = View.GONE
+                              downloaded.visibility = View.VISIBLE
+                              textView.text = it
+                              //    detailAdapter.notifyDataSetChanged()
+                          } else if (it == "retry" || it == "failed") {
+                              downloaded.visibility = View.GONE
+                              textView.visibility = View.GONE
+                              ivDownload.visibility = View.VISIBLE
+                          } else {
+
+                              println("progress: $it textView.text = ${textView.text}")
+                              textView.text = it
+                              textView.visibility = View.VISIBLE
+                          }
+                          */
+                }
+            }
+        }
+
+        pinnedEventsAdapter.fileClickListener =
+            { view: View, position: Int, data: EventFiles, drawingFile ->
+                val bundle = Bundle()
+                bundle.putParcelable("eventFile", data)
+                bundle.putParcelable("downloadedFile", drawingFile)
+
+                val file = File(drawingFile.localUri)
+                val fileUri = Uri.fromFile(file)
+                val fileDetails = getPickedFileDetail(requireContext(), fileUri)
+                if (fileDetails.attachmentType == AttachmentTypes.Pdf) {
+                    navigate(R.id.fileViewerFragment, bundle)
+                } else {
+                    openFile(file, requireContext())
+                    //    shortToastNow("File format not supported yet.")
+                }
+            }
+
+
+        pinnedEventsAdapter.openEventImageClickListener =
+            { _: View, position: Int, imageFiles: List<TaskFiles> ->
+                val bundle = Bundle()
+                bundle.putParcelableArray("images", imageFiles.toTypedArray())
+                bundle.putInt("position", position)
+                bundle.putBoolean("fromServerUrl", true)
+                navigate(R.id.imageViewerFragment, bundle)
+            }
+
+        pinnedEventsAdapter.pinClickListener =
+            { position, event, isPinned ->
+                viewModel.pinOrUnpinComment(
+                    event.taskId,
+                    event.id,
+                    isPinned
+                ) { isSuccess, updatedEvent ->
+                    if (updatedEvent != null) {
+                        val originalEvents = viewModel.originalPinnedEvents.value
+                        if (!originalEvents.isNullOrEmpty()) {
+                            val foundEvent = originalEvents.find { it.id == updatedEvent.id }
+                            if (foundEvent != null) {
+                                val index = originalEvents.indexOf(foundEvent)
+                                originalEvents.removeAt(index)
+                                viewModel.originalPinnedEvents.postValue(originalEvents)
+                                viewModel._taskPinnedEvents.postValue(originalEvents)
+                            }
+                        }
+
+//                        if (pinnedEventsAdapter.listItems.isNotEmpty()) {
+//                            val adapterEvent =
+//                                pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
+//                            if (adapterEvent != null) {
+//                                val index = pinnedEventsAdapter.listItems.indexOf(adapterEvent)
+//                                pinnedEventsAdapter.listItems[index] = updatedEvent
+//                                pinnedEventsAdapter.notifyItemChanged(index)
+//                            }
+//                        }
+                    }
+                }
+            }
+
     }
 
     private fun setTaskData(task: CeibroTaskV2, binding: FragmentTaskDetailParentV2Binding) {
@@ -846,5 +985,100 @@ class TaskDetailParentV2Fragment :
             }
         }
     }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskEventUpdate(
+        event: LocalEvents.TaskEventUpdate?
+    ) {
+        val updatedEvent = event?.events
+        val taskDetail = viewModel.taskDetail.value
+        if (taskDetail != null && updatedEvent != null && updatedEvent.taskId == taskDetail.id) {
+
+            if (updatedEvent.isPinned == true) {
+                val originalEvents = viewModel.originalPinnedEvents.value ?: mutableListOf()
+                if (originalEvents.isNotEmpty()) {
+                    val foundEvent = originalEvents.find { it.id == updatedEvent.id }
+                    if (foundEvent != null) {
+                        val index = originalEvents.indexOf(foundEvent)
+                        originalEvents[index] = updatedEvent
+                        viewModel.originalPinnedEvents.postValue(originalEvents)
+                    } else {
+                        originalEvents.add(updatedEvent)
+                        viewModel.originalPinnedEvents.postValue(originalEvents)
+                    }
+
+                } else {
+                    originalEvents.add(updatedEvent)
+                    viewModel.originalPinnedEvents.postValue(originalEvents)
+                    viewModel._taskPinnedEvents.postValue(originalEvents)
+                }
+                mViewDataBinding.pinnedCommentsCount.text = if (originalEvents.size > 1) {
+                    "${originalEvents.size} comments"
+                } else {
+                    "${originalEvents.size} comment"
+                }
+
+                mViewDataBinding.pinnedCommentsLayout.visibility =
+                    if (originalEvents.isNotEmpty()) {
+                        View.VISIBLE
+                    } else {
+                        mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+                        View.GONE
+                    }
+
+
+                if (pinnedEventsAdapter.listItems.isNotEmpty()) {
+                    val adapterEvent = pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
+                    if (adapterEvent != null) {
+                        val index = pinnedEventsAdapter.listItems.indexOf(adapterEvent)
+                        pinnedEventsAdapter.listItems[index] = updatedEvent
+                        pinnedEventsAdapter.notifyItemChanged(index)
+                    } else {
+                        pinnedEventsAdapter.listItems.add(updatedEvent)
+                        pinnedEventsAdapter.notifyItemInserted(pinnedEventsAdapter.listItems.size - 1)
+                    }
+                } else {
+                    pinnedEventsAdapter.listItems.add(updatedEvent)
+                    pinnedEventsAdapter.notifyItemInserted(pinnedEventsAdapter.listItems.size - 1)
+                }
+            } else {
+                val originalEvents = viewModel.originalPinnedEvents.value
+                if (!originalEvents.isNullOrEmpty()) {
+                    val foundEvent = originalEvents.find { it.id == updatedEvent.id }
+                    if (foundEvent != null) {
+                        val index = originalEvents.indexOf(foundEvent)
+                        originalEvents.removeAt(index)
+                        viewModel.originalPinnedEvents.postValue(originalEvents)
+                    }
+
+                    mViewDataBinding.pinnedCommentsCount.text = if (originalEvents.size > 1) {
+                        "${originalEvents.size} comments"
+                    } else {
+                        "${originalEvents.size} comment"
+                    }
+
+                    mViewDataBinding.pinnedCommentsLayout.visibility =
+                        if (originalEvents.isNotEmpty()) {
+                            View.VISIBLE
+                        } else {
+                            mViewDataBinding.pinnedCommentsDownUpIcon.setImageResource(R.drawable.icon_navigate_up)
+                            View.GONE
+                        }
+                }
+
+                if (pinnedEventsAdapter.listItems.isNotEmpty()) {
+                    val adapterEvent = pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
+                    if (adapterEvent != null) {
+                        val index = pinnedEventsAdapter.listItems.indexOf(adapterEvent)
+                        pinnedEventsAdapter.listItems.removeAt(index)
+                        pinnedEventsAdapter.notifyItemRemoved(index)
+                    }
+                }
+            }
+
+        }
+    }
+
 
 }
