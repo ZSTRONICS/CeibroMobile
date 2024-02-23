@@ -260,7 +260,7 @@ class TaskDetailFilesAdapter constructor(
                         binding.fileImage.setImageResource(R.drawable.icon_doc)
                         binding.fileImage.scaleType = ImageView.ScaleType.FIT_CENTER
                     } else {
-                        binding.fileImage.setImageResource(R.drawable.icon_corrupted)
+                        binding.fileImage.setImageResource(R.drawable.icon_document)
                         binding.fileImage.scaleType = ImageView.ScaleType.FIT_CENTER
                     }
                 }

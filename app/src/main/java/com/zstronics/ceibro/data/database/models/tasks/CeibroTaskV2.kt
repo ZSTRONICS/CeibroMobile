@@ -134,7 +134,9 @@ data class Events(
     @SerializedName("eventNumber")
     val eventNumber: Int,
     @SerializedName("eventSeenBy")
-    var eventSeenBy: List<String>? = emptyList()
+    var eventSeenBy: List<String>? = emptyList(),
+    @SerializedName("isPinned")
+    var isPinned: Boolean?
 ) : Parcelable
 
 
