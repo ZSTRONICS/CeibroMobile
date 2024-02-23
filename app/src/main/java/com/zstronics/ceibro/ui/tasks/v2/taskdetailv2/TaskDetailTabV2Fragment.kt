@@ -431,6 +431,23 @@ class TaskDetailTabV2Fragment :
                         mViewDataBinding.taskForwardBtn.alpha = 1f
                     }
                 }
+                val isViewer = item.viewer?.find { it == viewModel.user?.id }
+                if (isViewer != null) {
+                    mViewDataBinding.doneBtn.isEnabled = false
+                    mViewDataBinding.doneBtn.isClickable = false
+                    mViewDataBinding.doneBtn.alpha = 0.6f
+                    mViewDataBinding.taskForwardBtn.isEnabled = false
+                    mViewDataBinding.taskForwardBtn.isClickable = false
+                    mViewDataBinding.taskForwardBtn.alpha = 0.6f
+                } else {
+                    mViewDataBinding.doneBtn.isEnabled = true
+                    mViewDataBinding.doneBtn.isClickable = true
+                    mViewDataBinding.doneBtn.alpha = 1f
+                    mViewDataBinding.taskForwardBtn.isEnabled = true
+                    mViewDataBinding.taskForwardBtn.isClickable = true
+                    mViewDataBinding.taskForwardBtn.alpha = 1f
+                }
+
                 if (item.creatorState.equals(
                         TaskStatus.DONE.name,
                         true

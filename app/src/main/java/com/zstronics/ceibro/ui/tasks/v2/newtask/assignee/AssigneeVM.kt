@@ -51,11 +51,11 @@ class AssigneeVM @Inject constructor(
         } ?: kotlin.run {
             this.isConfirmer.value = false
         }
-        isViewer?.let {
-            this.isViewer.value = it
-        } ?: kotlin.run {
-            this.isViewer.value = false
-        }
+//        isViewer?.let {
+            this.isViewer.value = isViewer ?: false
+//        } ?: kotlin.run {
+//            this.isViewer.value = false
+//        }
         val selectedContact = bundle?.getParcelableArray("contacts")
         val selectedContactList =
             selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
