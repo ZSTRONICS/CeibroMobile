@@ -130,7 +130,7 @@ data class Events(
     @SerializedName("taskId")
     val taskId: String,
     @SerializedName("updatedAt")
-    val updatedAt: String,
+    var updatedAt: String,
     @SerializedName("eventNumber")
     val eventNumber: Int,
     @SerializedName("eventSeenBy")

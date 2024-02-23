@@ -114,10 +114,11 @@ class NewTaskV2Fragment :
 
 
             R.id.newConfirmerTopicText -> {
+                val list= mutableListOf<AllCeibroConnections.CeibroConnection>()
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
-                    viewState.selectedContacts.value?.toTypedArray()
+                    list.toTypedArray()
                 )
                 bundle.putBoolean("self-assign", viewState.selfAssignedConfermer.value ?: false)
                 bundle.putBoolean("isConfirmer", true)
@@ -314,7 +315,7 @@ class NewTaskV2Fragment :
 
 
         mViewDataBinding.selectedTagsRV.adapter = chipAdapter
-        chipAdapter.removeItemClickListener={
+        chipAdapter.removeItemClickListener = {
             viewState.selectedTags.value?.remove(it)
 
         }
@@ -996,10 +997,10 @@ class NewTaskV2Fragment :
                         viewState.selectedTags.value = tagList
                         val list = tagList.map { it.id }
                         chipAdapter.setList(tagList)
-                        viewState.tagText.value=list.toString()
+                        viewState.tagText.value = list.toString()
                     } else {
                         viewState.selectedTags = MutableLiveData()
-                        viewState.tagText.value=viewState.selectedTags.toString()
+                        viewState.tagText.value = viewState.selectedTags.toString()
                     }
 
                 }
@@ -1042,11 +1043,12 @@ class NewTaskV2Fragment :
                             }
                             index++
                         }
-                        if (selectedContact.isNotEmpty()) {
-                            viewState.selectedConfirmerContacts.value = selectedContactList[0]
-                        }
                     }
-                    viewState.confirmerText.value = assigneeMembers
+                    if (selfAssigned == false) {
+                        viewState.confirmerText.value = assigneeMembers
+                    }else{
+                        viewState.confirmerText.value = "Me"
+                    }
                 }
 
                 PROJECT_REQUEST_CODE -> {

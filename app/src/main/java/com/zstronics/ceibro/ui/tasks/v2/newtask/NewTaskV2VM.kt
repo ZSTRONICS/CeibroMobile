@@ -95,7 +95,7 @@ class NewTaskV2VM @Inject constructor(
                     index++
                 }
                 viewState.selectedContacts.value = selectedContactList.toMutableList()
-                viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
+              //  viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
                 // viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
             }
             viewState.assignToText.value = assigneeMembers
@@ -167,8 +167,23 @@ class NewTaskV2VM @Inject constructor(
                     }
                 }
                 var selectedConfirmersIds = ""
-                viewState.selectedConfirmerContacts.value?.let {
-                    selectedConfirmersIds = it.userCeibroData?.id ?: ""
+
+                if (viewState.selfAssignedConfermer.value == true) {
+                    if (user != null) {
+                        selectedConfirmersIds = user.id
+
+                    }
+                } else {
+                    viewState.selectedConfirmerContacts.value?.let {
+                        selectedConfirmersIds = it.userCeibroData?.id ?: ""
+                    }
+                }
+                if (viewState.selfAssignedViewer.value == true) {
+                    if (user != null) {
+                        if (!selectedViewersIds.contains(user.id)) {
+                            selectedViewersIds.add(user.id)
+                        }
+                    }
                 }
 
                 val selectedContacts =
@@ -191,7 +206,7 @@ class NewTaskV2VM @Inject constructor(
                     }
                 }
 
-                val tagList=viewState.selectedTags.value?.map { it.id }?: emptyList()
+                val tagList = viewState.selectedTags.value?.map { it.id } ?: emptyList()
 
                 val invitedNumbers = selectedContacts.filter { !it.isCeiborUser }
                     .map { it.phoneNumber }

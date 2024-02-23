@@ -43,7 +43,7 @@ class EventsRVAdapter constructor(
     val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
 ) :
     RecyclerView.Adapter<EventsRVAdapter.EventsViewHolder>() {
-    var itemClickListener: ((view: View, position: Int, data: Events) -> Unit)? =
+    var pinClickListener: ((position: Int, data: Events, isPinned: Boolean) -> Unit)? =
         null
     var openEventImageClickListener: ((view: View, position: Int, imageFiles: List<TaskFiles>) -> Unit)? =
         null
@@ -311,6 +311,11 @@ class EventsRVAdapter constructor(
                     }
                     binding.myMsgLayout.layoutParams = layoutParams
 
+                    if (item.isPinned == true) {
+                        binding.eventPinImg.visibility = View.VISIBLE
+                    } else {
+                        binding.eventPinImg.visibility = View.GONE
+                    }
 
                     binding.onlyImagesRV.visibility = View.GONE
                     binding.imagesWithCommentRV.visibility = View.GONE
@@ -451,9 +456,9 @@ class EventsRVAdapter constructor(
             binding.dotMenu.setOnClickListener {
                 createPopupWindow(it, item) { value ->
                     if (value.equals("pin", true)) {
-
+                        pinClickListener?.invoke(absoluteAdapterPosition, item, true)
                     } else if (value.equals("unpin", true)) {
-
+                        pinClickListener?.invoke(absoluteAdapterPosition, item, false)
                     }
                 }
             }
@@ -663,7 +668,7 @@ class EventsRVAdapter constructor(
 //                } else {
 //                    popupWindow.showAsDropDown(v, 0, -420)
 //                }
-            popupWindow.showAsDropDown(v, 0, -200)
+            popupWindow.showAsDropDown(v, 0, -180)
             } else {
                 popupWindow.showAsDropDown(v, 0, -30)
             }

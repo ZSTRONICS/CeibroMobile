@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskDetailFilesV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.local.FileAttachmentsDataSource
@@ -40,6 +41,7 @@ import com.zstronics.ceibro.data.repos.projects.projectsmain.ProjectsWithMembers
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.PinnedCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketForwardedToMeNewTaskEventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketHideUnHideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketInboxTaskResponse
@@ -79,7 +81,8 @@ class DashboardVM @Inject constructor(
     private val floorV2Dao: FloorsV2Dao,
     private val groupV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
-    private val connectionGroupV2Dao: ConnectionGroupV2Dao
+    private val connectionGroupV2Dao: ConnectionGroupV2Dao,
+    private val taskDetailFilesV2Dao: TaskDetailFilesV2Dao
 ) : HiltBaseViewModel<IDashboard.State>(), IDashboard.ViewModel {
     var user = sessionManager.getUser().value
     var userId: String? = ""
@@ -283,6 +286,23 @@ class DashboardVM @Inject constructor(
 
                         }
                     }
+                }
+
+                SocketHandler.TaskEvent.TASK_EVENT_UPDATED.name -> {
+                    try {
+                        val eventUpdateData = gson.fromJson<PinnedCommentV2Response>(
+                            arguments,
+                            object : TypeToken<PinnedCommentV2Response>() {}.type
+                        )
+                        launch {
+                            updateEventInLocal(
+                                eventUpdateData,
+                                taskDao,
+                                sessionManager
+                            )
+                        }
+                    } catch (_: Exception) { }
+
                 }
 
                 SocketHandler.TaskEvent.TASK_HIDDEN.name, SocketHandler.TaskEvent.TASK_SHOWN.name -> {
@@ -712,6 +732,7 @@ class DashboardVM @Inject constructor(
             inboxV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             connectionGroupV2Dao.deleteAll()
+            taskDetailFilesV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
             drawingPinsDao.deleteAll()
 

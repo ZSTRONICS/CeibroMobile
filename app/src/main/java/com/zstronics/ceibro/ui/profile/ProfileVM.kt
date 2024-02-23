@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.database.dao.FloorsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskDetailFilesV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.repos.task.TaskRepository
@@ -47,6 +48,7 @@ class ProfileVM @Inject constructor(
     private val groupV2Dao: GroupsV2Dao,
     private val connectionsV2Dao: ConnectionsV2Dao,
     private val connectionGroupV2Dao: ConnectionGroupV2Dao,
+    private val taskDetailFilesV2Dao: TaskDetailFilesV2Dao,
     private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<IProfile.State>(), IProfile.ViewModel {
     var user = sessionManager.getUser().value
@@ -125,6 +127,7 @@ class ProfileVM @Inject constructor(
             inboxV2Dao.deleteAll()
             connectionsV2Dao.deleteAll()
             connectionGroupV2Dao.deleteAll()
+            taskDetailFilesV2Dao.deleteAll()
             draftNewTaskV2Internal.deleteAllData()
             drawingPinsDao.deleteAll()
 

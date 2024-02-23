@@ -58,7 +58,6 @@ class AssigneeFragment :
                     } else {
                         val bundle = Bundle()
                         if (selfAssigned == true) {
-                            selectedContactList?.clear()
                             bundle.putBoolean("self-assign", selfAssigned)
 
                         } else {
@@ -402,6 +401,12 @@ class AssigneeFragment :
                 viewModel.selectedContacts.postValue(distinctList)
             } else {
                 viewModel.selectedContacts.postValue(selectedContacts)
+            }
+
+
+            if (viewModel.isConfirmer.value==true){
+                viewModel.selectedContacts.value?.clear()
+                viewModel.selectedContacts.value?.add(contact)
             }
 
             val recentAllConnections = viewModel.recentAllConnections.value

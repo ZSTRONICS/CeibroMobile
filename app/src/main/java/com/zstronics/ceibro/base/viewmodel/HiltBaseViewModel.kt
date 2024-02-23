@@ -47,6 +47,7 @@ import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
+import com.zstronics.ceibro.data.repos.task.models.v2.PinnedCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.UpdateRequiredEvents
@@ -1299,6 +1300,38 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
+
+    suspend fun updateEventInLocal(
+        eventData: PinnedCommentV2Response,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager
+    ) {
+        val isExists = TaskEventsList.isExists(
+            SocketHandler.TaskEvent.TASK_EVENT_UPDATED.name, eventData.data.eventId, true
+        )
+
+        if (!isExists) {
+            GlobalScope.launch {
+                val currentUser = sessionManager.getUserObj()
+                val event = taskDao.getSingleEvent(eventData.data.taskId, eventData.data.eventId)
+                if (event != null) {
+                    event.isPinned = eventData.data.isPinned
+                    event.updatedAt = eventData.data.updatedAt
+
+                    taskDao.insertEventData(event)
+                }
+                EventBus.getDefault().post(LocalEvents.TaskEventUpdate(event))
+
+            }.join()
+
+            TaskEventsList.removeEvent(
+                SocketHandler.TaskEvent.TASK_EVENT_UPDATED.name,
+                eventData.data.eventId
+            )
+        }
+
+    }
+
     suspend fun updateTaskUnCanceledInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
@@ -1790,8 +1823,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 GlobalScope.launch {
                     sessionManager.saveInboxUpdatedAtTimeStamp(inboxTask.createdAt)
 
-                    if (inboxTask.actionType.equals(SocketHandler.TaskEvent.IB_TASK_DONE.name, true) ||
-                        inboxTask.actionType.equals(SocketHandler.TaskEvent.IB_CANCELED_TASK.name, true)) {
+                    if (inboxTask.actionType.equals(
+                            SocketHandler.TaskEvent.IB_TASK_DONE.name,
+                            true
+                        ) ||
+                        inboxTask.actionType.equals(
+                            SocketHandler.TaskEvent.IB_CANCELED_TASK.name,
+                            true
+                        )
+                    ) {
 
                         val existingTask = inboxV2Dao.getInboxTaskData(inboxTask.taskId)
                         if (existingTask != null) {

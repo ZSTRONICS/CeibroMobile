@@ -12,6 +12,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.InboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.PinnedCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
@@ -254,6 +255,13 @@ interface TaskRetroService {
     suspend fun getTaskById(
         @Path("taskId") taskId: String
     ): Response<ForwardedToMeNewTaskV2Response>
+
+    @POST("v2/task/updatePin/{taskId}/{eventId}")
+    suspend fun pinOrUnpinComment(
+        @Path("taskId") taskId: String,
+        @Path("eventId") eventId: String,
+        @Query("isPinned") isPinned: Boolean
+    ): Response<PinnedCommentV2Response>
 
     @POST("v2/task/sync/taskwithevents")
     suspend fun syncTaskAndEvents(
