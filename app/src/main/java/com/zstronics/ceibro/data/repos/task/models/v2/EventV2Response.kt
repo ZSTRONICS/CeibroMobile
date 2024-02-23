@@ -53,7 +53,9 @@ data class EventV2Response(
         @SerializedName("pinData")
         val pinData: CeibroDrawingPins?,
         @SerializedName("eventNumber")
-        val eventNumber: Int
+        val eventNumber: Int,
+        @SerializedName("isPinned")
+        val isPinned: Boolean?
     ) : Parcelable {
 
         @Parcelize

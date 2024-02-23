@@ -953,7 +953,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
-                    eventNumber = eventData.eventNumber
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
@@ -1157,7 +1158,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
-                    eventNumber = eventData.eventNumber
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
                 )
 //                println("Heartbeat SocketEvent NEW_TASK_COMMENT started ${System.currentTimeMillis()}")
                 GlobalScope.launch {
@@ -1323,7 +1325,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
                         invitedMembers = eventData.invitedMembers,
-                        eventNumber = eventData.eventNumber
+                        eventNumber = eventData.eventNumber,
+                        isPinned = eventData.isPinned
                     )
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
                     val task = taskDao.getTaskByID(eventData.taskId)
@@ -1403,7 +1406,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         createdAt = eventData.createdAt,
                         updatedAt = eventData.updatedAt,
                         invitedMembers = eventData.invitedMembers,
-                        eventNumber = eventData.eventNumber
+                        eventNumber = eventData.eventNumber,
+                        isPinned = eventData.isPinned
                     )
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
                     val task = taskDao.getTaskByID(eventData.taskId)
@@ -1479,7 +1483,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
-                    eventNumber = eventData.eventNumber
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
@@ -1592,7 +1597,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 createdAt = eventData.createdAt,
                 updatedAt = eventData.updatedAt,
                 invitedMembers = eventData.invitedMembers,
-                eventNumber = eventData.eventNumber
+                eventNumber = eventData.eventNumber,
+                isPinned = eventData.isPinned
             )
             GlobalScope.launch {
                 sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
