@@ -110,6 +110,7 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/appGrey"
                         android:textSize="15sp"
+                        android:maxLength="1500"
                         android:text="@={viewState.comment}"
                         app:layout_constraintBottom_toTopOf="@id/newImagesRV"
                         app:layout_constraintEnd_toStartOf="@+id/attachmentBtn"

@@ -232,6 +232,7 @@
                 android:queryHint="Start typing tags"
                 android:searchIcon="@null"
                 android:textSize="14sp"
+                android:maxLength="25"
                 app:layout_constraintEnd_toStartOf="@+id/saveTagBtn"
                 app:layout_constraintStart_toEndOf="@+id/view6"
                 app:layout_constraintTop_toTopOf="parent"

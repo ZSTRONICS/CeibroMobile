@@ -71,6 +71,9 @@ interface TaskV2Dao {
     @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY createdAt ASC")
     suspend fun getEventsOfTask(taskId: String): List<Events>
 
+    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId AND isPinned = :isPinned ORDER BY updatedAt ASC")
+    suspend fun getPinnedEventsOfTask(taskId: String, isPinned: Boolean): List<Events>
+
     @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId AND id = :eventId")
     suspend fun getSingleEvent(taskId: String, eventId: String): Events?
 

@@ -5,17 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +56,11 @@ class TaskDetailParentV2VM @Inject constructor(
     val _documents: MutableLiveData<ArrayList<TaskFiles>> = MutableLiveData(arrayListOf())
     val documents: MutableLiveData<ArrayList<TaskFiles>> = _documents
 
+
+    val _taskPinnedEvents: MutableLiveData<MutableList<Events>> = MutableLiveData()
+    val taskPinnedEvents: MutableLiveData<MutableList<Events>> = _taskPinnedEvents
+    val originalPinnedEvents: MutableLiveData<MutableList<Events>> = MutableLiveData(mutableListOf())
+
     var isTaskBeingDone: MutableLiveData<Boolean> = MutableLiveData(false)
 
     var rootState = ""
@@ -88,22 +96,21 @@ class TaskDetailParentV2VM @Inject constructor(
                 taskId = taskDataFromNotification.id
                 isTaskBeingDone.postValue(taskDataFromNotification.isBeingDoneByAPI)
                 rootState = TaskRootStateTags.ToMe.tagValue
-                _taskDetail.postValue(taskDataFromNotification!!)
                 originalTask.postValue(taskDataFromNotification!!)
+                _taskDetail.postValue(taskDataFromNotification!!)
 
-                val seenByMe = taskDataFromNotification.seenBy.find { it1 -> it1 == user?.id }
                 taskSeen(taskDataFromNotification.id) { }
+                getPinnedEvents(taskId, true)
             } else {
                 taskData?.let { task ->
                     taskId = task.id
                     val isTaskBeingDone1 = taskDao.getTaskIsBeingDoneByAPI(task.id)
                     isTaskBeingDone.postValue(isTaskBeingDone1)
-                    _taskDetail.postValue(task)
                     originalTask.postValue(task)
+                    _taskDetail.postValue(task)
 
-
-                    val seenByMe = task.seenBy.find { it == user?.id }
                     taskSeen(task.id) { }
+                    getPinnedEvents(taskId, true)
                 } ?: run {
                     alert("No details to display")
                 }
@@ -138,4 +145,49 @@ class TaskDetailParentV2VM @Inject constructor(
             }
         }
     }
+
+    fun pinOrUnpinComment(
+        taskId: String,
+        eventId: String,
+        isPinned: Boolean,
+        callBack: (isSuccess: Boolean, event: Events?) -> Unit
+    ) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.pinOrUnpinComment(taskId, eventId, isPinned)) {
+                is ApiResponse.Success -> {
+                    val commentPinnedData = response.data.data
+
+                    updateEventInLocal(response.data, taskDao, sessionManager)
+//                    val event = taskDao.getSingleEvent(commentPinnedData.taskId, commentPinnedData.eventId)
+//                    if (event != null) {
+//                        event.isPinned = commentPinnedData.isPinned
+//                        event.updatedAt = commentPinnedData.updatedAt
+//
+//                        taskDao.insertEventData(event)
+//                    }
+
+                    loading(false, "")
+                    callBack.invoke(true, null)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false, null)
+                }
+            }
+        }
+    }
+
+    private fun getPinnedEvents(
+        taskId: String,
+        isPinned: Boolean
+    ) {
+        launch {
+            val allEvents = taskDao.getPinnedEventsOfTask(taskId, isPinned).toMutableList()
+            originalPinnedEvents.postValue(allEvents)
+            _taskPinnedEvents.postValue(allEvents)
+        }
+    }
+
 }
