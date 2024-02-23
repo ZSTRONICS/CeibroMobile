@@ -259,7 +259,7 @@ class TaskDetailCommentsV2VM @Inject constructor(
         onBack: (eventData: EventV2Response.Data?) -> Unit
     ) {
         val list = getCombinedList()
-        if (viewState.comment.value.toString() == "" && list.isEmpty()) {
+        if (viewState.comment.value.toString().trim() == "" && list.isEmpty()) {
             alert(context.getString(R.string.please_add_comment_or_files))
         } else {
             GlobalScope.launch {

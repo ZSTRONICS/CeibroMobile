@@ -66,7 +66,7 @@ class AssigneeFragment :
 
                         bundle.putParcelableArray("contacts", selectedContactList?.toTypedArray())
 
-                         navigateBackWithResult(Activity.RESULT_OK, bundle)
+                        navigateBackWithResult(Activity.RESULT_OK, bundle)
                     }
                 } else {
                     val selectedContactList = viewModel.selectedContacts.value
@@ -96,6 +96,12 @@ class AssigneeFragment :
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.selectedContactsRV.adapter = chipAdapter
 
+        if (viewModel.isViewer.value == true) {
+            mViewDataBinding.selfAssignCheckBox.visibility = View.GONE
+        } else {
+            mViewDataBinding.selfAssignCheckBox.visibility = View.VISIBLE
+        }
+
         sectionList.add(
             0,
             ConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
@@ -110,7 +116,7 @@ class AssigneeFragment :
             if (it) {
                 adapter.isConfirmer = true
                 adapter.notifyDataSetChanged()
-            }else{
+            } else {
                 adapter.isConfirmer = false
                 adapter.notifyDataSetChanged()
             }
@@ -404,7 +410,7 @@ class AssigneeFragment :
             }
 
 
-            if (viewModel.isConfirmer.value==true){
+            if (viewModel.isConfirmer.value == true) {
                 viewModel.selectedContacts.value?.clear()
                 viewModel.selectedContacts.value?.add(contact)
             }
