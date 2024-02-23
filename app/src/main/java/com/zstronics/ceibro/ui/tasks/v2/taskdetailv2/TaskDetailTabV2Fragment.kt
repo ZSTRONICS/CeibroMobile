@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.v2.taskdetailv2
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ActivityManager
 import android.app.DownloadManager
 import android.content.Context
@@ -31,6 +32,8 @@ import com.zstronics.ceibro.base.extensions.finish
 import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.longToastNow
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.navgraph.BackNavigationResult
+import com.zstronics.ceibro.base.navgraph.BackNavigationResultListener
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
@@ -59,7 +62,8 @@ import java.io.File
 
 @AndroidEntryPoint
 class TaskDetailTabV2Fragment :
-    BaseNavViewModelFragment<FragmentTaskDetailTabV2Binding, ITaskDetailTabV2.State, TaskDetailTabV2VM>() {
+    BaseNavViewModelFragment<FragmentTaskDetailTabV2Binding, ITaskDetailTabV2.State, TaskDetailTabV2VM>(),
+    BackNavigationResultListener {
     val list = ArrayList<String>()
     var sharedViewModel: SharedViewModel? = null
     override val bindingVariableId = BR.viewModel
@@ -403,6 +407,8 @@ class TaskDetailTabV2Fragment :
             }
 
             if (item != null) {
+                val isViewer = item.viewer?.find { it == viewModel.user?.id }
+
                 if (item.creatorState.equals(
                         TaskStatus.DONE.name,
                         true
@@ -413,7 +419,8 @@ class TaskDetailTabV2Fragment :
                     (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
                         TaskStatus.NEW.name,
                         true
-                    ))
+                    )) ||
+                    isViewer != null
                 ) {
                     mViewDataBinding.doneBtn.isEnabled = false
                     mViewDataBinding.doneBtn.isClickable = false
@@ -430,22 +437,6 @@ class TaskDetailTabV2Fragment :
                         mViewDataBinding.taskForwardBtn.isClickable = true
                         mViewDataBinding.taskForwardBtn.alpha = 1f
                     }
-                }
-                val isViewer = item.viewer?.find { it == viewModel.user?.id }
-                if (isViewer != null) {
-                    mViewDataBinding.doneBtn.isEnabled = false
-                    mViewDataBinding.doneBtn.isClickable = false
-                    mViewDataBinding.doneBtn.alpha = 0.6f
-                    mViewDataBinding.taskForwardBtn.isEnabled = false
-                    mViewDataBinding.taskForwardBtn.isClickable = false
-                    mViewDataBinding.taskForwardBtn.alpha = 0.6f
-                } else {
-                    mViewDataBinding.doneBtn.isEnabled = true
-                    mViewDataBinding.doneBtn.isClickable = true
-                    mViewDataBinding.doneBtn.alpha = 1f
-                    mViewDataBinding.taskForwardBtn.isEnabled = true
-                    mViewDataBinding.taskForwardBtn.isClickable = true
-                    mViewDataBinding.taskForwardBtn.alpha = 1f
                 }
 
                 if (item.creatorState.equals(
@@ -466,6 +457,13 @@ class TaskDetailTabV2Fragment :
                 }
 
                 mViewDataBinding.detailViewHeading.text = item.taskUID
+            } else {
+                mViewDataBinding.doneBtn.isEnabled = false
+                mViewDataBinding.doneBtn.isClickable = false
+                mViewDataBinding.doneBtn.alpha = 0.6f
+                mViewDataBinding.taskForwardBtn.isEnabled = false
+                mViewDataBinding.taskForwardBtn.isClickable = false
+                mViewDataBinding.taskForwardBtn.alpha = 0.6f
             }
 
         }
@@ -863,4 +861,25 @@ class TaskDetailTabV2Fragment :
             }
         }
     }
+
+
+    override fun onNavigationResult(result: BackNavigationResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            when (result.requestCode) {
+                DONE_REQUEST_CODE -> {
+                    val isBeingDone = result.data?.getBoolean("isBeingDone")
+                    if (isBeingDone == true) {
+                        shortToastNow("Marking task as done...")
+                        mViewDataBinding.doneBtn.isEnabled = false
+                        mViewDataBinding.doneBtn.isClickable = false
+                        mViewDataBinding.doneBtn.alpha = 0.6f
+                        mViewDataBinding.taskForwardBtn.isEnabled = false
+                        mViewDataBinding.taskForwardBtn.isClickable = false
+                        mViewDataBinding.taskForwardBtn.alpha = 0.6f
+                    }
+                }
+            }
+        }
+    }
+
 }
