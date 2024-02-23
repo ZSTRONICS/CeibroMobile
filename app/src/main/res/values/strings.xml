@@ -650,4 +650,7 @@
     <string name="go_to_file_location">Go to file location</string>
     <string name="recently_used_tagged">Recently Used Tags</string>
     <string name="all_tags">All Tags</string>
+    <string name="reply_to_comment">Reply to comment</string>
+    <string name="pin_comment">Pin comment</string>
+    <string name="unpin_comment">Unpin comment</string>
 </resources>

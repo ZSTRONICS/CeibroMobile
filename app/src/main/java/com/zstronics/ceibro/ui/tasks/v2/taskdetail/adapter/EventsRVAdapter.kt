@@ -1,12 +1,16 @@
 package com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -248,28 +252,6 @@ class EventsRVAdapter constructor(
                     binding.otherEventText.text = eventText
                     binding.otherEventLayout.visibility = View.VISIBLE
 
-                    binding.onlyComment.text = ""
-//                    if (item.commentData != null) {
-//                        if (!item.commentData.message.isNullOrEmpty()) {
-//                            binding.onlyComment.text = item.commentData.message.trim()
-//                            binding.onlyComment.visibility = View.VISIBLE
-//                        } else {
-//                            binding.onlyComment.text = ""
-//                            binding.onlyComment.visibility = View.GONE
-//                        }
-//                    }
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (binding.onlyComment.lineCount > 6) {
-                            binding.viewMoreLessLayout.visibility = View.VISIBLE
-                            binding.viewMoreBtn.visibility = View.VISIBLE
-                            binding.viewLessBtn.visibility = View.GONE
-                        } else {
-                            binding.viewMoreLessLayout.visibility = View.GONE
-                            binding.viewMoreBtn.visibility = View.GONE
-                            binding.viewLessBtn.visibility = View.GONE
-                        }
-                    }, 10)
-
                 }
 
                 TaskDetailEvents.InvitedUser.eventValue -> {
@@ -305,28 +287,6 @@ class EventsRVAdapter constructor(
                     }
                     binding.otherEventLayout.visibility = View.VISIBLE
 
-                    binding.onlyComment.text = ""
-
-//                    if (item.commentData != null) {
-//                        if (!item.commentData.message.isNullOrEmpty()) {
-//                            binding.onlyComment.text = item.commentData.message.trim()
-//                            binding.onlyComment.visibility = View.VISIBLE
-//                        } else {
-//                            binding.onlyComment.text = ""
-//                            binding.onlyComment.visibility = View.GONE
-//                        }
-//                    }
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (binding.onlyComment.lineCount > 6) {
-                            binding.viewMoreLessLayout.visibility = View.VISIBLE
-                            binding.viewMoreBtn.visibility = View.VISIBLE
-                            binding.viewLessBtn.visibility = View.GONE
-                        } else {
-                            binding.viewMoreLessLayout.visibility = View.GONE
-                            binding.viewMoreBtn.visibility = View.GONE
-                            binding.viewLessBtn.visibility = View.GONE
-                        }
-                    }, 10)
                 }
 
                 TaskDetailEvents.Comment.eventValue -> {
@@ -382,7 +342,7 @@ class EventsRVAdapter constructor(
                                 binding.viewMoreBtn.visibility = View.GONE
                                 binding.viewLessBtn.visibility = View.GONE
                             }
-                        }, 10)
+                        }, 15)
                     }
                 }
 
@@ -472,18 +432,29 @@ class EventsRVAdapter constructor(
 //                            context.resources.getString(R.string.marked_the_task_as_done)
 //                        binding.onlyComment.visibility = View.VISIBLE
 //                    }
-                    binding.onlyComment.text = ""
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (binding.onlyComment.lineCount > 6) {
-                            binding.viewMoreLessLayout.visibility = View.VISIBLE
-                            binding.viewMoreBtn.visibility = View.VISIBLE
-                            binding.viewLessBtn.visibility = View.GONE
-                        } else {
-                            binding.viewMoreLessLayout.visibility = View.GONE
-                            binding.viewMoreBtn.visibility = View.GONE
-                            binding.viewLessBtn.visibility = View.GONE
-                        }
-                    }, 10)
+//                    binding.onlyComment.text = ""
+//                    Handler(Looper.getMainLooper()).postDelayed({
+//                        if (binding.onlyComment.lineCount > 6) {
+//                            binding.viewMoreLessLayout.visibility = View.VISIBLE
+//                            binding.viewMoreBtn.visibility = View.VISIBLE
+//                            binding.viewLessBtn.visibility = View.GONE
+//                        } else {
+//                            binding.viewMoreLessLayout.visibility = View.GONE
+//                            binding.viewMoreBtn.visibility = View.GONE
+//                            binding.viewLessBtn.visibility = View.GONE
+//                        }
+//                    }, 10)
+                }
+            }
+
+
+            binding.dotMenu.setOnClickListener {
+                createPopupWindow(it, item) { value ->
+                    if (value.equals("pin", true)) {
+
+                    } else if (value.equals("unpin", true)) {
+
+                    }
                 }
             }
 
@@ -633,5 +604,73 @@ class EventsRVAdapter constructor(
                 binding.filesRV.visibility = View.VISIBLE
             }
         }
+
+
+
+        private fun createPopupWindow(
+            v: View,
+            event: Events,
+            callback: (String) -> Unit
+        ): PopupWindow {
+            val context: Context = v.context
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val view: View = inflater.inflate(R.layout.task_detail_comment_menu_dialog, null)
+
+            val popupWindow = PopupWindow(
+                view,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                true
+            )
+            popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            popupWindow.elevation = 13F
+            popupWindow.isOutsideTouchable = true
+
+
+            val replyToComment: TextView = view.findViewById(R.id.replyToComment)
+            val pinOrUnpinComment: TextView = view.findViewById(R.id.pinOrUnpinComment)
+            if (event.isPinned == true) {
+                pinOrUnpinComment.text = context.resources.getString(R.string.unpin_comment)
+            } else {
+                pinOrUnpinComment.text = context.resources.getString(R.string.pin_comment)
+            }
+
+//            replyToComment.setOnClickListener {
+//                popupWindow.dismiss()
+//                callback.invoke("reply")
+//            }
+
+            pinOrUnpinComment.setOnClickListener {
+                popupWindow.dismiss()
+                if (event.isPinned == true) {
+                    callback.invoke("unpin")
+                } else {
+                    callback.invoke("pin")
+                }
+            }
+
+            val values = IntArray(2)
+            v.getLocationInWindow(values)
+            val positionOfIcon = values[1]
+
+            //Get the height of 2/3rd of the height of the screen
+            val displayMetrics = context.resources.displayMetrics
+            val height = displayMetrics.heightPixels * 2 / 3
+
+            if (positionOfIcon > height) {
+//                if (tvDownload.visibility == View.GONE) {
+//                    popupWindow.showAsDropDown(v, 0, -295)
+//                } else {
+//                    popupWindow.showAsDropDown(v, 0, -420)
+//                }
+            popupWindow.showAsDropDown(v, 0, -200)
+            } else {
+                popupWindow.showAsDropDown(v, 0, -30)
+            }
+
+
+            return popupWindow
+        }
+
     }
 }
