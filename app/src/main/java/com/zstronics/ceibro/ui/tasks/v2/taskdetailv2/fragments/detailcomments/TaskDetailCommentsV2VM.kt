@@ -222,6 +222,37 @@ class TaskDetailCommentsV2VM @Inject constructor(
         }
     }
 
+    fun pinOrUnpinComment(
+        taskId: String,
+        eventId: String,
+        isPinned: Boolean,
+        callBack: (isSuccess: Boolean, event: Events?) -> Unit
+    ) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.pinOrUnpinComment(taskId, eventId, isPinned)) {
+                is ApiResponse.Success -> {
+                    val commentPinnedData = response.data.data
+                    val event = taskDao.getSingleEvent(commentPinnedData.taskId, commentPinnedData.eventId)
+                    if (event != null) {
+                        event.isPinned = commentPinnedData.isPinned
+                        event.updatedAt = commentPinnedData.updatedAt
+
+                        taskDao.insertEventData(event)
+                    }
+
+                    loading(false, "")
+                    callBack.invoke(true, event)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false, null)
+                }
+            }
+        }
+    }
+
 
     fun uploadComment(
         context: Context,

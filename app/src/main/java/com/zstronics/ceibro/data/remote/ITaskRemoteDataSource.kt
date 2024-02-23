@@ -22,6 +22,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.InboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.PinnedCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
@@ -122,6 +123,7 @@ interface ITaskRemoteDataSource {
     suspend fun hideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun unHideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun getTaskById(taskId: String): ApiResponse<ForwardedToMeNewTaskV2Response>
+    suspend fun pinOrUnpinComment(taskId: String, eventId: String, isPinned:Boolean): ApiResponse<PinnedCommentV2Response>
     suspend fun syncTaskAndEvents(request: SocketReSyncUpdateV2Request): ApiResponse<AllTasksV2NewResponse.NewData>
     suspend fun getTaskFilesByTaskId(taskId: String): ApiResponse<AllTaskFilesV2Response>
 }

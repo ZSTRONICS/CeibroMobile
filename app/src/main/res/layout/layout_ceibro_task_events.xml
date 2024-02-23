@@ -88,13 +88,14 @@
                 android:id="@+id/eventPinImg"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:padding="2dp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:padding="3dp"
                 android:src="@drawable/icon_pin_filled"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/dotMenu"
                 app:layout_constraintEnd_toStartOf="@+id/dotMenu"
-                app:layout_constraintTop_toTopOf="@+id/dotMenu" />
+                app:layout_constraintTop_toTopOf="@+id/dotMenu"
+                app:layout_constraintVertical_bias="0.40" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/dotMenu"

@@ -23,6 +23,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.InboxTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Response
+import com.zstronics.ceibro.data.repos.task.models.v2.PinnedCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsBody
 import com.zstronics.ceibro.data.repos.task.models.v2.SyncTaskEventsResponse
@@ -325,6 +326,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             call =
             {
                 service.getTaskById(taskId)
+            }
+        )
+
+    override suspend fun pinOrUnpinComment(taskId: String, eventId: String, isPinned:Boolean): ApiResponse<PinnedCommentV2Response> =
+        executeSafely(
+            call =
+            {
+                service.pinOrUnpinComment(taskId, eventId, isPinned)
             }
         )
 

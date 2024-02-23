@@ -68,8 +68,11 @@ interface TaskV2Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultipleEvents(tasks: List<Events>)
 
-    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY updatedAt ASC")
+    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId ORDER BY createdAt ASC")
     suspend fun getEventsOfTask(taskId: String): List<Events>
+
+    @Query("SELECT * FROM tasks_v2_events WHERE taskId = :taskId AND id = :eventId")
+    suspend fun getSingleEvent(taskId: String, eventId: String): Events?
 
     @Query("SELECT * FROM tasks_v2_events")
     suspend fun getAllEvents(): List<Events>?

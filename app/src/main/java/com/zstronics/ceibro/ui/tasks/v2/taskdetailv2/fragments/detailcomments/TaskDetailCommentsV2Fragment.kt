@@ -80,7 +80,7 @@ class TaskDetailCommentsV2Fragment :
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
-        when(id) {
+        when (id) {
             R.id.cameraBtn -> {
                 val listOfPickedImages = arrayListOf<PickedImages>()
                 viewModel.listOfImages.value?.let { listOfPickedImages.addAll(it) }
@@ -230,9 +230,15 @@ class TaskDetailCommentsV2Fragment :
 
         viewModel.taskEvents.observe(viewLifecycleOwner) { events ->
             if (!events.isNullOrEmpty()) {
-                eventsAdapter.setList(events, viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: "")
+                eventsAdapter.setList(
+                    events,
+                    viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: ""
+                )
             } else {
-                eventsAdapter.setList(mutableListOf(), viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: "")
+                eventsAdapter.setList(
+                    mutableListOf(),
+                    viewModel.user?.id ?: viewModel.sessionManager.getUserObj()?.id ?: ""
+                )
             }
 
             mViewDataBinding.eventsRV.visibility =
@@ -307,6 +313,37 @@ class TaskDetailCommentsV2Fragment :
                 bundle.putInt("position", position)
                 bundle.putBoolean("fromServerUrl", true)
                 navigate(R.id.imageViewerFragment, bundle)
+            }
+
+        eventsAdapter.pinClickListener =
+            { position, event, isPinned ->
+                viewModel.pinOrUnpinComment(
+                    event.taskId,
+                    event.id,
+                    isPinned
+                ) { isSuccess, updatedEvent ->
+                    if (updatedEvent != null) {
+                        val originalEvents = viewModel.originalEvents.value
+                        if (!originalEvents.isNullOrEmpty()) {
+                            val foundEvent = originalEvents.find { it.id == updatedEvent.id }
+                            if (foundEvent != null) {
+                                val index = originalEvents.indexOf(foundEvent)
+                                originalEvents[index] = updatedEvent
+                                viewModel.originalEvents.postValue(originalEvents)
+                            }
+                        }
+
+                        if (eventsAdapter.listItems.isNotEmpty()) {
+                            val adapterEvent =
+                                eventsAdapter.listItems.find { it.id == updatedEvent.id }
+                            if (adapterEvent != null) {
+                                val index = eventsAdapter.listItems.indexOf(adapterEvent)
+                                eventsAdapter.listItems[index] = updatedEvent
+                                eventsAdapter.notifyItemChanged(index)
+                            }
+                        }
+                    }
+                }
             }
 
 
@@ -427,6 +464,35 @@ class TaskDetailCommentsV2Fragment :
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onTaskEventUpdate(
+        event: LocalEvents.TaskEventUpdate?
+    ) {
+        val updatedEvent = event?.events
+        val taskDetail = viewModel.taskDetail.value
+        if (taskDetail != null && updatedEvent != null && updatedEvent.taskId == taskDetail.id) {
+
+            val originalEvents = viewModel.originalEvents.value
+            if (!originalEvents.isNullOrEmpty()) {
+                val foundEvent = originalEvents.find { it.id == updatedEvent.id }
+                if (foundEvent != null) {
+                    val index = originalEvents.indexOf(foundEvent)
+                    originalEvents[index] = updatedEvent
+                    viewModel.originalEvents.postValue(originalEvents)
+                }
+            }
+
+            if (eventsAdapter.listItems.isNotEmpty()) {
+                val adapterEvent = eventsAdapter.listItems.find { it.id == updatedEvent.id }
+                if (adapterEvent != null) {
+                    val index = eventsAdapter.listItems.indexOf(adapterEvent)
+                    eventsAdapter.listItems[index] = updatedEvent
+                    eventsAdapter.notifyItemChanged(index)
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshAllEvents(
         event: LocalEvents.RefreshAllEvents?
     ) {
@@ -528,7 +594,6 @@ class TaskDetailCommentsV2Fragment :
 
         }
     }
-
 
 
     private fun scrollToBottom(size: Int) {
@@ -882,6 +947,7 @@ class TaskDetailCommentsV2Fragment :
             }
         }
     }
+
     @SuppressLint("Range")
     private fun getDownloadProgress(
         context: Context?,
@@ -1055,7 +1121,10 @@ class TaskDetailCommentsV2Fragment :
 
                                     if (compressedImageUri != null) {
                                         val selectedNewImgDetail =
-                                            getPickedFileDetail(requireContext(), compressedImageUri)
+                                            getPickedFileDetail(
+                                                requireContext(),
+                                                compressedImageUri
+                                            )
 
                                         pickedImage.add(selectedNewImgDetail)
                                     } else {
