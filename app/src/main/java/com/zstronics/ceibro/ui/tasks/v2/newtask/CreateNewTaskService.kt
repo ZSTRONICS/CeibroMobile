@@ -768,7 +768,8 @@ class CreateNewTaskService : Service() {
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
-                    eventNumber = eventData.eventNumber
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
@@ -895,7 +896,8 @@ class CreateNewTaskService : Service() {
                     createdAt = eventData.createdAt,
                     updatedAt = eventData.updatedAt,
                     invitedMembers = eventData.invitedMembers,
-                    eventNumber = eventData.eventNumber
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
                 )
                 GlobalScope.launch {
                     sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)

@@ -902,7 +902,8 @@ class TaskDetailV2Fragment :
                             createdAt = eventData.createdAt,
                             updatedAt = eventData.updatedAt,
                             invitedMembers = eventData.invitedMembers,
-                            eventNumber = eventData.eventNumber
+                            eventNumber = eventData.eventNumber,
+                            isPinned = eventData.isPinned
                         )
                         addEventsToUI(taskEvent)
                     }
@@ -922,7 +923,8 @@ class TaskDetailV2Fragment :
                             createdAt = eventData.createdAt,
                             updatedAt = eventData.updatedAt,
                             invitedMembers = eventData.invitedMembers,
-                            eventNumber = eventData.eventNumber
+                            eventNumber = eventData.eventNumber,
+                            isPinned = eventData.isPinned
                         )
                         addEventsToUI(taskEvent)
                     }
@@ -952,7 +954,8 @@ class TaskDetailV2Fragment :
                             createdAt = eventData.createdAt,
                             updatedAt = eventData.updatedAt,
                             invitedMembers = eventData.invitedMembers,
-                            eventNumber = eventData.eventNumber
+                            eventNumber = eventData.eventNumber,
+                            isPinned = eventData.isPinned
                         )
                         addEventsToUI(taskEvent)
                     }
