@@ -1046,7 +1046,9 @@ class TaskDetailCommentsV2Fragment :
 
                             if (selectedDocDetail.attachmentType == AttachmentTypes.Doc || selectedDocDetail.attachmentType == AttachmentTypes.Pdf) {
                                 if (oldDocuments?.contains(selectedDocDetail) == true) {
-                                    shortToastNow("You selected an already-added document")
+                                    withContext(Dispatchers.Main) {
+                                        shortToastNow("You selected an already-added document")
+                                    }
                                 } else {
                                     pickedDocuments.add(selectedDocDetail)
                                 }
@@ -1068,7 +1070,7 @@ class TaskDetailCommentsV2Fragment :
                                 val foundImage =
                                     oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                                 if (foundImage != null) {
-                                    viewModel.launch(Dispatcher.Main) {
+                                    withContext(Dispatchers.Main) {
                                         shortToastNow("You selected an already-added image")
                                     }
                                 } else {
@@ -1103,7 +1105,9 @@ class TaskDetailCommentsV2Fragment :
 
                             if (selectedDocDetail.attachmentType == AttachmentTypes.Doc || selectedDocDetail.attachmentType == AttachmentTypes.Pdf) {
                                 if (oldDocuments?.contains(selectedDocDetail) == true) {
-                                    shortToastNow("You selected an already-added document")
+                                    withContext(Dispatchers.Main) {
+                                        shortToastNow("You selected an already-added document")
+                                    }
                                 } else {
                                     pickedDocuments.add(selectedDocDetail)
                                 }
@@ -1126,7 +1130,7 @@ class TaskDetailCommentsV2Fragment :
                                 val foundImage =
                                     oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                                 if (foundImage != null) {
-                                    viewModel.launch(Dispatcher.Main) {
+                                    withContext(Dispatchers.Main) {
                                         shortToastNow("You selected an already-added image")
                                     }
                                 } else {
