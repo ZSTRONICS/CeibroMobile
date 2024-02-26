@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.webkit.MimeTypeMap
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -451,6 +452,11 @@ class AddNewLocationBottomSheet(
         }
     }
 
+    fun getMimeTypeFromUrl(url: String): String? {
+        val extension = MimeTypeMap.getFileExtensionFromUrl(url)
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase())
+    }
+
     private fun navigateToAppSettings(context: Context?) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri: Uri = Uri.fromParts("package", context?.packageName, null)
@@ -465,14 +471,18 @@ class AddNewLocationBottomSheet(
     ) {
         val uri = Uri.parse(drawing.fileUrl)
         val fileName = drawing.fileName
-        val folder = File(
-            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-            DrawingsV2Fragment.folderName
-        )
-        if (!folder.exists()) {
-            folder.mkdirs()
-        }
-        val destinationUri = Uri.fromFile(File(folder, fileName))
+//        val folder = File(
+//            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+//            DrawingsV2Fragment.folderName
+//        )
+
+        val folder1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+//        if (!folder.exists()) {
+//            folder.mkdirs()
+//        }
+        val destinationUri = Uri.fromFile(File(folder1, fileName))
+        // Set the MIME type
+        val mimeType = getMimeTypeFromUrl(drawing.fileUrl)
 
         val request: DownloadManager.Request? =
             DownloadManager
@@ -481,6 +491,9 @@ class AddNewLocationBottomSheet(
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setVisibleInDownloadsUi(true)
 
+        if (mimeType != null){
+            request?.setMimeType(mimeType)
+        }
         val downloadId = manager?.enqueue(request)
 
         val ceibroDownloadDrawingV2 = downloadId?.let {
@@ -509,7 +522,7 @@ class AddNewLocationBottomSheet(
             }
         }, 1000)*/
 
-        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+//        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
     }
 

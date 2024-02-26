@@ -11,7 +11,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
@@ -29,7 +28,6 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
@@ -818,7 +816,48 @@ class TaskDetailCommentsV2Fragment :
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
         itemClickListener: ((tag: String) -> Unit)?
     ) {
-        shortToastNow("Downloading file...")
+
+
+        manager?.let {
+            downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getDownloadProgress(context, downloadId) {tag->
+                        GlobalScope.launch(Dispatchers.Main) {
+                            if (tag == "retry" || tag == "failed") {
+                                downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                            } else if (tag.trim().equals("100%", true)) {
+
+                                shortToastNow("Downloaded")
+                            }
+                        }
+                        itemClickListener?.invoke(tag)
+                    }
+                }, 1000)
+            }
+        } ?: kotlin.run {
+
+            manager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            manager?.let {
+                downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        getDownloadProgress(context, downloadId) {tag->
+                            GlobalScope.launch(Dispatchers.Main) {
+                                if (tag == "retry" || tag == "failed") {
+                                    downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                                } else if (tag.trim().equals("100%", true)) {
+
+                                    shortToastNow("Downloaded")
+                                }
+                            }
+                            itemClickListener?.invoke(tag)
+                        }
+                    }, 1000)
+                }
+            }
+        }
+
+        /*shortToastNow("Downloading file...")
         val uri = Uri.parse(triplet.third)
         val fileName = triplet.second
         val folder = File(
@@ -862,23 +901,10 @@ class TaskDetailCommentsV2Fragment :
                 println("progress  object  $it")
             }
 
-        }
+        }*/
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            getDownloadProgress(context, downloadId!!) {
-                GlobalScope.launch(Dispatchers.Main) {
-                    if (it == "retry" || it == "failed") {
-                        downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
-                    } else if (it.trim().equals("100%", true)) {
 
-                        shortToastNow("Downloaded")
-                    }
-                }
-                itemClickListener?.invoke(it)
-            }
-        }, 1000)
-
-        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+//        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
     }
 
@@ -1020,7 +1046,9 @@ class TaskDetailCommentsV2Fragment :
 
                             if (selectedDocDetail.attachmentType == AttachmentTypes.Doc || selectedDocDetail.attachmentType == AttachmentTypes.Pdf) {
                                 if (oldDocuments?.contains(selectedDocDetail) == true) {
-                                    shortToastNow("You selected an already-added document")
+                                    withContext(Dispatchers.Main) {
+                                        shortToastNow("You selected an already-added document")
+                                    }
                                 } else {
                                     pickedDocuments.add(selectedDocDetail)
                                 }
@@ -1042,7 +1070,7 @@ class TaskDetailCommentsV2Fragment :
                                 val foundImage =
                                     oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                                 if (foundImage != null) {
-                                    viewModel.launch(Dispatcher.Main) {
+                                    withContext(Dispatchers.Main) {
                                         shortToastNow("You selected an already-added image")
                                     }
                                 } else {
@@ -1077,7 +1105,9 @@ class TaskDetailCommentsV2Fragment :
 
                             if (selectedDocDetail.attachmentType == AttachmentTypes.Doc || selectedDocDetail.attachmentType == AttachmentTypes.Pdf) {
                                 if (oldDocuments?.contains(selectedDocDetail) == true) {
-                                    shortToastNow("You selected an already-added document")
+                                    withContext(Dispatchers.Main) {
+                                        shortToastNow("You selected an already-added document")
+                                    }
                                 } else {
                                     pickedDocuments.add(selectedDocDetail)
                                 }
@@ -1100,7 +1130,7 @@ class TaskDetailCommentsV2Fragment :
                                 val foundImage =
                                     oldImages?.find { oldImage -> oldImage.fileName == selectedImgDetail.fileName }
                                 if (foundImage != null) {
-                                    viewModel.launch(Dispatcher.Main) {
+                                    withContext(Dispatchers.Main) {
                                         shortToastNow("You selected an already-added image")
                                     }
                                 } else {

@@ -531,25 +531,50 @@ class DrawingsV2Fragment :
         startActivity(intent)
     }
 
+
     private fun downloadFile(
         drawing: DrawingV2,
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
         itemClickListener: ((tag: String) -> Unit)?
     ) {
+
+         manager?.let {
+            downloadDrawingFile(drawing, downloadedDrawingV2Dao, it)
+        } ?: kotlin.run {
+
+            manager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            manager?.let { downloadDrawingFile(drawing, downloadedDrawingV2Dao, it) }
+        }
+
+
+/*
+
         val uri = Uri.parse(drawing.fileUrl)
         val fileName = drawing.fileName
         val folder = File(context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName)
+        val folder1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        println("DIRECTORY_DOWNLOADS: $folder1")
         if (!folder.exists()) {
             folder.mkdirs()
         }
-        val destinationUri = Uri.fromFile(File(folder, fileName))
+        val destinationUri = Uri.fromFile(File(folder1, fileName))
+        // Set the MIME type
+        val mimeType = getMimeTypeFromUrl(drawing.fileUrl)
+        println("DIRECTORY_DOWNLOADS: mimeType: $mimeType")
 
         val request: DownloadManager.Request? =
             DownloadManager
                 .Request(uri)
+//                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fileName)
                 .setDestinationUri(destinationUri)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setVisibleInDownloadsUi(true)
+
+        if (mimeType != null){
+            request?.setMimeType(mimeType)
+        }
+
 
         val downloadId = manager?.enqueue(request)
 
@@ -572,14 +597,9 @@ class DrawingsV2Fragment :
                 downloadedDrawingV2Dao.insertDownloadDrawing(it)
             }
         }
+*/
 
-        /*     Handler(Looper.getMainLooper()).postDelayed({
-                 getDownloadProgress(context, downloadId!!) {
-                     itemClickListener?.invoke(it)
-                 }
-             }, 1000)*/
-
-        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+//        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
     }
 

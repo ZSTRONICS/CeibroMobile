@@ -3,6 +3,7 @@ package com.zstronics.ceibro.base.navgraph
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentResolver
@@ -56,6 +57,9 @@ import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
 import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
+import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
+import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncV2Response
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.attachment.AttachmentTypes
@@ -65,6 +69,8 @@ import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.utils.FileUtils
 import ee.zstronics.photoediting.EditImageActivity
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.internal.immutableListOf
 import org.greenrobot.eventbus.EventBus
 import java.io.File
@@ -353,6 +359,128 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         PermissionX.init(this).permissions(permission).forwardToSettings(permissionsList)
     }
 
+    private fun getMimeTypeFromUrl(url: String): String? {
+        val extension = MimeTypeMap.getFileExtensionFromUrl(url)
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.lowercase())
+    }
+
+
+    fun downloadGenericFile(
+        triplet: Triple<String, String, String>,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        manager: DownloadManager,
+        callBack: (downloadId: Long) -> Unit
+    ) {
+        val uri = Uri.parse(triplet.third)
+        val fileName = triplet.second
+//        val folder = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+//            DrawingsV2Fragment.folderName
+//        )
+        val folder1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        println("DIRECTORY_DOWNLOADS: $folder1")
+//        if (!folder.exists()) {
+//            folder.mkdirs()
+//        }
+        val destinationUri = Uri.fromFile(File(folder1, fileName))
+        // Set the MIME type
+        val mimeType = getMimeTypeFromUrl(triplet.third)
+        println("DIRECTORY_DOWNLOADS: mimeType: $mimeType")
+
+        val request: DownloadManager.Request? =
+            DownloadManager
+                .Request(uri)
+//                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fileName)
+                .setDestinationUri(destinationUri)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setVisibleInDownloadsUi(true)
+
+        if (mimeType != null) {
+            request?.setMimeType(mimeType)
+        }
+
+        val downloadId = manager.enqueue(request)
+
+        val ceibroDownloadDrawingV2 = downloadId.let {
+            CeibroDownloadDrawingV2(
+                fileName = triplet.second,
+                downloading = true,
+                isDownloaded = false,
+                downloadId = it,
+                drawing = null,
+                drawingId = triplet.first,
+                groupId = "",
+                localUri = ""
+            )
+        }
+
+        GlobalScope.launch {
+            ceibroDownloadDrawingV2.let {
+                downloadedDrawingV2Dao.insertDownloadDrawing(it)
+            }
+        }
+        callBack.invoke(downloadId)
+    }
+
+
+    fun downloadDrawingFile(
+        drawing: DrawingV2,
+        downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
+        manager: DownloadManager
+    ) {
+        val uri = Uri.parse(drawing.fileUrl)
+        val fileName = drawing.fileName
+//        val folder = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+//            DrawingsV2Fragment.folderName
+//        )
+        val folder1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        println("DIRECTORY_DOWNLOADS: $folder1")
+//        if (!folder.exists()) {
+//            folder.mkdirs()
+//        }
+        val destinationUri = Uri.fromFile(File(folder1, fileName))
+        // Set the MIME type
+        val mimeType = getMimeTypeFromUrl(drawing.fileUrl)
+        println("DIRECTORY_DOWNLOADS: mimeType: $mimeType")
+
+        val request: DownloadManager.Request? =
+            DownloadManager
+                .Request(uri)
+//                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fileName)
+                .setDestinationUri(destinationUri)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setVisibleInDownloadsUi(true)
+
+        if (mimeType != null) {
+            request?.setMimeType(mimeType)
+        }
+
+
+        val downloadId = manager.enqueue(request)
+
+        val ceibroDownloadDrawingV2 = downloadId.let {
+            CeibroDownloadDrawingV2(
+                fileName = drawing.fileName,
+                downloading = true,
+                isDownloaded = false,
+                downloadId = it,
+                drawing = drawing,
+                drawingId = drawing._id,
+                groupId = drawing.groupId,
+                localUri = ""
+            )
+        }
+
+
+        GlobalScope.launch {
+            ceibroDownloadDrawingV2.let {
+                downloadedDrawingV2Dao.insertDownloadDrawing(it)
+            }
+        }
+
+//        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+
+    }
+
     fun pickAttachment(allowMultiple: Boolean = false) {
         checkPermission(
             immutableListOf(
@@ -409,7 +537,6 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
             }, 500)
         }
     }
-
 
 
 //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -518,7 +645,7 @@ abstract class BaseNavViewModelFragment<VB : ViewDataBinding, VS : IBase.State, 
         val filename = if (fileName.isNullOrEmpty()) {
             System.currentTimeMillis().toString() + ".jpg"
         } else {
-            if (!ensureImageExtension(fileName).isNullOrEmpty()){
+            if (!ensureImageExtension(fileName).isNullOrEmpty()) {
                 fileName
             } else {
                 "$fileName.$fileExtension"
