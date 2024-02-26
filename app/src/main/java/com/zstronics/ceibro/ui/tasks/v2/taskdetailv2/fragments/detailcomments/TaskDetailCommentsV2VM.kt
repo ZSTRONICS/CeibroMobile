@@ -22,9 +22,7 @@ import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
-import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
-import com.zstronics.ceibro.data.repos.NotificationTaskData
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
@@ -82,7 +80,7 @@ class TaskDetailCommentsV2VM @Inject constructor(
     var rootState = ""
     var selectedState = ""
     var taskId: String = ""
-
+    var isResumedCalled = false
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -111,7 +109,7 @@ class TaskDetailCommentsV2VM @Inject constructor(
                 _taskDetail.postValue(taskDataFromNotification!!)
                 originalTask.postValue(taskDataFromNotification!!)
 
-                getAllEvents(taskDataFromNotification.id)
+//                getAllEvents(taskDataFromNotification.id)
                 syncEvents(taskDataFromNotification.id)
 
             } else {
@@ -233,7 +231,8 @@ class TaskDetailCommentsV2VM @Inject constructor(
             when (val response = remoteTask.pinOrUnpinComment(taskId, eventId, isPinned)) {
                 is ApiResponse.Success -> {
                     val commentPinnedData = response.data.data
-                    val event = taskDao.getSingleEvent(commentPinnedData.taskId, commentPinnedData.eventId)
+                    val event =
+                        taskDao.getSingleEvent(commentPinnedData.taskId, commentPinnedData.eventId)
                     if (event != null) {
                         event.isPinned = commentPinnedData.isPinned
                         event.updatedAt = commentPinnedData.updatedAt
@@ -421,7 +420,7 @@ class TaskDetailCommentsV2VM @Inject constructor(
         }
     }
 
-    private fun syncEvents(
+     fun syncEventsOne(
         taskId: String
     ) {
         launch {
@@ -505,6 +504,53 @@ class TaskDetailCommentsV2VM @Inject constructor(
             }
         }
     }
+     fun syncEvents(
+        taskId: String
+    ) {
+        launch {
+            val allEvents = taskDao.getEventsOfTask(taskId).toMutableList()
+            val eventsIds: MutableList<Int> = mutableListOf()
+            allEvents.forEach {
+                eventsIds.add(it.eventNumber)
+            }
+            val syncTaskEventsBody = SyncTaskEventsBody(eventsIds)
+            taskRepository.syncEvents(
+                taskId,
+                syncTaskEventsBody
+            ) { isSuccess, missingEvents, message ->
+                if (isSuccess) {
+                    if (missingEvents.isNotEmpty()) {
+                        if (allEvents.isNotEmpty()) {
+                            val newMissingEventList = mutableListOf<Events>()
+                            missingEvents.forEach { event ->
+                                val eventExist = allEvents.find { event.id == it.id }
+                                if (eventExist == null) {  /// event not existed
+                                    newMissingEventList.add(event)
+                                }
+                            }
+                            allEvents.addAll(newMissingEventList)
+                            originalEvents.postValue(allEvents)
+                            _taskEvents.postValue(allEvents)
 
+                        } else {
+                            allEvents.addAll(missingEvents)
+                            originalEvents.postValue(allEvents)
+                            _taskEvents.postValue(allEvents)
+                        }
+                        launch {
+                            taskDao.insertMultipleEvents(missingEvents)
+                        }
+                    } else {
+                        originalEvents.postValue(allEvents)
+                        _taskEvents.postValue(allEvents)
+                    }
+                } else {
+                    alert("Failed to sync task events")
+                    originalEvents.postValue(allEvents)
+                    _taskEvents.postValue(allEvents)
+                }
+            }
+        }
+    }
 
 }
