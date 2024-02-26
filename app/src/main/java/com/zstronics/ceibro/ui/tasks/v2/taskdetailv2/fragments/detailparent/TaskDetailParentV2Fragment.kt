@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
@@ -27,7 +26,6 @@ import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.EventFiles
-import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -35,7 +33,6 @@ import com.zstronics.ceibro.databinding.FragmentTaskDetailParentV2Binding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.FilesRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.ImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.OnlyImageRVAdapter
@@ -67,6 +64,7 @@ class TaskDetailParentV2Fragment :
     override fun toolBarVisibility(): Boolean = false
     var taskSeenRequest = false
     private var manager: DownloadManager? = null
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
     private val permissionList10 = arrayOf(
@@ -490,7 +488,7 @@ class TaskDetailParentV2Fragment :
         binding.taskDetailDueDate.text = "Due Date: $dueDate"
 
         binding.taskTitle.text =
-            if (task.title!=null) {
+            if (task.title != null) {
                 task.title.ifEmpty {
                     "N/A"
                 }
@@ -610,7 +608,6 @@ class TaskDetailParentV2Fragment :
         viewModel._documents.postValue(document)
 
     }
-
 
 
     private fun getPickedFileDetail(context: Context, fileUri: Uri?): PickedImages {
@@ -819,6 +816,47 @@ class TaskDetailParentV2Fragment :
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
         itemClickListener: ((tag: String) -> Unit)?
     ) {
+
+        manager?.let {
+            downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getDownloadProgress(context, downloadId) { tag ->
+                        GlobalScope.launch(Dispatchers.Main) {
+                            if (tag == "retry" || tag == "failed") {
+                                downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                            } else if (tag.trim().equals("100%", true)) {
+
+                                shortToastNow("Downloaded")
+                            }
+                        }
+                        itemClickListener?.invoke(tag)
+                    }
+                }, 1000)
+            }
+        } ?: kotlin.run {
+
+            manager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            manager?.let {
+                downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        getDownloadProgress(context, downloadId) { tag ->
+                            GlobalScope.launch(Dispatchers.Main) {
+                                if (tag == "retry" || tag == "failed") {
+                                    downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                                } else if (tag.trim().equals("100%", true)) {
+
+                                    shortToastNow("Downloaded")
+                                }
+                            }
+                            itemClickListener?.invoke(tag)
+                        }
+                    }, 1000)
+                }
+            }
+        }
+
+        /*
         shortToastNow("Downloading file...")
         val uri = Uri.parse(triplet.third)
         val fileName = triplet.second
@@ -880,7 +918,7 @@ class TaskDetailParentV2Fragment :
         }, 1000)
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
-
+*/
     }
 
     @SuppressLint("Range")
@@ -940,7 +978,6 @@ class TaskDetailParentV2Fragment :
             }
         }
     }
-
 
 
     override fun onAttach(context: Context) {
@@ -1029,7 +1066,8 @@ class TaskDetailParentV2Fragment :
 
 
                 if (pinnedEventsAdapter.listItems.isNotEmpty()) {
-                    val adapterEvent = pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
+                    val adapterEvent =
+                        pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
                     if (adapterEvent != null) {
                         val index = pinnedEventsAdapter.listItems.indexOf(adapterEvent)
                         pinnedEventsAdapter.listItems[index] = updatedEvent
@@ -1068,7 +1106,8 @@ class TaskDetailParentV2Fragment :
                 }
 
                 if (pinnedEventsAdapter.listItems.isNotEmpty()) {
-                    val adapterEvent = pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
+                    val adapterEvent =
+                        pinnedEventsAdapter.listItems.find { it.id == updatedEvent.id }
                     if (adapterEvent != null) {
                         val index = pinnedEventsAdapter.listItems.indexOf(adapterEvent)
                         pinnedEventsAdapter.listItems.removeAt(index)

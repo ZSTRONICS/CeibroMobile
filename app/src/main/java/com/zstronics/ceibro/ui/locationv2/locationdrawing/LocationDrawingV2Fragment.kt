@@ -526,53 +526,63 @@ class LocationDrawingV2Fragment :
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
         itemClickListener: ((tag: String) -> Unit)?
     ) {
-        val uri = Uri.parse(drawing.fileUrl)
-        val fileName = drawing.fileName
-        val folder = File(
-            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-            DrawingsV2Fragment.folderName
-        )
-        if (!folder.exists()) {
-            folder.mkdirs()
+
+        manager?.let {
+            downloadDrawingFile(drawing, downloadedDrawingV2Dao, it)
+        } ?: kotlin.run {
+
+            manager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            manager?.let { downloadDrawingFile(drawing, downloadedDrawingV2Dao, it) }
         }
-        val destinationUri = Uri.fromFile(File(folder, fileName))
-
-        val request: DownloadManager.Request? =
-            DownloadManager
-                .Request(uri)
-                .setDestinationUri(destinationUri)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setVisibleInDownloadsUi(true)
-
-        val downloadId = manager?.enqueue(request)
-
-        val ceibroDownloadDrawingV2 = downloadId?.let {
-            CeibroDownloadDrawingV2(
-                fileName = drawing.fileName,
-                downloading = true,
-                isDownloaded = false,
-                downloadId = it,
-                drawing = drawing,
-                drawingId = drawing._id,
-                groupId = drawing.groupId,
-                localUri = ""
-            )
-        }
-
-
-        GlobalScope.launch {
-            ceibroDownloadDrawingV2?.let {
-                downloadedDrawingV2Dao.insertDownloadDrawing(it)
-            }
-        }
-
-       /* Handler(Looper.getMainLooper()).postDelayed({
-            getDownloadProgress(context, downloadId!!) {
-                itemClickListener?.invoke(it)
-            }
-        }, 1000)*/
-
-        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
+//
+//        val uri = Uri.parse(drawing.fileUrl)
+//        val fileName = drawing.fileName
+//        val folder = File(
+//            context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+//            DrawingsV2Fragment.folderName
+//        )
+//        if (!folder.exists()) {
+//            folder.mkdirs()
+//        }
+//        val destinationUri = Uri.fromFile(File(folder, fileName))
+//
+//        val request: DownloadManager.Request? =
+//            DownloadManager
+//                .Request(uri)
+//                .setDestinationUri(destinationUri)
+//                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+//                .setVisibleInDownloadsUi(true)
+//
+//        val downloadId = manager?.enqueue(request)
+//
+//        val ceibroDownloadDrawingV2 = downloadId?.let {
+//            CeibroDownloadDrawingV2(
+//                fileName = drawing.fileName,
+//                downloading = true,
+//                isDownloaded = false,
+//                downloadId = it,
+//                drawing = drawing,
+//                drawingId = drawing._id,
+//                groupId = drawing.groupId,
+//                localUri = ""
+//            )
+//        }
+//
+//
+//        GlobalScope.launch {
+//            ceibroDownloadDrawingV2?.let {
+//                downloadedDrawingV2Dao.insertDownloadDrawing(it)
+//            }
+//        }
+//
+//       /* Handler(Looper.getMainLooper()).postDelayed({
+//            getDownloadProgress(context, downloadId!!) {
+//                itemClickListener?.invoke(it)
+//            }
+//        }, 1000)*/
+//
+//        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 
     }
 

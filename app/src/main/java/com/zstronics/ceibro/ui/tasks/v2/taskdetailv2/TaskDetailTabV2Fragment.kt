@@ -687,6 +687,47 @@ class TaskDetailTabV2Fragment :
         downloadedDrawingV2Dao: DownloadedDrawingV2Dao,
         itemClickListener: ((tag: String) -> Unit)?
     ) {
+
+        manager?.let {
+            downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getDownloadProgress(context, downloadId) {tag->
+                        GlobalScope.launch(Dispatchers.Main) {
+                            if (tag == "retry" || tag == "failed") {
+                                downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                            } else if (tag.trim().equals("100%", true)) {
+
+                                shortToastNow("Downloaded")
+                            }
+                        }
+                        itemClickListener?.invoke(tag)
+                    }
+                }, 1000)
+            }
+        } ?: kotlin.run {
+
+            manager =
+                requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            manager?.let {
+                downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        getDownloadProgress(context, downloadId) {tag->
+                            GlobalScope.launch(Dispatchers.Main) {
+                                if (tag == "retry" || tag == "failed") {
+                                    downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
+                                } else if (tag.trim().equals("100%", true)) {
+
+                                    shortToastNow("Downloaded")
+                                }
+                            }
+                            itemClickListener?.invoke(tag)
+                        }
+                    }, 1000)
+                }
+            }
+        }
+
+        /*
         shortToastNow("Downloading file...")
         val uri = Uri.parse(triplet.third)
         val fileName = triplet.second
@@ -748,7 +789,7 @@ class TaskDetailTabV2Fragment :
         }, 1000)
 
         println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
-
+*/
     }
 
     @SuppressLint("Range")
