@@ -170,25 +170,6 @@ class LocationProjectV2VM @Inject constructor(
             _allProjects.postValue(mutableListOf())
     }
 
-    fun filterRecentProjects(search: String) {
-        if (search.isEmpty()) {
-            if (originalRecentProjects.isNotEmpty()) {
-                _allRecentProjects.postValue(originalRecentProjects as MutableList<CeibroProjectV2>)
-            }
-            return
-        }
-        val filtered = originalRecentProjects.filter {
-            (it.title.isNotEmpty() && it.title.lowercase().contains(search, true)) ||
-                    (("${it.creator.firstName} ${it.creator.surName}").isNotEmpty() && ("${it.creator.firstName} ${it.creator.surName}").lowercase()
-                        .contains(search, true)) ||
-                    (!it.creator.companyName.isNullOrEmpty() && it.creator.companyName.lowercase()
-                        .contains(search, true))
-        }
-        if (filtered.isNotEmpty())
-            _allRecentProjects.postValue(filtered as MutableList<CeibroProjectV2>)
-        else
-            _allRecentProjects.postValue(mutableListOf())
-    }
 
     fun filterFavoriteProjects(search: String) {
         if (search.isEmpty()) {
