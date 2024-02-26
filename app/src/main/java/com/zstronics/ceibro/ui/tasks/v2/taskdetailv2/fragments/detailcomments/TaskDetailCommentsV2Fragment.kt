@@ -24,15 +24,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
-import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.finish
-import com.zstronics.ceibro.base.extensions.launchActivityWithFinishAffinity
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_ID
-import com.zstronics.ceibro.base.navgraph.host.NAVIGATION_Graph_START_DESTINATION_ID
-import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
@@ -43,8 +37,6 @@ import com.zstronics.ceibro.databinding.FragmentTaskDetailCommentsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
-import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.adapter.EventsRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -1151,5 +1143,16 @@ class TaskDetailCommentsV2Fragment :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.isResumedCalled) {
+            println("fragment : resumed called")
+            viewModel.isResumedCalled = true
+            viewModel.taskDetail.value?.let {
+                viewModel.syncEvents(it.id)
+            }
+
+        }
+    }
 
 }

@@ -136,12 +136,12 @@ class NewDrawingGroupAdapter @Inject constructor() :
         val renameGroupBtn: TextView = view.findViewById(R.id.renameGroupBtn)
 
         delete.setOnClickListener {
-
+            popupWindow.dismiss()
             if (groupResponseV2.drawings.isEmpty()) {
                 updateGroup(it.context, groupResponseV2) { tag, data ->
                     callback.invoke(tag, data)
                 }
-                popupWindow.dismiss()
+
             } else {
                 cannotDeleteAlertBox(it.context)
             }
@@ -161,9 +161,9 @@ class NewDrawingGroupAdapter @Inject constructor() :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, -200, -170)
+            popupWindow.showAsDropDown(v, 0, -300)
         } else {
-            popupWindow.showAsDropDown(v, -205, -60)
+            popupWindow.showAsDropDown(v, 5, -30)
         }
 
 

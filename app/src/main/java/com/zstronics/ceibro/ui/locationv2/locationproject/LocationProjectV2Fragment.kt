@@ -5,18 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.hideKeyboard
+import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentLocationProjectsV2Binding
-import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -32,13 +33,27 @@ class LocationProjectV2Fragment :
     override val viewModel: LocationProjectV2VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_location_projects_v2
     override fun toolBarVisibility(): Boolean = false
-    var sharedViewModel: SharedViewModel? = null
     var searchingProject = false
     override fun onClick(id: Int) {
         when (id) {
 
             R.id.cl_AddNewProject -> {
                 navigate(R.id.newProjectV2Fragment)
+            }
+
+            R.id.cancelSearch -> {
+                mViewDataBinding.locationProjectSearchBar.hideKeyboard()
+                mViewDataBinding.locationProjectsSearchCard.visibility = View.GONE
+                mViewDataBinding.locationProjectSearchBtn.visibility = View.VISIBLE
+                mViewDataBinding.locationProjectSearchBar.setQuery("", false)
+            }
+
+            R.id.locationProjectSearchBtn -> {
+                showKeyboard()
+                mViewDataBinding.locationProjectSearchBar.requestFocus()
+                mViewDataBinding.locationProjectsSearchCard.visibility = View.VISIBLE
+                mViewDataBinding.locationProjectSearchBtn.visibility = View.GONE
+
             }
 
         }
@@ -49,7 +64,6 @@ class LocationProjectV2Fragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         mViewDataBinding.emptyProjectListHeader.visibility = View.GONE
         mViewDataBinding.projectsRV.visibility = View.VISIBLE
 
@@ -68,7 +82,8 @@ class LocationProjectV2Fragment :
         sectionedAdapter.setCallBack { view, position, ceibroProjectV2, tag ->
             when (tag) {
                 "detail" -> {
-                    CeibroApplication.CookiesManager.locationProjectNameForDetails = ceibroProjectV2.title
+                    CeibroApplication.CookiesManager.locationProjectNameForDetails =
+                        ceibroProjectV2.title
                     CeibroApplication.CookiesManager.locationProjectDataForDetails = ceibroProjectV2
                     EventBus.getDefault().post(LocalEvents.LoadDrawingFragmentInLocation())
 //                    navigate(R.id.projectDetailV2Fragment)
@@ -102,7 +117,10 @@ class LocationProjectV2Fragment :
                 sectionList.removeAt(0)
                 sectionList.add(
                     0,
-                    LocationProjectsSectionHeader(mutableListOf(), getString(R.string.favorite_projects))
+                    LocationProjectsSectionHeader(
+                        mutableListOf(),
+                        getString(R.string.favorite_projects)
+                    )
                 )
                 sectionedAdapter.insertNewSection(
                     LocationProjectsSectionHeader(
@@ -145,7 +163,7 @@ class LocationProjectV2Fragment :
                 sectionedAdapter.insertNewSection(
                     LocationProjectsSectionHeader(
                         mutableListOf(),
-                        getString(R.string.all_projects)
+                         getString(R.string.all_projects)
                     ), 1
                 )
                 sectionedAdapter.notifyDataSetChanged()
@@ -156,13 +174,25 @@ class LocationProjectV2Fragment :
             }
         }
 
-        sharedViewModel?.projectSearchQuery?.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                searchingProject = true
+
+        mViewDataBinding.locationProjectSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.filterFavoriteProjects(query.trim())
+                    viewModel.filterAllProjects(query.trim())
+                }
+                return true
             }
-            viewModel.filterFavoriteProjects(it)
-            viewModel.filterAllProjects(it)
-        }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.filterFavoriteProjects(newText.trim())
+                    viewModel.filterAllProjects(newText.trim())
+                }
+                return true
+            }
+        })
     }
 
 
