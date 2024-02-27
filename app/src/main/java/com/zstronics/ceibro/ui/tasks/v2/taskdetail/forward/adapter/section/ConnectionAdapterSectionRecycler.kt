@@ -5,12 +5,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.ceibro.permissionx.PermissionX
 import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.LayoutItemAssigneeSelectionBinding
@@ -26,6 +28,7 @@ class ConnectionAdapterSectionRecycler constructor(
     ) {
     var showContactPermissionToast = true
     var isConfirmer = false
+    var isViewer = false
 
     var itemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
@@ -33,6 +36,7 @@ class ConnectionAdapterSectionRecycler constructor(
     var fullItemClickListener: ((view: View, position: Int, data: AllCeibroConnections.CeibroConnection) -> Unit)? =
         null
     var dataList: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
+    var disableContscts: MutableList<AllCeibroConnections.CeibroConnection> = mutableListOf()
     var oldContacts: ArrayList<String> = arrayListOf()
 
     override fun onCreateSectionViewHolder(
@@ -83,6 +87,11 @@ class ConnectionAdapterSectionRecycler constructor(
         notifyDataSetChanged()
     }
 
+    fun disableContacts(oldSelectedContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+        disableContscts = oldSelectedContacts
+        notifyDataSetChanged()
+    }
+
     inner class ConnectionsSectionViewHolder constructor(private val binding: LayoutItemHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ConnectionsSectionHeader?) {
@@ -112,6 +121,7 @@ class ConnectionAdapterSectionRecycler constructor(
     inner class ConnectionsChildViewHolder constructor(val binding: LayoutItemAssigneeSelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: AllCeibroConnections.CeibroConnection?) {
+            val context = binding.root.context
             item?.let {
                 with(binding) {
                     if (isConfirmer) {
@@ -124,17 +134,35 @@ class ConnectionAdapterSectionRecycler constructor(
                     root.isEnabled = true
                     root.isClickable = true
                     root.alpha = 1.0f
+
                     contactInitials.setTextColor(context.resources.getColor(R.color.black))
                     contactName.setTextColor(context.resources.getColor(R.color.black))
+
+
                     contactCheckBox.setOnClickListener {
                         item.isChecked = !item.isChecked
                         notifyDataSetChanged()
                         itemClickListener?.invoke(it, position, item)
                     }
                     root.setOnClickListener {
-                        item.isChecked = !item.isChecked
-                        notifyDataSetChanged()
-                        fullItemClickListener?.invoke(it, position, item)
+                        val disable = disableContscts.find { contact -> contact.id == item.id }
+                        if (isViewer && disable != null) {
+                            cancelAndMakeToast(
+                                context,
+                                "This user is already selected as assignee/confirmer",
+                                Toast.LENGTH_SHORT
+                            )
+                        } else if (disable != null) {
+                            cancelAndMakeToast(
+                                context,
+                                "This user is already selected as a viewer",
+                                Toast.LENGTH_SHORT
+                            )
+                        } else {
+                            item.isChecked = !item.isChecked
+                            notifyDataSetChanged()
+                            fullItemClickListener?.invoke(it, position, item)
+                        }
                     }
 
                     contactName.text = "${item.contactFirstName} ${item.contactSurName}"
@@ -217,6 +245,18 @@ class ConnectionAdapterSectionRecycler constructor(
                         root.isEnabled = false
                         root.isClickable = false
                         root.alpha = 0.7f
+                        contactInitials.setTextColor(context.resources.getColor(R.color.appGrey3))
+                        contactName.setTextColor(context.resources.getColor(R.color.appGrey3))
+                    }
+
+                    val disable = disableContscts.find { it.id == item.id }
+                    disable?.let {
+                        contactCheckBox.isChecked = false
+                        contactCheckBox.isClickable = false
+//                        mainLayout.isEnabled = false
+//                        root.isEnabled = false
+//                        root.isClickable = false
+                        root.alpha = 0.6f
                         contactInitials.setTextColor(context.resources.getColor(R.color.appGrey3))
                         contactName.setTextColor(context.resources.getColor(R.color.appGrey3))
                     }

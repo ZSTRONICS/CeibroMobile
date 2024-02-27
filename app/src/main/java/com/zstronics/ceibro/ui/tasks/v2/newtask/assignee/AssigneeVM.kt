@@ -37,6 +37,8 @@ class AssigneeVM @Inject constructor(
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
+    var disableSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
+        MutableLiveData()
     var isConfirmer: MutableLiveData<Boolean> = MutableLiveData(false)
     var isViewer: MutableLiveData<Boolean> = MutableLiveData(false)
 
@@ -52,15 +54,25 @@ class AssigneeVM @Inject constructor(
             this.isConfirmer.value = false
         }
 //        isViewer?.let {
-            this.isViewer.value = isViewer ?: false
+        this.isViewer.value = isViewer ?: false
 //        } ?: kotlin.run {
 //            this.isViewer.value = false
 //        }
+
+        val disabledContacts = bundle?.getParcelableArray("disabledContacts")
+        val disabledContactList =
+            disabledContacts?.map { it as AllCeibroConnections.CeibroConnection }
+                ?.toMutableList()
+        if (!disabledContactList.isNullOrEmpty()) {
+            disableSelectedContacts.postValue(disabledContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
+        }
+
         val selectedContact = bundle?.getParcelableArray("contacts")
         val selectedContactList =
             selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
                 ?.toMutableList()
         if (!selectedContactList.isNullOrEmpty()) {
+
             selectedContacts.postValue(selectedContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
         }
         val handler = Handler()

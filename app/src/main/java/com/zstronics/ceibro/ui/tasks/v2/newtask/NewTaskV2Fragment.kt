@@ -114,7 +114,9 @@ class NewTaskV2Fragment :
 
 
             R.id.newConfirmerTopicText -> {
-                val list= mutableListOf<AllCeibroConnections.CeibroConnection>()
+                val list = mutableListOf<AllCeibroConnections.CeibroConnection>()
+                val viewerList = viewState.selectedViewerContacts.value ?: mutableListOf()
+
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
@@ -123,10 +125,20 @@ class NewTaskV2Fragment :
                 bundle.putBoolean("self-assign", viewState.selfAssignedConfermer.value ?: false)
                 bundle.putBoolean("isConfirmer", true)
                 bundle.putBoolean("isViewer", false)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    viewerList.toTypedArray()
+                )
                 navigateForResult(R.id.assigneeFragment, CONFIRMER_REQUEST_CODE, bundle)
             }
 
             R.id.newViewerTopicText -> {
+                val assigneeList = viewState.selectedContacts.value ?: mutableListOf()
+                val confirmer = viewState.selectedConfirmerContacts.value
+                confirmer?.let {
+                    assigneeList.add(it)
+                }
+
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
@@ -135,6 +147,10 @@ class NewTaskV2Fragment :
                 bundle.putBoolean("self-assign", viewState.selfAssignedViewer.value ?: false)
                 bundle.putBoolean("isConfirmer", false)
                 bundle.putBoolean("isViewer", true)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    assigneeList.toTypedArray()
+                )
                 navigateForResult(R.id.assigneeFragment, VIEWER_REQUEST_CODE, bundle)
             }
 
@@ -147,6 +163,9 @@ class NewTaskV2Fragment :
 
 
             R.id.newTaskAssignToText -> {
+
+                val viewerList = viewState.selectedViewerContacts.value ?: mutableListOf()
+
                 val bundle = Bundle()
                 bundle.putParcelableArray(
                     "contacts",
@@ -155,6 +174,10 @@ class NewTaskV2Fragment :
                 bundle.putBoolean("self-assign", viewState.selfAssigned.value ?: false)
                 bundle.putBoolean("isConfirmer", false)
                 bundle.putBoolean("isViewer", false)
+                bundle.putParcelableArray(
+                    "disabledContacts",
+                    viewerList.toTypedArray()
+                )
                 navigateForResult(R.id.assigneeFragment, ASSIGNEE_REQUEST_CODE, bundle)
             }
 
@@ -1043,10 +1066,13 @@ class NewTaskV2Fragment :
                             }
                             index++
                         }
+                        if (selectedContactList.size > 0 && selectedContactList.size == 1) {
+                            viewState.selectedConfirmerContacts.value = selectedContactList[0]
+                        }
                     }
                     if (selfAssigned == false) {
                         viewState.confirmerText.value = assigneeMembers
-                    }else{
+                    } else {
                         viewState.confirmerText.value = "Me"
                     }
                 }

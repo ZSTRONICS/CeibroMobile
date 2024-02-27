@@ -121,6 +121,15 @@ class AssigneeFragment :
                 adapter.notifyDataSetChanged()
             }
         }
+        viewModel.isViewer.observe(viewLifecycleOwner) {
+            if (it) {
+                adapter.isViewer = true
+                adapter.notifyDataSetChanged()
+            } else {
+                adapter.isViewer = false
+                adapter.notifyDataSetChanged()
+            }
+        }
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.allContactsRV.layoutManager = linearLayoutManager
@@ -177,6 +186,15 @@ class AssigneeFragment :
                 }
             }
         }
+
+
+        viewModel.disableSelectedContacts.observe(viewLifecycleOwner) { disabledContacts ->
+            disabledContacts?.let { list ->
+                adapter.disableContacts(list)
+            }
+        }
+
+
         viewModel.selectedContacts.observe(viewLifecycleOwner) {
             if (it != null) {
 
@@ -200,6 +218,8 @@ class AssigneeFragment :
                     navigateBackWithResult(Activity.RESULT_OK, bundle)
                 }
             }
+
+
         }
         chipAdapter.removeItemClickListener =
             { childView: View, position: Int, data: AllCeibroConnections.CeibroConnection ->
