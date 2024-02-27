@@ -95,7 +95,7 @@ class NewTaskV2VM @Inject constructor(
                     index++
                 }
                 viewState.selectedContacts.value = selectedContactList.toMutableList()
-              //  viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
+                //  viewState.selectedViewerContacts.value = selectedContactList.toMutableList()
                 // viewState.selectedConfirmerContacts.value = selectedContactList.toMutableList()
             }
             viewState.assignToText.value = assigneeMembers
@@ -154,7 +154,7 @@ class NewTaskV2VM @Inject constructor(
     ) {
 
         if (viewState.taskTitle.value.toString() == "") {
-            alert("Tag is required")
+            alert("Title is required ")
         } else if (viewState.assignToText.value.toString() == "") {
             alert("Assignee is required")
         } else {

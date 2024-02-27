@@ -12,7 +12,6 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.Settings
 import android.view.View
@@ -33,7 +32,6 @@ import com.zstronics.ceibro.base.extensions.showKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterVM
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
-import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
 import com.zstronics.ceibro.data.repos.projects.drawing.DrawingV2
 import com.zstronics.ceibro.databinding.FragmentDrawingsV2Binding
 import com.zstronics.ceibro.extensions.openFilePicker
@@ -191,6 +189,9 @@ class DrawingsV2Fragment :
             viewModel.downloadedDrawingV2Dao,
             networkConnectivityObserver
         )
+        sectionedAdapter.deleteClickListener = { item ->
+            viewModel.deleteGroupByID(item._id)
+        }
         referenceSectionedAdapter = sectionedAdapter
 
 
@@ -538,7 +539,7 @@ class DrawingsV2Fragment :
         itemClickListener: ((tag: String) -> Unit)?
     ) {
 
-         manager?.let {
+        manager?.let {
             downloadDrawingFile(drawing, downloadedDrawingV2Dao, it)
         } ?: kotlin.run {
 
@@ -548,56 +549,56 @@ class DrawingsV2Fragment :
         }
 
 
-/*
+        /*
 
-        val uri = Uri.parse(drawing.fileUrl)
-        val fileName = drawing.fileName
-        val folder = File(context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName)
-        val folder1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        println("DIRECTORY_DOWNLOADS: $folder1")
-        if (!folder.exists()) {
-            folder.mkdirs()
-        }
-        val destinationUri = Uri.fromFile(File(folder1, fileName))
-        // Set the MIME type
-        val mimeType = getMimeTypeFromUrl(drawing.fileUrl)
-        println("DIRECTORY_DOWNLOADS: mimeType: $mimeType")
+                val uri = Uri.parse(drawing.fileUrl)
+                val fileName = drawing.fileName
+                val folder = File(context?.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), folderName)
+                val folder1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                println("DIRECTORY_DOWNLOADS: $folder1")
+                if (!folder.exists()) {
+                    folder.mkdirs()
+                }
+                val destinationUri = Uri.fromFile(File(folder1, fileName))
+                // Set the MIME type
+                val mimeType = getMimeTypeFromUrl(drawing.fileUrl)
+                println("DIRECTORY_DOWNLOADS: mimeType: $mimeType")
 
-        val request: DownloadManager.Request? =
-            DownloadManager
-                .Request(uri)
-//                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fileName)
-                .setDestinationUri(destinationUri)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setVisibleInDownloadsUi(true)
+                val request: DownloadManager.Request? =
+                    DownloadManager
+                        .Request(uri)
+        //                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fileName)
+                        .setDestinationUri(destinationUri)
+                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                        .setVisibleInDownloadsUi(true)
 
-        if (mimeType != null){
-            request?.setMimeType(mimeType)
-        }
-
-
-        val downloadId = manager?.enqueue(request)
-
-        val ceibroDownloadDrawingV2 = downloadId?.let {
-            CeibroDownloadDrawingV2(
-                fileName = drawing.fileName,
-                downloading = true,
-                isDownloaded = false,
-                downloadId = it,
-                drawing = drawing,
-                drawingId = drawing._id,
-                groupId = drawing.groupId,
-                localUri = ""
-            )
-        }
+                if (mimeType != null){
+                    request?.setMimeType(mimeType)
+                }
 
 
-        GlobalScope.launch {
-            ceibroDownloadDrawingV2?.let {
-                downloadedDrawingV2Dao.insertDownloadDrawing(it)
-            }
-        }
-*/
+                val downloadId = manager?.enqueue(request)
+
+                val ceibroDownloadDrawingV2 = downloadId?.let {
+                    CeibroDownloadDrawingV2(
+                        fileName = drawing.fileName,
+                        downloading = true,
+                        isDownloaded = false,
+                        downloadId = it,
+                        drawing = drawing,
+                        drawingId = drawing._id,
+                        groupId = drawing.groupId,
+                        localUri = ""
+                    )
+                }
+
+
+                GlobalScope.launch {
+                    ceibroDownloadDrawingV2?.let {
+                        downloadedDrawingV2Dao.insertDownloadDrawing(it)
+                    }
+                }
+        */
 
 //        println("id: ${id} Folder name: ${folder} uri:${uri} destinationUri:${destinationUri}")
 

@@ -190,5 +190,41 @@ class DrawingsV2VM @Inject constructor(
         return (found.isNotEmpty())
     }
 
+     fun deleteGroupByID(groupId: String) {
+        launch {
+            loading(true)
+            when (val response = projectRepository.deleteGroupByIdV2(groupId)) {
 
+                is ApiResponse.Success -> {
+                    groupsV2Dao.deleteGroupById(groupId)
+
+                    _myGroupData.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupId == item._id) {
+                                iterator.remove()
+                            }
+                        }
+                        _myGroupData.value = currentList
+                    }
+                    _favoriteGroups.value?.let { currentList ->
+                        val iterator = currentList.iterator()
+                        while (iterator.hasNext()) {
+                            val item = iterator.next()
+                            if (groupId == item._id) {
+                                iterator.remove()
+                            }
+                        }
+                        _favoriteGroups.value = currentList
+                    }
+                    loading(false, response.data.message)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                }
+            }
+        }
+    }
 }

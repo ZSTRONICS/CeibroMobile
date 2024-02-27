@@ -9,6 +9,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +55,8 @@ class AllDrawingsAdapterSectionRecycler(
     sectionList
 ) {
 
+
+    var deleteClickListener: ((CeibroGroupsV2) -> Unit)? = null
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissionList13 = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
@@ -194,7 +198,7 @@ class AllDrawingsAdapterSectionRecycler(
                 }
 
                 adapter.drawingFileClickListenerCallBack { view, data, absolutePath ->
-                    drawingFileClickListener?.invoke(view, data,absolutePath)
+                    drawingFileClickListener?.invoke(view, data, absolutePath)
 
                 }
 
@@ -341,15 +345,20 @@ class AllDrawingsAdapterSectionRecycler(
                          binding.llParent.addView(itemViewBinding.root)
                      }
                  }*/
+
+
             }
         }
     }
 
     private fun togglePopupMenu(view: View, item: CeibroGroupsV2?) {
-        popUpMenu(view, item)
+        item?.let {
+            popUpMenu(view, item)
+        }
+
     }
 
-    private fun popUpMenu(v: View, item: CeibroGroupsV2?): PopupWindow {
+    private fun popUpMenu(v: View, item: CeibroGroupsV2): PopupWindow {
         val popupWindow = PopupWindow(v.context)
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -380,7 +389,8 @@ class AllDrawingsAdapterSectionRecycler(
         }
 
         val publicGroup = view.findViewById<AppCompatTextView>(R.id.publicGroup)
-        if (item?.publicGroup == true) {
+        val deleteGroup = view.findViewById<AppCompatTextView>(R.id.deleteGroup)
+        if (item.publicGroup) {
             publicGroup.text = context.resources.getString(R.string.private_group)
         } else {
             publicGroup.text = context.resources.getString(R.string.public_group)
@@ -393,6 +403,21 @@ class AllDrawingsAdapterSectionRecycler(
                     publicGroupClickListener?.invoke(tag, group)
                 }
             }
+        }
+        deleteGroup.setOnClickListener {
+            popupWindow.dismiss()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (item.drawings.isEmpty()) {
+                    deleteGroup(it.context, item) { data ->
+                        deleteClickListener?.invoke(data)
+                    }
+
+                } else {
+                    cannotDeleteAlertBox(it.context)
+                }
+            }, 100)
+
         }
 
         return popupWindow
@@ -567,4 +592,67 @@ class AllDrawingsAdapterSectionRecycler(
         }
     }
 
+    private fun deleteGroup(
+        context: Context,
+        groupResponseV2: CeibroGroupsV2,
+        callback: (CeibroGroupsV2) -> Unit
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text =
+            context.resources.getString(R.string.are_you_sure_you_want_to_delete_this_group)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            callback.invoke(groupResponseV2)
+            alertDialog.dismiss()
+
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+
+    private fun cannotDeleteAlertBox(
+        context: Context,
+    ) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: androidx.appcompat.app.AlertDialog.Builder =
+            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        yesBtn.text = context.getString(R.string.ok)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val saperater = view.findViewById<View>(R.id.viewSaperator)
+        saperater.visibility = View.GONE
+        noBtn.visibility = View.GONE
+
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text =
+            context.resources.getString(R.string.cannot_delete_group)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
 }
