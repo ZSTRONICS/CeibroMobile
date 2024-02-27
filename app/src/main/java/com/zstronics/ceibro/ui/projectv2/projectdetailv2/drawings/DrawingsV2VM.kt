@@ -219,7 +219,6 @@ class DrawingsV2VM @Inject constructor(
                         _favoriteGroups.value = currentList
                     }
                     loading(false, response.data.message)
-                    callback.invoke()
                 }
 
                 is ApiResponse.Error -> {

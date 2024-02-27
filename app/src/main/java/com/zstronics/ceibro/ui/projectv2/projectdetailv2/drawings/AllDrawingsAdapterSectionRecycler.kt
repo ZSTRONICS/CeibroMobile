@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -406,16 +407,16 @@ class AllDrawingsAdapterSectionRecycler(
         deleteGroup.setOnClickListener {
             popupWindow.dismiss()
 
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 if (item.drawings.isEmpty()) {
-                    deleteGroup(it.context, item) {  data ->
+                    deleteGroup(it.context, item) { data ->
                         deleteClickListener?.invoke(data)
                     }
 
                 } else {
                     cannotDeleteAlertBox(it.context)
                 }
-            }, 200)
+            }, 100)
 
         }
 
