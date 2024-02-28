@@ -551,6 +551,9 @@ class TaskDetailCommentsV2Fragment :
                     if (eventExist == null) {  /// event not existed
                         allEvents.add(taskEvent)
                         viewModel.updateTaskAndAllEvents(taskEvent, allEvents)
+                        if (!taskEvent.commentData?.files.isNullOrEmpty()) {
+                            EventBus.getDefault().post(LocalEvents.RefreshTaskFiles())
+                        }
 
 //                        val handler = Handler(Looper.getMainLooper())
 //                        handler.postDelayed(Runnable {
@@ -565,6 +568,10 @@ class TaskDetailCommentsV2Fragment :
                     eventList.add(taskEvent)
                     allEvents.addAll(eventList)
                     viewModel.updateTaskAndAllEvents(taskEvent, allEvents)
+                    if (!taskEvent.commentData?.files.isNullOrEmpty()) {
+                        EventBus.getDefault().post(LocalEvents.RefreshTaskFiles())
+                    }
+
 //                    val task = viewModel.taskDao.getTaskByID(taskEvent.taskId)
 //                    task?.let {
 //                        viewModel.originalTask.postValue(it)

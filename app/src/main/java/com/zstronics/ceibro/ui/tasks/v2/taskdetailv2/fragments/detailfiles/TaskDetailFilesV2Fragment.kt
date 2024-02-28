@@ -30,10 +30,12 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.databinding.FragmentTaskDetailFilesV2Binding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.adapter.TaskDetailFilesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
@@ -43,6 +45,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 
 @AndroidEntryPoint
@@ -516,7 +521,7 @@ class TaskDetailFilesV2Fragment :
         manager?.let {
             downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
                 Handler(Looper.getMainLooper()).postDelayed({
-                    getDownloadProgress(context, downloadId) {tag->
+                    getDownloadProgress(context, downloadId) { tag ->
                         GlobalScope.launch(Dispatchers.Main) {
                             if (tag == "retry" || tag == "failed") {
                                 downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
@@ -536,7 +541,7 @@ class TaskDetailFilesV2Fragment :
             manager?.let {
                 downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
                     Handler(Looper.getMainLooper()).postDelayed({
-                        getDownloadProgress(context, downloadId) {tag->
+                        getDownloadProgress(context, downloadId) { tag ->
                             GlobalScope.launch(Dispatchers.Main) {
                                 if (tag == "retry" || tag == "failed") {
                                     downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
@@ -773,4 +778,24 @@ class TaskDetailFilesV2Fragment :
         return
 
     }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshTaskFiles(
+        event: LocalEvents.RefreshTaskFiles?
+    ) {
+        viewModel.refreshFiles()
+    }
+
 }

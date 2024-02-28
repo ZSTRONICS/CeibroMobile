@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
+import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
 import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.InboxV2Dao
+import com.zstronics.ceibro.data.database.dao.TaskDetailFilesV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.LocalTaskDetailFiles
@@ -30,6 +32,7 @@ class TaskDetailFilesV2VM @Inject constructor(
     val dashboardRepository: IDashboardRepository,
     val taskDao: TaskV2Dao,
     val groupsV2Dao: GroupsV2Dao,
+    val detailFilesV2Dao: TaskDetailFilesV2Dao,
     private val inboxV2Dao: InboxV2Dao,
     val drawingPinsDao: DrawingPinsV2Dao,
     val downloadedDrawingV2Dao: DownloadedDrawingV2Dao
@@ -71,42 +74,104 @@ class TaskDetailFilesV2VM @Inject constructor(
                 }
             }
 
-            allFiles?.let { files ->
-                val sortedFiles = files.sortedByDescending { it.createdAt }.toMutableList()
+            addFilesList(allFiles)
+        }
+    }
 
-                originalAllDetailFiles.postValue(sortedFiles)
-                _allDetailFiles.postValue(sortedFiles)
+    private fun addFilesList(allFiles: List<LocalTaskDetailFiles>?) {
+        allFiles?.let { files ->
+            val sortedFiles = files.sortedByDescending { it.createdAt }.toMutableList()
 
-                val allPhotosList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
-                val allFilesList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
+            originalAllDetailFiles.postValue(sortedFiles)
+            _allDetailFiles.postValue(sortedFiles)
 
-                for (item in sortedFiles) {
-                    when (item.fileTag) {
-                        AttachmentTags.Image.tagValue -> {
-                            allPhotosList.add(item)
-                        }
+            val allPhotosList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
+            val allFilesList: ArrayList<LocalTaskDetailFiles> = arrayListOf()
 
-                        AttachmentTags.Drawing.tagValue -> {
-                            allPhotosList.add(item)
-                        }
+            for (item in sortedFiles) {
+                when (item.fileTag) {
+                    AttachmentTags.Image.tagValue -> {
+                        allPhotosList.add(item)
+                    }
 
-                        AttachmentTags.ImageWithComment.tagValue -> {
-                            allPhotosList.add(item)
-                        }
+                    AttachmentTags.Drawing.tagValue -> {
+                        allPhotosList.add(item)
+                    }
 
-                        AttachmentTags.File.tagValue -> {
-                            allFilesList.add(item)
-                        }
+                    AttachmentTags.ImageWithComment.tagValue -> {
+                        allPhotosList.add(item)
+                    }
+
+                    AttachmentTags.File.tagValue -> {
+                        allFilesList.add(item)
                     }
                 }
+            }
 
-                originalPhotoFiles.postValue(allPhotosList.toMutableList())
-                _photoFiles.postValue(allPhotosList.toMutableList())
+            originalPhotoFiles.postValue(allPhotosList.toMutableList())
+            _photoFiles.postValue(allPhotosList.toMutableList())
 
-                originalDocumentFiles.postValue(allFilesList.toMutableList())
-                _documentFiles.postValue(allFilesList.toMutableList())
+            originalDocumentFiles.postValue(allFilesList.toMutableList())
+            _documentFiles.postValue(allFilesList.toMutableList())
 
+        }
+    }
+
+    fun refreshFiles() {
+        taskDetail.value?.let { task ->
+            getTaskFiles(task.id) { files ->
+                addFilesList(files)
+            }
+        } ?: kotlin.run {
+            val taskData: CeibroTaskV2? = CeibroApplication.CookiesManager.taskDataForDetails
+            val taskDataFromNotification: CeibroTaskV2? =
+                CeibroApplication.CookiesManager.taskDataForDetailsFromNotification
+            var taskId = ""
+
+            taskData?.let { task ->
+                taskId = task.id
+                originalTask.postValue(task)
+                _taskDetail.postValue(task)
+            } ?: kotlin.run {
+                taskDataFromNotification?.let { taskNotification ->
+                    taskId = taskNotification.id
+                    originalTask.postValue(taskNotification)
+                    _taskDetail.postValue(taskNotification)
+                }
+            }
+
+            getTaskFiles(taskId) { files ->
+                addFilesList(files)
             }
         }
     }
+
+    fun getTaskFiles(
+        taskId: String,
+        callBack: (taskFiles: List<LocalTaskDetailFiles>) -> Unit
+    ) {
+        launch {
+//            val allFiles = detailFilesV2Dao.getAllFilesOfTask(taskId)
+//
+//            if (allFiles.isNotEmpty()) {
+//                callBack.invoke(allFiles)
+//            } else {
+            when (val response = remoteTask.getTaskFilesByTaskId(taskId)) {
+                is ApiResponse.Success -> {
+                    val allTaskFiles = response.data.allTaskFiles
+                    if (allTaskFiles.isNotEmpty()) {
+                        detailFilesV2Dao.insertAllFiles(allTaskFiles)
+                    }
+                    callBack.invoke(allTaskFiles)
+                }
+
+                is ApiResponse.Error -> {
+                    alert(response.error.message)
+                }
+            }
+//            }
+        }
+    }
+
+
 }
