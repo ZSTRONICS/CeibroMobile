@@ -54,6 +54,7 @@ class TaskDetailFilesV2VM @Inject constructor(
     val documentFiles: LiveData<MutableList<LocalTaskDetailFiles>> = _documentFiles
     val originalDocumentFiles: MutableLiveData<MutableList<LocalTaskDetailFiles>> = MutableLiveData()
 
+    var isResumedCalled = false
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -146,7 +147,7 @@ class TaskDetailFilesV2VM @Inject constructor(
         }
     }
 
-    fun getTaskFiles(
+    private fun getTaskFiles(
         taskId: String,
         callBack: (taskFiles: List<LocalTaskDetailFiles>) -> Unit
     ) {
