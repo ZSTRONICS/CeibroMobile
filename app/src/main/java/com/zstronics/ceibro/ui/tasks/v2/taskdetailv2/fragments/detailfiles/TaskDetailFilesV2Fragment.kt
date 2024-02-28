@@ -798,4 +798,12 @@ class TaskDetailFilesV2Fragment :
         viewModel.refreshFiles()
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        if (!viewModel.isResumedCalled) {
+            viewModel.isResumedCalled = true
+            viewModel.refreshFiles()
+        }
+    }
 }
