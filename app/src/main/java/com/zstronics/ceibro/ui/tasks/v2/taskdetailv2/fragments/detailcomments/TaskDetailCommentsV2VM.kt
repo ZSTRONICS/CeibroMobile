@@ -509,6 +509,7 @@ class TaskDetailCommentsV2VM @Inject constructor(
     ) {
         launch {
             val allEvents = taskDao.getEventsOfTask(taskId).toMutableList()
+//            allEvents.sortedByDescending { it.createdAt }
             val eventsIds: MutableList<Int> = mutableListOf()
             allEvents.forEach {
                 eventsIds.add(it.eventNumber)
@@ -529,13 +530,19 @@ class TaskDetailCommentsV2VM @Inject constructor(
                                 }
                             }
                             allEvents.addAll(newMissingEventList)
-                            originalEvents.postValue(allEvents)
-                            _taskEvents.postValue(allEvents)
+                            val allEventsSorted =
+                                allEvents.sortedByDescending { it.createdAt }
+                                    .toMutableList()
+                            originalEvents.postValue(allEventsSorted)
+                            _taskEvents.postValue(allEventsSorted)
 
                         } else {
                             allEvents.addAll(missingEvents)
-                            originalEvents.postValue(allEvents)
-                            _taskEvents.postValue(allEvents)
+                            val allEventsSorted =
+                                allEvents.sortedByDescending { it.createdAt }
+                                    .toMutableList()
+                            originalEvents.postValue(allEventsSorted)
+                            _taskEvents.postValue(allEventsSorted)
                         }
                         launch {
                             taskDao.insertMultipleEvents(missingEvents)
