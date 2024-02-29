@@ -657,4 +657,9 @@
     <string name="pin_comment">Pin comment</string>
     <string name="unpin_comment">Unpin comment</string>
     <string name="pinned_comments">Pinned comments</string>
+    <string name="project">Project</string>
+    <string name="tags">Tags</string>
+    <string name="all">All</string>
+    <string name="no_result_found">No Result Found</string>
+    <string name="we_cannot_find_the_task_you_are_searching_for_may_be_a_little_spelling_mistake">We cannot find the task you are searching for, may be a little spelling mistake?</string>
 </resources>

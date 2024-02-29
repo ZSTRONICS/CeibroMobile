@@ -88,7 +88,14 @@ class TasksParentTabV3Fragment :
             }
         })
 
-
+        val tabTextColors = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_selected), intArrayOf()),
+            intArrayOf(resources.getColor(R.color.black), resources.getColor(R.color.appBlue))
+        )
+        mViewDataBinding.taskTabLayout.tabTextColors = tabTextColors
+        mViewDataBinding.taskTabLayout.tabIconTint = tabTextColors
+        mViewDataBinding.taskTabLayout.setSelectedTabIndicatorColor(Color.BLACK)
+ 
 
         TabLayoutMediator(mViewDataBinding.taskTabLayout, mViewDataBinding.taskViewPager) { tab, position ->
             tab.text = tabTitles[position]
@@ -113,13 +120,6 @@ class TasksParentTabV3Fragment :
 
         }.attach()
 
-        val tabTextColors = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_selected), intArrayOf()),
-            intArrayOf(resources.getColor(R.color.black), resources.getColor(R.color.appBlue))
-        )
-        mViewDataBinding.taskTabLayout.tabTextColors = tabTextColors
-        mViewDataBinding.taskTabLayout.tabIconTint = tabTextColors
-        mViewDataBinding.taskTabLayout.setSelectedTabIndicatorColor(Color.BLACK)
 
     }
 
