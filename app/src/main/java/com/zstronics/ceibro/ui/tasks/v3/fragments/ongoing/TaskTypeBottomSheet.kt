@@ -14,7 +14,8 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.databinding.FragmentTaskTypeBinding
 
-class TaskTypeBottomSheet(val callback: (String) -> Unit) : BottomSheetDialogFragment() {
+class TaskTypeBottomSheet(val type: String, val callback: (String) -> Unit) :
+    BottomSheetDialogFragment() {
     lateinit var binding: FragmentTaskTypeBinding
 
     override fun onCreateView(
@@ -37,6 +38,13 @@ class TaskTypeBottomSheet(val callback: (String) -> Unit) : BottomSheetDialogFra
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (type.lowercase() == "all".lowercase()) {
+            binding.rbAll.isChecked = true
+        } else if (type.lowercase() == "from me".lowercase()) {
+            binding.rbFromMe.isChecked = true
+        } else if (type.lowercase() == "to me".lowercase()) {
+            binding.rbToMe.isChecked = true
+        }
         binding.rbAll.setOnClick {
             callback.invoke("All")
             dismiss()

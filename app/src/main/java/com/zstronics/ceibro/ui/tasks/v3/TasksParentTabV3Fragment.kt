@@ -34,8 +34,8 @@ class TasksParentTabV3Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.taskType -> {
-                chooseTaskType { type ->
-                    mViewDataBinding.taskTypeText.text= type
+                chooseTaskType(mViewDataBinding.taskTypeText.text.toString()) { type ->
+                    mViewDataBinding.taskTypeText.text = type
                 }
             }
 
@@ -75,7 +75,12 @@ class TasksParentTabV3Fragment :
     lateinit var adapter: TasksParentV3TabLayoutAdapter
 
     val tabTitles = ArrayList<String>()
-    val tabIcons = arrayOf(R.drawable.icon_inbox_blue, R.drawable.icon_task_ongoing_tab, R.drawable.icon_approval, R.drawable.icon_tick_mark_blue)
+    val tabIcons = arrayOf(
+        R.drawable.icon_inbox_blue,
+        R.drawable.icon_task_ongoing_tab,
+        R.drawable.icon_approval,
+        R.drawable.icon_tick_mark_blue
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -115,13 +120,17 @@ class TasksParentTabV3Fragment :
         mViewDataBinding.taskTabLayout.tabTextColors = tabTextColors
         mViewDataBinding.taskTabLayout.tabIconTint = tabTextColors
         mViewDataBinding.taskTabLayout.setSelectedTabIndicatorColor(Color.BLACK)
- 
 
-        TabLayoutMediator(mViewDataBinding.taskTabLayout, mViewDataBinding.taskViewPager) { tab, position ->
+
+        TabLayoutMediator(
+            mViewDataBinding.taskTabLayout,
+            mViewDataBinding.taskViewPager
+        ) { tab, position ->
 //            tab.text = tabTitles[position]
 //            adapter.getTabIcon(position).let { tab.setIcon(it) }     //This default view shows icon on top of text, not on start as desired
 
-            val customTab = LayoutInflater.from(requireContext()).inflate(R.layout.layout_task_tab_item, null)
+            val customTab =
+                LayoutInflater.from(requireContext()).inflate(R.layout.layout_task_tab_item, null)
             val tabIcon = customTab.findViewById<ImageView>(R.id.taskTabIcon)
             val tabText = customTab.findViewById<TextView>(R.id.taskTabText)
 
@@ -134,15 +143,36 @@ class TasksParentTabV3Fragment :
 
             tab.customView = customTab
 
-            mViewDataBinding.taskTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            mViewDataBinding.taskTabLayout.addOnTabSelectedListener(object :
+                TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     // Update selected tab text and icon colors
                     if (tab != null && tab.position == position) {
-                        tabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                        tabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.black), PorterDuff.Mode.SRC_IN)
+                        tabText.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.black
+                            )
+                        )
+                        tabIcon.setColorFilter(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.black
+                            ), PorterDuff.Mode.SRC_IN
+                        )
                     } else {
-                        tabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.appBlue))
-                        tabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.appBlue), PorterDuff.Mode.SRC_IN)
+                        tabText.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.appBlue
+                            )
+                        )
+                        tabIcon.setColorFilter(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.appBlue
+                            ), PorterDuff.Mode.SRC_IN
+                        )
                     }
                 }
 
@@ -154,7 +184,10 @@ class TasksParentTabV3Fragment :
             // Update colors for the initially selected tab
             if (tab == mViewDataBinding.taskTabLayout.getTabAt(mViewDataBinding.taskTabLayout.selectedTabPosition)) {
                 tabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                tabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.black), PorterDuff.Mode.SRC_IN)
+                tabIcon.setColorFilter(
+                    ContextCompat.getColor(requireContext(), R.color.black),
+                    PorterDuff.Mode.SRC_IN
+                )
             }
 
         }.attach()
@@ -163,8 +196,8 @@ class TasksParentTabV3Fragment :
     }
 
 
-    private fun chooseTaskType(callback: (String) -> Unit) {
-        val sheet = TaskTypeBottomSheet {
+    private fun chooseTaskType(type: String, callback: (String) -> Unit) {
+        val sheet = TaskTypeBottomSheet(type) {
             callback.invoke(it)
         }
 
