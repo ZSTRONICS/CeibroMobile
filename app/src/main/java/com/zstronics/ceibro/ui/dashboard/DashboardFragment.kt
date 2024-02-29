@@ -60,6 +60,7 @@ import com.zstronics.ceibro.ui.socket.SocketHandler
 import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
+import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
