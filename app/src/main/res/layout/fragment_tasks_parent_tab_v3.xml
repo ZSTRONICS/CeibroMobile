@@ -45,7 +45,7 @@
                     android:id="@+id/taskTabLayout"
                     style="@style/MyTaskTabLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="@dimen/_44sdp" />
 
             </LinearLayout>
 
@@ -90,7 +90,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="@dimen/_2sdp"
-                        android:layout_marginEnd="@dimen/_2sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
                         android:scrollbars="none"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/ivSort"
@@ -126,7 +126,7 @@
                                     android:paddingHorizontal="@dimen/_2sdp"
                                     android:text="@string/all"
                                     android:textColor="@color/white"
-                                    android:textSize="@dimen/_11sdp"
+                                    android:textSize="@dimen/_10sdp"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintEnd_toStartOf="@id/ivAll"
                                     app:layout_constraintStart_toStartOf="parent"
@@ -176,7 +176,7 @@
                                     android:paddingHorizontal="@dimen/_2sdp"
                                     android:text="@string/project"
                                     android:textColor="@color/appGrey3"
-                                    android:textSize="@dimen/_11sdp" />
+                                    android:textSize="@dimen/_10sdp" />
 
                                 <TextView
                                     android:id="@+id/projectFilterCounter"
@@ -231,7 +231,7 @@
                                     android:paddingHorizontal="@dimen/_2sdp"
                                     android:text="@string/users_heading"
                                     android:textColor="@color/appGrey3"
-                                    android:textSize="@dimen/_11sdp" />
+                                    android:textSize="@dimen/_10sdp" />
 
                                 <TextView
                                     android:id="@+id/userFilterCounter"
@@ -286,7 +286,7 @@
                                     android:paddingHorizontal="@dimen/_2sdp"
                                     android:text="@string/tags"
                                     android:textColor="@color/appGrey3"
-                                    android:textSize="@dimen/_11sdp" />
+                                    android:textSize="@dimen/_10sdp" />
 
                                 <TextView
                                     android:id="@+id/tagFilterCounter"

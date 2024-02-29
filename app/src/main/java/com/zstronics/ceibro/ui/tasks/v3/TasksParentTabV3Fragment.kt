@@ -2,11 +2,17 @@ package com.zstronics.ceibro.ui.tasks.v3
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -112,25 +118,44 @@ class TasksParentTabV3Fragment :
  
 
         TabLayoutMediator(mViewDataBinding.taskTabLayout, mViewDataBinding.taskViewPager) { tab, position ->
-            tab.text = tabTitles[position]
-            adapter.getTabIcon(position).let { tab.setIcon(it) }     //This default view shows icon on top of text, not on start as desired
+//            tab.text = tabTitles[position]
+//            adapter.getTabIcon(position).let { tab.setIcon(it) }     //This default view shows icon on top of text, not on start as desired
 
-//            val customTab = LayoutInflater.from(requireContext()).inflate(R.layout.layout_task_tab_item, null)
-//            val tabIcon = customTab.findViewById<ImageView>(R.id.taskTabIcon)
-//            val tabText = customTab.findViewById<TextView>(R.id.taskTabText)
-//
-//            tabText.text = tabTitles[position]
-//
-//            // Set icon if available
-//            val iconResId = adapter.getTabIcon(position)
-//            if (iconResId != null) {
-//                tabIcon.setImageResource(iconResId)
-//                tabIcon.visibility = View.VISIBLE
-//            } else {
-//                tabIcon.visibility = View.GONE
-//            }
-//
-//            tab.customView = customTab
+            val customTab = LayoutInflater.from(requireContext()).inflate(R.layout.layout_task_tab_item, null)
+            val tabIcon = customTab.findViewById<ImageView>(R.id.taskTabIcon)
+            val tabText = customTab.findViewById<TextView>(R.id.taskTabText)
+
+            tabText.text = tabTitles[position]
+
+            // Set icon if available
+            val iconResId = adapter.getTabIcon(position)
+            tabIcon.setImageResource(iconResId)
+            tabIcon.visibility = View.VISIBLE
+
+            tab.customView = customTab
+
+            mViewDataBinding.taskTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    // Update selected tab text and icon colors
+                    if (tab != null && tab.position == position) {
+                        tabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                        tabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.black), PorterDuff.Mode.SRC_IN)
+                    } else {
+                        tabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.appBlue))
+                        tabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.appBlue), PorterDuff.Mode.SRC_IN)
+                    }
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+            })
+
+            // Update colors for the initially selected tab
+            if (tab == mViewDataBinding.taskTabLayout.getTabAt(mViewDataBinding.taskTabLayout.selectedTabPosition)) {
+                tabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                tabIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.black), PorterDuff.Mode.SRC_IN)
+            }
 
         }.attach()
 
