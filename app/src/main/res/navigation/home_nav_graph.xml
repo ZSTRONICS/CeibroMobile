@@ -315,12 +315,12 @@
         android:id="@+id/myConnectionV2ProfileFragment"
         android:name="com.zstronics.ceibro.ui.dashboard.connectionv2Profile.MyConnectionV2ProfileFragment"
         android:label="MyConnectionV2ProfileFragment"
-        tools:layout="@layout/fragment_connections_v2_profile"/>
+        tools:layout="@layout/fragment_connections_v2_profile" />
     <fragment
         android:id="@+id/taskToMeFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment"
         android:label="TaskToMeFragment"
-        tools:layout="@layout/fragment_task_to_me" >
+        tools:layout="@layout/fragment_task_to_me">
         <action
             android:id="@+id/action_taskToMeFragment_to_newTaskV2Fragment"
             app:destination="@id/newTaskV2Fragment" />
@@ -365,7 +365,7 @@
         android:id="@+id/taskFromMeFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment"
         android:label="TaskFromMeFragment"
-        tools:layout="@layout/fragment_task_from_me" >
+        tools:layout="@layout/fragment_task_from_me">
         <action
             android:id="@+id/action_taskFromMeFragment_to_newTaskV2Fragment"
             app:destination="@id/newTaskV2Fragment" />
@@ -377,7 +377,7 @@
         android:id="@+id/taskDetailV2Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.TaskDetailV2Fragment"
         android:label="TaskDetailV2Fragment"
-        tools:layout="@layout/fragment_task_detail_v2"  >
+        tools:layout="@layout/fragment_task_detail_v2">
         <action
             android:id="@+id/action_taskDetailV2Fragment_to_commentFragment"
             app:destination="@id/commentFragment" />
@@ -405,7 +405,7 @@
         android:id="@+id/taskHiddenFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment"
         android:label="TaskHiddenFragment"
-        tools:layout="@layout/fragment_task_hidden" >
+        tools:layout="@layout/fragment_task_hidden">
         <action
             android:id="@+id/action_taskHiddenFragment_to_newTaskV2Fragment"
             app:destination="@id/newTaskV2Fragment" />
@@ -422,7 +422,7 @@
         android:id="@+id/forwardTaskFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.forwardtask.ForwardTaskFragment"
         android:label="ForwardTaskFragment"
-        tools:layout="@layout/fragment_forward_task" >
+        tools:layout="@layout/fragment_forward_task">
         <action
             android:id="@+id/action_forwardTaskFragment_to_forwardFragment"
             app:destination="@id/forwardFragment" />
@@ -431,22 +431,22 @@
         android:id="@+id/ceibroDataLoadingFragment"
         android:name="com.zstronics.ceibro.ui.dataloading.CeibroDataLoadingFragment"
         android:label="CeibroDataLoadingFragment"
-        tools:layout="@layout/fragment_ceibro_data_loading"/>
+        tools:layout="@layout/fragment_ceibro_data_loading" />
     <fragment
         android:id="@+id/fileViewerFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.fileviewer.FileViewerFragment"
         android:label="FileViewerFragment"
-        tools:layout="@layout/fragment_file_viewer"/>
+        tools:layout="@layout/fragment_file_viewer" />
     <fragment
         android:id="@+id/imageViewerFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.taskdetail.imageviewer.ImageViewerFragment"
         android:label="ImageViewerFragment"
-        tools:layout="@layout/fragment_image_viewer"/>
+        tools:layout="@layout/fragment_image_viewer" />
     <fragment
         android:id="@+id/newProjectV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.newprojectv2.NewProjectV2Fragment"
         android:label="NewProjectV2Fragment"
-        tools:layout="@layout/fragment_new_project_v2"/>
+        tools:layout="@layout/fragment_new_project_v2" />
     <fragment
         android:id="@+id/projectsV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.ProjectsV2Fragment"
@@ -496,7 +496,7 @@
         android:id="@+id/projectInfoV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.projectinfo.ProjectInfoV2Fragment"
         android:label="ProjectInfoV2Fragment"
-        tools:layout="@layout/fragment_project_info_v2"/>
+        tools:layout="@layout/fragment_project_info_v2" />
     <fragment
         android:id="@+id/newDrawingV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.newdrawing.NewDrawingV2Fragment"
@@ -505,12 +505,12 @@
         android:id="@+id/locationsV2Fragment"
         android:name="com.zstronics.ceibro.ui.locationv2.LocationsV2Fragment"
         android:label="LocationsV2Fragment"
-        tools:layout="@layout/fragment_locations_v2"/>
+        tools:layout="@layout/fragment_locations_v2" />
     <fragment
         android:id="@+id/locationProjectV2Fragment"
         android:name="com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectV2Fragment"
         android:label="LocationProjectV2Fragment"
-        tools:layout="@layout/fragment_location_projects_v2"/>
+        tools:layout="@layout/fragment_location_projects_v2" />
     <fragment
         android:id="@+id/locationDrawingV2Fragment"
         android:name="com.zstronics.ceibro.ui.locationv2.locationdrawing.LocationDrawingV2Fragment"
@@ -520,12 +520,12 @@
         android:id="@+id/drawingsV2Fragment"
         android:name="com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment"
         android:label="DrawingsV2Fragment"
-        tools:layout="@layout/fragment_drawings_v2"/>
+        tools:layout="@layout/fragment_drawings_v2" />
     <fragment
         android:id="@+id/viewDrawingV2Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v2.newtask.drawing.ViewDrawingV2Fragment"
         android:label="ViewDrawingV2Fragment"
-        tools:layout="@layout/fragment_view_drawing_v2"/>
+        tools:layout="@layout/fragment_view_drawing_v2" />
     <fragment
         android:id="@+id/inboxFragment"
         android:name="com.zstronics.ceibro.ui.inbox.InboxFragment"
@@ -558,6 +558,10 @@
         android:id="@+id/tasksParentTabV3Fragment"
         android:name="com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3Fragment"
         android:label="TasksParentTabV3Fragment" />
+    <fragment
+        android:id="@+id/ongoingFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.OngoingFragment"
+        android:label="OngoingFragment" />
 
 
 </navigation>
