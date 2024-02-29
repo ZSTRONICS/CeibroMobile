@@ -155,6 +155,8 @@
     <string name="projects_heading">Projects</string>
     <string name="ongoing_heading">Ongoing</string>
     <string name="approve_heading">Approve</string>
+    <string name="approval_heading">Approval</string>
+    <string name="closed_heading">Closed</string>
     <string name="done_heading">Done</string>
     <string name="start_conversation_text">Start conversation</string>
     <string name="done_quick_reply">DONE</string>
@@ -219,6 +221,7 @@
     <string name="subtask_heading">Subtask</string>
     <string name="all_heading">All</string>
     <string name="active_heading">Active</string>
+    <string name="activity_heading">Activity</string>
     <string name="assigned_to_heading">Assigned to</string>
     <string name="task_due_date_heading">Task due date</string>
     <string name="new_task_heading">New Task</string>
