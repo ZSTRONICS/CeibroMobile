@@ -39,6 +39,7 @@
                     android:layout_marginTop="@dimen/_1sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:layout_weight="1"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:src="@drawable/icon_search"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -74,12 +75,13 @@
 
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="0dp"
+                            android:id="@+id/clTaskType"
+                            android:layout_width="wrap_content"
                             android:layout_height="35dp"
                             android:layout_marginHorizontal="@dimen/_2sdp"
-                            android:layout_weight="1.5"
                             android:background="@drawable/round_grey_btn"
                             android:backgroundTint="@color/appBlue"
+                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:orientation="horizontal"
                             android:paddingHorizontal="@dimen/_5sdp">
 
@@ -338,6 +340,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingVertical="@dimen/_3sdp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -361,12 +364,12 @@
                         android:layout_marginVertical="@dimen/_6sdp"
                         android:layout_marginStart="@dimen/_8sdp"
                         android:background="@color/appGrey3"
-                        app:layout_constraintBottom_toBottomOf="@+id/projectSearchBar"
+                        app:layout_constraintBottom_toBottomOf="@+id/taskSearchBar"
                         app:layout_constraintStart_toEndOf="@id/ivSearch"
-                        app:layout_constraintTop_toTopOf="@+id/projectSearchBar" />
+                        app:layout_constraintTop_toTopOf="@+id/taskSearchBar" />
 
                     <SearchView
-                        android:id="@+id/projectSearchBar"
+                        android:id="@+id/taskSearchBar"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_marginEnd="@dimen/_1sdp"
@@ -399,9 +402,9 @@
                         android:text="@string/cancel_btn_text"
                         android:textColor="@color/appBlue"
                         android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/projectSearchBar"
+                        app:layout_constraintBottom_toBottomOf="@+id/taskSearchBar"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/projectSearchBar" />
+                        app:layout_constraintTop_toTopOf="@+id/taskSearchBar" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

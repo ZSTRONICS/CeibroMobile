@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing
 
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -21,6 +22,22 @@ class OngoingFragment :
     override val layoutResId: Int = R.layout.fragment_ongoing
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
+        when (id) {
+
+            R.id.clTaskType -> {
+
+            }
+
+            R.id.imgSearch -> {
+                mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
+            }
+
+            R.id.cancelSearch -> {
+                mViewDataBinding.taskSearchBar.setQuery(null, false)
+                mViewDataBinding.tasksSearchCard.visibility = View.GONE
+            }
+
+        }
     }
 
     override fun onDestroyView() {
