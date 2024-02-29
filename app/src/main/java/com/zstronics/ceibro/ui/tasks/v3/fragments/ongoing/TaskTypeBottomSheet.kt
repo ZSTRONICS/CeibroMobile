@@ -42,11 +42,11 @@ class TaskTypeBottomSheet(val callback: (String) -> Unit) : BottomSheetDialogFra
             dismiss()
         }
         binding.rbFromMe.setOnClick {
-            callback.invoke("From Me")
+            callback.invoke("From me")
             dismiss()
         }
         binding.rbToMe.setOnClick {
-            callback.invoke("To Me")
+            callback.invoke("To me")
             dismiss()
         }
 

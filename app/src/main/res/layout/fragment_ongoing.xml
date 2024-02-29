@@ -19,483 +19,88 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/taskRV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:itemCount="10"
+            tools:listitem="@layout/layout_inbox_task_box_v2" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivNoTaskFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_no_task_found"
+                app:layout_constraintBottom_toTopOf="@+id/tvNoTaskFound"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvNoTaskFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center_horizontal"
+                android:text="@string/no_result_found"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/tvNoTaskFoundDetail"
+                app:layout_constraintEnd_toEndOf="@+id/ivNoTaskFound"
+                app:layout_constraintStart_toStartOf="@+id/ivNoTaskFound"
+                app:layout_constraintTop_toBottomOf="@+id/ivNoTaskFound" />
+
+            <TextView
+
+                android:id="@+id/tvNoTaskFoundDetail"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center_horizontal"
+                android:text="@string/we_cannot_find_the_task_you_are_searching_for_may_be_a_little_spelling_mistake"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/goBack"
+                app:layout_constraintEnd_toEndOf="@+id/ivNoTaskFound"
+                app:layout_constraintStart_toStartOf="@+id/ivNoTaskFound"
+                app:layout_constraintTop_toBottomOf="@+id/tvNoTaskFound" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/goBack"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:orientation="horizontal"
-                android:paddingVertical="@dimen/_5sdp">
-
-                <ImageView
-                    android:id="@+id/imgSearch"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_weight="1"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                    android:src="@drawable/icon_search"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/appBlue" />
-
-
-                <View
-                    android:id="@+id/saperator"
-                    android:layout_width="1dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="@dimen/_7sdp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:background="@color/appGrey2"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/scrollView"
-                    app:layout_constraintStart_toEndOf="@+id/imgSearch"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <HorizontalScrollView
-                    android:id="@+id/scrollView"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="6.5"
-                    app:layout_constraintEnd_toStartOf="@+id/ivSort"
-                    app:layout_constraintStart_toEndOf="@+id/saperator">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/clTaskType"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_marginHorizontal="@dimen/_2sdp"
-                            android:background="@drawable/round_grey_btn"
-                            android:backgroundTint="@color/appBlue"
-                            android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="@dimen/_5sdp">
-
-                            <TextView
-                                android:id="@+id/tvtaskType"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center_horizontal"
-                                android:text="@string/all"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/_13sdp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/ivAll"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <ImageView
-                                android:id="@+id/ivAll"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_drop_down"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/tvtaskType"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/white" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/clProject"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_marginHorizontal="@dimen/_2sdp"
-                            android:background="@drawable/round_grey_btn"
-                            android:backgroundTint="@color/appGrey2"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="@dimen/_5sdp">
-
-                            <TextView
-                                android:id="@+id/tvProject"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center_horizontal"
-                                android:text="@string/project"
-                                android:textColor="@color/appGrey3"
-                                android:textSize="@dimen/_13sdp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/projectCounter"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-
-                            <TextView
-                                android:id="@+id/projectCounter"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:layout_marginEnd="@dimen/_5sdp"
-                                android:background="@drawable/round_grey"
-                                android:backgroundTint="@color/appGrey3"
-                                android:elevation="12dp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center"
-                                android:maxLength="3"
-                                android:outlineSpotShadowColor="@color/white"
-                                android:paddingStart="4.5dp"
-                                android:paddingEnd="4.5dp"
-                                android:text="5"
-                                android:textColor="@color/white"
-                                android:textSize="13sp"
-                                android:visibility="visible"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/ivProject"
-                                app:layout_constraintStart_toEndOf="@+id/tvProject"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:ignore="HardcodedText,SmallSp,UnusedAttribute" />
-
-                            <ImageView
-                                android:id="@+id/ivProject"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_drop_down"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/projectCounter"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/appGrey3" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/clUsers"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_marginHorizontal="@dimen/_2sdp"
-                            android:background="@drawable/round_grey_btn"
-                            android:backgroundTint="@color/appGrey2"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="@dimen/_5sdp">
-
-                            <TextView
-                                android:id="@+id/tvUsers"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center_horizontal"
-                                android:text="@string/users_heading"
-                                android:textColor="@color/appGrey3"
-                                android:textSize="@dimen/_13sdp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/UsersCounter"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-
-                            <TextView
-                                android:id="@+id/UsersCounter"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:layout_marginEnd="@dimen/_5sdp"
-                                android:background="@drawable/round_grey"
-                                android:backgroundTint="@color/appGrey3"
-                                android:elevation="12dp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center"
-                                android:maxLength="3"
-                                android:outlineSpotShadowColor="@color/white"
-                                android:paddingStart="4.5dp"
-                                android:paddingEnd="4.5dp"
-                                android:text="0"
-                                android:textColor="@color/white"
-                                android:textSize="13sp"
-                                android:visibility="visible"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/ivUsers"
-                                app:layout_constraintStart_toEndOf="@+id/tvUsers"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:ignore="HardcodedText,SmallSp,UnusedAttribute" />
-
-                            <ImageView
-                                android:id="@+id/ivUsers"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_drop_down"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/UsersCounter"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/appGrey3" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/clTags"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_marginHorizontal="@dimen/_2sdp"
-                            android:background="@drawable/round_grey_btn"
-                            android:backgroundTint="@color/appGrey2"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="@dimen/_5sdp">
-
-                            <TextView
-                                android:id="@+id/tvTags"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center_horizontal"
-                                android:text="@string/tags"
-                                android:textColor="@color/appGrey3"
-                                android:textSize="@dimen/_13sdp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/TagsCounter"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-
-                            <TextView
-                                android:id="@+id/TagsCounter"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:layout_marginEnd="@dimen/_5sdp"
-                                android:background="@drawable/round_grey"
-                                android:backgroundTint="@color/appGrey3"
-                                android:elevation="12dp"
-                                android:fontFamily="@font/inter_medium"
-                                android:gravity="center"
-                                android:maxLength="3"
-                                android:outlineSpotShadowColor="@color/white"
-                                android:paddingStart="4.5dp"
-                                android:paddingEnd="4.5dp"
-                                android:text="0"
-                                android:textColor="@color/white"
-                                android:textSize="13sp"
-                                android:visibility="visible"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/ivTags"
-                                app:layout_constraintStart_toEndOf="@+id/tvTags"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:ignore="HardcodedText,SmallSp,UnusedAttribute" />
-
-                            <ImageView
-                                android:id="@+id/ivTags"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/icon_drop_down"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/TagsCounter"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:tint="@color/appGrey3" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
-
-                <ImageView
-                    android:id="@+id/ivSort"
-                    android:layout_width="50sp"
-                    android:layout_height="35dp"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:layout_weight="1"
-                    android:src="@drawable/icon_sort"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/appBlue" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/tasksSearchCard"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_marginHorizontal="@dimen/_2sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:background="@drawable/allsideshadowfile"
-                android:visibility="visible"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:backgroundTint="@color/appBlue"
+                android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0.01"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:text="Go back to view all"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingVertical="@dimen/_3sdp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/ivSearch"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="@dimen/_9sdp"
-                        android:src="@drawable/icon_search"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/black" />
-
-                    <View
-                        android:id="@+id/saperator1"
-                        android:layout_width="1dp"
-                        android:layout_height="0dp"
-                        android:layout_marginVertical="@dimen/_6sdp"
-                        android:layout_marginStart="@dimen/_8sdp"
-                        android:background="@color/appGrey3"
-                        app:layout_constraintBottom_toBottomOf="@+id/taskSearchBar"
-                        app:layout_constraintStart_toEndOf="@id/ivSearch"
-                        app:layout_constraintTop_toTopOf="@+id/taskSearchBar" />
-
-                    <SearchView
-                        android:id="@+id/taskSearchBar"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_marginEnd="@dimen/_1sdp"
-                        android:closeIcon="@drawable/icon_search_cancel"
-                        android:elevation="0dp"
-                        android:fontFamily="@font/inter_regular"
-                        android:iconifiedByDefault="false"
-                        android:paddingStart="-2dp"
-                        android:paddingEnd="-4dp"
-                        android:queryBackground="@android:color/transparent"
-                        android:queryHint="Start typing"
-                        android:searchIcon="@null"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/cancelSearch"
-                        app:layout_constraintStart_toEndOf="@+id/saperator1"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:theme="@style/AppSearchView" />
-
-
-                    <TextView
-                        android:id="@+id/cancelSearch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="@dimen/_2sdp"
-                        android:fontFamily="@font/inter_regular"
-                        android:gravity="center"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                        android:paddingHorizontal="@dimen/_5sdp"
-                        android:text="@string/cancel_btn_text"
-                        android:textColor="@color/appBlue"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/taskSearchBar"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/taskSearchBar" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/taskRV"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/_3sdp"
-                    android:layout_marginTop="@dimen/_3sdp"
-                    android:visibility="visible"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/layout_inbox_task_box_v2" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white">
-
-                    <ImageView
-                        android:id="@+id/ivNoTaskFound"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/icon_no_task_found"
-                        app:layout_constraintBottom_toTopOf="@+id/tvNoTaskFound"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed" />
-
-                    <TextView
-                        android:id="@+id/tvNoTaskFound"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:fontFamily="@font/inter_medium"
-                        android:gravity="center_horizontal"
-                        android:text="@string/no_result_found"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toTopOf="@+id/tvNoTaskFoundDetail"
-                        app:layout_constraintEnd_toEndOf="@+id/ivNoTaskFound"
-                        app:layout_constraintStart_toStartOf="@+id/ivNoTaskFound"
-                        app:layout_constraintTop_toBottomOf="@+id/ivNoTaskFound" />
-
-                    <TextView
-
-                        android:id="@+id/tvNoTaskFoundDetail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_40sdp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:fontFamily="@font/inter_medium"
-                        android:gravity="center_horizontal"
-                        android:text="@string/we_cannot_find_the_task_you_are_searching_for_may_be_a_little_spelling_mistake"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toTopOf="@+id/goBack"
-                        app:layout_constraintEnd_toEndOf="@+id/ivNoTaskFound"
-                        app:layout_constraintStart_toStartOf="@+id/ivNoTaskFound"
-                        app:layout_constraintTop_toBottomOf="@+id/tvNoTaskFound" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/goBack"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="55dp"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:backgroundTint="@color/appBlue"
-                        android:fontFamily="@font/inter_medium"
-                        android:letterSpacing="0.03"
-                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
-                        android:text="Go back to view all"
-                        android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        app:iconGravity="textStart"
-                        app:iconPadding="12dp"
-                        app:iconTint="@color/white"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvNoTaskFoundDetail"
-                        app:strokeColor="@color/appBlue"
-                        app:strokeWidth="2dp" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
-
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvNoTaskFoundDetail" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
