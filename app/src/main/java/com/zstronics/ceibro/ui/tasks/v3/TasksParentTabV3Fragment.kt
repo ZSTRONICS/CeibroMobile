@@ -10,8 +10,10 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
+import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskTypeBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,8 +27,20 @@ class TasksParentTabV3Fragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-            R.id.closeBtn -> {
+            R.id.taskType -> {
+                chooseTaskType { type ->
+                    mViewDataBinding.taskTypeText.text= type
+                }
+            }
 
+            R.id.imgSearch -> {
+//                mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
+            }
+
+            R.id.cancelTaskSearch -> {
+                mViewDataBinding.taskSearchBar.setQuery(null, true)
+                mViewDataBinding.taskSearchBar.clearFocus()
+                mViewDataBinding.taskSearchBar.hideKeyboard()
             }
         }
     }
@@ -88,7 +102,14 @@ class TasksParentTabV3Fragment :
             }
         })
 
-
+        val tabTextColors = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_selected), intArrayOf()),
+            intArrayOf(resources.getColor(R.color.black), resources.getColor(R.color.appBlue))
+        )
+        mViewDataBinding.taskTabLayout.tabTextColors = tabTextColors
+        mViewDataBinding.taskTabLayout.tabIconTint = tabTextColors
+        mViewDataBinding.taskTabLayout.setSelectedTabIndicatorColor(Color.BLACK)
+ 
 
         TabLayoutMediator(mViewDataBinding.taskTabLayout, mViewDataBinding.taskViewPager) { tab, position ->
             tab.text = tabTitles[position]
@@ -113,14 +134,17 @@ class TasksParentTabV3Fragment :
 
         }.attach()
 
-        val tabTextColors = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_selected), intArrayOf()),
-            intArrayOf(resources.getColor(R.color.black), resources.getColor(R.color.appBlue))
-        )
-        mViewDataBinding.taskTabLayout.tabTextColors = tabTextColors
-        mViewDataBinding.taskTabLayout.tabIconTint = tabTextColors
-        mViewDataBinding.taskTabLayout.setSelectedTabIndicatorColor(Color.BLACK)
 
+    }
+
+
+    private fun chooseTaskType(callback: (String) -> Unit) {
+        val sheet = TaskTypeBottomSheet {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "TaskTypeBottomSheet")
     }
 
 
