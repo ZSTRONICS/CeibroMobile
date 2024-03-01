@@ -660,8 +660,10 @@
     <string name="project">Project</string>
     <string name="tags">Tags</string>
     <string name="all">All</string>
-    <string name="no_result_found">No Result Found</string>
+    <string name="no_result_found">Oops! No result found.</string>
     <string name="we_cannot_find_the_task_you_are_searching_for_may_be_a_little_spelling_mistake">We cannot find the task you are searching for, may be a little spelling mistake?</string>
     <string name="from_me">From Me</string>
     <string name="to_me">To Me</string>
+    <string name="no_task_exists">No task exists!</string>
+    <string name="no_task_in_all_description">Drive project success – add a task to address critical issues and ensure smooth progress from planning to completion.</string>
 </resources>
