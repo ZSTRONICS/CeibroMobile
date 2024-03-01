@@ -45,7 +45,7 @@
                     android:id="@+id/taskTabLayout"
                     style="@style/MyTaskTabLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_44sdp" />
+                    android:layout_height="@dimen/_46sdp" />
 
             </LinearLayout>
 
