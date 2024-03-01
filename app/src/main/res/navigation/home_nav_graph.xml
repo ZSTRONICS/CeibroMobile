@@ -559,9 +559,9 @@
         android:name="com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3Fragment"
         android:label="TasksParentTabV3Fragment" />
     <fragment
-        android:id="@+id/ongoingFragment"
-        android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.OngoingFragment"
-        android:label="OngoingFragment" />
+        android:id="@+id/taskV3OngoingFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment"
+        android:label="TaskV3OngoingFragment" />
 
 
 </navigation>

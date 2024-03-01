@@ -5,8 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailcomments.TaskDetailCommentsV2Fragment
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.TaskDetailFilesV2Fragment
-import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.OngoingFragment
-import com.zstronics.ceibro.ui.works.WorksFragment
+import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment
 
 private const val NUM_TABS = 4
 
@@ -15,7 +14,7 @@ class TasksParentV3TabLayoutAdapter(fragmentManager: FragmentActivity, private v
     override fun getItemCount(): Int = NUM_TABS
 
     override fun createFragment(position: Int): Fragment {
-        val ongoingFragment = OngoingFragment()
+        val ongoingFragment = TaskV3OngoingFragment()
         val taskDetailCommentsV2Fragment = TaskDetailCommentsV2Fragment()
         val taskDetailFilesV2Fragment = TaskDetailFilesV2Fragment()
 

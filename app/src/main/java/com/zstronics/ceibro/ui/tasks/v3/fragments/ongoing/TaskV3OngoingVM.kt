@@ -5,7 +5,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OngoingVM @Inject constructor(
-    override val viewState: OngoingState,
-) : HiltBaseViewModel<IOngoing.State>(), IOngoing.ViewModel {
+class TaskV3OngoingVM @Inject constructor(
+    override val viewState: TaskV3OngoingState,
+) : HiltBaseViewModel<ITaskV3Ongoing.State>(), ITaskV3Ongoing.ViewModel {
 }

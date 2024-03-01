@@ -6,16 +6,16 @@ import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.databinding.FragmentOngoingBinding
+import com.zstronics.ceibro.databinding.FragmentTaskV3OngoingBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class OngoingFragment :
-    BaseNavViewModelFragment<FragmentOngoingBinding, IOngoing.State, OngoingVM>() {
+class TaskV3OngoingFragment :
+    BaseNavViewModelFragment<FragmentTaskV3OngoingBinding, ITaskV3Ongoing.State, TaskV3OngoingVM>() {
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: OngoingVM by viewModels()
-    override val layoutResId: Int = R.layout.fragment_ongoing
+    override val viewModel: TaskV3OngoingVM by viewModels()
+    override val layoutResId: Int = R.layout.fragment_task_v3_ongoing
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
