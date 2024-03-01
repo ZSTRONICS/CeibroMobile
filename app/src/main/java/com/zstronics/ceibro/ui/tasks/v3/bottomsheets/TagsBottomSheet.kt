@@ -18,8 +18,6 @@ import com.zstronics.ceibro.databinding.FragmentTagsSheetBinding
 import com.zstronics.ceibro.ui.tasks.v2.newtask.tag.adapter.TagsDrawingSectionHeader
 import com.zstronics.ceibro.ui.tasks.v2.newtask.tag.adapter.TagsSectionRecyclerView
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
-import koleton.api.hideSkeleton
-import koleton.api.loadSkeleton
 
 class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) -> Unit) :
     BottomSheetDialogFragment() {
@@ -43,6 +41,10 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
         //set to adjust screen height automatically, when soft keyboard appears on screen
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return mViewDataBinding.root
+    }
+
+    init {
+        loadTopics()
     }
 
 
@@ -192,35 +194,9 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
     }
 
 
-    private fun loadTopics(skeletonVisible: Boolean) {
-
-        if (skeletonVisible) {
-            mViewDataBinding.alltagsRV.loadSkeleton(R.layout.layout_invitations_box) {
-                itemCount(10)
-                color(R.color.appLightGrey)
-            }
-
-            viewModel.getAllTopics { allTopics ->
-                mViewDataBinding.alltagsRV.hideSkeleton()
-                val searchQuery = mViewDataBinding.tagSearchBar.query.toString()
-                if (searchQuery.isNotEmpty()) {
-                    viewModel.filterTopics(searchQuery.trim())
-
-                }
-            }
-        } else {
-            viewModel.getAllTopics { allTopics ->
-                val searchQuery = mViewDataBinding.tagSearchBar.query.toString()
-                if (searchQuery.isNotEmpty()) {
-                    viewModel.filterTopics(searchQuery.trim())
-
-                }
-            }
+    private fun loadTopics() {
+        viewModel.getAllTopics {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadTopics(true)
-    }
 }

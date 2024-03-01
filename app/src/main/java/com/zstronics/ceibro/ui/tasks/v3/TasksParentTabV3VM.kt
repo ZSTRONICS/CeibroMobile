@@ -108,7 +108,7 @@ class TasksParentTabV3VM @Inject constructor(
 
     override fun getAllProjects() {
         launch {
-            val allProjects = projectsV2Dao.getAllProjectsWithoutCondition()
+            val allProjects = projectsV2Dao.getAllProjectsNotFavorite()
             if (allProjects?.isNotEmpty() == true) {
                 _allProjects.postValue(allProjects.toMutableList())
                 originalAllProjects = allProjects.toMutableList()
