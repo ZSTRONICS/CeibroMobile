@@ -19,6 +19,8 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,6 +38,20 @@ class TasksParentTabV3Fragment :
             R.id.taskType -> {
                 chooseTaskType(mViewDataBinding.taskTypeText.text.toString().lowercase()) { type ->
                     mViewDataBinding.taskTypeText.text = type
+                }
+            }
+
+            R.id.projectFilter -> {
+
+                chooseProjectFromList(viewModel) {
+                    mViewDataBinding.projectFilterCounter.text = it
+                }
+            }
+
+            R.id.tagFilter -> {
+
+                chooseTagsType(viewModel) {
+                    mViewDataBinding.tagFilterCounter.text = it
                 }
             }
 
@@ -203,6 +219,24 @@ class TasksParentTabV3Fragment :
 
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "TaskTypeBottomSheet")
+    }
+
+    private fun chooseTagsType(model: TasksParentTabV3VM, callback: (String) -> Unit) {
+        val sheet = TagsBottomSheet(model) {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "TagsBottomSheet")
+    }
+
+    private fun chooseProjectFromList(type: TasksParentTabV3VM, callback: (String) -> Unit) {
+        val sheet = ProjectListBottomSheet(type) {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "ProjectListBottomSheet")
     }
 
 
