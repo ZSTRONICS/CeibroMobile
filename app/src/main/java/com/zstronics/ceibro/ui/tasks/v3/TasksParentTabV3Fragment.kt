@@ -34,7 +34,7 @@ class TasksParentTabV3Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.taskType -> {
-                chooseTaskType(mViewDataBinding.taskTypeText.text.toString()) { type ->
+                chooseTaskType(mViewDataBinding.taskTypeText.text.toString().lowercase()) { type ->
                     mViewDataBinding.taskTypeText.text = type
                 }
             }

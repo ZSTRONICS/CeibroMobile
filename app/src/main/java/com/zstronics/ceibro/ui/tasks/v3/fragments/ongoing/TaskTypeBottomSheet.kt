@@ -38,11 +38,11 @@ class TaskTypeBottomSheet(val type: String, val callback: (String) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (type.lowercase() == "all".lowercase()) {
+        if (type.equals("All", true)) {
             binding.rbAll.isChecked = true
-        } else if (type.lowercase() == "from me".lowercase()) {
+        } else if (type.equals("From me", true)) {
             binding.rbFromMe.isChecked = true
-        } else if (type.lowercase() == "to me".lowercase()) {
+        } else if (type.equals("To Me", true)) {
             binding.rbToMe.isChecked = true
         }
         binding.rbAll.setOnClick {
