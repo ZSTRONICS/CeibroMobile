@@ -668,4 +668,9 @@
     <string name="clear_all">Clear All</string>
     <string name="no_task_exists">No task exists!</string>
     <string name="no_task_in_all_description">Drive project success – add a task to address critical issues and ensure smooth progress from planning to completion.</string>
+    <string name="users">Users\n</string>
+    <string name="users_groups">Users Group</string>
+    <string name="creator">Creator</string>
+    <string name="viewer">Viewer</string>
+    <string name="assignee">Assignee</string>
 </resources>

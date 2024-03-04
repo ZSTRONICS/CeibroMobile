@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/task_card_less_corner_outline"
+    android:backgroundTint="@color/white"
+    android:elevation="@dimen/_4sdp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry">
+
+        <CheckBox
+            android:id="@+id/cbAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center_vertical"
+            android:text="@string/all"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/cbCreator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center_vertical"
+            android:text="@string/creator"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/cbAssignee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center_vertical"
+            android:text="@string/assignee"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/cbViewer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center_vertical"
+            android:text="@string/viewer"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/cbApproval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center_vertical"
+            android:text="@string/approval_heading"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <CheckBox
+            android:id="@+id/cbSelectAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center_vertical"
+            android:text="@string/select_all"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/applyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@drawable/signin_button_back"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_4sdp"
+            android:text="@string/apply"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:drawableTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/view5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

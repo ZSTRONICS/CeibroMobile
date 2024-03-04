@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.AssigneeState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.AssigneeVM" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/backBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar"
+                app:srcCompat="@drawable/icon_back"
+                app:tint="@color/appBlue" />
+
+            <android.widget.SearchView
+                android:id="@+id/assigneeSearchBar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginEnd="@dimen/_7sdp"
+                android:background="@null"
+                android:elevation="0dp"
+                android:iconifiedByDefault="false"
+                android:paddingStart="-10dp"
+                android:paddingEnd="-10dp"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Start typing name"
+                android:searchIcon="@null"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/addNewContact"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/AppSearchView" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/addNewContact"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:padding="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/view5"
+                app:layout_constraintEnd_toStartOf="@+id/roleBtn"
+                app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar"
+                app:srcCompat="@drawable/icon_add_new_friends"
+                app:tint="@color/appBlue" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/roleBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_9sdp"
+                android:background="@drawable/signin_button_back"
+                android:drawableEnd="@drawable/icon_drop_down"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:text="Role"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:drawableTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/view5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/assigneeSearchBar" />
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="0dp"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:background="@color/appGrey3"
+                app:layout_constraintEnd_toEndOf="@+id/assigneeSearchBar"
+                app:layout_constraintStart_toStartOf="@+id/assigneeSearchBar"
+                app:layout_constraintTop_toBottomOf="@+id/assigneeSearchBar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectedContactsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_1sdp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view5"
+                tools:itemCount="3"
+                tools:listitem="@layout/layout_item_assignee_chip" />
+
+            <CheckBox
+                android:visibility="gone"
+                android:id="@+id/selfAssignCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:checked="@{viewState.isSelfAssigned}"
+                android:fontFamily="@font/inter_medium"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp"
+                android:text="@string/self_assign"
+                android:textColor="@color/appTextGrey"
+                android:textSize="14.5sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectedContactsRV" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/allContactsRV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"
+                android:paddingTop="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selfAssignCheckBox"
+                tools:itemCount="8"
+                tools:listitem="@layout/layout_item_assignee_selection" />
+
+
+    </LinearLayout>
+</layout>

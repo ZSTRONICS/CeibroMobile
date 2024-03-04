@@ -1,6 +1,7 @@
 package com.zstronics.ceibro.ui.tasks.v3
 
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,6 +37,12 @@ class TasksParentTabV3Fragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
+            R.id.userFilter -> {
+                chooseUserType(mViewDataBinding.taskTypeText.text.toString().lowercase()) { type ->
+                    mViewDataBinding.taskTypeText.text = type
+                }
+            }
+
             R.id.taskType -> {
                 chooseTaskType(mViewDataBinding.taskTypeText.text.toString().lowercase()) { type ->
                     mViewDataBinding.taskTypeText.text = type
@@ -214,6 +222,15 @@ class TasksParentTabV3Fragment :
 
     private fun chooseTaskType(type: String, callback: (String) -> Unit) {
         val sheet = TaskTypeBottomSheet(type) {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "TaskTypeBottomSheet")
+    }
+
+    private fun chooseUserType(type: String, callback: (String) -> Unit) {
+        val sheet = UsersBottomSheet(type) {
             callback.invoke(it)
         }
 
