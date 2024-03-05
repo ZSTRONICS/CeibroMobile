@@ -32,6 +32,7 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncContactsRequest
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
@@ -185,6 +186,25 @@ class CeibroDataLoadingVM @Inject constructor(
                     taskDao.insertMultipleTasks(allTasks)
                     taskDao.insertMultipleEvents(allEvents)
                     drawingPinsDao.insertMultiplePins(allDrawingPins)
+
+                    val rootOngoingAllTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    val rootOngoingToMeTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                (it.toMeState.equals(TaskStatus.NEW.name, true) || it.toMeState.equals(TaskStatus.ONGOING.name, true)) }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    val rootOngoingFromMeTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                (it.fromMeState.equals(TaskStatus.UNREAD.name, true) || it.fromMeState.equals(TaskStatus.ONGOING.name, true)) }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    CeibroApplication.CookiesManager.rootOngoingAllTasks.postValue(rootOngoingAllTasks)
+                    CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(rootOngoingToMeTasks)
+                    CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(rootOngoingFromMeTasks)
+
 
                     val toMeNewTask =
                         allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }

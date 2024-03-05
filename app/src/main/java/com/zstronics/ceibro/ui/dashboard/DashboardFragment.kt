@@ -88,6 +88,7 @@ class DashboardFragment :
     private var locationDrawingFragmentInstance: LocationDrawingV2Fragment? = null
     private var projectsV2FragmentInstance: ProjectsV2Fragment? = null
     private var inboxFragment: InboxFragment? = null
+    private var allTasksParentFragment: TasksParentTabV3Fragment? = null
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
@@ -184,6 +185,10 @@ class DashboardFragment :
 
             }
 
+            R.id.allTasksBtn -> {
+                changeSelectedTab(R.id.allTasksBtn, false)
+            }
+
             R.id.fromMeBtn -> {
                 changeSelectedTab(R.id.fromMeBtn, false)
             }
@@ -215,6 +220,7 @@ class DashboardFragment :
     private fun changeSelectedTab(btnID: Int, newTask: Boolean) {
 
         viewState.inboxSelected.value = false
+        viewState.allTasksSelected.value = false
         viewState.locationSelected.value = false
         viewState.projectsSelected.value = false
         viewState.toMeSelected.value = false
@@ -224,6 +230,7 @@ class DashboardFragment :
 
 
         mViewDataBinding.inboxLine.visibility = View.GONE
+        mViewDataBinding.allTasksLine.visibility = View.GONE
         mViewDataBinding.toMeLine.visibility = View.GONE
         mViewDataBinding.fromMeLine.visibility = View.GONE
         mViewDataBinding.hiddenLine.visibility = View.GONE
@@ -244,6 +251,23 @@ class DashboardFragment :
                     .replace(R.id.fragment_container, inboxFragment!!)
                     .commit()
                 mViewDataBinding.inboxLine.visibility = View.VISIBLE
+            }
+
+            R.id.allTasksBtn -> {
+                locationProjectFragmentInstance = null
+                mViewDataBinding.createNewTaskBtn.visibility = View.VISIBLE
+                viewState.allTasksSelected.value = true
+                if (newTask) {
+                    allTasksParentFragment = TasksParentTabV3Fragment()
+                } else {
+                    if (allTasksParentFragment == null) {
+                        allTasksParentFragment = TasksParentTabV3Fragment()
+                    }
+                }
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, allTasksParentFragment!!)
+                    .commit()
+                mViewDataBinding.allTasksLine.visibility = View.VISIBLE
             }
 
             R.id.toMeBtn -> {
@@ -270,11 +294,8 @@ class DashboardFragment :
                         taskFromMeFragmentInstance = TaskFromMeFragment()
                     }
                 }
-//                childFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment_container, taskFromMeFragmentInstance!!)
-//                    .commit()
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, TasksParentTabV3Fragment())
+                    .replace(R.id.fragment_container, taskFromMeFragmentInstance!!)
                     .commit()
                 mViewDataBinding.fromMeLine.visibility = View.VISIBLE
             }

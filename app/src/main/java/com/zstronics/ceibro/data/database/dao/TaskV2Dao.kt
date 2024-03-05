@@ -31,6 +31,9 @@ interface TaskV2Dao {
     @Query("SELECT * FROM tasks_v2_basic WHERE hiddenState = :hiddenState ORDER BY updatedAt DESC")
     suspend fun getHiddenTasks(hiddenState: String): List<CeibroTaskV2>
 
+    @Query("SELECT * FROM tasks_v2_basic WHERE taskRootState = :taskRootState ORDER BY updatedAt DESC")
+    suspend fun getRootOngoingAllTasks(taskRootState: String): List<CeibroTaskV2>
+
     @Query("SELECT * FROM tasks_v2_basic WHERE id = :taskId")
     suspend fun getTaskByID(taskId: String): CeibroTaskV2?
 

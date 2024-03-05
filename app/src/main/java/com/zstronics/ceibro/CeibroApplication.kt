@@ -80,6 +80,9 @@ open class CeibroApplication : Application() {
         var androidId: String? = null
         var allInboxTasks: MutableLiveData<MutableList<CeibroInboxV2>> = MutableLiveData()
         var inboxTasksSortingType: MutableLiveData<String> = MutableLiveData("")
+        var rootOngoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+        var rootOngoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+        var rootOngoingFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var toMeNewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var toMeOngoingTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
         var toMeDoneTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()

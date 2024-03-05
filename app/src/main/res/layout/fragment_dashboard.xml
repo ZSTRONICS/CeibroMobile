@@ -314,7 +314,9 @@
                         app:layout_constraintEnd_toEndOf="@+id/menuBtn"
                         app:layout_constraintStart_toStartOf="@+id/menuBtn" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout> <androidx.constraintlayout.widget.ConstraintLayout
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/inboxLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -369,7 +371,9 @@
                         app:layout_constraintEnd_toEndOf="@+id/inboxBtn"
                         app:layout_constraintStart_toStartOf="@+id/inboxBtn" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout> <androidx.constraintlayout.widget.ConstraintLayout
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/toMeBtnLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -377,7 +381,8 @@
                     android:background="@color/transparent"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="@dimen/_3sdp"
-                    android:paddingEnd="@dimen/_3sdp">
+                    android:paddingEnd="@dimen/_3sdp"
+                    android:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/toMeBtn"
@@ -435,7 +440,8 @@
                     android:background="@color/transparent"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:paddingStart="@dimen/_3sdp"
-                    android:paddingEnd="@dimen/_3sdp">
+                    android:paddingEnd="@dimen/_3sdp"
+                    android:visibility="gone">
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/fromMeBtn"
@@ -544,6 +550,63 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/allTasksBtnLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                    android:paddingStart="@dimen/_3sdp"
+                    android:paddingEnd="@dimen/_3sdp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/allTasksBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/transparent"
+                        android:drawableTop="@drawable/icon_tasks_footer"
+                        android:drawableTint="@drawable/bottom_nav_color"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="1"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                        android:text="@string/tasks_heading"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/bottom_nav_text_color"
+                        android:textSize="@dimen/_8sdp"
+                        app:checked="@{viewState.allTasksSelected}"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/allTasksUnreadBadge"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/unread_badge"
+                        android:elevation="7dp"
+                        android:outlineSpotShadowColor="@color/white"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/allTasksBtn"
+                        app:layout_constraintHorizontal_bias="0.63"
+                        app:layout_constraintStart_toStartOf="@+id/allTasksBtn"
+                        app:layout_constraintTop_toTopOf="@+id/allTasksBtn" />
+
+                    <View
+                        android:id="@+id/allTasksLine"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@color/appBlue"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/allTasksBtn"
+                        app:layout_constraintEnd_toEndOf="@+id/allTasksBtn"
+                        app:layout_constraintStart_toStartOf="@+id/allTasksBtn" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/locationBtnLayout"
@@ -1042,9 +1105,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_9sdp"
+                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:orientation="vertical"
                     android:paddingVertical="@dimen/_2sdp"
-                    android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">

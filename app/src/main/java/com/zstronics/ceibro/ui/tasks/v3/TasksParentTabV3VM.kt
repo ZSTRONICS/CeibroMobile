@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.RecyclerView
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
@@ -13,14 +15,17 @@ import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
+import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v2.newtask.tag.TagsVM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -40,6 +45,26 @@ class TasksParentTabV3VM @Inject constructor(
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
     val user = sessionManager.getUser().value
+    var selectedTaskTypeState: String = TaskRootStateTags.All.tagValue
+    var selectedProjectsForFilter = ArrayList<CeibroProjectV2>()
+    var selectedTagsForFilter = ArrayList<TopicsResponse.TopicData>()
+
+    var firstStartOfParentFragment = true
+    var isFirstStartOfOngoingFragment = true
+    var isSearchingTasks = false
+
+
+    private val _ongoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val ongoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingToMeTasks
+    var originalOngoingToMeTasks: MutableList<CeibroTaskV2> = mutableListOf()
+
+    private val _ongoingFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val ongoingFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingFromMeTasks
+    var originalOngoingFromMeTasks: MutableList<CeibroTaskV2> = mutableListOf()
+
+    private val _ongoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val ongoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingAllTasks
+    var originalOngoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
 
 
     private val _allProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
@@ -89,18 +114,98 @@ class TasksParentTabV3VM @Inject constructor(
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
-        getAllProjects()
-        getFavoriteProjects()
-        val oldTags = bundle?.getParcelableArray("oldTags")
-        val oldTagsList =
-            oldTags?.map { it as TopicsResponse.TopicData }
-                ?.toMutableList()
-        if (!oldTagsList.isNullOrEmpty()) {
-            oldSelectedTags.postValue(oldTagsList as MutableList<TopicsResponse.TopicData>?)
+        launch {
+            loadAllTasks() {
+
+            }
         }
 
-//        getRecentProjects()
+        getAllProjects()
+        getFavoriteProjects()
+
     }
+
+
+    fun loadAllTasks(callBack: () -> Unit) {
+        launch {
+            val rootOngoingAllTasks =
+                CeibroApplication.CookiesManager.rootOngoingAllTasks.value ?: mutableListOf()
+            val rootOngoingToMeTasks =
+                CeibroApplication.CookiesManager.rootOngoingToMeTasks.value ?: mutableListOf()
+            val rootOngoingFromMeTasks =
+                CeibroApplication.CookiesManager.rootOngoingFromMeTasks.value ?: mutableListOf()
+
+            if (rootOngoingAllTasks.isNotEmpty()) {
+
+                if (firstStartOfParentFragment) {
+                    selectedTaskTypeState = TaskRootStateTags.All.tagValue
+                    firstStartOfParentFragment = false
+                }
+
+                _ongoingAllTasks.postValue(rootOngoingAllTasks)
+                _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
+                _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
+
+                originalOngoingAllTasks.postValue(rootOngoingAllTasks)
+                originalOngoingToMeTasks = rootOngoingToMeTasks
+                originalOngoingFromMeTasks = rootOngoingFromMeTasks
+
+                callBack.invoke()
+            } else {
+
+                val rootOngoingAllTasksDB =
+                    taskDao.getRootOngoingAllTasks(TaskRootStateTags.Ongoing.tagValue)
+                        .toMutableList()
+
+                val rootOngoingToMeTasksDB =
+                    rootOngoingAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                (it.toMeState.equals(
+                                    TaskStatus.NEW.name,
+                                    true
+                                ) || it.toMeState.equals(TaskStatus.ONGOING.name, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+                val rootOngoingFromMeTasksDB =
+                    rootOngoingAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                (it.fromMeState.equals(
+                                    TaskStatus.UNREAD.name,
+                                    true
+                                ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
+                    }
+                        .sortedByDescending { it.updatedAt }.toMutableList()
+
+
+                CeibroApplication.CookiesManager.rootOngoingAllTasks.postValue(rootOngoingAllTasksDB)
+                CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(
+                    rootOngoingToMeTasksDB
+                )
+                CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(
+                    rootOngoingFromMeTasksDB
+                )
+
+                if (firstStartOfParentFragment) {
+                    selectedTaskTypeState = TaskRootStateTags.All.tagValue
+                    firstStartOfParentFragment = false
+                }
+
+                _ongoingAllTasks.postValue(rootOngoingAllTasks)
+                _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
+                _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
+
+                originalOngoingAllTasks.postValue(rootOngoingAllTasks)
+                originalOngoingToMeTasks = rootOngoingToMeTasks
+                originalOngoingFromMeTasks = rootOngoingFromMeTasks
+
+                callBack.invoke()
+            }
+
+        }
+
+    }
+
 
     override fun getProjectName(context: Context) {
 
