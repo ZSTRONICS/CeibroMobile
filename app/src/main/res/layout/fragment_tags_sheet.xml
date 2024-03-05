@@ -14,6 +14,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_3sdp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/round_grey"
+            android:backgroundTint="@color/black_01" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/locationProjectsSearchCard"
             android:layout_width="match_parent"
@@ -37,8 +45,8 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="@dimen/_9sdp"
-                    android:src="@drawable/icon_back"
                     android:padding="2.5dp"
+                    android:src="@drawable/icon_back"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -124,9 +132,9 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -143,8 +151,8 @@
             android:id="@+id/alltagsRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
             android:layout_marginTop="@dimen/_2sdp"
+            android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/projectFilterFooter"
             app:layout_constraintEnd_toEndOf="parent"

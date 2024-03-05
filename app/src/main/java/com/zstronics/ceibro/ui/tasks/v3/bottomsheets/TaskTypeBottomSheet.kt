@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
@@ -64,6 +65,7 @@ class TaskTypeBottomSheet(val type: String, val callback: (String) -> Unit) :
         val dialog = super.onCreateDialog(savedInstanceState)
         if (dialog is BottomSheetDialog) {
             dialog.behavior.skipCollapsed = true
+            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         return dialog
     }

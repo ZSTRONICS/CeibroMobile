@@ -26,8 +26,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.databinding.FragmentSelectUsersBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.AssigneeVM
-import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.IAssignee
 import com.zstronics.ceibro.ui.tasks.v2.newtask.assignee.adapter.AssigneeChipsAdapter
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionAdapterSectionRecycler
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.forward.adapter.section.ConnectionsSectionHeader
@@ -41,12 +39,12 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UsersFragment :
-    BaseNavViewModelFragment<FragmentSelectUsersBinding, IAssignee.State, AssigneeVM>() {
+class UsersFiltersFragment :
+    BaseNavViewModelFragment<FragmentSelectUsersBinding, IUsersFilters.State, UsersFiltersVM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: AssigneeVM by viewModels()
+    override val viewModel: UsersFiltersVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_select_users
     override fun toolBarVisibility(): Boolean = false
     private var searchedContacts = false
@@ -79,12 +77,9 @@ class UsersFragment :
         mViewDataBinding.selectedContactsRV.adapter = chipAdapter
 
 
+
         sectionList.add(
             0,
-            ConnectionsSectionHeader(mutableListOf(), getString(R.string.recent_connections))
-        )
-        sectionList.add(
-            1,
             ConnectionsSectionHeader(mutableListOf(), getString(R.string.all_connections))
         )
         adapter = ConnectionAdapterSectionRecycler(requireContext(), sectionList)
@@ -102,9 +97,9 @@ class UsersFragment :
                     val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
                     viewModel.filterContacts(searchQuery)
                 } else {
-                    sectionList.removeAt(1)
+                    sectionList.removeAt(0)
                     sectionList.add(
-                        1, ConnectionsSectionHeader(
+                        0, ConnectionsSectionHeader(
                             it,
                             getString(R.string.all_connections),
                             false
@@ -115,30 +110,6 @@ class UsersFragment :
                             it,
                             getString(R.string.all_connections),
                             false
-                        ), 1
-                    )
-                    adapter.notifyDataChanged(sectionList)
-
-                }
-            }
-        }
-
-        viewModel.recentAllConnections.observe(viewLifecycleOwner) {
-            if (it != null) {
-                if (searchedRecentContacts) {
-                    searchedRecentContacts = false
-                    val searchQuery = mViewDataBinding.assigneeSearchBar.query.toString()
-                    viewModel.filterRecentContacts(searchQuery)
-                } else {
-                    sectionList.removeAt(0)
-                    sectionList.add(
-                        0,
-                        ConnectionsSectionHeader(it, getString(R.string.recent_connections), false)
-                    )
-                    adapter.insertNewSection(
-                        ConnectionsSectionHeader(
-                            it,
-                            getString(R.string.recent_connections), false
                         ), 0
                     )
                     adapter.notifyDataChanged(sectionList)

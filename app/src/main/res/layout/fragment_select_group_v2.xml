@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.groupsv2.GroupV2State" />
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.groups.GroupFiltersV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.groupsv2.GroupV2VM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.groups.GroupFiltersVM" />
 
         <import type="android.view.View" />
     </data>
@@ -24,10 +24,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/groupHeader"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -264,10 +264,10 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginHorizontal="@dimen/_8sdp"
             android:id="@+id/groupsRV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_3sdp"
             android:visibility="visible"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
@@ -43,7 +44,7 @@ class UsersBottomSheet(val viewModel: String, val callback: (String) -> Unit) :
         super.onViewCreated(view, savedInstanceState)
 
 
-        list.add(getString(R.string.users))
+        list.add(getString(R.string.users_heading))
         list.add(getString(R.string.users_groups))
         val adapter = UsersBottomSheetTabLayoutAdapter(requireActivity())
         mViewDataBinding.viewPager.adapter = adapter
@@ -67,6 +68,7 @@ class UsersBottomSheet(val viewModel: String, val callback: (String) -> Unit) :
         val dialog = super.onCreateDialog(savedInstanceState)
         if (dialog is BottomSheetDialog) {
             dialog.behavior.skipCollapsed = true
+            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         return dialog
     }

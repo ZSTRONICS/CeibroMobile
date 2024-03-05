@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
@@ -55,6 +56,7 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (S
             mViewDataBinding.locationProjectSearchBar.setQuery(null, true)
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
+            selectedTag.clear()
             callback.invoke(selectedTag.size.toString())
             dismiss()
         }
@@ -193,6 +195,7 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (S
         val dialog = super.onCreateDialog(savedInstanceState)
         if (dialog is BottomSheetDialog) {
             dialog.behavior.skipCollapsed = true
+            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
         return dialog
     }

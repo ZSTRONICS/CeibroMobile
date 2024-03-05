@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.SearchView
 import android.widget.TextView
@@ -18,13 +17,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
-import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.databinding.FragmentSelectGroupV2Binding
-import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
-import com.zstronics.ceibro.ui.groupsv2.AddNewGroupV2Sheet
-import com.zstronics.ceibro.ui.groupsv2.GroupV2VM
-import com.zstronics.ceibro.ui.groupsv2.IGroupV2
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
@@ -32,12 +25,12 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SelectGroupV2Fragment :
-    BaseNavViewModelFragment<FragmentSelectGroupV2Binding, IGroupV2.State, GroupV2VM>() {
+class SelectGroupFiltersV2Fragment :
+    BaseNavViewModelFragment<FragmentSelectGroupV2Binding, IGroupFiltersV2.State, GroupFiltersVM>() {
 
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: GroupV2VM by viewModels()
+    override val viewModel: GroupFiltersVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_select_group_v2
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
@@ -107,7 +100,7 @@ class SelectGroupV2Fragment :
             }
         }
         adapter.renameClickListener = { item ->
-            openUpdateGroupSheet(item)
+            // openUpdateGroupSheet(item)
         }
 
 
@@ -203,129 +196,4 @@ class SelectGroupV2Fragment :
     }
 
 
-    private fun openNewGroupSheet() {
-        val sheet = AddNewGroupV2Sheet(
-            viewModel.connectionsV2Dao,
-            viewModel,
-            false
-        )
-
-        sheet.createGroupClickListener = { groupName, selectedContactIds ->
-            viewModel.createConnectionGroup(groupName, selectedContactIds) { createdGroup ->
-                sheet.dismiss()
-
-                val allOriginalGroups = viewModel.originalConnectionGroups
-                val groupFound = allOriginalGroups.find { it._id == createdGroup._id }
-                if (groupFound != null) {
-                    val index = allOriginalGroups.indexOf(groupFound)
-                    allOriginalGroups[index] = createdGroup
-                    viewModel.originalConnectionGroups = allOriginalGroups
-                } else {
-                    allOriginalGroups.add(0, createdGroup)
-                    viewModel.originalConnectionGroups = allOriginalGroups
-                }
-
-                val adapterItemFound = adapter.groupListItems.find { it._id == createdGroup._id }
-                if (adapterItemFound != null) {
-                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                    adapter.groupListItems[index1] = createdGroup
-                    adapter.notifyItemChanged(index1)
-                } else {
-                    adapter.groupListItems.add(0, createdGroup)
-                    adapter.notifyItemInserted(0)
-                }
-            }
-        }
-
-        sheet.isCancelable = false
-        sheet.show(childFragmentManager, "AddNewGroupV2Sheet")
-    }
-
-    private fun openUpdateGroupSheet(
-        oldGroup: CeibroConnectionGroupV2
-    ) {
-
-        var groupToSendToSheet: CeibroConnectionGroupV2? = null
-        var contactToSendToSheet: List<SyncDBContactsList.CeibroDBContactsLight>? = null
-
-        val allOriginalGroups1 = viewModel.originalConnectionGroups
-        val groupFound1 = allOriginalGroups1.find { it._id == oldGroup._id }
-        if (groupFound1 != null) {
-            groupToSendToSheet = groupFound1
-            contactToSendToSheet = groupFound1.contacts.toLightDBGroupContacts()
-        } else {
-            groupToSendToSheet = oldGroup
-            contactToSendToSheet = oldGroup.contacts.toLightDBGroupContacts()
-        }
-
-        val sheet = AddNewGroupV2Sheet(
-            viewModel.connectionsV2Dao,
-            viewModel,
-            isUpdating = true,
-            oldGroup = groupToSendToSheet,
-            oldGroupContact = contactToSendToSheet
-        )
-
-
-        sheet.updateGroupClickListener = { item, groupName, selectedContactIds, groupNameChanged ->
-            viewModel.updateConnectionGroup(
-                item,
-                groupName,
-                selectedContactIds,
-                groupNameChanged
-            ) { updatedGroup ->
-
-                val allOriginalGroups = viewModel.originalConnectionGroups
-                val groupFound = allOriginalGroups.find { it._id == updatedGroup._id }
-                if (groupFound != null) {
-                    val index = allOriginalGroups.indexOf(groupFound)
-                    allOriginalGroups[index] = updatedGroup
-                    viewModel.originalConnectionGroups = allOriginalGroups
-                }
-
-                val adapterItemFound = adapter.groupListItems.find { it._id == updatedGroup._id }
-                if (adapterItemFound != null) {
-                    val index1 = adapter.groupListItems.indexOf(adapterItemFound)
-                    adapter.groupListItems[index1] = updatedGroup
-                    adapter.notifyItemChanged(index1)
-                }
-
-
-                sheet.dismiss()
-            }
-        }
-
-        sheet.isCancelable = false
-        sheet.show(childFragmentManager, "AddNewGroupV2Sheet")
-    }
-
-    private fun deleteGroupDialog(
-        context: Context,
-        callback: (String) -> Unit
-    ) {
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
-
-        val builder: androidx.appcompat.app.AlertDialog.Builder =
-            androidx.appcompat.app.AlertDialog.Builder(context).setView(view)
-        val alertDialog = builder.create()
-
-        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
-        val noBtn = view.findViewById<Button>(R.id.noBtn)
-        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
-        dialogText.text =
-            context.resources.getString(R.string.are_you_sure_you_want_to_delete_groups)
-        alertDialog.window?.setBackgroundDrawable(null)
-        alertDialog.show()
-
-        yesBtn.setOnClickListener {
-            callback.invoke("delete")
-            alertDialog.dismiss()
-
-        }
-
-        noBtn.setOnClickListener {
-            alertDialog.dismiss()
-        }
-    }
 }
