@@ -21,12 +21,12 @@ import com.zstronics.ceibro.ui.tasks.v2.newtask.tag.adapter.TagsDrawingSectionHe
 import com.zstronics.ceibro.ui.tasks.v2.newtask.tag.adapter.TagsSectionRecyclerView
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 
-class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) -> Unit) :
+class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayList<TopicsResponse.TopicData>) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var mViewDataBinding: FragmentTagsSheetBinding
     private var searchingProject = false
 
-    var selectedTag = ArrayList<TopicsResponse.TopicData>()
+    var selectedTags = ArrayList<TopicsResponse.TopicData>()
     private var sectionList: MutableList<TagsDrawingSectionHeader> = mutableListOf()
     private lateinit var tagsSectionRecyclerView: TagsSectionRecyclerView
     override fun onCreateView(
@@ -62,18 +62,17 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
             mViewDataBinding.tagSearchBar.setQuery(null, true)
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
+            selectedTags.clear()
+            viewModel.oldSelectedTags.value=selectedTags
+            tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value)
+
         }
         mViewDataBinding.btnApply.setOnClickListener {
 
-            callback.invoke(selectedTag.size.toString())
+            callback.invoke( selectedTags)
             dismiss()
         }
 
-
-        viewModel.oldSelectedTags.observe(viewLifecycleOwner) {
-            selectedTag.clear()
-            selectedTag.addAll(it)
-        }
 
         sectionList.add(
             0,
@@ -91,13 +90,14 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
         )
 
         tagsSectionRecyclerView = TagsSectionRecyclerView(requireContext(), sectionList)
+        tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value)
         tagsSectionRecyclerView.itemClickListener =
             { flag: Boolean, view: View, position: Int, data: TopicsResponse.TopicData ->
 
                 if (flag) {
-                    selectedTag.add(data)
+                    selectedTags.add(data)
                 } else {
-                    selectedTag.remove(data)
+                    selectedTags.remove(data)
                 }
             }
         mViewDataBinding.alltagsRV.adapter = tagsSectionRecyclerView
@@ -113,7 +113,7 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
                         getString(R.string.recently_used_tagged)
                     ), 0
                 )
-                tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value ?: mutableListOf())
+
                 tagsSectionRecyclerView.notifyDataSetChanged()
             } else {
                 sectionList.removeAt(0)
@@ -125,7 +125,6 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
                         getString(R.string.recently_used_tagged)
                     ), 0
                 )
-                tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value ?: mutableListOf())
                 tagsSectionRecyclerView.notifyDataSetChanged()
             }
 

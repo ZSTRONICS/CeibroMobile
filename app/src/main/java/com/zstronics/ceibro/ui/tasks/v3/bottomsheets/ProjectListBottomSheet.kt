@@ -20,12 +20,12 @@ import com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectsSectio
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.adapters.TaskProjectFilterAdapterSectionRecycler
 
-class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) -> Unit) :
+class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayList<CeibroProjectV2>) -> Unit) :
     BottomSheetDialogFragment() {
     lateinit var mViewDataBinding: FragmentProjectListBinding
     private var searchingProject = false
 
-    var selectedTag = ArrayList<CeibroProjectV2>()
+    var selectedProjects = ArrayList<CeibroProjectV2>()
     private lateinit var sectionedAdapter: TaskProjectFilterAdapterSectionRecycler
     private var sectionList: MutableList<LocationProjectsSectionHeader> = mutableListOf()
     override fun onCreateView(
@@ -52,6 +52,7 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (S
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        this.selectedProjects=viewModel.selectedProjects
 
         mViewDataBinding.backBtn.setOnClick {
             dismiss()
@@ -61,12 +62,14 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (S
             mViewDataBinding.locationProjectSearchBar.setQuery(null, true)
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
-            selectedTag.clear()
-            callback.invoke(selectedTag.size.toString())
+            selectedProjects.clear()
+            viewModel.selectedProjects=selectedProjects
+            callback.invoke(selectedProjects)
             dismiss()
         }
         mViewDataBinding.btnApply.setOnClickListener {
-            callback.invoke(selectedTag.size.toString())
+            viewModel.selectedProjects=selectedProjects
+            callback.invoke(selectedProjects)
             dismiss()
         }
 
@@ -86,12 +89,15 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (S
 
         sectionedAdapter.setCallBack { ceibroProjectV2, tag ->
             if (tag) {
-                selectedTag.add(ceibroProjectV2)
+                selectedProjects.add(ceibroProjectV2)
             } else {
-                selectedTag.remove(ceibroProjectV2)
+                selectedProjects.remove(ceibroProjectV2)
             }
-
         }
+
+
+        sectionedAdapter.setSelectedList(selectedProjects)
+
 //        val linearLayoutManager = LinearLayoutManager(requireContext())
 ////        mViewDataBinding.projectsRV.removeAllViews()
 //        mViewDataBinding.projectsRV.layoutManager = linearLayoutManager

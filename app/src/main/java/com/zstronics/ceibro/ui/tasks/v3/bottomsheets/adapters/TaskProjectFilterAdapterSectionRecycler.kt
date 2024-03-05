@@ -24,14 +24,22 @@ class TaskProjectFilterAdapterSectionRecycler constructor(
         context,
         sectionList
     ) {
+    var selectedList= ArrayList<CeibroProjectV2>()
+    fun setSelectedList(list: MutableList<CeibroProjectV2>) {
+        selectedList.addAll(list)
+        notifyDataSetChanged()
+    }
 
-    var itemClickListener: (( data: CeibroProjectV2, tag: Boolean) -> Unit)? =
+    var itemClickListener: ((data: CeibroProjectV2, tag: Boolean) -> Unit)? =
         null
 
-    fun setCallBack(itemClickListener: (( data: CeibroProjectV2, tag: Boolean)-> Unit)?) {
+    fun setCallBack(itemClickListener: ((data: CeibroProjectV2, tag: Boolean) -> Unit)?) {
         this.itemClickListener = itemClickListener
-
     }
+
+
+
+
 
     override fun onCreateSectionViewHolder(
         sectionViewGroup: ViewGroup?,
@@ -100,9 +108,9 @@ class TaskProjectFilterAdapterSectionRecycler constructor(
                 with(binding) {
 
                     projectImgImgCard.setOnClickListener {
-                        if (projectImgImgCard.isChecked){
-                            itemClickListener?.invoke(item,true)
-                        }else{
+                        if (projectImgImgCard.isChecked) {
+                            itemClickListener?.invoke(item, true)
+                        } else {
                             itemClickListener?.invoke(item, false)
                         }
                     }
@@ -131,16 +139,20 @@ class TaskProjectFilterAdapterSectionRecycler constructor(
                         binding.userCompany.text = item.creator.companyName
                     }
 
+                    val project = selectedList.find { listItem ->
+                        listItem._id == item._id
+                    }
+                    projectImgImgCard.isChecked = project != null
+
                     root.setOnClickListener {
-                        if (projectImgImgCard.isChecked){
-                            projectImgImgCard.isChecked=false
-                            itemClickListener?.invoke(item,false)
-                        }else{
-                            projectImgImgCard.isChecked=true
+                        if (projectImgImgCard.isChecked) {
+                            projectImgImgCard.isChecked = false
+                            itemClickListener?.invoke(item, false)
+                        } else {
+                            projectImgImgCard.isChecked = true
                             itemClickListener?.invoke(item, true)
                         }
                     }
-
                 }
             }
         }

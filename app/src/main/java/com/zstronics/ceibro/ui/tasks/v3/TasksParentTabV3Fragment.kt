@@ -51,7 +51,7 @@ class TasksParentTabV3Fragment :
 
             R.id.projectFilter -> {
 
-                chooseProjectFromList(viewModel) {
+                chooseProjectFromList(viewModel,) {
                     mViewDataBinding.projectFilterCounter.text = it
                 }
             }
@@ -240,16 +240,17 @@ class TasksParentTabV3Fragment :
 
     private fun chooseTagsType(model: TasksParentTabV3VM, callback: (String) -> Unit) {
         val sheet = TagsBottomSheet(model) {
-            callback.invoke(it)
+            viewModel.oldSelectedTags.postValue(it)
+            callback.invoke(it.size.toString())
         }
 
         sheet.isCancelable = true
         sheet.show(childFragmentManager, "TagsBottomSheet")
     }
 
-    private fun chooseProjectFromList(type: TasksParentTabV3VM, callback: (String) -> Unit) {
-        val sheet = ProjectListBottomSheet(type) {
-            callback.invoke(it)
+    private fun chooseProjectFromList(viewModel: TasksParentTabV3VM, callback: (String) -> Unit) {
+        val sheet = ProjectListBottomSheet(viewModel) {
+            callback.invoke(it.size.toString())
         }
 
         sheet.isCancelable = true
