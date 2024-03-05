@@ -20,7 +20,10 @@ import com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectsSectio
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.adapters.TaskProjectFilterAdapterSectionRecycler
 
-class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayList<CeibroProjectV2>) -> Unit) :
+class ProjectListBottomSheet(
+    val viewModel: TasksParentTabV3VM,
+    val callback: (ArrayList<CeibroProjectV2>) -> Unit
+) :
     BottomSheetDialogFragment() {
     lateinit var mViewDataBinding: FragmentProjectListBinding
     private var searchingProject = false
@@ -52,7 +55,7 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (A
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.selectedProjects=viewModel.selectedProjects
+        this.selectedProjects = viewModel.selectedProjectsForFilter
 
         mViewDataBinding.backBtn.setOnClick {
             dismiss()
@@ -63,12 +66,12 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (A
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
             selectedProjects.clear()
-            viewModel.selectedProjects=selectedProjects
+            viewModel.selectedProjectsForFilter = selectedProjects
             callback.invoke(selectedProjects)
             dismiss()
         }
         mViewDataBinding.btnApply.setOnClickListener {
-            viewModel.selectedProjects=selectedProjects
+            viewModel.selectedProjectsForFilter = selectedProjects
             callback.invoke(selectedProjects)
             dismiss()
         }
