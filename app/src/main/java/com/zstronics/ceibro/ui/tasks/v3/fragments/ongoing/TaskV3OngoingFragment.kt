@@ -63,8 +63,30 @@ class TaskV3OngoingFragment :
 
 
         if (viewModel.isFirstStartOfOngoingFragment) {
-            shortToastNow("isFirstStartOfOngoingFragment")
             viewModel.isFirstStartOfOngoingFragment = false
+            viewModel.ongoingAllTasks.value?.let {
+                if (viewModel.selectedTaskTypeState.equals(TaskRootStateTags.All.tagValue, true)) {
+                    if (it.isNotEmpty()) {
+                        adapter.setList(it, viewModel.selectedTaskTypeState)
+                        mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                    } else {
+                        adapter.setList(listOf(), viewModel.selectedTaskTypeState)
+                        mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                        if (viewModel.isSearchingTasks) {
+                            mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                            mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                        } else {
+                            mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                            mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                        }
+                    }
+
+                }
+            } ?: kotlin.run {
+                shortToastNow("All tasks list is empty ${viewModel.ongoingAllTasks.value?.size}")
+            }
         }
 
     }

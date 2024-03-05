@@ -53,7 +53,7 @@ data class CeibroTaskV2(
     @SerializedName("title")
     val title: String?,
     @SerializedName("confirmer")
-    val confirmer: String?,
+    val confirmer: TaskMemberDetail?,
     @SerializedName("tags")
     val tags: List<Tag>?,
     @SerializedName("viewer")
