@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.databinding.FragmentProjectListBinding
 import com.zstronics.ceibro.ui.locationv2.locationproject.LocationProjectsSectionHeader
@@ -51,6 +52,10 @@ class ProjectListBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (S
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        mViewDataBinding.backBtn.setOnClick {
+            dismiss()
+        }
 
         mViewDataBinding.tvClearAll.setOnClickListener {
             mViewDataBinding.locationProjectSearchBar.setQuery(null, true)

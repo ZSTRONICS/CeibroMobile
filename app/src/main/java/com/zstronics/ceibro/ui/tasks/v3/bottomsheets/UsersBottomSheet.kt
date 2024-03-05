@@ -15,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.databinding.FragmentUsersSheetBinding
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.adapters.UsersBottomSheetTabLayoutAdapter
 
@@ -44,6 +45,10 @@ class UsersBottomSheet(val viewModel: String, val callback: (String) -> Unit) :
         super.onViewCreated(view, savedInstanceState)
 
 
+
+        mViewDataBinding.backBtn.setOnClick {
+            dismiss()
+        }
         list.add(getString(R.string.users_heading))
         list.add(getString(R.string.users_groups))
         val adapter = UsersBottomSheetTabLayoutAdapter(requireActivity())

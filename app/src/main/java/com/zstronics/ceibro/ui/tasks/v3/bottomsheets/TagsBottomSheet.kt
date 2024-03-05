@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
+import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.databinding.FragmentTagsSheetBinding
@@ -53,6 +54,10 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (String) 
         super.onViewCreated(view, savedInstanceState)
 
 
+
+        mViewDataBinding.backBtn.setOnClick {
+            dismiss()
+        }
         mViewDataBinding.tvClearAll.setOnClickListener {
             mViewDataBinding.tagSearchBar.setQuery(null, true)
             viewModel.filterFavoriteProjects("")
