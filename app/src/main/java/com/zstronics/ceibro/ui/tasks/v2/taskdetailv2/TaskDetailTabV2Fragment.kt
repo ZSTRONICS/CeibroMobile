@@ -407,7 +407,7 @@ class TaskDetailTabV2Fragment :
             }
 
             if (item != null) {
-                val isViewer = item.viewer?.find { it == viewModel.user?.id }
+                val isViewer = item.viewer?.find { it.id == viewModel.user?.id }
 
                 if (item.creatorState.equals(
                         TaskStatus.DONE.name,

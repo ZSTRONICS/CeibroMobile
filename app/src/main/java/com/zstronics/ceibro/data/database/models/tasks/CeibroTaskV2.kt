@@ -57,13 +57,15 @@ data class CeibroTaskV2(
     @SerializedName("tags")
     val tags: List<Tag>?,
     @SerializedName("viewer")
-    val viewer: List<String>?,
+    val viewer: List<TaskMemberDetail>?,
     @SerializedName("updatedAt")
     var updatedAt: String,
-    @SerializedName("__v")
-    val v: Int,
+    @SerializedName("isTaskInApproval")
+    val isTaskInApproval: Boolean,
     @SerializedName("files")
     var files: List<TaskFiles> = emptyList(),
+    @SerializedName("taskRootState")
+    var taskRootState: String,
     @SerializedName("rootState")
     var rootState: String,
     @SerializedName("userSubState")
@@ -72,6 +74,10 @@ data class CeibroTaskV2(
     val isAssignedToMe: Boolean,
     @SerializedName("isCreator")
     var isCreator: Boolean,
+    @SerializedName("isTaskConfirmer")
+    var isTaskConfirmer: Boolean,
+    @SerializedName("isTaskViewer")
+    var isTaskViewer: Boolean,
     @SerializedName("isHiddenByMe")
     var isHiddenByMe: Boolean,
     @SerializedName("isSeenByMe")

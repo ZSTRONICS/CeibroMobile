@@ -56,7 +56,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
         NewTaskV2Entity::class,
         LocalTaskDetailFiles::class,
     ],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 @TypeConverters(
@@ -113,6 +113,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
     ActionProjectDataTypeConverter::class,
     ActionDataTaskTypeConverter::class,
     GroupContactV2ListTypeConverter::class,
+    TaskMemberDetailListTypeConverter::class,
 )
 abstract class CeibroDatabase : RoomDatabase() {
     @Deprecated("This dao is deprecated we are using v2 from now")

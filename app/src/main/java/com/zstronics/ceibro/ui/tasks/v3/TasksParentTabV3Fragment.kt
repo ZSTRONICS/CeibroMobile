@@ -235,7 +235,7 @@ class TasksParentTabV3Fragment :
         }
 
         sheet.isCancelable = true
-        sheet.show(childFragmentManager, "TaskTypeBottomSheet")
+        sheet.show(childFragmentManager, "UsersBottomSheet")
     }
 
     private fun chooseTagsType(model: TasksParentTabV3VM, callback: (String) -> Unit) {
