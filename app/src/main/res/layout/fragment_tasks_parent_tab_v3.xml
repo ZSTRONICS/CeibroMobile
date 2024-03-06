@@ -94,7 +94,7 @@
                         android:scrollbars="none"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/ivSort"
-                        app:layout_constraintStart_toEndOf="@+id/imgSearch"
+                        app:layout_constraintStart_toEndOf="@+id/imgSearchFilter"
                         app:layout_constraintTop_toTopOf="parent">
 
                         <LinearLayout

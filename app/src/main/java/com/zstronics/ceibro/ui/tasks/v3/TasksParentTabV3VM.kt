@@ -104,6 +104,8 @@ class TasksParentTabV3VM @Inject constructor(
     var originalRecentTopics = listOf<TopicsResponse.TopicData>()
     var oldSelectedTags: MutableLiveData<MutableList<TopicsResponse.TopicData>> = MutableLiveData()
 
+    var selectedTaskType=TaskRootStateTags.All.tagValue
+
     init {
         if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
             sessionManager.setUser()

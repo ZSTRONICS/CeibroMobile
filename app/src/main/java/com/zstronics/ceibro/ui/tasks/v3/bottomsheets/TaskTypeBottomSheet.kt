@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskTypeBinding
 
 class TaskTypeBottomSheet(val type: String, val callback: (String) -> Unit) :
@@ -39,23 +40,23 @@ class TaskTypeBottomSheet(val type: String, val callback: (String) -> Unit) :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (type.equals("All", true)) {
+        if (type.equals(TaskRootStateTags.All.tagValue, true)) {
             binding.rbAll.isChecked = true
-        } else if (type.equals("From me", true)) {
+        } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
             binding.rbFromMe.isChecked = true
-        } else if (type.equals("To Me", true)) {
+        } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
             binding.rbToMe.isChecked = true
         }
         binding.rbAll.setOnClick {
-            callback.invoke("All")
+            callback.invoke(TaskRootStateTags.All.tagValue)
             dismiss()
         }
         binding.rbFromMe.setOnClick {
-            callback.invoke("From me")
+            callback.invoke(TaskRootStateTags.FromMe.tagValue)
             dismiss()
         }
         binding.rbToMe.setOnClick {
-            callback.invoke("To me")
+            callback.invoke(TaskRootStateTags.ToMe.tagValue)
             dismiss()
         }
 

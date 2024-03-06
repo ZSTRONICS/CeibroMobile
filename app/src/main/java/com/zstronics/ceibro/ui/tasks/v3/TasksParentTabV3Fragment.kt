@@ -20,6 +20,7 @@ import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
@@ -58,8 +59,17 @@ class TasksParentTabV3Fragment :
             }
 
             R.id.taskType -> {
-                chooseTaskType(mViewDataBinding.taskTypeText.text.toString().lowercase()) { type ->
-                    mViewDataBinding.taskTypeText.text = type
+                chooseTaskType(viewModel.selectedTaskType) { type ->
+                    viewModel.selectedTaskType=type
+                    var typeToShow = ""
+                    if (type.equals(TaskRootStateTags.All.tagValue, true)) {
+                        typeToShow = "All"
+                    } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                        typeToShow = "From Me"
+                    } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                        typeToShow = "To Me "
+                    }
+                    mViewDataBinding.taskTypeText.text = typeToShow
                 }
             }
 
@@ -77,7 +87,7 @@ class TasksParentTabV3Fragment :
                 }
             }
 
-            R.id.imgSearch -> {
+            R.id.imgSearchFilter -> {
 //                mViewDataBinding.tasksSearchCard.visibility = View.VISIBLE
             }
 
