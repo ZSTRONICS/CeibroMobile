@@ -43,6 +43,9 @@ class UsersFiltersVM @Inject constructor(
     var isViewer: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
+
+     var listOfRoles = ArrayList<String>()
+
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         val selfAssigned = bundle?.getBoolean("self-assign")

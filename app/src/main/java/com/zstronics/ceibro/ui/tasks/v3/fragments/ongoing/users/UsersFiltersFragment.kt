@@ -50,11 +50,14 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
     private var searchedContacts = false
     private var searchedRecentContacts = false
     private var fullItemClickedForDone = false
-    private var userConnectionCallBack: ((ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit)? = null
+    private var userConnectionCallBack: ((ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit)? =
+        null
+
     fun setConnectionCallBack(connectionCallback: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit) {
         userConnectionCallBack = connectionCallback
     }
 
+    private val listOfRoles = ArrayList<String>()
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -65,11 +68,11 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
 
             R.id.roleBtn -> {
                 createPopupWindow(mViewDataBinding.roleBtn) {
+                    viewModel.listOfRoles = listOfRoles
                 }
             }
 
             R.id.btnApply -> {
-
 
                 val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
                 dataList.addAll(chipAdapter.dataList)
@@ -78,7 +81,7 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
 
             R.id.tvClearAll -> {
                 viewModel.selectedContacts.postValue(mutableListOf())
-                viewModel.getAllConnectionsV2 {  }
+                viewModel.getAllConnectionsV2 { }
                 val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
 
                 userConnectionCallBack?.invoke(dataList)
@@ -97,7 +100,7 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.selectedContactsRV.adapter = chipAdapter
 
-
+        listOfRoles.clear()
 
         sectionList.add(
             0,
@@ -105,7 +108,7 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
         )
         adapter = ConnectionAdapterSectionRecycler(requireContext(), sectionList)
 
-        viewModel.selectedContacts.value=connectionSelectedList
+        viewModel.selectedContacts.value = connectionSelectedList
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.allContactsRV.layoutManager = linearLayoutManager
@@ -458,8 +461,9 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
     @SuppressLint("MissingInflatedId")
     private fun createPopupWindow(
         v: View,
-        callback: (String) -> Unit
+        callback: (ArrayList<String>) -> Unit
     ): PopupWindow {
+
         var selectionCounter = 0
         val context: Context = v.context
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -472,7 +476,6 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
             true
         )
 
-
         val applyBtn: AppCompatTextView = view.findViewById(R.id.applyBtn)
         val cbSelectAll: CheckBox = view.findViewById(R.id.cbSelectAll)
         val cbAll: CheckBox = view.findViewById(R.id.cbAll)
@@ -481,51 +484,84 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
         val cbViewer: CheckBox = view.findViewById(R.id.cbViewer)
         val cbApproval: CheckBox = view.findViewById(R.id.cbApproval)
 
+        listOfRoles.forEach {
+            if (it.equals("All", true)) {
+                cbAll.isChecked = true
+                selectionCounter++
+            } else if (it.equals("Creator", true)) {
+                cbCreator.isChecked = true
+                selectionCounter++
+            } else if (it.equals("Assignee", true)) {
+                cbAssignee.isChecked = true
+                selectionCounter++
+            } else if (it.equals("Viewer", true)) {
+                cbViewer.isChecked = true
+                selectionCounter++
+            } else if (it.equals("Confirmer", true)) {
+                cbApproval.isChecked = true
+                selectionCounter++
+            }
+        }
+        cbSelectAll.isChecked = selectionCounter >= 5
 
 // Usage in your click listeners
         cbAll.setOnClickListener {
             selectionCounter =
-                updateSelectionCounter(cbAll.isChecked, selectionCounter, cbSelectAll)
+                updateSelectionCounter(cbAll, selectionCounter, cbSelectAll)
         }
 
         cbCreator.setOnClickListener {
             selectionCounter =
-                updateSelectionCounter(cbCreator.isChecked, selectionCounter, cbSelectAll)
+                updateSelectionCounter(cbCreator, selectionCounter, cbSelectAll)
         }
 
         cbAssignee.setOnClickListener {
             selectionCounter =
-                updateSelectionCounter(cbAssignee.isChecked, selectionCounter, cbSelectAll)
+                updateSelectionCounter(cbAssignee, selectionCounter, cbSelectAll)
         }
 
         cbViewer.setOnClickListener {
             selectionCounter =
-                updateSelectionCounter(cbViewer.isChecked, selectionCounter, cbSelectAll)
+                updateSelectionCounter(cbViewer, selectionCounter, cbSelectAll)
         }
 
         cbApproval.setOnClickListener {
             selectionCounter =
-                updateSelectionCounter(cbApproval.isChecked, selectionCounter, cbSelectAll)
+                updateSelectionCounter(cbApproval, selectionCounter, cbSelectAll)
         }
 
         cbSelectAll.setOnClickListener {
             val isChecked = cbSelectAll.isChecked
+
             cbAll.isChecked = isChecked
+            addRoleToLIst(cbAll.text.toString(), isChecked)
+
             cbCreator.isChecked = isChecked
+            addRoleToLIst(cbCreator.text.toString(), isChecked)
+
             cbAssignee.isChecked = isChecked
+            addRoleToLIst(cbAssignee.text.toString(), isChecked)
+
             cbViewer.isChecked = isChecked
+            addRoleToLIst(cbViewer.text.toString(), isChecked)
+
             cbApproval.isChecked = isChecked
+            addRoleToLIst(cbApproval.text.toString(), isChecked)
+
             selectionCounter = if (isChecked) {
                 5
             } else {
                 0
             }
-
+            if (!isChecked) {
+                listOfRoles.clear()
+            }
         }
 
 
 
         applyBtn.setOnClickListener {
+            callback.invoke(listOfRoles)
             popupWindow.dismiss()
         }
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -548,12 +584,24 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
     }
 
     private fun updateSelectionCounter(
-        isChecked: Boolean,
+        selectedCheckBox: CheckBox,
         selectionCounter: Int,
         cbSelectAll: CheckBox
     ): Int {
+        val isChecked = selectedCheckBox.isChecked
+        addRoleToLIst(selectedCheckBox.text.toString(), isChecked)
         val updatedCounter = selectionCounter + if (isChecked) 1 else -1
         cbSelectAll.isChecked = updatedCounter == 5
         return updatedCounter
+    }
+
+    private fun addRoleToLIst(role: String, flag: Boolean) {
+        if (flag) {
+            if (!listOfRoles.contains(role)) {
+                listOfRoles.add(role)
+            }
+        } else {
+            listOfRoles.remove(role)
+        }
     }
 }
