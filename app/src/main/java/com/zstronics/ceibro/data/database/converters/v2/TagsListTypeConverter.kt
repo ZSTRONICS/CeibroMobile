@@ -10,7 +10,7 @@ class TagsListTypeConverter {
 
     @TypeConverter
     fun fromString(value: String): List<Tag>? {
-        val type = object : TypeToken<List<CeibroProjectV2>?>() {}.type
+        val type = object : TypeToken<List<Tag>?>() {}.type
         return Gson().fromJson(value, type)
     }
 
