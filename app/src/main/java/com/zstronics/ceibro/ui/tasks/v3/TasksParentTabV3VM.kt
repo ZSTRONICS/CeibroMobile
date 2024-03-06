@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -17,6 +16,8 @@ import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -26,7 +27,6 @@ import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.ui.tasks.v2.newtask.tag.TagsVM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -111,6 +111,10 @@ class TasksParentTabV3VM @Inject constructor(
         }
     }
 
+
+    //filters
+    var selectedConnections = ArrayList<AllCeibroConnections.CeibroConnection>()
+    var selectedGroups = ArrayList<CeibroConnectionGroupV2>()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)

@@ -17,6 +17,7 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.FragmentSelectGroupV2Binding
 import com.zstronics.ceibro.ui.groupsv2.adapter.GroupV2Adapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +26,9 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SelectGroupFiltersV2Fragment :
+class SelectGroupFiltersV2Fragment(
+    private val selectedGroupsList: ArrayList<CeibroConnectionGroupV2>
+) :
     BaseNavViewModelFragment<FragmentSelectGroupV2Binding, IGroupFiltersV2.State, GroupFiltersVM>() {
 
     override val bindingVariableId = BR.viewModel
@@ -37,6 +40,15 @@ class SelectGroupFiltersV2Fragment :
         when (id) {
             R.id.backBtn -> {
                 navigateBack()
+            }
+
+            R.id.tvClearAll -> {
+                selectedGroup.clear()
+                ceibroConnectionGroupV2?.invoke(selectedGroup)
+            }
+
+            R.id.btnApply -> {
+                ceibroConnectionGroupV2?.invoke(selectedGroup)
             }
 
 
@@ -53,14 +65,20 @@ class SelectGroupFiltersV2Fragment :
     @Inject
     lateinit var adapter: GroupV2Adapter
 
+    private var ceibroConnectionGroupV2: ((ArrayList<CeibroConnectionGroupV2>) -> Unit)? = null
+    fun setGroupsCallBack(ceibroConnectionGroups: (ArrayList<CeibroConnectionGroupV2>) -> Unit) {
+        ceibroConnectionGroupV2 = ceibroConnectionGroups
+    }
+
+    private var selectedGroup: ArrayList<CeibroConnectionGroupV2> = arrayListOf()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
         mViewDataBinding.groupsRV.adapter = adapter
 
-        mViewDataBinding.tvClearAll.setOnClickListener {
-        }
+        selectedGroup = selectedGroupsList
+        adapter.selectAllGroups(selectedGroup)
 
         viewModel.connectionGroups.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
@@ -79,7 +97,8 @@ class SelectGroupFiltersV2Fragment :
 
         adapter.itemClickListener = { list ->
 
-
+            selectedGroup.clear()
+            selectedGroup.addAll(list)
         }
         adapter.deleteClickListener = { item ->
             viewModel.deleteConnectionGroup(item._id) {

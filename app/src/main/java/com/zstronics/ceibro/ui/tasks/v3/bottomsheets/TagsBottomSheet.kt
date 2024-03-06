@@ -63,13 +63,14 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayLis
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
             selectedTags.clear()
-            viewModel.oldSelectedTags.value=selectedTags
+            viewModel.selectedTagsForFilter=selectedTags
             tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value)
 
         }
         mViewDataBinding.btnApply.setOnClickListener {
 
-            callback.invoke( selectedTags)
+            viewModel.selectedTagsForFilter=selectedTags
+            callback.invoke(selectedTags)
             dismiss()
         }
 
@@ -90,7 +91,8 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayLis
         )
 
         tagsSectionRecyclerView = TagsSectionRecyclerView(requireContext(), sectionList)
-        tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value)
+        selectedTags=viewModel.selectedTagsForFilter
+        tagsSectionRecyclerView.setData(viewModel.selectedTagsForFilter)
         tagsSectionRecyclerView.itemClickListener =
             { flag: Boolean, view: View, position: Int, data: TopicsResponse.TopicData ->
 

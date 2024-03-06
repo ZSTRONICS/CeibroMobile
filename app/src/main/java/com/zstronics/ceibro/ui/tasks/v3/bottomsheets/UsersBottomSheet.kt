@@ -16,10 +16,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.FragmentUsersSheetBinding
+import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.adapters.UsersBottomSheetTabLayoutAdapter
 
-class UsersBottomSheet(val viewModel: String, val callback: (String) -> Unit) :
+class UsersBottomSheet(
+    val viewModel: TasksParentTabV3VM,
+    private val connectionscallBack: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit,
+    private val groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
+) :
     BottomSheetDialogFragment() {
 
     val list = ArrayList<String>()
@@ -51,7 +58,11 @@ class UsersBottomSheet(val viewModel: String, val callback: (String) -> Unit) :
         }
         list.add(getString(R.string.users_heading))
         list.add(getString(R.string.users_groups))
-        val adapter = UsersBottomSheetTabLayoutAdapter(requireActivity())
+        val adapter = UsersBottomSheetTabLayoutAdapter(requireActivity(), viewModel, {
+            connectionscallBack.invoke(it)
+        }, {
+            groupsCallBack.invoke(it)
+        })
         mViewDataBinding.viewPager.adapter = adapter
 
 

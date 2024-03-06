@@ -39,7 +39,7 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UsersFiltersFragment :
+class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnections.CeibroConnection>) :
     BaseNavViewModelFragment<FragmentSelectUsersBinding, IUsersFilters.State, UsersFiltersVM>() {
 
     override val bindingVariableId = BR.viewModel
@@ -50,6 +50,11 @@ class UsersFiltersFragment :
     private var searchedContacts = false
     private var searchedRecentContacts = false
     private var fullItemClickedForDone = false
+    private var userConnectionCallBack: ((ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit)? = null
+    fun setConnectionCallBack(connectionCallback: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit) {
+        userConnectionCallBack = connectionCallback
+    }
+
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -61,6 +66,22 @@ class UsersFiltersFragment :
             R.id.roleBtn -> {
                 createPopupWindow(mViewDataBinding.roleBtn) {
                 }
+            }
+
+            R.id.btnApply -> {
+
+
+                val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
+                dataList.addAll(chipAdapter.dataList)
+                userConnectionCallBack?.invoke(dataList)
+            }
+
+            R.id.tvClearAll -> {
+                viewModel.selectedContacts.postValue(mutableListOf())
+                viewModel.getAllConnectionsV2 {  }
+                val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
+
+                userConnectionCallBack?.invoke(dataList)
             }
         }
     }
@@ -84,6 +105,7 @@ class UsersFiltersFragment :
         )
         adapter = ConnectionAdapterSectionRecycler(requireContext(), sectionList)
 
+        viewModel.selectedContacts.value=connectionSelectedList
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.allContactsRV.layoutManager = linearLayoutManager
@@ -324,11 +346,9 @@ class UsersFiltersFragment :
 
             var selectedContacts: MutableList<AllCeibroConnections.CeibroConnection> =
                 mutableListOf()
-            val selected = adapter.sectionList[1].childItems.filter { it.isChecked }.map { it }
-            val selectedRecent =
-                adapter.sectionList[0].childItems.filter { it.isChecked }.map { it }
+            val selected = adapter.sectionList[0].childItems.filter { it.isChecked }.map { it }
 
-            selectedContacts.addAll(selectedRecent)
+
             selectedContacts.addAll(selected)
             selectedContacts = selectedContacts.distinct().toMutableList()
 

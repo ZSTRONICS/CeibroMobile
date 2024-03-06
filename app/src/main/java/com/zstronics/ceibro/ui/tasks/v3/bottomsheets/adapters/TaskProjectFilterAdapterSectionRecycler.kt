@@ -26,6 +26,7 @@ class TaskProjectFilterAdapterSectionRecycler constructor(
     ) {
     var selectedList= ArrayList<CeibroProjectV2>()
     fun setSelectedList(list: MutableList<CeibroProjectV2>) {
+        selectedList.clear()
         selectedList.addAll(list)
         notifyDataSetChanged()
     }

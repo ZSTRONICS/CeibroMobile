@@ -4,25 +4,40 @@ package com.zstronics.ceibro.ui.tasks.v3.bottomsheets.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.groups.SelectGroupFiltersV2Fragment
 import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.users.UsersFiltersFragment
 
 
 private const val NUM_TABS = 2
 
-class UsersBottomSheetTabLayoutAdapter(fragmentManager: FragmentActivity) :
+class UsersBottomSheetTabLayoutAdapter(
+    fragmentManager: FragmentActivity,
+    val viewModel: TasksParentTabV3VM,
+    private val connectionCallback: (ArrayList<AllCeibroConnections.CeibroConnection>)-> Unit,
+    private val userGroupCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
+) :
     FragmentStateAdapter(fragmentManager) {
     override fun getItemCount(): Int = NUM_TABS
 
     override fun createFragment(position: Int): Fragment {
-        val taskDetailParentV2Fragment = UsersFiltersFragment()
-        val SelectGroupV2Fragment = SelectGroupFiltersV2Fragment()
-        val taskDetailFilesV2Fragment = UsersFiltersFragment()
+        val usersFiltersFragment = UsersFiltersFragment(viewModel.selectedConnections)
+        usersFiltersFragment.setConnectionCallBack {
+            connectionCallback.invoke(it)
+        }
+
+        val selectGroupV2Fragment = SelectGroupFiltersV2Fragment(viewModel.selectedGroups)
+
+        selectGroupV2Fragment.setGroupsCallBack {
+            userGroupCallBack.invoke(it)
+        }
 
         return when (position) {
-            0 -> taskDetailParentV2Fragment
-            1 -> SelectGroupV2Fragment
-            else -> taskDetailParentV2Fragment
+            0 -> usersFiltersFragment
+            1 -> selectGroupV2Fragment
+            else -> usersFiltersFragment
         }
     }
 }

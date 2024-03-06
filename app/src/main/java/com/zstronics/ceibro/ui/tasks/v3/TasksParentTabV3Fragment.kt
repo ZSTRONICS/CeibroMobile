@@ -1,7 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v3
 
 import android.content.res.ColorStateList
-import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -19,6 +18,8 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.hideKeyboard
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
@@ -38,8 +39,21 @@ class TasksParentTabV3Fragment :
     override fun onClick(id: Int) {
         when (id) {
             R.id.userFilter -> {
-                chooseUserType(mViewDataBinding.taskTypeText.text.toString().lowercase()) { type ->
-                    mViewDataBinding.taskTypeText.text = type
+                chooseUserType(
+                    viewModel,
+                    { connectionsList ->
+                        viewModel.selectedConnections = connectionsList
+
+                        val size =
+                            viewModel.selectedGroups.size + viewModel.selectedConnections.size
+                        mViewDataBinding.userFilterCounter.text = size.toString()
+                    }
+                ) { groupsList ->
+                    viewModel.selectedGroups = groupsList
+
+                    val size =
+                        viewModel.selectedGroups.size + viewModel.selectedConnections.size
+                    mViewDataBinding.userFilterCounter.text = size.toString()
                 }
             }
 
@@ -51,7 +65,7 @@ class TasksParentTabV3Fragment :
 
             R.id.projectFilter -> {
 
-                chooseProjectFromList(viewModel,) {
+                chooseProjectFromList(viewModel) {
                     mViewDataBinding.projectFilterCounter.text = it
                 }
             }
@@ -229,9 +243,15 @@ class TasksParentTabV3Fragment :
         sheet.show(childFragmentManager, "TaskTypeBottomSheet")
     }
 
-    private fun chooseUserType(type: String, callback: (String) -> Unit) {
-        val sheet = UsersBottomSheet(type) {
-            callback.invoke(it)
+    private fun chooseUserType(
+        viewModel: TasksParentTabV3VM,
+        connections: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit,
+        groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
+    ) {
+        val sheet = UsersBottomSheet(viewModel, {
+            connections.invoke(it)
+        }) {
+            groupsCallBack.invoke(it)
         }
 
         sheet.isCancelable = true
@@ -240,8 +260,8 @@ class TasksParentTabV3Fragment :
 
     private fun chooseTagsType(model: TasksParentTabV3VM, callback: (String) -> Unit) {
         val sheet = TagsBottomSheet(model) {
-            viewModel.oldSelectedTags.postValue(it)
-            callback.invoke(it.size.toString())
+
+            callback.invoke(viewModel.selectedTagsForFilter.size.toString())
         }
 
         sheet.isCancelable = true
