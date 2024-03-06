@@ -208,8 +208,8 @@ class ProjectListBottomSheet(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         if (dialog is BottomSheetDialog) {
-            dialog.behavior.skipCollapsed = true
-            dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            dialog.behavior.skipCollapsed = false
+            dialog.behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         return dialog
     }

@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:gravity="center_vertical"
-            android:text="@string/approval_heading"
+            android:text="@string/confirmer_heading"
             android:textColor="@color/black"
             android:textSize="12sp" />
 
