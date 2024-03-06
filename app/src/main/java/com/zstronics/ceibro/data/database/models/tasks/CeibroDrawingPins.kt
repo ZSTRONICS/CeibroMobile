@@ -63,6 +63,14 @@ data class CeibroDrawingPins(
         val isHiddenByMe: Boolean,
         @SerializedName("isSeenByMe")
         val isSeenByMe: Boolean,
+        @SerializedName("isCanceled")
+        val isCanceled: Boolean,
+        @SerializedName("isTaskInApproval")
+        val isTaskInApproval: Boolean,
+        @SerializedName("isTaskViewer")
+        val isTaskViewer: Boolean,
+        @SerializedName("isTaskConfirmer")
+        val isTaskConfirmer: Boolean,
         @SerializedName("rootState")
         val rootState: String,
         @SerializedName("taskRootState")

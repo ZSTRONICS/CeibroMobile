@@ -160,7 +160,7 @@ class TasksParentTabV3VM @Inject constructor(
             } else {
 
                 val rootOngoingAllTasksDB =
-                    taskDao.getRootOngoingAllTasks(TaskRootStateTags.Ongoing.tagValue)
+                    taskDao.getRootAllTasks(TaskRootStateTags.Ongoing.tagValue)
                         .toMutableList()
 
                 val rootOngoingToMeTasksDB =

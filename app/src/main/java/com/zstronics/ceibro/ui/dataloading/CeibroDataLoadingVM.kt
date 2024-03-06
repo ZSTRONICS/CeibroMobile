@@ -206,49 +206,86 @@ class CeibroDataLoadingVM @Inject constructor(
                     CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(rootOngoingFromMeTasks)
 
 
-                    val toMeNewTask =
-                        allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }
-                            .sortedByDescending { it.updatedAt }.toMutableList()
-                    val toMeOngoingTask =
-                        allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }
-                            .sortedByDescending { it.updatedAt }.toMutableList()
-                    val toMeDoneTask =
-                        allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }
+                    val rootApprovalAllTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
-                    val fromMeUnreadTask =
-                        allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }
-                            .sortedByDescending { it.updatedAt }.toMutableList()
-                    val fromMeOngoingTask =
-                        allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }
-                            .sortedByDescending { it.updatedAt }.toMutableList()
-                    val fromMeDoneTask =
-                        allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }
+                    val rootApprovalInReviewPendingTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                (it.userSubState.equals(TaskRootStateTags.InReview.tagValue, true)) }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
-                    val hiddenCanceledTask =
-                        allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }
-                            .sortedByDescending { it.updatedAt }.toMutableList()
-                    val hiddenOngoingTask =
-                        allTasks.filter { it.hiddenState == TaskStatus.ONGOING.name.lowercase() }
-                            .sortedByDescending { it.updatedAt }.toMutableList()
-                    val hiddenDoneTask =
-                        allTasks.filter { it.hiddenState == TaskStatus.DONE.name.lowercase() }
+                    val rootApprovalToReviewTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                (it.userSubState.equals(TaskRootStateTags.ToReview.tagValue, true)) }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
-                    CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
-                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+                    CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(rootApprovalAllTasks)
+                    CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(rootApprovalInReviewPendingTasks)
+                    CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(rootApprovalToReviewTasks)
 
-                    CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
-                    CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
-                    CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
 
-                    CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
-                        hiddenCanceledTask
-                    )
-                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
+                    val rootClosedAllTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    val rootClosedToMeTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                (it.toMeState.equals(TaskStatus.DONE.name, true)) }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    val rootClosedFromMeTasks =
+                        allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                (it.fromMeState.equals(TaskStatus.DONE.name, true)) }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    CeibroApplication.CookiesManager.rootClosedAllTasks.postValue(rootClosedAllTasks)
+                    CeibroApplication.CookiesManager.rootClosedToMeTasks.postValue(rootClosedToMeTasks)
+                    CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(rootClosedFromMeTasks)
+
+//                    val toMeNewTask =
+//                        allTasks.filter { it.toMeState == TaskStatus.NEW.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//                    val toMeOngoingTask =
+//                        allTasks.filter { it.toMeState == TaskStatus.ONGOING.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//                    val toMeDoneTask =
+//                        allTasks.filter { it.toMeState == TaskStatus.DONE.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//
+//                    val fromMeUnreadTask =
+//                        allTasks.filter { it.fromMeState == TaskStatus.UNREAD.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//                    val fromMeOngoingTask =
+//                        allTasks.filter { it.fromMeState == TaskStatus.ONGOING.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//                    val fromMeDoneTask =
+//                        allTasks.filter { it.fromMeState == TaskStatus.DONE.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//
+//                    val hiddenCanceledTask =
+//                        allTasks.filter { it.hiddenState == TaskStatus.CANCELED.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//                    val hiddenOngoingTask =
+//                        allTasks.filter { it.hiddenState == TaskStatus.ONGOING.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//                    val hiddenDoneTask =
+//                        allTasks.filter { it.hiddenState == TaskStatus.DONE.name.lowercase() }
+//                            .sortedByDescending { it.updatedAt }.toMutableList()
+//
+//                    CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
+//                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+//                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+//
+//                    CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
+//                    CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
+//                    CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
+//
+//                    CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
+//                        hiddenCanceledTask
+//                    )
+//                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+//                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
                     apiSucceedCount++
                     callBack.invoke()

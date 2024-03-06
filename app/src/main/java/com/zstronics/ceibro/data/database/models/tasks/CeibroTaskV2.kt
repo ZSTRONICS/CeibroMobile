@@ -61,7 +61,7 @@ data class CeibroTaskV2(
     @SerializedName("updatedAt")
     var updatedAt: String,
     @SerializedName("isTaskInApproval")
-    val isTaskInApproval: Boolean,
+    var isTaskInApproval: Boolean,
     @SerializedName("files")
     var files: List<TaskFiles> = emptyList(),
     @SerializedName("taskRootState")

@@ -79,18 +79,30 @@ data class EventV2Response(
         @Parcelize
         @Keep
         data class TaskStatesData(
+            @SerializedName("taskRootState")
+            val taskRootState: String,
+            @SerializedName("rootState")
+            val rootState: String,
+            @SerializedName("userSubState")
+            val userSubState: String,
             @SerializedName("creatorState")
             val creatorState: String,
+            @SerializedName("isCanceled")
+            val isCanceled: Boolean,
+            @SerializedName("isHiddenByMe")
+            val isHiddenByMe: Boolean,
+            @SerializedName("isTaskInApproval")
+            val isTaskInApproval: Boolean,
             @SerializedName("isAssignedToMe")
             val isAssignedToMe: Boolean,
             @SerializedName("isCreator")
             val isCreator: Boolean,
-            @SerializedName("isHiddenByMe")
-            val isHiddenByMe: Boolean,
+            @SerializedName("isTaskViewer")
+            val isTaskViewer: Boolean,
+            @SerializedName("isTaskConfirmer")
+            val isTaskConfirmer: Boolean,
             @SerializedName("isSeenByMe")
             val isSeenByMe: Boolean,
-            @SerializedName("userSubState")
-            val userSubState: String,
             @SerializedName("fromMeState")
             val fromMeState: String,
             @SerializedName("toMeState")

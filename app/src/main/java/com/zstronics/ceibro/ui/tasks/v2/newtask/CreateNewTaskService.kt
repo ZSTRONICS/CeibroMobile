@@ -28,6 +28,7 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.database.models.tasks.Events
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
+import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
@@ -256,8 +257,127 @@ class CreateNewTaskService : Service() {
                     taskDao.insertTaskData(newTask)
                     newTask.pinData?.let { drawingPinsDaoInternal.insertSinglePinData(it) }
 
+                    if (newTask.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true)) {
+                        val rootOngoingAllTasks =
+                            CeibroApplication.CookiesManager.rootOngoingAllTasks.value
+                                ?: mutableListOf()
+                        val foundTask = rootOngoingAllTasks.find { it.id == newTask.id }
+                        if (foundTask != null) {
+                            val index = rootOngoingAllTasks.indexOf(foundTask)
+                            rootOngoingAllTasks.removeAt(index)
+                        }
+                        rootOngoingAllTasks.add(newTask)
+                        val allTasks =
+                            rootOngoingAllTasks.sortedByDescending { it.updatedAt }
+                                .toMutableList()
 
-                    if (newTask.isCreator) {
+                        CeibroApplication.CookiesManager.rootOngoingAllTasks.postValue(allTasks)
+
+                        if (newTask.isAssignedToMe) {
+                            val rootOngoingToMeTasks =
+                                allTasks.filter {
+                                    it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                            (it.toMeState.equals(
+                                                TaskStatus.NEW.name,
+                                                true
+                                            ) || it.toMeState.equals(TaskStatus.ONGOING.name, true))
+                                }
+                                    .sortedByDescending { it.updatedAt }.toMutableList()
+
+                            CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(rootOngoingToMeTasks)
+                        }
+                        if (newTask.isCreator) {
+                            val rootOngoingFromMeTasks =
+                                allTasks.filter {
+                                    it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                            (it.fromMeState.equals(
+                                                TaskStatus.UNREAD.name,
+                                                true
+                                            ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
+                                }
+                                    .sortedByDescending { it.updatedAt }.toMutableList()
+
+
+                            CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(
+                                rootOngoingFromMeTasks
+                            )
+                        }
+                    }
+
+                    if (newTask.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true)) {
+                        val rootApprovalAllTasks =
+                            CeibroApplication.CookiesManager.rootApprovalAllTasks.value
+                                ?: mutableListOf()
+                        val foundTask = rootApprovalAllTasks.find { it.id == newTask.id }
+                        if (foundTask != null) {
+                            val index = rootApprovalAllTasks.indexOf(foundTask)
+                            rootApprovalAllTasks.removeAt(index)
+                        }
+                        rootApprovalAllTasks.add(newTask)
+                        val allApprovalTasks =
+                            rootApprovalAllTasks.sortedByDescending { it.updatedAt }
+                                .toMutableList()
+
+                        CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(allApprovalTasks)
+
+
+                        val rootApprovalInReviewPendingTasks =
+                            allApprovalTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                    (it.userSubState.equals(TaskRootStateTags.InReview.tagValue, true)) }
+                                .sortedByDescending { it.updatedAt }.toMutableList()
+
+                        val rootApprovalToReviewTasks =
+                            allApprovalTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                    (it.userSubState.equals(TaskRootStateTags.ToReview.tagValue, true)) }
+                                .sortedByDescending { it.updatedAt }.toMutableList()
+
+                        CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(rootApprovalInReviewPendingTasks)
+                        CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(rootApprovalToReviewTasks)
+                    }
+
+//                if (newTask.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true)) {
+//                    val rootClosedAllTasks =
+//                        CeibroApplication.CookiesManager.rootClosedAllTasks.value
+//                            ?: mutableListOf()
+//                    val foundTask = rootClosedAllTasks.find { it.id == newTask.id }
+//                    if (foundTask != null) {
+//                        val index = rootClosedAllTasks.indexOf(foundTask)
+//                        rootClosedAllTasks.removeAt(index)
+//                    }
+//                    rootClosedAllTasks.add(newTask)
+//                    val allClosedTasks =
+//                        rootClosedAllTasks.sortedByDescending { it.updatedAt }
+//                            .toMutableList()
+//
+//                    CeibroApplication.CookiesManager.rootClosedAllTasks.postValue(allClosedTasks)
+//
+//                    if (newTask.isAssignedToMe) {
+//                        val rootClosedToMeTasks =
+//                            allClosedTasks.filter {
+//                                it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+//                                        (it.toMeState.equals(TaskStatus.DONE.name, true))
+//                            }
+//                                .sortedByDescending { it.updatedAt }.toMutableList()
+//
+//                        CeibroApplication.CookiesManager.rootClosedToMeTasks.postValue(rootClosedToMeTasks)
+//                    }
+//                    if (newTask.isCreator) {
+//                        val rootClosedFromMeTasks =
+//                            allClosedTasks.filter {
+//                                it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+//                                        (it.fromMeState.equals(TaskStatus.DONE.name, true))
+//                            }
+//                                .sortedByDescending { it.updatedAt }.toMutableList()
+//
+//                        CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(
+//                            rootClosedFromMeTasks
+//                        )
+//                    }
+//                }
+
+
+
+                    /*if (newTask.isCreator) {
                         when (newTask.fromMeState) {
                             TaskStatus.UNREAD.name.lowercase() -> {
                                 val allFromMeUnreadTasks =
@@ -355,7 +475,7 @@ class CreateNewTaskService : Service() {
                         }
                         sharedViewModel?.isToMeUnread?.value = true
                         sessionManager.saveToMeUnread(true)
-                    }
+                    }*/
 
                     EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                     EventBus.getDefault().post(LocalEvents.RefreshDrawingPins(newTask.pinData))

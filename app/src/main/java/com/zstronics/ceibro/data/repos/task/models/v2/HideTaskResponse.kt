@@ -30,5 +30,7 @@ data class HideTaskResponse(
     @SerializedName("hiddenState")
     val hiddenState: String,
     @SerializedName("pinData")
-    val pinData: CeibroDrawingPins?
+    val pinData: CeibroDrawingPins?,
+    @SerializedName("newTaskData")
+    val newTaskData: EventV2Response.Data.TaskStatesData
 ) : BaseResponse(), Parcelable

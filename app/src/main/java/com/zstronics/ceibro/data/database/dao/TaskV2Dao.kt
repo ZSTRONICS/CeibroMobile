@@ -32,7 +32,7 @@ interface TaskV2Dao {
     suspend fun getHiddenTasks(hiddenState: String): List<CeibroTaskV2>
 
     @Query("SELECT * FROM tasks_v2_basic WHERE taskRootState = :taskRootState ORDER BY updatedAt DESC")
-    suspend fun getRootOngoingAllTasks(taskRootState: String): List<CeibroTaskV2>
+    suspend fun getRootAllTasks(taskRootState: String): List<CeibroTaskV2>
 
     @Query("SELECT * FROM tasks_v2_basic WHERE id = :taskId")
     suspend fun getTaskByID(taskId: String): CeibroTaskV2?
@@ -47,7 +47,7 @@ interface TaskV2Dao {
     suspend fun updateTaskOnEvent(taskId: String, seenBy: List<String>, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, creatorState: String)
 
     @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, pinData = :pinData WHERE id = :taskId")
-    suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, pinData: CeibroDrawingPins?)
+    suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, pinData: CeibroDrawingPins?, taskRootState: String, isCanceled: Boolean, isTaskInApproval: Boolean, userSubState: String)
 
     @Update
     suspend fun updateTask(task: CeibroTaskV2)
