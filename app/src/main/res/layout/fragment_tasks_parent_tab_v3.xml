@@ -146,6 +146,48 @@
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/approvalType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/round_grey_btn"
+                                android:backgroundTint="@color/appBlue"
+                                android:gravity="center"
+                                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                                android:orientation="horizontal"
+                                android:paddingVertical="@dimen/_5sdp"
+                                android:paddingStart="@dimen/_7sdp"
+                                android:paddingEnd="@dimen/_6sdp">
+
+                                <TextView
+                                    android:id="@+id/approvalTypeText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/inter_medium"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/_2sdp"
+                                    android:text="@string/all"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@id/ivAll"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/ivApprovalAll"
+                                    android:layout_width="21dp"
+                                    android:layout_height="21dp"
+                                    android:layout_marginStart="@dimen/_3sdp"
+                                    android:src="@drawable/icon_drop_down"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@id/tvAll"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:tint="@color/white" />
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="match_parent"
