@@ -45,8 +45,13 @@ class TasksParentTabV3VM @Inject constructor(
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
     val user = sessionManager.getUser().value
-    var _selectedTaskTypeState: MutableLiveData<String> = MutableLiveData(TaskRootStateTags.All.tagValue)
+    var _selectedTaskTypeState: MutableLiveData<String> =
+        MutableLiveData(TaskRootStateTags.All.tagValue)
     var selectedTaskTypeState: LiveData<String> = _selectedTaskTypeState
+
+    var _applyFilter: MutableLiveData<Boolean> = MutableLiveData(false)
+    var applyFilter: LiveData<Boolean> = _applyFilter
+
     var selectedProjectsForFilter = ArrayList<CeibroProjectV2>()
     var selectedTagsForFilter = ArrayList<TopicsResponse.TopicData>()
 
@@ -511,5 +516,32 @@ class TasksParentTabV3VM @Inject constructor(
         val sectionLetter: Char,
         val items: List<TopicsResponse.TopicData>
     )
+
+    fun sortList(list: List<CeibroTaskV2>): MutableList<CeibroTaskV2> {
+//        val sortedTagsList = list.filter { ceibroTaskV2 ->
+//            selectedTagsForFilter.any { tag ->
+//                ceibroTaskV2.tags?.any { it.topic == tag.topic } == true
+//            }
+//        }
+
+        val filteredTasks =
+            list.filter { task ->
+                (task.tags?.any { tag ->
+                    selectedTagsForFilter.any { it.topic == tag.topic }
+                } == true) &&
+                        (selectedProjectsForFilter.any { project ->
+                            project._id == task.project?.id
+                        })
+            }.toMutableList()
+
+//        val sortedProjectList = sortedTagsList.filter { ceibroTaskV2 ->
+//            selectedProjectsForFilter.any { project ->
+//                ceibroTaskV2.tags?.any { it.id == project._id } == true
+//            }
+//        }
+
+        return filteredTasks
+    }
+
 
 }

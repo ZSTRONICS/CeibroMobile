@@ -55,18 +55,61 @@ class TaskV3OngoingFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-        parentViewModel.selectedTaskTypeState.observe(viewLifecycleOwner) { tag ->
+
+
+        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+
+         val taskType=   parentViewModel.selectedTaskTypeState.value
+
             var list: MutableList<CeibroTaskV2> = mutableListOf()
 
-            if (tag.equals(TaskRootStateTags.All.tagValue, true)) {
+            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
                 list = parentViewModel.originalOngoingAllTasks
 
-            } else if (tag.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
                 list = parentViewModel.originalOngoingFromMeTasks
 
-            } else if (tag.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
                 list = parentViewModel.originalOngoingToMeTasks
             }
+
+            list=  parentViewModel.sortList(list)
+
+            if (list.isNotEmpty()) {
+
+                adapter.setList(list, parentViewModel.selectedTaskTypeState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(listOf(), parentViewModel.selectedTaskTypeState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (parentViewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
+            }
+        }
+
+
+        parentViewModel.selectedTaskTypeState.observe(viewLifecycleOwner) { taskType ->
+            var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                list = parentViewModel.originalOngoingAllTasks
+
+            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                list = parentViewModel.originalOngoingFromMeTasks
+
+            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                list = parentViewModel.originalOngoingToMeTasks
+            }
+
+            list=  parentViewModel.sortList(list)
+
             if (list.isNotEmpty()) {
 
                 adapter.setList(list, parentViewModel.selectedTaskTypeState.value ?: "")

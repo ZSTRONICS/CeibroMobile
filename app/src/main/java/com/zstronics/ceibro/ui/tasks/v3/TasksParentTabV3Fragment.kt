@@ -61,19 +61,25 @@ class TasksParentTabV3Fragment :
 
             R.id.taskType -> {
                 chooseTaskType(viewModel.selectedTaskTypeState.value ?: "") { type ->
-                    viewModel._selectedTaskTypeState.value = type
-                    var typeToShow = ""
-                    if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                        typeToShow = "All"
-                    } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                        typeToShow = "From Me"
-                    } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                        typeToShow = "To Me "
+                    if (viewModel._selectedTaskTypeState.value != type) {
+                        viewModel._selectedTaskTypeState.value = type
+                        var typeToShow = ""
+                        if (type.equals(TaskRootStateTags.All.tagValue, true)) {
+                            typeToShow = "All"
+                        } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                            typeToShow = "From Me"
+                        } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                            typeToShow = "To Me "
+                        }
+                        mViewDataBinding.taskTypeText.text = typeToShow
                     }
-                    mViewDataBinding.taskTypeText.text = typeToShow
                 }
             }
 
+            R.id.imgSearchFilter -> {
+
+                viewModel._applyFilter.value=true
+            }
             R.id.projectFilter -> {
 
                 chooseProjectFromList(viewModel) {
