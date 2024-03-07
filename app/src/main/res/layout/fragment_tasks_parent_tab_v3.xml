@@ -106,6 +106,7 @@
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:id="@+id/taskType"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/round_grey_btn"
@@ -148,6 +149,7 @@
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:id="@+id/approvalType"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/round_grey_btn"

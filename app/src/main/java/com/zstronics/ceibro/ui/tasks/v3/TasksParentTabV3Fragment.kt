@@ -22,6 +22,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ApprovalTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
@@ -76,10 +77,28 @@ class TasksParentTabV3Fragment :
                 }
             }
 
+            R.id.approvalType -> {
+                chooseApprovalType(viewModel.selectedTaskTypeApprovalState.value ?: "") { type ->
+                    if (viewModel._selectedTaskTypeApprovalState.value != type) {
+                        viewModel._selectedTaskTypeApprovalState.value = type
+                        var typeToShow = ""
+                        if (type.equals(TaskRootStateTags.All.tagValue, true)) {
+                            typeToShow = "All"
+                        } else if (type.equals(TaskRootStateTags.ToReview.tagValue, true)) {
+                            typeToShow = "To Review"
+                        } else if (type.equals(TaskRootStateTags.InReview.tagValue, true)) {
+                            typeToShow = "Pending"
+                        }
+                        mViewDataBinding.approvalTypeText.text = typeToShow
+                    }
+                }
+            }
+
             R.id.imgSearchFilter -> {
 
-                viewModel._applyFilter.value=true
+                viewModel._applyFilter.value = true
             }
+
             R.id.projectFilter -> {
 
                 chooseProjectFromList(viewModel) {
@@ -153,17 +172,29 @@ class TasksParentTabV3Fragment :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 when (position) {
-//                    0 -> {
-//                        mViewDataBinding.bottomFooterLayout.visibility = View.VISIBLE
-//                    }
-//
-//                    1 -> {
-//                        mViewDataBinding.bottomFooterLayout.visibility = View.GONE
-//                    }
-//
-//                    2 -> {
-//                        mViewDataBinding.bottomFooterLayout.visibility = View.GONE
-//                    }
+                    0 -> {
+                        mViewDataBinding.filterAndSearchLayout.visibility = View.GONE
+                        mViewDataBinding.approvalType.visibility = View.GONE
+                        mViewDataBinding.taskType.visibility = View.GONE
+                    }
+
+                    1 -> {
+                        mViewDataBinding.filterAndSearchLayout.visibility = View.VISIBLE
+                        mViewDataBinding.approvalType.visibility = View.GONE
+                        mViewDataBinding.taskType.visibility = View.VISIBLE
+                    }
+
+                    2 -> {
+                        mViewDataBinding.filterAndSearchLayout.visibility = View.VISIBLE
+                        mViewDataBinding.approvalType.visibility = View.VISIBLE
+                        mViewDataBinding.taskType.visibility = View.GONE
+                    }
+
+                    3 -> {
+                        mViewDataBinding.filterAndSearchLayout.visibility = View.VISIBLE
+                        mViewDataBinding.approvalType.visibility = View.GONE
+                        mViewDataBinding.taskType.visibility = View.VISIBLE
+                    }
                 }
             }
         })
@@ -256,6 +287,15 @@ class TasksParentTabV3Fragment :
 
     private fun chooseTaskType(type: String, callback: (String) -> Unit) {
         val sheet = TaskTypeBottomSheet(type) {
+            callback.invoke(it)
+        }
+
+        sheet.isCancelable = true
+        sheet.show(childFragmentManager, "TaskTypeBottomSheet")
+    }
+
+    private fun chooseApprovalType(type: String, callback: (String) -> Unit) {
+        val sheet = ApprovalTypeBottomSheet(type) {
             callback.invoke(it)
         }
 
