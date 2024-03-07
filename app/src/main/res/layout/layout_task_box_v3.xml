@@ -315,12 +315,13 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/inboxTaskStateIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:scaleType="centerCrop"
                         android:visibility="gone"
+                        android:padding="1dp"
                         app:layout_constraintBottom_toBottomOf="@+id/creatorCard"
                         app:layout_constraintEnd_toEndOf="@+id/inboxTaskTitle"
                         app:layout_constraintTop_toTopOf="@+id/creatorCard" />

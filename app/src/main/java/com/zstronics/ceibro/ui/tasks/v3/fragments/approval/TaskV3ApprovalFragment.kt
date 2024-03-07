@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing
+package com.zstronics.ceibro.ui.tasks.v3.fragments.approval
 
 import android.os.Bundle
 import android.view.View
@@ -9,6 +9,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.databinding.FragmentTaskV3ApprovalBinding
 import com.zstronics.ceibro.databinding.FragmentTaskV3OngoingBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
@@ -22,13 +23,13 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TaskV3OngoingFragment :
-    BaseNavViewModelFragment<FragmentTaskV3OngoingBinding, ITaskV3Ongoing.State, TaskV3OngoingVM>() {
+class TaskV3ApprovalFragment :
+    BaseNavViewModelFragment<FragmentTaskV3ApprovalBinding, ITaskV3Approval.State, TaskV3ApprovalVM>() {
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: TaskV3OngoingVM by viewModels()
+    override val viewModel: TaskV3ApprovalVM by viewModels()
     private lateinit var parentViewModel: TasksParentTabV3VM
-    override val layoutResId: Int = R.layout.fragment_task_v3_ongoing
+    override val layoutResId: Int = R.layout.fragment_task_v3_approval
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
@@ -37,8 +38,8 @@ class TaskV3OngoingFragment :
         }
     }
     companion object {
-        fun newInstance(viewModel: TasksParentTabV3VM): TaskV3OngoingFragment {
-            val fragment = TaskV3OngoingFragment()
+        fun newInstance(viewModel: TasksParentTabV3VM): TaskV3ApprovalFragment {
+            val fragment = TaskV3ApprovalFragment()
             fragment.parentViewModel = viewModel
             return fragment
         }
@@ -54,68 +55,29 @@ class TaskV3OngoingFragment :
 
 
 
-
-        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
-
-         val taskType=   parentViewModel.selectedTaskTypeOngoingState.value
-
+        parentViewModel.selectedTaskTypeApprovalState.observe(viewLifecycleOwner) { taskType ->
             var list: MutableList<CeibroTaskV2> = mutableListOf()
 
             if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalOngoingAllTasks
+                list = parentViewModel.originalApprovalAllTasks
 
-            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingFromMeTasks
+            } else if (taskType.equals(TaskRootStateTags.InReview.tagValue, true)) {
+                list = parentViewModel.originalApprovalInReviewTasks
 
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingToMeTasks
+            } else if (taskType.equals(TaskRootStateTags.ToReview.tagValue, true)) {
+                list = parentViewModel.originalApprovalToReviewTasks
             }
 
             list=  parentViewModel.sortList(list)
 
             if (list.isNotEmpty()) {
 
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                adapter.setList(list, parentViewModel.selectedTaskTypeApprovalState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
             } else {
-                adapter.setList(listOf(), parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                }
-            }
-        }
-
-
-        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
-            var list: MutableList<CeibroTaskV2> = mutableListOf()
-
-            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalOngoingAllTasks
-
-            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingFromMeTasks
-
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingToMeTasks
-            }
-
-            list=  parentViewModel.sortList(list)
-
-            if (list.isNotEmpty()) {
-
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(listOf(), parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                adapter.setList(listOf(), parentViewModel.selectedTaskTypeApprovalState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.GONE
                 if (parentViewModel.isSearchingTasks) {
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
@@ -129,19 +91,19 @@ class TaskV3OngoingFragment :
 
 
 
-        parentViewModel.ongoingAllTasks.observe(viewLifecycleOwner) {
-            if (parentViewModel.selectedTaskTypeOngoingState.value.equals(
+        parentViewModel.approvalAllTasks.observe(viewLifecycleOwner) {
+            if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
                     TaskRootStateTags.All.tagValue,
                     true
                 )
             ) {
                 if (!it.isNullOrEmpty()) {
-                    adapter.setList(it, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                    adapter.setList(it, parentViewModel.selectedTaskTypeApprovalState.value ?: "")
                     mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf(), parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                    adapter.setList(listOf(), parentViewModel.selectedTaskTypeApprovalState.value ?: "")
                     mViewDataBinding.taskOngoingRV.visibility = View.GONE
                     if (parentViewModel.isSearchingTasks) {
                         mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
@@ -155,10 +117,6 @@ class TaskV3OngoingFragment :
         }
 
 
-        if (parentViewModel.isFirstStartOfOngoingFragment) {
-            parentViewModel.isFirstStartOfOngoingFragment = false
-        }
-
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
                 if (data.eventsCount > 30) {
@@ -168,7 +126,21 @@ class TaskV3OngoingFragment :
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
-                    CeibroApplication.CookiesManager.taskDetailRootState = parentViewModel.selectedTaskTypeOngoingState.value
+                    CeibroApplication.CookiesManager.taskDetailRootState = if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
+                            TaskRootStateTags.InReview.tagValue,
+                            true
+                        )
+                    ) {
+                        TaskRootStateTags.ToMe.tagValue
+                    } else if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
+                            TaskRootStateTags.ToReview.tagValue,
+                            true
+                        )
+                    ) {
+                        TaskRootStateTags.FromMe.tagValue
+                    } else {
+                        TaskRootStateTags.All.tagValue
+                    }
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))

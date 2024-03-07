@@ -60,9 +60,9 @@ class TasksParentTabV3Fragment :
             }
 
             R.id.taskType -> {
-                chooseTaskType(viewModel.selectedTaskTypeState.value ?: "") { type ->
-                    if (viewModel._selectedTaskTypeState.value != type) {
-                        viewModel._selectedTaskTypeState.value = type
+                chooseTaskType(viewModel.selectedTaskTypeOngoingState.value ?: "") { type ->
+                    if (viewModel._selectedTaskTypeOngoingState.value != type) {
+                        viewModel._selectedTaskTypeOngoingState.value = type
                         var typeToShow = ""
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                             typeToShow = "All"

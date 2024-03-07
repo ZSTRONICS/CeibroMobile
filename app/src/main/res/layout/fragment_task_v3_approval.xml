@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingState" />
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.approval.TaskV3ApprovalState" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingVM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.approval.TaskV3ApprovalVM" />
 
     </data>
 
