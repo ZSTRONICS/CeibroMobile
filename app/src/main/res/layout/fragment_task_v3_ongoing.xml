@@ -5,13 +5,23 @@
 
     <data>
 
+<!--        <variable-->
+<!--            name="viewState"-->
+<!--            type="com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3State" />-->
+
+<!--        <variable-->
+<!--            name="viewModel"-->
+<!--            type="com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM" />-->
+
+
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3State" />
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingState" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingVM" />
+
     </data>
 
 

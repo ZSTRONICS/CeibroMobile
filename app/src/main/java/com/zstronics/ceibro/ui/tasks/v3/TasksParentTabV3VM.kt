@@ -45,7 +45,8 @@ class TasksParentTabV3VM @Inject constructor(
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
     val user = sessionManager.getUser().value
-    var selectedTaskTypeState: MutableLiveData<String> = MutableLiveData(TaskRootStateTags.All.tagValue)
+    var _selectedTaskTypeState: MutableLiveData<String> = MutableLiveData(TaskRootStateTags.All.tagValue)
+    var selectedTaskTypeState: LiveData<String> = _selectedTaskTypeState
     var selectedProjectsForFilter = ArrayList<CeibroProjectV2>()
     var selectedTagsForFilter = ArrayList<TopicsResponse.TopicData>()
 
@@ -55,16 +56,16 @@ class TasksParentTabV3VM @Inject constructor(
 
 
     private val _ongoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
-    val ongoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingToMeTasks
+    val ongoingToMeTasks: LiveData<MutableList<CeibroTaskV2>> = _ongoingToMeTasks
     var originalOngoingToMeTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
     private val _ongoingFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
-    val ongoingFromMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingFromMeTasks
+    val ongoingFromMeTasks: LiveData<MutableList<CeibroTaskV2>> = _ongoingFromMeTasks
     var originalOngoingFromMeTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
     private val _ongoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
-    val ongoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = _ongoingAllTasks
-    var originalOngoingAllTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val ongoingAllTasks: LiveData<MutableList<CeibroTaskV2>> = _ongoingAllTasks
+    var originalOngoingAllTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
 
     private val _allProjects: MutableLiveData<MutableList<CeibroProjectV2>> =
@@ -142,7 +143,7 @@ class TasksParentTabV3VM @Inject constructor(
             if (rootOngoingAllTasks.isNotEmpty()) {
 
                 if (firstStartOfParentFragment) {
-                    selectedTaskTypeState.value = TaskRootStateTags.All.tagValue
+                    _selectedTaskTypeState.value = TaskRootStateTags.All.tagValue
                     firstStartOfParentFragment = false
                 }
 
@@ -150,7 +151,7 @@ class TasksParentTabV3VM @Inject constructor(
                 _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
                 _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
 
-                originalOngoingAllTasks.postValue(rootOngoingAllTasks)
+                originalOngoingAllTasks = rootOngoingAllTasks
                 originalOngoingToMeTasks = rootOngoingToMeTasks
                 originalOngoingFromMeTasks = rootOngoingFromMeTasks
 
@@ -191,7 +192,7 @@ class TasksParentTabV3VM @Inject constructor(
                 )
 
                 if (firstStartOfParentFragment) {
-                    selectedTaskTypeState.value = TaskRootStateTags.All.tagValue
+                    _selectedTaskTypeState.value = TaskRootStateTags.All.tagValue
                     firstStartOfParentFragment = false
                 }
 
@@ -199,7 +200,7 @@ class TasksParentTabV3VM @Inject constructor(
                 _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
                 _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
 
-                originalOngoingAllTasks.postValue(rootOngoingAllTasks)
+                originalOngoingAllTasks = rootOngoingAllTasks
                 originalOngoingToMeTasks = rootOngoingToMeTasks
                 originalOngoingFromMeTasks = rootOngoingFromMeTasks
 

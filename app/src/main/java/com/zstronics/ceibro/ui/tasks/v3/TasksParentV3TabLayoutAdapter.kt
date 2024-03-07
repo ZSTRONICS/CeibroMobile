@@ -3,18 +3,23 @@ package com.zstronics.ceibro.ui.tasks.v3
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailcomments.TaskDetailCommentsV2Fragment
 import com.zstronics.ceibro.ui.tasks.v2.taskdetailv2.fragments.detailfiles.TaskDetailFilesV2Fragment
 import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment
 
 private const val NUM_TABS = 4
 
-class TasksParentV3TabLayoutAdapter(fragmentManager: FragmentActivity, private val tabIcons: Array<Int>) :
+class TasksParentV3TabLayoutAdapter(
+    fragmentManager: FragmentActivity,
+    private val tabIcons: Array<Int>,
+    private val parentViewModel: TasksParentTabV3VM
+) :
     FragmentStateAdapter(fragmentManager) {
     override fun getItemCount(): Int = NUM_TABS
 
     override fun createFragment(position: Int): Fragment {
-        val ongoingFragment = TaskV3OngoingFragment()
+        val ongoingFragment = TaskV3OngoingFragment.newInstance(parentViewModel)
         val taskDetailCommentsV2Fragment = TaskDetailCommentsV2Fragment()
         val taskDetailFilesV2Fragment = TaskDetailFilesV2Fragment()
 
@@ -29,5 +34,10 @@ class TasksParentV3TabLayoutAdapter(fragmentManager: FragmentActivity, private v
 
     fun getTabIcon(position: Int): Int {
         return tabIcons[position]
+    }
+
+    fun setDefaultTab(viewPager: ViewPager2) {
+        // Set the default tab to index 1 (ongoingFragment2)
+        viewPager.setCurrentItem(1, false)
     }
 }

@@ -37,6 +37,7 @@ class TasksParentTabV3Fragment :
     override val viewModel: TasksParentTabV3VM by viewModels()
     override val layoutResId: Int = R.layout.fragment_tasks_parent_tab_v3
     override fun toolBarVisibility(): Boolean = false
+    var onceTabIndexSet = false
     override fun onClick(id: Int) {
         when (id) {
             R.id.userFilter -> {
@@ -59,8 +60,8 @@ class TasksParentTabV3Fragment :
             }
 
             R.id.taskType -> {
-                chooseTaskType(viewModel.selectedTaskTypeState.value?:"") { type ->
-                    viewModel.selectedTaskTypeState.value = type
+                chooseTaskType(viewModel.selectedTaskTypeState.value ?: "") { type ->
+                    viewModel._selectedTaskTypeState.value = type
                     var typeToShow = ""
                     if (type.equals(TaskRootStateTags.All.tagValue, true)) {
                         typeToShow = "All"
@@ -133,7 +134,7 @@ class TasksParentTabV3Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = TasksParentV3TabLayoutAdapter(requireActivity(), tabIcons)
+        adapter = TasksParentV3TabLayoutAdapter(requireActivity(), tabIcons, viewModel)
         mViewDataBinding.taskViewPager.adapter = adapter
 
         tabTitles.add(getString(R.string.activity_heading))
@@ -240,7 +241,10 @@ class TasksParentTabV3Fragment :
 
         }.attach()
 
-
+        if (onceTabIndexSet.not()) {
+            adapter.setDefaultTab(mViewDataBinding.taskViewPager)
+            onceTabIndexSet = true
+        }
     }
 
 

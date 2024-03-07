@@ -2,6 +2,7 @@ package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
@@ -21,16 +22,24 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class TaskV3OngoingFragment :
-    BaseNavViewModelFragment<FragmentTaskV3OngoingBinding, ITasksParentTabV3.State, TasksParentTabV3VM>() {
+    BaseNavViewModelFragment<FragmentTaskV3OngoingBinding, ITaskV3Ongoing.State, TaskV3OngoingVM>() {
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: TasksParentTabV3VM by viewModels()
+    override val viewModel: TaskV3OngoingVM by viewModels()
+    private lateinit var parentViewModel: TasksParentTabV3VM
     override val layoutResId: Int = R.layout.fragment_task_v3_ongoing
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
 
 
+        }
+    }
+    companion object {
+        fun newInstance(viewModel: TasksParentTabV3VM): TaskV3OngoingFragment {
+            val fragment = TaskV3OngoingFragment()
+            fragment.parentViewModel = viewModel
+            return fragment
         }
     }
 
@@ -43,32 +52,28 @@ class TaskV3OngoingFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-        viewModel.selectedTaskTypeState.observe(viewLifecycleOwner) { tag ->
+        parentViewModel.selectedTaskTypeState.observe(viewLifecycleOwner) { tag ->
             var list: MutableList<CeibroTaskV2> = mutableListOf()
 
             if (tag.equals(TaskRootStateTags.All.tagValue, true)) {
-                viewModel.ongoingToMeTasks.value?.let {
-                    list = it
-                }
+                list = parentViewModel.originalOngoingAllTasks
+
             } else if (tag.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                viewModel.ongoingFromMeTasks.value?.let {
-                    list = it
-                }
+                list = parentViewModel.originalOngoingFromMeTasks
+
             } else if (tag.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                viewModel.ongoingToMeTasks.value?.let {
-                    list = it
-                }
+                list = parentViewModel.originalOngoingToMeTasks
             }
-            if (!list.isNullOrEmpty()) {
+            if (list.isNotEmpty()) {
 
-                adapter.setList(list, viewModel.selectedTaskTypeState.value ?: "")
+                adapter.setList(list, parentViewModel.selectedTaskTypeState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
             } else {
-                adapter.setList(listOf(), viewModel.selectedTaskTypeState.value ?: "")
+                adapter.setList(listOf(), parentViewModel.selectedTaskTypeState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (viewModel.isSearchingTasks) {
+                if (parentViewModel.isSearchingTasks) {
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
                 } else {
@@ -80,32 +85,34 @@ class TaskV3OngoingFragment :
 
 
 
-    viewModel.ongoingAllTasks.observe(viewLifecycleOwner)
-    {
-        if (viewModel.selectedTaskTypeState.value.equals(TaskRootStateTags.All.tagValue, true)) {
-            if (!it.isNullOrEmpty()) {
-                adapter.setList(it, viewModel.selectedTaskTypeState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(listOf(), viewModel.selectedTaskTypeState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (viewModel.isSearchingTasks) {
+        parentViewModel.ongoingAllTasks.observe(viewLifecycleOwner) {
+            if (parentViewModel.selectedTaskTypeState.value.equals(
+                    TaskRootStateTags.All.tagValue,
+                    true
+                )
+            ) {
+                if (!it.isNullOrEmpty()) {
+                    adapter.setList(it, parentViewModel.selectedTaskTypeState.value ?: "")
+                    mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                } else {
+                    adapter.setList(listOf(), parentViewModel.selectedTaskTypeState.value ?: "")
+                    mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                    if (parentViewModel.isSearchingTasks) {
+                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                        mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                    } else {
+                        mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                    }
                 }
             }
         }
-    }
 
 
-    if (viewModel.isFirstStartOfOngoingFragment)
-    {
-        viewModel.isFirstStartOfOngoingFragment = false
+        if (parentViewModel.isFirstStartOfOngoingFragment) {
+            parentViewModel.isFirstStartOfOngoingFragment = false
 //            viewModel.ongoingAllTasks.value?.let {
 //                if (viewModel.selectedTaskTypeState.equals(TaskRootStateTags.All.tagValue, true)) {
 //                    if (it.isNotEmpty()) {
@@ -129,26 +136,26 @@ class TaskV3OngoingFragment :
 //            } ?: kotlin.run {
 //                shortToastNow("All tasks list is empty ${viewModel.ongoingAllTasks.value?.size}")
 //            }
-    }
-
-}
-
-
-@Subscribe(threadMode = ThreadMode.MAIN)
-fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
-    viewModel.loadAllTasks {
+        }
 
     }
-}
 
-override fun onStart() {
-    super.onStart()
-    EventBus.getDefault().register(this)
-}
 
-override fun onStop() {
-    super.onStop()
-    EventBus.getDefault().unregister(this)
-}
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
+        parentViewModel.loadAllTasks {
+
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 
 }
