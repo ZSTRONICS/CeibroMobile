@@ -36,6 +36,7 @@ class TaskV3OngoingFragment :
 
         }
     }
+
     companion object {
         fun newInstance(viewModel: TasksParentTabV3VM): TaskV3OngoingFragment {
             val fragment = TaskV3OngoingFragment()
@@ -56,38 +57,43 @@ class TaskV3OngoingFragment :
 
 
         parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+            if (it == true) {
 
-         val taskType=   parentViewModel.selectedTaskTypeOngoingState.value
+                val taskType = parentViewModel.selectedTaskTypeOngoingState.value
 
-            var list: MutableList<CeibroTaskV2> = mutableListOf()
+                var list: MutableList<CeibroTaskV2> = mutableListOf()
 
-            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalOngoingAllTasks
+                if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                    list = parentViewModel.originalOngoingAllTasks
 
-            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingFromMeTasks
+                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                    list = parentViewModel.originalOngoingFromMeTasks
 
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingToMeTasks
-            }
+                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                    list = parentViewModel.originalOngoingToMeTasks
+                }
 
-            list=  parentViewModel.sortList(list)
+                list = parentViewModel.sortList(list)
 
-            if (list.isNotEmpty()) {
+                if (list.isNotEmpty()) {
 
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(listOf(), parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
+                    adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                    mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                } else {
+                    adapter.setList(
+                        listOf(),
+                        parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                    )
+                    mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                    if (parentViewModel.isSearchingTasks) {
+                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                        mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                    } else {
+                        mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -106,7 +112,7 @@ class TaskV3OngoingFragment :
                 list = parentViewModel.originalOngoingToMeTasks
             }
 
-            list=  parentViewModel.sortList(list)
+            list = parentViewModel.sortList(list)
 
             if (list.isNotEmpty()) {
 
@@ -141,7 +147,10 @@ class TaskV3OngoingFragment :
                     mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
                 } else {
-                    adapter.setList(listOf(), parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                    adapter.setList(
+                        listOf(),
+                        parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                    )
                     mViewDataBinding.taskOngoingRV.visibility = View.GONE
                     if (parentViewModel.isSearchingTasks) {
                         mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
@@ -168,7 +177,8 @@ class TaskV3OngoingFragment :
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
-                    CeibroApplication.CookiesManager.taskDetailRootState = parentViewModel.selectedTaskTypeOngoingState.value
+                    CeibroApplication.CookiesManager.taskDetailRootState =
+                        parentViewModel.selectedTaskTypeOngoingState.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
