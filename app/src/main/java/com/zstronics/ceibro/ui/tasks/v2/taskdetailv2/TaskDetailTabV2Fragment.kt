@@ -416,11 +416,22 @@ class TaskDetailTabV2Fragment :
                         TaskStatus.CANCELED.name,
                         true
                     ) ||
+                    viewModel.rootState.equals(TaskRootStateTags.InReview.tagValue, true) ||
+                    viewModel.rootState.equals(TaskRootStateTags.ToReview.tagValue, true) ||
+                    item.isTaskViewer ||
+                    item.isTaskInApproval ||
                     (viewModel.rootState.equals(TaskRootStateTags.ToMe.tagValue, true) &&
-                            item.isAssignedToMe) ||
+                            (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
+                                TaskStatus.NEW.name,
+                                true
+                            )
+                            ) ||
                     (viewModel.rootState.equals(TaskRootStateTags.All.tagValue, true) &&
-                            item.isAssignedToMe) ||
-                    isViewer != null
+                            (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
+                                TaskStatus.NEW.name,
+                                true
+                            )
+                            )
                 ) {
                     mViewDataBinding.doneBtn.isEnabled = false
                     mViewDataBinding.doneBtn.isClickable = false

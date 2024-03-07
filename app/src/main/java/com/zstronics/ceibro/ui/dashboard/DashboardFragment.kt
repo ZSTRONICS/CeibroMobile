@@ -154,21 +154,24 @@ class DashboardFragment :
             }
             R.id.menuToMeTaskBtn -> {
                 closeDrawerLayout()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    changeSelectedTab(R.id.toMeBtn, false)
-                },50)
+//                Handler(Looper.getMainLooper()).postDelayed({
+//                    changeSelectedTab(R.id.toMeBtn, false)
+//                },50)
+                shortToastNow("Coming soon")
             }
             R.id.menuFromMeTaskBtn -> {
                 closeDrawerLayout()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    changeSelectedTab(R.id.fromMeBtn, false)
-                },50)
+//                Handler(Looper.getMainLooper()).postDelayed({
+//                    changeSelectedTab(R.id.fromMeBtn, false)
+//                },50)
+                shortToastNow("Coming soon")
             }
             R.id.menuHiddenTaskBtn -> {
                 closeDrawerLayout()
 //                Handler(Looper.getMainLooper()).postDelayed({
-                    navigate(R.id.taskHiddenFragment)
+//                    navigate(R.id.taskHiddenFragment)
 //                },20)
+                shortToastNow("Coming soon")
             }
 
             R.id.profileImg -> navigateToProfile()
@@ -1091,7 +1094,7 @@ class DashboardFragment :
         if (result.resultCode == Activity.RESULT_OK) {
             when (result.requestCode) {
                 CREATE_NEW_TASK_CODE -> {
-                    changeSelectedTab(R.id.fromMeBtn, true)
+                    changeSelectedTab(R.id.allTasksBtn, true)
                 }
             }
         }

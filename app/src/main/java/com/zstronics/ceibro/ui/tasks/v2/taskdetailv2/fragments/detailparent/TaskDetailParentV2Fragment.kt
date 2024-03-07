@@ -21,6 +21,7 @@ import com.ahmadullahpk.alldocumentreader.activity.All_Document_Reader_Activity
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.shortToastNow
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroDownloadDrawingV2
@@ -413,9 +414,7 @@ class TaskDetailParentV2Fragment :
         val context = binding.taskDetailStatusName.context
         var state = ""
         state =
-            if (viewModel.rootState == TaskRootStateTags.FromMe.tagValue || ((viewModel.user?.id
-                    ?: "") == task.creator.id)
-            ) {
+            if (task.isCreator || task.isTaskViewer) {
                 task.creatorState
             } else if (viewModel.rootState == TaskRootStateTags.Hidden.tagValue && viewModel.selectedState.equals(
                     TaskStatus.CANCELED.name,
@@ -424,7 +423,7 @@ class TaskDetailParentV2Fragment :
             ) {
                 task.creatorState
             } else {
-                task.assignedToState.find { it.userId == viewModel.user?.id }?.state ?: ""
+                task.userSubState
             }
         val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
             TaskStatus.NEW.name -> Pair(
@@ -440,6 +439,16 @@ class TaskDetailParentV2Fragment :
             TaskStatus.ONGOING.name -> Pair(
                 R.drawable.status_ongoing_filled_more_corners,
                 context.getString(R.string.ongoing_heading)
+            )
+
+            TaskRootStateTags.InReview.tagValue.uppercase() -> Pair(
+                R.drawable.status_in_review_outline,
+                state.toCamelCase()
+            )
+
+            TaskRootStateTags.ToReview.tagValue.uppercase() -> Pair(
+                R.drawable.status_in_review_outline,
+                state.toCamelCase()
             )
 
             TaskStatus.DONE.name -> Pair(

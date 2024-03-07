@@ -90,9 +90,9 @@ class TasksV3Adapter @Inject constructor() :
                             } else {
                                 item.userSubState
                             }
-                        } else if (selectedState.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                        } else if (selectedState.equals(TaskRootStateTags.ToMe.tagValue, true) || selectedState.equals(TaskRootStateTags.InReview.tagValue, true)) {
                             item.userSubState
-                        } else if (selectedState.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                        } else if (selectedState.equals(TaskRootStateTags.FromMe.tagValue, true) || selectedState.equals(TaskRootStateTags.ToReview.tagValue, true)) {
                             item.creatorState
                         } else {
                             "Unknown"
@@ -123,6 +123,24 @@ class TasksV3Adapter @Inject constructor() :
                             Pair(
                                 R.drawable.status_ongoing_outline_new,
                                 R.drawable.status_ongoing_outline
+                            )
+                        }
+
+                        TaskRootStateTags.InReview.tagValue.uppercase() -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_pending)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                            Pair(
+                                R.drawable.status_in_review_outline,
+                                R.drawable.status_in_review_outline
+                            )
+                        }
+
+                        TaskRootStateTags.ToReview.tagValue.uppercase() -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_pending)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                            Pair(
+                                R.drawable.status_in_review_outline,
+                                R.drawable.status_in_review_outline
                             )
                         }
 

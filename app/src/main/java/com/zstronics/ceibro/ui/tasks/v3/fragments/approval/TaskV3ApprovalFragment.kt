@@ -126,21 +126,7 @@ class TaskV3ApprovalFragment :
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
-                    CeibroApplication.CookiesManager.taskDetailRootState = if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
-                            TaskRootStateTags.InReview.tagValue,
-                            true
-                        )
-                    ) {
-                        TaskRootStateTags.ToMe.tagValue
-                    } else if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
-                            TaskRootStateTags.ToReview.tagValue,
-                            true
-                        )
-                    ) {
-                        TaskRootStateTags.FromMe.tagValue
-                    } else {
-                        TaskRootStateTags.All.tagValue
-                    }
+                    CeibroApplication.CookiesManager.taskDetailRootState = parentViewModel.selectedTaskTypeApprovalState.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
