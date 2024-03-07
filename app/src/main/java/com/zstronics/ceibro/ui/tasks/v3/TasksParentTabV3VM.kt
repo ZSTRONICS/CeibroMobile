@@ -83,11 +83,13 @@ class TasksParentTabV3VM @Inject constructor(
     var originalOngoingAllTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
 
-    private val _approvalInReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    private val _approvalInReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
+        MutableLiveData()
     val approvalInReviewTasks: LiveData<MutableList<CeibroTaskV2>> = _approvalInReviewTasks
     var originalApprovalInReviewTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
-    private val _approvalToReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    private val _approvalToReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
+        MutableLiveData()
     val approvalToReviewTasks: LiveData<MutableList<CeibroTaskV2>> = _approvalToReviewTasks
     var originalApprovalToReviewTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
@@ -247,11 +249,11 @@ class TasksParentTabV3VM @Inject constructor(
             }
 
 
-
             val rootApprovalAllTasks =
                 CeibroApplication.CookiesManager.rootApprovalAllTasks.value ?: mutableListOf()
             val rootApprovalInReviewPendingTasks =
-                CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.value ?: mutableListOf()
+                CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.value
+                    ?: mutableListOf()
             val rootApprovalToReviewTasks =
                 CeibroApplication.CookiesManager.rootApprovalToReviewTasks.value ?: mutableListOf()
 
@@ -277,18 +279,28 @@ class TasksParentTabV3VM @Inject constructor(
                         .toMutableList()
 
                 val rootApprovalInReviewPendingTasksDB =
-                    rootApprovalAllTasksDB.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
-                            (it.userSubState.equals(TaskRootStateTags.InReview.tagValue, true)) }
+                    rootApprovalAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                (it.userSubState.equals(TaskRootStateTags.InReview.tagValue, true))
+                    }
                         .sortedByDescending { it.updatedAt }.toMutableList()
 
                 val rootApprovalToReviewTasksDB =
-                    rootApprovalAllTasksDB.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
-                            (it.userSubState.equals(TaskRootStateTags.ToReview.tagValue, true)) }
+                    rootApprovalAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
+                                (it.userSubState.equals(TaskRootStateTags.ToReview.tagValue, true))
+                    }
                         .sortedByDescending { it.updatedAt }.toMutableList()
 
-                CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(rootApprovalAllTasksDB)
-                CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(rootApprovalInReviewPendingTasksDB)
-                CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(rootApprovalToReviewTasksDB)
+                CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(
+                    rootApprovalAllTasksDB
+                )
+                CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(
+                    rootApprovalInReviewPendingTasksDB
+                )
+                CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(
+                    rootApprovalToReviewTasksDB
+                )
 
                 _approvalAllTasks.postValue(rootApprovalAllTasksDB)
                 _approvalInReviewTasks.postValue(rootApprovalInReviewPendingTasksDB)
@@ -304,7 +316,6 @@ class TasksParentTabV3VM @Inject constructor(
                 }
 
             }
-
 
 
             val rootClosedAllTasks =
@@ -336,18 +347,24 @@ class TasksParentTabV3VM @Inject constructor(
                         .toMutableList()
 
                 val rootClosedToMeTasksDB =
-                    rootClosedAllTasksDB.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.toMeState.equals(TaskStatus.DONE.name, true)) }
+                    rootClosedAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                (it.toMeState.equals(TaskStatus.DONE.name, true))
+                    }
                         .sortedByDescending { it.updatedAt }.toMutableList()
 
                 val rootClosedFromMeTasksDB =
-                    rootClosedAllTasksDB.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.fromMeState.equals(TaskStatus.DONE.name, true)) }
+                    rootClosedAllTasksDB.filter {
+                        it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                    }
                         .sortedByDescending { it.updatedAt }.toMutableList()
 
                 CeibroApplication.CookiesManager.rootClosedAllTasks.postValue(rootClosedAllTasksDB)
                 CeibroApplication.CookiesManager.rootClosedToMeTasks.postValue(rootClosedToMeTasksDB)
-                CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(rootClosedFromMeTasksDB)
+                CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(
+                    rootClosedFromMeTasksDB
+                )
 
                 _closedAllTasks.postValue(rootClosedAllTasksDB)
                 _closedToMeTasks.postValue(rootClosedToMeTasksDB)
@@ -671,7 +688,7 @@ class TasksParentTabV3VM @Inject constructor(
 
     fun sortList(list: List<CeibroTaskV2>): MutableList<CeibroTaskV2> {
 
-        if (selectedTagsForFilter.size == 0 && selectedProjectsForFilter.size == 0) {
+        if (isFilterListEmpty()) {
             return list.toMutableList()
         }
 
@@ -687,5 +704,7 @@ class TasksParentTabV3VM @Inject constructor(
         return filteredTasks
     }
 
-
+    private fun isFilterListEmpty(): Boolean {
+        return selectedTagsForFilter.size == 0 && selectedProjectsForFilter.size == 0
+    }
 }
