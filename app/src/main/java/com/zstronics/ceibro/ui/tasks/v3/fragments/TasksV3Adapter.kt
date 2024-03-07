@@ -158,7 +158,10 @@ class TasksV3Adapter @Inject constructor() :
                     inboxTaskUId.setBackgroundResource(inboxTaskUIdBackground)
                     inboxTaskUId.text = item.taskUID
 
-
+                    if (item.isTaskViewer) {
+                        inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_viewer)
+                        inboxTaskStateIcon.visibility = View.VISIBLE
+                    }
 
                     if (item.project != null) {
                         if (item.project.title.isNotEmpty()) {
