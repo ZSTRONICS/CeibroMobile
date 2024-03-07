@@ -156,8 +156,10 @@ class TasksParentTabV3VM @Inject constructor(
     }
 
 
+
     //filters
-    var selectedConnections = ArrayList<AllCeibroConnections.CeibroConnection>()
+    var selectedConnections = Pair(ArrayList<AllCeibroConnections.CeibroConnection>(), ArrayList<String>())
+
     var selectedGroups = ArrayList<CeibroConnectionGroupV2>()
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {

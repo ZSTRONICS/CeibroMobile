@@ -39,7 +39,7 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnections.CeibroConnection>) :
+class UsersFiltersFragment(val connectionSelectedList: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>)) :
     BaseNavViewModelFragment<FragmentSelectUsersBinding, IUsersFilters.State, UsersFiltersVM>() {
 
     override val bindingVariableId = BR.viewModel
@@ -50,14 +50,15 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
     private var searchedContacts = false
     private var searchedRecentContacts = false
     private var fullItemClickedForDone = false
-    private var userConnectionCallBack: ((ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit)? =
+
+    private var userConnectionAndRollCallBack: ((Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>) -> Unit)? =
         null
 
-    fun setConnectionCallBack(connectionCallback: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit) {
-        userConnectionCallBack = connectionCallback
+    fun setConnectionCallBack(userConnectionCallBack: ((Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>) -> Unit)) {
+        this.userConnectionAndRollCallBack = userConnectionCallBack
     }
 
-    private val listOfRoles = ArrayList<String>()
+    private var listOfRoles = ArrayList<String>()
     override fun onClick(id: Int) {
         when (id) {
             R.id.backBtn -> navigateBack()
@@ -76,15 +77,15 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
 
                 val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
                 dataList.addAll(chipAdapter.dataList)
-                userConnectionCallBack?.invoke(dataList)
+                userConnectionAndRollCallBack?.invoke(Pair(dataList, listOfRoles))
             }
 
             R.id.tvClearAll -> {
                 viewModel.selectedContacts.postValue(mutableListOf())
                 viewModel.getAllConnectionsV2 { }
                 val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
-
-                userConnectionCallBack?.invoke(dataList)
+                listOfRoles.clear()
+                userConnectionAndRollCallBack?.invoke(Pair(dataList, listOfRoles))
             }
         }
     }
@@ -101,6 +102,7 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
         mViewDataBinding.selectedContactsRV.adapter = chipAdapter
 
         listOfRoles.clear()
+        listOfRoles = connectionSelectedList.second
 
         sectionList.add(
             0,
@@ -108,7 +110,7 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
         )
         adapter = ConnectionAdapterSectionRecycler(requireContext(), sectionList)
 
-        viewModel.selectedContacts.value = connectionSelectedList
+        viewModel.selectedContacts.value = connectionSelectedList.first
 
         val linearLayoutManager = LinearLayoutManager(requireContext())
         mViewDataBinding.allContactsRV.layoutManager = linearLayoutManager
@@ -154,7 +156,7 @@ class UsersFiltersFragment(val connectionSelectedList: ArrayList<AllCeibroConnec
             if (fullItemClickedForDone) {
                 fullItemClickedForDone = false
                 val selectedContactList = it
-                var selfAssigned = viewState.isSelfAssigned.value
+                val selfAssigned = viewState.isSelfAssigned.value
 
                 if (selectedContactList.isNullOrEmpty() && selfAssigned == false) {
                     shortToastNow("Please select contacts to proceed")

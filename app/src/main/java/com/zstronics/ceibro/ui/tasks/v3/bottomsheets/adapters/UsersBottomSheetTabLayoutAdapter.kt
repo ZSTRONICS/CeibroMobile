@@ -16,7 +16,7 @@ private const val NUM_TABS = 2
 class UsersBottomSheetTabLayoutAdapter(
     fragmentManager: FragmentActivity,
     val viewModel: TasksParentTabV3VM,
-    private val connectionCallback: (ArrayList<AllCeibroConnections.CeibroConnection>)-> Unit,
+    private val userConnectionAndRollCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>)->Unit,
     private val userGroupCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
 ) :
     FragmentStateAdapter(fragmentManager) {
@@ -25,7 +25,7 @@ class UsersBottomSheetTabLayoutAdapter(
     override fun createFragment(position: Int): Fragment {
         val usersFiltersFragment = UsersFiltersFragment(viewModel.selectedConnections)
         usersFiltersFragment.setConnectionCallBack {
-            connectionCallback.invoke(it)
+            userConnectionAndRollCallBack.invoke(it)
         }
 
         val selectGroupV2Fragment = SelectGroupFiltersV2Fragment(viewModel.selectedGroups)
