@@ -78,7 +78,7 @@ class TasksV3Adapter @Inject constructor() :
                 binding.apply {
 
                     taskCard.setOnClickListener {
-//                        itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                        itemClickListener?.invoke(it, absoluteAdapterPosition, item)
                     }
 
                     val taskState =

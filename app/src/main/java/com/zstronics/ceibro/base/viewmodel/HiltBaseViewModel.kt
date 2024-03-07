@@ -1509,6 +1509,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.invitedNumbers
                         }
                         task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
                         task.taskRootState = eventData.newTaskData.taskRootState
                         task.isCanceled = eventData.newTaskData.isCanceled
                         task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
@@ -1582,10 +1583,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                     if (task != null) {
                         task.seenBy = taskSeen.seenBy
+                        task.isSeenByMe = taskSeen.newTaskData.isSeenByMe
 
                         if (taskSeen.creatorStateChanged || taskSeen.stateChanged) {
                             task.updatedAt = taskSeen.taskUpdatedAt
-                            task.creatorState = taskSeen.newTaskData.creatorState
 
                             val foundState =
                                 task.assignedToState.find { it.userId == taskSeen.state.userId }
@@ -1728,7 +1729,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.seenBy = eventData.taskData.seenBy
                         task.hiddenBy = eventData.taskData.hiddenBy
                         task.updatedAt = eventData.taskUpdatedAt
-                        task.creatorState = eventData.newTaskData.creatorState
+
                         val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
                             eventData.taskData.assignedToState.toMutableList()
                         } else {
@@ -1741,6 +1742,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.invitedNumbers
                         }
                         task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
                         task.taskRootState = eventData.newTaskData.taskRootState
                         task.isCanceled = eventData.newTaskData.isCanceled
                         task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
@@ -1954,6 +1956,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.invitedNumbers
                         }
                         task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
                         task.taskRootState = eventData.newTaskData.taskRootState
                         task.isCanceled = eventData.newTaskData.isCanceled
                         task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
@@ -2052,6 +2055,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.invitedNumbers
                         }
                         task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
                         task.taskRootState = eventData.newTaskData.taskRootState
                         task.isCanceled = eventData.newTaskData.isCanceled
                         task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
@@ -2156,6 +2160,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                             task.invitedNumbers
                         }
                         task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
                         task.taskRootState = eventData.newTaskData.taskRootState
                         task.isCanceled = eventData.newTaskData.isCanceled
                         task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
@@ -2270,6 +2275,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     task.seenBy = eventData.taskData.seenBy
                     task.hiddenBy = eventData.taskData.hiddenBy
                     task.updatedAt = eventData.taskUpdatedAt
+                    task.isSeenByMe = eventData.newTaskData.isSeenByMe
                     task.taskRootState = eventData.newTaskData.taskRootState
                     task.isCanceled = eventData.newTaskData.isCanceled
                     task.isHiddenByMe = eventData.newTaskData.isHiddenByMe

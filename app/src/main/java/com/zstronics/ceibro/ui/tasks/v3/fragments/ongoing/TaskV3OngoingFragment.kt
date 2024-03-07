@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
+import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
@@ -15,6 +16,8 @@ import com.zstronics.ceibro.ui.tasks.v3.ITasksParentTabV3
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -113,31 +116,30 @@ class TaskV3OngoingFragment :
 
         if (parentViewModel.isFirstStartOfOngoingFragment) {
             parentViewModel.isFirstStartOfOngoingFragment = false
-//            viewModel.ongoingAllTasks.value?.let {
-//                if (viewModel.selectedTaskTypeState.equals(TaskRootStateTags.All.tagValue, true)) {
-//                    if (it.isNotEmpty()) {
-//                        adapter.setList(it, viewModel.selectedTaskTypeState)
-//                        mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-//                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-//                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-//                    } else {
-//                        adapter.setList(listOf(), viewModel.selectedTaskTypeState)
-//                        mViewDataBinding.taskOngoingRV.visibility = View.GONE
-//                        if (viewModel.isSearchingTasks) {
-//                            mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-//                            mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-//                        } else {
-//                            mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-//                            mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-//                        }
-//                    }
-//
-//                }
-//            } ?: kotlin.run {
-//                shortToastNow("All tasks list is empty ${viewModel.ongoingAllTasks.value?.size}")
-//            }
         }
 
+        adapter.itemClickListener =
+            { _: View, position: Int, data: CeibroTaskV2 ->
+                if (data.eventsCount > 30) {
+                    viewModel.loading(true, "")
+                }
+                viewModel.launch {
+                    val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
+                    CeibroApplication.CookiesManager.taskDataForDetails = data
+                    CeibroApplication.CookiesManager.taskDetailEvents = allEvents
+                    CeibroApplication.CookiesManager.taskDetailRootState = parentViewModel.selectedTaskTypeState.value
+                    CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
+//                    bundle.putParcelable("taskDetail", data)
+//                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
+//                    bundle.putString("rootState", TaskRootStateTags.ToMe.tagValue.lowercase())
+//                    bundle.putString("selectedState", viewModel.selectedState)
+                    withContext(Dispatchers.Main) {
+                        // Update the UI here
+                        navigate(R.id.taskDetailTabV2Fragment)
+                        viewModel.loading(false, "")
+                    }
+                }
+            }
     }
 
 

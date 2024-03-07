@@ -416,10 +416,10 @@ class TaskDetailTabV2Fragment :
                         TaskStatus.CANCELED.name,
                         true
                     ) ||
-                    (viewModel.rootState == TaskRootStateTags.ToMe.tagValue && (item.assignedToState.find { it.userId == viewModel.user?.id }?.state).equals(
-                        TaskStatus.NEW.name,
-                        true
-                    )) ||
+                    (viewModel.rootState.equals(TaskRootStateTags.ToMe.tagValue, true) &&
+                            item.isAssignedToMe) ||
+                    (viewModel.rootState.equals(TaskRootStateTags.All.tagValue, true) &&
+                            item.isAssignedToMe) ||
                     isViewer != null
                 ) {
                     mViewDataBinding.doneBtn.isEnabled = false
@@ -691,7 +691,7 @@ class TaskDetailTabV2Fragment :
         manager?.let {
             downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
                 Handler(Looper.getMainLooper()).postDelayed({
-                    getDownloadProgress(context, downloadId) {tag->
+                    getDownloadProgress(context, downloadId) { tag ->
                         GlobalScope.launch(Dispatchers.Main) {
                             if (tag == "retry" || tag == "failed") {
                                 downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())
@@ -711,7 +711,7 @@ class TaskDetailTabV2Fragment :
             manager?.let {
                 downloadGenericFile(triplet, downloadedDrawingV2Dao, it) { downloadId ->
                     Handler(Looper.getMainLooper()).postDelayed({
-                        getDownloadProgress(context, downloadId) {tag->
+                        getDownloadProgress(context, downloadId) { tag ->
                             GlobalScope.launch(Dispatchers.Main) {
                                 if (tag == "retry" || tag == "failed") {
                                     downloadedDrawingV2Dao.deleteByDrawingID(downloadId.toString())

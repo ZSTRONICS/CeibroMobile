@@ -587,7 +587,9 @@ class DashboardFragment :
         if (!socketEventsInitiated) {
             OneSignal.promptForPushNotifications()
             socketEventsInitiating()
-            changeSelectedTab(R.id.toMeBtn, false)
+
+            //Setting default home tab
+            changeSelectedTab(R.id.allTasksBtn, false)
         }
 
         SearchDataSingleton.searchString = MutableLiveData("")
