@@ -44,18 +44,18 @@ class TasksParentTabV3Fragment :
             R.id.userFilter -> {
                 chooseUserType(
                     viewModel,
-                    { connectionsList ->
-                        viewModel.selectedConnections = connectionsList
+                    { userConnectionAndRoleList ->
+                        viewModel.userConnectionAndRoleList = userConnectionAndRoleList
 
                         val size =
-                            viewModel.selectedGroups.size + viewModel.selectedConnections.size
+                            viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
                         mViewDataBinding.userFilterCounter.text = size.toString()
                     }
                 ) { groupsList ->
                     viewModel.selectedGroups = groupsList
 
                     val size =
-                        viewModel.selectedGroups.size + viewModel.selectedConnections.size
+                        viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
                     mViewDataBinding.userFilterCounter.text = size.toString()
                 }
             }
@@ -305,11 +305,11 @@ class TasksParentTabV3Fragment :
 
     private fun chooseUserType(
         viewModel: TasksParentTabV3VM,
-        connections: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit,
+        userConnectionAndRoleCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>)->Unit,
         groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
     ) {
         val sheet = UsersBottomSheet(viewModel, {
-            connections.invoke(it)
+            userConnectionAndRoleCallBack.invoke(it)
         }) {
             groupsCallBack.invoke(it)
         }

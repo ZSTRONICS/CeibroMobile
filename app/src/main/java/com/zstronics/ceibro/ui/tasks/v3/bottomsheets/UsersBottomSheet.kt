@@ -24,7 +24,7 @@ import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.adapters.UsersBottomSheetTa
 
 class UsersBottomSheet(
     val viewModel: TasksParentTabV3VM,
-    private val connectionscallBack: (ArrayList<AllCeibroConnections.CeibroConnection>) -> Unit,
+    private val userConnectionAndRollCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>) -> Unit,
     private val groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
 ) :
     BottomSheetDialogFragment() {
@@ -59,7 +59,7 @@ class UsersBottomSheet(
         list.add(getString(R.string.users_heading))
         list.add(getString(R.string.users_groups))
         val adapter = UsersBottomSheetTabLayoutAdapter(requireActivity(), viewModel, {
-            connectionscallBack.invoke(it)
+            userConnectionAndRollCallBack.invoke(it)
         }, {
             groupsCallBack.invoke(it)
         })
