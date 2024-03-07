@@ -3,16 +3,13 @@ package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.R
-import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3OngoingBinding
-import com.zstronics.ceibro.ui.dashboard.SharedViewModel
 import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.ui.tasks.v3.ITasksParentTabV3
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
@@ -45,31 +42,70 @@ class TaskV3OngoingFragment :
 
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
-        viewModel.ongoingAllTasks.observe(viewLifecycleOwner) {
-            if (viewModel.selectedTaskTypeState.equals(TaskRootStateTags.All.tagValue, true)) {
-                if (!it.isNullOrEmpty()) {
-                    adapter.setList(it, viewModel.selectedTaskTypeState)
-                    mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                } else {
-                    adapter.setList(listOf(), viewModel.selectedTaskTypeState)
-                    mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                    if (viewModel.isSearchingTasks) {
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                    } else {
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                    }
-                }
 
+        viewModel.selectedTaskTypeState.observe(viewLifecycleOwner) { tag ->
+            var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+            if (tag.equals(TaskRootStateTags.All.tagValue, true)) {
+                viewModel.ongoingToMeTasks.value?.let {
+                    list = it
+                }
+            } else if (tag.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                viewModel.ongoingFromMeTasks.value?.let {
+                    list = it
+                }
+            } else if (tag.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                viewModel.ongoingToMeTasks.value?.let {
+                    list = it
+                }
+            }
+            if (!list.isNullOrEmpty()) {
+
+                adapter.setList(list, viewModel.selectedTaskTypeState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(listOf(), viewModel.selectedTaskTypeState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (viewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
             }
         }
 
 
-        if (viewModel.isFirstStartOfOngoingFragment) {
-            viewModel.isFirstStartOfOngoingFragment = false
+
+    viewModel.ongoingAllTasks.observe(viewLifecycleOwner)
+    {
+        if (viewModel.selectedTaskTypeState.value.equals(TaskRootStateTags.All.tagValue, true)) {
+            if (!it.isNullOrEmpty()) {
+                adapter.setList(it, viewModel.selectedTaskTypeState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(listOf(), viewModel.selectedTaskTypeState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (viewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+
+    if (viewModel.isFirstStartOfOngoingFragment)
+    {
+        viewModel.isFirstStartOfOngoingFragment = false
 //            viewModel.ongoingAllTasks.value?.let {
 //                if (viewModel.selectedTaskTypeState.equals(TaskRootStateTags.All.tagValue, true)) {
 //                    if (it.isNotEmpty()) {
@@ -93,26 +129,26 @@ class TaskV3OngoingFragment :
 //            } ?: kotlin.run {
 //                shortToastNow("All tasks list is empty ${viewModel.ongoingAllTasks.value?.size}")
 //            }
-        }
-
     }
 
+}
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
-        viewModel.loadAllTasks {
 
-        }
+@Subscribe(threadMode = ThreadMode.MAIN)
+fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
+    viewModel.loadAllTasks {
+
     }
+}
 
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
+override fun onStart() {
+    super.onStart()
+    EventBus.getDefault().register(this)
+}
 
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
+override fun onStop() {
+    super.onStop()
+    EventBus.getDefault().unregister(this)
+}
 
 }

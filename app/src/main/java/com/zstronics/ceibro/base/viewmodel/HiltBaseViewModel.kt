@@ -2364,23 +2364,23 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(hideData.pinData)
                     }
 
-                    val toMeOngoingTask =
-                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val toMeDoneTask =
-                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//                    val toMeOngoingTask =
+//                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val toMeDoneTask =
+//                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//
+//                    val hiddenOngoingTask =
+//                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val hiddenDoneTask =
+//                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//
+//                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+//                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+//
+//                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+//                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
-                    val hiddenOngoingTask =
-                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val hiddenDoneTask =
-                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-
-                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
-
-                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
-
-//                    updateAllTasksLists(taskDao)
+                    updateAllTasksLists(taskDao)
                 }.join()
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                 EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(hideData.pinData))
@@ -2423,23 +2423,23 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(hideData.pinData)
                     }
 
-                    val toMeOngoingTask =
-                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val toMeDoneTask =
-                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//                    val toMeOngoingTask =
+//                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val toMeDoneTask =
+//                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//
+//                    val hiddenOngoingTask =
+//                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val hiddenDoneTask =
+//                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//
+//                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
+//                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
+//
+//                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
+//                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
-                    val hiddenOngoingTask =
-                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val hiddenDoneTask =
-                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-
-                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
-
-                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
-
-//                    updateAllTasksLists(taskDao)
+                    updateAllTasksLists(taskDao)
 
                 }.join()
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())

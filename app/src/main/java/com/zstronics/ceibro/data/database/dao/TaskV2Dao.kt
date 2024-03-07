@@ -46,7 +46,7 @@ interface TaskV2Dao {
     @Query("UPDATE tasks_v2_basic SET seenBy = :seenBy, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, creatorState = :creatorState WHERE id = :taskId")
     suspend fun updateTaskOnEvent(taskId: String, seenBy: List<String>, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, creatorState: String)
 
-    @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, pinData = :pinData WHERE id = :taskId")
+    @Query("UPDATE tasks_v2_basic SET isHiddenByMe = :isHiddenByMe, hiddenBy = :hiddenBy, updatedAt = :updatedAt, toMeState = :toMeState, fromMeState = :fromMeState, hiddenState = :hiddenState, pinData = :pinData, taskRootState = :taskRootState, isCanceled = :isCanceled, isTaskInApproval = :isTaskInApproval, userSubState = :userSubState WHERE id = :taskId")
     suspend fun updateTaskHideUnHide(taskId: String, isHiddenByMe: Boolean, hiddenBy: List<String>, updatedAt: String, toMeState: String, fromMeState: String, hiddenState: String, pinData: CeibroDrawingPins?, taskRootState: String, isCanceled: Boolean, isTaskInApproval: Boolean, userSubState: String)
 
     @Update

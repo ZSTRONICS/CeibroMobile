@@ -45,7 +45,7 @@ class TasksParentTabV3VM @Inject constructor(
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
     val user = sessionManager.getUser().value
-    var selectedTaskTypeState: String = TaskRootStateTags.All.tagValue
+    var selectedTaskTypeState: MutableLiveData<String> = MutableLiveData(TaskRootStateTags.All.tagValue)
     var selectedProjectsForFilter = ArrayList<CeibroProjectV2>()
     var selectedTagsForFilter = ArrayList<TopicsResponse.TopicData>()
 
@@ -104,8 +104,6 @@ class TasksParentTabV3VM @Inject constructor(
     var originalRecentTopics = listOf<TopicsResponse.TopicData>()
     var oldSelectedTags: MutableLiveData<MutableList<TopicsResponse.TopicData>> = MutableLiveData()
 
-    var selectedTaskType=TaskRootStateTags.All.tagValue
-
     init {
         if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
             sessionManager.setUser()
@@ -144,7 +142,7 @@ class TasksParentTabV3VM @Inject constructor(
             if (rootOngoingAllTasks.isNotEmpty()) {
 
                 if (firstStartOfParentFragment) {
-                    selectedTaskTypeState = TaskRootStateTags.All.tagValue
+                    selectedTaskTypeState.value = TaskRootStateTags.All.tagValue
                     firstStartOfParentFragment = false
                 }
 
@@ -193,7 +191,7 @@ class TasksParentTabV3VM @Inject constructor(
                 )
 
                 if (firstStartOfParentFragment) {
-                    selectedTaskTypeState = TaskRootStateTags.All.tagValue
+                    selectedTaskTypeState.value = TaskRootStateTags.All.tagValue
                     firstStartOfParentFragment = false
                 }
 
