@@ -156,9 +156,9 @@ class TasksParentTabV3VM @Inject constructor(
     }
 
 
-
     //filters
-    var userConnectionAndRoleList = Pair(ArrayList<AllCeibroConnections.CeibroConnection>(), ArrayList<String>())
+    var userConnectionAndRoleList =
+        Pair(ArrayList<AllCeibroConnections.CeibroConnection>(), ArrayList<String>())
 
     var selectedGroups = ArrayList<CeibroConnectionGroupV2>()
 
@@ -694,19 +694,89 @@ class TasksParentTabV3VM @Inject constructor(
             return list.toMutableList()
         }
 
-        val filteredTasks =
+        var filteredTasks =
             list.filter { task ->
-                (task.tags?.any { tag -> (selectedTagsForFilter.any { it.topic == tag.topic }) || selectedTagsForFilter.size == 0 } == true) &&
-                        ((selectedProjectsForFilter.any { project ->
-                            project._id == task.project?.id
-                        }) || selectedProjectsForFilter.size == 0)
+                ((task.tags?.any { tag -> (selectedTagsForFilter.any { it.topic == tag.topic }) || selectedTagsForFilter.size == 0 } == true)
+                        && ((selectedProjectsForFilter.any { project -> project._id == task.project?.id }) || selectedProjectsForFilter.size == 0))
             }.toMutableList()
 
 
+        filteredTasks = sortUsersList(filteredTasks)
         return filteredTasks
     }
 
+
+    private fun sortUsersList(list: List<CeibroTaskV2>): MutableList<CeibroTaskV2> {
+        val sortedList = ArrayList<CeibroTaskV2>()
+        sortedList.clear()
+
+        val roles = userConnectionAndRoleList.second
+        val connection = userConnectionAndRoleList.first
+
+
+        if (roles.size == 0 || connection.size == 0) {
+
+            return list.toMutableList()
+        }
+
+
+        list.forEach { task ->
+            roles.forEach { role ->
+                when (role) {
+                    "Confirmer" -> {
+                        if (connection.any { it.phoneNumber == task.confirmer?.phoneNumber }) {
+                            sortedList.add(task)
+                        }
+                    }
+
+                    "Assignee" -> {
+                        if (task.assignedToState.any { assignee -> connection.any { con -> con.phoneNumber == assignee.phoneNumber } }) {
+                            if (!sortedList.contains(task)) {
+                                sortedList.add(task)
+                            }
+                        }
+                        if (task.invitedNumbers.any { invitee -> connection.any { con -> con.phoneNumber == invitee.phoneNumber } }) {
+                            if (!sortedList.contains(task)) {
+                                sortedList.add(task)
+                            }
+                        }
+                    }
+
+                    "Viewer" -> {
+                        task.viewer?.let { viewerList ->
+                            if (viewerList.any { viewer -> connection.any { con -> con.phoneNumber == viewer.phoneNumber } }) {
+                                if (!sortedList.contains(task)) {
+                                    sortedList.add(task)
+                                }
+                            }
+                        }
+
+                    }
+
+                    "Creator" -> {
+                        task.confirmer?.let { confirmer ->
+                            if (connection.any { con -> con.phoneNumber == confirmer.phoneNumber }) {
+                                if (!sortedList.contains(task)) {
+                                    sortedList.add(task)
+                                }
+                            }
+                        }
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+        }
+
+        sortedList.distinct().toMutableList()
+        return sortedList
+    }
+
+
     private fun isFilterListEmpty(): Boolean {
         return selectedTagsForFilter.size == 0 && selectedProjectsForFilter.size == 0
+                && userConnectionAndRoleList.first.size == 0 && userConnectionAndRoleList.second.size == 0
     }
 }
