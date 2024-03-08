@@ -14,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskInfoBinding
@@ -71,6 +72,16 @@ class TaskInfoBottomSheet(_rootState: String, _selectedState: String, _userId: S
                 TaskStatus.ONGOING.name -> Pair(
                     R.drawable.status_ongoing_filled_more_corners,
                     requireContext().getString(R.string.ongoing_heading)
+                )
+
+                TaskRootStateTags.InReview.tagValue.uppercase() -> Pair(
+                    R.drawable.status_in_review_outline,
+                    state.toCamelCase()
+                )
+
+                TaskRootStateTags.ToReview.tagValue.uppercase() -> Pair(
+                    R.drawable.status_in_review_outline,
+                    state.toCamelCase()
                 )
 
                 TaskStatus.DONE.name -> Pair(
