@@ -28,7 +28,13 @@ class UsersBottomSheetTabLayoutAdapter(
             userConnectionAndRoleCallBack.invoke(it)
         }
 
-        val selectGroupV2Fragment = SelectGroupFiltersV2Fragment(viewModel.selectedGroups)
+
+        var list = ArrayList<CeibroConnectionGroupV2>()
+        viewModel.selectedGroups.forEach {
+        list.add(it.copy())
+
+        }
+        val selectGroupV2Fragment = SelectGroupFiltersV2Fragment(list)
 
         selectGroupV2Fragment.setGroupsCallBack {
             userGroupCallBack.invoke(it)
