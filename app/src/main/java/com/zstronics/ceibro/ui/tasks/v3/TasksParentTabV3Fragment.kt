@@ -62,7 +62,7 @@ class TasksParentTabV3Fragment :
 
             R.id.taskType -> {
                 chooseTaskType(viewModel.selectedTaskTypeOngoingState.value ?: "") { type ->
-                    if (viewModel._selectedTaskTypeOngoingState.value != type) {
+                    if (viewModel.selectedTaskTypeOngoingState.value != type) {
                         viewModel._selectedTaskTypeOngoingState.value = type
                         var typeToShow = ""
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
@@ -77,9 +77,26 @@ class TasksParentTabV3Fragment :
                 }
             }
 
+            R.id.closedType -> {
+                chooseTaskType(viewModel.selectedTaskTypeClosedState.value ?: "") { type ->
+                    if (viewModel.selectedTaskTypeClosedState.value != type) {
+                        viewModel._selectedTaskTypeClosedState.value = type
+                        var typeToShow = ""
+                        if (type.equals(TaskRootStateTags.All.tagValue, true)) {
+                            typeToShow = "All"
+                        } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                            typeToShow = "From Me"
+                        } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                            typeToShow = "To Me "
+                        }
+                        mViewDataBinding.closedTypeText.text = typeToShow
+                    }
+                }
+            }
+
             R.id.approvalType -> {
                 chooseApprovalType(viewModel.selectedTaskTypeApprovalState.value ?: "") { type ->
-                    if (viewModel._selectedTaskTypeApprovalState.value != type) {
+                    if (viewModel.selectedTaskTypeApprovalState.value != type) {
                         viewModel._selectedTaskTypeApprovalState.value = type
                         var typeToShow = ""
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
@@ -181,19 +198,22 @@ class TasksParentTabV3Fragment :
                     1 -> {
                         mViewDataBinding.filterAndSearchLayout.visibility = View.VISIBLE
                         mViewDataBinding.approvalType.visibility = View.GONE
+                        mViewDataBinding.closedType.visibility = View.GONE
                         mViewDataBinding.taskType.visibility = View.VISIBLE
                     }
 
                     2 -> {
                         mViewDataBinding.filterAndSearchLayout.visibility = View.VISIBLE
                         mViewDataBinding.approvalType.visibility = View.VISIBLE
+                        mViewDataBinding.closedType.visibility = View.GONE
                         mViewDataBinding.taskType.visibility = View.GONE
                     }
 
                     3 -> {
                         mViewDataBinding.filterAndSearchLayout.visibility = View.VISIBLE
                         mViewDataBinding.approvalType.visibility = View.GONE
-                        mViewDataBinding.taskType.visibility = View.VISIBLE
+                        mViewDataBinding.closedType.visibility = View.VISIBLE
+                        mViewDataBinding.taskType.visibility = View.GONE
                     }
                 }
             }

@@ -6,6 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.zstronics.ceibro.ui.inbox.InboxFragment
 import com.zstronics.ceibro.ui.tasks.v3.fragments.approval.TaskV3ApprovalFragment
+import com.zstronics.ceibro.ui.tasks.v3.fragments.closed.TaskV3ClosedFragment
 import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment
 
 private const val NUM_TABS = 4
@@ -22,12 +23,13 @@ class TasksParentV3TabLayoutAdapter(
         val inboxFragment = InboxFragment()
         val ongoingFragment = TaskV3OngoingFragment.newInstance(parentViewModel)
         val approvalFragment = TaskV3ApprovalFragment.newInstance(parentViewModel)
+        val closedFragment = TaskV3ClosedFragment.newInstance(parentViewModel)
 
         return when (position) {
             0 -> inboxFragment
             1 -> ongoingFragment
             2 -> approvalFragment
-            3 -> approvalFragment
+            3 -> closedFragment
             else -> ongoingFragment
         }
     }

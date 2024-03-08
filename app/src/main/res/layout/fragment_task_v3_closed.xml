@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewState"
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.closed.TaskV3ClosedState" />
+
+        <variable
+            name="viewModel"
+            type="com.zstronics.ceibro.ui.tasks.v3.fragments.closed.TaskV3ClosedVM" />
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/taskOngoingRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:itemCount="5"
+            tools:listitem="@layout/layout_task_box_v3" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/searchWithNoResultLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivNoTaskFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_no_task_found"
+                app:layout_constraintBottom_toTopOf="@+id/tvNoTaskFound"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tvNoTaskFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center_horizontal"
+                android:text="@string/no_result_found"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/tvNoTaskFoundDetail"
+                app:layout_constraintEnd_toEndOf="@+id/ivNoTaskFound"
+                app:layout_constraintStart_toStartOf="@+id/ivNoTaskFound"
+                app:layout_constraintTop_toBottomOf="@+id/ivNoTaskFound" />
+
+            <TextView
+
+                android:id="@+id/tvNoTaskFoundDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center_horizontal"
+                android:text="@string/we_cannot_find_the_task_you_are_searching_for_may_be_a_little_spelling_mistake"
+                android:textSize="13sp"
+                android:textColor="@color/appGrey3"
+                app:layout_constraintBottom_toTopOf="@+id/goBack"
+                app:layout_constraintEnd_toEndOf="@+id/ivNoTaskFound"
+                app:layout_constraintStart_toStartOf="@+id/ivNoTaskFound"
+                app:layout_constraintTop_toBottomOf="@+id/tvNoTaskFound" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/goBack"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/cancel_button"
+                android:backgroundTint="@color/appBlue"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0.01"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:text="Go back to view all"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvNoTaskFoundDetail" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noTaskInAllLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/noTaskInAllImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_no_task_found"
+                app:layout_constraintBottom_toTopOf="@+id/noTaskInAllHeading"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/noTaskInAllHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center_horizontal"
+                android:text="@string/no_task_exists"
+                android:textSize="14.5sp"
+                app:layout_constraintBottom_toTopOf="@+id/noTaskInAllDetail"
+                app:layout_constraintEnd_toEndOf="@+id/noTaskInAllImg"
+                app:layout_constraintStart_toStartOf="@+id/noTaskInAllImg"
+                app:layout_constraintTop_toBottomOf="@+id/noTaskInAllImg" />
+
+            <TextView
+                android:id="@+id/noTaskInAllDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center_horizontal"
+                android:text="@string/no_task_in_all_description"
+                android:textSize="13sp"
+                android:textColor="@color/appGrey3"
+                app:layout_constraintBottom_toTopOf="@+id/noTaskInAllBtn"
+                app:layout_constraintEnd_toEndOf="@+id/noTaskInAllImg"
+                app:layout_constraintStart_toStartOf="@+id/noTaskInAllImg"
+                app:layout_constraintTop_toBottomOf="@+id/noTaskInAllHeading" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/noTaskInAllBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/cancel_button"
+                android:backgroundTint="@color/appBlue"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:fontFamily="@font/inter_medium"
+                android:letterSpacing="0.01"
+                android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
+                android:text="Go back to view all"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/noTaskInAllDetail" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
