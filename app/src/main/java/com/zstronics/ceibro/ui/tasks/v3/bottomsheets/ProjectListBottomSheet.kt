@@ -47,15 +47,17 @@ class ProjectListBottomSheet(
         return mViewDataBinding.root
     }
 
-    init {
-        viewModel.getAllProjects()
-        viewModel.getFavoriteProjects()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.selectedProjects = viewModel.selectedProjectsForFilter
+        this.selectedProjects.clear()
+
+        viewModel.selectedProjectsForFilter.forEach {
+            selectedProjects.add(it.copy()) // Creates a new instance using the copy method
+        }
+
+
 
         mViewDataBinding.backBtn.setOnClick {
             dismiss()
@@ -68,7 +70,7 @@ class ProjectListBottomSheet(
             selectedProjects.clear()
             viewModel.selectedProjectsForFilter = selectedProjects
             sectionedAdapter.setSelectedList(selectedProjects)
-          //  callback.invoke(selectedProjects)
+            callback.invoke(selectedProjects)
         }
         mViewDataBinding.btnApply.setOnClickListener {
             viewModel.selectedProjectsForFilter = selectedProjects

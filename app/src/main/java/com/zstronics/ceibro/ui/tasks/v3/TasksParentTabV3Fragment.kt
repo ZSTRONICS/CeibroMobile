@@ -380,7 +380,7 @@ class TasksParentTabV3Fragment :
             callback.invoke(it.size.toString())
         }
 
-        sheet.isCancelable = true
+        sheet.isCancelable = false
         sheet.show(childFragmentManager, "ProjectListBottomSheet")
     }
 
