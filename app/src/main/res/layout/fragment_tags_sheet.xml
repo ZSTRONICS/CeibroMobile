@@ -88,9 +88,9 @@
                     android:textColor="@color/appBlue"
                     android:textSize="14sp"
                     android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/locationProjectSearchBar"
+                    app:layout_constraintBottom_toBottomOf="@+id/tagSearchBar"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/locationProjectSearchBar" />
+                    app:layout_constraintTop_toTopOf="@+id/tagSearchBar" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
