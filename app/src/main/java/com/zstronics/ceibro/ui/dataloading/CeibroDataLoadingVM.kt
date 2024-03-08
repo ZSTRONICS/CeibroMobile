@@ -293,38 +293,40 @@ class CeibroDataLoadingVM @Inject constructor(
 
                 is ApiResponse.Error -> {
                     println("DataLoading-Tasks Data error ${response.error.message}")
-                    val newTasks =
-                        taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
-                    val ongoingTasks =
-                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val doneTasks =
-                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                    val fromMeUnreadTasks =
-                        taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
-                    val fromMeOngoingTasks =
-                        taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val fromMeDoneTasks =
-                        taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-                    val hiddenCanceledTasks =
-                        taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
-                    val hiddenOngoingTasks =
-                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-                    val hiddenDoneTasks =
-                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+                    updateAllTasksLists(taskDao)
 
-                    CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
-                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
-                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
-
-                    CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
-                    CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
-                    CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
-
-                    CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
-                        hiddenCanceledTasks
-                    )
-                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
-                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
+//                    val newTasks =
+//                        taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
+//                    val ongoingTasks =
+//                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val doneTasks =
+//                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//                    val fromMeUnreadTasks =
+//                        taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
+//                    val fromMeOngoingTasks =
+//                        taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val fromMeDoneTasks =
+//                        taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//                    val hiddenCanceledTasks =
+//                        taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+//                    val hiddenOngoingTasks =
+//                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
+//                    val hiddenDoneTasks =
+//                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
+//
+//                    CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
+//                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
+//                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
+//
+//                    CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTasks)
+//                    CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTasks)
+//                    CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTasks)
+//
+//                    CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
+//                        hiddenCanceledTasks
+//                    )
+//                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTasks)
+//                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTasks)
 
                     apiSucceedCount++
                     callBack.invoke()

@@ -348,7 +348,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
     }
 
 
-    private suspend fun updateAllTasksLists(taskDao: TaskV2Dao): Boolean {
+    suspend fun updateAllTasksLists(taskDao: TaskV2Dao): Boolean {
         GlobalScope.launch {
 
             //Ongoing List
