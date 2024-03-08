@@ -9,7 +9,7 @@ import com.zstronics.ceibro.data.database.models.tasks.TaskMemberDetail
 class AssignedToStateListTypeConverter {
 
     @TypeConverter
-    fun fromString(value: String): List<AssignedToState>? {
+    fun fromString(value: String?): List<AssignedToState>? {
         val type = object : TypeToken<List<AssignedToState>?>() {}.type
         return Gson().fromJson(value, type)
     }

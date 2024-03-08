@@ -60,8 +60,10 @@ class UsersBottomSheet(
         list.add(getString(R.string.users_groups))
         val adapter = UsersBottomSheetTabLayoutAdapter(requireActivity(), viewModel, {
             userConnectionAndRollCallBack.invoke(it)
+            dismiss()
         }, {
             groupsCallBack.invoke(it)
+            dismiss()
         })
         mViewDataBinding.viewPager.adapter = adapter
 

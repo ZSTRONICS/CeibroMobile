@@ -51,6 +51,7 @@ class TasksParentTabV3Fragment :
                         val size =
                             viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
                         mViewDataBinding.userFilterCounter.text = size.toString()
+                        viewModel.userFilterCounter = size.toString()
                     }
                 ) { groupsList ->
                     viewModel.selectedGroups = groupsList
@@ -58,6 +59,8 @@ class TasksParentTabV3Fragment :
                     val size =
                         viewModel.selectedGroups.size + viewModel.userConnectionAndRoleList.first.size
                     mViewDataBinding.userFilterCounter.text = size.toString()
+                    viewModel.userFilterCounter = size.toString()
+
                 }
             }
 
@@ -65,15 +68,14 @@ class TasksParentTabV3Fragment :
                 chooseTaskType(viewModel.selectedTaskTypeOngoingState.value ?: "") { type ->
                     if (viewModel.selectedTaskTypeOngoingState.value != type) {
                         viewModel._selectedTaskTypeOngoingState.value = type
-                        var typeToShow = ""
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            typeToShow = "All"
+                            viewModel.typeToShowOngoing = "All"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            typeToShow = "From Me"
+                            viewModel.typeToShowOngoing = "From Me"
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            typeToShow = "To Me "
+                            viewModel.typeToShowOngoing = "To Me "
                         }
-                        mViewDataBinding.taskTypeText.text = typeToShow
+                        mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
                     }
                 }
             }
@@ -82,15 +84,14 @@ class TasksParentTabV3Fragment :
                 chooseTaskType(viewModel.selectedTaskTypeClosedState.value ?: "") { type ->
                     if (viewModel.selectedTaskTypeClosedState.value != type) {
                         viewModel._selectedTaskTypeClosedState.value = type
-                        var typeToShow = ""
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            typeToShow = "All"
+                            viewModel.typeToShowClosed = "All"
                         } else if (type.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                            typeToShow = "From Me"
+                            viewModel.typeToShowClosed = "From Me"
                         } else if (type.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                            typeToShow = "To Me "
+                            viewModel.typeToShowClosed = "To Me "
                         }
-                        mViewDataBinding.closedTypeText.text = typeToShow
+                        mViewDataBinding.closedTypeText.text = viewModel.typeToShowClosed
                     }
                 }
             }
@@ -99,15 +100,15 @@ class TasksParentTabV3Fragment :
                 chooseApprovalType(viewModel.selectedTaskTypeApprovalState.value ?: "") { type ->
                     if (viewModel.selectedTaskTypeApprovalState.value != type) {
                         viewModel._selectedTaskTypeApprovalState.value = type
-                        var typeToShow = ""
+
                         if (type.equals(TaskRootStateTags.All.tagValue, true)) {
-                            typeToShow = "All"
+                            viewModel.typeToShowApproval = "All"
                         } else if (type.equals(TaskRootStateTags.ToReview.tagValue, true)) {
-                            typeToShow = "To Review"
+                            viewModel.typeToShowApproval = "To Review"
                         } else if (type.equals(TaskRootStateTags.InReview.tagValue, true)) {
-                            typeToShow = "Pending"
+                            viewModel.typeToShowApproval = "Pending"
                         }
-                        mViewDataBinding.approvalTypeText.text = typeToShow
+                        mViewDataBinding.approvalTypeText.text = viewModel.typeToShowApproval
                     }
                 }
             }
@@ -121,6 +122,7 @@ class TasksParentTabV3Fragment :
 
                 chooseProjectFromList(viewModel) {
                     mViewDataBinding.projectFilterCounter.text = it
+                    viewModel.projectFilterCounter = it
                 }
             }
 
@@ -128,6 +130,7 @@ class TasksParentTabV3Fragment :
 
                 chooseTagsType(viewModel) {
                     mViewDataBinding.tagFilterCounter.text = it
+                    viewModel.tagFilterCounter = it
                 }
             }
 
@@ -409,5 +412,15 @@ class TasksParentTabV3Fragment :
 //        EventBus.getDefault().unregister(this)
 //    }
 
+    override fun onResume() {
+        super.onResume()
+        mViewDataBinding.taskTypeText.text = viewModel.typeToShowOngoing
+        mViewDataBinding.closedTypeText.text = viewModel.typeToShowClosed
+        mViewDataBinding.approvalTypeText.text = viewModel.typeToShowApproval
 
+        mViewDataBinding.userFilterCounter.text = viewModel.userFilterCounter
+        mViewDataBinding.tagFilterCounter.text = viewModel.tagFilterCounter
+        mViewDataBinding.projectFilterCounter.text = viewModel.projectFilterCounter
+
+    }
 }

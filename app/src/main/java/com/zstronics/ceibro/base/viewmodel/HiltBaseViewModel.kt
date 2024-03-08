@@ -2183,14 +2183,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                     updatedTask = task
 
-                    if (eventData.newTaskData.isAssignedToMe) {
-                        sharedViewModel?.isToMeUnread?.value = true
-                        sessionManager.saveToMeUnread(true)
-                    }
-                    if (eventData.newTaskData.isCreator) {
-                        sharedViewModel?.isFromMeUnread?.value = true
-                        sessionManager.saveFromMeUnread(true)
-                    }
 
                     updateAllTasksLists(taskDao)
 

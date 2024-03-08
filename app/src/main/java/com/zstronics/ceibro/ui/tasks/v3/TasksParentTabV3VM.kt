@@ -48,6 +48,15 @@ class TasksParentTabV3VM @Inject constructor(
     private val taskRepository: ITaskRepository,
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
+
+    var typeToShowOngoing="All"
+    var typeToShowClosed="All"
+    var typeToShowApproval="All"
+
+    var userFilterCounter="0"
+    var tagFilterCounter="0"
+    var projectFilterCounter="0"
+
     val user = sessionManager.getUser().value
     var _selectedTaskTypeOngoingState: MutableLiveData<String> =
         MutableLiveData(TaskRootStateTags.All.tagValue)
