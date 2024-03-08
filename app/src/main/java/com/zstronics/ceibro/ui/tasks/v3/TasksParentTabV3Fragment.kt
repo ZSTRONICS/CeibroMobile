@@ -195,7 +195,7 @@ class TasksParentTabV3Fragment :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    viewModel.filterList(query.trim())
+                    viewModel.filterTasksList(query.trim())
                     viewModel.searchedText = query.trim()
                 }
                 return true
@@ -203,7 +203,7 @@ class TasksParentTabV3Fragment :
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    viewModel.filterList(newText.trim())
+                    viewModel.filterTasksList(newText.trim())
                     viewModel.searchedText = newText.trim()
                 }
                 return true
@@ -421,10 +421,10 @@ class TasksParentTabV3Fragment :
         mViewDataBinding.userFilterCounter.text = viewModel.userFilterCounter
         mViewDataBinding.tagFilterCounter.text = viewModel.tagFilterCounter
         mViewDataBinding.projectFilterCounter.text = viewModel.projectFilterCounter
-        if (viewModel.isSearchingTasks) {
-            viewModel.filterList(viewModel.searchedText)
-
-        }
+//        if (viewModel.isSearchingTasks) {
+//            viewModel.filterList(viewModel.searchedText)
+//
+//        }
 
     }
 }

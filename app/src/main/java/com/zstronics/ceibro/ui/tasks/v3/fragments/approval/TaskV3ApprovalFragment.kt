@@ -14,11 +14,9 @@ import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
-import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3ApprovalBinding
-import com.zstronics.ceibro.databinding.FragmentTaskV3OngoingBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
@@ -61,44 +59,6 @@ class TaskV3ApprovalFragment :
 
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
-
-
-        parentViewModel.selectedTaskTypeApprovalState.observe(viewLifecycleOwner) { taskType ->
-            var list: MutableList<CeibroTaskV2> = mutableListOf()
-
-            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalApprovalAllTasks
-
-            } else if (taskType.equals(TaskRootStateTags.InReview.tagValue, true)) {
-                list = parentViewModel.originalApprovalInReviewTasks
-
-            } else if (taskType.equals(TaskRootStateTags.ToReview.tagValue, true)) {
-                list = parentViewModel.originalApprovalToReviewTasks
-            }
-
-            list=  parentViewModel.sortList(list)
-
-            if (list.isNotEmpty()) {
-
-                adapter.setList(list, parentViewModel.selectedTaskTypeApprovalState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(listOf(), parentViewModel.selectedTaskTypeApprovalState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                }
-            }
-        }
-
-
-
         parentViewModel.approvalAllTasks.observe(viewLifecycleOwner) {
             if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
                     TaskRootStateTags.All.tagValue,
@@ -125,6 +85,79 @@ class TaskV3ApprovalFragment :
                 }
             }
         }
+
+        parentViewModel.setFilteredDataToApprovalAdapter.observe(viewLifecycleOwner) { list ->
+            if (list.isNotEmpty()) {
+
+                adapter.setList(list, parentViewModel.selectedTaskTypeApprovalState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(
+                    listOf(),
+                    parentViewModel.selectedTaskTypeApprovalState.value ?: ""
+                )
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (parentViewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
+            }
+        }
+
+        parentViewModel.selectedTaskTypeApprovalState.observe(viewLifecycleOwner) { taskType ->
+            var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                list = parentViewModel.originalApprovalAllTasks
+
+            } else if (taskType.equals(TaskRootStateTags.InReview.tagValue, true)) {
+                list = parentViewModel.originalApprovalInReviewTasks
+
+            } else if (taskType.equals(TaskRootStateTags.ToReview.tagValue, true)) {
+                list = parentViewModel.originalApprovalToReviewTasks
+            }
+
+            list = parentViewModel.sortList(list)
+
+            parentViewModel.filteredApprovalTasks = list
+
+            parentViewModel.filterTasksList(parentViewModel.searchedText)
+
+        }
+
+
+        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+            if (it == true) {
+
+                val taskType = parentViewModel.selectedTaskTypeApprovalState.value
+
+                var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+                if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                    list = parentViewModel.originalApprovalAllTasks
+
+                } else if (taskType.equals(TaskRootStateTags.InReview.tagValue, true)) {
+                    list = parentViewModel.originalApprovalInReviewTasks
+
+                } else if (taskType.equals(TaskRootStateTags.ToReview.tagValue, true)) {
+                    list = parentViewModel.originalApprovalToReviewTasks
+                }
+
+                list = parentViewModel.sortList(list)
+
+                parentViewModel.filteredApprovalTasks = list
+
+                parentViewModel.filterTasksList(parentViewModel.searchedText)
+
+            }
+        }
+
+
 
 
         adapter.itemClickListener =

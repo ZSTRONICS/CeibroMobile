@@ -55,50 +55,12 @@ class TaskV3ClosedFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-
-        parentViewModel.selectedTaskTypeClosedState.observe(viewLifecycleOwner) { taskType ->
-            var list: MutableList<CeibroTaskV2> = mutableListOf()
-
-            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalClosedAllTasks
-
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalClosedToMeTasks
-
-            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalClosedFromMeTasks
-            }
-
-            list=  parentViewModel.sortList(list)
-
-            if (list.isNotEmpty()) {
-
-                adapter.setList(list, parentViewModel.selectedTaskTypeClosedState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(listOf(), parentViewModel.selectedTaskTypeClosedState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                }
-            }
-        }
-
-
-
         parentViewModel.closedAllTasks.observe(viewLifecycleOwner) {
             if (parentViewModel.selectedTaskTypeClosedState.value.equals(
                     TaskRootStateTags.All.tagValue,
                     true
                 )
             ) {
-
                 parentViewModel.filteredClosedTasks = it
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it, parentViewModel.selectedTaskTypeClosedState.value ?: "")
@@ -118,6 +80,77 @@ class TaskV3ClosedFragment :
                 }
             }
         }
+
+        parentViewModel.setFilteredDataToCloseAdapter.observe(viewLifecycleOwner) { list ->
+            if (list.isNotEmpty()) {
+
+                adapter.setList(list, parentViewModel.selectedTaskTypeClosedState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(
+                    listOf(),
+                    parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                )
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (parentViewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
+            }
+        }
+
+        parentViewModel.selectedTaskTypeClosedState.observe(viewLifecycleOwner) { taskType ->
+            var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                list = parentViewModel.originalClosedAllTasks
+
+            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                list = parentViewModel.originalClosedToMeTasks
+
+            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                list = parentViewModel.originalClosedFromMeTasks
+            }
+
+            list = parentViewModel.sortList(list)
+
+            parentViewModel.filteredClosedTasks = list
+
+            parentViewModel.filterTasksList(parentViewModel.searchedText)
+        }
+
+        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+            if (it == true) {
+
+                val taskType = parentViewModel.selectedTaskTypeClosedState.value
+
+                var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+                if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                    list = parentViewModel.originalClosedAllTasks
+
+                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                    list = parentViewModel.originalClosedToMeTasks
+
+                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                    list = parentViewModel.originalClosedFromMeTasks
+                }
+
+                list = parentViewModel.sortList(list)
+
+                parentViewModel.filteredClosedTasks = list
+
+                parentViewModel.filterTasksList(parentViewModel.searchedText)
+
+            }
+        }
+
+
 
 
         adapter.itemClickListener =

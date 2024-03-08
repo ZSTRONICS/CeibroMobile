@@ -100,10 +100,20 @@ class TasksParentTabV3VM @Inject constructor(
     var filteredClosedTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
 
-    private val _searchFilteredDataToAdapter: MutableLiveData<MutableList<CeibroTaskV2>> =
+    private val _setFilteredDataToOngoingAdapter: MutableLiveData<MutableList<CeibroTaskV2>> =
         MutableLiveData()
-    val searchFilteredDataToAdapter: LiveData<MutableList<CeibroTaskV2>> =
-        _searchFilteredDataToAdapter
+    val setFilteredDataToOngoingAdapter: LiveData<MutableList<CeibroTaskV2>> =
+        _setFilteredDataToOngoingAdapter
+
+    private val _setFilteredDataToApprovalAdapter: MutableLiveData<MutableList<CeibroTaskV2>> =
+        MutableLiveData()
+    val setFilteredDataToApprovalAdapter: LiveData<MutableList<CeibroTaskV2>> =
+        _setFilteredDataToApprovalAdapter
+
+    private val _setFilteredDataToCloseAdapter: MutableLiveData<MutableList<CeibroTaskV2>> =
+        MutableLiveData()
+    val setFilteredDataToCloseAdapter: LiveData<MutableList<CeibroTaskV2>> =
+        _setFilteredDataToCloseAdapter
 
 
     private val _approvalInReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
@@ -839,15 +849,17 @@ class TasksParentTabV3VM @Inject constructor(
     }
 
 
-    fun filterList(query: String) {
+    fun filterTasksList(query: String) {
 
         if (query.isEmpty()) {
             isSearchingTasks = false
-            _searchFilteredDataToAdapter.postValue(filteredOngoingTasks)
+            _setFilteredDataToOngoingAdapter.postValue(filteredOngoingTasks)
+            _setFilteredDataToApprovalAdapter.postValue(filteredApprovalTasks)
+            _setFilteredDataToCloseAdapter.postValue(filteredClosedTasks)
             return
         }
         isSearchingTasks = true
-        val filteredTasks =
+        val filteredOngoingTasks1 =
             filteredOngoingTasks.filter {
                 (it.title != null && it.title.contains(query.trim(), true)) ||
                         it.description.contains(query.trim(), true) ||
@@ -860,19 +872,8 @@ class TasksParentTabV3VM @Inject constructor(
                         }
             }.toMutableList()
 
-        _searchFilteredDataToAdapter.postValue(filteredTasks)
-    }
-
-    fun filterListWithMyList(query: String, list: MutableList<CeibroTaskV2>) {
-
-        if (query.isEmpty()) {
-            isSearchingTasks = false
-            _searchFilteredDataToAdapter.postValue(list)
-            return
-        }
-        isSearchingTasks = true
-        val filteredTasks =
-            list.filter {
+        val filteredApprovalTasks1 =
+            filteredApprovalTasks.filter {
                 (it.title != null && it.title.contains(query.trim(), true)) ||
                         it.description.contains(query.trim(), true) ||
                         it.taskUID.contains(query.trim(), true) ||
@@ -884,6 +885,22 @@ class TasksParentTabV3VM @Inject constructor(
                         }
             }.toMutableList()
 
-        _searchFilteredDataToAdapter.postValue(filteredTasks)
+        val filteredClosedTasks1 =
+            filteredClosedTasks.filter {
+                (it.title != null && it.title.contains(query.trim(), true)) ||
+                        it.description.contains(query.trim(), true) ||
+                        it.taskUID.contains(query.trim(), true) ||
+                        it.assignedToState.any { assignee ->
+                            assignee.firstName.contains(
+                                query.trim(),
+                                true
+                            ) || assignee.surName.contains(query.trim(), true)
+                        }
+            }.toMutableList()
+
+        _setFilteredDataToOngoingAdapter.postValue(filteredOngoingTasks1)
+        _setFilteredDataToApprovalAdapter.postValue(filteredApprovalTasks1)
+        _setFilteredDataToCloseAdapter.postValue(filteredClosedTasks1)
     }
+
 }

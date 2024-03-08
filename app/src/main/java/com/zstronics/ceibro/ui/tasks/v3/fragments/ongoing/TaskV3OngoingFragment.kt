@@ -54,132 +54,6 @@ class TaskV3OngoingFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-
-
-        parentViewModel.searchFilteredDataToAdapter.observe(viewLifecycleOwner) { list ->
-
-            if (list.isNotEmpty()) {
-
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(
-                    listOf(),
-                    parentViewModel.selectedTaskTypeOngoingState.value ?: ""
-                )
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                }
-            }
-        }
-
-        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
-            if (it == true) {
-
-                val taskType = parentViewModel.selectedTaskTypeOngoingState.value
-
-                var list: MutableList<CeibroTaskV2> = mutableListOf()
-
-                if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                    list = parentViewModel.originalOngoingAllTasks
-
-                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                    list = parentViewModel.originalOngoingFromMeTasks
-
-                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                    list = parentViewModel.originalOngoingToMeTasks
-                }
-
-                list = parentViewModel.sortList(list)
-
-                /*if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                    parentViewModel.filteredOngoingAllTasks = list
-
-                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                    parentViewModel.filteredOngoingFromMeTasks = list
-
-                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                    parentViewModel.filteredOngoingToMeTasks = list
-                }*/
-
-                parentViewModel.filteredOngoingTasks = list
-
-
-                parentViewModel.filterListWithMyList(parentViewModel.searchedText, list)
-
-
-                /*if (list.isNotEmpty()) {
-
-                    adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                    mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                } else {
-                    adapter.setList(
-                        listOf(),
-                        parentViewModel.selectedTaskTypeOngoingState.value ?: ""
-                    )
-                    mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                    if (parentViewModel.isSearchingTasks) {
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                    } else {
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                    }
-                }*/
-            }
-        }
-
-
-        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
-            var list: MutableList<CeibroTaskV2> = mutableListOf()
-
-            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalOngoingAllTasks
-
-            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingFromMeTasks
-
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingToMeTasks
-            }
-
-            list = parentViewModel.sortList(list)
-
-            parentViewModel.filteredOngoingTasks = list
-
-            parentViewModel.filterListWithMyList(parentViewModel.searchedText, list)
-
-
-            /*if (list.isNotEmpty()) {
-
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-            } else {
-                adapter.setList(listOf(), parentViewModel.selectedTaskTypeOngoingState.value ?: "")
-                mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                if (parentViewModel.isSearchingTasks) {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                } else {
-                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
-                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                }
-            }*/
-        }
-
-
-
         parentViewModel.ongoingAllTasks.observe(viewLifecycleOwner) {
             if (parentViewModel.selectedTaskTypeOngoingState.value.equals(
                     TaskRootStateTags.All.tagValue,
@@ -210,9 +84,77 @@ class TaskV3OngoingFragment :
         }
 
 
-        if (parentViewModel.isFirstStartOfOngoingFragment) {
-            parentViewModel.isFirstStartOfOngoingFragment = false
+        parentViewModel.setFilteredDataToOngoingAdapter.observe(viewLifecycleOwner) { list ->
+            if (list.isNotEmpty()) {
+
+                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(
+                    listOf(),
+                    parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                )
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (parentViewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
+            }
         }
+
+        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
+            var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                list = parentViewModel.originalOngoingAllTasks
+
+            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                list = parentViewModel.originalOngoingFromMeTasks
+
+            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                list = parentViewModel.originalOngoingToMeTasks
+            }
+
+            list = parentViewModel.sortList(list)
+
+            parentViewModel.filteredOngoingTasks = list
+
+            parentViewModel.filterTasksList(parentViewModel.searchedText)
+
+        }
+
+        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+            if (it == true) {
+
+                val taskType = parentViewModel.selectedTaskTypeOngoingState.value
+
+                var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+                if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                    list = parentViewModel.originalOngoingAllTasks
+
+                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                    list = parentViewModel.originalOngoingFromMeTasks
+
+                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                    list = parentViewModel.originalOngoingToMeTasks
+                }
+
+                list = parentViewModel.sortList(list)
+
+                parentViewModel.filteredOngoingTasks = list
+
+                parentViewModel.filterTasksList(parentViewModel.searchedText)
+
+            }
+        }
+
+
 
         adapter.itemClickListener =
             { _: View, position: Int, data: CeibroTaskV2 ->
