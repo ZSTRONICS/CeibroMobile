@@ -186,10 +186,36 @@ class TaskInfoBottomSheet(_rootState: String, _selectedState: String, _userId: S
             }
 
 
-            binding.taskConfirmerName.text = "No confirmer added on this task"
-            binding.taskViewerName.text = "No viewer added on this task"
-            binding.taskConfirmerLayout.visibility = View.GONE
-            binding.taskViewerLayout.visibility = View.GONE
+//            binding.taskConfirmerName.text = "No confirmer added on this task"
+//            binding.taskViewerName.text = "No viewer added on this task"
+//            binding.taskConfirmerLayout.visibility = View.GONE
+//            binding.taskViewerLayout.visibility = View.GONE
+
+            if (taskDetail.confirmer != null) {
+                binding.taskConfirmerName.text = if (taskDetail.confirmer.firstName.isEmpty()) {
+                    "${taskDetail.confirmer.phoneNumber}"
+                } else {
+                    "${taskDetail.confirmer.firstName} ${taskDetail.confirmer.surName}"
+                }
+                binding.taskConfirmerLayout.visibility = View.VISIBLE
+            } else {
+                binding.taskConfirmerName.text = ""
+                binding.taskConfirmerLayout.visibility = View.GONE
+            }
+
+            if (!taskDetail.viewer.isNullOrEmpty()) {
+                binding.taskViewerName.text = if (taskDetail.viewer.size > 0 && taskDetail.viewer.size < 2) {
+                    "${taskDetail.viewer[0].firstName} ${taskDetail.viewer[0].surName}"
+                } else {
+                    "${taskDetail.viewer[0].firstName} ${taskDetail.viewer[0].surName}  +${taskDetail.viewer.size - 1}"
+                }
+                binding.taskViewerLayout.visibility = View.VISIBLE
+            } else {
+                binding.taskViewerName.text = ""
+                binding.taskViewerLayout.visibility = View.GONE
+            }
+
+
 
             if (taskDetail.project != null && taskDetail.project.title.isNotEmpty()) {
                 binding.taskProjectName.text = taskDetail.project.title
