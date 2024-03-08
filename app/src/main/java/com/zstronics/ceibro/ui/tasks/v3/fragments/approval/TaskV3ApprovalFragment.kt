@@ -97,6 +97,8 @@ class TaskV3ApprovalFragment :
                     true
                 )
             ) {
+                parentViewModel.filteredApprovalTasks = it
+
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it, parentViewModel.selectedTaskTypeApprovalState.value ?: "")
                     mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE

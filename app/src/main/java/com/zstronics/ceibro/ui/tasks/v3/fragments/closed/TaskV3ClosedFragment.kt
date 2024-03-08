@@ -98,6 +98,8 @@ class TaskV3ClosedFragment :
                     true
                 )
             ) {
+
+                parentViewModel.filteredClosedTasks = it
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it, parentViewModel.selectedTaskTypeClosedState.value ?: "")
                     mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE

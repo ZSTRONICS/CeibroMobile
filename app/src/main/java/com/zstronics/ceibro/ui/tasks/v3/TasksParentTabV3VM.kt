@@ -82,6 +82,17 @@ class TasksParentTabV3VM @Inject constructor(
     val ongoingAllTasks: LiveData<MutableList<CeibroTaskV2>> = _ongoingAllTasks
     var originalOngoingAllTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
+    var filteredOngoingTasks: MutableList<CeibroTaskV2> = mutableListOf()
+    var filteredApprovalTasks: MutableList<CeibroTaskV2> = mutableListOf()
+    var filteredClosedTasks: MutableList<CeibroTaskV2> = mutableListOf()
+
+
+
+
+    private val _searchFilteredDataToAdapter: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
+    val searchFilteredDataToAdapter: LiveData<MutableList<CeibroTaskV2>> = _searchFilteredDataToAdapter
+
+
 
     private val _approvalInReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
         MutableLiveData()
@@ -147,6 +158,10 @@ class TasksParentTabV3VM @Inject constructor(
     val recentTopics: MutableLiveData<MutableList<TopicsResponse.TopicData>?> = _recentTopics
     var originalRecentTopics = listOf<TopicsResponse.TopicData>()
     var oldSelectedTags: MutableLiveData<MutableList<TopicsResponse.TopicData>> = MutableLiveData()
+
+
+    var searchedText: String = ""
+
 
     init {
         if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
@@ -780,5 +795,54 @@ class TasksParentTabV3VM @Inject constructor(
     private fun isFilterListEmpty(): Boolean {
         return selectedTagsForFilter.isEmpty() && selectedProjectsForFilter.isEmpty()
                 && userConnectionAndRoleList.first.isEmpty() && userConnectionAndRoleList.second.isEmpty()
+    }
+
+
+    fun filterList(query: String) {
+
+        if (query.isEmpty()) {
+            isSearchingTasks=false
+            _searchFilteredDataToAdapter.postValue(filteredOngoingTasks)
+            return
+        }
+        isSearchingTasks=true
+        val filteredTasks =
+            filteredOngoingTasks.filter {
+                (it.title != null && it.title.contains(query.trim(), true)) ||
+                        it.description.contains(query.trim(), true) ||
+                        it.taskUID.contains(query.trim(), true) ||
+                        it.assignedToState.any { assignee ->
+                            assignee.firstName.contains(
+                                query.trim(),
+                                true
+                            ) || assignee.surName.contains(query.trim(), true)
+                        }
+            }.toMutableList()
+
+        _searchFilteredDataToAdapter.postValue(filteredTasks)
+    }
+
+    fun filterListWithMyList(query: String, list: MutableList<CeibroTaskV2>) {
+
+        if (query.isEmpty()) {
+            isSearchingTasks=false
+            _searchFilteredDataToAdapter.postValue(list)
+            return
+        }
+        isSearchingTasks=true
+        val filteredTasks =
+            list.filter {
+                (it.title != null && it.title.contains(query.trim(), true)) ||
+                        it.description.contains(query.trim(), true) ||
+                        it.taskUID.contains(query.trim(), true) ||
+                        it.assignedToState.any { assignee ->
+                            assignee.firstName.contains(
+                                query.trim(),
+                                true
+                            ) || assignee.surName.contains(query.trim(), true)
+                        }
+            }.toMutableList()
+
+        _searchFilteredDataToAdapter.postValue(filteredTasks)
     }
 }

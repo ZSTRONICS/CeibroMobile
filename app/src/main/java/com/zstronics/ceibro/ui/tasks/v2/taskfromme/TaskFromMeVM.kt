@@ -163,6 +163,7 @@ class TaskFromMeVM @Inject constructor(
             _doneTasks.postValue(originalDoneTasks)
             return
         }
+
         if (selectedState.equals(TaskStatus.UNREAD.name.lowercase(), true)) {
             val filteredTasks =
                 originalUnreadTasks.filter {

@@ -44,6 +44,7 @@ class SelectGroupFiltersV2Fragment(
 
             R.id.tvClearAll -> {
                 selectedGroup.clear()
+                adapter.selectAllGroups(selectedGroup)
                 ceibroConnectionGroupV2?.invoke(selectedGroup)
             }
 

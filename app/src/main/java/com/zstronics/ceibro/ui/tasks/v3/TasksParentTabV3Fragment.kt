@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -185,6 +186,29 @@ class TasksParentTabV3Fragment :
         tabTitles.add(getString(R.string.closed_heading))
 
 
+
+
+        mViewDataBinding.taskSearchBar.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    viewModel.filterList(query.trim())
+                    viewModel.searchedText = query.trim()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    viewModel.filterList(newText.trim())
+                    viewModel.searchedText = newText.trim()
+                }
+                return true
+            }
+        })
+
+
+
         mViewDataBinding.taskViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -325,7 +349,7 @@ class TasksParentTabV3Fragment :
 
     private fun chooseUserType(
         viewModel: TasksParentTabV3VM,
-        userConnectionAndRoleCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>)->Unit,
+        userConnectionAndRoleCallBack: (Pair<ArrayList<AllCeibroConnections.CeibroConnection>, ArrayList<String>>) -> Unit,
         groupsCallBack: (ArrayList<CeibroConnectionGroupV2>) -> Unit
     ) {
         val sheet = UsersBottomSheet(viewModel, {

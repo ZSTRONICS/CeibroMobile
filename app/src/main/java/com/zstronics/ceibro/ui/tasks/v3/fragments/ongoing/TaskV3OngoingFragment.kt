@@ -56,6 +56,30 @@ class TaskV3OngoingFragment :
 
 
 
+        parentViewModel.searchFilteredDataToAdapter.observe(viewLifecycleOwner) { list ->
+
+            if (list.isNotEmpty()) {
+
+                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
+                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+            } else {
+                adapter.setList(
+                    listOf(),
+                    parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                )
+                mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                if (parentViewModel.isSearchingTasks) {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                } else {
+                    mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                    mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                }
+            }
+        }
+
         parentViewModel.applyFilter.observe(viewLifecycleOwner) {
             if (it == true) {
 
@@ -75,7 +99,23 @@ class TaskV3OngoingFragment :
 
                 list = parentViewModel.sortList(list)
 
-                if (list.isNotEmpty()) {
+                /*if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                    parentViewModel.filteredOngoingAllTasks = list
+
+                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                    parentViewModel.filteredOngoingFromMeTasks = list
+
+                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                    parentViewModel.filteredOngoingToMeTasks = list
+                }*/
+
+                parentViewModel.filteredOngoingTasks = list
+
+
+                parentViewModel.filterListWithMyList(parentViewModel.searchedText, list)
+
+
+                /*if (list.isNotEmpty()) {
 
                     adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
                     mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
@@ -94,7 +134,7 @@ class TaskV3OngoingFragment :
                         mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                         mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
                     }
-                }
+                }*/
             }
         }
 
@@ -114,7 +154,12 @@ class TaskV3OngoingFragment :
 
             list = parentViewModel.sortList(list)
 
-            if (list.isNotEmpty()) {
+            parentViewModel.filteredOngoingTasks = list
+
+            parentViewModel.filterListWithMyList(parentViewModel.searchedText, list)
+
+
+            /*if (list.isNotEmpty()) {
 
                 adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
@@ -130,7 +175,7 @@ class TaskV3OngoingFragment :
                     mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                     mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
                 }
-            }
+            }*/
         }
 
 
@@ -141,6 +186,7 @@ class TaskV3OngoingFragment :
                     true
                 )
             ) {
+                parentViewModel.filteredOngoingTasks = it
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
                     mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
