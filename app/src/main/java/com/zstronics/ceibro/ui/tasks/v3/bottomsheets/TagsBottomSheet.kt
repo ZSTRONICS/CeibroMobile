@@ -65,6 +65,8 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayLis
             selectedTags.clear()
             viewModel.selectedTagsForFilter=selectedTags
             tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value)
+            callback.invoke(selectedTags)
+            dismiss()
 
         }
         mViewDataBinding.btnApply.setOnClickListener {

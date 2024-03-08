@@ -71,6 +71,7 @@ class ProjectListBottomSheet(
             viewModel.selectedProjectsForFilter = selectedProjects
             sectionedAdapter.setSelectedList(selectedProjects)
             callback.invoke(selectedProjects)
+            dismiss()
         }
         mViewDataBinding.btnApply.setOnClickListener {
             viewModel.selectedProjectsForFilter = selectedProjects
