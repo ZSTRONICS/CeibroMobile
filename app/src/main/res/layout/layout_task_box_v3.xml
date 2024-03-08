@@ -164,7 +164,7 @@
                             android:gravity="center|start"
                             android:orientation="horizontal"
                             app:layout_constraintBottom_toBottomOf="@+id/inboxTaskUId"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/taskMenuBtn"
                             app:layout_constraintStart_toEndOf="@+id/inboxTaskUId"
                             app:layout_constraintTop_toTopOf="@+id/inboxTaskUId">
 
@@ -201,6 +201,18 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/taskMenuBtn"
+                            android:layout_width="25dp"
+                            android:layout_height="0dp"
+                            android:src="@drawable/ic_menu_dots"
+                            android:padding="1dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/inboxTaskUId"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/inboxTaskUId"
+                            app:tint="@color/appBlue" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

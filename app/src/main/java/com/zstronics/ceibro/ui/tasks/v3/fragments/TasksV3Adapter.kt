@@ -33,6 +33,8 @@ class TasksV3Adapter @Inject constructor() :
     RecyclerView.Adapter<TasksV3Adapter.TaskToMeViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
+    var menuClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
+        null
     var itemLongClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
     var listItems: MutableList<CeibroTaskV2> = mutableListOf()
@@ -79,6 +81,9 @@ class TasksV3Adapter @Inject constructor() :
 
                     taskCard.setOnClickListener {
                         itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                    }
+                    taskMenuBtn.setOnClickListener {
+                        menuClickListener?.invoke(it, absoluteAdapterPosition, item)
                     }
 
                     val taskState =
@@ -179,6 +184,12 @@ class TasksV3Adapter @Inject constructor() :
                     if (item.isTaskViewer) {
                         inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_viewer)
                         inboxTaskStateIcon.visibility = View.VISIBLE
+                    }
+
+                    if (item.isTaskInApproval) {
+                        taskMenuBtn.visibility = View.VISIBLE
+                    } else {
+                        taskMenuBtn.visibility = View.GONE
                     }
 
                     if (item.project != null) {

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/task_card_less_corner_outline"
+    android:backgroundTint="@color/white"
+    android:elevation="@dimen/_2sdp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_1sdp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/approveCloseBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start|center"
+            android:drawableStart="@drawable/icon_task_done"
+            android:drawableTint="@color/black"
+            android:drawablePadding="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/approve_heading"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/rejectReOpenBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start|center"
+            android:drawableStart="@drawable/icon_task_reject_reopen"
+            android:drawableTint="@color/black"
+            android:drawablePadding="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/reject_reopen"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/rejectCloseBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start|center"
+            android:drawableStart="@drawable/icon_task_canceled"
+            android:drawableTint="@color/black"
+            android:drawablePadding="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/reject_close"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

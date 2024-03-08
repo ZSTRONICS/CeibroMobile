@@ -1,12 +1,20 @@
 package com.zstronics.ceibro.ui.tasks.v3.fragments.approval
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
+import com.zstronics.ceibro.data.database.models.projects.CeibroGroupsV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3ApprovalBinding
@@ -141,8 +149,77 @@ class TaskV3ApprovalFragment :
                     }
                 }
             }
+
+        adapter.menuClickListener =
+            { v: View, position: Int, data: CeibroTaskV2 ->
+                createPopupWindow(v, data) { menuTag ->
+                    if (menuTag.equals("approveClose", true)) {
+
+                    }
+                    if (menuTag.equals("rejectReOpen", true)) {
+
+                    }
+                    if (menuTag.equals("rejectClose", true)) {
+
+                    }
+                }
+            }
     }
 
+    private fun createPopupWindow(
+        v: View,
+        data: CeibroTaskV2,
+        callback: (String) -> Unit
+    ): PopupWindow {
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.task_v3_approval_menu_dialog, null)
+
+        val popupWindow = PopupWindow(
+            view,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+
+
+        val approveCloseBtn: TextView = view.findViewById(R.id.approveCloseBtn)
+        val rejectReOpenBtn: TextView = view.findViewById(R.id.rejectReOpenBtn)
+        val rejectCloseBtn: TextView = view.findViewById(R.id.rejectCloseBtn)
+
+        approveCloseBtn.setOnClickListener {
+            callback.invoke("approveClose")
+            popupWindow.dismiss()
+        }
+        rejectReOpenBtn.setOnClickListener {
+            callback.invoke("rejectReOpen")
+            popupWindow.dismiss()
+        }
+        rejectCloseBtn.setOnClickListener {
+            callback.invoke("rejectClose")
+            popupWindow.dismiss()
+        }
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, 0, -300)
+        } else {
+            popupWindow.showAsDropDown(v, 5, -30)
+        }
+
+
+        return popupWindow
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {

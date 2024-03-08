@@ -668,6 +668,8 @@
     <string name="clear_all">Clear All</string>
     <string name="no_task_exists">No task exists!</string>
     <string name="no_task_in_all_description">Drive project success – add a task to address critical issues and ensure smooth progress from planning to completion.</string>
+    <string name="no_task_in_all_closed_description">There are no construction tasks recorded as closed in your project</string>
+    <string name="no_task_in_all_approval_description">Your construction approval queue is empty at the moment. All are approved or rejected, none awaiting for your attention.</string>
     <string name="users_groups">Users Group</string>
     <string name="creator">Creator</string>
     <string name="viewer">Viewer</string>
@@ -675,4 +677,6 @@
     <string name="to_review">To Review</string>
     <string name="in_review">In Review</string>
     <string name="pending">Pending</string>
+    <string name="reject_close">Reject-close</string>
+    <string name="reject_reopen">Reject-reopen</string>
 </resources>
