@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v3.fragments.closed
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -185,14 +186,16 @@ class TaskV3ClosedFragment :
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         EventBus.getDefault().register(this)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         EventBus.getDefault().unregister(this)
+
     }
+
 
 }

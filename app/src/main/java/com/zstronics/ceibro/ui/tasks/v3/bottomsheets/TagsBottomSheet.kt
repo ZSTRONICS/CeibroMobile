@@ -91,7 +91,14 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayLis
         )
 
         tagsSectionRecyclerView = TagsSectionRecyclerView(requireContext(), sectionList)
-        selectedTags=viewModel.selectedTagsForFilter
+
+        selectedTags.clear()
+        viewModel.selectedTagsForFilter.forEach {
+            selectedTags.add(it.copy()) // Creates a new instance using the copy method
+        }
+
+
+
         tagsSectionRecyclerView.setData(viewModel.selectedTagsForFilter)
         tagsSectionRecyclerView.itemClickListener =
             { flag: Boolean, view: View, position: Int, data: TopicsResponse.TopicData ->
