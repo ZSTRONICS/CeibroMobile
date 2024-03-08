@@ -18,6 +18,8 @@ import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
+import com.zstronics.ceibro.data.repos.dashboard.connections.v2.GroupContact
+import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
@@ -25,6 +27,8 @@ import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.sessions.SessionManager
+import com.zstronics.ceibro.ui.contacts.toLightDBContacts
+import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -87,11 +91,10 @@ class TasksParentTabV3VM @Inject constructor(
     var filteredClosedTasks: MutableList<CeibroTaskV2> = mutableListOf()
 
 
-
-
-    private val _searchFilteredDataToAdapter: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
-    val searchFilteredDataToAdapter: LiveData<MutableList<CeibroTaskV2>> = _searchFilteredDataToAdapter
-
+    private val _searchFilteredDataToAdapter: MutableLiveData<MutableList<CeibroTaskV2>> =
+        MutableLiveData()
+    val searchFilteredDataToAdapter: LiveData<MutableList<CeibroTaskV2>> =
+        _searchFilteredDataToAdapter
 
 
     private val _approvalInReviewTasks: MutableLiveData<MutableList<CeibroTaskV2>> =
@@ -706,7 +709,8 @@ class TasksParentTabV3VM @Inject constructor(
     fun sortList(list: List<CeibroTaskV2>): MutableList<CeibroTaskV2> {
 
         if (isFilterListEmpty()) {
-            return list.toMutableList()
+            val sortedList = sortUsersList(list)
+            return sortedList.toMutableList()
         }
 
         var filteredTasks =
@@ -727,9 +731,38 @@ class TasksParentTabV3VM @Inject constructor(
 
         val roles = userConnectionAndRoleList.second
         val connection = userConnectionAndRoleList.first
+        val groupConnections: MutableList<GroupContact> = mutableListOf()
+
+        if (selectedGroups.isNotEmpty() && roles.isEmpty()) {
+            if (!roles.contains("Confirmer")) {
+                roles.add("Confirmer")
+            }
+            if (!roles.contains("Assignee")) {
+                roles.add("Assignee")
+            }
+            if (!roles.contains("Viewer")) {
+                roles.add("Viewer")
+            }
+            if (!roles.contains("Creator")) {
+                roles.add("Creator")
+            }
+        }
+
+        selectedGroups.forEach { group ->
+            groupConnections.addAll(group.contacts)
+        }
+
+        val lightConnectionContacts = connection.toLightDBContacts()
+        val lightGroupContacts = groupConnections.toLightDBGroupContacts()
 
 
-        if (roles.size == 0 || connection.size == 0) {
+        val combinedList: MutableList<SyncDBContactsList.CeibroDBContactsLight> = mutableListOf()
+        combinedList.addAll(lightConnectionContacts)
+        combinedList.addAll(lightGroupContacts)
+        val distinctList = combinedList.distinctBy { it.phoneNumber }
+
+
+        if (roles.isEmpty() || distinctList.isEmpty()) {
 
             return list.toMutableList()
         }
@@ -739,7 +772,7 @@ class TasksParentTabV3VM @Inject constructor(
             roles.forEach { role ->
                 when (role) {
                     "Confirmer" -> {
-                        if (connection.any { it.phoneNumber == task.confirmer?.phoneNumber }) {
+                        if (distinctList.any { it.phoneNumber == task.confirmer?.phoneNumber }) {
                             if (!sortedList.contains(task)) {
                                 sortedList.add(task)
                             }
@@ -747,12 +780,12 @@ class TasksParentTabV3VM @Inject constructor(
                     }
 
                     "Assignee" -> {
-                        if (task.assignedToState.any { assignee -> connection.any { con -> con.phoneNumber == assignee.phoneNumber } }) {
+                        if (task.assignedToState.any { assignee -> distinctList.any { con -> con.phoneNumber == assignee.phoneNumber } }) {
                             if (!sortedList.contains(task)) {
                                 sortedList.add(task)
                             }
                         }
-                        if (task.invitedNumbers.any { invitee -> connection.any { con -> con.phoneNumber == invitee.phoneNumber } }) {
+                        if (task.invitedNumbers.any { invitee -> distinctList.any { con -> con.phoneNumber == invitee.phoneNumber } }) {
                             if (!sortedList.contains(task)) {
                                 sortedList.add(task)
                             }
@@ -761,7 +794,7 @@ class TasksParentTabV3VM @Inject constructor(
 
                     "Viewer" -> {
                         task.viewer?.let { viewerList ->
-                            if (viewerList.any { viewer -> connection.any { con -> con.phoneNumber == viewer.phoneNumber } }) {
+                            if (viewerList.any { viewer -> distinctList.any { con -> con.phoneNumber == viewer.phoneNumber } }) {
                                 if (!sortedList.contains(task)) {
                                     sortedList.add(task)
                                 }
@@ -772,7 +805,7 @@ class TasksParentTabV3VM @Inject constructor(
 
                     "Creator" -> {
                         task.creator.let { creator ->
-                            if (connection.any { con -> con.phoneNumber == creator.phoneNumber }) {
+                            if (distinctList.any { con -> con.phoneNumber == creator.phoneNumber }) {
                                 if (!sortedList.contains(task)) {
                                     sortedList.add(task)
                                 }
@@ -794,18 +827,17 @@ class TasksParentTabV3VM @Inject constructor(
 
     private fun isFilterListEmpty(): Boolean {
         return selectedTagsForFilter.isEmpty() && selectedProjectsForFilter.isEmpty()
-                && userConnectionAndRoleList.first.isEmpty() && userConnectionAndRoleList.second.isEmpty()
     }
 
 
     fun filterList(query: String) {
 
         if (query.isEmpty()) {
-            isSearchingTasks=false
+            isSearchingTasks = false
             _searchFilteredDataToAdapter.postValue(filteredOngoingTasks)
             return
         }
-        isSearchingTasks=true
+        isSearchingTasks = true
         val filteredTasks =
             filteredOngoingTasks.filter {
                 (it.title != null && it.title.contains(query.trim(), true)) ||
@@ -825,11 +857,11 @@ class TasksParentTabV3VM @Inject constructor(
     fun filterListWithMyList(query: String, list: MutableList<CeibroTaskV2>) {
 
         if (query.isEmpty()) {
-            isSearchingTasks=false
+            isSearchingTasks = false
             _searchFilteredDataToAdapter.postValue(list)
             return
         }
-        isSearchingTasks=true
+        isSearchingTasks = true
         val filteredTasks =
             list.filter {
                 (it.title != null && it.title.contains(query.trim(), true)) ||

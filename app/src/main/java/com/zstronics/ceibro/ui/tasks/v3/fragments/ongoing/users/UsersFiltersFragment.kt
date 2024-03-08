@@ -480,17 +480,13 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
 
         val applyBtn: AppCompatTextView = view.findViewById(R.id.applyBtn)
         val cbSelectAll: CheckBox = view.findViewById(R.id.cbSelectAll)
-        val cbAll: CheckBox = view.findViewById(R.id.cbAll)
         val cbCreator: CheckBox = view.findViewById(R.id.cbCreator)
         val cbAssignee: CheckBox = view.findViewById(R.id.cbAssignee)
         val cbViewer: CheckBox = view.findViewById(R.id.cbViewer)
         val cbApproval: CheckBox = view.findViewById(R.id.cbApproval)
 
         listOfRoles.forEach {
-            if (it.equals("All", true)) {
-                cbAll.isChecked = true
-                selectionCounter++
-            } else if (it.equals("Creator", true)) {
+            if (it.equals("Creator", true)) {
                 cbCreator.isChecked = true
                 selectionCounter++
             } else if (it.equals("Assignee", true)) {
@@ -504,13 +500,7 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
                 selectionCounter++
             }
         }
-        cbSelectAll.isChecked = selectionCounter >= 5
-
-// Usage in your click listeners
-        cbAll.setOnClickListener {
-            selectionCounter =
-                updateSelectionCounter(cbAll, selectionCounter, cbSelectAll)
-        }
+        cbSelectAll.isChecked = selectionCounter >= 4
 
         cbCreator.setOnClickListener {
             selectionCounter =
@@ -535,8 +525,6 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
         cbSelectAll.setOnClickListener {
             val isChecked = cbSelectAll.isChecked
 
-            cbAll.isChecked = isChecked
-            addRoleToLIst(cbAll.text.toString(), isChecked)
 
             cbCreator.isChecked = isChecked
             addRoleToLIst(cbCreator.text.toString(), isChecked)
@@ -551,7 +539,7 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
             addRoleToLIst(cbApproval.text.toString(), isChecked)
 
             selectionCounter = if (isChecked) {
-                5
+                4
             } else {
                 0
             }
@@ -593,7 +581,7 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
         val isChecked = selectedCheckBox.isChecked
         addRoleToLIst(selectedCheckBox.text.toString(), isChecked)
         val updatedCounter = selectionCounter + if (isChecked) 1 else -1
-        cbSelectAll.isChecked = updatedCounter == 5
+        cbSelectAll.isChecked = updatedCounter == 4
         return updatedCounter
     }
 
