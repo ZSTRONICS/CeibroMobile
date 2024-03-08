@@ -421,10 +421,10 @@ class TasksParentTabV3Fragment :
         mViewDataBinding.userFilterCounter.text = viewModel.userFilterCounter
         mViewDataBinding.tagFilterCounter.text = viewModel.tagFilterCounter
         mViewDataBinding.projectFilterCounter.text = viewModel.projectFilterCounter
-//        if (viewModel.isSearchingTasks) {
-//            viewModel.filterList(viewModel.searchedText)
-//
-//        }
+        if (viewModel.isSearchingTasks) {
+            viewModel.filterTasksList(viewModel.searchedText)
+
+        }
 
     }
 }
