@@ -50,12 +50,12 @@ class TaskInfoBottomSheet(_rootState: String, _selectedState: String, _userId: S
 
         if (taskDetail != null) {
             var state = ""
-            state = if (rootState == TaskRootStateTags.FromMe.tagValue && userId == taskDetail.creator.id) {
+            state = if (taskDetail.isCreator || taskDetail.isTaskViewer) {
                 taskDetail.creatorState
-            } else if (rootState == TaskRootStateTags.Hidden.tagValue && selectedState.equals(TaskStatus.CANCELED.name, true)) {
-                taskDetail.creatorState
+            } else if (taskDetail.isAssignedToMe) {
+                taskDetail.userSubState
             } else {
-                taskDetail.assignedToState.find { it.userId == userId }?.state ?: ""
+                taskDetail.userSubState
             }
             val taskStatusNameBg: Pair<Int, String> = when (state.uppercase()) {
                 TaskStatus.NEW.name -> Pair(

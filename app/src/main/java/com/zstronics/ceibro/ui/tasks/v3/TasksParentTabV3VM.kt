@@ -725,7 +725,9 @@ class TasksParentTabV3VM @Inject constructor(
                 when (role) {
                     "Confirmer" -> {
                         if (connection.any { it.phoneNumber == task.confirmer?.phoneNumber }) {
-                            sortedList.add(task)
+                            if (!sortedList.contains(task)) {
+                                sortedList.add(task)
+                            }
                         }
                     }
 
@@ -754,8 +756,8 @@ class TasksParentTabV3VM @Inject constructor(
                     }
 
                     "Creator" -> {
-                        task.confirmer?.let { confirmer ->
-                            if (connection.any { con -> con.phoneNumber == confirmer.phoneNumber }) {
+                        task.creator.let { creator ->
+                            if (connection.any { con -> con.phoneNumber == creator.phoneNumber }) {
                                 if (!sortedList.contains(task)) {
                                     sortedList.add(task)
                                 }
@@ -776,7 +778,7 @@ class TasksParentTabV3VM @Inject constructor(
 
 
     private fun isFilterListEmpty(): Boolean {
-        return selectedTagsForFilter.size == 0 && selectedProjectsForFilter.size == 0
-                && userConnectionAndRoleList.first.size == 0 && userConnectionAndRoleList.second.size == 0
+        return selectedTagsForFilter.isEmpty() && selectedProjectsForFilter.isEmpty()
+                && userConnectionAndRoleList.first.isEmpty() && userConnectionAndRoleList.second.isEmpty()
     }
 }
