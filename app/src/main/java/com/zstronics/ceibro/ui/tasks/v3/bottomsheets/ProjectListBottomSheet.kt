@@ -64,16 +64,19 @@ class ProjectListBottomSheet(
         }
 
         mViewDataBinding.tvClearAll.setOnClickListener {
-            mViewDataBinding.locationProjectSearchBar.setQuery(null, true)
+            mViewDataBinding.locationProjectSearchBar.setQuery("", true)
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
-            selectedProjects.clear()
+//            selectedProjects.clear()
             viewModel.selectedProjectsForFilter = selectedProjects
             sectionedAdapter.setSelectedList(selectedProjects)
             callback.invoke(selectedProjects)
             dismiss()
         }
         mViewDataBinding.btnApply.setOnClickListener {
+            mViewDataBinding.locationProjectSearchBar.setQuery("", true)
+            viewModel.filterFavoriteProjects("")
+            viewModel.filterAllProjects("")
             viewModel.selectedProjectsForFilter = selectedProjects
             callback.invoke(selectedProjects)
             dismiss()
