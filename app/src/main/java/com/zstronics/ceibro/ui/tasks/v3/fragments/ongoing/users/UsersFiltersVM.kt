@@ -1,8 +1,5 @@
 package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.users
 
-import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -11,8 +8,6 @@ import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.sessions.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,66 +32,14 @@ class UsersFiltersVM @Inject constructor(
 
     var selectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
         MutableLiveData()
-    var disableSelectedContacts: MutableLiveData<MutableList<AllCeibroConnections.CeibroConnection>> =
-        MutableLiveData()
-    var isConfirmer: MutableLiveData<Boolean> = MutableLiveData(false)
-    var isViewer: MutableLiveData<Boolean> = MutableLiveData(false)
 
-
-
-     var listOfRoles = ArrayList<String>()
-
-    override fun onFirsTimeUiCreate(bundle: Bundle?) {
-        super.onFirsTimeUiCreate(bundle)
-        val selfAssigned = bundle?.getBoolean("self-assign")
-        val isConfirmer = bundle?.getBoolean("isConfirmer")
-        val isViewer = bundle?.getBoolean("isViewer")
-        isConfirmer?.let {
-            this.isConfirmer.value = it
-        } ?: kotlin.run {
-            this.isConfirmer.value = false
-        }
-//        isViewer?.let {
-        this.isViewer.value = isViewer ?: false
-//        } ?: kotlin.run {
-//            this.isViewer.value = false
-//        }
-
-        val disabledContacts = bundle?.getParcelableArray("disabledContacts")
-        val disabledContactList =
-            disabledContacts?.map { it as AllCeibroConnections.CeibroConnection }
-                ?.toMutableList()
-        if (!disabledContactList.isNullOrEmpty()) {
-            disableSelectedContacts.postValue(disabledContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
-        }
-
-        val selectedContact = bundle?.getParcelableArray("contacts")
-        val selectedContactList =
-            selectedContact?.map { it as AllCeibroConnections.CeibroConnection }
-                ?.toMutableList()
-        if (!selectedContactList.isNullOrEmpty()) {
-
-            selectedContacts.postValue(selectedContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
-        }
-        val handler = Handler()
-        handler.postDelayed(Runnable {
-            if (selfAssigned != null) {
-                viewState.isSelfAssigned.value = selfAssigned
-            }
-        }, 50)
-
-    }
+    var listOfRoles = ArrayList<String>()
 
     fun getAllConnectionsV2(callBack: () -> Unit) {
         loadRecentConnections()
         launch {
             val connectionsData = connectionsV2Dao.getAll()
-            if (isConfirmer.value == true || isViewer.value == true) {
-                val list = connectionsData.filter { it.isCeiborUser }
-                processConnectionsData(list, callBack)
-            } else {
-                processConnectionsData(connectionsData, callBack)
-            }
+            processConnectionsData(connectionsData, callBack)
         }
     }
 
@@ -246,12 +189,4 @@ class UsersFiltersVM @Inject constructor(
         return sortedItems
     }
 
-    companion object {
-        fun printCurrentTimeWithSeconds(line: Int) {
-            val currentTime = System.currentTimeMillis()
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val dateString = sdf.format(Date(currentTime))
-            Log.d("getAllConnectionsV2", "Line $line Time: $dateString")
-        }
-    }
 }

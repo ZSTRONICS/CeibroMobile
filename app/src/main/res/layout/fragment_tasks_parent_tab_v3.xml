@@ -415,6 +415,7 @@
                         android:layout_height="35dp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:padding="4dp"
+                        android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                         android:src="@drawable/icon_sort"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

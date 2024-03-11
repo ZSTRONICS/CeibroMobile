@@ -417,7 +417,7 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
         super.onResume()
         val handler = Handler()
         handler.postDelayed({
-            loadConnections(true)
+            loadConnections(false)
         }, 80)
     }
 

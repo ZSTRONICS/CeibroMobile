@@ -26,6 +26,7 @@ import com.zstronics.ceibro.databinding.FragmentTasksParentTabV3Binding
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ApprovalTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskSortingV3BottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
@@ -116,6 +117,10 @@ class TasksParentTabV3Fragment :
             R.id.imgSearchFilter -> {
 
                 viewModel._applyFilter.value = true
+            }
+
+            R.id.ivSort -> {
+                sortInboxBottomSheet()
             }
 
             R.id.projectFilter -> {
@@ -384,6 +389,22 @@ class TasksParentTabV3Fragment :
         sheet.show(childFragmentManager, "ProjectListBottomSheet")
     }
 
+    private fun sortInboxBottomSheet() {
+        val sheet = TaskSortingV3BottomSheet(viewModel.lastSortingType)
+
+        sheet.onChangeSortingType = { latestSortingType ->
+            viewModel.lastSortingType = latestSortingType
+            if (viewModel.isUserSearching) {
+                mViewDataBinding.taskSearchBar.setQuery("", false)
+            }
+            //  CeibroApplication.CookiesManager.inboxTasksSortingType.postValue(latestSortingType)
+            //  viewModel.changeSortingOrder(latestSortingType)
+            //     changeSortingText(latestSortingType)
+        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "TaskSortingV3BottomSheet")
+    }
 
     private fun showTaskInfoBottomSheet() {
 //        val sheet = TaskInfoBottomSheet(

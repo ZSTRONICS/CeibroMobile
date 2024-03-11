@@ -82,7 +82,8 @@ class TasksParentTabV3VM @Inject constructor(
     var isFirstStartOfClosedFragment = true
     var isSearchingTasks = false
 
-
+    var isUserSearching = false
+    var lastSortingType = "SortByActivity"
     private val _ongoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val ongoingToMeTasks: LiveData<MutableList<CeibroTaskV2>> = _ongoingToMeTasks
     var originalOngoingToMeTasks: MutableList<CeibroTaskV2> = mutableListOf()

@@ -8,21 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.setOnClick
-import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
-import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.databinding.FragmentTaskInfoBinding
 import com.zstronics.ceibro.databinding.LayoutInboxSortingBinding
-import com.zstronics.ceibro.ui.tasks.task.TaskStatus
-import com.zstronics.ceibro.utils.DateUtils
 
 class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogFragment() {
     lateinit var binding: LayoutInboxSortingBinding
@@ -53,7 +46,11 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
             binding.unreadSortBtn.isClickable = true
             binding.dueDateSortBtn.isClickable = true
 
-            setDrawableEndWithTint(binding.latestActivitySortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            setDrawableEndWithTint(
+                binding.latestActivitySortBtn,
+                R.drawable.icon_tick_mark,
+                R.color.appBlue
+            )
             removeDrawableEnd(binding.unreadSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
 
@@ -63,7 +60,11 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
             binding.dueDateSortBtn.isClickable = true
 
             removeDrawableEnd(binding.latestActivitySortBtn)
-            setDrawableEndWithTint(binding.unreadSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            setDrawableEndWithTint(
+                binding.unreadSortBtn,
+                R.drawable.icon_tick_mark,
+                R.color.appBlue
+            )
             removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByDueDate", true)) {
@@ -73,7 +74,11 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
 
             removeDrawableEnd(binding.latestActivitySortBtn)
             removeDrawableEnd(binding.unreadSortBtn)
-            setDrawableEndWithTint(binding.dueDateSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            setDrawableEndWithTint(
+                binding.dueDateSortBtn,
+                R.drawable.icon_tick_mark,
+                R.color.appBlue
+            )
 
         } else {
             removeDrawableEnd(binding.latestActivitySortBtn)
@@ -89,7 +94,11 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
             binding.dueDateSortBtn.isClickable = true
 
             lastSortingType = "SortByActivity"
-            setDrawableEndWithTint(binding.latestActivitySortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            setDrawableEndWithTint(
+                binding.latestActivitySortBtn,
+                R.drawable.icon_tick_mark,
+                R.color.appBlue
+            )
             removeDrawableEnd(binding.unreadSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
             onChangeSortingType?.invoke(lastSortingType)
@@ -102,7 +111,11 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
 
             lastSortingType = "SortByUnread"
             removeDrawableEnd(binding.latestActivitySortBtn)
-            setDrawableEndWithTint(binding.unreadSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            setDrawableEndWithTint(
+                binding.unreadSortBtn,
+                R.drawable.icon_tick_mark,
+                R.color.appBlue
+            )
             removeDrawableEnd(binding.dueDateSortBtn)
             onChangeSortingType?.invoke(lastSortingType)
         }
@@ -115,7 +128,11 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
             lastSortingType = "SortByDueDate"
             removeDrawableEnd(binding.latestActivitySortBtn)
             removeDrawableEnd(binding.unreadSortBtn)
-            setDrawableEndWithTint(binding.dueDateSortBtn, R.drawable.icon_tick_mark, R. color.appBlue)
+            setDrawableEndWithTint(
+                binding.dueDateSortBtn,
+                R.drawable.icon_tick_mark,
+                R.color.appBlue
+            )
             onChangeSortingType?.invoke(lastSortingType)
         }
 
@@ -130,7 +147,8 @@ class InboxSortingBottomSheet(lastSortingTypeParam: String) : BottomSheetDialogF
         drawable?.let {
             it.setBounds(0, 0, it.intrinsicWidth, it.intrinsicHeight)
             textView.setCompoundDrawables(null, null, it, null)
-            textView.compoundDrawableTintList = ContextCompat.getColorStateList(textView.context, tintResId)
+            textView.compoundDrawableTintList =
+                ContextCompat.getColorStateList(textView.context, tintResId)
             textView.compoundDrawableTintMode = PorterDuff.Mode.SRC_IN
         }
     }

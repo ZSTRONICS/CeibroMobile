@@ -644,6 +644,7 @@
     <string name="notes_heading">Notes</string>
     <string name="hidden_tasks">Hidden tasks</string>
     <string name="sort_inbox_by">Sort inbox by</string>
+    <string name="sort_task_by">Sort task by</string>
     <string name="cancel_heading">Cancel</string>
     <string name="new_group">New group</string>
     <string name="start_typing_name">Start typing name</string>
@@ -679,4 +680,7 @@
     <string name="pending">Pending</string>
     <string name="reject_close">Reject-close</string>
     <string name="reject_reopen">Reject-reopen</string>
+    <string name="latest_activity">Latest activity</string>
+    <string name="by_project_a_z">By project(A-Z)</string>
+    <string name="unseen">Unseen</string>
 </resources>
