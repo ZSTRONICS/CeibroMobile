@@ -390,13 +390,13 @@ class TasksParentTabV3Fragment :
     }
 
     private fun sortInboxBottomSheet() {
-        val sheet = TaskSortingV3BottomSheet(viewModel.lastSortingType)
+        val sheet = TaskSortingV3BottomSheet(viewModel.lastSortingType.value ?: "SortByActivity")
 
         sheet.onChangeSortingType = { latestSortingType ->
-            viewModel.lastSortingType = latestSortingType
-            if (viewModel.isUserSearching) {
-                mViewDataBinding.taskSearchBar.setQuery("", false)
-            }
+            viewModel.lastSortingType.value = latestSortingType
+//            if (viewModel.isUserSearching) {
+//                mViewDataBinding.taskSearchBar.setQuery("", false)
+//            }
             //  CeibroApplication.CookiesManager.inboxTasksSortingType.postValue(latestSortingType)
             //  viewModel.changeSortingOrder(latestSortingType)
             //     changeSortingText(latestSortingType)

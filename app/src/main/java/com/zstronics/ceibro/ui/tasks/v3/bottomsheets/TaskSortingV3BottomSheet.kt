@@ -61,8 +61,8 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByUnseen", true)) {
-            binding.unseenSortBtn.isClickable = false
             binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = false
             binding.newTaskSortBtn.isClickable = true
             binding.byProjectSortBtn.isClickable = true
             binding.dueDateSortBtn.isClickable = true
@@ -78,54 +78,54 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByNewTask", true)) {
-            binding.newTaskSortBtn.isClickable = false
-            binding.dueDateSortBtn.isClickable = true
-            binding.unseenSortBtn.isClickable = true
             binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = true
+            binding.newTaskSortBtn.isClickable = false
             binding.byProjectSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = true
 
             setDrawableEndWithTint(
                 binding.newTaskSortBtn,
                 R.drawable.icon_tick_mark,
                 R.color.appBlue
             )
-            removeDrawableEnd(binding.dueDateSortBtn)
-            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByProject", true)) {
+            binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = true
+            binding.newTaskSortBtn.isClickable = true
             binding.byProjectSortBtn.isClickable = false
             binding.dueDateSortBtn.isClickable = true
-            binding.unseenSortBtn.isClickable = true
-            binding.latestActivitySortBtn.isClickable = true
-            binding.newTaskSortBtn.isClickable = true
 
             setDrawableEndWithTint(
                 binding.byProjectSortBtn,
                 R.drawable.icon_tick_mark,
                 R.color.appBlue
             )
-            removeDrawableEnd(binding.dueDateSortBtn)
-            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.newTaskSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
 
         } else if (lastSortingType.equals("SortByDueDate", true)) {
-            binding.dueDateSortBtn.isClickable = false
+            binding.latestActivitySortBtn.isClickable = true
             binding.unseenSortBtn.isClickable = true
             binding.newTaskSortBtn.isClickable = true
-            binding.latestActivitySortBtn.isClickable = true
             binding.byProjectSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = false
 
             setDrawableEndWithTint(
                 binding.dueDateSortBtn,
                 R.drawable.icon_tick_mark,
                 R.color.appBlue
             )
+            removeDrawableEnd(binding.latestActivitySortBtn)
             removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.newTaskSortBtn)
-            removeDrawableEnd(binding.latestActivitySortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
 
         }
@@ -149,11 +149,12 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.newTaskSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
+            onChangeSortingType?.invoke(lastSortingType)
         }
 
         binding.unseenSortBtn.setOnClick {
-            binding.unseenSortBtn.isClickable = false
             binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = false
             binding.newTaskSortBtn.isClickable = true
             binding.byProjectSortBtn.isClickable = true
             binding.dueDateSortBtn.isClickable = true
@@ -168,14 +169,15 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             removeDrawableEnd(binding.newTaskSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
             removeDrawableEnd(binding.dueDateSortBtn)
+            onChangeSortingType?.invoke(lastSortingType)
         }
 
         binding.newTaskSortBtn.setOnClick {
-            binding.newTaskSortBtn.isClickable = false
-            binding.dueDateSortBtn.isClickable = true
-            binding.unseenSortBtn.isClickable = true
             binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = true
+            binding.newTaskSortBtn.isClickable = false
             binding.byProjectSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = true
 
             setDrawableEndWithTint(
                 binding.newTaskSortBtn,
@@ -184,18 +186,19 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
             )
             lastSortingType = "SortByNewTask"
 
-            removeDrawableEnd(binding.dueDateSortBtn)
-            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.byProjectSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
             onChangeSortingType?.invoke(lastSortingType)
         }
+
         binding.byProjectSortBtn.setOnClick {
+            binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = true
+            binding.newTaskSortBtn.isClickable = true
             binding.byProjectSortBtn.isClickable = false
             binding.dueDateSortBtn.isClickable = true
-            binding.unseenSortBtn.isClickable = true
-            binding.latestActivitySortBtn.isClickable = true
-            binding.newTaskSortBtn.isClickable = true
 
             setDrawableEndWithTint(
                 binding.byProjectSortBtn,
@@ -203,19 +206,20 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
                 R.color.appBlue
             )
             lastSortingType = "SortByProject"
-            removeDrawableEnd(binding.dueDateSortBtn)
-            removeDrawableEnd(binding.unseenSortBtn)
+
             removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.newTaskSortBtn)
+            removeDrawableEnd(binding.dueDateSortBtn)
             onChangeSortingType?.invoke(lastSortingType)
         }
 
         binding.dueDateSortBtn.setOnClick {
-            binding.dueDateSortBtn.isClickable = false
-            binding.byProjectSortBtn.isClickable = true
-            binding.unseenSortBtn.isClickable = true
             binding.latestActivitySortBtn.isClickable = true
+            binding.unseenSortBtn.isClickable = true
             binding.newTaskSortBtn.isClickable = true
+            binding.byProjectSortBtn.isClickable = true
+            binding.dueDateSortBtn.isClickable = false
 
             setDrawableEndWithTint(
                 binding.dueDateSortBtn,
@@ -223,10 +227,11 @@ class TaskSortingV3BottomSheet(lastSortingTypeParam: String) : BottomSheetDialog
                 R.color.appBlue
             )
             lastSortingType = "SortByDueDate"
-            removeDrawableEnd(binding.byProjectSortBtn)
-            removeDrawableEnd(binding.unseenSortBtn)
+
             removeDrawableEnd(binding.latestActivitySortBtn)
+            removeDrawableEnd(binding.unseenSortBtn)
             removeDrawableEnd(binding.newTaskSortBtn)
+            removeDrawableEnd(binding.byProjectSortBtn)
             onChangeSortingType?.invoke(lastSortingType)
         }
 

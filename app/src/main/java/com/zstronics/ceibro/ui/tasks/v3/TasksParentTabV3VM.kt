@@ -13,6 +13,7 @@ import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
+import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -32,6 +33,13 @@ import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,26 +57,15 @@ class TasksParentTabV3VM @Inject constructor(
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
 
-    var typeToShowOngoing="All"
-    var typeToShowClosed="All"
-    var typeToShowApproval="All"
+    var typeToShowOngoing = "All"
+    var typeToShowClosed = "All"
+    var typeToShowApproval = "All"
 
-    var userFilterCounter="0"
-    var tagFilterCounter="0"
-    var projectFilterCounter="0"
+    var userFilterCounter = "0"
+    var tagFilterCounter = "0"
+    var projectFilterCounter = "0"
 
     val user = sessionManager.getUser().value
-    var _selectedTaskTypeOngoingState: MutableLiveData<String> =
-        MutableLiveData(TaskRootStateTags.All.tagValue)
-    var selectedTaskTypeOngoingState: LiveData<String> = _selectedTaskTypeOngoingState
-
-    var _selectedTaskTypeApprovalState: MutableLiveData<String> =
-        MutableLiveData(TaskRootStateTags.All.tagValue)
-    var selectedTaskTypeApprovalState: LiveData<String> = _selectedTaskTypeApprovalState
-
-    var _selectedTaskTypeClosedState: MutableLiveData<String> =
-        MutableLiveData(TaskRootStateTags.All.tagValue)
-    var selectedTaskTypeClosedState: LiveData<String> = _selectedTaskTypeClosedState
 
     var _applyFilter: MutableLiveData<Boolean> = MutableLiveData(false)
     var applyFilter: LiveData<Boolean> = _applyFilter
@@ -83,7 +80,7 @@ class TasksParentTabV3VM @Inject constructor(
     var isSearchingTasks = false
 
     var isUserSearching = false
-    var lastSortingType = "SortByActivity"
+
     private val _ongoingToMeTasks: MutableLiveData<MutableList<CeibroTaskV2>> = MutableLiveData()
     val ongoingToMeTasks: LiveData<MutableList<CeibroTaskV2>> = _ongoingToMeTasks
     var originalOngoingToMeTasks: MutableList<CeibroTaskV2> = mutableListOf()
@@ -184,9 +181,24 @@ class TasksParentTabV3VM @Inject constructor(
 
 
     var searchedText: String = ""
+    var lastSortingType: MutableLiveData<String> = MutableLiveData("SortByActivity")
 
+    var _selectedTaskTypeOngoingState: MutableLiveData<String> =
+        MutableLiveData(TaskRootStateTags.All.tagValue)
+    var selectedTaskTypeOngoingState: LiveData<String> = _selectedTaskTypeOngoingState
+
+    var _selectedTaskTypeApprovalState: MutableLiveData<String> =
+        MutableLiveData(TaskRootStateTags.All.tagValue)
+    var selectedTaskTypeApprovalState: LiveData<String> = _selectedTaskTypeApprovalState
+
+    var _selectedTaskTypeClosedState: MutableLiveData<String> =
+        MutableLiveData(TaskRootStateTags.All.tagValue)
+    var selectedTaskTypeClosedState: LiveData<String> = _selectedTaskTypeClosedState
 
     init {
+        loadAllTasks {
+
+        }
         if (sessionManager.getUser().value?.id.isNullOrEmpty()) {
             sessionManager.setUser()
             sessionManager.setToken()
@@ -203,9 +215,10 @@ class TasksParentTabV3VM @Inject constructor(
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
         launch {
-            loadAllTasks() {
-
-            }
+//            loadAllTasks() {
+//
+//            }
+//            lastSortingType.value = "SortByActivity"
         }
 
         getAllProjects()
@@ -225,11 +238,12 @@ class TasksParentTabV3VM @Inject constructor(
 
             if (rootOngoingAllTasks.isNotEmpty()) {
 
-                if (isFirstStartOfOngoingFragment) {
-                    _selectedTaskTypeOngoingState.value = TaskRootStateTags.All.tagValue
-                    isFirstStartOfOngoingFragment = false
-                }
+//                if (isFirstStartOfOngoingFragment) {
+//                    _selectedTaskTypeOngoingState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfOngoingFragment = false
+//                }
 
+                filteredOngoingTasks = rootOngoingAllTasks
                 _ongoingAllTasks.postValue(rootOngoingAllTasks)
                 _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
                 _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
@@ -273,11 +287,12 @@ class TasksParentTabV3VM @Inject constructor(
                     rootOngoingFromMeTasksDB
                 )
 
-                if (isFirstStartOfOngoingFragment) {
-                    _selectedTaskTypeOngoingState.value = TaskRootStateTags.All.tagValue
-                    isFirstStartOfOngoingFragment = false
-                }
+//                if (isFirstStartOfOngoingFragment) {
+//                    _selectedTaskTypeOngoingState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfOngoingFragment = false
+//                }
 
+                filteredOngoingTasks = rootOngoingAllTasks
                 _ongoingAllTasks.postValue(rootOngoingAllTasks)
                 _ongoingToMeTasks.postValue(rootOngoingToMeTasks)
                 _ongoingFromMeTasks.postValue(rootOngoingFromMeTasks)
@@ -299,6 +314,7 @@ class TasksParentTabV3VM @Inject constructor(
 
             if (rootApprovalAllTasks.isNotEmpty()) {
 
+                filteredApprovalTasks = rootApprovalAllTasks
                 _approvalAllTasks.postValue(rootApprovalAllTasks)
                 _approvalInReviewTasks.postValue(rootApprovalInReviewPendingTasks)
                 _approvalToReviewTasks.postValue(rootApprovalToReviewTasks)
@@ -307,10 +323,10 @@ class TasksParentTabV3VM @Inject constructor(
                 originalApprovalInReviewTasks = rootApprovalInReviewPendingTasks
                 originalApprovalToReviewTasks = rootApprovalToReviewTasks
 
-                if (isFirstStartOfApprovalFragment) {
-                    _selectedTaskTypeApprovalState.value = TaskRootStateTags.All.tagValue
-                    isFirstStartOfApprovalFragment = false
-                }
+//                if (isFirstStartOfApprovalFragment) {
+//                    _selectedTaskTypeApprovalState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfApprovalFragment = false
+//                }
 
             } else {
 
@@ -342,6 +358,7 @@ class TasksParentTabV3VM @Inject constructor(
                     rootApprovalToReviewTasksDB
                 )
 
+                filteredApprovalTasks = rootApprovalAllTasks
                 _approvalAllTasks.postValue(rootApprovalAllTasksDB)
                 _approvalInReviewTasks.postValue(rootApprovalInReviewPendingTasksDB)
                 _approvalToReviewTasks.postValue(rootApprovalToReviewTasksDB)
@@ -350,10 +367,10 @@ class TasksParentTabV3VM @Inject constructor(
                 originalApprovalInReviewTasks = rootApprovalInReviewPendingTasksDB
                 originalApprovalToReviewTasks = rootApprovalToReviewTasksDB
 
-                if (isFirstStartOfApprovalFragment) {
-                    _selectedTaskTypeApprovalState.value = TaskRootStateTags.All.tagValue
-                    isFirstStartOfApprovalFragment = false
-                }
+//                if (isFirstStartOfApprovalFragment) {
+//                    _selectedTaskTypeApprovalState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfApprovalFragment = false
+//                }
 
             }
 
@@ -367,6 +384,7 @@ class TasksParentTabV3VM @Inject constructor(
 
             if (rootClosedAllTasks.isNotEmpty()) {
 
+                filteredClosedTasks = rootClosedAllTasks
                 _closedAllTasks.postValue(rootClosedAllTasks)
                 _closedToMeTasks.postValue(rootClosedToMeTasks)
                 _closedFromMeTasks.postValue(rootClosedFromMeTasks)
@@ -375,10 +393,10 @@ class TasksParentTabV3VM @Inject constructor(
                 originalClosedToMeTasks = rootClosedToMeTasks
                 originalClosedFromMeTasks = rootClosedFromMeTasks
 
-                if (isFirstStartOfClosedFragment) {
-                    _selectedTaskTypeClosedState.value = TaskRootStateTags.All.tagValue
-                    isFirstStartOfClosedFragment = false
-                }
+//                if (isFirstStartOfClosedFragment) {
+//                    _selectedTaskTypeClosedState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfClosedFragment = false
+//                }
 
             } else {
 
@@ -406,6 +424,7 @@ class TasksParentTabV3VM @Inject constructor(
                     rootClosedFromMeTasksDB
                 )
 
+                filteredClosedTasks = rootClosedAllTasks
                 _closedAllTasks.postValue(rootClosedAllTasksDB)
                 _closedToMeTasks.postValue(rootClosedToMeTasksDB)
                 _closedFromMeTasks.postValue(rootClosedFromMeTasksDB)
@@ -414,10 +433,10 @@ class TasksParentTabV3VM @Inject constructor(
                 originalClosedToMeTasks = rootClosedToMeTasksDB
                 originalClosedFromMeTasks = rootClosedFromMeTasksDB
 
-                if (isFirstStartOfClosedFragment) {
-                    _selectedTaskTypeClosedState.value = TaskRootStateTags.All.tagValue
-                    isFirstStartOfClosedFragment = false
-                }
+//                if (isFirstStartOfClosedFragment) {
+//                    _selectedTaskTypeClosedState.value = TaskRootStateTags.All.tagValue
+//                    isFirstStartOfClosedFragment = false
+//                }
 
             }
 
@@ -849,6 +868,78 @@ class TasksParentTabV3VM @Inject constructor(
         return selectedTagsForFilter.isEmpty() && selectedProjectsForFilter.isEmpty()
     }
 
+
+    suspend fun applySortingOrder(list: MutableList<CeibroTaskV2>): MutableList<CeibroTaskV2> {
+        var updatedTaskList: MutableList<CeibroTaskV2> = mutableListOf()
+        GlobalScope.launch {
+            if (list.isNotEmpty()) {
+                if (lastSortingType.value.equals("SortByActivity", true)) {
+                    val allTasks = list
+                    allTasks.sortByDescending { it.updatedAt }
+                    updatedTaskList = allTasks
+
+                } else if (lastSortingType.value.equals("SortByUnseen", true)) {
+                    val allTasks = list
+                    allTasks.sortByDescending { !it.isSeenByMe }
+                    updatedTaskList = allTasks
+
+                } else if (lastSortingType.value.equals("SortByNewTask", true)) {
+                    val allTasks = list
+                    allTasks.sortByDescending { it.createdAt }
+                    updatedTaskList = allTasks
+
+                } else if (lastSortingType.value.equals("SortByDueDate", true)) {
+//                loading(true)
+                    val currentDate = Date()
+                    val allTasks = list
+
+                    val comparator = compareBy<CeibroTaskV2> { task ->
+                        when {
+                            task.dueDate.isEmpty() -> 3 // Tasks with no due date go to the bottom
+                            parseDate(task.dueDate)!! < currentDate -> 2 // Tasks with due date before current date
+                            parseDate(task.dueDate)!! > currentDate -> 1 // Tasks with due date after current date
+                            else -> 0 // Tasks with due date equal to current date
+                        }
+                    }.thenByDescending { task ->
+                        when {
+                            task.dueDate.isEmpty() -> "" // No further sorting for tasks with no due date
+                            parseDate(task.dueDate)!! < currentDate -> parseDate(task.dueDate) // Sort tasks with due date before current date in descending order
+                            parseDate(task.dueDate)!! > currentDate -> parseDate(task.dueDate) // Sort tasks with due date after current date in descending order
+                            else -> "" // No further sorting for tasks with due date equal to current date
+                        }
+                    }
+
+                    // Sort tasks using the custom comparator
+                    val sortedTasksList = allTasks.sortedWith(comparator)
+
+                    updatedTaskList = sortedTasksList.toMutableList()
+
+                } else {
+                    val allTasks = list
+                    allTasks.sortByDescending { it.createdAt }
+                    updatedTaskList = allTasks
+                }
+            }
+        }.join()
+        return updatedTaskList
+    }
+
+    private fun parseDate(dateString: String): Date? {
+        val dateFormatDot = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+        val dateFormatHyphen = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+        try {
+            return dateFormatDot.parse(dateString)
+        } catch (e: Exception) {
+            // If parsing with "." format fails, try parsing with "-" format
+            try {
+                return dateFormatHyphen.parse(dateString)
+            } catch (e: Exception) {
+                // If parsing with "-" format also fails, return null or handle the error as needed
+                return null
+            }
+        }
+    }
 
     fun filterTasksList(query: String) {
 

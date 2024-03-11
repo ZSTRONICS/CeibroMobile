@@ -16,6 +16,9 @@ import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -61,6 +64,7 @@ class TaskV3OngoingFragment :
                     true
                 )
             ) {
+                parentViewModel.isFirstStartOfOngoingFragment = false
                 parentViewModel.filteredOngoingTasks = it
                 if (!it.isNullOrEmpty()) {
                     adapter.setList(it, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
@@ -108,32 +112,26 @@ class TaskV3OngoingFragment :
             }
         }
 
-        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
-            var list: MutableList<CeibroTaskV2> = mutableListOf()
+        parentViewModel.lastSortingType.observe(viewLifecycleOwner) { sortingType ->
+            if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
+                val list: MutableList<CeibroTaskV2> = parentViewModel.filteredOngoingTasks
+                parentViewModel.viewModelScope.launch {
+                    parentViewModel.loading(true, "")
+                    val sortedList = async { parentViewModel.sortList(list) }.await()
+                    val orderedList =
+                        async { parentViewModel.applySortingOrder(sortedList) }.await()
 
-            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                list = parentViewModel.originalOngoingAllTasks
+                    parentViewModel.filteredOngoingTasks = orderedList
 
-            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingFromMeTasks
-
-            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                list = parentViewModel.originalOngoingToMeTasks
+                    parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    parentViewModel.loading(false, "")
+                }
             }
-
-            list = parentViewModel.sortList(list)
-
-            parentViewModel.filteredOngoingTasks = list
-
-            parentViewModel.filterTasksList(parentViewModel.searchedText)
-
         }
 
-        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
-            if (it == true) {
 
-                val taskType = parentViewModel.selectedTaskTypeOngoingState.value
-
+        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
+            if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
                 var list: MutableList<CeibroTaskV2> = mutableListOf()
 
                 if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
@@ -146,12 +144,45 @@ class TaskV3OngoingFragment :
                     list = parentViewModel.originalOngoingToMeTasks
                 }
 
-                list = parentViewModel.sortList(list)
+                parentViewModel.viewModelScope.launch {
+                    val sortedList = async { parentViewModel.sortList(list) }.await()
+                    val orderedList =
+                        async { parentViewModel.applySortingOrder(sortedList) }.await()
 
-                parentViewModel.filteredOngoingTasks = list
+                    parentViewModel.filteredOngoingTasks = orderedList
 
-                parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    parentViewModel.filterTasksList(parentViewModel.searchedText)
+                }
+            }
+        }
 
+        parentViewModel.applyFilter.observe(viewLifecycleOwner) {
+            if (it == true) {
+                if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
+                    val taskType = parentViewModel.selectedTaskTypeOngoingState.value
+
+                    var list: MutableList<CeibroTaskV2> = mutableListOf()
+
+                    if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                        list = parentViewModel.originalOngoingAllTasks
+
+                    } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                        list = parentViewModel.originalOngoingFromMeTasks
+
+                    } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                        list = parentViewModel.originalOngoingToMeTasks
+                    }
+
+                    parentViewModel.viewModelScope.launch {
+                        val sortedList = async { parentViewModel.sortList(list) }.await()
+                        val orderedList =
+                            async { parentViewModel.applySortingOrder(sortedList) }.await()
+
+                        parentViewModel.filteredOngoingTasks = orderedList
+
+                        parentViewModel.filterTasksList(parentViewModel.searchedText)
+                    }
+                }
             }
         }
 
