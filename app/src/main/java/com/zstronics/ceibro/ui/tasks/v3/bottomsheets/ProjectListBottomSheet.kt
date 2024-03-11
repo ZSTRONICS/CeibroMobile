@@ -67,7 +67,7 @@ class ProjectListBottomSheet(
             mViewDataBinding.locationProjectSearchBar.setQuery("", true)
             viewModel.filterFavoriteProjects("")
             viewModel.filterAllProjects("")
-//            selectedProjects.clear()
+            selectedProjects.clear()
             viewModel.selectedProjectsForFilter = selectedProjects
             sectionedAdapter.setSelectedList(selectedProjects)
             callback.invoke(selectedProjects)
