@@ -888,6 +888,31 @@ class TasksParentTabV3VM @Inject constructor(
                     allTasks.sortByDescending { it.createdAt }
                     updatedTaskList = allTasks
 
+                } else if (lastSortingType.value.equals("SortByProject", true)) {
+                    val allTasks = list
+//                    allTasks.sortByDescending {
+//                        when {
+//                            it.project != null && it.project.title.firstOrNull()?.isLetter() == true -> 0
+//                            it.project != null && it.project.title.firstOrNull()?.isDigit() == true -> 1 // Titles starting with numbers next
+//                            it.project != null && it.project.title.isEmpty() -> 2 // Alphabetical titles first
+//                            else -> 3 // Tasks with no project title last
+//                        }
+//                    }
+
+                    // For the first position (alphabetical titles), sort alphabetically by project title
+                    val position1Tasks = allTasks.filter { it.project?.title?.firstOrNull()?.isLetter() == true }.toMutableList()
+                    position1Tasks.sortBy { it.project?.title?.lowercase() }
+
+                    // Now, let's group the tasks with project titles starting with numbers (position 2)
+                    val position2Tasks = allTasks.filter { it.project?.title?.firstOrNull()?.isDigit() == true }.toMutableList()
+                    position2Tasks.sortBy { it.project?.title }
+
+                    // For the third position (tasks with no project title), there's no need to sort
+                    // Combine all tasks in the desired order
+                    val sortedTasks = position1Tasks + position2Tasks + allTasks.filter { it.project == null || it.project.title.isBlank() }
+
+                    updatedTaskList = sortedTasks.toMutableList()
+
                 } else if (lastSortingType.value.equals("SortByDueDate", true)) {
 //                loading(true)
                     val currentDate = Date()
