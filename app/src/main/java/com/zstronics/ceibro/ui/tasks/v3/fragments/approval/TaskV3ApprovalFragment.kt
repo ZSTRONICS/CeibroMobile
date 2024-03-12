@@ -19,6 +19,7 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3ApprovalBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
+import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
