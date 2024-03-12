@@ -13,7 +13,6 @@ import com.zstronics.ceibro.data.database.dao.GroupsV2Dao
 import com.zstronics.ceibro.data.database.dao.ProjectsV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
-import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
@@ -33,10 +32,8 @@ import com.zstronics.ceibro.ui.contacts.toLightDBGroupContacts
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -759,6 +756,7 @@ class TasksParentTabV3VM @Inject constructor(
             }.toMutableList()
 
 
+
         filteredTasks = sortUsersList(filteredTasks)
         return filteredTasks
     }
@@ -801,8 +799,7 @@ class TasksParentTabV3VM @Inject constructor(
         val distinctList = combinedList.distinctBy { it.phoneNumber }
 
 
-        if (roles.isEmpty() || distinctList.isEmpty()) {
-
+        if (distinctList.isEmpty()) {
             return list.toMutableList()
         }
 
@@ -866,6 +863,7 @@ class TasksParentTabV3VM @Inject constructor(
 
     private fun isFilterListEmpty(): Boolean {
         return selectedTagsForFilter.isEmpty() && selectedProjectsForFilter.isEmpty()
+                && userConnectionAndRoleList.first.isEmpty() && userConnectionAndRoleList.second.isEmpty()
     }
 
 
@@ -900,16 +898,21 @@ class TasksParentTabV3VM @Inject constructor(
 //                    }
 
                     // For the first position (alphabetical titles), sort alphabetically by project title
-                    val position1Tasks = allTasks.filter { it.project?.title?.firstOrNull()?.isLetter() == true }.toMutableList()
+                    val position1Tasks =
+                        allTasks.filter { it.project?.title?.firstOrNull()?.isLetter() == true }
+                            .toMutableList()
                     position1Tasks.sortBy { it.project?.title?.lowercase() }
 
                     // Now, let's group the tasks with project titles starting with numbers (position 2)
-                    val position2Tasks = allTasks.filter { it.project?.title?.firstOrNull()?.isDigit() == true }.toMutableList()
+                    val position2Tasks =
+                        allTasks.filter { it.project?.title?.firstOrNull()?.isDigit() == true }
+                            .toMutableList()
                     position2Tasks.sortBy { it.project?.title }
 
                     // For the third position (tasks with no project title), there's no need to sort
                     // Combine all tasks in the desired order
-                    val sortedTasks = position1Tasks + position2Tasks + allTasks.filter { it.project == null || it.project.title.isBlank() }
+                    val sortedTasks =
+                        position1Tasks + position2Tasks + allTasks.filter { it.project == null || it.project.title.isBlank() }
 
                     updatedTaskList = sortedTasks.toMutableList()
 

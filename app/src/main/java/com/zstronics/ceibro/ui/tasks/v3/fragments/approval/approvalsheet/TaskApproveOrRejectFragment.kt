@@ -6,6 +6,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
@@ -15,11 +18,15 @@ import com.zstronics.ceibro.base.extensions.shortToastNow
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.databinding.FragmentTaskApproveOrRejectBinding
-import com.zstronics.ceibro.databinding.FragmentWorksBinding
 import com.zstronics.ceibro.extensions.openFilePicker
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroFilesRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroImageWithCommentRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.newtask.adapter.CeibroOnlyImageRVAdapter
+import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.EditCommentDialogSheet
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.CeibroCameraActivity
+import ee.zstronics.ceibro.camera.CeibroImageViewerActivity
 import ee.zstronics.ceibro.camera.FileUtils
 import ee.zstronics.ceibro.camera.PickedImages
 import id.zelory.compressor.Compressor
@@ -27,6 +34,7 @@ import id.zelory.compressor.constraint.format
 import id.zelory.compressor.constraint.quality
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TaskApproveOrRejectFragment :
@@ -37,6 +45,7 @@ class TaskApproveOrRejectFragment :
     override val viewModel: TaskApproveOrRejectVM by viewModels()
     override val layoutResId: Int = R.layout.fragment_task_approve_or_reject
     override fun toolBarVisibility(): Boolean = false
+
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalZeroShutterLag::class)
     override fun onClick(id: Int) {
         when (id) {
@@ -70,17 +79,17 @@ class TaskApproveOrRejectFragment :
             R.id.approveRejectAttachBtn -> {
                 if (viewState.isAttachLayoutOpen.value == true) {
                     viewState.isAttachLayoutOpen.value = false
-                    mViewDataBinding.newCommentAttachmentLayout.animate()
-                        .translationY(mViewDataBinding.newCommentAttachmentLayout.height.toFloat())
+                    mViewDataBinding.approveRejectAttachmentLayout.animate()
+                        .translationY(mViewDataBinding.approveRejectAttachmentLayout.height.toFloat())
                         .setDuration(350)
                         .withEndAction {
-                            mViewDataBinding.newCommentAttachmentLayout.visibility = View.GONE
+                            mViewDataBinding.approveRejectAttachmentLayout.visibility = View.GONE
                         }
                         .start()
                 } else {
                     viewState.isAttachLayoutOpen.value = true
-                    mViewDataBinding.newCommentAttachmentLayout.visibility = View.VISIBLE
-                    mViewDataBinding.newCommentAttachmentLayout.animate()
+                    mViewDataBinding.approveRejectAttachmentLayout.visibility = View.VISIBLE
+                    mViewDataBinding.approveRejectAttachmentLayout.animate()
                         .translationY(0f)
                         .setDuration(350)
                         .start()
@@ -132,10 +141,243 @@ class TaskApproveOrRejectFragment :
         }
     }
 
+    @Inject
+    lateinit var onlyImageAdapter: CeibroOnlyImageRVAdapter
+
+    @Inject
+    lateinit var imageWithCommentAdapter: CeibroImageWithCommentRVAdapter
+
+    @Inject
+    lateinit var filesAdapter: CeibroFilesRVAdapter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        viewModel.task.observe(viewLifecycleOwner) {
+            viewModel.viewState.taskTitle.value = it.title
+        }
+
+        viewModel.taskType.observe(viewLifecycleOwner) { taskUpdateType ->
+            if (taskUpdateType.equals("approveClose", true)) {
+                viewModel.viewState.title.value = "Approve"
+                mViewDataBinding.tvUpdateStatus.setTextColor(resources.getColor(R.color.appGreen))
+                viewModel.viewState.description.value =
+                    (resources.getString(R.string.approve_close_detail))
+            } else if (taskUpdateType.equals("rejectReOpen", true)) {
+                viewModel.viewState.title.value = "Reject-reopen"
+                mViewDataBinding.tvUpdateStatus.setTextColor(resources.getColor(R.color.appRed))
+                viewModel.viewState.description.value =
+                    (resources.getString(R.string.reject_reopen_detail))
+            } else if (taskUpdateType.equals("rejectClose", true)) {
+                viewModel.viewState.title.value = "reject-Close"
+                mViewDataBinding.tvUpdateStatus.setTextColor(resources.getColor(R.color.appRed))
+                viewModel.viewState.description.value =
+                    (resources.getString(R.string.reject_close_detail))
+            }
+        }
 
 
 
+        mViewDataBinding.filesLayout.visibility = View.GONE
+        mViewDataBinding.onlyImagesRV.visibility = View.GONE
+        mViewDataBinding.imagesWithCommentRV.visibility = View.GONE
 
+        mViewDataBinding.onlyImagesRV.isNestedScrollingEnabled = false
+        mViewDataBinding.imagesWithCommentRV.isNestedScrollingEnabled = false
+        mViewDataBinding.filesRV.isNestedScrollingEnabled = false
+
+
+        val handler = Handler()
+        handler.postDelayed(Runnable {
+            mViewDataBinding.approveRejectAttachmentLayout.animate()
+                .translationY(mViewDataBinding.approveRejectAttachmentLayout.height.toFloat())
+                .setDuration(20)
+                .withEndAction {
+                    mViewDataBinding.approveRejectAttachmentLayout.visibility = View.GONE
+                }
+                .start()
+        }, 20)
+
+        mViewDataBinding.commentText.setOnTouchListener { view, event ->
+            view.parent.requestDisallowInterceptTouchEvent(true)
+            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                view.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return@setOnTouchListener false
+        }
+
+
+
+        viewModel.listOfImages.observe(viewLifecycleOwner) {
+
+            if (!it.isNullOrEmpty()) {
+                val allImages = it
+                println("ImagesURISelected: $it")
+                val onlyImages1 = arrayListOf<PickedImages>()
+                val imagesWithComment1 = arrayListOf<PickedImages>()
+                for (item in allImages) {
+                    if (item.comment.isNotEmpty()) {
+                        imagesWithComment1.add(item)
+                    } else {
+                        onlyImages1.add(item)
+                    }
+                }
+                viewModel.onlyImages.postValue(onlyImages1)
+                viewModel.imagesWithComments.postValue(imagesWithComment1)
+            } else {
+                viewModel.onlyImages.postValue(arrayListOf())
+                viewModel.imagesWithComments.postValue(arrayListOf())
+            }
+        }
+
+        viewModel.imagesWithComments.observe(viewLifecycleOwner) {
+            imageWithCommentAdapter.setList(it)
+            if (it.isNotEmpty()) {
+                mViewDataBinding.imagesWithCommentRV.visibility = View.VISIBLE
+                mViewDataBinding.imagesWithCommentBottomLine.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.imagesWithCommentRV.visibility = View.GONE
+                mViewDataBinding.imagesWithCommentBottomLine.visibility = View.GONE
+            }
+        }
+        mViewDataBinding.imagesWithCommentRV.adapter = imageWithCommentAdapter
+        imageWithCommentAdapter.textClickListener = { _: View, position: Int, data: PickedImages ->
+            showEditCommentDialog(data)
+        }
+
+
+        imageWithCommentAdapter.openImageClickListener =
+            { _: View, position: Int, data: PickedImages ->
+                /*  val bundle = Bundle()
+                  bundle.putParcelableArray(
+                      "images",
+                      viewModel.imagesWithComments.value?.toTypedArray()
+                  )
+                  bundle.putInt("position", position)
+                  bundle.putBoolean("fromServerUrl", false)
+                  navigate(R.id.imageViewerFragment, bundle)*/
+
+                val newList: ArrayList<PickedImages> = arrayListOf()
+                //  val listOfPickedImages = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                val ceibroCamera = Intent(requireActivity(), CeibroImageViewerActivity::class.java)
+                val bundle = Bundle()
+                if (viewModel.listOfImages.value != null) {
+                    newList.addAll(viewModel.listOfImages.value!!)
+                }
+                //  newList.addAll(oldImages)
+
+                bundle.putParcelableArrayList("images", newList)
+                bundle.putParcelable("object", data)
+                bundle.putBoolean("isFromNewTaskFragment", true)
+                ceibroCamera.putExtras(bundle)
+                ceibroImageViewerLauncher.launch(ceibroCamera)
+
+            }
+
+        imageWithCommentAdapter.removeItemClickListener =
+            {
+                val listOfImages = viewModel.listOfImages.value
+                if (listOfImages?.contains(it) == true) {
+                    listOfImages.remove(it)
+                    viewModel.listOfImages.postValue(listOfImages)
+                }
+
+                setImagesAndFilesHeadingVisibility()
+            }
+
+
+        viewModel.onlyImages.observe(viewLifecycleOwner) {
+            onlyImageAdapter.setList(it)
+            if (it.isNotEmpty()) {
+                mViewDataBinding.onlyImagesRV.visibility = View.VISIBLE
+                mViewDataBinding.onlyImagesBottomLine.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.onlyImagesRV.visibility = View.GONE
+                mViewDataBinding.onlyImagesBottomLine.visibility = View.GONE
+            }
+        }
+        mViewDataBinding.onlyImagesRV.adapter = onlyImageAdapter
+        onlyImageAdapter.openImageClickListener =
+            { _: View, position: Int, fileUri: String, obj ->
+                /* val bundle = Bundle()
+                 bundle.putParcelableArray("images", viewModel.onlyImages.value?.toTypedArray())
+                 bundle.putInt("position", position)
+                 bundle.putBoolean("fromServerUrl", false)
+                 navigate(R.id.imageViewerFragment, bundle)*/
+
+                val newList: ArrayList<PickedImages> = arrayListOf()
+                //  val listOfPickedImages = result.data?.extras?.getParcelableArrayList<PickedImages>("images")
+                val ceibroCamera = Intent(requireActivity(), CeibroImageViewerActivity::class.java)
+                val bundle = Bundle()
+                if (viewModel.listOfImages.value != null) {
+                    newList.addAll(viewModel.listOfImages.value!!)
+                }
+                //  newList.addAll(oldImages)
+
+                bundle.putParcelableArrayList("images", newList)
+                bundle.putParcelable("object", obj)
+                bundle.putBoolean("isFromNewTaskFragment", true)
+                ceibroCamera.putExtras(bundle)
+                ceibroImageViewerLauncher.launch(ceibroCamera)
+            }
+
+        onlyImageAdapter.removeItemClickListener =
+            {
+                val listOfImages = viewModel.listOfImages.value
+                if (listOfImages?.contains(it) == true) {
+                    listOfImages.remove(it)
+                    viewModel.listOfImages.postValue(listOfImages)
+                }
+                setImagesAndFilesHeadingVisibility()
+            }
+
+
+        viewModel.documents.observe(viewLifecycleOwner) {
+            filesAdapter.setList(it)
+            if (it.isNotEmpty()) {
+                mViewDataBinding.filesLayout.visibility = View.VISIBLE
+                mViewDataBinding.filesBottomLine.visibility = View.VISIBLE
+            } else {
+                mViewDataBinding.filesLayout.visibility = View.GONE
+                mViewDataBinding.filesBottomLine.visibility = View.GONE
+            }
+            mViewDataBinding.filesCount.text = "${it.size} file(s)"
+        }
+        mViewDataBinding.filesRV.adapter = filesAdapter
+
+        filesAdapter.itemClickListener = { _: View, position: Int, data: PickedImages ->
+            val oldDocuments = viewModel.documents.value
+            oldDocuments?.remove(data)
+            viewModel.documents.postValue(oldDocuments)
+            setImagesAndFilesHeadingVisibility()
+        }
+
+//        val handler1 = Handler()
+//        handler1.postDelayed(Runnable {
+//            mViewDataBinding.commentText.post {
+//                mViewDataBinding.commentText.showKeyboardWithFocus()
+//            }
+//        }, 300)
+
+
+    }
+
+    private fun showEditCommentDialog(data: PickedImages) {
+        val sheet = EditCommentDialogSheet(data)
+        sheet.updateCommentOnClick = { updatedComment ->
+            val allImagesWithComment = viewModel.imagesWithComments.value
+            val foundData = allImagesWithComment?.find { it.fileUri == data.fileUri }
+            if (foundData != null) {
+                val index = allImagesWithComment.indexOf(foundData)
+                foundData.comment = updatedComment
+                allImagesWithComment[index] = foundData
+                viewModel.imagesWithComments.postValue(allImagesWithComment)
+            }
+        }
+
+        sheet.isCancelable = false
+        sheet.show(childFragmentManager, "EditCommentDialogSheet")
+    }
 
     private val ceibroImagesPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -379,4 +621,23 @@ class TaskApproveOrRejectFragment :
                 viewModel.listOfImages.postValue(newList)
             }
         }
+
+    override fun onResume() {
+        super.onResume()
+        setImagesAndFilesHeadingVisibility()
+    }
+
+    private fun setImagesAndFilesHeadingVisibility() {
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (viewModel.filesCounter() > 0) {
+                mViewDataBinding.imageRequiredHeading.visibility = View.GONE
+                mViewDataBinding.imageRequiredHeadingBottomLine.visibility = View.GONE
+            } else {
+                mViewDataBinding.imageRequiredHeading.visibility = View.VISIBLE
+                mViewDataBinding.imageRequiredHeadingBottomLine.visibility = View.VISIBLE
+            }
+        }, 200)
+
+    }
 }

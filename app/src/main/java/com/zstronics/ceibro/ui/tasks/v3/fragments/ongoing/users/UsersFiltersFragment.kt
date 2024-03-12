@@ -75,9 +75,15 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
 
             R.id.btnApply -> {
 
-                val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
-                dataList.addAll(chipAdapter.dataList)
-                userConnectionAndRoleCallBack?.invoke(Pair(dataList, listOfRoles))
+                if (listOfRoles.isEmpty()) {
+
+                    shortToastNow("Please select role to sort users accordingly")
+                } else {
+
+                    val dataList = ArrayList<AllCeibroConnections.CeibroConnection>()
+                    dataList.addAll(chipAdapter.dataList)
+                    userConnectionAndRoleCallBack?.invoke(Pair(dataList, listOfRoles))
+                }
             }
 
             R.id.tvClearAll -> {
@@ -101,8 +107,13 @@ class UsersFiltersFragment(private val userConnectionAndRolesList: (Pair<ArrayLi
         super.onViewCreated(view, savedInstanceState)
         mViewDataBinding.selectedContactsRV.adapter = chipAdapter
 
+//        listOfRoles.clear()
+//        listOfRoles = userConnectionAndRolesList.second
+
         listOfRoles.clear()
-        listOfRoles = userConnectionAndRolesList.second
+        val deepCopyList =   userConnectionAndRolesList.second.toMutableList()
+        listOfRoles=ArrayList(deepCopyList)
+
 
         sectionList.add(
             0,

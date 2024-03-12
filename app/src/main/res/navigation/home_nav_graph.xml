@@ -562,6 +562,18 @@
         android:id="@+id/taskV3OngoingFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment"
         android:label="TaskV3OngoingFragment" />
+    <fragment
+        android:id="@+id/taskApproveOrRejectFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.approval.approvalsheet.TaskApproveOrRejectFragment"
+        android:label="TaskApproveOrRejectFragment" />
+    <fragment
+        android:id="@+id/taskV3ApprovalFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.approval.TaskV3ApprovalFragment"
+        android:label="TaskV3ApprovalFragment" />
+    <fragment
+        android:id="@+id/taskV3ClosedFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.closed.TaskV3ClosedFragment"
+        android:label="TaskV3ClosedFragment" />
 
 
 </navigation>

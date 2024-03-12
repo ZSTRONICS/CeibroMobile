@@ -19,7 +19,6 @@ import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3ApprovalBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
-import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +45,7 @@ class TaskV3ApprovalFragment :
 
         }
     }
+
     companion object {
         fun newInstance(viewModel: TasksParentTabV3VM): TaskV3ApprovalFragment {
             val fragment = TaskV3ApprovalFragment()
@@ -171,7 +171,8 @@ class TaskV3ApprovalFragment :
 
                 parentViewModel.viewModelScope.launch {
                     val sortedList = async { parentViewModel.sortList(list) }.await()
-                    val orderedList = async { parentViewModel.applySortingOrder(sortedList) }.await()
+                    val orderedList =
+                        async { parentViewModel.applySortingOrder(sortedList) }.await()
 
                     parentViewModel.filteredApprovalTasks = orderedList
 
@@ -193,7 +194,8 @@ class TaskV3ApprovalFragment :
                     val allEvents = viewModel.taskDao.getEventsOfTask(data.id)
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
-                    CeibroApplication.CookiesManager.taskDetailRootState = parentViewModel.selectedTaskTypeApprovalState.value
+                    CeibroApplication.CookiesManager.taskDetailRootState =
+                        parentViewModel.selectedTaskTypeApprovalState.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
@@ -211,13 +213,24 @@ class TaskV3ApprovalFragment :
             { v: View, position: Int, data: CeibroTaskV2 ->
                 createPopupWindow(v, data) { menuTag ->
                     if (menuTag.equals("approveClose", true)) {
+                        val bundle = Bundle()
+                        bundle.putParcelable("CeibroTaskV2", data)
+                        bundle.putString("updateTaskType", "approveClose")
+                        navigate(R.id.taskApproveOrRejectFragment, bundle)
 
                     }
                     if (menuTag.equals("rejectReOpen", true)) {
 
+                        val bundle = Bundle()
+                        bundle.putParcelable("CeibroTaskV2", data)
+                        bundle.putString("updateTaskType", "rejectReOpen")
+                        navigate(R.id.taskApproveOrRejectFragment, bundle)
                     }
                     if (menuTag.equals("rejectClose", true)) {
-
+                        val bundle = Bundle()
+                        bundle.putParcelable("CeibroTaskV2", data)
+                        bundle.putString("updateTaskType", "rejectClose")
+                        navigate(R.id.taskApproveOrRejectFragment, bundle)
                     }
                 }
             }

@@ -29,7 +29,7 @@ class UsersBottomSheetTabLayoutAdapter(
         }
 
 
-        var list = ArrayList<CeibroConnectionGroupV2>()
+        val list = ArrayList<CeibroConnectionGroupV2>()
         viewModel.selectedGroups.forEach {
         list.add(it.copy())
 
