@@ -540,7 +540,7 @@ class TasksParentTabV3VM @Inject constructor(
         }
     }
 
-    fun reloadData() {
+    fun reloadProjectData() {
         getAllProjects()
         getFavoriteProjects()
 //        getRecentProjects()
