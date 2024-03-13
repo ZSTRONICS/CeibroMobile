@@ -1,5 +1,6 @@
 package com.zstronics.ceibro.ui.tasks.v3.hidden
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -23,6 +24,7 @@ import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnect
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTasksHiddenParentTabV3Binding
+import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ApprovalTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.ProjectListHiddenBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TagsHiddenBottomSheet
@@ -30,6 +32,9 @@ import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskSortingV3BottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.TaskTypeBottomSheet
 import com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersHiddenBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 @AndroidEntryPoint
 class TasksHiddenParentTabV3Fragment :
@@ -438,4 +443,22 @@ class TasksHiddenParentTabV3Fragment :
         }
 
     }
+
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshProjectsData(event: LocalEvents.RefreshProjectsData?) {
+        viewModel.reloadData()
+    }
+
 }
