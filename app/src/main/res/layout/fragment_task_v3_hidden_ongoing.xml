@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.ongoing.TaskV3HiddenOngoingState" />
+            type="com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing.TaskV3HiddenOngoingState" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.ongoing.TaskV3HiddenOngoingVM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing.TaskV3HiddenOngoingVM" />
 
     </data>
 

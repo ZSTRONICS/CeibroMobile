@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.ongoing
+package com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.closed
 
 import android.content.Context
 import android.os.Bundle
@@ -10,7 +10,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.databinding.FragmentTaskV3HiddenOngoingBinding
+import com.zstronics.ceibro.databinding.FragmentTaskV3HiddenClosedBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3VM
@@ -25,13 +25,13 @@ import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TaskV3HiddenOngoingFragment :
-    BaseNavViewModelFragment<FragmentTaskV3HiddenOngoingBinding, ITaskV3HiddenOngoing.State, TaskV3HiddenOngoingVM>() {
+class TaskV3HiddenClosedFragment :
+    BaseNavViewModelFragment<FragmentTaskV3HiddenClosedBinding, ITaskV3HiddenClosed.State, TaskV3HiddenClosedVM>() {
     override val bindingVariableId = BR.viewModel
     override val bindingViewStateVariableId = BR.viewState
-    override val viewModel: TaskV3HiddenOngoingVM by viewModels()
+    override val viewModel: TaskV3HiddenClosedVM by viewModels()
     private lateinit var parentViewModel: TasksHiddenParentTabV3VM
-    override val layoutResId: Int = R.layout.fragment_task_v3_hidden_ongoing
+    override val layoutResId: Int = R.layout.fragment_task_v3_hidden_closed
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
@@ -41,8 +41,8 @@ class TaskV3HiddenOngoingFragment :
     }
 
     companion object {
-        fun newInstance(viewModel: TasksHiddenParentTabV3VM): TaskV3HiddenOngoingFragment {
-            val fragment = TaskV3HiddenOngoingFragment()
+        fun newInstance(viewModel: TasksHiddenParentTabV3VM): TaskV3HiddenClosedFragment {
+            val fragment = TaskV3HiddenClosedFragment()
             fragment.parentViewModel = viewModel
             return fragment
         }
@@ -57,29 +57,26 @@ class TaskV3HiddenOngoingFragment :
         mViewDataBinding.taskOngoingRV.adapter = adapter
 
 
-        parentViewModel.ongoingAllTasks.observe(viewLifecycleOwner) {
+        parentViewModel.closedAllTasks.observe(viewLifecycleOwner) {
             if (parentViewModel.applyFilter.value == true) {
                 parentViewModel._applyFilter.value = true
             } else {
-                if (parentViewModel.selectedTaskTypeOngoingState.value.equals(
+                if (parentViewModel.selectedTaskTypeClosedState.value.equals(
                         TaskRootStateTags.All.tagValue,
                         true
                     )
                 ) {
-                    parentViewModel.isFirstStartOfOngoingFragment = false
-                    parentViewModel.filteredOngoingTasks = it
+                    parentViewModel.isFirstStartOfClosedFragment = false
+                    parentViewModel.filteredClosedTasks = it
                     if (!it.isNullOrEmpty()) {
-                        adapter.setList(
-                            it,
-                            parentViewModel.selectedTaskTypeOngoingState.value ?: ""
-                        )
+                        adapter.setList(it, parentViewModel.selectedTaskTypeClosedState.value ?: "")
                         mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                         mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                         mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
                     } else {
                         adapter.setList(
                             listOf(),
-                            parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                            parentViewModel.selectedTaskTypeClosedState.value ?: ""
                         )
                         mViewDataBinding.taskOngoingRV.visibility = View.GONE
                         if (parentViewModel.isSearchingTasks) {
@@ -94,18 +91,17 @@ class TaskV3HiddenOngoingFragment :
             }
         }
 
-
-        parentViewModel.setFilteredDataToOngoingAdapter.observe(viewLifecycleOwner) { list ->
+        parentViewModel.setFilteredDataToCloseAdapter.observe(viewLifecycleOwner) { list ->
             if (list.isNotEmpty()) {
 
-                adapter.setList(list, parentViewModel.selectedTaskTypeOngoingState.value ?: "")
+                adapter.setList(list, parentViewModel.selectedTaskTypeClosedState.value ?: "")
                 mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
             } else {
                 adapter.setList(
                     listOf(),
-                    parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                    parentViewModel.selectedTaskTypeClosedState.value ?: ""
                 )
                 mViewDataBinding.taskOngoingRV.visibility = View.GONE
                 if (parentViewModel.isSearchingTasks) {
@@ -118,16 +114,17 @@ class TaskV3HiddenOngoingFragment :
             }
         }
 
+
         parentViewModel.lastSortingType.observe(viewLifecycleOwner) { sortingType ->
-            if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
-                val list: MutableList<CeibroTaskV2> = parentViewModel.filteredOngoingTasks
+            if (parentViewModel.isFirstStartOfClosedFragment.not()) {
+                val list: MutableList<CeibroTaskV2> = parentViewModel.filteredClosedTasks
                 parentViewModel.viewModelScope.launch {
                     viewModel.loading(true, "")
                     val sortedList = async { parentViewModel.sortList(list) }.await()
                     val orderedList =
                         async { parentViewModel.applySortingOrder(sortedList) }.await()
 
-                    parentViewModel.filteredOngoingTasks = orderedList
+                    parentViewModel.filteredClosedTasks = orderedList
 
                     parentViewModel.filterTasksList(parentViewModel.searchedText)
                     viewModel.loading(false, "")
@@ -135,48 +132,46 @@ class TaskV3HiddenOngoingFragment :
             }
         }
 
+        parentViewModel.selectedTaskTypeClosedState.observe(viewLifecycleOwner) { taskType ->
+            parentViewModel.isFirstStartOfClosedFragment = false
+            var list: MutableList<CeibroTaskV2> = mutableListOf()
 
-        parentViewModel.selectedTaskTypeOngoingState.observe(viewLifecycleOwner) { taskType ->
-            if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
-                var list: MutableList<CeibroTaskV2> = mutableListOf()
+            if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
+                list = parentViewModel.originalClosedAllTasks
 
-                if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                    list = parentViewModel.originalOngoingAllTasks
+            } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
+                list = parentViewModel.originalClosedToMeTasks
 
-                } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                    list = parentViewModel.originalOngoingFromMeTasks
+            } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                list = parentViewModel.originalClosedFromMeTasks
+            }
 
-                } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                    list = parentViewModel.originalOngoingToMeTasks
-                }
+            parentViewModel.viewModelScope.launch {
+                val sortedList = async { parentViewModel.sortList(list) }.await()
+                val orderedList = async { parentViewModel.applySortingOrder(sortedList) }.await()
 
-                parentViewModel.viewModelScope.launch {
-                    val sortedList = async { parentViewModel.sortList(list) }.await()
-                    val orderedList =
-                        async { parentViewModel.applySortingOrder(sortedList) }.await()
+                parentViewModel.filteredClosedTasks = orderedList
 
-                    parentViewModel.filteredOngoingTasks = orderedList
-
-                    parentViewModel.filterTasksList(parentViewModel.searchedText)
-                }
+                parentViewModel.filterTasksList(parentViewModel.searchedText)
             }
         }
 
         parentViewModel.applyFilter.observe(viewLifecycleOwner) {
-            if (it == true) {
-                if (parentViewModel.isFirstStartOfOngoingFragment.not()) {
-                    val taskType = parentViewModel.selectedTaskTypeOngoingState.value
+            if (parentViewModel.isFirstStartOfClosedFragment.not()) {
+                if (it == true) {
+
+                    val taskType = parentViewModel.selectedTaskTypeClosedState.value
 
                     var list: MutableList<CeibroTaskV2> = mutableListOf()
 
                     if (taskType.equals(TaskRootStateTags.All.tagValue, true)) {
-                        list = parentViewModel.originalOngoingAllTasks
-
-                    } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
-                        list = parentViewModel.originalOngoingFromMeTasks
+                        list = parentViewModel.originalClosedAllTasks
 
                     } else if (taskType.equals(TaskRootStateTags.ToMe.tagValue, true)) {
-                        list = parentViewModel.originalOngoingToMeTasks
+                        list = parentViewModel.originalClosedToMeTasks
+
+                    } else if (taskType.equals(TaskRootStateTags.FromMe.tagValue, true)) {
+                        list = parentViewModel.originalClosedFromMeTasks
                     }
 
                     parentViewModel.viewModelScope.launch {
@@ -184,13 +179,15 @@ class TaskV3HiddenOngoingFragment :
                         val orderedList =
                             async { parentViewModel.applySortingOrder(sortedList) }.await()
 
-                        parentViewModel.filteredOngoingTasks = orderedList
+                        parentViewModel.filteredClosedTasks = orderedList
 
                         parentViewModel.filterTasksList(parentViewModel.searchedText)
                     }
+
                 }
             }
         }
+
 
 
 
@@ -204,7 +201,7 @@ class TaskV3HiddenOngoingFragment :
                     CeibroApplication.CookiesManager.taskDataForDetails = data
                     CeibroApplication.CookiesManager.taskDetailEvents = allEvents
                     CeibroApplication.CookiesManager.taskDetailRootState =
-                        parentViewModel.selectedTaskTypeOngoingState.value
+                        parentViewModel.selectedTaskTypeClosedState.value
                     CeibroApplication.CookiesManager.taskDetailSelectedSubState = ""
 //                    bundle.putParcelable("taskDetail", data)
 //                    bundle.putParcelableArrayList("eventsArray", ArrayList(allEvents))
@@ -218,25 +215,5 @@ class TaskV3HiddenOngoingFragment :
                 }
             }
     }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
-        parentViewModel.loadAllTasks {
-
-        }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        EventBus.getDefault().unregister(this)
-
-    }
-
 
 }

@@ -461,4 +461,13 @@ class TasksHiddenParentTabV3Fragment :
         viewModel.reloadData()
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
+        viewModel.loadAllTasks {
+
+        }
+    }
+
+
 }

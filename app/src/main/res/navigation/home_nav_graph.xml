@@ -584,11 +584,11 @@
         android:label="TasksHiddenParentTabV3Fragment" />
     <fragment
         android:id="@+id/taskV3OngoingHiddenFragment"
-        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.ongoing.TaskV3HiddenOngoingFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing.TaskV3HiddenOngoingFragment"
         android:label="TaskV3OngoingHiddenFragment" />
     <fragment
         android:id="@+id/taskV3HiddenClosedFragment"
-        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.TaskV3HiddenClosedFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.closed.TaskV3HiddenClosedFragment"
         android:label="TaskV3HiddenClosedFragment" />
 
 

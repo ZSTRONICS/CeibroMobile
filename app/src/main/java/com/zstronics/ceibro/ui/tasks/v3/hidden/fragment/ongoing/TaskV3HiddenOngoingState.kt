@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.ongoing
+package com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing
 
 import com.zstronics.ceibro.base.state.BaseState
 import javax.inject.Inject
