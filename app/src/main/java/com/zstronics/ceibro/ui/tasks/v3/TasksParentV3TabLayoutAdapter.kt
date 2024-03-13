@@ -9,7 +9,6 @@ import com.zstronics.ceibro.ui.tasks.v3.fragments.approval.TaskV3ApprovalFragmen
 import com.zstronics.ceibro.ui.tasks.v3.fragments.closed.TaskV3ClosedFragment
 import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment
 
-private const val NUM_TABS = 4
 
 class TasksParentV3TabLayoutAdapter(
     fragmentManager: FragmentActivity,
@@ -17,6 +16,8 @@ class TasksParentV3TabLayoutAdapter(
     private val parentViewModel: TasksParentTabV3VM
 ) :
     FragmentStateAdapter(fragmentManager) {
+
+    private val NUM_TABS = 4
     override fun getItemCount(): Int = NUM_TABS
 
     override fun createFragment(position: Int): Fragment {

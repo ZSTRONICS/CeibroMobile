@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.groups.GroupFiltersV2State" />
+            type="com.zstronics.ceibro.ui.tasks.v3.bottomsheets.groups.GroupFiltersV2State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.groups.GroupFiltersVM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.bottomsheets.groups.GroupFiltersVM" />
 
         <import type="android.view.View" />
     </data>

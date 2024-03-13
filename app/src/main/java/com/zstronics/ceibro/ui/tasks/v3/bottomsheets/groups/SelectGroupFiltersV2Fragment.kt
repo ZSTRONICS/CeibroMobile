@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.groups
+package com.zstronics.ceibro.ui.tasks.v3.bottomsheets.groups
 
 import android.content.Context
 import android.graphics.Color

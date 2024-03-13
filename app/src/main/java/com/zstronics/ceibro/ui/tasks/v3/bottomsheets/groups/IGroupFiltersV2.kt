@@ -1,12 +1,12 @@
-package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.users
+package com.zstronics.ceibro.ui.tasks.v3.bottomsheets.groups
 
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.base.interfaces.IBase
 
-
-interface IUsersFilters {
+interface IGroupFiltersV2 {
     interface State : IBase.State {
-        val isSelfAssigned: MutableLiveData<Boolean>
+
+        val setAddTaskButtonVisibility: MutableLiveData<Boolean>
     }
 
     interface ViewModel : IBase.ViewModel<State> {

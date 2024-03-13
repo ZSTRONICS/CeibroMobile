@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.users.UsersFiltersState" />
+            type="com.zstronics.ceibro.ui.tasks.v3.bottomsheets.users.UsersFiltersState" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.users.UsersFiltersVM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.bottomsheets.users.UsersFiltersVM" />
     </data>
 
 

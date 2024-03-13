@@ -61,6 +61,7 @@ import com.zstronics.ceibro.ui.tasks.v2.hidden_tasks.TaskHiddenFragment
 import com.zstronics.ceibro.ui.tasks.v2.taskfromme.TaskFromMeFragment
 import com.zstronics.ceibro.ui.tasks.v2.tasktome.TaskToMeFragment
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3Fragment
+import com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -89,6 +90,7 @@ class DashboardFragment :
     private var projectsV2FragmentInstance: ProjectsV2Fragment? = null
     private var inboxFragment: InboxFragment? = null
     private var allTasksParentFragment: TasksParentTabV3Fragment? = null
+    private var tasksHiddenParentTabV3Fragment: TasksHiddenParentTabV3Fragment? = null
     private var socketEventsInitiated = false
     private var appStartWithInternet = true
     private var connectivityStatus = "Available"
@@ -114,6 +116,7 @@ class DashboardFragment :
                 }
 
             }
+
 
             R.id.tasksHeader -> {
 
@@ -168,10 +171,10 @@ class DashboardFragment :
             }
             R.id.menuHiddenTaskBtn -> {
                 closeDrawerLayout()
-//                Handler(Looper.getMainLooper()).postDelayed({
-//                    navigate(R.id.taskHiddenFragment)
-//                },20)
-                shortToastNow("Coming soon")
+                Handler(Looper.getMainLooper()).postDelayed({
+                    navigate(R.id.tasksHiddenParentTabV3Fragment)
+                },20)
+//                shortToastNow("Coming soon")
             }
 
             R.id.profileImg -> navigateToProfile()

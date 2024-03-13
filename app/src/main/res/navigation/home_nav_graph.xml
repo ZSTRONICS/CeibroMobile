@@ -574,6 +574,22 @@
         android:id="@+id/taskV3ClosedFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v3.fragments.closed.TaskV3ClosedFragment"
         android:label="TaskV3ClosedFragment" />
+    <dialog
+        android:id="@+id/usersHiddenBottomSheet"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.bottomsheets.UsersHiddenBottomSheet"
+        android:label="UsersHiddenBottomSheet" />
+    <fragment
+        android:id="@+id/tasksHiddenParentTabV3Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3Fragment"
+        android:label="TasksHiddenParentTabV3Fragment" />
+    <fragment
+        android:id="@+id/taskV3OngoingHiddenFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.ongoing.TaskV3HiddenOngoingFragment"
+        android:label="TaskV3OngoingHiddenFragment" />
+    <fragment
+        android:id="@+id/taskV3HiddenClosedFragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragments.closed.TaskV3HiddenClosedFragment"
+        android:label="TaskV3HiddenClosedFragment" />
 
 
 </navigation>
