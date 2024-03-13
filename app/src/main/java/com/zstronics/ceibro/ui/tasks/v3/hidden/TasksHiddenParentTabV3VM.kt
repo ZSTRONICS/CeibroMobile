@@ -2,9 +2,15 @@ package com.zstronics.ceibro.ui.tasks.v3.hidden
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
@@ -16,6 +22,7 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
@@ -52,6 +59,7 @@ class TasksHiddenParentTabV3VM @Inject constructor(
     val projectsV2Dao: ProjectsV2Dao,
     private val projectRepository: IProjectRepository,
     private val taskRepository: ITaskRepository,
+    private val remoteTask: TaskRemoteDataSource,
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksHiddneParentTabV3.State>(), ITasksHiddneParentTabV3.ViewModel {
 
@@ -850,6 +858,52 @@ class TasksHiddenParentTabV3VM @Inject constructor(
         _setFilteredDataToOngoingAdapter.postValue(filteredOngoingTasks1)
         _setFilteredDataToApprovalAdapter.postValue(filteredApprovalTasks1)
         _setFilteredDataToCloseAdapter.postValue(filteredClosedTasks1)
+    }
+
+
+
+    fun showUnHideTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_un_hide_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            unHideTask(taskData.id) { isSuccess ->
+                alertDialog.dismiss()
+            }
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+    private fun unHideTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.unHideTask(taskId)) {
+                is ApiResponse.Success -> {
+                    val unHideResponse = response.data
+                    updateTaskUnHideInLocal(unHideResponse, taskDao, sessionManager, drawingPinsDao)
+                    loading(false, "")
+                    callBack.invoke(true)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
     }
 
 }

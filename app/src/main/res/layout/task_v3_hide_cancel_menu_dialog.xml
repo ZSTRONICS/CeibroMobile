@@ -30,7 +30,25 @@
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="12sp"
+            android:visibility="gone"
             app:drawableStartCompat="@drawable/icon_visibility_off"
+            app:drawableTint="@color/black" />
+
+        <TextView
+            android:id="@+id/unHideTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/_6sdp"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start|center"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/unhide"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/icon_visibility_on"
             app:drawableTint="@color/black" />
 
         <TextView
@@ -46,6 +64,24 @@
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="12sp"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_cross"
+            app:drawableTint="@color/black" />
+
+        <TextView
+            android:id="@+id/unCancelTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/_6sdp"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start|center"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/un_cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="gone"
             app:drawableStartCompat="@drawable/ic_cross"
             app:drawableTint="@color/black" />
 

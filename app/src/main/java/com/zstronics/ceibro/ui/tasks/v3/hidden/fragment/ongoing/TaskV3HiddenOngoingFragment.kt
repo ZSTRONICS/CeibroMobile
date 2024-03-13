@@ -1,8 +1,14 @@
 package com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
@@ -218,7 +224,62 @@ class TaskV3HiddenOngoingFragment :
                     }
                 }
             }
+
+        adapter.menuClickListener =
+            { v: View, position: Int, data: CeibroTaskV2 ->
+                createPopupWindow(v, data) { menuTag ->
+                    if (menuTag.equals("unHideTask", true)) {
+                        parentViewModel.showUnHideTaskDialog(requireContext(), data)
+                    }
+                }
+            }
     }
 
+    private fun createPopupWindow(
+        v: View,
+        data: CeibroTaskV2,
+        callback: (String) -> Unit
+    ): PopupWindow {
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.task_v3_hide_cancel_menu_dialog, null)
+
+        val popupWindow = PopupWindow(
+            view,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+
+
+        val unHideTaskBtn: TextView = view.findViewById(R.id.unHideTaskBtn)
+
+        unHideTaskBtn.visibility = View.VISIBLE
+
+        unHideTaskBtn.setOnClickListener {
+            callback.invoke("unHideTask")
+            popupWindow.dismiss()
+        }
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, 0, -170)
+        } else {
+            popupWindow.showAsDropDown(v, 5, -10)
+        }
+
+
+        return popupWindow
+    }
 
 }

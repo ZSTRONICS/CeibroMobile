@@ -260,6 +260,9 @@ class TaskV3OngoingFragment :
         val hideTaskBtn: TextView = view.findViewById(R.id.hideTaskBtn)
         val cancelTaskBtn: TextView = view.findViewById(R.id.cancelTaskBtn)
 
+        hideTaskBtn.visibility = View.VISIBLE
+        cancelTaskBtn.visibility = View.VISIBLE
+
         hideTaskBtn.setOnClickListener {
             callback.invoke("hideTask")
             popupWindow.dismiss()

@@ -253,14 +253,11 @@ class TaskV3ClosedFragment :
 
 
         val hideTaskBtn: TextView = view.findViewById(R.id.hideTaskBtn)
-        val cancelTaskBtn: TextView = view.findViewById(R.id.cancelTaskBtn)
-        cancelTaskBtn.visibility = View.GONE
+
+        hideTaskBtn.visibility = View.VISIBLE
+
         hideTaskBtn.setOnClickListener {
             callback.invoke("hideTask")
-            popupWindow.dismiss()
-        }
-        cancelTaskBtn.setOnClickListener {
-            callback.invoke("cancelTask")
             popupWindow.dismiss()
         }
 
@@ -273,7 +270,7 @@ class TaskV3ClosedFragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, 0, -280)
+            popupWindow.showAsDropDown(v, 0, -170)
         } else {
             popupWindow.showAsDropDown(v, 5, -10)
         }

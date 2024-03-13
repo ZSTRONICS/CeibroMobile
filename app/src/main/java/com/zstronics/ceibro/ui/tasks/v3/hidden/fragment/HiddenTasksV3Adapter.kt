@@ -186,11 +186,11 @@ class HiddenTasksV3Adapter @Inject constructor() :
                         inboxTaskStateIcon.visibility = View.VISIBLE
                     }
 
-                    if (item.isTaskInApproval) {
+//                    if (item.isTaskInApproval) {
                         taskMenuBtn.visibility = View.VISIBLE
-                    } else {
-                        taskMenuBtn.visibility = View.GONE
-                    }
+//                    } else {
+//                        taskMenuBtn.visibility = View.GONE
+//                    }
 
                     if (item.project != null) {
                         if (item.project.title.isNotEmpty()) {
