@@ -751,8 +751,19 @@ class TasksParentTabV3VM @Inject constructor(
 
         var filteredTasks =
             list.filter { task ->
-                ((task.tags?.any { tag -> (selectedTagsForFilter.any { it.topic == tag.topic }) || selectedTagsForFilter.size == 0 } == true)
-                        && ((selectedProjectsForFilter.any { project -> project._id == task.project?.id }) || selectedProjectsForFilter.size == 0))
+                (selectedTagsForFilter.size == 0 || selectedTagsForFilter.any { tag ->
+                    task.tags?.any {
+                        it.topic.equals(
+                            tag.topic,
+                            true
+                        )
+                    } ?: true
+                }) && (selectedProjectsForFilter.size == 0 || selectedProjectsForFilter.any { project ->
+                    project.title.equals(
+                        task.project?.title,
+                        true
+                    )
+                })
             }.toMutableList()
 
 
@@ -984,6 +995,7 @@ class TasksParentTabV3VM @Inject constructor(
                 (it.title != null && it.title.contains(query.trim(), true)) ||
                         it.description.contains(query.trim(), true) ||
                         it.taskUID.contains(query.trim(), true) ||
+                        (it.project != null && it.project.title.contains(query.trim(), true)) ||
                         it.assignedToState.any { assignee ->
                             assignee.firstName.contains(
                                 query.trim(),
@@ -997,6 +1009,7 @@ class TasksParentTabV3VM @Inject constructor(
                 (it.title != null && it.title.contains(query.trim(), true)) ||
                         it.description.contains(query.trim(), true) ||
                         it.taskUID.contains(query.trim(), true) ||
+                        (it.project != null && it.project.title.contains(query.trim(), true)) ||
                         it.assignedToState.any { assignee ->
                             assignee.firstName.contains(
                                 query.trim(),
@@ -1010,6 +1023,7 @@ class TasksParentTabV3VM @Inject constructor(
                 (it.title != null && it.title.contains(query.trim(), true)) ||
                         it.description.contains(query.trim(), true) ||
                         it.taskUID.contains(query.trim(), true) ||
+                        (it.project != null && it.project.title.contains(query.trim(), true)) ||
                         it.assignedToState.any { assignee ->
                             assignee.firstName.contains(
                                 query.trim(),
