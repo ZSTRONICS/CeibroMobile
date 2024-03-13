@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing.TaskV3HiddenOngoingFragment
 import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.closed.TaskV3HiddenClosedFragment
+import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing.TaskV3HiddenOngoingFragment
 
 class TasksHiddenParentV3TabLayoutAdapter(
     fragmentManager: FragmentActivity,

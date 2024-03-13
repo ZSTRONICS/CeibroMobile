@@ -152,7 +152,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center_horizontal"
-                android:text="@string/no_task_in_all_closed_description"
+                android:text="@string/no_task_in_hidden_closed_all_description"
                 android:textSize="13sp"
                 android:textColor="@color/appGrey3"
                 app:layout_constraintBottom_toTopOf="@+id/noTaskInAllBtn"

@@ -45,7 +45,7 @@
                     android:id="@+id/backBtn"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                     android:padding="3.5dp"
