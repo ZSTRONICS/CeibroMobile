@@ -690,4 +690,5 @@
     <string name="reject_reopen_detail">Please provide reason or attach image/file as prove to reject-reopen this task.</string>
     <string name="reject_close_detail">Please provide reason or attach image/file as prove to reject-close this task.</string>
     <string name="images_and_files">Images and files</string>
+    <string name="hide">Hide</string>
 </resources>

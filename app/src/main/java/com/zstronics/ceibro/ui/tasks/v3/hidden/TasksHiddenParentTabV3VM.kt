@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
@@ -219,7 +220,7 @@ class TasksHiddenParentTabV3VM @Inject constructor(
     fun loadAllTasks(callBack: () -> Unit) {
         launch {
             val rootAllHiddenTasksDB =
-                taskDao.getRootAllTasks(TaskRootStateTags.Hidden.tagValue)
+                taskDao.getRootAllTasks(TaskRootStateTags.Hidden.tagValue.toCamelCase())
 
             val rootHiddenOngoingTasksDB =
                 rootAllHiddenTasksDB.filter {

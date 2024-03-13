@@ -14,6 +14,7 @@ import com.zstronics.ceibro.databinding.FragmentTaskV3HiddenClosedBinding
 import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3VM
+import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.HiddenTasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -49,7 +50,7 @@ class TaskV3HiddenClosedFragment :
     }
 
     @Inject
-    lateinit var adapter: TasksV3Adapter
+    lateinit var adapter: HiddenTasksV3Adapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

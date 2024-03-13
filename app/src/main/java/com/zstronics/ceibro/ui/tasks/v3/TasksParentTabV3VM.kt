@@ -2,9 +2,16 @@ package com.zstronics.ceibro.ui.tasks.v3
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zstronics.ceibro.CeibroApplication
+import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.DownloadedDrawingV2Dao
@@ -15,6 +22,7 @@ import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.dao.TopicsV2Dao
 import com.zstronics.ceibro.data.database.models.projects.CeibroProjectV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.AllCeibroConnections
 import com.zstronics.ceibro.data.repos.dashboard.connections.v2.CeibroConnectionGroupV2
@@ -51,6 +59,7 @@ class TasksParentTabV3VM @Inject constructor(
     val projectsV2Dao: ProjectsV2Dao,
     private val projectRepository: IProjectRepository,
     private val taskRepository: ITaskRepository,
+    private val remoteTask: TaskRemoteDataSource,
     private val topicsV2Dao: TopicsV2Dao
 ) : HiltBaseViewModel<ITasksParentTabV3.State>(), ITasksParentTabV3.ViewModel {
 
@@ -1035,6 +1044,110 @@ class TasksParentTabV3VM @Inject constructor(
         _setFilteredDataToOngoingAdapter.postValue(filteredOngoingTasks1)
         _setFilteredDataToApprovalAdapter.postValue(filteredApprovalTasks1)
         _setFilteredDataToCloseAdapter.postValue(filteredClosedTasks1)
+    }
+
+
+
+
+
+    fun showHideTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_hide_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            hideTask(taskData.id) { isSuccess ->
+                alertDialog.dismiss()
+            }
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+
+    private fun hideTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.hideTask(taskId)) {
+                is ApiResponse.Success -> {
+                    val hideResponse = response.data
+                    updateTaskHideInLocal(hideResponse, taskDao, sessionManager, drawingPinsDao)
+                    loading(false, "")
+                    callBack.invoke(true)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
+    }
+
+
+
+    fun showCancelTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_cancel_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            cancelTask(taskData.id) { isSuccess ->
+                alertDialog.dismiss()
+            }
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+
+    private fun cancelTask(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.cancelTask(taskId)) {
+                is ApiResponse.Success -> {
+                    updateTaskCanceledInLocal(
+                        response.data.data,
+                        taskDao,
+                        user?.id,
+                        sessionManager,
+                        drawingPinsDao
+                    )
+                    val handler = Handler()
+                    handler.postDelayed({
+                        loading(false, "")
+                        callBack.invoke(true)
+                    }, 50)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
     }
 
 }

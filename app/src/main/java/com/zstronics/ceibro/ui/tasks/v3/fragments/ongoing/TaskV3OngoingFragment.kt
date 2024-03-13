@@ -1,8 +1,14 @@
 package com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import com.zstronics.ceibro.BR
 import com.zstronics.ceibro.CeibroApplication
@@ -217,8 +223,69 @@ class TaskV3OngoingFragment :
                     }
                 }
             }
+
+        adapter.menuClickListener =
+            { v: View, position: Int, data: CeibroTaskV2 ->
+                createPopupWindow(v, data) { menuTag ->
+                    if (menuTag.equals("hideTask", true)) {
+                        parentViewModel.showHideTaskDialog(requireContext(), data)
+                    } else if (menuTag.equals("cancelTask", true)) {
+
+                        parentViewModel.showCancelTaskDialog(requireContext(), data)
+                    }
+                }
+            }
     }
 
+    private fun createPopupWindow(
+        v: View,
+        data: CeibroTaskV2,
+        callback: (String) -> Unit
+    ): PopupWindow {
+        val context: Context = v.context
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.task_v3_hide_cancel_menu_dialog, null)
+
+        val popupWindow = PopupWindow(
+            view,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.elevation = 13F
+        popupWindow.isOutsideTouchable = true
+
+
+        val hideTaskBtn: TextView = view.findViewById(R.id.hideTaskBtn)
+        val cancelTaskBtn: TextView = view.findViewById(R.id.cancelTaskBtn)
+
+        hideTaskBtn.setOnClickListener {
+            callback.invoke("hideTask")
+            popupWindow.dismiss()
+        }
+        cancelTaskBtn.setOnClickListener {
+            callback.invoke("cancelTask")
+            popupWindow.dismiss()
+        }
+
+        val values = IntArray(2)
+        v.getLocationInWindow(values)
+        val positionOfIcon = values[1]
+
+        //Get the height of 2/3rd of the height of the screen
+        val displayMetrics = context.resources.displayMetrics
+        val height = displayMetrics.heightPixels * 2 / 3
+
+        if (positionOfIcon > height) {
+            popupWindow.showAsDropDown(v, 0, -280)
+        } else {
+            popupWindow.showAsDropDown(v, 5, -10)
+        }
+
+
+        return popupWindow
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
