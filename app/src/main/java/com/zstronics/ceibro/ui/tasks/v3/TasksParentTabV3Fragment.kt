@@ -471,4 +471,12 @@ class TasksParentTabV3Fragment :
         viewModel.reloadProjectData()
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
+        viewModel.loadAllTasks {
+
+        }
+    }
+
 }
