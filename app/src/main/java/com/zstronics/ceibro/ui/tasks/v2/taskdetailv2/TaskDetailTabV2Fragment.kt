@@ -296,6 +296,8 @@ class TaskDetailTabV2Fragment :
         }
     }
 
+    lateinit var tabAdapter: TaskDetailV2TabLayout
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.notificationTaskData.observe(viewLifecycleOwner) { notificationData ->
@@ -308,8 +310,8 @@ class TaskDetailTabV2Fragment :
         list.add(getString(R.string.details))
         list.add(getString(R.string.comments))
         list.add(getString(R.string.files_heading))
-        val adapter = TaskDetailV2TabLayout(requireActivity())
-        mViewDataBinding.viewPager.adapter = adapter
+        tabAdapter = TaskDetailV2TabLayout(requireActivity())
+        mViewDataBinding.viewPager.adapter = tabAdapter
 
         mViewDataBinding.viewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
@@ -869,6 +871,7 @@ class TaskDetailTabV2Fragment :
 
     override fun onDestroy() {
         super.onDestroy()
+        tabAdapter.onParentDestroyed()
         EventBus.getDefault().unregister(this)
     }
 

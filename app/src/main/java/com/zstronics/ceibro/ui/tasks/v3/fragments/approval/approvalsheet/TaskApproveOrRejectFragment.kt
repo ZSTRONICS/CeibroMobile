@@ -138,6 +138,10 @@ class TaskApproveOrRejectFragment :
                     )
                 )
             }
+
+            R.id.nextBtn -> {
+
+            }
         }
     }
 
@@ -154,24 +158,24 @@ class TaskApproveOrRejectFragment :
 
 
         viewModel.task.observe(viewLifecycleOwner) {
-            viewModel.viewState.taskTitle.value = it.title
+            viewState.taskTitle.value = it.title
         }
 
         viewModel.taskType.observe(viewLifecycleOwner) { taskUpdateType ->
             if (taskUpdateType.equals("approveClose", true)) {
-                viewModel.viewState.title.value = "Approve"
+                viewState.title.value = "Approve"
                 mViewDataBinding.tvUpdateStatus.setTextColor(resources.getColor(R.color.appGreen))
-                viewModel.viewState.description.value =
+                viewState.description.value =
                     (resources.getString(R.string.approve_close_detail))
             } else if (taskUpdateType.equals("rejectReOpen", true)) {
-                viewModel.viewState.title.value = "Reject-reopen"
+                viewState.title.value = "Reject-reopen"
                 mViewDataBinding.tvUpdateStatus.setTextColor(resources.getColor(R.color.appRed))
-                viewModel.viewState.description.value =
+                viewState.description.value =
                     (resources.getString(R.string.reject_reopen_detail))
             } else if (taskUpdateType.equals("rejectClose", true)) {
-                viewModel.viewState.title.value = "reject-Close"
+                viewState.title.value = "reject-Close"
                 mViewDataBinding.tvUpdateStatus.setTextColor(resources.getColor(R.color.appRed))
-                viewModel.viewState.description.value =
+                viewState.description.value =
                     (resources.getString(R.string.reject_close_detail))
             }
         }
