@@ -652,41 +652,6 @@ class TasksParentTabV3VM @Inject constructor(
         }
     }
 
-    fun saveTopic(
-        topic: String,
-        callBack: (isSuccess: Boolean, newTopic: TopicsResponse.TopicData?) -> Unit
-    ) {
-        val request = NewTopicCreateRequest(
-            topic = topic
-        )
-        launch {
-            loading(true)
-            taskRepository.saveTopic(request) { isSuccess, error, newTopicResponse ->
-                if (isSuccess) {
-                    val newTopic = newTopicResponse?.newTopic
-
-                    if (newTopic != null) {
-                        if (originalAllTopics.isNotEmpty()) {
-                            val allTopics =
-                                originalAllTopics as MutableList<TopicsResponse.TopicData>
-                            allTopics.add(newTopic)
-                            originalAllTopics = allTopics
-                            _allTopics.postValue(allTopics)
-                        } else {
-                            val allTopics: MutableList<TopicsResponse.TopicData> = mutableListOf()
-                            allTopics.add(newTopic)
-                            originalAllTopics = allTopics
-                            _allTopics.postValue(allTopics)
-                        }
-                    }
-                    loading(false, "")
-                    callBack.invoke(isSuccess, newTopic)
-                } else {
-                    loading(false, error)
-                }
-            }
-        }
-    }
 
 
     fun filterTopics(search: String) {

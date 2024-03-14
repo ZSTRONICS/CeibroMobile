@@ -61,6 +61,9 @@ class ProjectListHiddenBottomSheet(
 
         mViewDataBinding.backBtn.setOnClick {
             dismiss()
+            mViewDataBinding.locationProjectSearchBar.setQuery("", true)
+            viewModel.filterFavoriteProjects("")
+            viewModel.filterAllProjects("")
         }
 
         mViewDataBinding.tvClearAll.setOnClickListener {
@@ -218,5 +221,12 @@ class ProjectListHiddenBottomSheet(
             dialog.behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
         return dialog
+    }
+
+    override fun onDestroyView() {
+        mViewDataBinding.locationProjectSearchBar.setQuery("", true)
+        viewModel.filterFavoriteProjects("")
+        viewModel.filterAllProjects("")
+        super.onDestroyView()
     }
 }
