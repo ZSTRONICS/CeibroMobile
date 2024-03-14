@@ -60,8 +60,7 @@ class TagsBottomSheet(val viewModel: TasksParentTabV3VM, val callback: (ArrayLis
         }
         mViewDataBinding.tvClearAll.setOnClickListener {
             mViewDataBinding.tagSearchBar.setQuery(null, true)
-            viewModel.filterFavoriteProjects("")
-            viewModel.filterAllProjects("")
+            viewModel.filterTopics("")
             selectedTags.clear()
             viewModel.selectedTagsForFilter=selectedTags
             tagsSectionRecyclerView.setData(viewModel.oldSelectedTags.value)
