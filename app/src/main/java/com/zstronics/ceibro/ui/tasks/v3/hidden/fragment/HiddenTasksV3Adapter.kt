@@ -399,7 +399,6 @@ class HiddenTasksV3Adapter @Inject constructor() :
 
                     unreadCount.visibility = View.GONE
 
-
                 }
             } else {
                 binding.taskCard.visibility = View.GONE

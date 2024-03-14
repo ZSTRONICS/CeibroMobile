@@ -669,6 +669,7 @@
     <string name="clear_all">Clear All</string>
     <string name="no_task_exists">No task exists!</string>
     <string name="no_task_in_all_description">Drive project success – add a task to address critical issues and ensure smooth progress from planning to completion.</string>
+    <string name="no_task_in_canceled_all_description">No tasks are canceled yet.</string>
     <string name="no_task_in_hidden_ongoing_all_description">No ongoing tasks are hidden yet.</string>
     <string name="no_task_in_hidden_closed_all_description">No ongoing tasks are hidden yet.</string>
     <string name="no_task_in_all_closed_description">There are no construction tasks recorded as closed in your project</string>
@@ -693,4 +694,5 @@
     <string name="hide">Hide</string>
     <string name="unhide">Unhide</string>
     <string name="un_cancel">Un-cancel</string>
+    <string name="canceled_tasks">Canceled tasks</string>
 </resources>

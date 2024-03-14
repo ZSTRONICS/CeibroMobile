@@ -17,6 +17,7 @@ import androidx.work.*
 import com.zstronics.ceibro.CeibroApplication
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.base.clickevents.SingleClickEvent
+import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.base.interfaces.IBase
 import com.zstronics.ceibro.base.interfaces.OnClickHandler
 import com.zstronics.ceibro.base.navgraph.host.NavHostPresenterActivity
@@ -278,57 +279,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         GlobalScope.launch {
-                            val newTasks =
-                                taskDaoInternal.getToMeTasks(TaskStatus.NEW.name.lowercase())
-                                    .toMutableList()
-                            val ongoingTasks =
-                                taskDaoInternal.getToMeTasks(TaskStatus.ONGOING.name.lowercase())
-                                    .toMutableList()
-                            val doneTasks =
-                                taskDaoInternal.getToMeTasks(TaskStatus.DONE.name.lowercase())
-                                    .toMutableList()
-                            val fromMeUnreadTasks =
-                                taskDaoInternal.getFromMeTasks(TaskStatus.UNREAD.name.lowercase())
-                                    .toMutableList()
-                            val fromMeOngoingTasks =
-                                taskDaoInternal.getFromMeTasks(TaskStatus.ONGOING.name.lowercase())
-                                    .toMutableList()
-                            val fromMeDoneTasks =
-                                taskDaoInternal.getFromMeTasks(TaskStatus.DONE.name.lowercase())
-                                    .toMutableList()
-                            val hiddenCanceledTasks =
-                                taskDaoInternal.getHiddenTasks(TaskStatus.CANCELED.name.lowercase())
-                                    .toMutableList()
-                            val hiddenOngoingTasks =
-                                taskDaoInternal.getHiddenTasks(TaskStatus.ONGOING.name.lowercase())
-                                    .toMutableList()
-                            val hiddenDoneTasks =
-                                taskDaoInternal.getHiddenTasks(TaskStatus.DONE.name.lowercase())
-                                    .toMutableList()
-
-                            CeibroApplication.CookiesManager.toMeNewTasks.postValue(newTasks)
-                            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(ongoingTasks)
-                            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(doneTasks)
-
-                            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(
-                                fromMeUnreadTasks
-                            )
-                            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(
-                                fromMeOngoingTasks
-                            )
-                            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(
-                                fromMeDoneTasks
-                            )
-
-                            CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(
-                                hiddenCanceledTasks
-                            )
-                            CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(
-                                hiddenOngoingTasks
-                            )
-                            CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(
-                                hiddenDoneTasks
-                            )
+                            updateAllTasksLists(taskDaoInternal)
 
                             EventBus.getDefault().post(LocalEvents.RefreshTasksData())
                             EventBus.getDefault().post(LocalEvents.RefreshAllEvents())
@@ -442,38 +393,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                 rootClosedFromMeTasks
             )
 
-//
-//            val toMeNewTask = taskDao.getToMeTasks(TaskStatus.NEW.name.lowercase()).toMutableList()
-//            val toMeOngoingTask =
-//                taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//            val toMeDoneTask =
-//                taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//            val fromMeUnreadTask =
-//                taskDao.getFromMeTasks(TaskStatus.UNREAD.name.lowercase()).toMutableList()
-//            val fromMeOngoingTask =
-//                taskDao.getFromMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//            val fromMeDoneTask =
-//                taskDao.getFromMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//            val hiddenCanceledTask =
-//                taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
-//            val hiddenOngoingTask =
-//                taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//            val hiddenDoneTask =
-//                taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//            CeibroApplication.CookiesManager.toMeNewTasks.postValue(toMeNewTask)
-//            CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-//            CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
-//
-//            CeibroApplication.CookiesManager.fromMeUnreadTasks.postValue(fromMeUnreadTask)
-//            CeibroApplication.CookiesManager.fromMeOngoingTasks.postValue(fromMeOngoingTask)
-//            CeibroApplication.CookiesManager.fromMeDoneTasks.postValue(fromMeDoneTask)
-//
-//            CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
-//            CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-//            CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
         }.join()
         return true
     }
@@ -484,8 +403,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         task: CeibroTaskV2
     ): Boolean {
         GlobalScope.launch {
-            if (!eventData.oldTaskData.hiddenState.equals(
-                    TaskStatus.CANCELED.name.lowercase(),
+            if (!eventData.oldTaskData.taskRootState.equals(
+                    TaskRootStateTags.Canceled.tagValue.toCamelCase(),
                     true
                 )
             ) {
@@ -724,12 +643,11 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 
     private suspend fun updateAllTasksListForTaskSeen(
         taskDao: TaskV2Dao,
-        taskSeen: TaskSeenResponse.TaskSeen,
-        task: CeibroTaskV2
+        taskSeen: TaskSeenResponse.TaskSeen
     ): Boolean {
         GlobalScope.launch {
-            if (!taskSeen.oldTaskData.hiddenState.equals(
-                    TaskStatus.CANCELED.name.lowercase(),
+            if (!taskSeen.oldTaskData.taskRootState.equals(
+                    TaskRootStateTags.Canceled.tagValue.toCamelCase(),
                     true
                 )
             ) {
@@ -747,37 +665,35 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         rootOngoingAllTasksDB
                     )
 
-                    if (task.isAssignedToMe) {
-                        val rootOngoingToMeTasks =
-                            rootOngoingAllTasksDB.filter {
-                                it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
-                                        (it.toMeState.equals(
-                                            TaskStatus.NEW.name,
-                                            true
-                                        ) || it.toMeState.equals(TaskStatus.ONGOING.name, true))
-                            }
-                                .sortedByDescending { it.updatedAt }.toMutableList()
+                    val rootOngoingToMeTasks =
+                        rootOngoingAllTasksDB.filter {
+                            it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                    (it.toMeState.equals(
+                                        TaskStatus.NEW.name,
+                                        true
+                                    ) || it.toMeState.equals(TaskStatus.ONGOING.name, true))
+                        }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
 
-                        CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(
-                            rootOngoingToMeTasks
-                        )
-                    }
-                    if (task.isCreator) {
-                        val rootOngoingFromMeTasks =
-                            rootOngoingAllTasksDB.filter {
-                                it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
-                                        (it.fromMeState.equals(
-                                            TaskStatus.UNREAD.name,
-                                            true
-                                        ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
-                            }
-                                .sortedByDescending { it.updatedAt }.toMutableList()
+                    CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(
+                        rootOngoingToMeTasks
+                    )
+
+                    val rootOngoingFromMeTasks =
+                        rootOngoingAllTasksDB.filter {
+                            it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                    (it.fromMeState.equals(
+                                        TaskStatus.UNREAD.name,
+                                        true
+                                    ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
+                        }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
 
 
-                        CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(
-                            rootOngoingFromMeTasks
-                        )
-                    }
+                    CeibroApplication.CookiesManager.rootOngoingFromMeTasks.postValue(
+                        rootOngoingFromMeTasks
+                    )
+
                 }
 
                 if (taskSeen.newTaskData.taskRootState.equals(
@@ -834,30 +750,28 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         rootClosedAllTasksDB
                     )
 
-                    if (task.isAssignedToMe) {
-                        val rootClosedToMeTasks =
-                            rootClosedAllTasksDB.filter {
-                                it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.toMeState.equals(TaskStatus.DONE.name, true))
-                            }
-                                .sortedByDescending { it.updatedAt }.toMutableList()
+                    val rootClosedToMeTasks =
+                        rootClosedAllTasksDB.filter {
+                            it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                    (it.toMeState.equals(TaskStatus.DONE.name, true))
+                        }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
 
-                        CeibroApplication.CookiesManager.rootClosedToMeTasks.postValue(
-                            rootClosedToMeTasks
-                        )
-                    }
-                    if (task.isCreator) {
-                        val rootClosedFromMeTasks =
-                            rootClosedAllTasksDB.filter {
-                                it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.fromMeState.equals(TaskStatus.DONE.name, true))
-                            }
-                                .sortedByDescending { it.updatedAt }.toMutableList()
+                    CeibroApplication.CookiesManager.rootClosedToMeTasks.postValue(
+                        rootClosedToMeTasks
+                    )
 
-                        CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(
-                            rootClosedFromMeTasks
-                        )
-                    }
+                    val rootClosedFromMeTasks =
+                        rootClosedAllTasksDB.filter {
+                            it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
+                                    (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                        }
+                            .sortedByDescending { it.updatedAt }.toMutableList()
+
+                    CeibroApplication.CookiesManager.rootClosedFromMeTasks.postValue(
+                        rootClosedFromMeTasks
+                    )
+
                 }
 
 
@@ -993,9 +907,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                 }
                                 */
             } else {
-                val hiddenCanceledTask =
-                    taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
-                CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
+//                val hiddenCanceledTask =
+//                    taskDao.getHiddenTasks(TaskStatus.CANCELED.name.lowercase()).toMutableList()
+//                CeibroApplication.CookiesManager.hiddenCanceledTasks.postValue(hiddenCanceledTask)
             }
 
         }.join()
@@ -1530,14 +1444,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     }
                     taskDao.insertEventData(taskEvent)
 
-                    if (eventData.newTaskData.isAssignedToMe) {
-                        sharedViewModel?.isToMeUnread?.value = true
-                        sessionManager.saveToMeUnread(true)
-                    }
-                    if (eventData.newTaskData.isCreator) {
-                        sharedViewModel?.isFromMeUnread?.value = true
-                        sessionManager.saveFromMeUnread(true)
-                    }
+//                    if (eventData.newTaskData.isAssignedToMe) {
+//                        sharedViewModel?.isToMeUnread?.value = true
+//                        sessionManager.saveToMeUnread(true)
+//                    }
+//                    if (eventData.newTaskData.isCreator) {
+//                        sharedViewModel?.isFromMeUnread?.value = true
+//                        sessionManager.saveFromMeUnread(true)
+//                    }
 
                     if (task != null) {
                         updateAllTasksListForCommentAndForward(taskDao, eventData, task)
@@ -1664,9 +1578,9 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
 //                        EventBus.getDefault().post(LocalEvents.RefreshInboxData())
                     }
 
-                    if (task != null) {
-                        updateAllTasksListForTaskSeen(taskDao, taskSeen, task)
-                    }
+
+                    updateAllTasksListForTaskSeen(taskDao, taskSeen)
+
 
 //                    val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
 //                    CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
@@ -1786,24 +1700,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskDao.insertEventData(taskEvent)
                                     taskData?.pinData?.let { drawingPinsDao.insertSinglePinData(it) }
 
-
-                                    if (eventData.newTaskData.creatorState.equals(
-                                            TaskStatus.CANCELED.name,
-                                            true
-                                        )
-                                    ) {
-                                        sharedViewModel?.isHiddenUnread?.value = true
-                                        sessionManager.saveHiddenUnread(true)
-                                    } else {
-                                        if (eventData.newTaskData.isAssignedToMe) {
-                                            sharedViewModel?.isToMeUnread?.value = true
-                                            sessionManager.saveToMeUnread(true)
-                                        }
-                                        if (eventData.newTaskData.isCreator) {
-                                            sharedViewModel?.isFromMeUnread?.value = true
-                                            sessionManager.saveFromMeUnread(true)
-                                        }
-                                    }
 
                                     if (taskData != null) {
                                         updateAllTasksListForCommentAndForward(
@@ -2076,10 +1972,10 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(eventData.pinData)
                     }
 
-                    if (task?.creator?.id != userId) {
-                        sharedViewModel?.isHiddenUnread?.postValue(true)
-                        sessionManager.saveHiddenUnread(true)
-                    }
+//                    if (task?.creator?.id != userId) {
+//                        sharedViewModel?.isHiddenUnread?.postValue(true)
+//                        sessionManager.saveHiddenUnread(true)
+//                    }
 
                     updateAllTasksLists(taskDao)
 
@@ -2362,22 +2258,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(hideData.pinData)
                     }
 
-//                    val toMeOngoingTask =
-//                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//                    val toMeDoneTask =
-//                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//                    val hiddenOngoingTask =
-//                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//                    val hiddenDoneTask =
-//                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-//                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
-//
-//                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-//                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
-
                     updateAllTasksLists(taskDao)
                 }.join()
                 EventBus.getDefault().post(LocalEvents.RefreshTasksData())
@@ -2421,21 +2301,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         drawingPinsDao.insertSinglePinData(hideData.pinData)
                     }
 
-//                    val toMeOngoingTask =
-//                        taskDao.getToMeTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//                    val toMeDoneTask =
-//                        taskDao.getToMeTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//                    val hiddenOngoingTask =
-//                        taskDao.getHiddenTasks(TaskStatus.ONGOING.name.lowercase()).toMutableList()
-//                    val hiddenDoneTask =
-//                        taskDao.getHiddenTasks(TaskStatus.DONE.name.lowercase()).toMutableList()
-//
-//                    CeibroApplication.CookiesManager.toMeOngoingTasks.postValue(toMeOngoingTask)
-//                    CeibroApplication.CookiesManager.toMeDoneTasks.postValue(toMeDoneTask)
-//
-//                    CeibroApplication.CookiesManager.hiddenOngoingTasks.postValue(hiddenOngoingTask)
-//                    CeibroApplication.CookiesManager.hiddenDoneTasks.postValue(hiddenDoneTask)
 
                     updateAllTasksLists(taskDao)
 
