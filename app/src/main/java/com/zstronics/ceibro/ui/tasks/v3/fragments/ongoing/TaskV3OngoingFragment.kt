@@ -261,7 +261,10 @@ class TaskV3OngoingFragment :
         val cancelTaskBtn: TextView = view.findViewById(R.id.cancelTaskBtn)
 
         hideTaskBtn.visibility = View.VISIBLE
-        cancelTaskBtn.visibility = View.VISIBLE
+        if (data.isCreator) {
+            cancelTaskBtn.visibility = View.VISIBLE
+        }
+
 
         hideTaskBtn.setOnClickListener {
             callback.invoke("hideTask")
@@ -281,7 +284,11 @@ class TaskV3OngoingFragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, 0, -280)
+            if (data.isCreator) {
+                popupWindow.showAsDropDown(v, 0, -280)
+            } else {
+                popupWindow.showAsDropDown(v, 0, -175)
+            }
         } else {
             popupWindow.showAsDropDown(v, 5, -10)
         }

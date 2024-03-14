@@ -1,4 +1,4 @@
-package com.zstronics.ceibro.ui.tasks.v3.hidden.fragment
+package com.zstronics.ceibro.ui.tasks.v3.canceled
 
 
 import android.content.res.ColorStateList
@@ -26,8 +26,8 @@ import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
 import javax.inject.Inject
 
-class HiddenTasksV3Adapter @Inject constructor() :
-    RecyclerView.Adapter<HiddenTasksV3Adapter.TaskToMeViewHolder>() {
+class CancelledTasksV3Adapter @Inject constructor() :
+    RecyclerView.Adapter<CancelledTasksV3Adapter.TaskToMeViewHolder>() {
     var itemClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
         null
     var menuClickListener: ((view: View, position: Int, data: CeibroTaskV2) -> Unit)? =
@@ -78,6 +78,12 @@ class HiddenTasksV3Adapter @Inject constructor() :
 
                     taskCard.setOnClickListener {
                         itemClickListener?.invoke(it, absoluteAdapterPosition, item)
+                    }
+
+                    if (item.isCreator) {
+                        taskMenuBtn.visibility = View.VISIBLE
+                    } else {
+                        taskMenuBtn.visibility = View.GONE
                     }
                     taskMenuBtn.setOnClickListener {
                         menuClickListener?.invoke(it, absoluteAdapterPosition, item)
@@ -191,11 +197,6 @@ class HiddenTasksV3Adapter @Inject constructor() :
                         inboxTaskStateIcon.visibility = View.VISIBLE
                     }
 
-//                    if (item.isTaskInApproval) {
-                    taskMenuBtn.visibility = View.VISIBLE
-//                    } else {
-//                        taskMenuBtn.visibility = View.GONE
-//                    }
 
                     if (item.project != null) {
                         if (item.project.title.isNotEmpty()) {

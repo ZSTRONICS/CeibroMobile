@@ -154,7 +154,7 @@ class TasksCanceledV3Fragment :
 
 
     @Inject
-    lateinit var adapter: HiddenTasksV3Adapter
+    lateinit var adapter: CancelledTasksV3Adapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -7,11 +7,11 @@
 
         <variable
             name="viewState"
-            type="com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3State" />
+            type="com.zstronics.ceibro.ui.tasks.v3.canceled.TasksCanceledV3State" />
 
         <variable
             name="viewModel"
-            type="com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3VM" />
+            type="com.zstronics.ceibro.ui.tasks.v3.canceled.TasksCanceledV3VM" />
 
         <import type="android.view.View" />
     </data>
