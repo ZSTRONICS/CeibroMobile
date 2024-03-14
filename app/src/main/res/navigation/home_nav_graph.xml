@@ -590,6 +590,10 @@
         android:id="@+id/taskV3HiddenClosedFragment"
         android:name="com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.closed.TaskV3HiddenClosedFragment"
         android:label="TaskV3HiddenClosedFragment" />
+    <fragment
+        android:id="@+id/tasksCanceledV3Fragment"
+        android:name="com.zstronics.ceibro.ui.tasks.v3.canceled.TasksCanceledV3Fragment"
+        android:label="TasksCanceledV3Fragment" />
 
 
 </navigation>

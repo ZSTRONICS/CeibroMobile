@@ -176,6 +176,13 @@ class DashboardFragment :
                 },20)
 //                shortToastNow("Coming soon")
             }
+            R.id.menuCancelledTaskBtn -> {
+                closeDrawerLayout()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    navigate(R.id.tasksCanceledV3Fragment)
+                },20)
+//                shortToastNow("Coming soon")
+            }
 
             R.id.profileImg -> navigateToProfile()
             R.id.friendsReqBtn -> navigateToConnections()

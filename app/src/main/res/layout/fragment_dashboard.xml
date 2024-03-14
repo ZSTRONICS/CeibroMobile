@@ -913,6 +913,7 @@
                             android:text="@string/to_me_heading"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
+                            android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -928,6 +929,7 @@
                             android:text="@string/from_me_heading"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
+                            android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@id/ivUsers"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -940,7 +942,7 @@
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:paddingVertical="@dimen/_5sdp"
-                            android:text="@string/hidden_heading"
+                            android:text="@string/hidden_tasks"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -955,7 +957,7 @@
                             android:fontFamily="@font/inter_medium"
                             android:onClick="@{(v) -> viewModel.handlePressOnView(v.id)}"
                             android:paddingVertical="@dimen/_5sdp"
-                            android:text="@string/canceled"
+                            android:text="@string/canceled_tasks"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
