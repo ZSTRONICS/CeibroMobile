@@ -63,33 +63,35 @@ class TaskV3OngoingFragment :
             if (parentViewModel.applyFilter.value == true) {
                 parentViewModel._applyFilter.value = true
             } else {
-                if (parentViewModel.selectedTaskTypeOngoingState.value.equals(
-                        TaskRootStateTags.All.tagValue,
-                        true
-                    )
-                ) {
-                    parentViewModel.isFirstStartOfOngoingFragment = false
-                    parentViewModel.filteredOngoingTasks = it
-                    if (!it.isNullOrEmpty()) {
-                        adapter.setList(
-                            it,
-                            parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                if (parentViewModel.isFirstStartOfOngoingFragment) {
+                    if (parentViewModel.selectedTaskTypeOngoingState.value.equals(
+                            TaskRootStateTags.All.tagValue,
+                            true
                         )
-                        mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                    } else {
-                        adapter.setList(
-                            listOf(),
-                            parentViewModel.selectedTaskTypeOngoingState.value ?: ""
-                        )
-                        mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                        if (parentViewModel.isSearchingTasks) {
+                    ) {
+                        parentViewModel.isFirstStartOfOngoingFragment = false
+                        parentViewModel.filteredOngoingTasks = it
+                        if (!it.isNullOrEmpty()) {
+                            adapter.setList(
+                                it,
+                                parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                            )
+                            mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                             mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                            mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                        } else {
-                            mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                             mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                        } else {
+                            adapter.setList(
+                                listOf(),
+                                parentViewModel.selectedTaskTypeOngoingState.value ?: ""
+                            )
+                            mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                            if (parentViewModel.isSearchingTasks) {
+                                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                                mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                            } else {
+                                mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                            }
                         }
                     }
                 }
