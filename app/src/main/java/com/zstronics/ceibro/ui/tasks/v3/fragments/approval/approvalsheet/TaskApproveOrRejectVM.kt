@@ -16,6 +16,7 @@ import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
+import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
@@ -37,6 +38,7 @@ class TaskApproveOrRejectVM @Inject constructor(
     override val viewState: TaskApproveOrRejectState,
     val sessionManager: SessionManager,
     val dashboardRepository: IDashboardRepository,
+    private val remoteTask: TaskRemoteDataSource,
     private val taskDao: TaskV2Dao,
 ) : HiltBaseViewModel<ITaskApproveOrReject.State>(), ITaskApproveOrReject.ViewModel {
     val user = sessionManager.getUser().value
@@ -156,7 +158,7 @@ class TaskApproveOrRejectVM @Inject constructor(
                     )
 
                     loading(true)
-//                    when (val response = dashboardRepository.uploadEventWithoutFilesV2(
+//                    when (val response = remoteTask.approveOrRejectTask(
 //                        event = TaskDetailEvents.Comment.eventValue,
 //                        taskId = taskId ?: "",
 //                        hasFiles = false,
