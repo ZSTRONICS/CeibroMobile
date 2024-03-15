@@ -122,7 +122,6 @@ class TaskApproveOrRejectVM @Inject constructor(
 
                     eventData = null
 
-//                    CommentVM.eventWithFileUploadV2RequestData = request
 //                    val serviceIntent = Intent(context, CreateNewTaskService::class.java)
 //                    serviceIntent.putExtra("ServiceRequest", "commentRequest")
 //                    serviceIntent.putExtra("taskId", taskId)
