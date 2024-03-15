@@ -474,6 +474,7 @@ class TasksParentTabV3Fragment :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
+        viewModel._applyFilter.value = false
         viewModel.loadAllTasks {
 
         }
