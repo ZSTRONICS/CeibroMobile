@@ -305,22 +305,5 @@ class TaskV3OngoingFragment :
         return popupWindow
     }
 
-    /*
-        @Subscribe(threadMode = ThreadMode.MAIN)
-        fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
-            parentViewModel.loadAllTasks {
 
-            }
-        }
-
-        override fun onAttach(context: Context) {
-            super.onAttach(context)
-            EventBus.getDefault().register(this)
-        }
-
-        override fun onDestroy() {
-            super.onDestroy()
-            EventBus.getDefault().unregister(this)
-
-        }*/
 }
