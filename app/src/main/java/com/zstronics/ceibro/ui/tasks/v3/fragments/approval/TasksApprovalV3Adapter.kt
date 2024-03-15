@@ -80,7 +80,7 @@ class TasksApprovalV3Adapter @Inject constructor() :
                         itemClickListener?.invoke(it, absoluteAdapterPosition, item)
                     }
 
-                    if (item.isCreator || item.isTaskConfirmer) {
+                    if (item.isTaskConfirmer) {
                         taskMenuBtn.visibility = View.VISIBLE
                     } else {
                         taskMenuBtn.visibility = View.GONE
@@ -198,7 +198,7 @@ class TasksApprovalV3Adapter @Inject constructor() :
                     }
 
 //                    if (item.isTaskInApproval) {
-                    taskMenuBtn.visibility = View.VISIBLE
+                 //   taskMenuBtn.visibility = View.VISIBLE
 //                    } else {
 //                        taskMenuBtn.visibility = View.GONE
 //                    }

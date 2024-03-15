@@ -1767,7 +1767,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
-   suspend fun updateTaskApproveOrRejectInLocal(
+    suspend fun updateTaskApproveOrRejectInLocal(
         eventData: EventV2Response.Data?,
         taskDao: TaskV2Dao,
         inboxV2Dao: InboxV2Dao,
@@ -1928,6 +1928,14 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     eventData.id
                 )
 //                println("Heartbeat SocketEvent NEW_TASK_COMMENT ended ${System.currentTimeMillis()}")
+
+                updateAllTasksLists(taskDao)
+
+                EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
+                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
+
+
             }
         }
     }
