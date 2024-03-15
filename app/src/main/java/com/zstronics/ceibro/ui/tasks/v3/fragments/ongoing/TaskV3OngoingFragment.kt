@@ -94,6 +94,9 @@ class TaskV3OngoingFragment :
                             }
                         }
                     }
+                } else {
+                    val type = parentViewModel.selectedTaskTypeOngoingState.value
+                    parentViewModel._selectedTaskTypeOngoingState.value = type
                 }
             }
         }
@@ -224,14 +227,21 @@ class TaskV3OngoingFragment :
 
         adapter.menuClickListener =
             { v: View, position: Int, data: CeibroTaskV2 ->
-                createPopupWindow(v, data) { menuTag ->
-                    if (menuTag.equals("hideTask", true)) {
-                        parentViewModel.showHideTaskDialog(requireContext(), data)
-                    } else if (menuTag.equals("cancelTask", true)) {
 
-                        parentViewModel.showCancelTaskDialog(requireContext(), data)
+                try {
+                    createPopupWindow(v, data) { menuTag ->
+                        if (menuTag.equals("hideTask", true)) {
+                            parentViewModel.showHideTaskDialog(requireContext(), data)
+                        } else if (menuTag.equals("cancelTask", true)) {
+
+
+                            parentViewModel.showCancelTaskDialog(requireContext(), data)
+                        }
                     }
+                } catch (error: Exception) {
+                    print("error :${error.message} ")
                 }
+
             }
     }
 
@@ -295,5 +305,22 @@ class TaskV3OngoingFragment :
         return popupWindow
     }
 
+    /*
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        fun onRefreshTasksData(event: LocalEvents.RefreshTasksData?) {
+            parentViewModel.loadAllTasks {
 
+            }
+        }
+
+        override fun onAttach(context: Context) {
+            super.onAttach(context)
+            EventBus.getDefault().register(this)
+        }
+
+        override fun onDestroy() {
+            super.onDestroy()
+            EventBus.getDefault().unregister(this)
+
+        }*/
 }

@@ -66,36 +66,41 @@ class TaskV3ApprovalFragment :
             if (parentViewModel.applyFilter.value == true) {
                 parentViewModel._applyFilter.value = true
             } else {
-                if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
-                        TaskRootStateTags.All.tagValue,
-                        true
-                    )
-                ) {
-                    parentViewModel.isFirstStartOfApprovalFragment = false
-                    parentViewModel.filteredApprovalTasks = it
+                if (parentViewModel.isFirstStartOfApprovalFragment) {
+                    if (parentViewModel.selectedTaskTypeApprovalState.value.equals(
+                            TaskRootStateTags.All.tagValue,
+                            true
+                        )
+                    ) {
+                        parentViewModel.isFirstStartOfApprovalFragment = false
+                        parentViewModel.filteredApprovalTasks = it
 
-                    if (!it.isNullOrEmpty()) {
-                        adapter.setList(
-                            it,
-                            parentViewModel.selectedTaskTypeApprovalState.value ?: ""
-                        )
-                        mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                    } else {
-                        adapter.setList(
-                            listOf(),
-                            parentViewModel.selectedTaskTypeApprovalState.value ?: ""
-                        )
-                        mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                        if (parentViewModel.isSearchingTasks) {
+                        if (!it.isNullOrEmpty()) {
+                            adapter.setList(
+                                it,
+                                parentViewModel.selectedTaskTypeApprovalState.value ?: ""
+                            )
+                            mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                             mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                            mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                        } else {
-                            mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                             mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                        } else {
+                            adapter.setList(
+                                listOf(),
+                                parentViewModel.selectedTaskTypeApprovalState.value ?: ""
+                            )
+                            mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                            if (parentViewModel.isSearchingTasks) {
+                                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                                mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                            } else {
+                                mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                            }
                         }
                     }
+                } else {
+                    val type = parentViewModel.selectedTaskTypeApprovalState.value
+                    parentViewModel._selectedTaskTypeApprovalState.value = type
                 }
             }
         }

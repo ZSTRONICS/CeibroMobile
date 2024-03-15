@@ -17,7 +17,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3ClosedBinding
-import com.zstronics.ceibro.ui.socket.LocalEvents
 import com.zstronics.ceibro.ui.tasks.v3.TasksParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,9 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -67,32 +63,40 @@ class TaskV3ClosedFragment :
             if (parentViewModel.applyFilter.value == true) {
                 parentViewModel._applyFilter.value = true
             } else {
-                if (parentViewModel.selectedTaskTypeClosedState.value.equals(
-                        TaskRootStateTags.All.tagValue,
-                        true
-                    )
-                ) {
-                    parentViewModel.isFirstStartOfClosedFragment = false
-                    parentViewModel.filteredClosedTasks = it
-                    if (!it.isNullOrEmpty()) {
-                        adapter.setList(it, parentViewModel.selectedTaskTypeClosedState.value ?: "")
-                        mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
-                        mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                        mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
-                    } else {
-                        adapter.setList(
-                            listOf(),
-                            parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                if (parentViewModel.isFirstStartOfClosedFragment) {
+                    if (parentViewModel.selectedTaskTypeClosedState.value.equals(
+                            TaskRootStateTags.All.tagValue,
+                            true
                         )
-                        mViewDataBinding.taskOngoingRV.visibility = View.GONE
-                        if (parentViewModel.isSearchingTasks) {
+                    ) {
+                        parentViewModel.isFirstStartOfClosedFragment = false
+                        parentViewModel.filteredClosedTasks = it
+                        if (!it.isNullOrEmpty()) {
+                            adapter.setList(
+                                it,
+                                parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                            )
+                            mViewDataBinding.taskOngoingRV.visibility = View.VISIBLE
                             mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                            mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
-                        } else {
-                            mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                             mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                        } else {
+                            adapter.setList(
+                                listOf(),
+                                parentViewModel.selectedTaskTypeClosedState.value ?: ""
+                            )
+                            mViewDataBinding.taskOngoingRV.visibility = View.GONE
+                            if (parentViewModel.isSearchingTasks) {
+                                mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
+                                mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                            } else {
+                                mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
+                                mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
+                            }
                         }
                     }
+                } else {
+                    val type = parentViewModel.selectedTaskTypeClosedState.value
+                    parentViewModel._selectedTaskTypeClosedState.value = type
                 }
             }
         }
