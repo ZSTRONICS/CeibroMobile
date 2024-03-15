@@ -126,4 +126,13 @@ interface ITaskRemoteDataSource {
     suspend fun pinOrUnpinComment(taskId: String, eventId: String, isPinned:Boolean): ApiResponse<PinnedCommentV2Response>
     suspend fun syncTaskAndEvents(request: SocketReSyncUpdateV2Request): ApiResponse<AllTasksV2NewResponse.NewData>
     suspend fun getTaskFilesByTaskId(taskId: String): ApiResponse<AllTaskFilesV2Response>
+
+    suspend fun approveOrRejectTask(
+        approvalEvent: String,
+        taskId: String,
+        hasFiles: Boolean,
+        comment: RequestBody,
+        files: List<MultipartBody.Part>?,
+        metadata: RequestBody
+    ): ApiResponse<EventV2Response>
 }

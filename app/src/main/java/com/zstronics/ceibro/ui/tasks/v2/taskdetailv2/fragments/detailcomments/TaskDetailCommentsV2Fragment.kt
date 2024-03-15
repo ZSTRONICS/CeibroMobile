@@ -434,12 +434,16 @@ class TaskDetailCommentsV2Fragment :
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        EventBus.getDefault().register(this)
+        try {
+            EventBus.getDefault().register(this)
+        } catch (_:Exception) { }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        EventBus.getDefault().unregister(this)
+        try {
+            EventBus.getDefault().unregister(this)
+        } catch (_:Exception) { }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

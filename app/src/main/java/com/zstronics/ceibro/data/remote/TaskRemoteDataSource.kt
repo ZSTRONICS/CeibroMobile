@@ -77,9 +77,9 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     ): ApiResponse<NewTaskV2Response> {
         return executeSafely(call = {
             service.newTaskV2WithFiles(
-                tags= tags,
-                confirmer= confirmer,
-                viewer= viewer,
+                tags = tags,
+                confirmer = confirmer,
+                viewer = viewer,
                 hasFiles = hasFiles,
                 dueDate = dueDate,
                 title = title,
@@ -116,9 +116,9 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     ): ApiResponse<NewTaskV2Response> {
         return executeSafely(call = {
             service.newTaskV2WithFilesWithPinData(
-                tags= tags,
-                confirmer= confirmer,
-                viewer= viewer,
+                tags = tags,
+                confirmer = confirmer,
+                viewer = viewer,
                 hasFiles = hasFiles,
                 dueDate = dueDate,
                 title = title,
@@ -153,9 +153,9 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
     ): ApiResponse<NewTaskV2Response> {
         return executeSafely(call = {
             service.newTaskV2WithoutFiles(
-                tags= tags,
-                confirmer= confirmer,
-                viewer= viewer,
+                tags = tags,
+                confirmer = confirmer,
+                viewer = viewer,
                 hasFiles = hasFiles,
                 dueDate = dueDate,
                 title = title,
@@ -329,7 +329,11 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
-    override suspend fun pinOrUnpinComment(taskId: String, eventId: String, isPinned:Boolean): ApiResponse<PinnedCommentV2Response> =
+    override suspend fun pinOrUnpinComment(
+        taskId: String,
+        eventId: String,
+        isPinned: Boolean
+    ): ApiResponse<PinnedCommentV2Response> =
         executeSafely(
             call =
             {
@@ -355,4 +359,24 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
+
+    override suspend fun approveOrRejectTask(
+        approvalEvent: String,
+        taskId: String,
+        hasFiles: Boolean,
+        comment: RequestBody,
+        files: List<MultipartBody.Part>?,
+        metadata: RequestBody
+    ): ApiResponse<EventV2Response> {
+        return executeSafely(call = {
+            service.approveOrRejectTask(
+                approvalEvent = approvalEvent,
+                taskId = taskId,
+                hasFiles = hasFiles,
+                comment = comment,
+                files = files,
+                metadata = metadata
+            )
+        })
+    }
 }
