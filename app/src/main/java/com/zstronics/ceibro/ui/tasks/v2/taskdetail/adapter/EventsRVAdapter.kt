@@ -176,8 +176,7 @@ class EventsRVAdapter constructor(
             val tintColor = if (!item.eventSeenBy.isNullOrEmpty()) {
                 if (item.eventSeenBy?.contains(loggedInUserId) == true) {
                     context.resources.getColor(R.color.appBlue)
-                }
-                else {
+                } else {
                     context.resources.getColor(R.color.appGrey3)
                 }
             } else {
@@ -450,6 +449,30 @@ class EventsRVAdapter constructor(
 //                        }
 //                    }, 10)
                 }
+
+                TaskDetailEvents.APPROVED.eventValue -> {
+                    binding.myMsgLayout.visibility = View.GONE
+
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} approved the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
+                }
+
+                TaskDetailEvents.REJECT_REOPEN.eventValue -> {
+                    binding.myMsgLayout.visibility = View.GONE
+
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} rejected and reopened the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
+                }
+
+                TaskDetailEvents.REJECT_CLOSE.eventValue -> {
+                    binding.myMsgLayout.visibility = View.GONE
+
+                    binding.otherEventText.text =
+                        "${creatorName.toCamelCase()} rejected and closed the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
+                }
             }
 
 
@@ -611,14 +634,14 @@ class EventsRVAdapter constructor(
         }
 
 
-
         private fun createPopupWindow(
             v: View,
             event: Events,
             callback: (String) -> Unit
         ): PopupWindow {
             val context: Context = v.context
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val inflater =
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val view: View = inflater.inflate(R.layout.task_detail_comment_menu_dialog, null)
 
             val popupWindow = PopupWindow(
@@ -668,7 +691,7 @@ class EventsRVAdapter constructor(
 //                } else {
 //                    popupWindow.showAsDropDown(v, 0, -420)
 //                }
-            popupWindow.showAsDropDown(v, 0, -180)
+                popupWindow.showAsDropDown(v, 0, -180)
             } else {
                 popupWindow.showAsDropDown(v, 0, -30)
             }

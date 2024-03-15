@@ -1767,6 +1767,171 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
         }
     }
 
+   suspend fun updateTaskApproveOrRejectInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        inboxV2Dao: InboxV2Dao,
+        userId: String?,
+        sessionManager: SessionManager,
+        drawingPinsDao: DrawingPinsV2Dao
+    ) {
+        if (eventData != null) {
+            val isExists = TaskEventsList.isExists(
+                SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
+            )
+            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+                ViewModelProvider(it).get(SharedViewModel::class.java)
+            }
+
+            if (!isExists) {
+                val currentUser = sessionManager.getUserObj()
+                val taskEvent = Events(
+                    id = eventData.id,
+                    taskId = eventData.taskId,
+                    eventType = eventData.eventType,
+                    initiator = eventData.initiator,
+                    eventData = eventData.eventData,
+                    commentData = eventData.commentData,
+                    createdAt = eventData.createdAt,
+                    updatedAt = eventData.updatedAt,
+                    invitedMembers = eventData.invitedMembers,
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
+                )
+//                println("Heartbeat SocketEvent NEW_TASK_COMMENT started ${System.currentTimeMillis()}")
+                GlobalScope.launch {
+                    sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
+                    val task = taskDao.getTaskByID(eventData.taskId)
+                    val inboxTask = inboxV2Dao.getInboxTaskData(eventData.taskId)
+
+                    if (task != null) {
+                        task.seenBy = eventData.taskData.seenBy
+                        task.hiddenBy = eventData.taskData.hiddenBy
+                        task.updatedAt = eventData.taskUpdatedAt
+
+                        val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
+                            eventData.taskData.assignedToState.toMutableList()
+                        } else {
+                            task.assignedToState
+                        }
+                        task.assignedToState = newAssigneeList
+                        val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
+                            eventData.taskData.invitedNumbers.toMutableList()
+                        } else {
+                            task.invitedNumbers
+                        }
+                        task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
+                        task.taskRootState = eventData.newTaskData.taskRootState
+                        task.isCanceled = eventData.newTaskData.isCanceled
+                        task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
+                        task.userSubState = eventData.newTaskData.userSubState
+                        task.creatorState = eventData.newTaskData.creatorState
+                        task.isTaskInApproval = eventData.newTaskData.isTaskInApproval
+                        task.rootState = eventData.newTaskData.rootState
+                        task.toMeState = eventData.newTaskData.toMeState
+                        task.fromMeState = eventData.newTaskData.fromMeState
+                        task.hiddenState = eventData.newTaskData.hiddenState
+                        task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
+
+                        taskDao.updateTask(task)
+                        taskDao.insertEventData(taskEvent)
+
+//                        if (eventData.newTaskData.creatorState.equals(
+//                                TaskStatus.CANCELED.name,
+//                                true
+//                            )
+//                        ) {
+//                            sharedViewModel?.isHiddenUnread?.value = true
+//                            sessionManager.saveHiddenUnread(true)
+//                        } else {
+//                            if (eventData.newTaskData.isAssignedToMe) {
+//                                sharedViewModel?.isToMeUnread?.value = true
+//                                sessionManager.saveToMeUnread(true)
+//                            }
+//                            if (eventData.newTaskData.isCreator) {
+//                                sharedViewModel?.isFromMeUnread?.value = true
+//                                sessionManager.saveFromMeUnread(true)
+//                            }
+//                        }
+
+                        updateAllTasksListForCommentAndForward(taskDao, eventData, task)
+
+                    } else {
+                        getTaskById(eventData.taskId) { isSuccess, taskData, events ->
+                            if (isSuccess) {
+                                launch {
+                                    taskDao.insertEventData(taskEvent)
+                                    taskData?.pinData?.let { drawingPinsDao.insertSinglePinData(it) }
+
+
+                                    if (taskData != null) {
+                                        updateAllTasksListForCommentAndForward(
+                                            taskDao,
+                                            eventData,
+                                            taskData
+                                        )
+                                    }
+                                }
+                            } else {
+                            }
+                        }
+                    }
+
+                    if (eventData.pinData != null) {
+                        drawingPinsDao.insertSinglePinData(eventData.pinData)
+                    }
+
+                    if (inboxTask != null && eventData.initiator.id != currentUser?.id) {
+                        inboxTask.actionBy = eventData.initiator
+                        inboxTask.createdAt = eventData.createdAt
+                        inboxTask.actionType = SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name
+                        inboxTask.isSeen = false
+                        inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
+
+                        if (eventData.commentData != null) {
+                            val newActionFiles = if (eventData.commentData.files.isNotEmpty()) {
+                                eventData.commentData.files.map {
+                                    ActionFilesData(
+                                        fileUrl = it.fileUrl
+                                    )
+                                }
+                            } else {
+                                mutableListOf()
+                            }
+                            inboxTask.actionFiles = newActionFiles.toMutableList()
+                            inboxTask.actionDescription = eventData.commentData.message ?: ""
+                        } else {
+                            inboxTask.actionFiles = mutableListOf()
+                            inboxTask.actionDescription = ""
+                        }
+
+                        inboxV2Dao.insertInboxItem(inboxTask)
+
+//                        val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
+//                        CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+
+                        EventBus.getDefault().post(LocalEvents.RefreshInboxSingleEvent(inboxTask))
+                    }
+
+                }.join()
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(Runnable {
+                    EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
+                }, 50)
+
+                TaskEventsList.removeEvent(
+                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name,
+                    eventData.id
+                )
+//                println("Heartbeat SocketEvent NEW_TASK_COMMENT ended ${System.currentTimeMillis()}")
+            }
+        }
+    }
+
 
     suspend fun updateEventInLocal(
         eventData: PinnedCommentV2Response,

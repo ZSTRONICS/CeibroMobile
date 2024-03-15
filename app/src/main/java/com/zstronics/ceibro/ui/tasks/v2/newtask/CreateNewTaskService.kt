@@ -32,6 +32,7 @@ import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.DashboardRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.v2.ApproveOrRejectTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
@@ -51,6 +52,7 @@ import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.locationPi
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskList
 import com.zstronics.ceibro.ui.tasks.v2.newtask.NewTaskV2VM.Companion.taskRequest
 import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentVM.Companion.eventWithFileUploadV2RequestData
+import com.zstronics.ceibro.ui.tasks.v3.fragments.approval.approvalsheet.TaskApproveOrRejectVM.Companion.approveOrRejectTaskRequest
 import com.zstronics.ceibro.utils.FileUtils
 import dagger.hilt.android.AndroidEntryPoint
 import ee.zstronics.ceibro.camera.PickedImages
@@ -59,6 +61,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.greenrobot.eventbus.EventBus
 import javax.inject.Inject
 
@@ -76,6 +82,7 @@ class CreateNewTaskService : Service() {
     private val createTaskNotificationID = 1
     private val doneNotificationID = 2
     private val commentNotificationID = 3
+    private val approveNotificationID = 5
     private val draftCreateTaskNotificationID = 4
 
     @Inject
@@ -139,6 +146,30 @@ class CreateNewTaskService : Service() {
                                     )
                                 )
                                 uploadComment(it, taskId, event, sessionManager, this)
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            "approveRequest" -> {
+
+                taskId?.let { taskId ->
+                    event?.let { event ->
+                        sessionManager?.let { sessionManager ->
+                            approveOrRejectTaskRequest?.let {
+                                startForeground(
+                                    approveNotificationID,
+                                    createIndeterminateNotificationForFileUpload(
+                                        context = this,
+                                        channelId = CHANNEL_ID,
+                                        channelName = CHANNEL_NAME,
+                                        notificationTitle = "updating task status",
+                                        notificationID = approveNotificationID
+                                    )
+                                )
+                                approveTask(it, taskId, sessionManager, this)
 
                             }
                         }
@@ -285,7 +316,10 @@ class CreateNewTaskService : Service() {
                         if (newTask.isAssignedToMe) {
                             val rootOngoingToMeTasks =
                                 allTasks.filter {
-                                    it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                    it.taskRootState.equals(
+                                        TaskRootStateTags.Ongoing.tagValue,
+                                        true
+                                    ) &&
                                             (it.toMeState.equals(
                                                 TaskStatus.NEW.name,
                                                 true
@@ -293,16 +327,24 @@ class CreateNewTaskService : Service() {
                                 }
                                     .sortedByDescending { it.updatedAt }.toMutableList()
 
-                            CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(rootOngoingToMeTasks)
+                            CeibroApplication.CookiesManager.rootOngoingToMeTasks.postValue(
+                                rootOngoingToMeTasks
+                            )
                         }
                         if (newTask.isCreator) {
                             val rootOngoingFromMeTasks =
                                 allTasks.filter {
-                                    it.taskRootState.equals(TaskRootStateTags.Ongoing.tagValue, true) &&
+                                    it.taskRootState.equals(
+                                        TaskRootStateTags.Ongoing.tagValue,
+                                        true
+                                    ) &&
                                             (it.fromMeState.equals(
                                                 TaskStatus.UNREAD.name,
                                                 true
-                                            ) || it.fromMeState.equals(TaskStatus.ONGOING.name, true))
+                                            ) || it.fromMeState.equals(
+                                                TaskStatus.ONGOING.name,
+                                                true
+                                            ))
                                 }
                                     .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -327,21 +369,43 @@ class CreateNewTaskService : Service() {
                             rootApprovalAllTasks.sortedByDescending { it.updatedAt }
                                 .toMutableList()
 
-                        CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(allApprovalTasks)
+                        CeibroApplication.CookiesManager.rootApprovalAllTasks.postValue(
+                            allApprovalTasks
+                        )
 
 
                         val rootApprovalInReviewPendingTasks =
-                            allApprovalTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
-                                    (it.userSubState.equals(TaskRootStateTags.InReview.tagValue, true)) }
+                            allApprovalTasks.filter {
+                                it.taskRootState.equals(
+                                    TaskRootStateTags.Approval.tagValue,
+                                    true
+                                ) &&
+                                        (it.userSubState.equals(
+                                            TaskRootStateTags.InReview.tagValue,
+                                            true
+                                        ))
+                            }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
                         val rootApprovalToReviewTasks =
-                            allApprovalTasks.filter { it.taskRootState.equals(TaskRootStateTags.Approval.tagValue, true) &&
-                                    (it.userSubState.equals(TaskRootStateTags.ToReview.tagValue, true)) }
+                            allApprovalTasks.filter {
+                                it.taskRootState.equals(
+                                    TaskRootStateTags.Approval.tagValue,
+                                    true
+                                ) &&
+                                        (it.userSubState.equals(
+                                            TaskRootStateTags.ToReview.tagValue,
+                                            true
+                                        ))
+                            }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
-                        CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(rootApprovalInReviewPendingTasks)
-                        CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(rootApprovalToReviewTasks)
+                        CeibroApplication.CookiesManager.rootApprovalInReviewPendingTasks.postValue(
+                            rootApprovalInReviewPendingTasks
+                        )
+                        CeibroApplication.CookiesManager.rootApprovalToReviewTasks.postValue(
+                            rootApprovalToReviewTasks
+                        )
                     }
 
 //                if (newTask.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true)) {
@@ -383,7 +447,6 @@ class CreateNewTaskService : Service() {
 //                        )
 //                    }
 //                }
-
 
 
                     /*if (newTask.isCreator) {
@@ -705,6 +768,65 @@ class CreateNewTaskService : Service() {
 
 
 
+                    apiCounter--
+                    if (apiCounter <= 0) {
+                        stopServiceAndClearNotification()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun approveTask(
+        request: ApproveOrRejectTaskRequest,
+        taskId: String,
+        sessionManager: SessionManager,
+        context: CreateNewTaskService
+    ) {
+        GlobalScope.launch {
+            apiCounter++
+
+
+            val message = request.message.toRequestBody("text/plain".toMediaTypeOrNull())
+
+            val metadata =
+                request.metadata.toRequestBody("text/plain".toMediaTypeOrNull())
+
+            val parts = request.files?.map { file ->
+                val reqFile = file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("files", file.name, reqFile)
+            }
+            when (val response = remoteTaskInternal.approveOrRejectTask(
+                approvalEvent = request.approvalEvent,
+                taskId = taskId,
+                hasFiles = true,
+                comment = message,
+                files = parts,
+                metadata = metadata
+            )) {
+                is ApiResponse.Success -> {
+
+                    val room = providesAppDatabase(context)
+                    val taskDao = room.getTaskV2sDao()
+
+                    println("Service Status...:success updating task status for approved")
+                    updateTaskApproveInLocal(
+                        response.data.data, taskDao,
+                        sessionManager, drawingPinsDaoInternal
+                    )
+                    hideIndeterminateNotifications(context, approveNotificationID)
+                    apiCounter--
+                    if (apiCounter <= 0) {
+                        stopServiceAndClearNotification()
+                    }
+
+
+                }
+
+                is ApiResponse.Error -> {
+
+                    println("Service Status...: failed toupde task status for approved")
+                    hideIndeterminateNotifications(context, approveNotificationID)
                     apiCounter--
                     if (apiCounter <= 0) {
                         stopServiceAndClearNotification()
@@ -1207,6 +1329,189 @@ class CreateNewTaskService : Service() {
                                 launch {
                                     taskDao.insertEventData(taskEvent)
                                     taskData?.pinData?.let { drawingPinsDaoInternal.insertSinglePinData(it) }
+
+
+                                    if (eventData.newTaskData.creatorState.equals(
+                                            TaskStatus.CANCELED.name,
+                                            true
+                                        )
+                                    ) {
+                                        sharedViewModel?.isHiddenUnread?.value = true
+                                        sessionManager.saveHiddenUnread(true)
+                                    } else {
+                                        if (eventData.newTaskData.isAssignedToMe) {
+                                            sharedViewModel?.isToMeUnread?.value = true
+                                            sessionManager.saveToMeUnread(true)
+                                        }
+                                        if (eventData.newTaskData.isCreator) {
+                                            sharedViewModel?.isFromMeUnread?.value = true
+                                            sessionManager.saveFromMeUnread(true)
+                                        }
+                                    }
+
+                                    if (taskData != null) {
+                                        updateAllTasksListForCommentAndForward(
+                                            taskDao,
+                                            eventData,
+                                            taskData
+                                        )
+                                    }
+                                }
+                            } else {
+                            }
+                        }
+                    }
+
+                    if (eventData.pinData != null) {
+                        drawingPinsDaoInternal.insertSinglePinData(eventData.pinData)
+                    }
+
+                    if (inboxTask != null && eventData.initiator.id != sessionManager.getUserObj()?.id) {
+                        inboxTask.actionBy = eventData.initiator
+                        inboxTask.createdAt = eventData.createdAt
+                        inboxTask.actionType = SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name
+                        inboxTask.isSeen = false
+                        inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
+
+                        if (eventData.commentData != null) {
+                            val newActionFiles = if (eventData.commentData.files.isNotEmpty()) {
+                                eventData.commentData.files.map {
+                                    ActionFilesData(
+                                        fileUrl = it.fileUrl
+                                    )
+                                }
+                            } else {
+                                mutableListOf()
+                            }
+                            inboxTask.actionFiles = newActionFiles.toMutableList()
+                            inboxTask.actionDescription = eventData.commentData.message ?: ""
+                        } else {
+                            inboxTask.actionFiles = mutableListOf()
+                            inboxTask.actionDescription = ""
+                        }
+
+                        inboxV2DaoInternal.insertInboxItem(inboxTask)
+
+//                        val allInboxTasks = inboxV2Dao.getAllInboxItems().toMutableList()
+//                        CeibroApplication.CookiesManager.allInboxTasks.postValue(allInboxTasks)
+
+                        EventBus.getDefault().post(LocalEvents.RefreshInboxSingleEvent(inboxTask))
+                    }
+
+                }.join()
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(Runnable {
+                    EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
+                    EventBus.getDefault().post(LocalEvents.RefreshTasksData())
+                    EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
+                }, 50)
+
+                TaskEventsList.removeEvent(
+                    SocketHandler.TaskEvent.NEW_TASK_COMMENT.name,
+                    eventData.id
+                )
+            }
+        }
+    }
+
+
+    private suspend fun updateTaskApproveInLocal(
+        eventData: EventV2Response.Data?,
+        taskDao: TaskV2Dao,
+        sessionManager: SessionManager,
+        drawingPinsDaoInternal: DrawingPinsV2Dao
+    ) {
+        if (eventData != null) {
+            val isExists = TaskEventsList.isExists(
+                SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
+            )
+            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
+                ViewModelProvider(it).get(SharedViewModel::class.java)
+            }
+
+            if (!isExists) {
+                val taskEvent = Events(
+                    id = eventData.id,
+                    taskId = eventData.taskId,
+                    eventType = eventData.eventType,
+                    initiator = eventData.initiator,
+                    eventData = eventData.eventData,
+                    commentData = eventData.commentData,
+                    createdAt = eventData.createdAt,
+                    updatedAt = eventData.updatedAt,
+                    invitedMembers = eventData.invitedMembers,
+                    eventNumber = eventData.eventNumber,
+                    isPinned = eventData.isPinned
+                )
+                GlobalScope.launch {
+                    sessionManager.saveUpdatedAtTimeStamp(eventData.taskUpdatedAt)
+                    val task = taskDao.getTaskByID(eventData.taskId)
+                    val inboxTask = inboxV2DaoInternal.getInboxTaskData(eventData.taskId)
+
+                    if (task != null) {
+                        task.seenBy = eventData.taskData.seenBy
+                        task.hiddenBy = eventData.taskData.hiddenBy
+                        task.updatedAt = eventData.taskUpdatedAt
+
+                        val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
+                            eventData.taskData.assignedToState.toMutableList()
+                        } else {
+                            task.assignedToState
+                        }
+                        task.assignedToState = newAssigneeList
+                        val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
+                            eventData.taskData.invitedNumbers.toMutableList()
+                        } else {
+                            task.invitedNumbers
+                        }
+                        task.invitedNumbers = newInvitedList
+                        task.isSeenByMe = eventData.newTaskData.isSeenByMe
+                        task.taskRootState = eventData.newTaskData.taskRootState
+                        task.isCanceled = eventData.newTaskData.isCanceled
+                        task.isHiddenByMe = eventData.newTaskData.isHiddenByMe
+                        task.userSubState = eventData.newTaskData.userSubState
+                        task.creatorState = eventData.newTaskData.creatorState
+                        task.isTaskInApproval = eventData.newTaskData.isTaskInApproval
+                        task.rootState = eventData.newTaskData.rootState
+                        task.toMeState = eventData.newTaskData.toMeState
+                        task.fromMeState = eventData.newTaskData.fromMeState
+                        task.hiddenState = eventData.newTaskData.hiddenState
+                        task.eventsCount = task.eventsCount + 1
+                        task.pinData = eventData.pinData
+
+                        taskDao.updateTask(task)
+                        taskDao.insertEventData(taskEvent)
+
+//                        if (eventData.newTaskData.creatorState.equals(
+//                                TaskStatus.CANCELED.name,
+//                                true
+//                            )
+//                        ) {
+//                            sharedViewModel?.isHiddenUnread?.value = true
+//                            sessionManager.saveHiddenUnread(true)
+//                        } else {
+//                            if (eventData.newTaskData.isAssignedToMe) {
+//                                sharedViewModel?.isToMeUnread?.value = true
+//                                sessionManager.saveToMeUnread(true)
+//                            }
+//                            if (eventData.newTaskData.isCreator) {
+//                                sharedViewModel?.isFromMeUnread?.value = true
+//                                sessionManager.saveFromMeUnread(true)
+//                            }
+//                        }
+
+                        updateAllTasksListForCommentAndForward(taskDao, eventData, task)
+
+                    } else {
+                        getTaskById(eventData.taskId) { isSuccess, taskData, events ->
+                            if (isSuccess) {
+                                launch {
+                                    taskDao.insertEventData(taskEvent)
+                                    taskData?.pinData?.let {
+                                        drawingPinsDaoInternal.insertSinglePinData(
+                                            it
+                                        )
+                                    }
 
 
                                     if (eventData.newTaskData.creatorState.equals(

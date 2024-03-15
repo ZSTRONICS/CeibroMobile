@@ -379,4 +379,22 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             )
         })
     }
+
+    override suspend fun approveOrRejectTaskWithoutFiles(
+        approvalEvent: String,
+        taskId: String,
+        hasFiles: Boolean,
+        comment: RequestBody
+    ): ApiResponse<EventV2Response> {
+
+        return executeSafely(call = {
+            service.approveOrRejectTaskWithoutFiles(
+                approvalEvent = approvalEvent,
+                taskId = taskId,
+                hasFiles = hasFiles,
+                comment = comment
+            )
+        })
+    }
+
 }

@@ -14,23 +14,26 @@ import com.zstronics.ceibro.base.extensions.cancelAndMakeToast
 import com.zstronics.ceibro.base.viewmodel.Dispatcher
 import com.zstronics.ceibro.base.viewmodel.HiltBaseViewModel
 import com.zstronics.ceibro.data.base.ApiResponse
+import com.zstronics.ceibro.data.database.dao.DrawingPinsV2Dao
+import com.zstronics.ceibro.data.database.dao.InboxV2Dao
 import com.zstronics.ceibro.data.database.dao.TaskV2Dao
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.remote.TaskRemoteDataSource
 import com.zstronics.ceibro.data.repos.dashboard.IDashboardRepository
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
-import com.zstronics.ceibro.data.repos.task.models.v2.EventCommentOnlyUploadV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.ApproveOrRejectTaskRequest
 import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.ui.tasks.v2.newtask.CreateNewTaskService
-import com.zstronics.ceibro.ui.tasks.v2.taskdetail.comment.CommentVM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ee.zstronics.ceibro.camera.AttachmentTypes
 import ee.zstronics.ceibro.camera.PickedImages
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +43,8 @@ class TaskApproveOrRejectVM @Inject constructor(
     val dashboardRepository: IDashboardRepository,
     private val remoteTask: TaskRemoteDataSource,
     private val taskDao: TaskV2Dao,
+    private val inboxV2Dao: InboxV2Dao,
+    private val drawingPinsDao: DrawingPinsV2Dao,
 ) : HiltBaseViewModel<ITaskApproveOrReject.State>(), ITaskApproveOrReject.ViewModel {
     val user = sessionManager.getUser().value
 
@@ -56,7 +61,7 @@ class TaskApproveOrRejectVM @Inject constructor(
 
     private val _task: MutableLiveData<CeibroTaskV2> = MutableLiveData()
     val task: LiveData<CeibroTaskV2> = _task
-
+    private var taskTypeTag = ""
 
     override fun onFirsTimeUiCreate(bundle: Bundle?) {
         super.onFirsTimeUiCreate(bundle)
@@ -67,8 +72,18 @@ class TaskApproveOrRejectVM @Inject constructor(
         }
         taskType?.let {
             this._taskType.value = it
+            if (it.equals("approveClose", true)) {
+                taskTypeTag = TaskDetailEvents.APPROVE.eventValue
+            }
+            if (it.equals("rejectReOpen", true)) {
+                taskTypeTag = TaskDetailEvents.REJECT_REOPEN.eventValue
+            }
+            if (it.equals("rejectClose", true)) {
+                taskTypeTag = TaskDetailEvents.REJECT_CLOSE.eventValue
+            }
         }
     }
+
 
     fun filesCounter(): Int {
         return ((listOfImages.value?.size ?: 0) + (documents.value?.size ?: 0))
@@ -114,24 +129,26 @@ class TaskApproveOrRejectVM @Inject constructor(
                     val metadataString2 =
                         Gson().toJson(metadataString)     //again passing to make the json to convert into json string with slashes
 
-                    val request = EventWithFileUploadV2Request(
+                    approveOrRejectTaskRequest = ApproveOrRejectTaskRequest(
                         files = attachmentUriList,
                         message = viewState.comment.value.toString(),
-                        metadata = metadataString2
+                        metadata = metadataString2,
+                        hasFiles = true,
+                        approvalEvent = taskTypeTag,
                     )
 
                     eventData = null
 
-//                    val serviceIntent = Intent(context, CreateNewTaskService::class.java)
-//                    serviceIntent.putExtra("ServiceRequest", "commentRequest")
-//                    serviceIntent.putExtra("taskId", taskId)
-//                    serviceIntent.putExtra("event", TaskDetailEvents.Comment.eventValue)
-//                    context.startService(serviceIntent)
-//
-//                    loading(false, "")
-//                    launch(Dispatcher.Main) {
-//                        onBack.invoke(eventData)
-//                    }
+                    val serviceIntent = Intent(context, CreateNewTaskService::class.java)
+                    serviceIntent.putExtra("ServiceRequest", "approveRequest")
+                    serviceIntent.putExtra("taskId", task?.value?.id ?: "")
+                    serviceIntent.putExtra("event", taskTypeTag)
+                    context.startService(serviceIntent)
+
+                    loading(false, "")
+                    launch(Dispatcher.Main) {
+                        onBack.invoke(eventData)
+                    }
 
 
 //                    when (val response = dashboardRepository.uploadEventWithFilesV2(
@@ -151,50 +168,90 @@ class TaskApproveOrRejectVM @Inject constructor(
 //                        }
 //                    }
 
+                    /*
+                                        val message = viewState.comment.value.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                                        val metadata = approveOrRejectTaskRequest?.metadata?.toRequestBody("text/plain".toMediaTypeOrNull())
+                                        val parts = approveOrRejectTaskRequest?.files?.map { file ->
+                                            val reqFile =
+                                                file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+                                            MultipartBody.Part.createFormData("files", file.name, reqFile)
+                                        }
+                                        loading(true)
+                                        metadata?.let { data ->
+
+                                            when (val response = remoteTask.approveOrRejectTask(
+                                                approvalEvent = taskTypeTag,
+                                                taskId = task.value?.id ?: "",
+                                                hasFiles = true,
+                                                comment = message,
+                                                files = parts,
+                                                metadata = data
+                                            )) {
+                                                is ApiResponse.Success -> {
+                                                    val commentData = response.data.data
+                                                    isSuccess = true
+                                                    eventData = commentData
+                                                }
+
+                                                is ApiResponse.Error -> {
+                                                    launch(Dispatcher.Main) {
+                                                        cancelAndMakeToast(
+                                                            context,
+                                                            response.error.message,
+                                                            Toast.LENGTH_SHORT
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }*/
+
                 } else {        //if list is empty, moving to else part
-                    val request = EventCommentOnlyUploadV2Request(
-                        message = viewState.comment.value.toString()
-                    )
+
+
+                    val message = viewState.comment.value.toString()
+                        .toRequestBody("text/plain".toMediaTypeOrNull())
+
+
 
                     loading(true)
-//                    when (val response = remoteTask.approveOrRejectTask(
-//                        event = TaskDetailEvents.Comment.eventValue,
-//                        taskId = taskId ?: "",
-//                        hasFiles = false,
-//                        eventCommentOnlyUploadV2Request = request
-//                    )) {
-//                        is ApiResponse.Success -> {
-//                            val commentData = response.data.data
-//                            isSuccess = true
-//                            eventData = commentData
-//                        }
-//
-//                        is ApiResponse.Error -> {
-//                            launch(Dispatcher.Main) {
-//                                cancelAndMakeToast(
-//                                    context,
-//                                    response.error.message,
-//                                    Toast.LENGTH_SHORT
-//                                )
-//                            }
-//                        }
-//                    }
+                    when (val response = remoteTask.approveOrRejectTaskWithoutFiles(
+                        approvalEvent = taskTypeTag,
+                        taskId = task.value?.id ?: "",
+                        hasFiles = false,
+                        comment = message
+                    )) {
+                        is ApiResponse.Success -> {
+                            val commentData = response.data.data
+                            isSuccess = true
+                            eventData = commentData
+                        }
+
+                        is ApiResponse.Error -> {
+                            launch(Dispatcher.Main) {
+                                cancelAndMakeToast(
+                                    context,
+                                    response.error.message,
+                                    Toast.LENGTH_SHORT
+                                )
+                            }
+                        }
+                    }
                 }
-//                updateTaskCommentInLocal(
-//                    eventData,
-//                    taskDao,
-//                    inboxV2Dao,
-//                    user?.id,
-//                    sessionManager,
-//                    drawingPinsDao
-//                )
-//
-//                Handler(Looper.getMainLooper()).postDelayed({
-//                    loading(false, "")
-//                    if (isSuccess) {
-//                        onBack(eventData)
-//                    }
-//                }, 10)
+                updateTaskApproveOrRejectInLocal(
+                    eventData,
+                    taskDao,
+                    inboxV2Dao,
+                    user?.id,
+                    sessionManager,
+                    drawingPinsDao
+                )
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    loading(false, "")
+                    if (isSuccess) {
+                        onBack(eventData)
+                    }
+                }, 10)
 
             }
         }
@@ -211,5 +268,9 @@ class TaskApproveOrRejectVM @Inject constructor(
             combinedList.addAll(documents)
         }
         return combinedList
+    }
+
+    companion object {
+        var approveOrRejectTaskRequest: ApproveOrRejectTaskRequest? = null
     }
 }
