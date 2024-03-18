@@ -220,7 +220,8 @@ class DashboardVM @Inject constructor(
 
                 SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
                 SocketHandler.TaskEvent.UN_CANCEL_TASK.name, SocketHandler.TaskEvent.JOINED_TASK.name,
-                SocketHandler.TaskEvent.TASK_APPROVED.name, SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name, SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name -> {
+                SocketHandler.TaskEvent.TASK_APPROVED.name, SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name,
+                SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name, SocketHandler.TaskEvent.TASK_REOPEN.name -> {
                     val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                         arguments,
                         object : TypeToken<SocketNewTaskEventV2Response>() {}.type
@@ -300,6 +301,16 @@ class DashboardVM @Inject constructor(
 
                         }
                     }
+                    if (socketData.eventType == SocketHandler.TaskEvent.TASK_REOPEN.name) {
+                        launch {
+                            updateTaskReOpenedInLocal(
+                                commentData,
+                                taskDao,
+                                sessionManager,
+                                drawingPinsDao
+                            )
+                        }
+                    }
                 }
 
                 SocketHandler.TaskEvent.TASK_EVENT_UPDATED.name -> {
@@ -354,7 +365,7 @@ class DashboardVM @Inject constructor(
                 SocketHandler.TaskEvent.IB_TASK_CREATED.name, SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.IB_TASK_DONE.name,
                 SocketHandler.TaskEvent.IB_CANCELED_TASK.name, SocketHandler.TaskEvent.IB_JOINED_TASK.name, SocketHandler.TaskEvent.IB_TASK_FORWARDED.name,
                 SocketHandler.TaskEvent.IB_TASK_APPROVED.name, SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name,
-                SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name -> {
+                SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name, SocketHandler.TaskEvent.IB_TASK_REOPEN.name -> {
                     val inboxTask = gson.fromJson<SocketInboxTaskResponse>(
                         arguments,
                         object : TypeToken<SocketInboxTaskResponse>() {}.type
@@ -448,6 +459,17 @@ class DashboardVM @Inject constructor(
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_REOPEN.name) {
                         if (inboxTask != null) {
                             launch {
                                 addOrUpdateInboxTaskInLocal(
