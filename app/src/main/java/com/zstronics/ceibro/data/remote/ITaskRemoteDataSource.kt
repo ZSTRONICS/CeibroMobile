@@ -135,4 +135,11 @@ interface ITaskRemoteDataSource {
         files: List<MultipartBody.Part>?,
         metadata: RequestBody
     ): ApiResponse<EventV2Response>
+
+    suspend fun approveOrRejectTaskWithoutFiles(
+        approvalEvent: String,
+        taskId: String,
+        hasFiles: Boolean,
+        comment: RequestBody
+    ): ApiResponse<EventV2Response>
 }

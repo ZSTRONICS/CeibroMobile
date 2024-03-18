@@ -55,7 +55,7 @@ class TaskV3ApprovalFragment :
     }
 
     @Inject
-    lateinit var adapter: TasksV3Adapter
+    lateinit var adapter: TasksApprovalV3Adapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

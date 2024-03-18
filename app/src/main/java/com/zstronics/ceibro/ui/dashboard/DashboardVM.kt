@@ -219,7 +219,8 @@ class DashboardVM @Inject constructor(
                 }
 
                 SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.TASK_DONE.name, SocketHandler.TaskEvent.CANCELED_TASK.name,
-                SocketHandler.TaskEvent.UN_CANCEL_TASK.name, SocketHandler.TaskEvent.JOINED_TASK.name -> {
+                SocketHandler.TaskEvent.UN_CANCEL_TASK.name, SocketHandler.TaskEvent.JOINED_TASK.name,
+                SocketHandler.TaskEvent.TASK_APPROVED.name, SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name, SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name -> {
                     val commentData = gson.fromJson<SocketNewTaskEventV2Response>(
                         arguments,
                         object : TypeToken<SocketNewTaskEventV2Response>() {}.type
@@ -229,6 +230,17 @@ class DashboardVM @Inject constructor(
                     if (socketData.eventType == SocketHandler.TaskEvent.NEW_TASK_COMMENT.name) {
                         launch {
                             updateTaskCommentInLocal(
+                                commentData,
+                                taskDao,
+                                inboxV2Dao,
+                                userId,
+                                sessionManager, drawingPinsDao
+                            )
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.TASK_APPROVED.name || socketData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name || socketData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name) {
+                        launch {
+                            updateTaskApproveOrRejectInLocal(
                                 commentData,
                                 taskDao,
                                 inboxV2Dao,
@@ -301,7 +313,8 @@ class DashboardVM @Inject constructor(
                                 sessionManager
                             )
                         }
-                    } catch (_: Exception) { }
+                    } catch (_: Exception) {
+                    }
 
                 }
 

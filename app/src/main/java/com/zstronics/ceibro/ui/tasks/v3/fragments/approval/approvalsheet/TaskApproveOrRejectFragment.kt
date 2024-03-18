@@ -140,7 +140,14 @@ class TaskApproveOrRejectFragment :
             }
 
             R.id.nextBtn -> {
+                viewModel.approveOrRejectTask(mViewDataBinding.root.context) {
+                    it?.let {
+                        navigateBack()
+                    } ?: kotlin.run {
+                        navigateBack()
+                    }
 
+                }
             }
         }
     }

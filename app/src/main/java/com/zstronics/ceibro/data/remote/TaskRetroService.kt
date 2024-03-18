@@ -285,4 +285,13 @@ interface TaskRetroService {
         @Part files: List<MultipartBody.Part>?,
         @Part("metadata") metadata: RequestBody
     ): Response<EventV2Response>
+
+    @Multipart
+    @POST("v2/task/approval/{approvalEvent}/{taskId}")
+    suspend fun approveOrRejectTaskWithoutFiles(
+        @Path("approvalEvent") approvalEvent: String,
+        @Path("taskId") taskId: String,
+        @Query("hasFiles") hasFiles: Boolean,
+        @Part("comment") comment: RequestBody,
+    ): Response<EventV2Response>
 }

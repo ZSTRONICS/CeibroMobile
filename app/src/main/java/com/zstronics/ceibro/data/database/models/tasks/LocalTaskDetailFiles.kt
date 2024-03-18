@@ -22,7 +22,7 @@ data class LocalTaskDetailFiles(
     @SerializedName("fileName")
     val fileName: String,
     @SerializedName("fileTag")
-    val fileTag: String,
+    val fileTag: String?="",
     @SerializedName("fileUrl")
     val fileUrl: String,
     @SerializedName("fileType")
