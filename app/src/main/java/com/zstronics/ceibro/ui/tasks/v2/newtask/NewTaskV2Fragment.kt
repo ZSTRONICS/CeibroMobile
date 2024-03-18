@@ -133,10 +133,15 @@ class NewTaskV2Fragment :
             }
 
             R.id.newViewerTopicText -> {
-                val assigneeList = viewState.selectedContacts.value ?: mutableListOf()
+
+                val selected=viewState.selectedContacts.value ?: mutableListOf()
+                val assigneeList = mutableListOf<AllCeibroConnections.CeibroConnection> ()
+                selected.forEach {
+                    assigneeList.add(it.copy())
+                }
                 val confirmer = viewState.selectedConfirmerContacts.value
                 confirmer?.let {
-                    assigneeList.add(it)
+                    assigneeList.add(it.copy())
                 }
 
                 val bundle = Bundle()

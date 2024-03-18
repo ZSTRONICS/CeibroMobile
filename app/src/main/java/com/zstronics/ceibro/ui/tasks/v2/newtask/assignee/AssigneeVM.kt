@@ -73,7 +73,8 @@ class AssigneeVM @Inject constructor(
                 ?.toMutableList()
         if (!selectedContactList.isNullOrEmpty()) {
 
-            selectedContacts.postValue(selectedContactList as MutableList<AllCeibroConnections.CeibroConnection>?)
+            val list = selectedContactList.distinctBy { it.phoneNumber }
+            selectedContacts.postValue(list as MutableList<AllCeibroConnections.CeibroConnection>?)
         }
         val handler = Handler()
         handler.postDelayed(Runnable {

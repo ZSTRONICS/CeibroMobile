@@ -83,11 +83,13 @@ class ConnectionAdapterSectionRecycler constructor(
     }
 
     fun setData(oldSelectedContacts: ArrayList<String>) {
+        oldContacts.clear()
         oldContacts = oldSelectedContacts
         notifyDataSetChanged()
     }
 
     fun disableContacts(oldSelectedContacts: MutableList<AllCeibroConnections.CeibroConnection>) {
+       disableContscts.clear()
         disableContscts = oldSelectedContacts
         notifyDataSetChanged()
     }
