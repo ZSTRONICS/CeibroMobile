@@ -17,8 +17,6 @@ import com.zstronics.ceibro.base.navgraph.BaseNavViewModelFragment
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.databinding.FragmentTaskV3HiddenOngoingBinding
-import com.zstronics.ceibro.ui.socket.LocalEvents
-import com.zstronics.ceibro.ui.tasks.v3.fragments.TasksV3Adapter
 import com.zstronics.ceibro.ui.tasks.v3.hidden.TasksHiddenParentTabV3VM
 import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.HiddenTasksV3Adapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,9 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint

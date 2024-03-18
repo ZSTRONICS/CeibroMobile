@@ -410,6 +410,7 @@
     <string name="photo_heading">Photo</string>
     <string name="created_heading">Created</string>
     <string name="canceled">Canceled</string>
+    <string name="closed">Closed</string>
     <string name="failed">Failed</string>
     <string name="topic_required">Topic <font color="#D9000D">*</font></string>
     <string name="project_name_required">Project name <font color="#D9000D">*</font></string>

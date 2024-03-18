@@ -34,6 +34,7 @@ import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.TaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.extensions.getLocalContacts
 import com.zstronics.ceibro.ui.contacts.ContactSyncWorker
@@ -231,12 +232,12 @@ class CeibroDataLoadingVM @Inject constructor(
 
                     val rootClosedToMeTasks =
                         allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                (it.toMeState.equals(TaskStatus.DONE.name, true)) }
+                                (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true)) }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
                     val rootClosedFromMeTasks =
                         allTasks.filter { it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                (it.fromMeState.equals(TaskStatus.DONE.name, true)) }
+                                (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true)) }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
                     CeibroApplication.CookiesManager.rootClosedAllTasks.postValue(rootClosedAllTasks)

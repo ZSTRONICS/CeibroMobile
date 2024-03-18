@@ -19,6 +19,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutInboxTaskBoxV2Binding
 import com.zstronics.ceibro.ui.socket.SocketHandler
@@ -82,10 +83,10 @@ class InboxAdapter @Inject constructor() :
                             R.drawable.status_new_filled
                         )
 
-//                        TaskStatus.UNREAD.name -> Pair(
-//                            R.drawable.status_new_outline_new,
-//                            R.drawable.status_new_filled
-//                        )
+                        TaskStatus.UNREAD.name -> Pair(
+                            R.drawable.status_new_outline_new,
+                            R.drawable.status_new_filled
+                        )
 
                         TaskStatus.ONGOING.name -> Pair(
                             R.drawable.status_ongoing_outline_new,
@@ -100,6 +101,11 @@ class InboxAdapter @Inject constructor() :
                         TaskStatus.CANCELED.name -> Pair(
                             R.drawable.status_cancelled_outline,
                             R.drawable.status_cancelled_filled_less_corner
+                        )
+
+                        TaskDetailEvents.REJECT_CLOSED.eventValue.uppercase() -> Pair(
+                            R.drawable.status_reject_outline_more_corner,
+                            R.drawable.status_reject_filled
                         )
 
                         else -> Pair(
@@ -147,6 +153,21 @@ class InboxAdapter @Inject constructor() :
 
                         SocketHandler.TaskEvent.IB_CANCELED_TASK.name -> {
                             inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_canceled)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
+
+                        SocketHandler.TaskEvent.IB_TASK_APPROVED.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_done)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
+
+                        SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_canceled)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                        }
+
+                        SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_reject_reopen)
                             inboxTaskStateIcon.visibility = View.VISIBLE
                         }
 

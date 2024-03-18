@@ -352,7 +352,9 @@ class DashboardVM @Inject constructor(
                 }
 
                 SocketHandler.TaskEvent.IB_TASK_CREATED.name, SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name, SocketHandler.TaskEvent.IB_TASK_DONE.name,
-                SocketHandler.TaskEvent.IB_CANCELED_TASK.name, SocketHandler.TaskEvent.IB_JOINED_TASK.name, SocketHandler.TaskEvent.IB_TASK_FORWARDED.name -> {
+                SocketHandler.TaskEvent.IB_CANCELED_TASK.name, SocketHandler.TaskEvent.IB_JOINED_TASK.name, SocketHandler.TaskEvent.IB_TASK_FORWARDED.name,
+                SocketHandler.TaskEvent.IB_TASK_APPROVED.name, SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name,
+                SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name -> {
                     val inboxTask = gson.fromJson<SocketInboxTaskResponse>(
                         arguments,
                         object : TypeToken<SocketInboxTaskResponse>() {}.type
@@ -413,6 +415,39 @@ class DashboardVM @Inject constructor(
                         }
                     }
                     if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_FORWARDED.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_APPROVED.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name) {
+                        if (inboxTask != null) {
+                            launch {
+                                addOrUpdateInboxTaskInLocal(
+                                    inboxTask,
+                                    inboxV2Dao,
+                                    sessionManager
+                                )
+                            }
+                        }
+                    }
+                    if (socketData.eventType == SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name) {
                         if (inboxTask != null) {
                             launch {
                                 addOrUpdateInboxTaskInLocal(

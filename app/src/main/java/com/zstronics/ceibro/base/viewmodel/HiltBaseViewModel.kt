@@ -51,6 +51,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.ForwardedToMeNewTaskV2Resp
 import com.zstronics.ceibro.data.repos.task.models.v2.HideTaskResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.PinnedCommentV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.SocketReSyncUpdateV2Request
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskSeenResponse
 import com.zstronics.ceibro.data.repos.task.models.v2.UpdateRequiredEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
@@ -375,14 +376,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             val rootClosedToMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.toMeState.equals(TaskStatus.DONE.name, true))
+                            (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
+                                TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
             val rootClosedFromMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                            (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -513,7 +515,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val rootClosedToMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.toMeState.equals(TaskStatus.DONE.name, true))
+                                        (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -525,7 +527,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         val rootClosedFromMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                                        (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -753,7 +755,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     val rootClosedToMeTasks =
                         rootClosedAllTasksDB.filter {
                             it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                    (it.toMeState.equals(TaskStatus.DONE.name, true))
+                                    (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                         }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -764,7 +766,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     val rootClosedFromMeTasks =
                         rootClosedAllTasksDB.filter {
                             it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                    (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                                    (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                         }
                             .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1864,7 +1866,16 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     if (inboxTask != null && eventData.initiator.id != currentUser?.id) {
                         inboxTask.actionBy = eventData.initiator
                         inboxTask.createdAt = eventData.createdAt
-                        inboxTask.actionType = eventData.eventType
+                        inboxTask.actionType = if (eventData.eventType == SocketHandler.TaskEvent.TASK_APPROVED.name) {
+                            SocketHandler.TaskEvent.IB_TASK_APPROVED.name
+                        } else if (eventData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name) {
+                            SocketHandler.TaskEvent.IB_TASK_REJECTED_CLOSED.name
+                        } else if (eventData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name) {
+                            SocketHandler.TaskEvent.IB_TASK_REJECTED_REOPEND.name
+                        } else {
+                            eventData.eventType
+                        }
+                        inboxTask.taskState = eventData.newTaskData.creatorState
                         inboxTask.isSeen = false
                         inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
 

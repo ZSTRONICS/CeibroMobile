@@ -21,6 +21,7 @@ import com.zstronics.ceibro.R
 import com.zstronics.ceibro.data.database.models.inbox.CeibroInboxV2
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.databinding.LayoutInboxTaskBoxV2Binding
 import com.zstronics.ceibro.databinding.LayoutTaskBoxV3Binding
@@ -135,7 +136,7 @@ class TasksV3Adapter @Inject constructor() :
                             inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_pending)
                             inboxTaskStateIcon.visibility = View.VISIBLE
                             Pair(
-                                R.drawable.status_in_review_outline,
+                                R.drawable.status_in_review_outline_more_corners,
                                 R.drawable.status_in_review_outline
                             )
                         }
@@ -144,7 +145,7 @@ class TasksV3Adapter @Inject constructor() :
                             inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_pending)
                             inboxTaskStateIcon.visibility = View.VISIBLE
                             Pair(
-                                R.drawable.status_in_review_outline,
+                                R.drawable.status_in_review_outline_more_corners,
                                 R.drawable.status_in_review_outline
                             )
                         }
@@ -164,6 +165,15 @@ class TasksV3Adapter @Inject constructor() :
                             Pair(
                                 R.drawable.status_cancelled_outline,
                                 R.drawable.status_cancelled_filled_less_corner
+                            )
+                        }
+
+                        TaskDetailEvents.REJECT_CLOSED.eventValue.uppercase() -> {
+                            inboxTaskStateIcon.setBackgroundResource(R.drawable.icon_task_canceled)
+                            inboxTaskStateIcon.visibility = View.VISIBLE
+                            Pair(
+                                R.drawable.status_reject_outline_more_corner,
+                                R.drawable.status_reject_outline
                             )
                         }
 

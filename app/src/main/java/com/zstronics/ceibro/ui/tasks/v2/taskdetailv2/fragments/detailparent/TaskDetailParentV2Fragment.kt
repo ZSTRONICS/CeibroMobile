@@ -30,6 +30,7 @@ import com.zstronics.ceibro.data.database.models.tasks.EventFiles
 import com.zstronics.ceibro.data.database.models.tasks.TaskFiles
 import com.zstronics.ceibro.data.repos.dashboard.attachment.AttachmentTags
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskDetailParentV2Binding
 import com.zstronics.ceibro.ui.projectv2.projectdetailv2.drawings.DrawingsV2Fragment
 import com.zstronics.ceibro.ui.socket.LocalEvents
@@ -459,6 +460,11 @@ class TaskDetailParentV2Fragment :
             TaskStatus.CANCELED.name -> Pair(
                 R.drawable.status_cancelled_filled_more_corners,
                 context.getString(R.string.canceled)
+            )
+
+            TaskDetailEvents.REJECT_CLOSED.eventValue.uppercase() -> Pair(
+                R.drawable.status_reject_filled_more_full_corners,
+                state.toCamelCase()
             )
 
             else -> Pair(

@@ -17,6 +17,7 @@ import com.zstronics.ceibro.base.clickevents.setOnClick
 import com.zstronics.ceibro.base.extensions.toCamelCase
 import com.zstronics.ceibro.data.database.models.tasks.CeibroTaskV2
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.databinding.FragmentTaskInfoBinding
 import com.zstronics.ceibro.ui.tasks.task.TaskStatus
 import com.zstronics.ceibro.utils.DateUtils
@@ -92,6 +93,11 @@ class TaskInfoBottomSheet(_rootState: String, _selectedState: String, _userId: S
                 TaskStatus.CANCELED.name -> Pair(
                     R.drawable.status_cancelled_filled_more_corners,
                     requireContext().getString(R.string.canceled)
+                )
+
+                TaskDetailEvents.REJECT_CLOSED.eventValue.uppercase() -> Pair(
+                    R.drawable.status_done_filled_more_corners,
+                    state.toCamelCase()
                 )
 
                 else -> Pair(

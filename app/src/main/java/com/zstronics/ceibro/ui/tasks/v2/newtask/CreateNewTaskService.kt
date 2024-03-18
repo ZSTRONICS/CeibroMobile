@@ -37,6 +37,7 @@ import com.zstronics.ceibro.data.repos.task.models.v2.EventV2Response
 import com.zstronics.ceibro.data.repos.task.models.v2.EventWithFileUploadV2Request
 import com.zstronics.ceibro.data.repos.task.models.v2.LocalFilesToStore
 import com.zstronics.ceibro.data.repos.task.models.v2.NewTaskV2Entity
+import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
 import com.zstronics.ceibro.data.sessions.SessionManager
 import com.zstronics.ceibro.data.sessions.SharedPreferenceManager
 import com.zstronics.ceibro.ui.dashboard.SharedViewModel
@@ -1109,7 +1110,8 @@ class CreateNewTaskService : Service() {
                         val rootClosedToMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.toMeState.equals(TaskStatus.DONE.name, true))
+                                        (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(
+                                            TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1121,7 +1123,7 @@ class CreateNewTaskService : Service() {
                         val rootClosedFromMeTasks =
                             rootClosedAllTasksDB.filter {
                                 it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                                        (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                                        (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                             }
                                 .sortedByDescending { it.updatedAt }.toMutableList()
 
@@ -1658,14 +1660,14 @@ class CreateNewTaskService : Service() {
             val rootClosedToMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.toMeState.equals(TaskStatus.DONE.name, true))
+                            (it.toMeState.equals(TaskStatus.DONE.name, true) || it.toMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
             val rootClosedFromMeTasks =
                 rootClosedAllTasksDB.filter {
                     it.taskRootState.equals(TaskRootStateTags.Closed.tagValue, true) &&
-                            (it.fromMeState.equals(TaskStatus.DONE.name, true))
+                            (it.fromMeState.equals(TaskStatus.DONE.name, true) || it.fromMeState.equals(TaskDetailEvents.REJECT_CLOSED.eventValue, true))
                 }
                     .sortedByDescending { it.updatedAt }.toMutableList()
 
