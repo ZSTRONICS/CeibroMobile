@@ -94,7 +94,8 @@ class TaskApproveOrRejectVM @Inject constructor(
         onBack: (eventData: EventV2Response.Data?) -> Unit
     ) {
         val list = getCombinedList()
-        if (taskTypeTag != TaskDetailEvents.APPROVE.eventValue && viewState.comment.value.toString().trim() == "" && list.isEmpty()) {
+        if (taskTypeTag != TaskDetailEvents.APPROVE.eventValue && (viewState.comment.value.toString().trim().isEmpty() || list.isEmpty())
+        ) {
             alert(context.getString(R.string.please_add_comment_or_files))
         } else {
             GlobalScope.launch {
@@ -141,7 +142,7 @@ class TaskApproveOrRejectVM @Inject constructor(
 
                     val serviceIntent = Intent(context, CreateNewTaskService::class.java)
                     serviceIntent.putExtra("ServiceRequest", "approveRequest")
-                    serviceIntent.putExtra("taskId", task?.value?.id ?: "")
+                    serviceIntent.putExtra("taskId", task.value?.id ?: "")
                     serviceIntent.putExtra("event", taskTypeTag)
                     context.startService(serviceIntent)
 
@@ -150,67 +151,49 @@ class TaskApproveOrRejectVM @Inject constructor(
                         onBack.invoke(eventData)
                     }
 
+/*
+                    val message = viewState.comment.value.toString()
+                        .toRequestBody("text/plain".toMediaTypeOrNull())
+                    val metadata =
+                        approveOrRejectTaskRequest?.metadata?.toRequestBody("text/plain".toMediaTypeOrNull())
+                    val parts = approveOrRejectTaskRequest?.files?.map { file ->
+                        val reqFile =
+                            file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
+                        MultipartBody.Part.createFormData("files", file.name, reqFile)
+                    }
+                    loading(true)
+                    metadata?.let { data ->
 
-//                    when (val response = dashboardRepository.uploadEventWithFilesV2(
-//                        event = TaskDetailEvents.Comment.eventValue,
-//                        taskId = taskId ?: "",
-//                        hasFiles = true,
-//                        eventWithFileUploadV2Request = request
-//                    )) {
-//                        is ApiResponse.Success -> {
-//                            val commentData = response.data.data
-//                            isSuccess = true
-//                            eventData = commentData
-//                        }
-//
-//                        is ApiResponse.Error -> {
-//                            cancelAndMakeToast(context, response.error.message, Toast.LENGTH_SHORT)
-//                        }
-//                    }
+                        when (val response = remoteTask.approveOrRejectTask(
+                            approvalEvent = taskTypeTag,
+                            taskId = task.value?.id ?: "",
+                            hasFiles = true,
+                            comment = message,
+                            files = parts,
+                            metadata = data
+                        )) {
+                            is ApiResponse.Success -> {
+                                val commentData = response.data.data
+                                isSuccess = true
+                                eventData = commentData
+                            }
 
-                    /*
-                                        val message = viewState.comment.value.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-                                        val metadata = approveOrRejectTaskRequest?.metadata?.toRequestBody("text/plain".toMediaTypeOrNull())
-                                        val parts = approveOrRejectTaskRequest?.files?.map { file ->
-                                            val reqFile =
-                                                file.asRequestBody(("image/" + file.extension).toMediaTypeOrNull())
-                                            MultipartBody.Part.createFormData("files", file.name, reqFile)
-                                        }
-                                        loading(true)
-                                        metadata?.let { data ->
-
-                                            when (val response = remoteTask.approveOrRejectTask(
-                                                approvalEvent = taskTypeTag,
-                                                taskId = task.value?.id ?: "",
-                                                hasFiles = true,
-                                                comment = message,
-                                                files = parts,
-                                                metadata = data
-                                            )) {
-                                                is ApiResponse.Success -> {
-                                                    val commentData = response.data.data
-                                                    isSuccess = true
-                                                    eventData = commentData
-                                                }
-
-                                                is ApiResponse.Error -> {
-                                                    launch(Dispatcher.Main) {
-                                                        cancelAndMakeToast(
-                                                            context,
-                                                            response.error.message,
-                                                            Toast.LENGTH_SHORT
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }*/
+                            is ApiResponse.Error -> {
+                                launch(Dispatcher.Main) {
+                                    cancelAndMakeToast(
+                                        context,
+                                        response.error.message,
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
+                            }
+                        }
+                    }*/
 
                 } else {        //if list is empty, moving to else part
 
-
                     val message = viewState.comment.value.toString()
                         .toRequestBody("text/plain".toMediaTypeOrNull())
-
 
 
                     loading(true)
@@ -224,10 +207,20 @@ class TaskApproveOrRejectVM @Inject constructor(
                             val commentData = response.data.data
                             isSuccess = true
                             eventData = commentData
+
+                            updateTaskApproveOrRejectInLocal(
+                                commentData,
+                                taskDao,
+                                inboxV2Dao,
+                                user?.id,
+                                sessionManager,
+                                drawingPinsDao
+                            )
                         }
 
                         is ApiResponse.Error -> {
                             launch(Dispatcher.Main) {
+                                isSuccess = false
                                 cancelAndMakeToast(
                                     context,
                                     response.error.message,
@@ -237,14 +230,6 @@ class TaskApproveOrRejectVM @Inject constructor(
                         }
                     }
                 }
-                updateTaskApproveOrRejectInLocal(
-                    eventData,
-                    taskDao,
-                    inboxV2Dao,
-                    user?.id,
-                    sessionManager,
-                    drawingPinsDao
-                )
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     loading(false, "")

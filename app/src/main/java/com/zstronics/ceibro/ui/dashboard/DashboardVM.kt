@@ -238,7 +238,9 @@ class DashboardVM @Inject constructor(
                             )
                         }
                     }
-                    if (socketData.eventType == SocketHandler.TaskEvent.TASK_APPROVED.name || socketData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name || socketData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name) {
+                    if (socketData.eventType == SocketHandler.TaskEvent.TASK_APPROVED.name ||
+                        socketData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_CLOSED.name ||
+                        socketData.eventType == SocketHandler.TaskEvent.TASK_REJECTED_REOPENED.name) {
                         launch {
                             updateTaskApproveOrRejectInLocal(
                                 commentData,

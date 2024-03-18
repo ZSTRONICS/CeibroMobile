@@ -1779,9 +1779,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
             val isExists = TaskEventsList.isExists(
                 SocketHandler.TaskEvent.NEW_TASK_COMMENT.name, eventData.id, true
             )
-            val sharedViewModel = NavHostPresenterActivity.activityInstance?.let {
-                ViewModelProvider(it).get(SharedViewModel::class.java)
-            }
 
             if (!isExists) {
                 val currentUser = sessionManager.getUserObj()
@@ -1808,11 +1805,15 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         task.seenBy = eventData.taskData.seenBy
                         task.hiddenBy = eventData.taskData.hiddenBy
                         task.updatedAt = eventData.taskUpdatedAt
+                        val assignToList = task.assignedToState
+                        assignToList.map {
+                            it.state = eventData.newTaskData.userSubState
+                        }
 
                         val newAssigneeList = if (eventData.taskData.assignedToState.isNotEmpty()) {
                             eventData.taskData.assignedToState.toMutableList()
                         } else {
-                            task.assignedToState
+                            assignToList
                         }
                         task.assignedToState = newAssigneeList
                         val newInvitedList = if (eventData.taskData.invitedNumbers.isNotEmpty()) {
@@ -1838,25 +1839,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                         taskDao.updateTask(task)
                         taskDao.insertEventData(taskEvent)
 
-//                        if (eventData.newTaskData.creatorState.equals(
-//                                TaskStatus.CANCELED.name,
-//                                true
-//                            )
-//                        ) {
-//                            sharedViewModel?.isHiddenUnread?.value = true
-//                            sessionManager.saveHiddenUnread(true)
-//                        } else {
-//                            if (eventData.newTaskData.isAssignedToMe) {
-//                                sharedViewModel?.isToMeUnread?.value = true
-//                                sessionManager.saveToMeUnread(true)
-//                            }
-//                            if (eventData.newTaskData.isCreator) {
-//                                sharedViewModel?.isFromMeUnread?.value = true
-//                                sessionManager.saveFromMeUnread(true)
-//                            }
-//                        }
-
-                        updateAllTasksListForCommentAndForward(taskDao, eventData, task)
+                        updateAllTasksLists(taskDao)
 
                     } else {
                         getTaskById(eventData.taskId) { isSuccess, taskData, events ->
@@ -1866,13 +1849,8 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                                     taskData?.pinData?.let { drawingPinsDao.insertSinglePinData(it) }
 
 
-                                    if (taskData != null) {
-                                        updateAllTasksListForCommentAndForward(
-                                            taskDao,
-                                            eventData,
-                                            taskData
-                                        )
-                                    }
+                                    updateAllTasksLists(taskDao)
+
                                 }
                             } else {
                             }
@@ -1886,7 +1864,7 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     if (inboxTask != null && eventData.initiator.id != currentUser?.id) {
                         inboxTask.actionBy = eventData.initiator
                         inboxTask.createdAt = eventData.createdAt
-                        inboxTask.actionType = SocketHandler.TaskEvent.IB_NEW_TASK_COMMENT.name
+                        inboxTask.actionType = eventData.eventType
                         inboxTask.isSeen = false
                         inboxTask.unSeenNotifCount = inboxTask.unSeenNotifCount + 1
 
@@ -1927,15 +1905,6 @@ abstract class HiltBaseViewModel<VS : IBase.State> : BaseCoroutineViewModel(), I
                     SocketHandler.TaskEvent.NEW_TASK_COMMENT.name,
                     eventData.id
                 )
-//                println("Heartbeat SocketEvent NEW_TASK_COMMENT ended ${System.currentTimeMillis()}")
-
-                updateAllTasksLists(taskDao)
-
-                EventBus.getDefault().post(LocalEvents.TaskEvent(taskEvent))
-                EventBus.getDefault().post(LocalEvents.RefreshTasksData())
-                EventBus.getDefault().post(LocalEvents.UpdateDrawingPins(eventData.pinData))
-
-
             }
         }
     }
