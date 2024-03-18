@@ -22,6 +22,7 @@ class ImageWithCommentRVAdapter @Inject constructor() :
     var openImageClickListener: ((view: View, position: Int, fileUrl: String) -> Unit)? =
         null
     var listItems: MutableList<TaskFiles> = mutableListOf()
+    var dataUpdated = false
     private var selectedItemPosition = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(
@@ -48,6 +49,7 @@ class ImageWithCommentRVAdapter @Inject constructor() :
     fun setList(list: List<TaskFiles>) {
         this.listItems.clear()
         this.listItems.addAll(list)
+        dataUpdated = true
         notifyDataSetChanged()
     }
 
@@ -55,6 +57,13 @@ class ImageWithCommentRVAdapter @Inject constructor() :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: TaskFiles) {
+            if (dataUpdated) {      // This solves the view more and view less button issue when data is updated and view was expanded.
+                binding.imgComment.maxLines = 5
+                binding.viewMoreLessLayout.visibility = View.GONE
+                binding.viewMoreBtn.visibility = View.GONE
+                binding.viewLessBtn.visibility = View.GONE
+            }
+
             binding.smallImgView.setOnClickListener {
                 openImageClickListener?.invoke(it, absoluteAdapterPosition, item.fileUrl)
             }
