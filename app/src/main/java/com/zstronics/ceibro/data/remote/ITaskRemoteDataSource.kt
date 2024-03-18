@@ -120,6 +120,7 @@ interface ITaskRemoteDataSource {
     suspend fun taskSeen(taskId: String): ApiResponse<TaskSeenResponse>
     suspend fun cancelTask(taskId: String): ApiResponse<EventV2Response>
     suspend fun unCancelTask(taskId: String): ApiResponse<EventV2Response>
+    suspend fun reOpenTask(taskId: String): ApiResponse<EventV2Response>
     suspend fun hideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun unHideTask(taskId: String): ApiResponse<HideTaskResponse>
     suspend fun getTaskById(taskId: String): ApiResponse<ForwardedToMeNewTaskV2Response>

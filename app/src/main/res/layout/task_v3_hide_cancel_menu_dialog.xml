@@ -85,6 +85,23 @@
             app:drawableStartCompat="@drawable/ic_cross"
             app:drawableTint="@color/black" />
 
+        <TextView
+            android:id="@+id/reOpenTaskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/_6sdp"
+            android:fontFamily="@font/inter_semibold"
+            android:gravity="start|center"
+            android:paddingHorizontal="@dimen/_7sdp"
+            android:paddingVertical="@dimen/_7sdp"
+            android:text="@string/re_open"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/icon_re_open"
+            app:drawableTint="@color/black" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

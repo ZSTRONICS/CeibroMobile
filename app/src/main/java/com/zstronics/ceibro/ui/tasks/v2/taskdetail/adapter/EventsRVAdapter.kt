@@ -455,6 +455,14 @@ class EventsRVAdapter constructor(
 //                    binding.onlyComment.visibility = View.VISIBLE
                 }
 
+                TaskDetailEvents.ReOpen.eventValue -> {
+                    binding.myMsgLayout.visibility = View.GONE
+
+                    binding.otherEventText.text = "${creatorName.toCamelCase()} re-opened the task"
+                    binding.otherEventLayout.visibility = View.VISIBLE
+
+                }
+
                 TaskDetailEvents.DoneTask.eventValue -> {
                     binding.myMsgLayout.visibility = View.GONE
 

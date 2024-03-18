@@ -31,7 +31,6 @@ import com.zstronics.ceibro.data.repos.dashboard.contacts.SyncDBContactsList
 import com.zstronics.ceibro.data.repos.projects.IProjectRepository
 import com.zstronics.ceibro.data.repos.task.ITaskRepository
 import com.zstronics.ceibro.data.repos.task.TaskRootStateTags
-import com.zstronics.ceibro.data.repos.task.models.NewTopicCreateRequest
 import com.zstronics.ceibro.data.repos.task.models.TopicsResponse
 import com.zstronics.ceibro.data.repos.task.models.TopicsV2DatabaseEntity
 import com.zstronics.ceibro.data.repos.task.models.v2.TaskDetailEvents
@@ -1014,6 +1013,54 @@ class TasksParentTabV3VM @Inject constructor(
     }
 
 
+
+
+
+
+    fun showReOpenTaskDialog(context: Context, taskData: CeibroTaskV2) {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.layout_custom_dialog, null)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context).setView(view)
+        val alertDialog = builder.create()
+
+        val yesBtn = view.findViewById<Button>(R.id.yesBtn)
+        val noBtn = view.findViewById<Button>(R.id.noBtn)
+        val dialogText = view.findViewById<TextView>(R.id.dialog_text)
+        dialogText.text = context.resources.getString(R.string.do_you_want_to_re_open_the_task)
+        alertDialog.window?.setBackgroundDrawable(null)
+        alertDialog.show()
+
+        yesBtn.setOnClickListener {
+            reOpenTaskAPI(taskData.id) { isSuccess ->
+                alertDialog.dismiss()
+            }
+        }
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+    }
+
+
+    private fun reOpenTaskAPI(taskId: String, callBack: (isSuccess: Boolean) -> Unit) {
+        launch {
+            loading(true)
+            when (val response = remoteTask.reOpenTask(taskId)) {
+                is ApiResponse.Success -> {
+                    val eventResponse = response.data.data
+                    updateTaskReOpenedInLocal(eventResponse, taskDao, sessionManager, drawingPinsDao)
+                    loading(false, "")
+                    callBack.invoke(true)
+                }
+
+                is ApiResponse.Error -> {
+                    loading(false, response.error.message)
+                    callBack.invoke(false)
+                }
+            }
+        }
+    }
 
 
 

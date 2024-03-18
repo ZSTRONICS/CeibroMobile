@@ -231,6 +231,8 @@ class TaskV3ClosedFragment :
                 createPopupWindow(v, data) { menuTag ->
                     if (menuTag.equals("hideTask", true)) {
                         parentViewModel.showHideTaskDialog(requireContext(), data)
+                    } else if (menuTag.equals("reOpenTask", true)) {
+                        parentViewModel.showReOpenTaskDialog(requireContext(), data)
                     }
                 }
             }
@@ -257,11 +259,19 @@ class TaskV3ClosedFragment :
 
 
         val hideTaskBtn: TextView = view.findViewById(R.id.hideTaskBtn)
+        val reOpenTaskBtn: TextView = view.findViewById(R.id.reOpenTaskBtn)
 
         hideTaskBtn.visibility = View.VISIBLE
+        if (data.isCreator) {
+            reOpenTaskBtn.visibility = View.VISIBLE
+        }
 
         hideTaskBtn.setOnClickListener {
             callback.invoke("hideTask")
+            popupWindow.dismiss()
+        }
+        reOpenTaskBtn.setOnClickListener {
+            callback.invoke("reOpenTask")
             popupWindow.dismiss()
         }
 
@@ -274,7 +284,11 @@ class TaskV3ClosedFragment :
         val height = displayMetrics.heightPixels * 2 / 3
 
         if (positionOfIcon > height) {
-            popupWindow.showAsDropDown(v, 0, -170)
+            if (data.isCreator) {
+                popupWindow.showAsDropDown(v, 0, -280)
+            } else {
+                popupWindow.showAsDropDown(v, 0, -175)
+            }
         } else {
             popupWindow.showAsDropDown(v, 5, -10)
         }

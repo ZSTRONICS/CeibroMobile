@@ -304,6 +304,14 @@ class TaskRemoteDataSource @Inject constructor(private val service: TaskRetroSer
             }
         )
 
+    override suspend fun reOpenTask(taskId: String): ApiResponse<EventV2Response> =
+        executeSafely(
+            call =
+            {
+                service.reOpenTask(taskId)
+            }
+        )
+
 
     override suspend fun hideTask(taskId: String): ApiResponse<HideTaskResponse> =
         executeSafely(

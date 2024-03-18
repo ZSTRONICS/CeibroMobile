@@ -449,6 +449,7 @@
     <string name="done_by">Done by</string>
     <string name="new_comment">New comment</string>
     <string name="self_assign">Self-assign</string>
+    <string name="do_you_want_to_re_open_the_task">Are you sure you want to re-open the task?</string>
     <string name="do_you_want_to_hide_the_task">Do you want to hide the task?</string>
     <string name="do_you_want_to_un_hide_the_task">Do you want to un-hide the task?</string>
     <string name="do_you_want_to_cancel_the_task">Do you want to cancel the task?</string>
@@ -696,4 +697,5 @@
     <string name="unhide">Unhide</string>
     <string name="un_cancel">Un-cancel</string>
     <string name="canceled_tasks">Canceled tasks</string>
+    <string name="re_open">Re-open</string>
 </resources>

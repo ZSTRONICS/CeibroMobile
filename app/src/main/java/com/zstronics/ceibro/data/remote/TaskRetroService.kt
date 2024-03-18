@@ -240,6 +240,11 @@ interface TaskRetroService {
         @Path("taskId") taskId: String
     ): Response<EventV2Response>
 
+    @POST("v2/task/reopen/{taskId}")
+    suspend fun reOpenTask(
+        @Path("taskId") taskId: String
+    ): Response<EventV2Response>
+
 
     @POST("v2/task/hide/{taskId}")
     suspend fun hideTask(
