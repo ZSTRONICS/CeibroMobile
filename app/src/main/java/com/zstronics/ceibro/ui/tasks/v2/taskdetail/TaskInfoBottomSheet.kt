@@ -96,7 +96,7 @@ class TaskInfoBottomSheet(_rootState: String, _selectedState: String, _userId: S
                 )
 
                 TaskDetailEvents.REJECT_CLOSED.eventValue.uppercase() -> Pair(
-                    R.drawable.status_done_filled_more_corners,
+                    R.drawable.status_reject_filled_more_full_corners,
                     state.toCamelCase()
                 )
 
