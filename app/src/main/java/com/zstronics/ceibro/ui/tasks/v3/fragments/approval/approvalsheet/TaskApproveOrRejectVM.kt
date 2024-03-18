@@ -94,7 +94,7 @@ class TaskApproveOrRejectVM @Inject constructor(
         onBack: (eventData: EventV2Response.Data?) -> Unit
     ) {
         val list = getCombinedList()
-        if (taskTypeTag != TaskDetailEvents.APPROVE.eventValue && (viewState.comment.value.toString().trim().isEmpty() || list.isEmpty())
+        if (taskTypeTag != TaskDetailEvents.APPROVE.eventValue && (viewState.comment.value.toString().trim().isEmpty() && list.isEmpty())
         ) {
             alert(context.getString(R.string.please_add_comment_or_files))
         } else {
