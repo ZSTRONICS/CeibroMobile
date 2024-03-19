@@ -13,7 +13,8 @@ import com.zstronics.ceibro.ui.tasks.v3.fragments.ongoing.TaskV3OngoingFragment
 class TasksParentV3TabLayoutAdapter(
     fragmentManager: FragmentActivity,
     private val tabIcons: Array<Int>,
-    private val parentViewModel: TasksParentTabV3VM
+    private val parentViewModel: TasksParentTabV3VM,
+    val callback: (String) -> Unit
 ) :
     FragmentStateAdapter(fragmentManager) {
 
@@ -23,9 +24,17 @@ class TasksParentV3TabLayoutAdapter(
     override fun createFragment(position: Int): Fragment {
         val inboxFragment = InboxFragment()
         val ongoingFragment = TaskV3OngoingFragment.newInstance(parentViewModel)
+        ongoingFragment.clearSearchCallbackMethod {
+            callback.invoke(it)
+        }
         val approvalFragment = TaskV3ApprovalFragment.newInstance(parentViewModel)
+        approvalFragment.clearSearchCallbackMethod {
+            callback.invoke(it)
+        }
         val closedFragment = TaskV3ClosedFragment.newInstance(parentViewModel)
-
+        closedFragment.clearSearchCallbackMethod {
+            callback.invoke(it)
+        }
         return when (position) {
             0 -> inboxFragment
             1 -> ongoingFragment

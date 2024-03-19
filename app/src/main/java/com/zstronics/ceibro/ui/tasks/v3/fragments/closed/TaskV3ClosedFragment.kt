@@ -38,7 +38,9 @@ class TaskV3ClosedFragment :
     override fun onClick(id: Int) {
         when (id) {
 
-
+            R.id.clearSearch -> {
+                clearSearchCallback?.invoke("clear")
+            }
         }
     }
 
@@ -48,6 +50,11 @@ class TaskV3ClosedFragment :
             fragment.parentViewModel = viewModel
             return fragment
         }
+    }
+
+    private var clearSearchCallback: ((String) -> Unit)? = null
+    fun clearSearchCallbackMethod(callback: (String) -> Unit) {
+        this.clearSearchCallback = callback
     }
 
     @Inject
@@ -87,7 +94,8 @@ class TaskV3ClosedFragment :
                             mViewDataBinding.taskOngoingRV.visibility = View.GONE
                             if (parentViewModel.isSearchingTasks) {
                                 mViewDataBinding.noTaskInAllLayout.visibility = View.GONE
-                                mViewDataBinding.searchWithNoResultLayout.visibility = View.VISIBLE
+                                mViewDataBinding.searchWithNoResultLayout.visibility =
+                                    View.VISIBLE
                             } else {
                                 mViewDataBinding.noTaskInAllLayout.visibility = View.VISIBLE
                                 mViewDataBinding.searchWithNoResultLayout.visibility = View.GONE
@@ -158,7 +166,8 @@ class TaskV3ClosedFragment :
 
             parentViewModel.viewModelScope.launch {
                 val sortedList = async { parentViewModel.sortList(list) }.await()
-                val orderedList = async { parentViewModel.applySortingOrder(sortedList) }.await()
+                val orderedList =
+                    async { parentViewModel.applySortingOrder(sortedList) }.await()
 
                 parentViewModel.filteredClosedTasks = orderedList
 
@@ -244,7 +253,8 @@ class TaskV3ClosedFragment :
         callback: (String) -> Unit
     ): PopupWindow {
         val context: Context = v.context
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater =
+            context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.task_v3_hide_cancel_menu_dialog, null)
 
         val popupWindow = PopupWindow(

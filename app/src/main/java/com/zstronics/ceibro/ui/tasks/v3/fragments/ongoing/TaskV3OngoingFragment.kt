@@ -37,7 +37,9 @@ class TaskV3OngoingFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-
+            R.id.clearSearch -> {
+                clearSearchCallback?.invoke("clear")
+            }
 
         }
     }
@@ -52,6 +54,12 @@ class TaskV3OngoingFragment :
 
     @Inject
     lateinit var adapter: TasksV3Adapter
+
+
+    private var clearSearchCallback: ((String) -> Unit)? = null
+    fun clearSearchCallbackMethod(callback: (String) -> Unit) {
+        this.clearSearchCallback = callback
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

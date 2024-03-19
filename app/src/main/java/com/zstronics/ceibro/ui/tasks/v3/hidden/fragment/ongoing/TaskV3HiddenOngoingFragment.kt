@@ -37,10 +37,18 @@ class TaskV3HiddenOngoingFragment :
     override fun toolBarVisibility(): Boolean = false
     override fun onClick(id: Int) {
         when (id) {
-
+            R.id.clearSearch -> {
+                clearSearchCallback?.invoke("clear")
+            }
 
         }
     }
+
+    private var clearSearchCallback: ((String) -> Unit)? = null
+    fun clearSearchCallbackMethod(callback: (String) -> Unit) {
+        this.clearSearchCallback = callback
+    }
+
 
     companion object {
         fun newInstance(viewModel: TasksHiddenParentTabV3VM): TaskV3HiddenOngoingFragment {

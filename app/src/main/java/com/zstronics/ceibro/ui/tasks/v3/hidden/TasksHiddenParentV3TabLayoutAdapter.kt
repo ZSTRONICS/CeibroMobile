@@ -10,7 +10,8 @@ import com.zstronics.ceibro.ui.tasks.v3.hidden.fragment.ongoing.TaskV3HiddenOngo
 class TasksHiddenParentV3TabLayoutAdapter(
     fragmentManager: FragmentActivity,
     private val tabIcons: Array<Int>,
-    private val parentViewModel: TasksHiddenParentTabV3VM
+    private val parentViewModel: TasksHiddenParentTabV3VM,
+    val callback: (String) -> Unit
 ) :
     FragmentStateAdapter(fragmentManager) {
     private val NUM_TABS = 2
@@ -19,8 +20,14 @@ class TasksHiddenParentV3TabLayoutAdapter(
     override fun createFragment(position: Int): Fragment {
 
         val ongoingFragment = TaskV3HiddenOngoingFragment.newInstance(parentViewModel)
-        val closedFragment = TaskV3HiddenClosedFragment.newInstance(parentViewModel)
+        ongoingFragment.clearSearchCallbackMethod {
+            callback.invoke(it)
+        }
 
+        val closedFragment = TaskV3HiddenClosedFragment.newInstance(parentViewModel)
+        closedFragment.clearSearchCallbackMethod {
+            callback.invoke(it)
+        }
         return when (position) {
             0 -> ongoingFragment
             1 -> closedFragment

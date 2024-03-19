@@ -50,7 +50,9 @@ class TasksHiddenParentTabV3Fragment :
         when (id) {
             R.id.backBtn -> {
                 navigateBack()
-            }R.id.userFilter -> {
+            }
+
+            R.id.userFilter -> {
                 chooseUserType(
                     viewModel,
                     { userConnectionAndRoleList ->
@@ -190,7 +192,12 @@ class TasksHiddenParentTabV3Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = TasksHiddenParentV3TabLayoutAdapter(requireActivity(), tabIcons, viewModel)
+        adapter = TasksHiddenParentV3TabLayoutAdapter(requireActivity(), tabIcons, viewModel) {
+
+            mViewDataBinding.taskSearchBar.setQuery(null, true)
+            mViewDataBinding.taskSearchBar.clearFocus()
+            mViewDataBinding.taskSearchBar.hideKeyboard()
+        }
         mViewDataBinding.taskViewPager.adapter = adapter
 
         tabTitles.add(getString(R.string.ongoing_heading))
@@ -443,7 +450,6 @@ class TasksHiddenParentTabV3Fragment :
         }
 
     }
-
 
 
     override fun onAttach(context: Context) {

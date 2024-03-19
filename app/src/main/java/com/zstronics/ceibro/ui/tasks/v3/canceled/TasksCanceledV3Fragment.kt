@@ -55,6 +55,11 @@ class TasksCanceledV3Fragment :
             R.id.backBtn -> {
                 navigateBack()
             }
+            R.id.clearSearch -> {
+                mViewDataBinding.taskSearchBar.setQuery(null, true)
+                mViewDataBinding.taskSearchBar.clearFocus()
+                mViewDataBinding.taskSearchBar.hideKeyboard()
+            }
 
             R.id.userFilter -> {
                 chooseUserType(

@@ -190,7 +190,12 @@ class TasksParentTabV3Fragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = TasksParentV3TabLayoutAdapter(requireActivity(), tabIcons, viewModel)
+        adapter = TasksParentV3TabLayoutAdapter(requireActivity(), tabIcons, viewModel) {
+
+            mViewDataBinding.taskSearchBar.setQuery(null, true)
+            mViewDataBinding.taskSearchBar.clearFocus()
+            mViewDataBinding.taskSearchBar.hideKeyboard()
+        }
         mViewDataBinding.taskViewPager.adapter = adapter
 
         tabTitles.add(getString(R.string.activity_heading))
@@ -453,7 +458,6 @@ class TasksParentTabV3Fragment :
         }
 
     }
-
 
 
     override fun onAttach(context: Context) {
