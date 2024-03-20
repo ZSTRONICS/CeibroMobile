@@ -635,6 +635,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginStart="@dimen/_14sdp"
                     android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"
                     android:visibility="gone"
